@@ -11,24 +11,24 @@ export const userService = {
     delete: _delete
 };
 
-function login(username, password) {
+function login(email, password) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
     };
-    return fetch(`${apiUrl}/authenticate`, requestOptions)
+    return fetch(`${apiUrl}/users/login`, requestOptions)
         .then(handleResponse)
-        .then(user => {
+        .then(token => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem('user', JSON.stringify(user));
-            return user;
+            localStorage.setItem('token', JSON.stringify(token));
+            return token;
         });
 }
 
 function logout() {
     // remove user from local storage to log user out
-    localStorage.removeItem('user');
+    localStorage.removeItem('token');
 }
 
 function getAll() {
@@ -54,7 +54,7 @@ function register(user) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
     };
-    return fetch(`${apiUrl}/register`, requestOptions).then(handleResponse);
+    return fetch(`${apiUrl}/signup`, requestOptions).then(handleResponse);
 }
 
 function update(user) {

@@ -6,9 +6,7 @@ import { userActions } from '../../_actions';
 
 function Register() {
     const [user, setUser] = useState({
-        first_name: '',
-        last_name: '',
-        user_name: '',
+        email: '',
         password: ''
     });
     const [submitted, setSubmitted] = useState(false);
@@ -29,7 +27,7 @@ function Register() {
         e.preventDefault();
 
         setSubmitted(true);
-        if (user.first_name && user.last_name && user.user_name && user.password) {
+        if (user.email && user.password) {
             dispatch(userActions.register(user));
         }
     }
@@ -38,24 +36,11 @@ function Register() {
         <div className="col-lg-8 offset-lg-2">
             <h2>Register</h2>
             <form name="form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label>First Name</label>
-                    <input type="text" name="first_name" value={user.first_name} onChange={handleChange} className={'form-control' + (submitted && !user.firstName ? ' is-invalid' : '')} />
-                    {submitted && !user.first_name &&
-                        <div className="invalid-feedback">First Name is required</div>
-                    }
-                </div>
-                <div className="form-group">
-                    <label>Last Name</label>
-                    <input type="text" name="last_name" value={user.last_name} onChange={handleChange} className={'form-control' + (submitted && !user.lastName ? ' is-invalid' : '')} />
-                    {submitted && !user.last_name &&
-                        <div className="invalid-feedback">Last Name is required</div>
-                    }
-                </div>
+
                 <div className="form-group">
                     <label>Username</label>
-                    <input type="text" name="user_name" value={user.user_name} onChange={handleChange} className={'form-control' + (submitted && !user.username ? ' is-invalid' : '')} />
-                    {submitted && !user.user_name &&
+                    <input type="text" name="email" value={user.email} onChange={handleChange} className={'form-control' + (submitted && !user.email ? ' is-invalid' : '')} />
+                    {submitted && !user.email &&
                         <div className="invalid-feedback">Username is required</div>
                     }
                 </div>
