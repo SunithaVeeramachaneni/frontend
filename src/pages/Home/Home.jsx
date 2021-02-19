@@ -58,13 +58,12 @@ function Home() {
 
 
         <div className="col-lg-8 offset-lg-2">
-            <select onChange={handleChange}>
-                <option selected value="en">English</option>
+            <select onChange={e =>  handleChange(e)} >
+                <option value="en">English</option>
                 <option value="fr">French</option>
                 <option value="de">German</option>
                 <option value="es">Spanish</option>
             </select>
-            <hr/>
             <Trans i18nKey="title">
                         Hi John!
             </Trans>
