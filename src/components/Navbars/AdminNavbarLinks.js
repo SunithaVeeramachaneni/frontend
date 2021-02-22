@@ -17,7 +17,7 @@ import Person from "@material-ui/icons/Person";
 import Notifications from "@material-ui/icons/Notifications";
 import Dashboard from "@material-ui/icons/Dashboard";
 import Search from "@material-ui/icons/Search";
-
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 // core components
 import styles from "../../assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 
@@ -67,6 +67,10 @@ function AdminNavbarLinks(props) {
     }
   };
 
+  const logout = () => {
+    localStorage.clear();
+  }
+
   const { t } = props;
   const handleChange = event => {
       let newlang = event.target.value;
@@ -74,13 +78,6 @@ function AdminNavbarLinks(props) {
     }
   return (
       <div className={classes.manager}>
-        {/* <select onChange={handleChange}>
-          <option value="en">English</option>
-          <option value="jap">Japanese</option>
-          <option value="hin">Hindi</option>
-          <option value="fre">French</option>
-          <option value="ger">German</option>
-        </select> */}
         <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="language-translator">Language</InputLabel>
             <Select labelId="language-translator" id="language-translator"
@@ -157,6 +154,17 @@ function AdminNavbarLinks(props) {
             </Grow>
           )}
         </Poppers>
+        <Button
+          color={window.innerWidth > 959 ? "transparent" : "white"}
+          justIcon={window.innerWidth > 959}
+          simple={!(window.innerWidth > 959)}
+          aria-owns={openProfile ? "profile-menu-list-grow" : null}
+          aria-haspopup="true"
+          onClick={logout}
+          className={classes.buttonLink}
+        >
+          <ExitToAppIcon className={classes.icons} />
+        </Button>
       </div>
   );
 }

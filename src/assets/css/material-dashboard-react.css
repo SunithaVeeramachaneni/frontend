@@ -513,3 +513,8 @@ footer ul li a:hover {
   width: 120px !important;
   background: white !important;
 }
+
+.MuiButton-root {
+  min-width: 40px !important;
+}
+
