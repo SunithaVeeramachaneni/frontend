@@ -1,4 +1,4 @@
-import { apiUrl } from '../../config';
+import { apiUrl } from '../config';
 import { authHeader } from '../_helpers';
 
 export const userService = {
@@ -44,7 +44,7 @@ function getById(id) {
         method: 'GET',
         headers: authHeader()
     };
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`${apiUrl}/users/${id}`, requestOptions).then(handleResponse);
 }
 
 function register(user) {
@@ -84,7 +84,7 @@ function handleResponse(response) {
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
                 logout();
-                location.reload(true);
+                window.location.reload(true);
             }
 
             const error = (data && data.message) || response.statusText;
