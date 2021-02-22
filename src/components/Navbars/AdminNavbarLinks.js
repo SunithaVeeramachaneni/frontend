@@ -23,10 +23,14 @@ import styles from "../../assets/jss/material-dashboard-react/components/headerL
 
 import {Home} from "../../pages/Home";
 import FixedPlugin from "../FixedPlugin/FixedPlugin.js";
+import { withTranslation, Trans } from "react-i18next";
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 
 const useStyles = makeStyles(styles);
 
-export default function AdminNavbarLinks() {
+function AdminNavbarLinks(props) {
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
@@ -62,8 +66,35 @@ export default function AdminNavbarLinks() {
       setFixedClasses("dropdown");
     }
   };
+
+  const { t } = props;
+  const handleChange = event => {
+      let newlang = event.target.value;
+      props.i18n.changeLanguage(newlang);
+    }
   return (
       <div className={classes.manager}>
+        {/* <select onChange={handleChange}>
+          <option value="en">English</option>
+          <option value="jap">Japanese</option>
+          <option value="hin">Hindi</option>
+          <option value="fre">French</option>
+          <option value="ger">German</option>
+        </select> */}
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="language-translator">Language</InputLabel>
+            <Select labelId="language-translator" id="language-translator"
+                    onChange={handleChange} label="Language">
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="jap">Japnese</MenuItem>
+              <MenuItem value="hin">Hindi</MenuItem>
+              <MenuItem value="fre">French</MenuItem>
+              <MenuItem value="ger">German</MenuItem>
+            </Select>
+        </FormControl>
+        <Trans>
+           <p>{t("title")}</p>
+        </Trans>
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -129,3 +160,5 @@ export default function AdminNavbarLinks() {
       </div>
   );
 }
+
+export default (withTranslation("translations")(AdminNavbarLinks));

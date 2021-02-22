@@ -48,15 +48,8 @@ export default function Header(props) {
                 </IconButton>
             </Hidden>
           </div>
- 
-          <Button color="transparent" href="#" className={classes.title}>
-            {makeBrand()}
-          </Button>
           <AdminNavbarLinks />
         </div>
-        {/* <Hidden smDown implementation="css"> */}
-            
-        {/* </Hidden> */}
       </Toolbar>
     </AppBar>
   );

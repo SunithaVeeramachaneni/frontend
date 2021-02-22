@@ -13,11 +13,16 @@ import {Register} from './pages/Register'
 
 import "./assets/css/material-dashboard-react.css?v=1.9.0";
 
+import { I18nextProvider } from "react-i18next";
+
+import i18n from "./_components/i18n";
+
 const hist = createBrowserHistory();
 
 ReactDOM.render(
   <Provider store={store}>
   <Suspense fallback={<div>Loading...</div>}>
+  <I18nextProvider i18n={i18n}>
   <Router history={hist}>
     <Switch>
       <Route path="/admin" component={Admin} />
@@ -26,6 +31,7 @@ ReactDOM.render(
       <Redirect from="/" to="/admin/dashboard" />
     </Switch>
   </Router>
+  </I18nextProvider>
   </Suspense>
   </Provider>,
   document.getElementById("root")
