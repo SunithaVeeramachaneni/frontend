@@ -16,8 +16,8 @@ function Login() {
     const location = useLocation();
 
     // reset login status
-    useEffect(() => { 
-        dispatch(userActions.logout()); 
+    useEffect(() => {
+        dispatch(userActions.logout());
     }, []);
 
     function handleChange(e) {
@@ -27,7 +27,6 @@ function Login() {
 
     function handleSubmit(e) {
         e.preventDefault();
-
         setSubmitted(true);
         if (username && password) {
             // get return url from location state or default to home page
@@ -41,23 +40,22 @@ function Login() {
             <h2>Connect & Use</h2>
             <form name="form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <input type="text" placeholder="Username" name="username" value={username} onChange={handleChange} className={'form-control' + (submitted && !username ? ' is-invalid' : '')} />
+                    <input type="email" placeholder="Email ID" name="username" value={username} onChange={handleChange} className={'form-control' + (submitted && !username ? ' is-invalid' : '')} />
                     {submitted && !username &&
-                        <div className="invalid-feedback">Username is required</div>
+                    <div className="invalid-feedback">Email ID is required</div>
                     }
                 </div>
                 <div className="form-group">
                     <input type="password" placeholder="Password" name="password" value={password} onChange={handleChange} className={'form-control' + (submitted && !password ? ' is-invalid' : '')} />
                     {submitted && !password &&
-                        <div className="invalid-feedback">Password is required</div>
+                    <div className="invalid-feedback">Password is required</div>
                     }
                 </div>
                 <div className="form-group">
                     <button className="btn btn-primary btn-lg btn-block">
-                            {loggingIn && <span className="spinner-border spinner-border-sm mr-1"></span>}
-                            Login
-                        </button>
-
+                        {loggingIn && <span className="spinner-border spinner-border-sm mr-1"></span>}
+                        Login
+                    </button>
                 </div>
                 <div className="form-group">
                     Did not have any account? <Link to="/register" className="btn btn-link">Register as new user</Link>
