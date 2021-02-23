@@ -13,6 +13,9 @@
     "dependencies": {
         "history": "^4.10.1",
         "i18next": "^19.8.7",
+        "@apollo/client": "^3.2.2",
+        "graphql": "^15.3.0",
+        "optimism": "^0.13.0",
         "i18next-browser-languagedetector": "^6.0.1",
         "i18next-http-backend": "^1.1.0",
         "react": "^16.13.0",

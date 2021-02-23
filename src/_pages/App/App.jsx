@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -8,6 +8,8 @@ import { PrivateRoute } from '../../_components';
 import { Home } from '../Home';
 import { Login } from '../Login';
 import { Register } from '../Register';
+
+
 
 function App() {
     const alert = useSelector(state => state.alert);
@@ -19,6 +21,8 @@ function App() {
             dispatch(alertActions.clear());
         });
     }, []);
+
+
 
     return (
         <div>
