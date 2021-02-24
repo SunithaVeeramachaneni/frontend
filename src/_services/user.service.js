@@ -1,4 +1,4 @@
-import { apiUrl } from '../../config';
+import { apiUrl } from '../config';
 import { authHeader } from '../_helpers';
 
 export const userService = {
@@ -40,6 +40,7 @@ function getAll() {
 }
 
 function getById(id) {
+    let config;
     const requestOptions = {
         method: 'GET',
         headers: authHeader()
@@ -84,7 +85,7 @@ function handleResponse(response) {
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
                 logout();
-                location.reload(true);
+                window.location.reload(true);
             }
 
             const error = (data && data.message) || response.statusText;

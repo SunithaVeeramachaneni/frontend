@@ -36,6 +36,7 @@ function Login() {
     }
 
     return (
+        <div className="container">
         <div className="col-lg-8 offset-lg-2 text-center login">
             <h2>Connect & Use</h2>
             <form name="form" onSubmit={handleSubmit}>
@@ -61,6 +62,7 @@ function Login() {
                     Did not have any account? <Link to="/register" className="btn btn-link">Register as new user</Link>
                 </div>
             </form>
+        </div>
         </div>
     );
 }

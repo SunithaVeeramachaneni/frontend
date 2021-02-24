@@ -33,6 +33,7 @@ function Register() {
     }
 
     return (
+        <div className="container">
         <div className="col-lg-8 offset-lg-2">
             <h2>Register</h2>
             <form name="form" onSubmit={handleSubmit}>
@@ -59,6 +60,7 @@ function Register() {
                     <Link to="/login" className="btn btn-link">Cancel</Link>
                 </div>
             </form>
+        </div>
         </div>
     );
 }

@@ -8,8 +8,10 @@ import { PrivateRoute } from '../../_components';
 import { Home } from '../Home';
 import { Login } from '../Login';
 import { Register } from '../Register';
+import Admin from "../../layouts/Admin"
+import { createBrowserHistory } from "history";
 
-
+const hist = createBrowserHistory();
 
 function App() {
     const alert = useSelector(state => state.alert);
@@ -26,23 +28,31 @@ function App() {
 
     return (
         <div>
-            <div className="container">
-                <div className="col-md-8 offset-md-2">
+            {/* <div className="container">
+                <div className="col-md-8 offset-md-2"> */}
                     {alert.message &&
                         <div className={`alert ${alert.type}`}>{alert.message}</div>
                     }
-                    <Router history={history}>
+                    {/* <Router history={history}>
                         <Switch>
-                            <PrivateRoute exact path="/" component={Home} />
+                            <PrivateRoute exact path="/" component={Admin} />
                             <Route path="/login" component={Login} />
                             <Route path="/register" component={Register} />
-                            <Route exact path="/" component={Home} />
-                            <Route path="/home" component={Home} />
+                            <Route path="/layout" component={Admin} />
                             <Redirect from="*" to="/" />
                         </Switch>
+                    </Router> */}
+                    <Router history={history}>
+                        <Switch>
+                        <PrivateRoute exact path="/admin/dashboard" component={Admin} />
+                        <Route path="/admin/dashboard" component={Admin} />
+                        <Route path="/login" component={Login} />
+                        <Route path="/register" component={Register} />
+                        <Redirect from="/" to="/admin/dashboard" />
+                        </Switch>
                     </Router>
-                </div>
-            </div>
+                {/* </div>
+            </div> */}
         </div>
     );
 }
