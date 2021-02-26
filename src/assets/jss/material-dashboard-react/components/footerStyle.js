@@ -34,7 +34,7 @@ const footerStyle = {
     fontSize: "10px",
     lineHeight: "24px",
     color: "#9B9B9B",
-    marginBottom:"-10px"
+    marginBottom:"-5px"
   },
   footerlogo : {
     width: "140px",
@@ -64,6 +64,10 @@ const footerStyle = {
     display: "inline-block",
     padding: "0px",
     width: "auto"
+  },
+  poweredby : {
+    position:"relative",
+    top:"7px"
   }
 };
 export default footerStyle;

@@ -26,42 +26,39 @@ export default function FixedPlugin(props) {
       })}
     >
       <div id="fixedPluginClasses" className={props.fixedClasses}>
-      <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel id="demo-simple-select-outlined-label">Themes</InputLabel>
-        <Select labelId="demo-simple-select-outlined-label" id="demo-simple-select-outlined"
-                onChange={e =>  props.handleColorClick(e.target.value)}   label="Themes">
-          <MenuItem className={
+        <select onChange={e =>  props.handleColorClick(e.target.value)}>
+          <option value="">Themes</option>
+          <option className={
                     props.bgColor === "purple"
                       ? "badge filter badge-purple active"
                       : "badge filter badge-purple"
                   }
-                  value="purple">Purple</MenuItem>
-          <MenuItem className={
+                  value="purple">Purple</option>
+          <option className={
                     props.bgColor === "blue"
                       ? "badge filter badge-blue active"
                       : "badge filter badge-blue"
                   }
-                  value="blue">Blue</MenuItem>
-          <MenuItem className={
+                  value="blue">Blue</option>
+          <option className={
                     props.bgColor === "green"
                       ? "badge filter badge-green active"
                       : "badge filter badge-green"
                   }
-                 value="green">Green</MenuItem>
-          <MenuItem className={
+                 value="green">Green</option>
+          <option className={
                     props.bgColor === "red"
                       ? "badge filter badge-red active"
                       : "badge filter badge-red"
                   }
-                  value="red">Red</MenuItem>
-          <MenuItem className={
+                  value="red">Red</option>
+          <option className={
                     props.bgColor === "orange"
                       ? "badge filter badge-orange active"
                       : "badge filter badge-orange"
                   }
-                  value="orange">Orange</MenuItem>
-        </Select>
-      </FormControl>
+                  value="orange">Orange</option>
+        </select>
         {/* <select onChange={e =>  props.handleColorClick(e.target.value)}>
           <option>Themes</option>
           <option className={

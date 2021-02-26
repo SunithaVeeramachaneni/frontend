@@ -19,7 +19,7 @@ import Notifications from "@material-ui/icons/Notifications";
 import Dashboard from "@material-ui/icons/Dashboard";
 import Search from "@material-ui/icons/Search";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import User from '../../assets/img/User.svg';
 // core components
 import styles from "../../assets/jss/material-dashboard-react/components/headerLinksStyle.js";
@@ -94,23 +94,18 @@ function AdminNavbarLinks(props) {
             />
           </FormControl>
         </div>
-        <div className={classes.languageDropdown}>
-          <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="language-translator">Language</InputLabel>
-              <Select labelId="language-translator" id="language-translator"
-                      onChange={handleChange} label="Language">
-                <MenuItem value="en">English</MenuItem>
-                <MenuItem value="jap">Japnese</MenuItem>
-                <MenuItem value="hin">Hindi</MenuItem>
-                <MenuItem value="fre">French</MenuItem>
-                <MenuItem value="ger">German</MenuItem>
-              </Select>
-          </FormControl>
-        </div>
+        <select onChange={handleChange} className={classes.languageDropdown}>
+          <option value="">Language</option>
+          <option value="en">English</option>
+          <option value="jap">Japnese</option>
+          <option value="hin">Hindi</option>
+          <option value="fre">French</option>
+          <option value="ger">German</option>
+        </select>
         <div style={{"margin":"0px 10px 0px 10px"}}>
           <Trans>
             <p className={classes.signedUser}>{t("title")}</p>
-            <span className={classes.signedUserDesignation}>Designation</span>
+            <span className={classes.signedUserDesignation}>VP Global Operations</span>
           </Trans>
         </div>
         <Button
@@ -123,7 +118,7 @@ function AdminNavbarLinks(props) {
           className={classes.buttonLink}
         >
           <img src={User} alt="" className={classes.usericon} />
-          <ArrowDropDownIcon/>
+          <KeyboardArrowDownIcon style={{"height":"15px"}}/>
         </Button>
         <Poppers
           open={Boolean(openProfile)}

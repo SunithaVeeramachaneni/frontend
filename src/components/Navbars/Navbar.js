@@ -38,7 +38,7 @@ export default function Header(props) {
       <Toolbar className={classes.container}>
         <div className={classes.flex}>
           <div style={{"display": "inline-flex"}}>
-              <Hidden mdUp implementation="css">
+              {/* <Hidden mdUp implementation="css"> */}
                 <IconButton
                   color="inherit"
                   aria-label="open drawer"
@@ -46,11 +46,11 @@ export default function Header(props) {
                 >
                   <Menu />
                 </IconButton>
-            </Hidden>
+            {/* </Hidden> */}
           </div>
-          <Button color="transparent" href="#" className={classes.title}>
+          <span className={classes.title}>
             {makeBrand()}
-          </Button>
+          </span>
           <AdminNavbarLinks />
         </div>
           

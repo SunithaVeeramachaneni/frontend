@@ -37,17 +37,12 @@ const headerStyle = () => ({
     flex: 1
   },
   title: {
-    ...defaultFont,
-    letterSpacing: "unset",
-    lineHeight: "30px",
-    fontSize: "18px",
-    borderRadius: "3px",
-    textTransform: "none",
-    color: "inherit",
-    margin: "0",
-    "&:hover,&:focus": {
-      background: "transparent"
-    }
+    fontFamily: "Poppins",
+    fontWeight: "600",
+    fontSize: "20px",
+    color: "#000000",
+    position:"relative",
+    bottom:"5px",
   },
   appResponsive: {
     top: "8px"

@@ -44,11 +44,11 @@ function App() {
                     </Router> */}
                     <Router history={history}>
                         <Switch>
-                        <PrivateRoute exact path="/admin/dashboard" component={Admin} />
-                        <Route path="/admin/dashboard" component={Admin} />
-                        <Route path="/login" component={Login} />
-                        <Route path="/register" component={Register} />
-                        <Redirect from="/" to="/admin/dashboard" />
+                            <PrivateRoute exact path="/admin/dashboard" component={Admin} />
+                            <Route path="/admin" component={Admin} />
+                            <Route path="/login" component={Login} />
+                            <Route path="/register" component={Register} />
+                            <Redirect from="*" to="/admin/dashboard" />
                         </Switch>
                     </Router>
                 {/* </div>

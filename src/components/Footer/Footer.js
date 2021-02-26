@@ -23,7 +23,7 @@ export default function Footer(props) {
               className={classes.a}>
                <p className={classes.footerText}>Connected Worker Platform</p>
                <p className={classes.footerText}>© 2020 All Rights Reserved</p>
-               <p className={classes.footerText}>Powered by <img src={Logo} alt="innovapptive" className={classes.footerlogo}/></p>
+               <p className={classes.footerText}><span className={classes.poweredby}>Powered by</span> <img src={Logo} alt="innovapptive" className={classes.footerlogo}/></p>
             </a>
           </span>
        

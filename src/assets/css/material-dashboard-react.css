@@ -508,18 +508,13 @@ footer ul li a:hover {
 * {
   letter-spacing: normal !important;
 }
-
-.languageDropdown .MuiInputBase-root .MuiOutlinedInput-root .MuiInputBase-formControl {
-  width: 120px !important;
-  background: white !important;
-}
-
+ 
 .searchWrapper .MuiFormControl-root {
   width: 200px !important;
   background: white !important;
 }
 
 .MuiButton-root {
-  min-width: 40px !important;
+  min-width: 38px !important;
 }
 

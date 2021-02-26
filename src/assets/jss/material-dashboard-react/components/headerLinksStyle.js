@@ -33,21 +33,18 @@ const headerLinksStyle = theme => ({
   buttonLink: {
     [theme.breakpoints.down("sm")]: {
       display: "flex",
-      margin: "0px 15px 0",
-      width: "-webkit-fill-available",
+      margin:"0",
+      padding:"0",
+      width: "60px",
       "& svg": {
         width: "24px",
         height: "30px",
-        marginRight: "15px",
-        marginLeft: "-15px"
       },
       "& .fab,& .fas,& .far,& .fal,& .material-icons": {
         fontSize: "24px",
         lineHeight: "30px",
         width: "24px",
-        height: "30px",
-        marginRight: "15px",
-        marginLeft: "-15px"
+        height: "30px"
       },
       "& > span": {
         justifyContent: "flex-start",
@@ -104,18 +101,18 @@ const headerLinksStyle = theme => ({
   },
   searchWrapper: {
     [theme.breakpoints.down("sm")]: {
-      width: "-webkit-fill-available",
-      margin: "5px 10px 0 10px"
+      width: "250px",
     },
     display: "inline-block",
   },
   searchInput: {
     borderRadius:"35px",
-    height:"48px"
+    height:"42px"
   },
   signedUser : {
-    marginBottom: "-10px",
-    marginTop: "10px",
+    whiteSpace: "nowrap",
+    marginBottom: "-7px",
+    marginTop: "5px",
     fontFamily: "Poppins",
     fontWeight: "600",
     fontSize: "12px",
@@ -127,11 +124,19 @@ const headerLinksStyle = theme => ({
     fontWeight: "600",
     fontSize: "10px",
     textAlign: "right",
+    whiteSpace: "nowrap",
     color: "#8F8F8F"
   },
   usericon : {
-    width: "40px",
-    margin: "0px 0px 0px -10px"
+    width: "40px"
+  },
+  languageDropdown: {
+    width: "115px",
+    height: "40px",
+    border: "1px solid #C4C4C4",
+    borderRadius: "10px",
+    margin: "2px 10px 0 10px",
+    paddingLeft: "10px"
   }
 
 });

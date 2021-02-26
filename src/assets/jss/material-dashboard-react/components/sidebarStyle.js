@@ -67,7 +67,7 @@ const sidebarStyle = theme => ({
     "&:after": {
       content: '""',
       position: "absolute",
-      bottom: "0",
+      bottom: "6px",
 
       height: "1px",
       right: "0px",
@@ -128,7 +128,7 @@ const sidebarStyle = theme => ({
     }
   },
   list: {
-    marginTop: "10px",
+    marginTop: "8px",
     paddingLeft: "0",
     paddingTop: "0",
     paddingBottom: "0",
@@ -136,7 +136,7 @@ const sidebarStyle = theme => ({
     listStyle: "none",
     position: "unset",
     overflowY:"scroll",
-    height:"475px"
+    height:"500px"
   },
   item: {
     position: "relative",
