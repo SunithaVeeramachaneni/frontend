@@ -46,7 +46,7 @@ export const MainMenu = ({ disabled }: any) => {
 
     return (
         <React.Fragment>
-            <IonMenu menuId="first" contentId="myMenuOutlet" disabled={disabled} style={{"maxWidth":"21%"}}>
+            <IonMenu menuId="first" contentId="myMenuOutlet" disabled={disabled}>
                 <IonHeader>
                     <IonToolbar>
                         <IonImg src={Logo} className="Logo"/>
