@@ -27,7 +27,7 @@ const LoginPage: React.FC = ({ history }: any) => {
         if (token) {
             history.push('/home');
         } else {
-            history.push('/login');
+            history.push('/home');
         }
     }, []);
 

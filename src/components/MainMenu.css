@@ -1,0 +1,25 @@
+.remove_inner_bottom{
+    --inner-border-width: 0; 
+ }
+ 
+.footer {
+    padding-left: 15px;
+    height: 105px;
+}
+
+.footer-text {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.footer-logo {
+    width: 170px;
+    position: relative;
+    top: -10px;
+    left: 10px;
+}
+
+.Logo {
+    width:250px;
+    padding-left:20px;
+}

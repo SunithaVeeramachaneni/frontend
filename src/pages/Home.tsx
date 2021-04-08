@@ -4,15 +4,21 @@ import {
     IonPage,
     IonTitle,
     IonToolbar,
-    IonMenuButton
+    IonMenuButton,
+    IonPopover,
+    IonButton,
+    IonImg,
+    IonList,
+    IonItem,
+    IonLabel
 } from '@ionic/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 
 import { LeavesSummary } from '../components/Leaves';
 import { IUrlOptions } from '../models/rest-api.model';
 import { RemoteService } from '../services/remote.service';
-
+import User from "../assets/images/User.svg";
 
 const HomePage = ({ users, history }: any) => {
     const remoteService = new RemoteService();
@@ -33,19 +39,37 @@ const HomePage = ({ users, history }: any) => {
     useEffect(() => {
         let isLoggedIn = sessionStorage.getItem('userToken');
         if (!isLoggedIn) {
-            history.push('/login');
+            history.push('/home');
         }
         getRecordById('2');
     }, []);
 
+    const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
+
     return (
         <IonPage>
 
-            <IonHeader>
+            <IonHeader className="nav-header">
                 <IonToolbar>
                     <IonMenuButton slot="start"></IonMenuButton>
-                    <IonTitle>Home</IonTitle>
+                    <IonTitle>DASHBOARD</IonTitle>
                 </IonToolbar>
+                <IonPopover
+                    cssClass='my-custom-class'
+                    event={popoverState.event}
+                    isOpen={popoverState.showPopover}
+                    onDidDismiss={() => setShowPopover({ showPopover: false, event: undefined })}
+                >
+                    <IonList>
+                        <IonItem>
+                            <IonLabel>Settings</IonLabel>
+                        </IonItem>
+                        <IonItem>
+                            <IonLabel>Logout</IonLabel>
+                        </IonItem>
+                    </IonList>
+                </IonPopover>
+                <IonImg src={User} className="user-icon" onClick={(e: any) => {e.persist(); setShowPopover({ showPopover: true, event: e }) }}/>
             </IonHeader>
 
             <IonContent class="ion-padding">

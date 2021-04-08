@@ -5,3 +5,13 @@
 .padding {
   padding: 1em;
 }
+.user-icon {
+  width: 45px;
+  float: right;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.nav-header{
+  display: flex;
+}

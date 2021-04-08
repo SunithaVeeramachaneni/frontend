@@ -41,10 +41,10 @@ const App: React.FC = (props) => {
 
                     <IonPage id="myMenuOutlet">
 
-                        <IonTabs>
+                        {/*<IonTabs> */}
                             <IonRouterOutlet>
                                 <Route path="/" render={(props) => <HomePage users={data} {...props} />} exact={true} />
-                                <Route path="/login" component={LoginPage} exact={true} />
+                                {/* <Route path="/login" component={LoginPage} exact={true} /> */}
                                 <Route path="/home" render={(props) => <HomePage users={data} {...props} />} exact={true} />
                                 <Route path="/tab2" component={Tab2} exact={true} />
                                 <Route path="/details/:leaveType/apply" component={ApplyLeaveForm} />
@@ -55,7 +55,7 @@ const App: React.FC = (props) => {
                                 <Route exact path="/" render={() => <Redirect to="/home" />} />
                             </IonRouterOutlet>
 
-                            <IonTabBar slot="bottom">
+                            {/* <IonTabBar slot="bottom">
                                 <IonTabButton tab="tab1" href="/home">
                                     <IonIcon icon={home} />
                                     <IonLabel>Home</IonLabel>
@@ -68,8 +68,8 @@ const App: React.FC = (props) => {
                                     <IonIcon icon={send} />
                                     <IonLabel>Tab Three</IonLabel>
                                 </IonTabButton>
-                            </IonTabBar>
-                        </IonTabs>
+                            </IonTabBar> */}
+                        {/* </IonTabs> */}
 
                     </IonPage>
 

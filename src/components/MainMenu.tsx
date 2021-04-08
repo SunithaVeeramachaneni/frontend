@@ -10,9 +10,13 @@ import {
     IonItem,
     IonIcon,
     IonMenuToggle,
-    IonLabel
+    IonLabel,
+    IonFooter,
+    IonImg
 } from '@ionic/react';
-import { home, person, chatbubbles, settings } from 'ionicons/icons';
+import { home,star, person,chatboxes, notifications, journal, calendar,create,radioButtonOff, squareOutline, navigate, settings, square } from 'ionicons/icons';
+import Logo from "../assets/images/innovapptive-logo.svg";
+import "./MainMenu.css";
 
 interface AppPage {
     title: string,
@@ -24,18 +28,28 @@ export const MainMenu = ({ disabled }: any) => {
     let history = useHistory();
     console.log('history :', history);
     const appPages: AppPage[] = [
-        { title: 'Home', url: '/home', icon: home },
-        { title: 'Profile', url: '/home', icon: person },
-        { title: 'Messages', url: '/home', icon: chatbubbles },
-        { title: 'Settings', url: '/home', icon: settings },
+        { title: 'Dashboard', url: '/home', icon: home },
+        { title: 'Insights', url: '/home', icon: star },
+        { title: 'ROI Forecasting', url: '/home', icon: person },
+        { title: 'Chatter', url: '/home', icon: chatboxes },
+        { title: 'IOT and Alerts', url: '/home', icon: notifications },
+        { title: 'Maintenance Control Center', url: '/home', icon: journal },
+        { title: 'Planning & Scheduling', url: '/home', icon: calendar },
+        { title: 'Work Instructions Authoring', url: '/home', icon: create },
+        { title: 'Operator Rounds', url: '/home', icon: radioButtonOff },
+        { title: 'Paperless Operations', url: '/home', icon: squareOutline },
+        { title: 'Asset Tracker', url: '/home', icon: navigate },
+        { title: 'Warehouse 360°', url: '/home', icon: settings },
+        { title: 'Configure CWP', url: '/home', icon: settings },
+
     ];
 
     return (
         <React.Fragment>
-            <IonMenu menuId="first" contentId="myMenuOutlet" disabled={disabled}>
+            <IonMenu menuId="first" contentId="myMenuOutlet" disabled={disabled} style={{"maxWidth":"21%"}}>
                 <IonHeader>
-                    <IonToolbar color="primary">
-                        <IonTitle>Main Menu</IonTitle>
+                    <IonToolbar>
+                        <IonImg src={Logo} className="Logo"/>
                     </IonToolbar>
                 </IonHeader>
                 <IonContent>
@@ -43,9 +57,9 @@ export const MainMenu = ({ disabled }: any) => {
                         {
                             appPages.map((appPage, index) => {
                                 return (
-                                    <IonMenuToggle key={index} auto-hide="false">
-                                        <IonItem routerLink={appPage.url}>
-                                            <IonIcon icon={appPage.icon} slot="start" />
+                                    <IonMenuToggle key={index} auto-hide="false" className="scroll">
+                                        <IonItem routerLink={appPage.url} lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={appPage.icon} slot="start" style={{"marginRight":"12px"}}/>
                                             <IonLabel>{appPage.title}</IonLabel>
                                         </IonItem>
                                     </IonMenuToggle>
@@ -54,15 +68,21 @@ export const MainMenu = ({ disabled }: any) => {
                         }
                         <IonMenuToggle key={5} auto-hide="false" onClick={() => {
                             sessionStorage.removeItem('userToken');
-                            history.push('/login')
+                            history.push('/home')
                         }}>
-                            <IonItem >
-                                <IonIcon icon={settings} slot="start" />
+                            {/* <IonItem no-lines>
+                                <IonIcon icon={settings} slot="start" style={{"marginRight":"12px"}} />
                                 <IonLabel>Logout</IonLabel>
-                            </IonItem>
+                            </IonItem> */}
                         </IonMenuToggle>
                     </IonList>
                 </IonContent>
+                <IonFooter className="footer">
+                    <p className="footer-text">Connected Worker Platform</p>
+                    <p className="footer-text">2020 All Rights Reserved</p>
+                    <p className="footer-text" style={{"display":"flex"}}>Powered by 
+                        <IonImg src={Logo} className="footer-logo"/></p>
+                </IonFooter>
             </IonMenu>
         </React.Fragment>
     )
