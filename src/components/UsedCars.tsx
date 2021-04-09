@@ -59,7 +59,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
     useEffect(() => {
         let searchedResult = usedCars.filter(function(car){
-            return car.make == searchText;
+            return car.make == searchText || car.model == searchText ;
         });
         console.log(searchedResult);
         if(searchedResult.length > 0) {
@@ -75,13 +75,11 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     'Access-Control-Allow-Origin': '*'
                 }
             });
-
-            
             carsPromise.then((res) => {
                 console.log(res.data);
                 const cars = res.data.usedcars
                 setUsedCars(cars);
-            
+
             })
                 .catch(error => {
                     console.log(error);
@@ -259,7 +257,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
             </form>
                 </IonModal>
                  <IonToolbar>
-                     <IonSearchbar value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
+                     <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
                  </IonToolbar>
 
                  <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
