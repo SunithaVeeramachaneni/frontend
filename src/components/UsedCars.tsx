@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import {
     IonGrid,
     IonRow, IonCol, IonContent,
+    IonToolbar,
+
     IonCard,
     IonCardContent,
     IonCardHeader,
@@ -10,13 +12,14 @@ import {
     IonCardTitle,
     IonHeader,
     IonModal,
+    IonSearchbar,
     IonButton,
     IonItem, IonLabel, IonInput, IonImg
 } from '@ionic/react';
 import axios from 'axios';
 
 import { Controller, useForm } from 'react-hook-form';
- 
+
 import Close from "../assets/images/close.svg";
 import Delete from "../assets/images/delete.svg";
 import Edit from "../assets/images/edit.svg";
@@ -26,17 +29,19 @@ import Swal from 'sweetalert2';
 import "./UsedCars.css";
 
 export const UsedCarsSummary = ({ cars }: any) => {
-    
+
     // axios.interceptors.request.use(x => {
     //     x.meta = x.meta || {}
     //     x.meta.requestStartedAt = new Date().getTime();
     //     return x;
     // });
-    
+
     const [responseTime, setResponseTime] = useState("");
     const [instructions, setInstructions] = useState([] as any);
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(1)
+    const [searchText, setSearchText] = useState("")
+
 
     const [usedCars, setUsedCars]= useState([] as any);
     // const [pageNoCars, setPageNoCars]= useState(1);
@@ -53,7 +58,41 @@ export const UsedCarsSummary = ({ cars }: any) => {
     }
 
     useEffect(() => {
-       
+        let searchedResult = usedCars.filter(function(car){
+            return car.make == searchText;
+        });
+        console.log(searchedResult);
+        if(searchedResult.length > 0) {
+            setUsedCars(searchedResult);
+        } else {
+            // alert(searchedResult)
+            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
+                method: 'get',
+                withCredentials: false,
+                headers: {
+                    'Accept': 'application/json',
+                    'sec-fetch-mode': 'no-cors',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+
+            
+            carsPromise.then((res) => {
+                console.log(res.data);
+                const cars = res.data.usedcars
+                setUsedCars(cars);
+            
+            })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+    }, [searchText])
+
+
+    useEffect(() => {
+
         try {
             const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
               method: 'get',
@@ -64,23 +103,23 @@ export const UsedCarsSummary = ({ cars }: any) => {
                   'Access-Control-Allow-Origin': '*'
                 }
               });
-            
+
             // const data = response.data;
               carsPromise.then((res) => {
                     console.log(res.data);
                     const cars = res.data.usedcars
                     setUsedCars([...usedCars, ...cars]);
-                    
+
                 })
                 .catch(error => {
                     console.log(error);
                 });
-                
+
         } catch(error) {
-            console.log(error);       
+            console.log(error);
           };
-      
-     
+
+
     }, [skip])
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
@@ -103,7 +142,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    
+
     const onSubmit = data => {
           console.log(data)
         axios.post('http://localhost:3002/car', {
@@ -137,7 +176,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
           .then((response) => {
             console.log(response);
             setShowEditModal(false);
-          
+
             //TODO - Should improve code here for multiple calls
             const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
               method: 'get',
@@ -148,13 +187,13 @@ export const UsedCarsSummary = ({ cars }: any) => {
                   'Access-Control-Allow-Origin': '*'
                 }
               });
-            
+
             // const data = response.data;
               carsPromise.then((res) => {
                     console.log(res.data);
                     let cars = res.data.usedcars
                     setUsedCars(cars);
-                   
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Updated Successfully'
@@ -163,7 +202,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 .catch(error => {
                     console.log(error);
                 });
-                
+
 
           }, (error) => {
             console.log(error);
@@ -186,7 +225,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
              <IonContent>
              <IonModal isOpen={showModal} cssClass='my-custom-class'>
              <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
-                <h1 style={{"marginTop":"0px"}}>Add  
+                <h1 style={{"marginTop":"0px"}}>Add
                     <IonImg src={Close} className="Logo" onClick={() => setShowModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
                 <hr style={{"background":"lightgray"}}/>
                 <IonItem lines="none" class="remove_inner_bottom">
@@ -219,7 +258,11 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 </IonButton>
             </form>
                 </IonModal>
-                <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
+                 <IonToolbar>
+                     <IonSearchbar value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
+                 </IonToolbar>
+
+                 <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
                 <IonGrid style={{"marginTop":"50px"}}>
                 <IonHeader>
                     <IonRow>
@@ -241,7 +284,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         <IonCol className="borders">
                             <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
                             <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
-                                <h1 style={{"marginTop":"0px"}}>Edit  
+                                <h1 style={{"marginTop":"0px"}}>Edit
                                     <IonImg src={Close} className="Logo" onClick={() => setShowEditModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
                                 <hr style={{"background":"lightgray"}}/>
 
@@ -249,7 +292,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     <IonLabel className="form-labels">Id</IonLabel>
                                     <IonInput name="id" value={id} className="form-inputs" ref={register({required: true})} disabled={true}></IonInput>
                                 </IonItem>
-                            
+
                                 <IonItem lines="none" class="remove_inner_bottom">
                                     <IonLabel className="form-labels">Model</IonLabel>
                                     <IonInput name="model_name" value={model_name} className="form-inputs" onIonChange={e => setModelName(e.detail.value!)} ref={register({required: true})}></IonInput>
@@ -274,18 +317,18 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     <IonLabel className="form-labels">Engine</IonLabel>
                                     <IonInput name="engine_type" value={engine_type} className="form-inputs" onIonChange={e => setEngineType(e.detail.value!)} ref={register({required: true})}></IonInput>
                                 </IonItem>
-                             
+
                                 <IonButton type="submit">
                                     Submit
                                 </IonButton>
                             </form>
                         </IonModal>
-                        
+
                             <IonItem lines="none" class="remove_inner_bottom">
-                                <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />  
+                                <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
-                   
+
                         </IonCol>
                   </IonRow>
                 ))}
