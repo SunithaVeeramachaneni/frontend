@@ -1,0 +1,21 @@
+.remove_inner_bottom{
+    --inner-border-width: 0; 
+ }
+
+ .form-inputs {
+    border:1px solid #E5E5E5;
+    border-radius:10px;
+    margin-left: 15px;
+ }
+
+ .form-labels {
+     width: 80px;
+ }
+
+ .bold {
+     font-weight: 600;
+ }
+
+ .borders {
+     border: 1px solid #E5E5E5;
+ }
