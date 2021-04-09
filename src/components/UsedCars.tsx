@@ -23,9 +23,9 @@ import Edit from "../assets/images/edit.svg";
 
 import Swal from 'sweetalert2';
 
-import "./Leaves.css";
+import "./UsedCars.css";
 
-export const LeavesSummary = ({ users }: any) => {
+export const UsedCarsSummary = ({ cars }: any) => {
     
     // axios.interceptors.request.use(x => {
     //     x.meta = x.meta || {}
@@ -55,7 +55,7 @@ export const LeavesSummary = ({ users }: any) => {
     useEffect(() => {
        
         try {
-            const carsPromise = axios('http://localhost:3000/cars?skip=${skip}', {
+            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
               method: 'get',
               withCredentials: false,
                 headers: {
@@ -84,8 +84,6 @@ export const LeavesSummary = ({ users }: any) => {
     }, [skip])
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
-
-
     const [id, setId] = useState("")
     const [model_name, setModelName]= useState("Range Rover Velar");
     const [make_name, setMakeName]= useState("Land Rover")
@@ -108,7 +106,7 @@ export const LeavesSummary = ({ users }: any) => {
     
     const onSubmit = data => {
           console.log(data)
-        axios.post('http://localhost:3000/car', {
+        axios.post('http://localhost:3002/car', {
             model_name: data.model_name,
             make_name: data.make_name,
             body_type: data.body_type,
@@ -129,7 +127,7 @@ export const LeavesSummary = ({ users }: any) => {
 
       const updateUsedCars = data => {
           console.log(data);
-          axios.put(`http://localhost:3000/updateCar/${data.id}`, {
+          axios.put(`http://localhost:3002/updateCar/${data.id}`, {
                 model_name:data.model_name,
                 make_name: data.make_name,
                 body_type: data.body_type,
@@ -139,17 +137,41 @@ export const LeavesSummary = ({ users }: any) => {
           .then((response) => {
             console.log(response);
             setShowEditModal(false);
-            Swal.fire({
-                icon: 'success',
-                title: 'Updated Successfully'
-            })
+          
+            //TODO - Should improve code here for multiple calls
+            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
+              method: 'get',
+              withCredentials: false,
+                headers: {
+                  'Accept': 'application/json',
+                  'sec-fetch-mode': 'no-cors',
+                  'Access-Control-Allow-Origin': '*'
+                }
+              });
+            
+            // const data = response.data;
+              carsPromise.then((res) => {
+                    console.log(res.data);
+                    let cars = res.data.usedcars
+                    setUsedCars(cars);
+                   
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated Successfully'
+                    })
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+                
+
           }, (error) => {
             console.log(error);
           });
     }
 
     const deleteUsedCars = (cars) => {
-        axios.delete(`http://localhost:3000/deleteCar/${cars.id}`).then(res => {
+        axios.delete(`http://localhost:3002/deleteCar/${cars.id}`).then(res => {
           Swal.fire({
               icon: 'success',
               title: 'Deleted Successfully'

@@ -15,12 +15,12 @@ import {
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 
-import { LeavesSummary } from '../components/Leaves';
+import { UsedCarsSummary } from '../components/UsedCars';
 import { IUrlOptions } from '../models/rest-api.model';
 import { RemoteService } from '../services/remote.service';
 import User from "../assets/images/User.svg";
 
-const HomePage = ({ users, history }: any) => {
+const HomePage = ({ cars, history }: any) => {
     const remoteService = new RemoteService();
 
     const getRecordById = (recordId: string) => {
@@ -73,7 +73,7 @@ const HomePage = ({ users, history }: any) => {
             </IonHeader>
 
             <IonContent class="ion-padding">
-                <LeavesSummary users={users} />
+                <UsedCarsSummary cars={cars} />
             </IonContent>
 
         </IonPage>
