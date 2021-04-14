@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 import ReactDOM from "react-dom";
+
+import { Doughnut, Bar } from 'react-chartjs-2';
 import {
     IonGrid,
     IonRow, IonCol, IonContent,
@@ -38,9 +40,43 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
     const [responseTime, setResponseTime] = useState("");
     const [instructions, setInstructions] = useState([] as any);
+    const [newCarsByModel, setNewCarsByModel] = useState([] as any);
+    const [newCarsByModelAndYear, setNewCarsByModelAndYear] = useState([] as any);
+    const [newCarsBarData, setNewCarsBarData] = useState({} as any);
+    const [newCarsByModelAndYearBarData, setNewCarsByModelAndYearBarData] = useState({} as any);
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(1)
     const [searchText, setSearchText] = useState("")
+
+    // var barChartData = {
+    //     labels: ['New Cars', 'Old Cars'],
+    //     datasets: [
+    //       {
+    //         label: newCarsBarData.model_name,
+    //         backgroundColor: 'rgba(255,99,132,0.2)',
+    //         borderColor: 'rgba(255,99,132,1)',
+    //         borderWidth: 1,
+    //         hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+    //         hoverBorderColor: 'rgba(255,99,132,1)',
+    //         data: newCarsBarData.carStatus
+    //       }
+    //     ]
+    //     };
+
+        var barChart2Data = {
+            labels: newCarsByModelAndYearBarData.years,
+            datasets: [
+              {
+                label: newCarsByModelAndYearBarData.model_name,
+                backgroundColor: 'rgba(255,99,132,0.2)',
+                borderColor: 'rgba(255,99,132,1)',
+                borderWidth: 1,
+                hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                hoverBorderColor: 'rgba(255,99,132,1)',
+                data: newCarsByModelAndYearBarData.carsCount
+              }
+            ]
+            };
 
 
     const [usedCars, setUsedCars]= useState([] as any);
@@ -66,59 +102,126 @@ export const UsedCarsSummary = ({ cars }: any) => {
             setUsedCars(searchedResult);
         } else {
             // alert(searchedResult)
-            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
-                method: 'get',
-                withCredentials: false,
-                headers: {
-                    'Accept': 'application/json',
-                    'sec-fetch-mode': 'no-cors',
-                    'Access-Control-Allow-Origin': '*'
-                }
-            });
-            carsPromise.then((res) => {
-                console.log(res.data);
-                const cars = res.data.usedcars
-                setUsedCars(cars);
-
-            })
-                .catch(error => {
+            //https://raw.githubusercontent.com/openfootball/world-cup.json/master/2018/worldcup.json
+            // http://cwpdev.innovapptive.com:3000/cars?skip=${skip}
+            const fetchCars = async () => {
+                try {
+                    const results = await axios('https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}', {
+                      method: 'get',
+                      withCredentials: false
+                   });
+                   console.log(results);
+                   setUsedCars(results.data.usedcars);
+        
+                } catch(error) {
                     console.log(error);
-                });
+                  };
+            }
+           
+            fetchCars();
         }
 
     }, [searchText])
 
 
     useEffect(() => {
+        const fetchCars = async () => {
+            try {
+                const results = await axios('https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}', {
+                  method: 'get',
+                  withCredentials: false
+               });
+               console.log(results);
+                        setUsedCars(results.data.usedcars);
+    
+            } catch(error) {
+                console.log(error);
+              };
+        }
 
+     fetchCars();
+
+
+    }, [skip])
+
+//carsByModelDoughnutChart
+
+useEffect(() => {
+   
+    // const fetchNewCarsByModel = async () => {
+    //     try {
+    //         const results = await axios('http://localhost:3000/getNewCarsByModelAndFuelType?model_name=Discovery Sport', {
+    //           method: 'get',
+    //           withCredentials: false
+    //        });
+    //        console.log(results);
+    //        setNewCarsByModel(results.data);
+    //        if(results.data && results.data.length > 0) {
+         
+    //         const carStatus = results.data.map(status => {
+    //             return status.countCars
+    //         })
+    //         const model_name = results.data.map(model => {
+    //             return model._id.model_name
+    //         })
+    //         let carStatusObject = {
+    //             carStatus: carStatus,
+    //             model_name: model_name[0]
+    //         } 
+    //         console.log(carStatusObject)
+    //         setNewCarsBarData(carStatusObject)
+            
+    //        }
+          
+
+    //     } catch(error) {
+    //         console.log(error);
+    //       };
+    // }
+
+
+    const fetchNewCarsByModelAndYear = async () => {
+        let model='Range Rover Evoque';
         try {
-            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
+            const results = await axios('http://localhost:3000/getNewCarsByModelNameAndYear?model_name=Range Rover Evoque', {
               method: 'get',
-              withCredentials: false,
-                headers: {
-                  'Accept': 'application/json',
-                  'sec-fetch-mode': 'no-cors',
-                  'Access-Control-Allow-Origin': '*'
-                }
-              });
-
-            // const data = response.data;
-              carsPromise.then((res) => {
-                    console.log(res.data);
-                    const cars = res.data.usedcars
-                    setUsedCars([...usedCars, ...cars]);
-
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+              withCredentials: false
+           });
+           console.log(results);
+           setNewCarsByModelAndYear(results.data);
+           if(results.data && results.data.length > 0) {
+         
+            const newCarsCount = results.data.map(model => {
+                return model.newCarsCount
+            })
+            const years = results.data.map(model => {
+                return model._id.year
+            })
+            let carStatusObject = {
+                years: years,
+                carsCount: newCarsCount,
+                model_name: model_name
+            } 
+            console.log(carStatusObject)
+            setNewCarsByModelAndYearBarData(carStatusObject)
+            
+           }
+          
 
         } catch(error) {
             console.log(error);
           };
+    }
+
+    // fetchNewCarsByModel();
+    fetchNewCarsByModelAndYear()
 
 
-    }, [skip])
+}, [])
+
+
+
+
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
     const [id, setId] = useState("")
@@ -143,7 +246,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
     const onSubmit = data => {
           console.log(data)
-        axios.post('http://localhost:3002/car', {
+        axios.post('https://invamdemo-dbapi.innovapptive.com/car', {
             model_name: data.model_name,
             make_name: data.make_name,
             body_type: data.body_type,
@@ -162,9 +265,9 @@ export const UsedCarsSummary = ({ cars }: any) => {
           });
       };
 
-      const updateUsedCars = data => {
+    const updateUsedCars = data => {
           console.log(data);
-          axios.put(`http://localhost:3002/updateCar/${data.id}`, {
+          axios.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${data.id}`, {
                 model_name:data.model_name,
                 make_name: data.make_name,
                 body_type: data.body_type,
@@ -176,7 +279,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
             setShowEditModal(false);
 
             //TODO - Should improve code here for multiple calls
-            const carsPromise = axios('http://localhost:3002/cars?skip=${skip}', {
+            const carsPromise = axios('https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}', {
               method: 'get',
               withCredentials: false,
                 headers: {
@@ -208,7 +311,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
     }
 
     const deleteUsedCars = (cars) => {
-        axios.delete(`http://localhost:3002/deleteCar/${cars.id}`).then(res => {
+        axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${cars.id}`).then(res => {
           Swal.fire({
               icon: 'success',
               title: 'Deleted Successfully'
@@ -222,7 +325,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
         <React.Fragment>
              <IonContent>
              <IonModal isOpen={showModal} cssClass='my-custom-class'>
-             <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
+                  <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
                 <h1 style={{"marginTop":"0px"}}>Add
                     <IonImg src={Close} className="Logo" onClick={() => setShowModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
                 <hr style={{"background":"lightgray"}}/>
@@ -255,31 +358,90 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     Submit
                 </IonButton>
             </form>
-                </IonModal>
-                 <IonToolbar>
-                     <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
-                 </IonToolbar>
+             </IonModal>
+            <IonToolbar>
+                <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
+            </IonToolbar>
 
-                 <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
-                <IonGrid style={{"marginTop":"50px"}}>
+            <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
+           
+            <IonGrid style={{"marginTop":"10px"}}>
+            <IonRow>
+                        {/* <IonCol className="bold borders"> */}
+                        {/* <IonCard>
+                        <Bar data={barChartData} options={{
+                            scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                            },
+                            title: {
+                            display: true,
+                            text: 'New Cars By Model',
+                            fontSize: 15
+                            },
+                            legend: {
+                            display: true,
+                            position: 'bottom'
+                            },
+                            plugins: {
+                            datalabels: { display: true }
+                            }
+                        }}
+                     />
+   
+  </IonCard> */}
+                        {/* </IonCol> */}
+                        <IonCol className= "borders">
+                        <IonCard>
+                        <Bar data={barChart2Data} options={{
+                            scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                            },
+                            title: {
+                            display: true,
+                            text: 'Count of new cars by Model and Year',
+                            fontSize: 15
+                            },
+                            legend: {
+                            display: true,
+                            position: 'bottom'
+                            },
+                            plugins: {
+                            datalabels: { display: true }
+                            }
+                        }}
+                     />
+   
+  </IonCard>
+                        </IonCol>
+                        </IonRow>
+            </IonGrid>
+            <IonGrid style={{"marginTop":"50px"}}>
                 <IonHeader>
                     <IonRow>
                         <IonCol className="bold borders">Model Name</IonCol>
                         <IonCol className="bold borders">Make Name</IonCol>
-                        <IonCol className="bold borders">Body Type</IonCol>
                         <IonCol className="bold borders">City</IonCol>
-                        <IonCol className="bold borders">Engine Type</IonCol>
-                        <IonCol className="borders"></IonCol>
-                        </IonRow>
+                        <IonCol className="bold borders">Engine</IonCol>
+                       
+                    </IonRow>
                 </IonHeader>
                 {usedCars.map(car => (
                     <IonRow key={car.id} >
                         <IonCol className="borders">{car.model}</IonCol>
                         <IonCol className="borders">{car.make}</IonCol>
-                        <IonCol className="borders">{car.body_type}</IonCol>
-                        <IonCol className="borders">{car.city}</IonCol>
+                          <IonCol className="borders">{car.city}</IonCol>
                         <IonCol className="borders">{car.engine_type}</IonCol>
-                        <IonCol className="borders">
+                       
                             <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
                             <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
                                 <h1 style={{"marginTop":"0px"}}>Edit
@@ -327,7 +489,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
 
-                        </IonCol>
+                       
                   </IonRow>
                 ))}
                 </IonGrid>
