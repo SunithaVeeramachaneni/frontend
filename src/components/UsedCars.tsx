@@ -63,7 +63,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
 
     const [usedCars, setUsedCars]= useState([] as any);
-  
+
 //carsByModelDoughnutChart
 
 useEffect(() => {
@@ -77,7 +77,7 @@ useEffect(() => {
            console.log(results);
            setNewCarsByModelAndYear(results.data);
            if(results.data && results.data.length > 0) {
-         
+
             const newCarsCount = results.data.map(model => {
                 return model.newCarsCount
             })
@@ -88,12 +88,12 @@ useEffect(() => {
                 years: years,
                 carsCount: newCarsCount,
                 model_name: model_name
-            } 
+            }
             console.log(carStatusObject)
             setNewCarsByModelAndYearBarData(carStatusObject)
-            
+
            }
-          
+
 
         } catch(error) {
             console.log(error);
@@ -127,15 +127,15 @@ useEffect(() => {
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
 
- 
+
 
     return (
         <React.Fragment>
              <IonContent>
-           
+
             <IonGrid style={{"marginTop":"10px"}}>
             <IonRow>
-                        <IonCol className= "borders">
+                <IonCol size="12" size-md="6">
                         <IonCard>
                         <Bar data={barChart2Data} options={{
                             scales: {
@@ -160,13 +160,99 @@ useEffect(() => {
                             }
                         }}
                      />
-   
+
+  </IonCard>
+                        </IonCol>
+                        <IonCol size="12" size-md="6">
+                        <IonCard>
+                        <Bar data={barChart2Data} options={{
+                            scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                            },
+                            title: {
+                            display: true,
+                            text: 'Count of new cars by Model and Year',
+                            fontSize: 15
+                            },
+                            legend: {
+                            display: true,
+                            position: 'bottom'
+                            },
+                            plugins: {
+                            datalabels: { display: true }
+                            }
+                        }}
+                     />
+
+  </IonCard>
+                        </IonCol>
+                        </IonRow>
+                        <IonRow>
+                <IonCol size="12" size-md="6">
+                        <IonCard>
+                        <Bar data={barChart2Data} options={{
+                            scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                            },
+                            title: {
+                            display: true,
+                            text: 'Count of new cars by Model and Year',
+                            fontSize: 15
+                            },
+                            legend: {
+                            display: true,
+                            position: 'bottom'
+                            },
+                            plugins: {
+                            datalabels: { display: true }
+                            }
+                        }}
+                     />
+
+  </IonCard>
+                        </IonCol>
+                        <IonCol size="12" size-md="6">
+                        <IonCard>
+                        <Bar data={barChart2Data} options={{
+                            scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                            },
+                            title: {
+                            display: true,
+                            text: 'Count of new cars by Model and Year',
+                            fontSize: 15
+                            },
+                            legend: {
+                            display: true,
+                            position: 'bottom'
+                            },
+                            plugins: {
+                            datalabels: { display: true }
+                            }
+                        }}
+                     />
+
   </IonCard>
                         </IonCol>
                         </IonRow>
             </IonGrid>
-              
-            
+
+
               </IonContent>
         </React.Fragment>
     );
