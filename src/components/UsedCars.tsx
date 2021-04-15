@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut, Bar,Line } from 'react-chartjs-2';
 import {
     IonGrid,
     IonRow, IonCol, IonContent,
@@ -47,6 +47,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [newCarsByModelAndYearBarData, setNewCarsByModelAndYearBarData] = useState({} as any);
     const [model, setModel] = useState("");
     const [newCarsByMakeDonutData, setNewCarsByMakeDonutData] = useState({} as any);
+    const [newCountByModelNameLineData, setNewCountByModelNameLineData] = useState({} as any);
 
     const doughnutChartData = {
         labels: ['new cars', 'old cars'],
@@ -75,6 +76,21 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 hoverBackgroundColor: 'rgba(255,99,132,0.4)',
                 hoverBorderColor: 'rgba(255,99,132,1)',
                 data: newCarsByModelAndYearBarData.carsCount
+            }
+        ]
+    };
+
+    var lineChart2Data = {
+        labels: newCountByModelNameLineData.model_names,
+        datasets: [
+            {
+                label: newCountByModelNameLineData.make_name,
+                backgroundColor: 'rgba(255,99,132,0.2)',
+                borderColor: 'rgba(255,99,132,1)',
+                borderWidth: 1,
+                hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                hoverBorderColor: 'rgba(255,99,132,1)',
+                data: newCountByModelNameLineData.carsCount
             }
         ]
     };
@@ -109,7 +125,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         carsCount: newCarsCount,
                         model_name: model_name
                     }
-                    console.log(carStatusObject)
+                    console.log("carsbarchart",carStatusObject)
                     setNewCarsByModelAndYearBarData(carStatusObject)
 
                 }
@@ -152,9 +168,43 @@ export const UsedCarsSummary = ({ cars }: any) => {
             };
         }
 
+
+        const fetchAllModelNameByMakeName = async () => {
+            let make_name = 'Kia';
+            try {
+                const results = await axios('http://localhost:3000/getMakeNameAndModelName?make_name=Kia', {
+                    method: 'get',
+                    withCredentials: false
+                });
+              console.log('fetchAllModelNameByMakeName',results)
+                
+                if (results.data && results.data.length > 0) {
+
+                    const CarsCount = results.data.map(model => {
+                        return model.modelCount
+                    })
+                    const model_names = results.data.map(model => {
+                        return model._id.model_name
+                    })
+                    let carStatusObject = {
+                        make_name: make_name,
+                        carsCount: CarsCount,
+                        model_names: model_names
+                    }
+                    setNewCountByModelNameLineData(carStatusObject)
+
+                }
+
+
+            } catch (error) {
+                console.log(error);
+            };
+        }
+
         // fetchNewCarsByModel();
         fetchNewCarsByModelAndYear();
         fetchNewCarsByMakeName();
+        fetchAllModelNameByMakeName();
 
     }, [])
 
@@ -250,7 +300,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                                <Bar data={barChart2Data} options={{
+                                <Line data={lineChart2Data} options={{
                                     scales: {
                                         xAxes: [{
                                             stacked: true
@@ -261,7 +311,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     },
                                     title: {
                                         display: true,
-                                        text: 'Count of new cars by Model and Year',
+                                        text: 'Count of Cars By Model Name',
                                         fontSize: 15
                                     },
                                     legend: {
