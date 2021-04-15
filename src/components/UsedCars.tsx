@@ -6,7 +6,6 @@ import {
     IonGrid,
     IonRow, IonCol, IonContent,
     IonToolbar,
-
     IonCard,
     IonCardContent,
     IonCardHeader,
@@ -183,7 +182,7 @@ useEffect(() => {
     const fetchNewCarsByModelAndYear = async () => {
         let model='Range Rover Evoque';
         try {
-            const results = await axios('http://localhost:3000/getNewCarsByModelNameAndYear?model_name=Range Rover Evoque', {
+            const results = await axios('http://localhost:3000/getNewCarsByModelNameAndYear?model_name=Range%20Rover%20Evoque', {
               method: 'get',
               withCredentials: false
            });
@@ -216,11 +215,7 @@ useEffect(() => {
     // fetchNewCarsByModel();
     fetchNewCarsByModelAndYear()
 
-
 }, [])
-
-
-
 
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
@@ -441,9 +436,8 @@ useEffect(() => {
                         <IonCol className="borders">{car.make}</IonCol>
                           <IonCol className="borders">{car.city}</IonCol>
                         <IonCol className="borders">{car.engine_type}</IonCol>
-                       
                             <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
-                            <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
+                                <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
                                 <h1 style={{"marginTop":"0px"}}>Edit
                                     <IonImg src={Close} className="Logo" onClick={() => setShowEditModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
                                 <hr style={{"background":"lightgray"}}/>
@@ -482,15 +476,13 @@ useEffect(() => {
                                     Submit
                                 </IonButton>
                             </form>
-                        </IonModal>
+                            </IonModal>
 
                             <IonItem lines="none" class="remove_inner_bottom">
                                 <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
-
-                       
-                  </IonRow>
+                    </IonRow>
                 ))}
                 </IonGrid>
               </IonContent>

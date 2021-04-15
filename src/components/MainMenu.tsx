@@ -29,13 +29,13 @@ export const MainMenu = ({ disabled }: any) => {
     console.log('history :', history);
     const appPages: AppPage[] = [
         { title: 'Dashboard', url: '/home', icon: home },
-        { title: 'Insights', url: '/home', icon: star },
-        { title: 'ROI Forecasting', url: '/home', icon: person },
+        { title: 'Insights', url: '/insight', icon: star },
+        { title: 'Work Instructions Authoring', url: '/workInstructions', icon: person },
         { title: 'Chatter', url: '/home', icon: chatboxes },
         { title: 'IOT and Alerts', url: '/home', icon: notifications },
         { title: 'Maintenance Control Center', url: '/home', icon: journal },
         { title: 'Planning & Scheduling', url: '/home', icon: calendar },
-        { title: 'Work Instructions Authoring', url: '/home', icon: create },
+        { title: 'ROI Forecasting', url: '/home', icon: create },
         { title: 'Operator Rounds', url: '/home', icon: radioButtonOff },
         { title: 'Paperless Operations', url: '/home', icon: squareOutline },
         { title: 'Asset Tracker', url: '/home', icon: navigate },

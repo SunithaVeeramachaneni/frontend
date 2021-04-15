@@ -15,7 +15,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 
-import { UsedCarsSummary } from '../components/UsedCars';
+import { UsedCarsInsightsSummary } from '../components/UsedCarsInsights';
 import { IUrlOptions } from '../models/rest-api.model';
 import { RemoteService } from '../services/remote.service';
 import User from "../assets/images/User.svg";
@@ -73,7 +73,7 @@ const HomePage = ({ cars, history }: any) => {
             </IonHeader>
 
             <IonContent class="ion-padding">
-                <UsedCarsSummary cars={cars} />
+                <UsedCarsInsightsSummary cars={cars} />
             </IonContent>
 
         </IonPage>
