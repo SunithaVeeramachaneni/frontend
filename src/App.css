@@ -1,0 +1,7 @@
+
+.split-pane-md.split-pane-visible>.split-pane-side {
+    min-width: 170px;
+    max-width: 18%;
+
+    border-left: 0;
+}

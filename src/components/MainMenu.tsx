@@ -46,7 +46,7 @@ export const MainMenu = ({ disabled }: any) => {
 
     return (
         <React.Fragment>
-            <IonMenu menuId="first" contentId="myMenuOutlet" disabled={disabled}>
+            <IonMenu menuId="first" className="menu-width" contentId="myMenuOutlet" disabled={disabled}>
                 <IonHeader>
                     <IonToolbar>
                         <IonImg src={Logo} className="Logo"/>
@@ -80,8 +80,8 @@ export const MainMenu = ({ disabled }: any) => {
                 <IonFooter className="footer">
                     <p className="footer-text">Connected Worker Platform</p>
                     <p className="footer-text">2020 All Rights Reserved</p>
-                    <p className="footer-text" style={{"display":"flex"}}>Powered by 
-                        <IonImg src={Logo} className="footer-logo"/></p>
+                    <p className="footer-text" style={{"display":"flex"}}><br />
+                        <span>Powered by </span><IonImg src={Logo} className="footer-logo"/></p>
                 </IonFooter>
             </IonMenu>
         </React.Fragment>

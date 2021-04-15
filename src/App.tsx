@@ -25,7 +25,7 @@ import { MainMenu } from './components/MainMenu';
 import LeaveDetails from './components/LeaveDetails';
 import ApplyLeaveForm from './components/ApplyLeaveForm';
 import * as Users from './assets/data/leaves.json';
-
+import "./App.css";
 const App: React.FC = (props) => {
     const { data }: any = Users;
 
@@ -37,7 +37,7 @@ const App: React.FC = (props) => {
         <IonApp>
             <IonReactRouter>
                 <IonSplitPane contentId="myMenuOutlet">
-                    <MainMenu disabled={false} />
+                    <MainMenu className="menu-width" disabled={false} />
 
                     <IonPage id="myMenuOutlet">
 

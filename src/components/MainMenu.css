@@ -13,13 +13,19 @@
 }
 
 .footer-logo {
-    width: 170px;
+    width: 120px;
     position: relative;
-    top: -10px;
+    top: 0;
     left: 10px;
 }
 
 .Logo {
-    width:250px;
+    width:170px;
     padding-left:20px;
+}
+
+.menu-width {
+    width: 170px;
+    padding-left:20px;
+    font-size: 12px;
 }
