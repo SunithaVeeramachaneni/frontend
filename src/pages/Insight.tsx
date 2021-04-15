@@ -24,7 +24,7 @@ import axios from 'axios';
 
 import { Controller, useForm } from 'react-hook-form';
 
-import { UsedCarsSummary } from '../components/UsedCars';
+import { UsedCarsInsightsSummary } from '../components/UsedCarsInsights';
 import { IUrlOptions } from '../models/rest-api.model';
 
 import Close from "../assets/images/close.svg";
@@ -225,7 +225,7 @@ const Insight: React.FC = ({ cars, history }: any) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent class="ion-padding">
-                <UsedCarsSummary cars={cars} />
+                <UsedCarsInsightsSummary cars={cars} />
             </IonContent>
         </IonPage>
     );
