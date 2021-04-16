@@ -82,6 +82,9 @@ export const UsedCarsSummary = ({ cars }: any) => {
     };
 
     var stackedGraphOptions = {
+        legend: {
+            display: false
+        },
         scales: {
           yAxes: [
             {
