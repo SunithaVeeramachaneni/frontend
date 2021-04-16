@@ -48,7 +48,8 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [model, setModel] = useState("");
     const [newCarsByMakeDonutData, setNewCarsByMakeDonutData] = useState({} as any);
     const [newCountByModelNameLineData, setNewCountByModelNameLineData] = useState({} as any);
-
+    const [countByMakeNameAndYear, setCountByMakeNameAndYear] = useState({} as any);
+    
     const doughnutChartData = {
         labels: ['new cars', 'old cars'],
         datasets: [
@@ -79,6 +80,34 @@ export const UsedCarsSummary = ({ cars }: any) => {
             }
         ]
     };
+
+    var stackedGraphOptions = {
+        scales: {
+          yAxes: [
+            {
+              stacked: true,
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+          xAxes: [
+            {
+              stacked: true,
+            },
+          ],
+        },
+      }
+      var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
     var lineChart2Data = {
         labels: newCountByModelNameLineData.model_names,
@@ -201,10 +230,66 @@ export const UsedCarsSummary = ({ cars }: any) => {
             };
         }
 
+        const fetchCountByMakeNameAndYear = async () => {
+            let make_name = 'Kia';
+            try {
+                const results = await axios('http://localhost:3000/getCountByMakeNameAndYear?make_name=Kia', {
+                    method: 'get',
+                    withCredentials: false
+                });
+              console.log('fetchCountByMakeNameAndYear',results)
+                
+                if (results.data && results.data.length > 0) {
+
+                    const years = results.data.map(model => {
+                        return model._id.year
+                    })
+                    let uniqueYears =Array.from(new Set(years)) ;
+                    const model_names = results.data.map(model => {
+                        return model._id.model_name
+                    })
+                    let uniqueModels =Array.from(new Set(model_names)) ;
+
+                    let sortedYears =  uniqueYears.sort();
+                    let finalStackedData = [] as any;
+                    let colotcount =0;
+                    uniqueModels.forEach((value)=>{
+                        let temp = {};
+                        temp['label']=value;
+                        let countData=[] as any;
+                        sortedYears.forEach((year)=>{
+                            let ct = 0;
+                             results.data.map(model => {
+                                if(model._id.year==year && model._id.model_name==value){
+                                   ct= model.count;
+                                }
+                            })
+                            countData.push(ct)
+                        })
+                        temp['data']=countData;
+                        temp['backgroundColor'] =colorArray[colotcount++]
+                        finalStackedData.push(temp)
+                    })
+                    console.log("finalStackedData",finalStackedData)
+                    let carStatusObject = {
+                        labels: sortedYears,
+                        datasets: finalStackedData,
+                    }
+                    setCountByMakeNameAndYear(carStatusObject);
+
+                }
+
+
+            } catch (error) {
+                console.log(error);
+            };
+        }
+
         // fetchNewCarsByModel();
         fetchNewCarsByModelAndYear();
         fetchNewCarsByMakeName();
         fetchAllModelNameByMakeName();
+        fetchCountByMakeNameAndYear();
 
     }, [])
 
@@ -328,30 +413,8 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                                <Bar data={barChart2Data} options={{
-                                    scales: {
-                                        xAxes: [{
-                                            stacked: true
-                                        }],
-                                        yAxes: [{
-                                            stacked: true
-                                        }]
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Count of new cars by Model and Year',
-                                        fontSize: 15
-                                    },
-                                    legend: {
-                                        display: true,
-                                        position: 'bottom'
-                                    },
-                                    plugins: {
-                                        datalabels: { display: true }
-                                    }
-                                }}
+                                <Bar data={countByMakeNameAndYear} options={stackedGraphOptions}
                                 />
-
                             </IonCard>
                         </IonCol>
                     </IonRow>
