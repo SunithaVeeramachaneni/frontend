@@ -354,6 +354,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     isOpen={showLoading1}
                                     onDidDismiss={() => setShowLoading1(false)}
                                     message={'Please wait...'}
+                                    duration={10000}
                                 />
                                 <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
@@ -398,6 +399,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     isOpen={showLoading2}
                                     onDidDismiss={() => setShowLoading2(false)}
                                     message={'Please wait...'}
+                                    duration={10000}
                                 />
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
@@ -444,6 +446,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     isOpen={showLoading3}
                                     onDidDismiss={() => setShowLoading3(false)}
                                     message={'Please wait...'}
+                                    duration={10000}
                                 />
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
@@ -488,6 +491,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                                     isOpen={showLoading4}
                                     onDidDismiss={() => setShowLoading4(false)}
                                     message={'Please wait...'}
+                                    duration={10000}
                                 />
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
