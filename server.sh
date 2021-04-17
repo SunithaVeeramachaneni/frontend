@@ -1,1 +1,1 @@
-sudo -s build -p 3002
+serve -s build -p 3002
