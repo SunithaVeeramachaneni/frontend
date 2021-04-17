@@ -17,7 +17,7 @@ import {
     IonModal,
     IonSearchbar,
     IonButton,
-    IonItem, IonLabel, IonInput, IonImg
+    IonItem, IonLabel, IonInput, IonImg, IonLoading 
 } from '@ionic/react';
 import axios from 'axios';
 
@@ -45,7 +45,6 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [newCarsByModelAndYear, setNewCarsByModelAndYear] = useState([] as any);
     const [newCarsBarData, setNewCarsBarData] = useState({} as any);
     const [newCarsByModelAndYearBarData, setNewCarsByModelAndYearBarData] = useState({} as any);
-    const [model, setModel] = useState("");
     const [newCarsByMakeDonutData, setNewCarsByMakeDonutData] = useState({} as any);
     const [newCountByModelNameLineData, setNewCountByModelNameLineData] = useState({} as any);
     const [countByMakeNameAndYear, setCountByMakeNameAndYear] = useState({} as any);
@@ -130,21 +129,35 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
     const [usedCars, setUsedCars] = useState([] as any);
 
-    //carsByModelDoughnutChart
+    const [model, setModel] = useState("")
+    const [name, setName] = useState("");
+    const [makeName1, setMakeName1] = useState("");
+    const [makeName2, setMakeName2] = useState("");
+    const [showLoading1, setShowLoading1] = useState(false);
+    const [showLoading2, setShowLoading2] = useState(false);
+    const [showLoading3, setShowLoading3] = useState(false);
+    const [showLoading4, setShowLoading4] = useState(false);
+
+
+
+    
 
     useEffect(() => {
+        //https://localhost:3000/getNewCarsByYear?make_name=Kia&cachedKey=sampesf
+        const fetchNewCarsByModelAndYear = async (model) => {
 
-        //http://localhost:3000/getNewCarsByYear?make_name=Kia&cachedKey=sampesf
-        const fetchNewCarsByModelAndYear = async () => {
-            let model = 'Range Rover Evoque';
+            let modelName = (model === "") ? "Renegade" : model
             try {
-                const results = await axios('http://localhost:3000/getNewCarsByModelNameAndYear?model_name=Range%20Rover%20Evoque', {
+                setShowLoading1(true);
+                const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByModelNameAndYear?model_name=${modelName}`, {
                     method: 'get',
                     withCredentials: false
                 });
                 console.log(results);
                 setNewCarsByModelAndYear(results.data);
                 if (results.data && results.data.length > 0) {
+                    
+                    setShowLoading1(false);
 
                     const newCarsCount = results.data.map(model => {
                         return model.newCarsCount
@@ -155,7 +168,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     let carStatusObject = {
                         years: years,
                         carsCount: newCarsCount,
-                        model_name: model_name
+                        model_name: modelName
                     }
                     console.log("carsbarchart",carStatusObject)
                     setNewCarsByModelAndYearBarData(carStatusObject)
@@ -168,10 +181,13 @@ export const UsedCarsSummary = ({ cars }: any) => {
             };
         }
 
-        const fetchNewCarsByMakeName = async () => {
+        const fetchNewCarsByMakeName = async (name) => {
             let model = 'Range Rover Evoque';
+            let makeName = (name === "") ? "Kia" : name
+            
             try {
-                const results = await axios('http://localhost:3000/getNewCarsByYear?make_name=Kia&cachedKey=sampesf', {
+                setShowLoading2(true);
+                const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}&cachedKey=sampesf`, {
                     method: 'get',
                     withCredentials: false
                 });
@@ -187,10 +203,11 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     // })
                     let carStatusObject = {
                         carsCount: carsCount,
-                        make: make_name
+                        make: makeName
                     }
                     console.log(carStatusObject)
                     setNewCarsByMakeDonutData(carStatusObject)
+                    setShowLoading2(false);
 
                 }
 
@@ -201,10 +218,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
         }
 
 
-        const fetchAllModelNameByMakeName = async () => {
-            let make_name = 'Kia';
+        const fetchAllModelNameByMakeName = async (makeName1) => {
+           let make_name = 'Kia';
+           let makeName = (makeName1 === "") ? "Kia" : makeName1
             try {
-                const results = await axios('http://localhost:3000/getMakeNameAndModelName?make_name=Kia', {
+                setShowLoading3(true);
+                const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getMakeNameAndModelName?make_name=${makeName}`, {
                     method: 'get',
                     withCredentials: false
                 });
@@ -219,11 +238,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         return model._id.model_name
                     })
                     let carStatusObject = {
-                        make_name: make_name,
+                        make_name: makeName,
                         carsCount: CarsCount,
                         model_names: model_names
                     }
-                    setNewCountByModelNameLineData(carStatusObject)
+                    setNewCountByModelNameLineData(carStatusObject);
+                    setShowLoading3(false);
 
                 }
 
@@ -233,10 +253,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
             };
         }
 
-        const fetchCountByMakeNameAndYear = async () => {
+        const fetchCountByMakeNameAndYear = async (makeName2) => {
             let make_name = 'Kia';
+            let makeName = (makeName2 === "") ? "Kia" : makeName2
             try {
-                const results = await axios('http://localhost:3000/getCountByMakeNameAndYear?make_name=Kia', {
+                setShowLoading4(true);
+                const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getCountByMakeNameAndYear?make_name=${makeName}`, {
                     method: 'get',
                     withCredentials: false
                 });
@@ -279,6 +301,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         datasets: finalStackedData,
                     }
                     setCountByMakeNameAndYear(carStatusObject);
+                    setShowLoading4(false);
 
                 }
 
@@ -289,12 +312,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
         }
 
         // fetchNewCarsByModel();
-        fetchNewCarsByModelAndYear();
-        fetchNewCarsByMakeName();
-        fetchAllModelNameByMakeName();
-        fetchCountByMakeNameAndYear();
+        fetchNewCarsByModelAndYear(model);
+        fetchNewCarsByMakeName(name);
+        fetchAllModelNameByMakeName(makeName1);
+        fetchCountByMakeNameAndYear(makeName2);
 
-    }, [])
+    }, [model,name,makeName1,makeName2])
 
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
@@ -319,15 +342,29 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [showEditModal, setShowEditModal] = useState(false);
 
 
-
     return (
         <React.Fragment>
             <IonContent>
-
-                <IonGrid style={{ "marginTop": "10px" }}>
+                <IonGrid style={{ "marginTop": "-16px" }}>
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
+                            <IonLoading
+                                    isOpen={showLoading1}
+                                    onDidDismiss={() => setShowLoading1(false)}
+                                    message={'Please wait...'}
+                                />
+                                <IonList style={{ "marginTop": "-16px", }}>
+                                    <IonItem>
+                                        <IonLabel>Model</IonLabel>
+                                        <IonSelect value={model}  placeholder="Renegade"  onIonChange={e => setModel(e.detail.value)}>
+                                            <IonSelectOption value="Discovery">Discovery</IonSelectOption>
+                                            <IonSelectOption value="Traverse">Traverse</IonSelectOption>
+                                            <IonSelectOption value="MAZDA3">MAZDA3</IonSelectOption>
+                                            <IonSelectOption value="CX-5">CX-5</IonSelectOption>
+                                            <IonSelectOption value="Equinox">Equinox</IonSelectOption>
+                                        </IonSelect>
+                                    </IonItem></IonList>
                                 <Bar data={barChart2Data} options={{
                                     scales: {
                                         xAxes: [{
@@ -356,8 +393,22 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-
-
+                            <IonLoading
+                                    isOpen={showLoading2}
+                                    onDidDismiss={() => setShowLoading2(false)}
+                                    message={'Please wait...'}
+                                />
+                            <IonList style={{ "marginTop": "-16px", }}>
+                                    <IonItem>
+                                        <IonLabel>MakeName</IonLabel>
+                                        <IonSelect value={name} placeholder="Kia" onIonChange={e => setName(e.detail.value)}>
+                                            <IonSelectOption value="Mazda">Mazda</IonSelectOption>
+                                            <IonSelectOption value="Jeep">Jeep</IonSelectOption>
+                                            <IonSelectOption value="Nissan">Nissan</IonSelectOption>
+                                            <IonSelectOption value="Hyundai">Hyundai</IonSelectOption>
+                                            <IonSelectOption value="Lexus">Lexus</IonSelectOption>
+                                        </IonSelect>
+                                    </IonItem></IonList>
                                 <Doughnut data={doughnutChartData} options={{
                                     scales: {
                                         xAxes: [{
@@ -388,6 +439,22 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
+                            <IonLoading
+                                    isOpen={showLoading3}
+                                    onDidDismiss={() => setShowLoading3(false)}
+                                    message={'Please wait...'}
+                                />
+                            <IonList style={{ "marginTop": "-16px", }}>
+                                    <IonItem>
+                                        <IonLabel>MakeName</IonLabel>
+                                        <IonSelect value={makeName1} placeholder="Kia" onIonChange={e => setMakeName1(e.detail.value)}>
+                                        <IonSelectOption value="Mazda">Mazda</IonSelectOption>
+                                            <IonSelectOption value="Jeep">Jeep</IonSelectOption>
+                                            <IonSelectOption value="Nissan">Nissan</IonSelectOption>
+                                            <IonSelectOption value="Hyundai">Hyundai</IonSelectOption>
+                                            <IonSelectOption value="Lexus">Lexus</IonSelectOption>
+                                        </IonSelect>
+                                    </IonItem></IonList>
                                 <Line data={lineChart2Data} options={{
                                     scales: {
                                         xAxes: [{
@@ -416,6 +483,22 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
+                            <IonLoading
+                                    isOpen={showLoading4}
+                                    onDidDismiss={() => setShowLoading4(false)}
+                                    message={'Please wait...'}
+                                />
+                            <IonList style={{ "marginTop": "-16px", }}>
+                                    <IonItem>
+                                        <IonLabel>MakeName</IonLabel>
+                                        <IonSelect value={makeName2} placeholder="Kia" onIonChange={e => setMakeName2(e.detail.value)}>
+                                        <IonSelectOption value="Mazda">Mazda</IonSelectOption>
+                                            <IonSelectOption value="Jeep">Jeep</IonSelectOption>
+                                            <IonSelectOption value="Nissan">Nissan</IonSelectOption>
+                                            <IonSelectOption value="Hyundai">Hyundai</IonSelectOption>
+                                            <IonSelectOption value="Lexus">Lexus</IonSelectOption>
+                                        </IonSelect>
+                                    </IonItem></IonList>
                                 <Bar data={countByMakeNameAndYear} options={stackedGraphOptions}
                                 />
                             </IonCard>
