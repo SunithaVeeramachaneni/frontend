@@ -350,12 +350,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            <IonLoading
+                            {/* <IonLoading
                                     isOpen={showLoading1}
                                     onDidDismiss={() => setShowLoading1(false)}
                                     message={'Please wait...'}
                                     duration={10000}
-                                />
+                                /> */}
                                 <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>Model</IonLabel>
@@ -395,12 +395,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            <IonLoading
+                            {/* <IonLoading
                                     isOpen={showLoading2}
                                     onDidDismiss={() => setShowLoading2(false)}
                                     message={'Please wait...'}
                                     duration={10000}
-                                />
+                                /> */}
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
@@ -442,12 +442,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            <IonLoading
+                            {/* <IonLoading
                                     isOpen={showLoading3}
                                     onDidDismiss={() => setShowLoading3(false)}
                                     message={'Please wait...'}
                                     duration={10000}
-                                />
+                                /> */}
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
@@ -487,12 +487,12 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            <IonLoading
+                            {/* <IonLoading
                                     isOpen={showLoading4}
                                     onDidDismiss={() => setShowLoading4(false)}
                                     message={'Please wait...'}
                                     duration={10000}
-                                />
+                                /> */}
                             <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
