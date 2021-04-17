@@ -48,6 +48,10 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [newCarsByMakeDonutData, setNewCarsByMakeDonutData] = useState({} as any);
     const [newCountByModelNameLineData, setNewCountByModelNameLineData] = useState({} as any);
     const [countByMakeNameAndYear, setCountByMakeNameAndYear] = useState({} as any);
+    const [showLoading1, setShowLoading1] = useState(false);
+    const [showLoading2, setShowLoading2] = useState(false);
+    const [showLoading3, setShowLoading3] = useState(false);
+    const [showLoading4, setShowLoading4] = useState(false);
     
     const doughnutChartData = {
         labels: ['new cars', 'old cars'],
@@ -133,10 +137,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [name, setName] = useState("");
     const [makeName1, setMakeName1] = useState("");
     const [makeName2, setMakeName2] = useState("");
-    const [showLoading1, setShowLoading1] = useState(false);
-    const [showLoading2, setShowLoading2] = useState(false);
-    const [showLoading3, setShowLoading3] = useState(false);
-    const [showLoading4, setShowLoading4] = useState(false);
+
 
 
 
