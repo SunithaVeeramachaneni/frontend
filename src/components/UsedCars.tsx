@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
-import { Doughnut, Bar,Line } from 'react-chartjs-2';
+import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import {
     IonGrid,
     IonRow, IonCol, IonContent,
@@ -17,7 +17,7 @@ import {
     IonModal,
     IonSearchbar,
     IonButton,
-    IonItem, IonLabel, IonInput, IonImg, IonLoading 
+    IonItem, IonLabel, IonInput, IonImg, IonLoading
 } from '@ionic/react';
 import axios from 'axios';
 
@@ -52,7 +52,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
     const [showLoading2, setShowLoading2] = useState(false);
     const [showLoading3, setShowLoading3] = useState(false);
     const [showLoading4, setShowLoading4] = useState(false);
-    
+
     const doughnutChartData = {
         labels: ['new cars', 'old cars'],
         datasets: [
@@ -63,7 +63,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 borderWidth: 1,
                 hoverBackgroundColor: 'rgba(255,99,132,0.4)',
                 hoverBorderColor: 'rgba(255,99,132,1)',
-                data:newCarsByMakeDonutData.carsCount
+                data: newCarsByMakeDonutData.carsCount
             }
         ]
     };
@@ -89,31 +89,31 @@ export const UsedCarsSummary = ({ cars }: any) => {
             display: false
         },
         scales: {
-          yAxes: [
-            {
-              stacked: true,
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-          xAxes: [
-            {
-              stacked: true,
-            },
-          ],
+            yAxes: [
+                {
+                    stacked: true,
+                    ticks: {
+                        beginAtZero: true,
+                    },
+                },
+            ],
+            xAxes: [
+                {
+                    stacked: true,
+                },
+            ],
         },
-      }
-      var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
-		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
-		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
-		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
-		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
-		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
-		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
-		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
-		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
-		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
+    }
+    var colorArray = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6',
+        '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+        '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A',
+        '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+        '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC',
+        '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+        '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680',
+        '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+        '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3',
+        '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
     var lineChart2Data = {
         labels: newCountByModelNameLineData.model_names,
@@ -141,7 +141,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
 
 
-    
+
 
     useEffect(() => {
         //https://localhost:3000/getNewCarsByYear?make_name=Kia&cachedKey=sampesf
@@ -157,7 +157,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 console.log(results);
                 setNewCarsByModelAndYear(results.data);
                 if (results.data && results.data.length > 0) {
-                    
+
                     setShowLoading1(false);
 
                     const newCarsCount = results.data.map(model => {
@@ -171,7 +171,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         carsCount: newCarsCount,
                         model_name: modelName
                     }
-                    console.log("carsbarchart",carStatusObject)
+                    console.log("carsbarchart", carStatusObject)
                     setNewCarsByModelAndYearBarData(carStatusObject)
 
                 }
@@ -185,15 +185,15 @@ export const UsedCarsSummary = ({ cars }: any) => {
         const fetchNewCarsByMakeName = async (name) => {
             let model = 'Range Rover Evoque';
             let makeName = (name === "") ? "Kia" : name
-            
+
             try {
                 setShowLoading2(true);
                 const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}&cachedKey=sampesf`, {
                     method: 'get',
                     withCredentials: false
                 });
-             
-                
+
+
                 if (results.data && results.data.length > 0) {
 
                     const carsCount = results.data.map(model => {
@@ -220,16 +220,16 @@ export const UsedCarsSummary = ({ cars }: any) => {
 
 
         const fetchAllModelNameByMakeName = async (makeName1) => {
-           let make_name = 'Kia';
-           let makeName = (makeName1 === "") ? "Kia" : makeName1
+            let make_name = 'Kia';
+            let makeName = (makeName1 === "") ? "Kia" : makeName1
             try {
                 setShowLoading3(true);
                 const results = await axios(`https://invamdemo-dbapi.innovapptive.com/getMakeNameAndModelName?make_name=${makeName}`, {
                     method: 'get',
                     withCredentials: false
                 });
-              console.log('fetchAllModelNameByMakeName',results)
-                
+                console.log('fetchAllModelNameByMakeName', results)
+
                 if (results.data && results.data.length > 0) {
 
                     const CarsCount = results.data.map(model => {
@@ -263,40 +263,40 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     method: 'get',
                     withCredentials: false
                 });
-              console.log('fetchCountByMakeNameAndYear',results)
-                
+                console.log('fetchCountByMakeNameAndYear', results)
+
                 if (results.data && results.data.length > 0) {
 
                     const years = results.data.map(model => {
                         return model._id.year
                     })
-                    let uniqueYears =Array.from(new Set(years)) ;
+                    let uniqueYears = Array.from(new Set(years));
                     const model_names = results.data.map(model => {
                         return model._id.model_name
                     })
-                    let uniqueModels =Array.from(new Set(model_names)) ;
+                    let uniqueModels = Array.from(new Set(model_names));
 
-                    let sortedYears =  uniqueYears.sort();
+                    let sortedYears = uniqueYears.sort();
                     let finalStackedData = [] as any;
-                    let colotcount =0;
-                    uniqueModels.forEach((value)=>{
+                    let colotcount = 0;
+                    uniqueModels.forEach((value) => {
                         let temp = {};
-                        temp['label']=value;
-                        let countData=[] as any;
-                        sortedYears.forEach((year)=>{
+                        temp['label'] = value;
+                        let countData = [] as any;
+                        sortedYears.forEach((year) => {
                             let ct = 0;
-                             results.data.map(model => {
-                                if(model._id.year==year && model._id.model_name==value){
-                                   ct= model.count;
+                            results.data.map(model => {
+                                if (model._id.year == year && model._id.model_name == value) {
+                                    ct = model.count;
                                 }
                             })
                             countData.push(ct)
                         })
-                        temp['data']=countData;
-                        temp['backgroundColor'] =colorArray[colotcount++]
+                        temp['data'] = countData;
+                        temp['backgroundColor'] = colorArray[colotcount++]
                         finalStackedData.push(temp)
                     })
-                    console.log("finalStackedData",finalStackedData)
+                    console.log("finalStackedData", finalStackedData)
                     let carStatusObject = {
                         labels: sortedYears,
                         datasets: finalStackedData,
@@ -318,7 +318,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
         fetchAllModelNameByMakeName(makeName1);
         fetchCountByMakeNameAndYear(makeName2);
 
-    }, [model,name,makeName1,makeName2])
+    }, [model, name, makeName1, makeName2])
 
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
@@ -349,23 +349,27 @@ export const UsedCarsSummary = ({ cars }: any) => {
                 <IonGrid style={{ "marginTop": "-16px" }}>
                     <IonRow>
                         <IonCol size="12" size-md="6">
-                            <IonCard>
-                            {/* <IonLoading
+                            <IonCard className="custom-card">
+                                {/* <IonLoading
                                     isOpen={showLoading1}
                                     onDidDismiss={() => setShowLoading1(false)}
                                     message={'Please wait...'}
                                     duration={10000}
                                 /> */}
-                                <IonList style={{ "marginTop": "-16px", }}>
+                                <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>Model</IonLabel>
-                                        <IonSelect value={model}  placeholder="Renegade"  onIonChange={e => setModel(e.detail.value)}>
+                                        <IonSelect 
+                                            interface="popover" 
+                                            value={model} placeholder="Renegade" onIonChange={e => setModel(e.detail.value)}>
                                             <IonSelectOption value="Discovery">Discovery</IonSelectOption>
                                             <IonSelectOption value="Traverse">Traverse</IonSelectOption>
                                             <IonSelectOption value="MAZDA3">MAZDA3</IonSelectOption>
                                             <IonSelectOption value="CX-5">CX-5</IonSelectOption>
                                             <IonSelectOption value="Equinox">Equinox</IonSelectOption>
+
                                         </IonSelect>
+
                                     </IonItem></IonList>
                                 <Bar data={barChart2Data} options={{
                                     scales: {
@@ -395,16 +399,16 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            {/* <IonLoading
+                                {/* <IonLoading
                                     isOpen={showLoading2}
                                     onDidDismiss={() => setShowLoading2(false)}
                                     message={'Please wait...'}
                                     duration={10000}
                                 /> */}
-                            <IonList style={{ "marginTop": "-16px", }}>
+                                <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
-                                        <IonSelect value={name} placeholder="Kia" onIonChange={e => setName(e.detail.value)}>
+                                        <IonSelect  interface="popover" value={name} placeholder="Kia" onIonChange={e => setName(e.detail.value)}>
                                             <IonSelectOption value="Mazda">Mazda</IonSelectOption>
                                             <IonSelectOption value="Jeep">Jeep</IonSelectOption>
                                             <IonSelectOption value="Nissan">Nissan</IonSelectOption>
@@ -442,17 +446,17 @@ export const UsedCarsSummary = ({ cars }: any) => {
                     <IonRow>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            {/* <IonLoading
+                                {/* <IonLoading
                                     isOpen={showLoading3}
                                     onDidDismiss={() => setShowLoading3(false)}
                                     message={'Please wait...'}
                                     duration={10000}
                                 /> */}
-                            <IonList style={{ "marginTop": "-16px", }}>
+                                <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
-                                        <IonSelect value={makeName1} placeholder="Kia" onIonChange={e => setMakeName1(e.detail.value)}>
-                                        <IonSelectOption value="Mazda">Mazda</IonSelectOption>
+                                        <IonSelect interface="popover" value={makeName1} placeholder="Kia" onIonChange={e => setMakeName1(e.detail.value)}>
+                                            <IonSelectOption value="Mazda">Mazda</IonSelectOption>
                                             <IonSelectOption value="Jeep">Jeep</IonSelectOption>
                                             <IonSelectOption value="Nissan">Nissan</IonSelectOption>
                                             <IonSelectOption value="Hyundai">Hyundai</IonSelectOption>
@@ -487,17 +491,17 @@ export const UsedCarsSummary = ({ cars }: any) => {
                         </IonCol>
                         <IonCol size="12" size-md="6">
                             <IonCard>
-                            {/* <IonLoading
+                                {/* <IonLoading
                                     isOpen={showLoading4}
                                     onDidDismiss={() => setShowLoading4(false)}
                                     message={'Please wait...'}
                                     duration={10000}
                                 /> */}
-                            <IonList style={{ "marginTop": "-16px", }}>
+                                <IonList style={{ "marginTop": "-16px", }}>
                                     <IonItem>
                                         <IonLabel>MakeName</IonLabel>
-                                        <IonSelect value={makeName2} placeholder="Kia" onIonChange={e => setMakeName2(e.detail.value)}>
-                                        <IonSelectOption value="Mazda">Mazda</IonSelectOption>
+                                        <IonSelect interface="popover" value={makeName2} placeholder="Kia" onIonChange={e => setMakeName2(e.detail.value)}>
+                                            <IonSelectOption value="Mazda">Mazda</IonSelectOption>
                                             <IonSelectOption value="Jeep">Jeep</IonSelectOption>
                                             <IonSelectOption value="Nissan">Nissan</IonSelectOption>
                                             <IonSelectOption value="Hyundai">Hyundai</IonSelectOption>
