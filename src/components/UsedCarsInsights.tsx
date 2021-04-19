@@ -59,7 +59,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         setCount(count => count + 1);
     }
 
-    async function fetchData(skippped) {
+    async function fetchData(skip) {
         const url: string = `https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}`;    
         const res: Response = await fetch(url);
         res
@@ -79,10 +79,9 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         await fetchData(0);
       });
 
-      
       async function searchNext($event: CustomEvent<void>) {
-          setSkip(skip => skip + 10)
-          setCount(count => count + usedCars.length)
+        setSkip(skip => skip + 10)
+        setCount(count => count + usedCars.length)
         await fetchData(skip);
     
         ($event.target as HTMLIonInfiniteScrollElement).complete();
@@ -239,6 +238,14 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     return (
         <React.Fragment>
              <IonContent>
+
+          <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                             onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
+            <IonInfiniteScrollContent
+                loadingText="Loading more good doggos...">
+            </IonInfiniteScrollContent>
+          </IonInfiniteScroll>
+
              <IonModal isOpen={showModal} cssClass='my-custom-class'>
                   <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
                 <h1 style={{"marginTop":"0px"}}>Add
@@ -292,8 +299,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                     </IonRow>
                 </IonHeader>
                 {items.map(car => (
-                    
-                    car.model ?  (<IonRow key={car.id}>                    
+                   car.model ? (<IonRow key={car.id} >
                         <IonCol className="borders">{car.model}</IonCol>
                         <IonCol className="borders">{car.make}</IonCol>
                           <IonCol className="borders">{car.city}</IonCol>
@@ -347,7 +353,6 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                             </IonItem>
 
                   </IonRow>): null                
-                  
                 ))}
                     <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
                         onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
