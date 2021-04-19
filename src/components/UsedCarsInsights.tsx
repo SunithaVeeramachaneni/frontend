@@ -15,7 +15,11 @@ import {
     IonModal,
     IonSearchbar,
     IonButton,
-    IonItem, IonLabel, IonInput, IonImg
+    IonItem, IonLabel, IonInput, IonImg,
+    IonPage,
+    IonTitle,
+    useIonViewWillEnter,
+    IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import axios from 'axios';
 
@@ -30,12 +34,8 @@ import Swal from 'sweetalert2';
 import "./UsedCars.css";
 
 export const UsedCarsInsightsSummary = ({ cars }: any) => {
-
-    // axios.interceptors.request.use(x => {
-    //     x.meta = x.meta || {}
-    //     x.meta.requestStartedAt = new Date().getTime();
-    //     return x;
-    // });
+    const [items, setItems] =useState([] as any);
+    const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(false);
 
     const [responseTime, setResponseTime] = useState("");
     const [instructions, setInstructions] = useState([] as any);
@@ -58,6 +58,35 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         setSkip(usedCars.length)
         setCount(count => count + 1);
     }
+
+    async function fetchData(skippped) {
+        const url: string = `https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}`;    
+        const res: Response = await fetch(url);
+        res
+            .json()
+            .then(async (res) => {
+              if (res && res.usedcars && res.usedcars.length > 0) {
+                setItems([...items, ...res.usedcars]);
+                setDisableInfiniteScroll(res.usedcars.length < 10);
+              } else {
+                setDisableInfiniteScroll(true);
+              }
+            })
+            .catch(err => console.error(err));
+      }
+
+      useIonViewWillEnter(async () => {
+        await fetchData(0);
+      });
+
+      
+      async function searchNext($event: CustomEvent<void>) {
+          setSkip(skip => skip + 10)
+          setCount(count => count + usedCars.length)
+        await fetchData(skip);
+    
+        ($event.target as HTMLIonInfiniteScrollElement).complete();
+      }
 
     useEffect(() => {
         let searchedResult = usedCars.filter(function(car){
@@ -262,8 +291,9 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                        
                     </IonRow>
                 </IonHeader>
-                {usedCars.map(car => (
-                    <IonRow key={car.id} >
+                {items.map(car => (
+                    
+                    car.model ?  (<IonRow key={car.id}>                    
                         <IonCol className="borders">{car.model}</IonCol>
                         <IonCol className="borders">{car.make}</IonCol>
                           <IonCol className="borders">{car.city}</IonCol>
@@ -316,9 +346,16 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
 
-                       
-                  </IonRow>
+                  </IonRow>): null                
+                  
                 ))}
+                    <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                        onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
+                        <IonInfiniteScrollContent
+                            loadingText="Loading more UsedCars...">
+                        </IonInfiniteScrollContent>
+                    </IonInfiniteScroll>
+
                 </IonGrid>
               </IonContent>
         </React.Fragment>
