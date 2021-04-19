@@ -224,14 +224,16 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
           });
     }
 
-    const deleteUsedCars = (cars) => {
-        axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${cars.id}`).then(res => {
+    const deleteUsedCars = (selectedCar) => {
+        axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${selectedCar.id}`).then(res => {
+
           Swal.fire({
               icon: 'success',
               title: 'Deleted Successfully'
           })
-          const usedcar = usedCars.filter(item => item.id !== cars.id);
-          setUsedCars(usedcar);
+          const usedcar = usedCars.filter(item => item.id !== selectedCar.id);
+           fetchData(0);
+           setUsedCars(usedcar);
         })
     }
 
