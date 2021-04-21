@@ -7,11 +7,14 @@ import {
     IonRow, IonCol, IonContent,
     IonToolbar,
     IonCard,
+    IonSelect,
+    IonSelectOption,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
     IonCardTitle,
     IonHeader,
+  
     IonModal,
     IonSearchbar,
     IonButton,
@@ -45,7 +48,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(1)
     const [searchText, setSearchText] = useState("")
-
+    const [selectedYear, setSelectedyear] = useState("")
+    const [selectedCity, setSelectedCity] = useState("")
+    const [selectedMakeName, setSelectedMakeName] = useState("")
+    const [selectedModelName, setSelectedModelName] = useState("")
+    const [searchObject, setSearchObject] = useState({})
+   
 
     const [usedCars, setUsedCars]= useState([] as any);
   
@@ -57,6 +65,35 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const fetchMoreUsedCarsData = () => {
         setSkip(usedCars.length)
         setCount(count => count + 1);
+    }
+
+    const searchFields = async (make_name, model_name, city, year) => {
+     
+        if(make_name) {
+            setSearchObject({...searchObject, make_name:make_name})
+        }
+
+       if(model_name) {
+            setSearchObject({...searchObject, model_name:model_name})
+        }
+
+        if(city) {
+            setSearchObject({...searchObject, city:city})
+        }
+
+        if(year) {
+            setSearchObject({...searchObject, year:year})
+        }
+        console.log(searchObject);
+
+        let stringfiedSearch = JSON.stringify(searchObject);
+        console.log(stringfiedSearch);
+        const searchResults = await axios('https://invamdemo-dbapi.innovapptive.com/search?search=${stringfiedSearch}', {
+            method: 'get',
+            withCredentials: false
+         });
+         console.log(searchResults)
+
     }
 
     useEffect(() => {
@@ -245,14 +282,41 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                 </IonButton>
             </form>
              </IonModal>
-            <IonToolbar>
+            
+             
+                                        <IonSelect multiple={true} 
+                                        interface="popover" 
+                                        value={searchText} 
+                                        placeholder="Select fields to search" 
+                                        onIonChange={e => setSearchText(e.detail.value)}>
+                                            <IonSelectOption value="make_name">Make Name</IonSelectOption>
+                                            <IonSelectOption value="model_name">Model Name</IonSelectOption>
+                                            <IonSelectOption value="city">City</IonSelectOption>
+                                            <IonSelectOption value="year">Year</IonSelectOption>
+                                        </IonSelect>
+                                        <IonItem>
+            <IonLabel position="fixed">Make Name</IonLabel>
+            <IonInput value={selectedMakeName}></IonInput>
+            <IonLabel position="fixed">Model Name</IonLabel>
+            <IonInput value={selectedModelName}></IonInput>
+            <IonLabel position="fixed">city</IonLabel>
+            <IonInput value={selectedCity}></IonInput>
+            <IonLabel position="fixed">Year</IonLabel>
+            <IonInput value={selectedYear}></IonInput>
+            <IonButton onClick={() => searchFields(selectedMakeName, selectedModelName, selectedCity, selectedYear)} style={{"position":"absolute","right":"10px"}}>Search</IonButton>
+           
+           
+          </IonItem>
+
+                                        
+            {/* <IonToolbar>
                 <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
-            </IonToolbar>
+            </IonToolbar> */}
 
             <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
            
            
-            <IonGrid style={{"marginTop":"50px"}}>
+            <IonGrid>
                 <IonHeader>
                     <IonRow>
                         <IonCol className="bold borders">Model Name</IonCol>
