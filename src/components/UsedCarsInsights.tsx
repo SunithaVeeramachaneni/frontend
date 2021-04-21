@@ -7,6 +7,7 @@ import {
     IonRow, IonCol, IonContent,
     IonToolbar,
     IonCard,
+    IonLoading,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
@@ -47,7 +48,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(1)
     const [searchText, setSearchText] = useState("")
-
+    const [showLoading, setShowLoading] = useState(false);
     const [selectedYear, setSelectedYear] = useState("")
     const [selectedCity, setSelectedCity] = useState("")
     const [selectedMakeName, setSelectedMakeName] = useState("")
@@ -102,11 +103,13 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     async function fetchData(skip) {
         const url: string = `https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}`;
         const res: Response = await fetch(url);
+        setShowLoading(true);
         res
             .json()
             .then(async (res) => {
               if (res && res.usedcars && res.usedcars.length > 0) {
                 setItems([...items, ...res.usedcars]);
+                setShowLoading(false);
                 setDisableInfiniteScroll(res.usedcars.length < 10);
               } else {
                 setDisableInfiniteScroll(true);
@@ -116,6 +119,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
       }
 
       useIonViewWillEnter(async () => {
+     
         await fetchData(0);
       });
 
@@ -266,21 +270,25 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
 
     const deleteUsedCars = (selectedCar) => {
         axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${selectedCar.id}`).then(res => {
-
           Swal.fire({
               icon: 'success',
               title: 'Deleted Successfully'
           })
-          const usedcar = usedCars.filter(item => item.id !== selectedCar.id);
-           fetchData(0);
-           setUsedCars(usedcar);
+          const usedcar = items.filter(item => item.id !== selectedCar.id);
+          
+           setItems(usedcar);
         })
     }
 
     return (
         <React.Fragment>
              <IonContent>
-
+             <IonLoading
+                                    isOpen={showLoading}
+                                    onDidDismiss={() => setShowLoading(false)}
+                                    message={'Please wait...'}
+                                    duration={5000}
+                                    />
                  <IonSelect style={{"width" : "200px"}} multiple={true}
                             interface="popover"
                             value={searchText}
