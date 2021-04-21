@@ -7,18 +7,21 @@ import {
     IonRow, IonCol, IonContent,
     IonToolbar,
     IonCard,
-    IonSelect,
-    IonSelectOption,
     IonCardContent,
     IonCardHeader,
     IonCardSubtitle,
     IonCardTitle,
     IonHeader,
-  
+    IonSelect,
+    IonSelectOption,
     IonModal,
     IonSearchbar,
     IonButton,
-    IonItem, IonLabel, IonInput, IonImg
+    IonItem, IonLabel, IonInput, IonImg,
+    IonPage,
+    IonTitle,
+    useIonViewWillEnter,
+    IonInfiniteScroll, IonInfiniteScrollContent
 } from '@ionic/react';
 import axios from 'axios';
 
@@ -33,12 +36,8 @@ import Swal from 'sweetalert2';
 import "./UsedCars.css";
 
 export const UsedCarsInsightsSummary = ({ cars }: any) => {
-
-    // axios.interceptors.request.use(x => {
-    //     x.meta = x.meta || {}
-    //     x.meta.requestStartedAt = new Date().getTime();
-    //     return x;
-    // });
+    const [items, setItems] =useState([] as any);
+    const [disableInfiniteScroll, setDisableInfiniteScroll] = useState<boolean>(false);
 
     const [responseTime, setResponseTime] = useState("");
     const [instructions, setInstructions] = useState([] as any);
@@ -48,15 +47,15 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(1)
     const [searchText, setSearchText] = useState("")
-    const [selectedYear, setSelectedyear] = useState("")
+
+    const [selectedYear, setSelectedYear] = useState("")
     const [selectedCity, setSelectedCity] = useState("")
     const [selectedMakeName, setSelectedMakeName] = useState("")
     const [selectedModelName, setSelectedModelName] = useState("")
     const [searchObject, setSearchObject] = useState({})
-   
 
     const [usedCars, setUsedCars]= useState([] as any);
-  
+
     const fetchMoreData = () => {
         setSkip(instructions.length)
         setCount(count => count + 1);
@@ -68,12 +67,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     }
 
     const searchFields = async (make_name, model_name, city, year) => {
-     
+
         if(make_name) {
             setSearchObject({...searchObject, make_name:make_name})
         }
 
-       if(model_name) {
+        if(model_name) {
             setSearchObject({...searchObject, model_name:model_name})
         }
 
@@ -91,10 +90,38 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         const searchResults = await axios('https://invamdemo-dbapi.innovapptive.com/search?search=${stringfiedSearch}', {
             method: 'get',
             withCredentials: false
-         });
-         console.log(searchResults)
+        });
+        console.log(searchResults)
 
     }
+
+    async function fetchData(skip) {
+        const url: string = `https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}`;
+        const res: Response = await fetch(url);
+        res
+            .json()
+            .then(async (res) => {
+              if (res && res.usedcars && res.usedcars.length > 0) {
+                setItems([...items, ...res.usedcars]);
+                setDisableInfiniteScroll(res.usedcars.length < 10);
+              } else {
+                setDisableInfiniteScroll(true);
+              }
+            })
+            .catch(err => console.error(err));
+      }
+
+      useIonViewWillEnter(async () => {
+        await fetchData(0);
+      });
+
+      async function searchNext($event: CustomEvent<void>) {
+        setSkip(skip => skip + 10)
+        setCount(count => count + usedCars.length)
+        await fetchData(skip);
+
+        ($event.target as HTMLIonInfiniteScrollElement).complete();
+      }
 
     useEffect(() => {
         let searchedResult = usedCars.filter(function(car){
@@ -113,12 +140,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                    });
                    console.log(results);
                    setUsedCars(results.data.usedcars);
-        
+
                 } catch(error) {
                     console.log(error);
                   };
             }
-           
+
             fetchCars();
         }
 
@@ -134,7 +161,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                });
                console.log(results);
                         setUsedCars(results.data.usedcars);
-    
+
             } catch(error) {
                 console.log(error);
               };
@@ -233,20 +260,54 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
           });
     }
 
-    const deleteUsedCars = (cars) => {
-        axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${cars.id}`).then(res => {
+    const deleteUsedCars = (selectedCar) => {
+        axios.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${selectedCar.id}`).then(res => {
+
           Swal.fire({
               icon: 'success',
               title: 'Deleted Successfully'
           })
-          const usedcar = usedCars.filter(item => item.id !== cars.id);
-          setUsedCars(usedcar);
+          const usedcar = usedCars.filter(item => item.id !== selectedCar.id);
+           fetchData(0);
+           setUsedCars(usedcar);
         })
     }
 
     return (
         <React.Fragment>
              <IonContent>
+
+                 <IonSelect style={{"width" : "200px"}} multiple={true}
+                            interface="popover"
+                            value={searchText}
+                            placeholder="Select fields to search"
+                            onIonChange={e => setSearchText(e.detail.value)}>
+                     <IonSelectOption value="make_name">Make Name</IonSelectOption>
+                     <IonSelectOption value="model_name">Model Name</IonSelectOption>
+                     <IonSelectOption value="city">City</IonSelectOption>
+                     <IonSelectOption value="year">Year</IonSelectOption>
+                 </IonSelect>
+                 <IonItem>
+                     <IonLabel position="fixed">Make Name</IonLabel>
+                     <IonInput value={selectedMakeName}></IonInput>
+                     <IonLabel position="fixed">Model Name</IonLabel>
+                     <IonInput value={selectedModelName}></IonInput>
+                     <IonLabel position="fixed">city</IonLabel>
+                     <IonInput value={selectedCity}></IonInput>
+                     <IonLabel position="fixed">Year</IonLabel>
+                     <IonInput value={selectedYear}></IonInput>
+                     <IonButton onClick={() => searchFields(selectedMakeName, selectedModelName, selectedCity, selectedYear)} style={{"position":"absolute","right":"10px"}}>Search</IonButton>
+
+
+                 </IonItem>
+
+          <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                             onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
+            <IonInfiniteScrollContent
+                loadingText="Loading more usedcars...">
+            </IonInfiniteScrollContent>
+          </IonInfiniteScroll>
+
              <IonModal isOpen={showModal} cssClass='my-custom-class'>
                   <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
                 <h1 style={{"marginTop":"0px"}}>Add
@@ -282,57 +343,30 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                 </IonButton>
             </form>
              </IonModal>
-            
-             
-                                        <IonSelect multiple={true} 
-                                        interface="popover" 
-                                        value={searchText} 
-                                        placeholder="Select fields to search" 
-                                        onIonChange={e => setSearchText(e.detail.value)}>
-                                            <IonSelectOption value="make_name">Make Name</IonSelectOption>
-                                            <IonSelectOption value="model_name">Model Name</IonSelectOption>
-                                            <IonSelectOption value="city">City</IonSelectOption>
-                                            <IonSelectOption value="year">Year</IonSelectOption>
-                                        </IonSelect>
-                                        <IonItem>
-            <IonLabel position="fixed">Make Name</IonLabel>
-            <IonInput value={selectedMakeName}></IonInput>
-            <IonLabel position="fixed">Model Name</IonLabel>
-            <IonInput value={selectedModelName}></IonInput>
-            <IonLabel position="fixed">city</IonLabel>
-            <IonInput value={selectedCity}></IonInput>
-            <IonLabel position="fixed">Year</IonLabel>
-            <IonInput value={selectedYear}></IonInput>
-            <IonButton onClick={() => searchFields(selectedMakeName, selectedModelName, selectedCity, selectedYear)} style={{"position":"absolute","right":"10px"}}>Search</IonButton>
-           
-           
-          </IonItem>
-
-                                        
-            {/* <IonToolbar>
-                <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>
-            </IonToolbar> */}
+            {/*<IonToolbar>*/}
+            {/*    <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>*/}
+            {/*</IonToolbar>*/}
 
             <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
-           
-           
-            <IonGrid>
+
+
+            <IonGrid style={{"marginTop":"5px"}}>
                 <IonHeader>
                     <IonRow>
                         <IonCol className="bold borders">Model Name</IonCol>
                         <IonCol className="bold borders">Make Name</IonCol>
                         <IonCol className="bold borders">City</IonCol>
                         <IonCol className="bold borders">Engine</IonCol>
-                       
+
                     </IonRow>
                 </IonHeader>
-                {usedCars.map(car => (
-                    <IonRow key={car.id} >
+                {items.map(car => (
+                   car.model ? (<IonRow key={car.id} >
                         <IonCol className="borders">{car.model}</IonCol>
                         <IonCol className="borders">{car.make}</IonCol>
                           <IonCol className="borders">{car.city}</IonCol>
                         <IonCol className="borders">{car.engine_type}</IonCol>
-                       
+
                             <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
                             <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
                                 <h1 style={{"marginTop":"0px"}}>Edit
@@ -380,9 +414,15 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
 
-                       
-                  </IonRow>
+                  </IonRow>): null
                 ))}
+                    <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                        onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
+                        <IonInfiniteScrollContent
+                            loadingText="Loading more UsedCars...">
+                        </IonInfiniteScrollContent>
+                    </IonInfiniteScroll>
+
                 </IonGrid>
               </IonContent>
         </React.Fragment>
