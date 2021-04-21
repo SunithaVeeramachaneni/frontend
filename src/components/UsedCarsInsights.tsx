@@ -289,7 +289,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                                     message={'Please wait...'}
                                     duration={5000}
                                     />
-                 <IonSelect style={{"width" : "200px"}} multiple={true}
+                 <IonSelect style={{"width" : "200px","border":"1px solid #E5E5E5","borderRadius":"10px"}} multiple={true}
                             interface="popover"
                             value={searchText}
                             placeholder="Select fields to search"
@@ -301,26 +301,26 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                  </IonSelect>
 
 
-                 <IonItem style={{"display":"flex"}} lines="none" class="remove_inner_bottom">
+                 <IonItem className={searchText ? "display" : "hide"} lines="none" class="remove_inner_bottom" style={{"marginTop":"10px","marginLeft":"-30px"}}>
                     <IonItem className={searchText.indexOf('make_name') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
-                        <IonLabel>Make Name</IonLabel>
+                        <IonLabel className="m-r-10">Make Name</IonLabel>
                         <IonInput value={searchObject.make_name} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "make_name":e.detail.value!})}></IonInput>
                     </IonItem>
                     <IonItem className={searchText.indexOf('model_name') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
-                        <IonLabel>Model Name</IonLabel>
+                        <IonLabel className="m-r-10">Model Name</IonLabel>
                         <IonInput value={searchObject.model_name} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "model_name":e.detail.value!})}></IonInput>
                     </IonItem>
                     <IonItem className={searchText.indexOf('city') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
-                        <IonLabel>city</IonLabel>
+                        <IonLabel className="m-r-10">city</IonLabel>
                         <IonInput value={searchObject.city} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "city":e.detail.value!})}></IonInput>
                     </IonItem>
                     <IonItem className={searchText.indexOf('year') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
-                        <IonLabel>Year</IonLabel>
+                        <IonLabel className="m-r-10">Year</IonLabel>
                         <IonInput value={searchObject.year} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "year":e.detail.value!})}></IonInput>
                     </IonItem>
                     <IonItem lines="none" class="remove_inner_bottom">
                         <IonButton onClick={() => searchFields(searchObject)}   
-                               className={searchText ? "display" : "hide"}>Search</IonButton>
+                               className={searchText ? "display" : "hide"} style={{"height":"40px"}}>Search</IonButton>
                     </IonItem>
                   
                  </IonItem>
@@ -378,7 +378,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                         <IonCol className="bold borders">Make Name</IonCol>
                         <IonCol className="bold borders">City</IonCol>
                         <IonCol className="bold borders">Engine</IonCol>
-
+                        <IonCol className="bold borders" style={{"maxWidth":"94px"}}></IonCol>
                     </IonRow>
                 </IonHeader>
                 {items.map(car => (
@@ -430,7 +430,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                             </form>
                         </IonModal>
 
-                            <IonItem lines="none" class="remove_inner_bottom">
+                            <IonItem lines="none" class="remove_inner_bottom borders">
                                 <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />
                                 <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>

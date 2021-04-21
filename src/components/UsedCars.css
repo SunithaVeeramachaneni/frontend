@@ -33,14 +33,23 @@
 
 
   .display {
-     display: block;
+     display: flex;
   }
 
   .hide {
    display: none;
 }
-
+.m-r-10 {
+    margin-right: 10px;
+}
 .input-fields {
     border: 1px solid #E5E5E5;
     border-radius: 10px;
+}
+
+.sc-ion-input-md-h {
+    padding-left: 7px !important;
+}
+.sc-ion-input-lg-h {
+    padding-left: 5px;
 }
