@@ -55,8 +55,9 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const [searchObject, setSearchObject] = useState({
         "make_name":"",
         "model_name":"",
-        "city":"",
-        "year":""
+        "city": "",
+        "year": ""
+      
     })
 
     const [usedCars, setUsedCars]= useState([] as any);
@@ -71,39 +72,31 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         setCount(count => count + 1);
     }
 
+
+    function delet(obj) {
+        for (var prop in obj) {
+            if (obj[prop] === null || obj[prop] === undefined || obj[prop] === "") {
+                delete obj[prop];
+            }
+        }
+    }
+
     const searchFields = async (searchObject) => {
-
-        console.log(searchObject)
-
-    
-        // if(make_name) {
-        //     setSearchObject({...searchObject, make_name:make_name})
-         
-        // }
-
-        // if(model_name) {
-        //     setSearchObject({...searchObject, model_name:model_name})
-         
-        // }
-
-        // if(city) {
-        //     setSearchObject({...searchObject, city:city})
-        // }
-
-        // if(year) {
-        //     setSearchObject({...searchObject, year:year})
-        // }
-       // console.log(searchObject);
-       
-
+        delet(searchObject);
+        console.log(searchObject);
         let stringfiedSearch = JSON.stringify(searchObject);
         console.log(stringfiedSearch);
-        const searchResults = await axios(`https://invamdemo-dbapi.innovapptive.com/search?search=${stringfiedSearch}`, {
+
+        const searchResults = await axios(`https://invamdemo-dbapi.innovapptive.com/search?page=1&limit=10&searchfeilds=${stringfiedSearch}`, {
             method: 'get',
             withCredentials: false
         });
-        console.log(searchResults)
-
+        console.log(searchResults);
+        if(searchResults) {
+            console.log(searchResults);
+            setItems(searchResults.data.usedcars)
+        }
+    
     }
 
     async function fetchData(skip) {
@@ -324,12 +317,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                   
                  </IonItem>
               
-          <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+          {/* <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
                              onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
             <IonInfiniteScrollContent
                 loadingText="Loading more usedcars...">
             </IonInfiniteScrollContent>
-          </IonInfiniteScroll>
+          </IonInfiniteScroll> */}
 
              <IonModal isOpen={showModal} cssClass='my-custom-class'>
                   <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
@@ -366,13 +359,10 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                 </IonButton>
             </form>
              </IonModal>
-            {/*<IonToolbar>*/}
-            {/*    <IonSearchbar placeholder="Search by makename or model name" value={searchText} onIonChange={e => setSearchText(e.detail.value!)}></IonSearchbar>*/}
-            {/*</IonToolbar>*/}
-
+      
             <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
-
-
+           <div style={{"clear": "both"}}> </div>
+           <br /><br /> 
             <IonGrid style={{"marginTop":"5px"}}>
                 <IonHeader>
                     <IonRow>
