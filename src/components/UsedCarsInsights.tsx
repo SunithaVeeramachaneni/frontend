@@ -225,12 +225,57 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
 
     const updateUsedCars = data => {
           console.log(data);
-          axios.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${data.id}`, {
+          axios.get(`https://invamdemo-dbapi.innovapptive.com/car/${data.id}`)
+          .then((response) => {
+              console.log(response);
+          
+            axios.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${data.id}`, {
                 model_name:data.model_name,
                 make_name: data.make_name,
                 body_type: data.body_type,
                 city: data.city,
-                engine_type: data.engine_type
+                engine_type: data.engine_type,
+                back_legroom: response.data.back_legroom,
+                daysonmarket: response.data.daysonmarket,
+                dealer_zip:  response.data.dealer_zip,
+                engine_cylinders:  response.data.engine_cylinders,
+                engine_displacement: response.data.engine_displacement,
+                exterior_color: response.data.exterior_color,
+                franchise_dealer: response.data.franchise_dealer,
+                franchise_make:  response.data.franchise_make,
+                front_legroom:  response.data.front_legroom,
+                fuel_tank_volume:  response.data.fuel_tank_volume,
+                fuel_type:  response.data.fuel_type,
+                height: response.data.height,
+                horsepower:  response.data.horsepower,
+                interior_color:  response.data.interior_color,
+                is_new: response.data.is_new,
+                latitude:  response.data.latitude,
+                length:  response.data.length,
+                listed_date:  response.data.listed_date,
+                listing_color: response.data.listing_color,
+                longitude:  response.data.longitude,
+                main_picture_url:  response.data.main_picture_url,
+                major_options: response.data.major_options,
+                maximum_seating:  response.data.maximum_seating,
+                mileage:  response.data.mileage,
+                power:  response.data.power,
+                price:  response.data.price,
+                savings_amount: response.data.savings_amount,
+                seller_rating: response.data.seller_rating,
+                sp_id: response.data.sp_id,
+                sp_name: response.data.sp_name,
+                torque: response.data.torque,
+                transmission: response.data.transmission,
+                transmission_display: response.data.transmission_display,
+                trimId: response.data.trimId,
+                trim_name: response.data.trim_name,
+                vin: response.data.vin,
+                wheel_system: response.data.wheel_system,
+                wheel_system_display: response.data.wheel_system_display,
+                wheelbase: response.data.wheelbase,
+                width: response.data.width,
+                year: response.data.year
           })
           .then((response) => {
             console.log(response);
@@ -266,6 +311,8 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
           }, (error) => {
             console.log(error);
           });
+
+        })
     }
 
     const deleteUsedCars = (selectedCar) => {
