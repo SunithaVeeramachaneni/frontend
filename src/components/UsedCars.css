@@ -30,3 +30,17 @@
   .custom-card {
     border-radius: 10px;
   }
+
+
+  .display {
+     display: block;
+  }
+
+  .hide {
+   display: none;
+}
+
+.input-fields {
+    border: 1px solid #E5E5E5;
+    border-radius: 10px;
+}

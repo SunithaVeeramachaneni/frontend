@@ -52,7 +52,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
     const [selectedCity, setSelectedCity] = useState("")
     const [selectedMakeName, setSelectedMakeName] = useState("")
     const [selectedModelName, setSelectedModelName] = useState("")
-    const [searchObject, setSearchObject] = useState({})
+    const [searchObject, setSearchObject] = useState({
+        "make_name":"",
+        "model_name":"",
+        "city":"",
+        "year":""
+    })
 
     const [usedCars, setUsedCars]= useState([] as any);
 
@@ -66,28 +71,34 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         setCount(count => count + 1);
     }
 
-    const searchFields = async (make_name, model_name, city, year) => {
+    const searchFields = async (searchObject) => {
 
-        if(make_name) {
-            setSearchObject({...searchObject, make_name:make_name})
-        }
+        console.log(searchObject)
 
-        if(model_name) {
-            setSearchObject({...searchObject, model_name:model_name})
-        }
+    
+        // if(make_name) {
+        //     setSearchObject({...searchObject, make_name:make_name})
+         
+        // }
 
-        if(city) {
-            setSearchObject({...searchObject, city:city})
-        }
+        // if(model_name) {
+        //     setSearchObject({...searchObject, model_name:model_name})
+         
+        // }
 
-        if(year) {
-            setSearchObject({...searchObject, year:year})
-        }
-        console.log(searchObject);
+        // if(city) {
+        //     setSearchObject({...searchObject, city:city})
+        // }
+
+        // if(year) {
+        //     setSearchObject({...searchObject, year:year})
+        // }
+       // console.log(searchObject);
+       
 
         let stringfiedSearch = JSON.stringify(searchObject);
         console.log(stringfiedSearch);
-        const searchResults = await axios('https://invamdemo-dbapi.innovapptive.com/search?search=${stringfiedSearch}', {
+        const searchResults = await axios(`https://invamdemo-dbapi.innovapptive.com/search?search=${stringfiedSearch}`, {
             method: 'get',
             withCredentials: false
         });
@@ -287,20 +298,32 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                      <IonSelectOption value="city">City</IonSelectOption>
                      <IonSelectOption value="year">Year</IonSelectOption>
                  </IonSelect>
-                 <IonItem>
-                     <IonLabel position="fixed">Make Name</IonLabel>
-                     <IonInput value={selectedMakeName}></IonInput>
-                     <IonLabel position="fixed">Model Name</IonLabel>
-                     <IonInput value={selectedModelName}></IonInput>
-                     <IonLabel position="fixed">city</IonLabel>
-                     <IonInput value={selectedCity}></IonInput>
-                     <IonLabel position="fixed">Year</IonLabel>
-                     <IonInput value={selectedYear}></IonInput>
-                     <IonButton onClick={() => searchFields(selectedMakeName, selectedModelName, selectedCity, selectedYear)} style={{"position":"absolute","right":"10px"}}>Search</IonButton>
 
 
+                 <IonItem style={{"display":"flex"}} lines="none" class="remove_inner_bottom">
+                    <IonItem className={searchText.indexOf('make_name') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
+                        <IonLabel>Make Name</IonLabel>
+                        <IonInput value={searchObject.make_name} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "make_name":e.detail.value!})}></IonInput>
+                    </IonItem>
+                    <IonItem className={searchText.indexOf('model_name') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
+                        <IonLabel>Model Name</IonLabel>
+                        <IonInput value={searchObject.model_name} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "model_name":e.detail.value!})}></IonInput>
+                    </IonItem>
+                    <IonItem className={searchText.indexOf('city') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
+                        <IonLabel>city</IonLabel>
+                        <IonInput value={searchObject.city} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "city":e.detail.value!})}></IonInput>
+                    </IonItem>
+                    <IonItem className={searchText.indexOf('year') !== -1 ? "display" : "hide"}  lines="none" class="remove_inner_bottom">
+                        <IonLabel>Year</IonLabel>
+                        <IonInput value={searchObject.year} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "year":e.detail.value!})}></IonInput>
+                    </IonItem>
+                    <IonItem lines="none" class="remove_inner_bottom">
+                        <IonButton onClick={() => searchFields(searchObject)}   
+                               className={searchText ? "display" : "hide"}>Search</IonButton>
+                    </IonItem>
+                  
                  </IonItem>
-
+              
           <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
                              onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
             <IonInfiniteScrollContent
