@@ -3,7 +3,7 @@
         {
            "Category_Id":20,
            "Category_Name":"Unassigned",
-           "Cover_Image":"../../../assets/images/category-placeholder.png"
+           "Cover_Image":"category-placeholder.png"
         },
         {
            "Category_Id":604,

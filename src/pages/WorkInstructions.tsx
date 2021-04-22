@@ -1,6 +1,7 @@
 import React from 'react';
 import { IonHeader, IonToolbar, IonPage, IonTitle, IonContent } from '@ionic/react';
 import { InstructionSummary } from '../components/instruction';
+import './WorkInstructions.css';
 
 const WorkInstructionPage: React.FC = () => {
     return (

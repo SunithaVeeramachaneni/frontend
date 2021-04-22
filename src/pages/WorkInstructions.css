@@ -1,0 +1,9 @@
+ion-button {
+    --background: #2953E8;
+    --border-radius: 15px;
+    --color: white
+  }
+  
+  .searchbar-input.sc-ion-searchbar-md {
+    border-radius: 15px;
+  }
