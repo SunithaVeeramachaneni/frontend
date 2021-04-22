@@ -1,0 +1,44 @@
+{
+    "data": [
+        {
+           "Category_Id":20,
+           "Category_Name":"Unassigned",
+           "Cover_Image":"../../../assets/images/category-placeholder.png"
+        },
+        {
+           "Category_Id":604,
+           "Category_Name":"Sample Category1",
+           "Cover_Image":"../images/coverimage1.png"
+        },
+        {
+           "Category_Id":607,
+           "Category_Name":"Maintanence",
+           "Cover_Image":"category-placeholder.png"
+        },
+        {
+           "Category_Id":612,
+           "Category_Name":"Sample Category2",
+           "Cover_Image":"assets/images/category-placeholder.png"
+        },
+        {
+           "Category_Id":615,
+           "Category_Name":"Job Instruction",
+           "Cover_Image":"assets/images/category-placeholder.png"
+        },
+        {
+           "Category_Id":617,
+           "Category_Name":"desk Instruction",
+           "Cover_Image":"assets/images/category-placeholder.png"
+        },
+        {
+           "Category_Id":618,
+           "Category_Name":"Health Precaution",
+           "Cover_Image":"assets/images/category-placeholder.png"
+        },
+        {
+           "Category_Id":619,
+           "Category_Name":"testCat12345",
+           "Cover_Image":"assets/images/category-placeholder.png"
+        }
+     ]
+}

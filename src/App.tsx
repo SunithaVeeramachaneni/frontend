@@ -15,7 +15,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { apps, home, send } from 'ionicons/icons';
 
 import Insight from './pages/Insight';
-import WorkInstructions from './pages/WorkInstructions';
+import WorkInstructionPage from './pages/WorkInstructions';
 
 import './vendor';
 
@@ -51,7 +51,7 @@ const App: React.FC = (props) => {
                                 <Route path="/details/:leaveType" component={LeaveDetails} />
 
                                 {/* <Route path="/tab2/details" component={Details} /> */}
-                                <Route path="/workInstructions" component={WorkInstructions} />
+                                <Route path="/workInstructions" component={WorkInstructionPage} />
                                 <Route exact path="/" render={() => <Redirect to="/home" />} />
                             </IonRouterOutlet>
 
