@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
 import {
     IonContent,
@@ -12,9 +12,10 @@ import {
     IonMenuToggle,
     IonLabel,
     IonFooter,
-    IonImg
+    IonImg,
+    IonItemGroup
 } from '@ionic/react';
-import { home,star, person,chatboxes, notifications, journal, calendar,create,radioButtonOff, squareOutline, navigate, settings, square } from 'ionicons/icons';
+import { home,star, person,chatboxes, notifications, journal, calendar,create,radioButtonOff, squareOutline, navigate, settings, square , arrowDropdown} from 'ionicons/icons';
 import Logo from "../assets/images/innovapptive-logo.svg";
 import "./MainMenu.css";
 
@@ -29,7 +30,7 @@ export const MainMenu = ({ disabled }: any) => {
     console.log('history :', history);
     const appPages: AppPage[] = [
         { title: 'Dashboard', url: '/home', icon: home },
-        { title: 'Insights', url: '/insight', icon: star },
+        { title: 'Insights', url: '/insight', icon: star},
         { title: 'Work Instructions Authoring', url: '/workInstructions', icon: person },
         { title: 'Chatter', url: '/home', icon: chatboxes },
         { title: 'IOT and Alerts', url: '/home', icon: notifications },
@@ -44,6 +45,12 @@ export const MainMenu = ({ disabled }: any) => {
 
     ];
 
+    const [showForce, setShowForce] = useState(false);
+
+    const menuItemForce = () => {
+        setShowForce(!showForce);
+      } 
+
     return (
         <React.Fragment>
             <IonMenu menuId="first" className="menu-width" contentId="myMenuOutlet" disabled={disabled}>
@@ -54,18 +61,93 @@ export const MainMenu = ({ disabled }: any) => {
                 </IonHeader>
                 <IonContent>
                     <IonList>
-                        {
+                        {/* {
                             appPages.map((appPage, index) => {
                                 return (
-                                    <IonMenuToggle key={index} auto-hide="false" className="scroll">
-                                        <IonItem routerLink={appPage.url} lines="none" class="remove_inner_bottom">
-                                            <IonIcon icon={appPage.icon} slot="start" style={{"marginRight":"12px"}}/>
-                                            <IonLabel>{appPage.title}</IonLabel>
-                                        </IonItem>
-                                    </IonMenuToggle>
+                                  
+                             
+                                   
                                 );
                             })
-                        }
+                        } */}
+
+                        <IonMenuToggle auto-hide="false" className="scroll">
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={home} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Home</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/insight" onClick={menuItemForce} lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={star} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Insights</IonLabel>
+                                            <IonIcon icon={arrowDropdown} slot="end" style={{"marginRight":"12px"}}/>
+                                        </IonItem>
+                                            <IonItemGroup className={showForce === true ? "display" :"hide"}>
+                                                <IonItem submenu-item  lines="none" class="remove_inner_bottom" style={{"height":"40px"}}>
+                                                    <IonIcon icon="" slot="start" style={{"marginRight":"12px"}}/>
+                                                    <IonLabel>Asset 360</IonLabel>
+                                                </IonItem>
+                                                <IonItem submenu-item  lines="none" class="remove_inner_bottom" style={{"height":"40px"}}>
+                                                    <IonIcon icon="" slot="start" style={{"marginRight":"12px"}}/>
+                                                    <IonLabel>Maintenance 360</IonLabel>
+                                                </IonItem>
+                                                <IonItem submenu-item  lines="none" class="remove_inner_bottom" style={{"height":"40px"}}>
+                                                    <IonIcon icon="" slot="start" style={{"marginRight":"12px"}}/>
+                                                    <IonLabel>Operations 360</IonLabel>
+                                                </IonItem>
+                                                <IonItem submenu-item  lines="none" class="remove_inner_bottom" style={{"height":"40px"}}>
+                                                    <IonIcon icon="" slot="start" style={{"marginRight":"12px"}}/>
+                                                    <IonLabel>Warehouse 360</IonLabel>
+                                                </IonItem>
+                                                <IonItem submenu-item  lines="none" class="remove_inner_bottom" style={{"height":"40px"}}>
+                                                    <IonIcon icon="" slot="start" style={{"marginRight":"12px"}}/>
+                                                    <IonLabel>Fixed Asset 360</IonLabel>
+                                                </IonItem>
+                                            </IonItemGroup>
+                                        <IonItem routerLink="/workinstruction" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={person} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Work Instructions Authoring</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={chatboxes} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Chatter</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={notifications} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>IOT and Alerts</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={journal} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Maintenance Control Center</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={calendar} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Planning & Scheduling</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={create} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>ROI Forecasting</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={radioButtonOff} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Operator Rounds</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={squareOutline} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Paperless Operations</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={navigate} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Asset Tracker</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={settings} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Warehouse 360°</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={settings} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Configure CWP</IonLabel>
+                                        </IonItem>   
+                                    </IonMenuToggle>
                         <IonMenuToggle key={5} auto-hide="false" onClick={() => {
                             sessionStorage.removeItem('userToken');
                             history.push('/home')
