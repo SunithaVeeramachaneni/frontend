@@ -296,7 +296,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
               carsPromise.then((res) => {
                     console.log(res.data);
                     let cars = res.data.usedcars
-                    setUsedCars(cars);
+                    setItems(cars);
 
                     Swal.fire({
                         icon: 'success',
@@ -379,7 +379,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
             </IonInfiniteScrollContent>
           </IonInfiniteScroll> */}
 
-             <IonModal isOpen={showModal} cssClass='my-custom-class'>
+             <IonModal isOpen={showModal} cssClass='my-custom-class' id="addModal">
                   <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
                 <h1 style={{"marginTop":"0px"}}>Add
                     <IonImg src={Close} className="Logo" onClick={() => setShowModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
@@ -415,7 +415,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
             </form>
              </IonModal>
       
-            <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
+            <IonButton data-target="#addModal" onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
            <div style={{"clear": "both"}}> </div>
            <br /><br /> 
             <IonGrid style={{"marginTop":"5px"}}>
@@ -425,7 +425,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                         <IonCol className="bold borders">Make Name</IonCol>
                         <IonCol className="bold borders">City</IonCol>
                         <IonCol className="bold borders">Engine</IonCol>
-                        <IonCol className="bold borders" style={{"maxWidth":"94px"}}></IonCol>
+                        <IonCol className="bold borders" style={{"maxWidth":"110px"}}></IonCol>
                     </IonRow>
                 </IonHeader>
                 {items.map(car => (
@@ -435,7 +435,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                           <IonCol className="borders">{car.city}</IonCol>
                         <IonCol className="borders">{car.engine_type}</IonCol>
 
-                            <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
+                            <IonModal isOpen={showEditModal} cssClass='my-custom-class' id="editModal">
                             <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
                                 <h1 style={{"marginTop":"0px"}}>Edit
                                     <IonImg src={Close} className="Logo" onClick={() => setShowEditModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
@@ -475,11 +475,15 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                                     Submit
                                 </IonButton>
                             </form>
-                        </IonModal>
+                        </IonModal> 
 
                             <IonItem lines="none" class="remove_inner_bottom borders">
-                                <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />
-                                <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
+                                <IonButton color="favorite" data-target="#editModal" onClick={() => {setShowEditModal(true); showDetails(car)}}>
+                                    <IonImg src={Edit} style={{"width":"20px","cursor":"pointer"}} />
+                                </IonButton> 
+                                <IonButton color="favorite" onClick={() => deleteUsedCars(car)}>
+                                    <IonImg src={Delete} style={{"width":"20px","cursor":"pointer"}}/>
+                                </IonButton>
                             </IonItem>
 
                   </IonRow>): null
