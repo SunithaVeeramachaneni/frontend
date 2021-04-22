@@ -220,7 +220,7 @@ const Insight: React.FC = ({ cars, history }: any) => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Insight</IonTitle>
+                    <IonTitle>Insights</IonTitle>
                     <IonMenuButton slot="start" />
                 </IonToolbar>
             </IonHeader>
