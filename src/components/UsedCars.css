@@ -20,17 +20,14 @@
      border: 1px solid #E5E5E5;
  }
  .my-custom-class {
-    --background: #222;
+    --background: #fff;
     --spinner-color: #fff;
-  
-    color: #fff;
+    color: black;
   }
-
 
   .custom-card {
     border-radius: 10px;
   }
-
 
   .display {
      display: flex;
