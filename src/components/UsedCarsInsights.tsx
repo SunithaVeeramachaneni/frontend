@@ -63,18 +63,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
 
     const [usedCars, setUsedCars]= useState([] as any);
 
-    const fetchMoreData = () => {
-        setSkip(instructions.length)
-        setCount(count => count + 1);
-    }
-
-    const fetchMoreUsedCarsData = () => {
-        setSkip(usedCars.length)
-        setCount(count => count + 1);
-    }
-
-
-    function delet(obj) {
+    function deletNullifiedProp(obj) {
         for (var prop in obj) {
             if (obj[prop] === null || obj[prop] === undefined || obj[prop] === "") {
                 delete obj[prop];
@@ -82,22 +71,25 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
         }
     }
 
-    const searchFields = async (searchObject) => {
-        delet(searchObject);
-        console.log(searchObject);
-        let stringfiedSearch = JSON.stringify(searchObject);
+    const searchFields = async (searchObject, skip) => {
+        
+        deletNullifiedProp(searchObject);
+       let stringfiedSearch = JSON.stringify(searchObject);
         console.log(stringfiedSearch);
 
-        const searchResults = await axios(`https://invamdemo-dbapi.innovapptive.com/search?page=1&limit=10&searchfeilds=${stringfiedSearch}`, {
+        const searchResults = await axios(`https://invamdemo-dbapi.innovapptive.com/search?page=1&limit=10&skip=${skip}&searchfeilds=${stringfiedSearch}`, {
             method: 'get',
             withCredentials: false
         });
         console.log(searchResults);
-        if(searchResults) {
+        if(searchResults && searchResults.data.usedcars.length > 0) {
             console.log(searchResults);
-            setItems(searchResults.data.usedcars)
+            setItems(searchResults.data.usedcars);
+            setShowLoading(false);
+            setDisableInfiniteScroll(searchResults.data.usedcars < 10);
+        } else {
+            setDisableInfiniteScroll(true);
         }
-    
     }
 
     async function fetchData(skip) {
@@ -119,66 +111,22 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
       }
 
       useIonViewWillEnter(async () => {
-     
-        await fetchData(0);
+            await fetchData(0);
       });
 
       async function searchNext($event: CustomEvent<void>) {
         setSkip(skip => skip + 10)
         setCount(count => count + usedCars.length)
-        await fetchData(skip);
+        if(searchObject.make_name!== "" || searchObject.model_name!== "" || searchObject.city !== "" || searchObject.year !== "") {
+            await searchFields(searchObject, skip);
+        } else {
+            await fetchData(skip);
+        }
+      
 
         ($event.target as HTMLIonInfiniteScrollElement).complete();
       }
 
-    useEffect(() => {
-        let searchedResult = usedCars.filter(function(car){
-            return car.make == searchText || car.model == searchText ;
-        });
-        console.log(searchedResult);
-        if(searchedResult.length > 0) {
-            setUsedCars(searchedResult);
-        } else {
-                 // http://cwpdev.innovapptive.com:3000/cars?skip=${skip}
-            const fetchCars = async () => {
-                try {
-                    const results = await axios('https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}', {
-                      method: 'get',
-                      withCredentials: false
-                   });
-                   console.log(results);
-                   setUsedCars(results.data.usedcars);
-
-                } catch(error) {
-                    console.log(error);
-                  };
-            }
-
-            fetchCars();
-        }
-
-    }, [searchText])
-
-
-    useEffect(() => {
-        const fetchCars = async () => {
-            try {
-                const results = await axios('https://invamdemo-dbapi.innovapptive.com/cars?skip=${skip}', {
-                  method: 'get',
-                  withCredentials: false
-               });
-               console.log(results);
-                        setUsedCars(results.data.usedcars);
-
-            } catch(error) {
-                console.log(error);
-              };
-        }
-
-     fetchCars();
-
-
-    }, [skip])
 
 
     const { register, handleSubmit, errors } = useForm({}); // initialise the hook
@@ -225,57 +173,12 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
 
     const updateUsedCars = data => {
           console.log(data);
-          axios.get(`https://invamdemo-dbapi.innovapptive.com/car/${data.id}`)
-          .then((response) => {
-              console.log(response);
-          
-            axios.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${data.id}`, {
+          axios.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${data.id}`, {
                 model_name:data.model_name,
                 make_name: data.make_name,
                 body_type: data.body_type,
                 city: data.city,
-                engine_type: data.engine_type,
-                back_legroom: response.data.back_legroom,
-                daysonmarket: response.data.daysonmarket,
-                dealer_zip:  response.data.dealer_zip,
-                engine_cylinders:  response.data.engine_cylinders,
-                engine_displacement: response.data.engine_displacement,
-                exterior_color: response.data.exterior_color,
-                franchise_dealer: response.data.franchise_dealer,
-                franchise_make:  response.data.franchise_make,
-                front_legroom:  response.data.front_legroom,
-                fuel_tank_volume:  response.data.fuel_tank_volume,
-                fuel_type:  response.data.fuel_type,
-                height: response.data.height,
-                horsepower:  response.data.horsepower,
-                interior_color:  response.data.interior_color,
-                is_new: response.data.is_new,
-                latitude:  response.data.latitude,
-                length:  response.data.length,
-                listed_date:  response.data.listed_date,
-                listing_color: response.data.listing_color,
-                longitude:  response.data.longitude,
-                main_picture_url:  response.data.main_picture_url,
-                major_options: response.data.major_options,
-                maximum_seating:  response.data.maximum_seating,
-                mileage:  response.data.mileage,
-                power:  response.data.power,
-                price:  response.data.price,
-                savings_amount: response.data.savings_amount,
-                seller_rating: response.data.seller_rating,
-                sp_id: response.data.sp_id,
-                sp_name: response.data.sp_name,
-                torque: response.data.torque,
-                transmission: response.data.transmission,
-                transmission_display: response.data.transmission_display,
-                trimId: response.data.trimId,
-                trim_name: response.data.trim_name,
-                vin: response.data.vin,
-                wheel_system: response.data.wheel_system,
-                wheel_system_display: response.data.wheel_system_display,
-                wheelbase: response.data.wheelbase,
-                width: response.data.width,
-                year: response.data.year
+                engine_type: data.engine_type
           })
           .then((response) => {
             console.log(response);
@@ -296,7 +199,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
               carsPromise.then((res) => {
                     console.log(res.data);
                     let cars = res.data.usedcars
-                    setItems(cars);
+                    setUsedCars(cars);
 
                     Swal.fire({
                         icon: 'success',
@@ -311,8 +214,6 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
           }, (error) => {
             console.log(error);
           });
-
-        })
     }
 
     const deleteUsedCars = (selectedCar) => {
@@ -322,14 +223,13 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
               title: 'Deleted Successfully'
           })
           const usedcar = items.filter(item => item.id !== selectedCar.id);
-          
-           setItems(usedcar);
+            setItems(usedcar);
         })
     }
 
     return (
         <React.Fragment>
-             <IonContent>
+             <IonContent style={{"height": "300px"}}>
              <IonLoading
                                     isOpen={showLoading}
                                     onDidDismiss={() => setShowLoading(false)}
@@ -366,7 +266,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                         <IonInput value={searchObject.year} className="input-fields"  onIonChange={e => setSearchObject({...searchObject , "year":e.detail.value!})}></IonInput>
                     </IonItem>
                     <IonItem lines="none" class="remove_inner_bottom">
-                        <IonButton onClick={() => searchFields(searchObject)}   
+                        <IonButton onClick={() => searchFields(searchObject, 0)}   
                                className={searchText ? "display" : "hide"} style={{"height":"40px"}}>Search</IonButton>
                     </IonItem>
                   
@@ -379,7 +279,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
             </IonInfiniteScrollContent>
           </IonInfiniteScroll> */}
 
-             <IonModal isOpen={showModal} cssClass='my-custom-class' id="addModal">
+             <IonModal isOpen={showModal} cssClass='my-custom-class'>
                   <form onSubmit={handleSubmit(onSubmit)} style={{ padding: 18 }}>
                 <h1 style={{"marginTop":"0px"}}>Add
                     <IonImg src={Close} className="Logo" onClick={() => setShowModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
@@ -415,7 +315,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
             </form>
              </IonModal>
       
-            <IonButton data-target="#addModal" onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
+            <IonButton onClick={() => setShowModal(true)} style={{"position":"absolute","right":"10px"}}>ADD</IonButton>
            <div style={{"clear": "both"}}> </div>
            <br /><br /> 
             <IonGrid style={{"marginTop":"5px"}}>
@@ -425,7 +325,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                         <IonCol className="bold borders">Make Name</IonCol>
                         <IonCol className="bold borders">City</IonCol>
                         <IonCol className="bold borders">Engine</IonCol>
-                        <IonCol className="bold borders" style={{"maxWidth":"110px"}}></IonCol>
+                        <IonCol className="bold borders" style={{"maxWidth":"94px"}}></IonCol>
                     </IonRow>
                 </IonHeader>
                 {items.map(car => (
@@ -435,7 +335,7 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                           <IonCol className="borders">{car.city}</IonCol>
                         <IonCol className="borders">{car.engine_type}</IonCol>
 
-                            <IonModal isOpen={showEditModal} cssClass='my-custom-class' id="editModal">
+                            <IonModal isOpen={showEditModal} cssClass='my-custom-class'>
                             <form onSubmit={handleSubmit(updateUsedCars)} style={{ padding: 18 }}>
                                 <h1 style={{"marginTop":"0px"}}>Edit
                                     <IonImg src={Close} className="Logo" onClick={() => setShowEditModal(false)} style={{"cursor":"pointer","width":"60px","float":"right"}}/></h1>
@@ -475,20 +375,16 @@ export const UsedCarsInsightsSummary = ({ cars }: any) => {
                                     Submit
                                 </IonButton>
                             </form>
-                        </IonModal> 
+                        </IonModal>
 
                             <IonItem lines="none" class="remove_inner_bottom borders">
-                                <IonButton color="favorite" data-target="#editModal" onClick={() => {setShowEditModal(true); showDetails(car)}}>
-                                    <IonImg src={Edit} style={{"width":"20px","cursor":"pointer"}} />
-                                </IonButton> 
-                                <IonButton color="favorite" onClick={() => deleteUsedCars(car)}>
-                                    <IonImg src={Delete} style={{"width":"20px","cursor":"pointer"}}/>
-                                </IonButton>
+                                <IonImg src={Edit} onClick={() => {setShowEditModal(true); showDetails(car)}} style={{"width":"20px","cursor":"pointer"}} />
+                                <IonImg src={Delete} style={{"width":"20px","cursor":"pointer","marginLeft":"20px"}} onClick={() => deleteUsedCars(car)}/>
                             </IonItem>
 
                   </IonRow>): null
                 ))}
-                    <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll}
+                    <IonInfiniteScroll threshold="200px" disabled={disableInfiniteScroll}
                         onIonInfinite={(e: CustomEvent<void>) => searchNext(e)}>
                         <IonInfiniteScrollContent
                             loadingText="Loading more UsedCars...">

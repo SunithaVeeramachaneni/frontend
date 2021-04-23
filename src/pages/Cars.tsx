@@ -72,7 +72,7 @@ const UsedCarsPage = ({ cars, history }: any) => {
                 <IonImg src={User} className="user-icon" onClick={(e: any) => {e.persist(); setShowPopover({ showPopover: true, event: e }) }}/>
             </IonHeader>
 
-            <IonContent class="ion-padding">
+            <IonContent class="ion-padding ion-custom-content" style={{"background":"#f2f2f2 !important"}}>
                 <UsedCarsSummary cars={cars} />
             </IonContent>
 
