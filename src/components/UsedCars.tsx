@@ -58,7 +58,7 @@ export const UsedCarsSummary = ({ cars }: any) => {
         datasets: [
             {
                 label: newCarsByModelAndYearBarData.make_name,
-                backgroundColor: ['#36a2eb', 'rgba(255,99,132,0.2)'],
+                backgroundColor: ['#FF5E54', 'rgba(255,99,132,0.2)'],
                 borderColor: 'rgba(255,99,132,1)',
                 borderWidth: 1,
                 hoverBackgroundColor: 'rgba(255,99,132,0.4)',
@@ -74,11 +74,11 @@ export const UsedCarsSummary = ({ cars }: any) => {
         datasets: [
             {
                 label: newCarsByModelAndYearBarData.model_name,
-                backgroundColor: 'rgba(255,99,132,0.2)',
-                borderColor: 'rgba(255,99,132,1)',
+                backgroundColor: 'rgba(139,33,238,0.9)',
+                borderColor: 'rgba(108,25,185,1)',
                 borderWidth: 1,
-                hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-                hoverBorderColor: 'rgba(255,99,132,1)',
+                hoverBackgroundColor: 'rgba(139,33,238,0.4)',
+                hoverBorderColor: 'rgba(108,25,185,1)',
                 data: newCarsByModelAndYearBarData.carsCount
             }
         ]
