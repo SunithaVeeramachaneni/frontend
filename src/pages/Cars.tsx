@@ -13,14 +13,14 @@ import {
     IonLabel
 } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
-import './Home.css';
+import './Cars.css';
 
 import { UsedCarsSummary } from '../components/UsedCars';
 import { IUrlOptions } from '../models/rest-api.model';
 import { RemoteService } from './remote.service';
 import User from "../assets/images/User.svg";
 
-const HomePage = ({ cars, history }: any) => {
+const UsedCarsPage = ({ cars, history }: any) => {
     const remoteService = new RemoteService();
 
     const getRecordById = (recordId: string) => {
@@ -52,7 +52,7 @@ const HomePage = ({ cars, history }: any) => {
             <IonHeader className="nav-header">
                 <IonToolbar>
                     <IonMenuButton slot="start"></IonMenuButton>
-                    <IonTitle>DASHBOARD</IonTitle>
+                    <IonTitle>User Cars Analysis and Insights</IonTitle>
                 </IonToolbar>
                 <IonPopover
                     cssClass='my-custom-class'
@@ -80,4 +80,4 @@ const HomePage = ({ cars, history }: any) => {
     );
 };
 
-export default HomePage;
+export default UsedCarsPage;

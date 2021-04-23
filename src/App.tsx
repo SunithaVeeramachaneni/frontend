@@ -16,7 +16,7 @@ import { apps, home, send } from 'ionicons/icons';
 
 import Insight from './pages/Insight';
 import WorkInstructionPage from './pages/WorkInstructions';
-
+import UsedCarsPage from './pages/Cars';
 import './vendor';
 
 import LoginPage from './pages/Login';
@@ -51,25 +51,12 @@ const App: React.FC = (props) => {
                                 <Route path="/details/:leaveType" component={LeaveDetails} />
 
                                 {/* <Route path="/tab2/details" component={Details} /> */}
-                                <Route path="/workInstructions" component={WorkInstructionPage} />
+                                <Route path="/workinstructions" component={WorkInstructionPage} />
+                                <Route path="/usedcars" component={UsedCarsPage} />
                                 <Route exact path="/" render={() => <Redirect to="/home" />} />
                             </IonRouterOutlet>
 
-                            {/* <IonTabBar slot="bottom">
-                                <IonTabButton tab="tab1" href="/home">
-                                    <IonIcon icon={home} />
-                                    <IonLabel>Home</IonLabel>
-                                </IonTabButton>
-                                <IonTabButton tab="tab2" href="/tab2">
-                                    <IonIcon icon={apps} />
-                                    <IonLabel>Tab Two</IonLabel>
-                                </IonTabButton>
-                                <IonTabButton tab="tab3" href="/tab3">
-                                    <IonIcon icon={send} />
-                                    <IonLabel>Tab Three</IonLabel>
-                                </IonTabButton>
-                            </IonTabBar> */}
-                        {/* </IonTabs> */}
+
 
                     </IonPage>
 

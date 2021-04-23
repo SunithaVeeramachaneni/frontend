@@ -15,7 +15,7 @@ import {
     IonImg,
     IonItemGroup
 } from '@ionic/react';
-import { home,star, person,chatboxes, notifications, journal, calendar,create,radioButtonOff, squareOutline, navigate, settings, square , arrowDropdown} from 'ionicons/icons';
+import { home,star, person,chatboxes, notifications, journal, calendar,create,radioButtonOff, squareOutline, navigate, settings, square , arrowDropdown, pie} from 'ionicons/icons';
 import Logo from "../assets/images/innovapptive-logo.svg";
 import "./MainMenu.css";
 
@@ -30,8 +30,9 @@ export const MainMenu = ({ disabled }: any) => {
     console.log('history :', history);
     const appPages: AppPage[] = [
         { title: 'Dashboard', url: '/home', icon: home },
+        { title: 'Used Cars', url: '/usedcars', icon: pie},
         { title: 'Insights', url: '/insight', icon: star},
-        { title: 'Work Instructions Authoring', url: '/workInstructions', icon: person },
+        { title: 'Work Instructions Authoring', url: '/workinstructions', icon: person },
         { title: 'Chatter', url: '/home', icon: chatboxes },
         { title: 'IOT and Alerts', url: '/home', icon: notifications },
         { title: 'Maintenance Control Center', url: '/home', icon: journal },
@@ -74,7 +75,11 @@ export const MainMenu = ({ disabled }: any) => {
                         <IonMenuToggle auto-hide="false" className="scroll">
                                         <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
                                             <IonIcon icon={home} slot="start" style={{"marginRight":"12px"}}/>
-                                            <IonLabel>Home</IonLabel>
+                                            <IonLabel>Dashboard</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/usedcars" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={pie} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Used Cars Insights</IonLabel>
                                         </IonItem>
                                         <IonItem routerLink="/insight" onClick={menuItemForce} lines="none" class="remove_inner_bottom">
                                             <IonIcon icon={star} slot="start" style={{"marginRight":"12px"}}/>
@@ -103,9 +108,13 @@ export const MainMenu = ({ disabled }: any) => {
                                                     <IonLabel>Fixed Asset 360</IonLabel>
                                                 </IonItem>
                                             </IonItemGroup>
-                                        <IonItem routerLink="/workinstruction" lines="none" class="remove_inner_bottom">
-                                            <IonIcon icon={person} slot="start" style={{"marginRight":"12px"}}/>
+                                        <IonItem routerLink="/workinstructions" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={create} slot="start" style={{"marginRight":"12px"}}/>
                                             <IonLabel>Work Instructions Authoring</IonLabel>
+                                        </IonItem>
+                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
+                                            <IonIcon icon={journal} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonLabel>Maintenance Control Center</IonLabel>
                                         </IonItem>
                                         <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
                                             <IonIcon icon={chatboxes} slot="start" style={{"marginRight":"12px"}}/>
@@ -116,15 +125,12 @@ export const MainMenu = ({ disabled }: any) => {
                                             <IonLabel>IOT and Alerts</IonLabel>
                                         </IonItem>
                                         <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
-                                            <IonIcon icon={journal} slot="start" style={{"marginRight":"12px"}}/>
-                                            <IonLabel>Maintenance Control Center</IonLabel>
-                                        </IonItem>
-                                        <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
                                             <IonIcon icon={calendar} slot="start" style={{"marginRight":"12px"}}/>
                                             <IonLabel>Planning & Scheduling</IonLabel>
                                         </IonItem>
                                         <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">
-                                            <IonIcon icon={create} slot="start" style={{"marginRight":"12px"}}/>
+                                            <IonIcon icon={person} slot="start" style={{"marginRight":"12px"}}/>
+                                            
                                             <IonLabel>ROI Forecasting</IonLabel>
                                         </IonItem>
                                         <IonItem routerLink="/home" lines="none" class="remove_inner_bottom">

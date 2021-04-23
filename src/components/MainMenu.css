@@ -38,3 +38,13 @@
  .hide {
   display: none;
 }
+
+.list-md .item-lines-none {
+    font-size: 14px;
+    color:#7A7A7A
+}
+
+.split-pane-visible > ion-menu.split-pane-side.menu-enabled {
+    font-size: 14px;
+    color:#7A7A7A
+}

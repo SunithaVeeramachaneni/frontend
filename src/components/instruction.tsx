@@ -90,7 +90,8 @@ export const InstructionSummary = () => {
                                 <IonCol>
                                     {favoriteIns.map(fav => (
                                         fav.WI_Name ? (
-                                             <IonList key={fav.Id}>  <IonImg style={{"width": "50px","height": "50px","float":"left","marginRight":"10px"}} src={docPlaceholder} className="docPlaceholder"/><IonLabel style={{"position": "relative","top": "10px"}}>{fav.WI_Name}</IonLabel></IonList>
+                                             <IonList key={fav.Id}>  
+                                             <IonImg style={{"width": "50px","height": "50px","float":"left","marginRight":"10px"}} src={docPlaceholder} className="docPlaceholder"/><IonLabel style={{"position": "relative","top": "10px"}}>{fav.WI_Name}</IonLabel></IonList>
                                    
                                         ) : null
                                     ))}
