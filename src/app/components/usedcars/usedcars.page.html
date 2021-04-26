@@ -1,0 +1,41 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>DASHBOARD</ion-title>
+    <ion-buttons slot="end">
+      <img [src]="userImg"  style="cursor:pointer;width: 75%;height: 75%;" />
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" >
+  <!-- <ion-button (click)="runHttp()">run http</ion-button> -->
+  <ion-toolbar>
+    <ion-searchbar placeholder="Search by makename or model name" ></ion-searchbar>
+  </ion-toolbar>
+  <ion-button style="position:absolute;right:10px" (click)="openModal()">ADD</ion-button>
+  <ion-grid style="margin-Top:50px">
+    <ion-header>
+      <ion-row>
+        <ion-col class="bold borders">Model Name</ion-col>
+        <ion-col class="bold borders">Make Name</ion-col>
+        <ion-col class="bold borders">Body Type</ion-col>
+        <ion-col class="bold borders">City</ion-col>
+        <ion-col class="bold borders">Engine Type</ion-col>
+        <ion-col class="bold borders"></ion-col>
+      </ion-row>
+    </ion-header>
+      <ion-row *ngFor="let car of cars">
+        <ion-col class="borders">{{car.model}}</ion-col>
+        <ion-col class="borders">{{car.make}}</ion-col>
+        <ion-col class="borders">{{car.body_type}}</ion-col>
+        <ion-col class="borders">{{car.city}}</ion-col>
+        <ion-col class="borders">{{car.engine_type}}</ion-col>
+        <ion-col class="borders">
+          <ion-item lines="none" class="remove_inner_bottom">
+            <img [src]="editImg"  style="width:20px;cursor:pointer;" />
+            <img [src]="deleteImg"  style="width:20px;cursor:pointer;margin-Left:20px" />
+          </ion-item>
+        </ion-col>
+      </ion-row>
+  </ion-grid>

@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Add</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+<div class="container-fluid">
+  <form #userForm="ngForm" (ngSubmit)="register()">
+    <div class="form-group">
+      <label position="stacked">Model</label>
+      <input class="form-control" name="modelname" value={{modelname}}>
+    </div>
+
+    <div class="form-group">
+      <label position="stacked">Make</label>
+      <input class="form-control" name="make_name" value={{make}} >
+    </div>
+
+    <div class="form-group">
+      <label position="stacked">Body Type</label>
+      <input class="form-control" name="body_type" value={{bodytype}} >
+    </div>
+
+    <div class="form-group">
+      <label position="stacked">City</label>
+      <input class="form-control" name="city" value={{city}} >
+    </div>
+
+    <div class="form-group">
+      <label position="stacked">Engine</label>
+      <input class="form-control" name="engine_type" value={{engine}} >
+    </div>
+
+    <!-- <ion-item class="remove_inner_bottom">
+      <ion-label position="stacked">Engine</ion-label>
+      <ion-input class="form-control" name="engine_type">{{engine}}</ion-input>
+    </ion-item> -->
+    <br />
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+    <!-- <ion-button expand="block" class="ion-margin-top">Submit</ion-button> -->
+  </form>
+</div>
+  </ion-content>
