@@ -9,11 +9,11 @@ import { Observable, throwError } from 'rxjs';
 
 
 @Component({
-  selector: 'app-instruction',
-  templateUrl: './workInstructions.page.html',
-  styleUrls: ['./workInstructions.page.scss'],
+  selector: 'app-instruction-home',
+  templateUrl: './workInstructions-home.page.html',
+  styleUrls: ['./workInstructions-home.page.scss'],
 })
-export class WorkInstructionsComponent implements OnInit {
+export class WorkInstructionsHomeComponent implements OnInit {
   editImg = '/assets/images/edit.svg';
   deleteImg = '/assets/images/delete.svg';
   userImg = '/assets/images/User.svg';
@@ -49,13 +49,10 @@ export class WorkInstructionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any>('https://invamdemo-dbapi.innovapptive.com/cars')
+    this.http.get<any>('http://localhost:3000/categories')
     .subscribe(response => {
       console.log(response);
-      if(Object.keys(response).length) {
-        this.cars = response.usedcars ? response.usedcars : [];
-        console.log(this.cars);
-      }
+      
     });
   }
 

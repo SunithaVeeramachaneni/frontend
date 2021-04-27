@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { InstructionsPageRoutingModule } from './workInstructions-routing.module';
-
-import { WorkInstructionsComponent } from './workInstructions.page';
+import { InstructionsHomePageRoutingModule } from './workInstructions-home-routing.module';
+import { CategoriesComponent } from './categories/categories.component';
+import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
 import { MyModalPageComponent } from '../my-modal-page/my-modal-page.component';
 
 @NgModule({
@@ -16,9 +16,9 @@ import { MyModalPageComponent } from '../my-modal-page/my-modal-page.component';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    InstructionsPageRoutingModule
+    InstructionsHomePageRoutingModule
   ],
-  declarations: [WorkInstructionsComponent, MyModalPageComponent],
+  declarations: [WorkInstructionsHomeComponent, CategoriesComponent,MyModalPageComponent],
   entryComponents: [MyModalPageComponent]
 })
-export class WorkInstructionsModule {}
+export class WorkInstructionsHomeModule {}

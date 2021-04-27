@@ -14,9 +14,9 @@ const routes: Routes = [
 
   },
   {
-    path: 'WorkInstructions',
+    path: 'WorkInstructions-Home',
     // loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-    loadChildren: () => import('./components/workInstructions/workInstructions.module').then( m => m.WorkInstructionsModule)
+    loadChildren: () => import('./components/workInstructions-home/workInstructions-home.module').then( m => m.WorkInstructionsHomeModule)
 
   },
   {

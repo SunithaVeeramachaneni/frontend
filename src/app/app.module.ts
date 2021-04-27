@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { WorkInstructionsComponent } from './components/workInstructions/workInstructions.page';
+import { WorkInstructionsHomeComponent } from './components/workInstructions-home/workInstructions-home.page';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [AppComponent, WorkInstructionsComponent],
+  declarations: [AppComponent, WorkInstructionsHomeComponent],
   entryComponents: [],
   imports: [BrowserModule,HttpClientModule, IonicModule.forRoot(), AppRoutingModule, FormsModule],
   providers: [HttpClient,{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SampleService],
