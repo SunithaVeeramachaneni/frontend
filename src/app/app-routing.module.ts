@@ -14,6 +14,12 @@ const routes: Routes = [
 
   },
   {
+    path: 'WorkInstructions',
+    // loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
+    loadChildren: () => import('./components/workInstructions/workInstructions.module').then( m => m.WorkInstructionsModule)
+
+  },
+  {
     path: 'main-menu',
     loadChildren: () => import('./components/main-menu/main-menu.module').then( m => m.MainMenuPageModule)
   },

@@ -15,7 +15,7 @@ export class AppComponent {
     { title: 'IOT and Alerts', url: '/components/IOTandAlerts', icon: 'notifications' },
     { title: 'Maintenance Control Center', url: '/components/MaintenanceControlCenter', icon: 'journal' },
     { title: 'Planning & Scheduling', url: '/components/PlanningandScheduling', icon: 'calendar' },
-    { title: 'Work Instructions Authoring', url: '/components/WorkInstructionsAuthoring', icon: 'create' },
+    { title: 'Work Instructions Authoring', url: 'WorkInstructions', icon: 'create' },
     { title: 'Operator Rounds', url: '/components/OperatorRounds', icon: 'radio-button-off' },
     { title: 'Paperless Operations', url: '/components/PaperlessOperations', icon: 'square' },
     { title: 'Asset Tracker', url: '/components/AssetTracker', icon: 'navigate' },
