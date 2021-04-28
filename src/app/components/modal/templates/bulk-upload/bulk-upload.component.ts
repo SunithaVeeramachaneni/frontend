@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {MyOverlayRef} from '../../myoverlay-ref';
 import {ThemePalette} from '@angular/material/core';
 import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
 import {InstructionService} from "../../../workInstructions-home/categories/workinstructions/instruction.service";
@@ -29,7 +28,7 @@ export class BulkUploadComponent implements OnInit {
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'indeterminate';
 
-  constructor(public ref: MyOverlayRef,
+  constructor(
               private alertService: AlertService,
               private _instructionSvc: InstructionService,
               private router: Router,
@@ -196,8 +195,8 @@ export class BulkUploadComponent implements OnInit {
   }
 
   close() {
-    this.ref.close();
-    const sheets = this.ref.data;
+    // this.ref.close();
+    // const sheets = this.ref.data;
     if (this.loadResults === true) {
       if (this.isUploadSuccess()) {
         this.router.navigate(['/drafts']);
@@ -375,76 +374,76 @@ export class BulkUploadComponent implements OnInit {
 
   ngOnInit(): void {
     this.getBusinessObjects();
-    const sheets = this.ref.data;
-    const allKeys = sheets ? Object.keys(sheets) : [];
-    for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
-      let steps = this.steps;
-      steps = sheets[allKeys[fieldKey]];
-      if (steps && steps.length !== 0) {
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-        const insResultedObject = {
-          instructionName: steps[0].WorkInstruction,
-          insPostedSuccessfully: false,
-          insPostingFailed: false,
-        };
-        this.ins = [...this.ins, insResultedObject];
-        const instructionHeaderPayload = {
-          AssignedObjects: this.businessObject(steps[0].AssignedObjects),
-          Categories: null,
-          CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-          created_at: "",
-          EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-          IsFavorite: false,
-          IsPublishedTillSave: false,
-          Published: false,
-          SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
-          SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
-          Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
-          Cover_Image: steps[0].Cover_Image_Name,
-          WI_Desc: null,
-          WI_Id: null,
-          WI_Name: steps[0].WorkInstruction.trim(),
-          updated_at: ""
-        };
-        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(",") : [];
+    // const sheets = this.ref.data;
+    //const allKeys = sheets ? Object.keys(sheets) : [];
+    // for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
+    //   let steps = this.steps;
+    //   steps = sheets[allKeys[fieldKey]];
+    //   if (steps && steps.length !== 0) {
+    //     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    //     const insResultedObject = {
+    //       instructionName: steps[0].WorkInstruction,
+    //       insPostedSuccessfully: false,
+    //       insPostingFailed: false,
+    //     };
+    //     this.ins = [...this.ins, insResultedObject];
+    //     const instructionHeaderPayload = {
+    //       AssignedObjects: this.businessObject(steps[0].AssignedObjects),
+    //       Categories: null,
+    //       CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+    //       created_at: "",
+    //       EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+    //       IsFavorite: false,
+    //       IsPublishedTillSave: false,
+    //       Published: false,
+    //       SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
+    //       SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
+    //       Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
+    //       Cover_Image: steps[0].Cover_Image_Name,
+    //       WI_Desc: null,
+    //       WI_Id: null,
+    //       WI_Name: steps[0].WorkInstruction.trim(),
+    //       updated_at: ""
+    //     };
+    //     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+    //     const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(",") : [];
 
-        from(catgrs)
-          .pipe(
-            concatMap((category: string) => {
-              category = category.trim();
-              return this._instructionSvc.getCategoriesByName(category, info)
-                .pipe(
-                  mergeMap(data => {
-                    if (data.length === 0) {
-                      return this.addCategory(category, info);
-                    } else {
-                      return of(data[0]);
-                    }
-                  })
-                );
-            }),
-            toArray()
-          ).subscribe(
-            categories => {
-              categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
-              instructionHeaderPayload.Categories = JSON.stringify(categories);
-              if (steps.length === 1) {
-                this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
-              } else {
-                this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
-              }
-            },
-            error => {
-              this._instructionSvc.handleError(error);
-              insResultedObject.insPostingFailed = true;
-              if (fieldKey + 1 === allKeys.length) {
-                this.loadResults = true;
-              }
-            }
-          );
-      }
-    }
+    //     from(catgrs)
+    //       .pipe(
+    //         concatMap((category: string) => {
+    //           category = category.trim();
+    //           return this._instructionSvc.getCategoriesByName(category, info)
+    //             .pipe(
+    //               mergeMap(data => {
+    //                 if (data.length === 0) {
+    //                   return this.addCategory(category, info);
+    //                 } else {
+    //                   return of(data[0]);
+    //                 }
+    //               })
+    //             );
+    //         }),
+    //         toArray()
+    //       ).subscribe(
+    //         categories => {
+    //           categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
+    //           instructionHeaderPayload.Categories = JSON.stringify(categories);
+    //           if (steps.length === 1) {
+    //             this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
+    //           } else {
+    //             this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
+    //           }
+    //         },
+    //         error => {
+    //           this._instructionSvc.handleError(error);
+    //           insResultedObject.insPostingFailed = true;
+    //           if (fieldKey + 1 === allKeys.length) {
+    //             this.loadResults = true;
+    //           }
+    //         }
+    //       );
+    //   }
+    // }
   }
 
   /**

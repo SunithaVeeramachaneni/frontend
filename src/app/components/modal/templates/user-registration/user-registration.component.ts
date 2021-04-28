@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MyOverlayRef } from '../../myoverlay-ref';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {UserAccountService} from '../../../user-management/user-account.service';
 import {AlertService} from '../../alert/alert.service';
@@ -12,7 +11,7 @@ import { ErrorInfo } from '../../../../interfaces/error-info';
 })
 
 export class UserRegistrationComponent implements OnInit {
-  constructor(public ref: MyOverlayRef,
+  constructor(
               private instructionService: InstructionService,
               private alertService: AlertService,
               private userAccService: UserAccountService) {}
@@ -55,7 +54,7 @@ export class UserRegistrationComponent implements OnInit {
             this.userAccService.register(this.registerFormGroup.value, info).subscribe(() => {
               this.alertService.success('Registration is Successful! Please check registered email', {keepAfterRouteChange: true});
               this.userAccService.sendApproveMail(this.registerFormGroup.value, info).subscribe(() => {
-                this.ref.close();
+                // this.ref.close();
               },
               error => this.alertService.error(this.instructionService.getErrorMessage(error), {keepAfterRouteChange: true})
               );
@@ -68,9 +67,9 @@ export class UserRegistrationComponent implements OnInit {
     // this.ref.close(this.registerFormGroup.value);
   }
 
-  close() {
-    this.ref.close(null);
-  }
+  // close() {
+  //   this.ref.close(null);
+  // }
 
 
 }

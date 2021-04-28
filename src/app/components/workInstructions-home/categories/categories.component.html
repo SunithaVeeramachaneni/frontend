@@ -1,11 +1,11 @@
 <div class="row categories-header">
-    <div class="col-lg-8 categories-row-heading">
+    <div class="col-lg-8 col-md-8 categories-row-heading">
       <img src="../../../assets/svg/categories.svg" alt=""/>
       <span class="categories-heading">Categories</span>
     </div>
-    <div class="col-lg-4">
+    <div class="col-lg-4 col-md-4">
       <button type="button" class="btn btn-link font-weight-bold btn-link-custom categories-button"
-              (click)="open(catSubscribeComponent, {})">
+              (click)="openModal()">
         <img src="../assets/svg/addcategory.svg" alt="" class="categories-img"/>
         <span class="addcategory">ADD CATEGORY</span>
       </button>
@@ -21,20 +21,25 @@
             <p class="categories-Wicount"><strong>{{obj.Drafts_Count}}</strong> Drafted - <strong>{{obj.Published_Count}}</strong> Published</p>
           </div>
           <div id="hoverShow1" class="categories-details-card-hover">
+            <button (click)="openModal(obj)">edit</button>
+            <button (click)="delete(obj)">delete</button>
+          </div>
+         
+          <!-- <div id="hoverShow1" class="categories-details-card-hover">
             <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-              <mat-icon>more_horiz</mat-icon>
+              <mat-icon>more_horiz</mat-icon>more
             </button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item (click)="open(catSubscribeComponent, obj)" id="editCategory">
                 <mat-icon>edit</mat-icon>
                 <span class="menu-text">Edit Category</span>
-              </button>
+              </button> 
               <button mat-menu-item (click)="open(delCatSubscribeComponent, obj)" id="deleteCategory">
                 <mat-icon class="text-red">close</mat-icon>
                 <span class="menu-text text-red">Delete Category</span>
               </button>
             </mat-menu>
-          </div>
+          </div> -->
         </div>
         <div *ngIf="obj.CId === '4d08pHYBr'" class="card custom-card hoverWrapper categories-details-card">
           <a [routerLink]="['/instructions/', obj.CId]"><img #image class="card-img-top" src='{{obj.Cover_Image}}' alt=""/></a>

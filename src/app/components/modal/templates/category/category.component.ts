@@ -1,15 +1,17 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {MyOverlayRef} from '../../myoverlay-ref';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild,Input} from '@angular/core';
 import {FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors, FormControl} from '@angular/forms';
 import {NgxSpinnerService} from "ngx-spinner";
 import {COVER_IMAGES} from "../../constants";
-import {InstructionService} from '../../../workInstructions-home/categories/workinstructions/instruction.service';
 import Swal from 'sweetalert2';
-import {CategoryService} from '../../../workInstructions-home/categories/category.service';
+import {CategoryService} from '../../../workinstructions-home/categories/category.service';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { ErrorInfo } from '../../../../interfaces/error-info';
 import { Base64HelperService } from '../../../../shared/base64-helper.service';
+
+import { ModalController } from '@ionic/angular';
+import { NavController } from '@ionic/angular';
+import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
 
 @Component({
   selector: 'app-category',
@@ -31,29 +33,41 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   onResize() {
     this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
   }
-
+  @Input() CId : any;
+  @Input() Category_Name : any;
+  @Input() Cover_Image : any;
+  
   constructor(private fb: FormBuilder,
-              private ref: MyOverlayRef,
               private spinner: NgxSpinnerService,
-              private _instructionSvc: InstructionService,
               private categoryService: CategoryService,
-              private base64HelperService: Base64HelperService) {
+              private base64HelperService: Base64HelperService,
+              public navCtrl: NavController,
+              private modalCtrl: ModalController,private http: HttpClient,) {
+  }
+
+    
+
+  dismissModal(){
+    this.modalCtrl.dismiss(null,"cancel");
   }
 
   ngOnInit() {
+    console.log(this.Category_Name)
     this.frmSubscribe = this.fb.group({
-      cid: new FormControl(''),
-      title: new FormControl('', [
-        Validators.required, Validators.minLength(3), Validators.maxLength(48)], this.validateCategoryName.bind(this)),
-      coverImage: new FormControl(this.coverImages[0])
+      cid: new FormControl(this.CId),
+      title: new FormControl(this.Category_Name, [
+        Validators.required, Validators.minLength(3), Validators.maxLength(48)]),
+      coverImage: new FormControl(this.Cover_Image)
     });
-    const {CId: cid, Category_Name: title, Cover_Image: coverImage} = this.ref.data;
+    const {CId: cid} = this.CId;
+    const {Category_Name: title} = this.Category_Name;
+    const {Cover_Image: coverImage} = this.Cover_Image;
     this.categoryValidatedMsg = '';
 
-    if (cid) {
+    if (this.CId) {
       this.title = 'Edit Category';
-      this.files = coverImage && coverImage.indexOf('assets') > -1 ? this.files : [coverImage];
-      this.frmSubscribe.setValue({cid, title, coverImage});
+      // this.files = coverImage && coverImage.indexOf('assets') > -1 ? this.files : [coverImage];
+      // this.frmSubscribe.setValue({cid, title, coverImage});
     } else {
       this.title = 'Add New Category';
     }
@@ -86,22 +100,22 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     imageForm.append('image', file);
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 
-    this._instructionSvc.uploadAttachments(imageForm, info).subscribe(
-      resp => {
-        const {image: uploadedImage} = resp;
-        this.files = [uploadedImage];
-        this.base64HelperService.getBase64Image(uploadedImage);
-        this.categoryService.setDeleteFiles(uploadedImage);
-        this.frmSubscribe.patchValue({coverImage: uploadedImage});
-      },
-      error => {
-        Swal.fire("Sorry", this._instructionSvc.getErrorMessage(error), 'error');
-        this.spinner.hide();
-      },
-      () => {
-        this.spinner.hide();
-      }
-    );
+    // this._instructionSvc.uploadAttachments(imageForm, info).subscribe(
+    //   resp => {
+    //     const {image: uploadedImage} = resp;
+    //     this.files = [uploadedImage];
+    //     this.base64HelperService.getBase64Image(uploadedImage);
+    //     this.categoryService.setDeleteFiles(uploadedImage);
+    //     this.frmSubscribe.patchValue({coverImage: uploadedImage});
+    //   },
+    //   error => {
+    //     Swal.fire("Sorry", this._instructionSvc.getErrorMessage(error), 'error');
+    //     this.spinner.hide();
+    //   },
+    //   () => {
+    //     this.spinner.hide();
+    //   }
+    // );
   }
 
   deleteAttachment(index: number) {
@@ -111,23 +125,45 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
+    console.log("working")
+    console.log(this.CId)
     if (this.frmSubscribe.invalid) {
       return;
     }
 
-    if (this.ref.data.Category_Name === this.frmSubscribe.value.title && this.ref.data.Cover_Image === this.frmSubscribe.value.coverImage) {
-      this.categoryValidatedMsg = 'No changes made to the Category!';
-    } else if (this.ref.data.Category_Name === this.frmSubscribe.value.title ||
-      this.ref.data.Cover_Image === this.frmSubscribe.value.coverImage) {
-      this.categoryValidatedMsg = '';
-      this.ref.close(this.frmSubscribe.value);
-    } else {
-      this.ref.close(this.frmSubscribe.value);
+    else if(this.CId){
+      const category = {
+        "Category_Name": this.frmSubscribe.value.title,
+        "Cover_Image": this.frmSubscribe.value.coverImage,
+      };
+      this.http.put(`http://localhost:3000/updateCategory/${this.CId}`, category)
+      .subscribe(data => {
+        console.log(data);
+        this.dismissModal();
+        this.http.get("http://localhost:3000/categories").subscribe(data=> {
+          console.log(data);
+        })
+       }, error => {
+        console.log(error);
+      })
     }
-  }
-
-  cancel() {
-    this.ref.close(null);
+    
+    else {
+      const category = {
+        "Category_Name": this.frmSubscribe.value.title,
+        "Cover_Image": this.frmSubscribe.value.coverImage,
+      };
+      this.http.post("http://localhost:3000/addCategory", category)
+      .subscribe(data => {
+        console.log(data);
+        this.dismissModal();
+        this.http.get("http://localhost:3000/categories").subscribe(data=> {
+          console.log(data);
+        })
+       }, error => {
+        console.log(error);
+      })
+    }
   }
 
   getImageSrc = (source: string) => {
@@ -138,17 +174,17 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     return {'height': this.imageHeight ? this.imageHeight : '100%'};
   }
 
-  validateCategoryName({value}: AbstractControl): Observable<ValidationErrors | null> {
-    return this._instructionSvc.getCategoriesByName(value)
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        map((categories) => {
-          if (value !== this.ref.data.Category_Name && categories.length) {
-            return {categoryNameExists: true};
-          }
-          return null;
-        })
-      );
-  }
+  // validateCategoryName({value}: AbstractControl): Observable<ValidationErrors | null> {
+  //   return this._instructionSvc.getCategoriesByName(value)
+  //     .pipe(
+  //       debounceTime(500),
+  //       distinctUntilChanged(),
+  //       map((categories) => {
+  //         if (value !== this.ref.data.Category_Name && categories.length) {
+  //           return {categoryNameExists: true};
+  //         }
+  //         return null;
+  //       })
+  //     );
+  // }
 }

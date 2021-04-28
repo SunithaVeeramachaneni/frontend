@@ -1,4 +1,77 @@
-<div class="modal-card">
+<form [formGroup]="frmSubscribe" (ngSubmit)="onSubmit()">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>{{title}}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="dismissModal()">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding" style="height:390px;">
+    <div class="container-fluid">
+    <input type="text" formControlName="cid" type="hidden">
+      <div class="form-group margin-bottom">
+        <p class="form-headings">Title<span class="text-required">*</span></p>
+        <input type="text" name="title" formControlName="title" id="Category_Name" autocomplete="off" #CatName
+               class="form-control"  [ngClass]="{ 'is-invalid': f.title.errors && (f.title.dirty || f.title.touched) }" />
+        <div *ngIf="f.title.errors && (f.title.dirty || f.title.touched)" class="invalid-feedback">
+          <div *ngIf="f.title.errors.required">Title is required</div>
+          <div *ngIf="f.title.errors.minlength">Title must be at least 3 characters</div>
+          <div *ngIf="f.title.errors.maxlength">Title must be at the max of 48 characters</div>
+          <div *ngIf="f.title.errors.categoryNameExists">Category name already exists</div>
+        </div>
+        <div class="has-text-right char-count">{{f.title.value.length}}/48</div>
+      </div>
+      <div class="form-group">
+        <p class="form-headings pt10">Cover Image</p>
+
+        <div class="uploadfilecontainer1" (click)="fileInput.click()" appDragDrop (onFileDropped)="uploadFile($event)">
+          <input hidden type="file" accept="image/*" #fileInput (change)="uploadFile($event.target.files)" placeholder="drap here">
+          <label class="uploadfilecontainertitle">
+            <img src="assets/svg/upload.svg" alt="" class="upload-img"/>
+            Upload your own</label>
+        </div>
+        <div  class="row files-list" *ngFor="let file of files;let i=index">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 f-left">
+            <img alt="Cover Image" [hidden]="!getImageSrc(file)" [src]="getImageSrc(file)" class="s3coverImage" [ngStyle]="getS3CoverImageHeight()"/>
+          </div>
+          <div class="col-lg-5 col-md-5 col-sm-10 col-xs-10 fnt-gray p-0 my-auto">
+            {{ file }}
+          </div>
+          <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2 p-0 my-auto">
+            <button type="button" class="delete-file" (click)="deleteAttachment(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngFor="let coverImage of coverImages; let i = index">
+        <div class="row row-padding" *ngIf="(i+1)%2 !== 0" [ngStyle]="i === 0 && { 'padding-top': '10px' } ">
+          <div class="col-lg-6 col-md-6">
+            <label>
+              <input type="radio" formControlName="coverImage" [value]="coverImages[i]">
+              <img #image class="coverImages" [src]="coverImages[i]" alt=""/>
+            </label>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <label>
+              <input type="radio" formControlName="coverImage" [value]="coverImages[i+1]">
+              <img class="coverImages cover-image" [src]="coverImages[i+1]" alt=""/>
+            </label>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ion-content>
+  <ion-toolbar>
+    <button type="submit" class="btn save-btn" data-toggle="modal" data-dismiss="modal" style="float: right; margin-right: 30px;">SAVE</button>
+  </ion-toolbar>
+</form>
+
+<!-- <div class="modal-card">
   <form [formGroup]="frmSubscribe" (ngSubmit)="onSubmit()">
     <div class="modal-header">
         <h5 class="modal-title" id="modalLongTitle">{{title}}</h5>
@@ -30,7 +103,7 @@
         </div>
         <div  class="row files-list" *ngFor="let file of files;let i=index">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 f-left">
-            <img alt="Cover Image" [hidden]="!getImageSrc(file)" [attr.src]="getImageSrc(file)" class="s3coverImage" [ngStyle]="getS3CoverImageHeight()"/>
+            <img alt="Cover Image" [hidden]="!getImageSrc(file)" [src]="getImageSrc(file)" class="s3coverImage" [ngStyle]="getS3CoverImageHeight()"/>
           </div>
           <div class="col-lg-5 col-md-5 col-sm-10 col-xs-10 fnt-gray p-0 my-auto">
             {{ file }}
@@ -64,4 +137,24 @@
       <button type="submit" class="btn save-btn" data-toggle="modal" data-dismiss="modal">SAVE</button>
     </div>
   </form>
-</div>
+</div> -->
+
+
+<!-- <ion-content padding class="main-view">
+  <div class="overlay" (click)="dismiss()"></div>
+  <div class="modal_content">
+    <div class="circle"></div>
+    <div class="modal-content">
+  <h2>Welcome to Ionic!</h2>
+  <p>
+    This starter project comes with simple tabs-based layout for apps
+    that are going to primarily use a Tabbed UI.
+  </p>
+  <p>
+    Take a look at the <code>pages/</code> directory to add or change tabs,
+    update any existing page or create new pages.
+  </p>
+    </div>
+  </div>
+  
+</ion-content> -->

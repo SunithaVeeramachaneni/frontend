@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MyOverlayRef} from "../../myoverlay-ref";
 import {InstructionService} from "../../../workInstructions-home/categories/workinstructions/instruction.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastService} from "../../../../shared/toast";
@@ -61,7 +60,7 @@ export class CopyInstructionComponent implements OnInit {
     }
   }
 
-  constructor(public ref: MyOverlayRef,
+  constructor(
               private spinner: NgxSpinnerService,
               private _toastService: ToastService,
               private _instructionSvc: InstructionService,
@@ -70,7 +69,7 @@ export class CopyInstructionComponent implements OnInit {
 
   ngOnInit(): void {
     this.filterByAuthors();
-    this.recentsAndFavsObject = this.ref.data;
+    // this.recentsAndFavsObject = this.ref.data;
   }
 
   filterByAuthors() {
@@ -79,9 +78,9 @@ export class CopyInstructionComponent implements OnInit {
     });
   }
 
-  close() {
-    this.ref.close();
-  }
+  // close() {
+  //   this.ref.close();
+  // }
 
   getImageSrc = (source: string) => {
     return source && source.indexOf('assets') > -1 ? source :  this.base64HelperService.getBase64ImageData(source);
@@ -93,7 +92,7 @@ export class CopyInstructionComponent implements OnInit {
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     this._instructionSvc.copyWorkInstruction(title, userName, info).subscribe(
       () => {
-        this.ref.close();
+        // this.ref.close();
         this.spinner.hide();
         this._toastService.show({
             text: "Selected Work instruction has been successfully copied!",

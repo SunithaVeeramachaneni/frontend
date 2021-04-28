@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {UserAccountService} from '../user-account.service';
 import { first, tap } from 'rxjs/operators';
 import {ComponentType} from '@angular/cdk/portal';
-import {OverlayService} from '../../modal/overlay.service';
 import {UserRegistrationComponent} from '../../modal/templates/user-registration/user-registration.component';
 
 @Component({
@@ -16,7 +15,6 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private overlayService: OverlayService,
     private router: Router,
     private userAccService: UserAccountService,
   ) {}
@@ -70,13 +68,13 @@ export class LoginComponent implements OnInit {
       });
     }
 
-  open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
-    const ref = this.overlayService.open(content, obj);
-    ref.afterClosed$.subscribe(res => {
-      if (content === this.userRegSubscriptionComponent) {
-        this.userRegDetailObject = res.data;
-      }
-    });
-  }
+  // open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
+  //   const ref = this.overlayService.open(content, obj);
+  //   ref.afterClosed$.subscribe(res => {
+  //     if (content === this.userRegSubscriptionComponent) {
+  //       this.userRegDetailObject = res.data;
+  //     }
+  //   });
+  // }
 }
 

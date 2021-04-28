@@ -2,6 +2,11 @@ import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRe
 import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
 import { Base64HelperService } from '../../../shared/base64-helper.service';
 
+import {ComponentType} from '@angular/cdk/portal';
+import {CategoryComponent} from '../../modal/templates/category/category.component';
+import {DeleteCategoryComponent} from '../../modal/templates/delete-category/delete-category.component' ;
+
+import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-categories',
   templateUrl: 'categories.component.html',
@@ -61,7 +66,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     }
   }
 
-  constructor(private http: HttpClient, private cdrf: ChangeDetectorRef, private base64HelperService: Base64HelperService) {}
+  constructor(private modalCtrl: ModalController,private http: HttpClient, private cdrf: ChangeDetectorRef, private base64HelperService: Base64HelperService) {}
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -109,14 +114,60 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     this.cdrf.detectChanges();
   }
 
+  async openModal(obj){
+    console.log(obj)
+
+    if(obj === undefined) {
+      const modal = await this.modalCtrl.create({
+        component: CategoryComponent,
+        componentProps: {
+          CId : this.categoryDetail.CId,
+          Category_Name : this.categoryDetail.Category_Name,
+          Cover_Image :"assets/img/brand/category-placeholder.png",
+        }
+      });
+      await modal.present();
+      const data = await modal.onWillDismiss();
+      this.categoriesList=[];
+      this.getAllCategories();
+    }
+    else {
+      const modal = await this.modalCtrl.create({
+        component: CategoryComponent,
+        componentProps: {
+          CId : obj.CId,
+          Category_Name : obj.Category_Name,
+          Cover_Image : obj.Cover_Image,
+        }
+      });
+      await modal.present();
+      const data = await modal.onWillDismiss();
+      this.categoriesList=[];
+      this.getAllCategories();
+    }
+  }
+
+  delete(obj) {
+    console.log(obj);
+    this.http.delete(`http://localhost:3000/deleteCategory/${obj.CId}`, obj)
+    .subscribe(data => {
+      console.log(data);
+      this.categoriesList = [];
+      this.getAllCategories();
+     }, error => {
+      console.log(error);
+    })
+  }
+
   ngAfterViewChecked(): void {
     if (this.image) {
       this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
     }
   }
 
- 
-
+  getImageSrc = (source: string) => {
+    return this.base64HelperService.getBase64ImageData(source);
+  }
 
   getS3CoverImageStyles = (source: string) => {
     if (source && source.indexOf('assets') > -1) {
