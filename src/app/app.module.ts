@@ -22,7 +22,8 @@ import { AppMaterialModules } from './material.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
-
+import {TimeAgoPipe} from "./pipes/time-ago.pipe";
+import {DropDownFilterPipe} from "./pipes/dropdown-filter.pipe";
 import { AppRoutingModule } from './app-routing.module';
 
 // Import 3rd party components
@@ -48,7 +49,10 @@ import { environment } from '../environments/environment';
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [
+    AppComponent,  
+    TimeAgoPipe,
+    DropDownFilterPipe],
   entryComponents: [],
   imports: [
     BrowserModule,
@@ -85,6 +89,9 @@ import { environment } from '../environments/environment';
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'} },
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
+  ],
+  exports: [
+    TimeAgoPipe, DropDownFilterPipe
   ],
   bootstrap: [AppComponent],
 })

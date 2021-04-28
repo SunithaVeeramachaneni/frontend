@@ -61,6 +61,8 @@ export class WorkInstructionsHomeComponent implements OnInit {
       )
       .subscribe(
         ({favorites, drafts, recents}) => {
+          console.log(favorites);
+          console.log(drafts);
           this.wiFavList = favorites;
           this.wiDraftedList = drafts;
           this.wiRecentList = recents;
@@ -78,6 +80,15 @@ export class WorkInstructionsHomeComponent implements OnInit {
 
   ngOnInit() {
     this.getAllFavsDraftsAndRecentIns();
+  }
+
+  ngOnDestroy(): void {
+    if (this.getAllFavAndDraftInstSubscription) {
+      this.getAllFavAndDraftInstSubscription.unsubscribe();
+    }
+  }
+  getImageSrc = (source: string) => {
+    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
   }
 
 }

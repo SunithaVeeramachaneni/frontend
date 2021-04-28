@@ -15,8 +15,7 @@ import {Ng2SearchPipeModule} from 'ng2-search-filter';
 import {NgxPaginationModule} from 'ngx-pagination';
 import { OrderModule } from 'ngx-order-pipe';
 import {NgpSortModule} from 'ngp-sort-pipe';
-import {TimeAgoPipe} from "../../../../pipes/time-ago.pipe";
-import {DropDownFilterPipe} from "../../../../pipes/dropdown-filter.pipe";
+
 import { StepContentComponent } from './steps/step-content/step-content.component';
 import { CarouselComponent } from './steps/attachment-carousel/carousel.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -59,8 +58,7 @@ import { instructionReducer } from './state/instruction.reducer';
       StoreModule.forFeature('workinstruction', instructionReducer)
     ],
   declarations: [
-    TimeAgoPipe,
-    DropDownFilterPipe,
+ 
     WorkInstructionsComponent,
     OverviewComponent,
     CustomStepperComponent,
@@ -74,10 +72,7 @@ import { instructionReducer } from './state/instruction.reducer';
   ],
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
-  ],
-  exports: [
-    TimeAgoPipe, DropDownFilterPipe
-  ],
+  ]
 
 })
 export class WorkInstructionsModule {

@@ -27,6 +27,7 @@ import { InstructionsHomePageRoutingModule } from './workInstructions-home-routi
 import { CategoriesComponent } from './categories/categories.component';
 import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
 
+
 @NgModule({
   imports: [
     CommonModule,
@@ -37,11 +38,13 @@ import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
     InstructionsHomePageRoutingModule
   ],
   declarations: [
+   
     WorkInstructionsHomeComponent, 
     CategoriesComponent
-
+   
   ],
-
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
+  
   entryComponents: []
 })
 export class WorkInstructionsHomeModule {}
