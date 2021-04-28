@@ -1,0 +1,98 @@
+.card-head {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 34px;
+    line-height: 36px;
+    color: #563E98;
+}
+
+.card {
+        margin: 0 auto; /* Added */
+        float: none; /* Added */
+        margin-bottom: 10px; /* Added */
+        width: 1027px;
+        height: 400px;
+        position:relative;
+        top:10px;
+}
+
+.login-button {
+    background: #7253C9;
+    border-radius: 4px;
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    letter-spacing: 1.25px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    width: 100%;
+    padding: 10px;
+    border: none;
+}
+
+.forgetpassword {
+    border: none;
+    background-color: transparent;
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.5px;
+    color: #222B45;
+}
+
+.register {
+    border:none;
+    background-color: transparent;
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.5px;
+    color: #222B45;
+}
+
+
+.remember {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    letter-spacing: 0.5px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+
+.innov-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 360px;
+    padding-top: 70px;
+    height: 130px;
+}
+
+.p-20 {
+    padding:20px;
+}
+
+.border-arrow {
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 0px 40px 0px 40px;
+}
+
+.arrow-image {
+    width: 30px;
+    display: flex;
+    position: relative;
+    top: 45%;
+    left: -55px;
+}

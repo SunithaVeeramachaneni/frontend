@@ -1,0 +1,41 @@
+
+<div class="modal-card custom-modal-card user-regstration">
+  <form [formGroup]="registerFormGroup" (ngSubmit)="onRegistrationSubmit()">
+  <section class="modal-card-head">
+    New User
+  </section>
+  <section class="modal-card-body">
+      <app-alert></app-alert>
+      <div class="mat-error">{{userValidatedMsg}}</div>
+      <mat-form-field appearance="outline">
+        <mat-label>Employee ID</mat-label>
+        <input matInput type="text" formControlName="empId" >
+        <mat-error *ngIf="checkError('empId', 'required')">Employee ID is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="text" formControlName="email" >
+        <mat-error *ngIf="checkError('email', 'required')">Email is required</mat-error>
+        <mat-error *ngIf="checkError('email', 'email')">Email format must be corrected</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput type="text" formControlName="firstname" >
+        <mat-error *ngIf="checkError('firstname', 'required')">First Name is required</mat-error>
+        <mat-error *ngIf="checkError('firstname', 'minlength')">First Name must be minimum of 3 characters</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput type="text" formControlName="lastname" >
+        <mat-error *ngIf="checkError('lastname', 'required')">Last Name is required</mat-error>
+        <mat-error *ngIf="checkError('lastname', 'minlength')">Last Name must be minimum of 3 characters</mat-error>
+      </mat-form-field>
+  </section>
+  <footer class="modal-card-foot float-right pull-right">
+
+      <button (click)="close()" type="button" class="btn btn-link">CANCEL</button>
+      <button type="submit" class="btn btn-primary save-btn" data-toggle="modal" data-dismiss="modal">REGISTER</button>
+    <br />
+  </footer>
+  </form>
+</div>

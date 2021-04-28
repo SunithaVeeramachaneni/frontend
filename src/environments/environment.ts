@@ -3,7 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  wiUrl: 'http://workinstructions.innovapptive.com:4202',
+   apiUrl: 'http://localhost:3000/', // MONGO DEV
+   abapApiUrl: 'http://3.215.240.187:7002/',      // For NGT Syetem - ABAP DEV
+  //abapApiUrl: 'http://3.215.240.187:4200/',     // For NGQ System -  ABAP QA
+  requestTimeout: 60000
 };
 
 /*

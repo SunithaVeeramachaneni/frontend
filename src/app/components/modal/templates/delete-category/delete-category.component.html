@@ -1,0 +1,15 @@
+<div class="modal-card custom-modal-card">
+  <section class="modal-card-head">
+    Delete Category?
+  </section>
+  <section class="modal-card-body">{{ref.data.WI_COUNT}}
+    <div *ngIf="(ref && ref.data.Drafts_Count === 0) || (ref && ref.data.Published_Count === 0)">Category '{{ref.data.Category_Name}}' would be removed.</div>
+    <div *ngIf="(ref && ref.data.Drafts_Count > 0) || (ref && ref.data.Published_Count > 0)"> {{ref.data.Drafts_Count + ref.data.Published_Count}} Work Instructions will be moved from Category '{{ref.data.Category_Name}}' to 'Unassigned' </div>
+  </section>
+  <footer class="modal-card-foot">
+    <div class="buttons is-right">
+      <button (click)="close('no')" type="button" class="btn btn-link">CANCEL</button>
+      <button (click)="close('yes')" type="button" class="button bg-red fnt-white b-r-8">DELETE</button>
+    </div>
+  </footer>
+</div>

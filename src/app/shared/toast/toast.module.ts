@@ -11,7 +11,7 @@ import { defaultToastConfig, TOAST_CONFIG_TOKEN } from './toast-config';
   entryComponents: [ToastComponent]
 })
 export class ToastModule {
-  public static forRoot(config = defaultToastConfig): ModuleWithProviders {
+  public static forRoot(config = defaultToastConfig) {
     return {
       ngModule: ToastModule,
       providers: [

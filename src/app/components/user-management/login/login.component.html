@@ -1,0 +1,39 @@
+<div class="row">
+    <img src="../../../../assets/img/Innovapptive.png" alt="" class="innov-logo"/>
+</div>
+<div class="card login">
+   <div class="row p-20">
+        <div class="col-lg-6 col-md-6" >
+         <h4 class="card-head">Connected Worker Platform</h4>
+         <img src="../../../../assets/img/cwp.png" alt=""/>
+        </div>
+        <div class="col-lg-6 col-md-6 border-arrow">
+         <img src="../../../../assets/img/Arrow.png" alt="" class="arrow-image"/>
+             <form [formGroup]="loginFormGroup"  (ngSubmit)="onSubmit()">
+                <div class="mat-error">{{userValidatedMsg}}</div>
+                <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="text" formControlName="email" >
+                <mat-error *ngIf="checkError('email', 'required')">Email is required</mat-error>
+                <mat-error *ngIf="checkError('email', 'email')">Email is invalid</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                        <input matInput [type]="passwordhide ? 'password' : 'text'" formControlName="password" >
+                        <button type="button" mat-icon-button matSuffix (click)="passwordhide = !passwordhide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="passwordhide">
+                                <mat-icon>{{passwordhide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                                </button>
+                        <mat-error *ngIf="checkError('password', 'required')">Password required</mat-error>
+                        <mat-error *ngIf="checkError('password', 'minlength')">Password should not be less than 8 characters</mat-error>
+                </mat-form-field>
+
+                <mat-checkbox [disabled]="true" class="remember">Remember Me</mat-checkbox>
+
+                <button type="submit" class="login-button">LOGIN</button><br/><br/>
+             </form>
+            <a (click)="open(userRegSubscriptionComponent, {})">
+            <button class="register">Register New User</button>
+          </a>
+        </div>
+    </div>
+</div>

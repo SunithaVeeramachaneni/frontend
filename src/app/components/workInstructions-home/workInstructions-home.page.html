@@ -9,6 +9,77 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" >
-  
+  <div class="row recents-favorites-row">
+    <div class="col-xs-12 col-sm-12 col-md-6">
+      <div class="recents-favorites-lst-header">
+        <i class="fa fa-file-o draft-icon" aria-hidden="true"></i>
+        <span class="p-l-5">Drafts</span>
+      </div>
+      <ng-container *ngIf="(this.wiDraftedList | slice:0:3) as result">
+        <app-dummy #recentDrafts [value]="result"></app-dummy>
+      <ul class="recents-favorites-list">
+        <li class="row list-data" *ngFor="let obj of result">
+          <div class=" col-xs-1 col-sm-1 col-md-1 col-lg-1 recent-wi-img p-0">
+           <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/>
+          </div>
+          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">
+            <div [routerLink]="['/drafts/add-instruction/', obj.Id]" class="ellipsis">
+             <a><span class="recent-title" matTooltip={{obj.WI_Name}} matTooltipClass="">{{ obj.WI_Name }}</span></a></div>
+            <div class="category-ellipsis" >
+                <span class="recent-subtitle" matTooltip={{obj.categories}} matTooltipClass="">{{ obj.categories}}</span>
+            </div>
+          </div>
+          <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 p-l-10">
+            <span class="recent-edited">Edited {{obj.updated_at | timeAgo}}</span> <br/>
+            <span class="recent-edited">by {{obj.EditedBy}}</span>
+          </div>
+        </li>
+      </ul>
+      <div *ngIf="result.length === 0 && wiDraftedList.length > 0 || this.wiDraftedList && wiDraftedList.length === 0" class="no-fav">
+        {{ wiDraftedList.length ? 'No Results Found !!' : 'No Drafted Instructions found !!' }}
+      </div>
+      <div class="col-md-12 text-center seeall-fixed" *ngIf="this.wiDraftedList.length !== 0 && result.length !== 0">
+        <button class="seeall isDisabled" [routerLink]="['/drafts', searchCriteria]" (click)="showMore = true">SEE ALL</button>
+      </div>
+    </ng-container>
+     </div>
+    <div class="col-xs-12 col-sm-12 col-md-6">
+          <div class="recents-favorites-lst-header">
+            <i class="fa fa-star-o favorite-icon" aria-hidden="true"></i>
+            <span class="p-l-5">Favorites</span>
+          </div>
+          <ng-container *ngIf="(this.wiFavList | slice:0:3) as result">
+            <app-dummy #recentFavourites [value]="result"></app-dummy>
+            <ul class="recents-favorites-list">
+              <li class="row list-data" *ngFor="let obj of result">
+                <div class=" col-xs-1 col-sm-1 col-md-1 col-lg-1 recent-wi-img p-0">
+                  <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/>
+                </div>
+
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">
+                  <div [routerLink]="['/favorites/add-instruction/', obj.Id]" class="dis-flex">
+                    <a class="ellipsis"><span class="recent-title"  matTooltip={{obj.WI_Name}} matTooltipClass="">{{ obj.WI_Name }}</span></a>
+                    <mat-icon class="is-fav-icon fav-icon">star</mat-icon> <span class="chip" *ngIf="obj.Published === false">Draft</span></div>
+                  <div class="category-ellipsis">
+                    <span class="recent-subtitle" matTooltip={{obj.categories}} matTooltipClass="">{{ obj.categories}}</span>
+                  </div>
+                </div>
+
+                <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 p-l-10">
+                  <span class="recent-edited">Edited {{obj.updated_at | timeAgo}}</span> <br/>
+                  <span class="recent-edited">by {{obj.EditedBy}}</span>
+                </div>
+              </li>
+            </ul>
+            <div *ngIf="result.length === 0 && this.wiFavList.length > 0 || this.wiFavList && this.wiFavList.length === 0" class="no-fav">
+              {{ wiFavList.length ? 'No Results Found !!' : 'No Favorite Instructions found !!' }}
+            </div>
+            <div class="col-md-12 text-center seeall-fixed">
+              <button *ngIf="result.length !== 0 && this.wiFavList.length !== 0" class="seeall isDisabled" [routerLink]="['/favorites', searchCriteria]" (click)="showMore = true">SEE ALL</button>
+            </div>
+          </ng-container>
+    </div>
+  </div>
+  <div class="row row-gap"></div>
    <app-categories></app-categories>
 </ion-content>

@@ -1,0 +1,664 @@
+.mat-tab-body {
+    padding: 10px !important;
+  }
+
+  .mat-tab-group {
+    font-family: "Roboto", sans-serif !important;
+  }
+  .m-l-5 {
+    margin-left: -5px;
+  }
+  .ipad-iphone-preview-block {
+    overflow-y: scroll;
+    height: calc(100vh - 175px);
+    overflow-x: hidden;
+  }
+  .iphone-top-piece {
+    width: 147px;
+    height: 25px;
+    position: relative;
+    left: 12px;
+    top:-5px;
+  }
+  .iphone-view {
+    background: url('../../../../../../../assets/img/iPhoneX.png') top left no-repeat;
+    background-size:100% 100%;
+    width:300px;
+    min-height: 596px;
+    height: auto !important;
+    overflow: hidden;
+    margin: 0px auto 0;
+  }
+
+  .ipad-view-default-content {
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+    top: 50px;
+    position: relative;
+    height: 100%;
+  }
+
+  .ipad-view-default-content p {
+    color: #76767B;
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
+    padding: 0 10px;
+    text-align: center;
+    margin: 0 10px
+  }
+  .ipad-content-image {
+    position: relative;
+    top: 65px;
+  }
+  .form-factors {
+    padding: 10px 10px;
+  }
+ 
+  .mat-ink-bar {
+    width: 100px !important;
+  }
+
+  .custom-row {
+    clear:left;
+    width:100%;
+    height: 100%;
+    margin: 0;
+    /* position: relative;
+    top: -40px; */
+    /* height: 75vh;
+    overflow-y: scroll; */
+  }
+
+  @media only screen and (max-width: 765px) {
+    .custom-row {
+      overflow-y: scroll;
+      height: calc(100vh - 215px);
+    }
+  }
+  .custom-header-height {
+    height: 55px;
+  }
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0 1em 0 !important;
+  }
+
+  .col-carousel-iphone{
+    height: 255px;
+    float: left;
+    position: relative;
+    left: 70px;
+  }
+  .carousel {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.5em;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+    border-radius: 0.5em;
+  }
+
+  .slide:hover {
+    transform: scale(1.025);
+  }
+
+  .control {
+    border: none;
+    background-color: transparent;
+    outline: 0;
+
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5em;
+    color: white;
+    font-weight: bold;
+    font-size: 3em;
+    user-select: none;
+    height: 100%;
+    opacity: 80%;
+
+  }
+
+  .control:hover, .control:focus { opacity: 1}
+  .control.next{right: 0;}
+  .control.prev {  left: 0;}
+
+  /* style the arrows */
+  .arrow {
+    display: block;
+    border-left: 0.1em solid white;
+    border-bottom: 0.1em solid white;
+    width: 0.5em;
+    height: 0.5em;
+  }
+
+
+  .arrow.left {
+    transform: rotate(45deg);
+  }
+  .arrow.right {
+    transform: rotate(225deg);
+  }
+  .main-carosuel-iphone {
+    background: white;
+    margin-top: -30px;
+    margin-left: 5px;
+    margin-right: 5px;
+    height: 560px;
+    padding-left: -17px;
+    border-radius: 20px;
+  }
+  .position {
+    margin-left :-40px;
+    margin-right:-30px;
+  }
+  .col-thumbnail{
+    padding: 10px;
+    position: relative;
+    left: 15px;
+    height: 85px;
+  }
+  @media only screen and (max-width:1200px) {
+    .col-thumbnail{
+      padding: 10px;
+      position: relative;
+      left: 15px;
+      height: 70px;
+    }
+  }
+  @media only screen and (max-width:765px) {
+    .col-thumbnail{
+      padding: 10px;
+      position: relative;
+      left: 15px;
+      height: 85px;
+    }
+  }
+  @media only screen and (max-width:595px) {
+    .col-thumbnail{
+      padding: 10px;
+      position: relative;
+      left: 15px;
+      height: 70px;
+    }
+  }
+
+  .thumbnail{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  .ipad-thumbnail{
+    margin-left: -22px;
+  }
+  .thumbnail-list{
+    display: inline-block;
+    float: left;
+    padding: 0px 10px 0px 0px;
+  }
+  .thumbnail-img {
+    width:70px;
+    height: 70px;
+    border-radius:0.5em;
+    position: relative;
+    left:10px;
+  }
+  @media only screen and (max-width:1200px) {
+    .thumbnail-img {
+      width:50px;
+      height: 50px;
+      border-radius:0.5em;
+      position: relative;
+      left:10px;
+    }
+  }
+  @media only screen and (max-width:1100px) {
+    .thumbnail-img {
+      width:45px;
+      height: 45px;
+      border-radius:0.5em;
+      position: relative;
+      left:10px;
+    }
+  }
+  @media only screen and (max-width:990px) {
+    .thumbnail-img {
+      width:50px;
+      height: 50px;
+      border-radius:0.5em;
+      position: relative;
+      left:10px;
+    }
+  }
+  @media only screen and (max-width:765px) {
+    .thumbnail-img {
+      width:65px;
+      height: 65px;
+      border-radius:0.5em;
+      position: relative;
+      left:10px;
+    }
+  }
+
+  @media only screen and (max-width:595px) {
+    .thumbnail-img {
+      width:50px;
+      height: 50px;
+      border-radius:0.5em;
+      position: relative;
+      left:10px;
+    }
+  }
+
+
+  .arrow-right{
+    position: absolute;
+    top: 0px;
+  }
+  .header {
+    position: relative;
+    top:-5px;
+  }
+  .header-position{
+    position: relative;
+    top:-10px;
+  }
+  .header-left {
+    text-align: left;
+    position: relative;
+    left:35px;
+  }
+  .header-right {
+    text-align: right;
+    right: 25px;
+  }
+  .header-right-icon{
+    margin-right: -25px;
+  }
+  .header-title{
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: -7px;
+  }
+  .close-icon-position {
+    position: relative;
+    left: 40px;
+    float: left;
+  }
+  .scroll-header-iphone {
+    overflow-y: scroll;
+    height: 420px;
+    overflow-x: hidden;
+  }
+
+  .preview-steps-title {
+    padding-top: 5px;
+    position: relative;
+    top: -50px;
+    margin: 0 10px 0 20px;
+  }
+
+  .preview-steps-title li {
+    height: 50px;
+  }
+
+  .icon-background{
+    background: #E5E5E5;
+    color: #3678AF;
+    width: 30px;
+    height: 30px;
+    padding: 7px 0 0px 0px;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  .icon-background-more{
+    background: #E5E5E5;
+    color: #3678AF;
+    width: 30px;
+    height: 30px;
+    padding: 7px 6px 0px 0px;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  .icons {
+    width: 25px;
+    height: 25px;
+  }
+
+  .header-body {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 7px;
+  }
+
+  .wi-step-cnt {
+    font-weight: 500;
+    margin-left: 5px;
+  }
+
+  .prev-button-iphone{
+    padding-right:12px;
+    border: none;
+    background-color: #E5E5E5;
+    color:#3678AF;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-left: 5px;
+    width: 90px;
+    height: 31px;
+    cursor: default;
+  }
+
+  .allsteps-button{
+    padding: 0px 18px 0px 10px;
+    border: none;
+    background-color: #E5E5E5;
+    color:#3678AF;
+    border-radius: 5px;
+    white-space: nowrap;
+    height: 30px;
+    cursor: default;
+  }
+  .allsteps-button-iphone {
+      border: none;
+      background-color: #E5E5E5;
+      color: #3678AF;
+      border-radius: 50%;
+      white-space: nowrap;
+      height: 35px;
+      width: 35px;
+      position: relative;
+      top: -2px;
+      cursor: default;
+  }
+  .next-button-iphone{
+    padding-left: 12px;
+    border: none;
+    background-color:#3678AF;
+    color:white;
+    border-radius: 5px;
+    white-space: nowrap;
+    float: right;
+    margin-right: 5px;
+    width: 80px;
+    height: 31px;
+    cursor: default;
+  }
+
+
+  .foot-btns-data {
+    position: relative;
+    top:-4px;
+  }
+  .foot-button {
+    position: relative;
+    top:3px;
+    left: -4px;
+    width: 15px;
+  }
+  .editor-main{
+    text-align: left;
+    padding-left: 5px;
+    position: relative;
+    top: 7px;
+  }
+  .editor-icons{
+    position: relative;
+    top: 3px;
+    font-size:14px;
+  }
+  .editor-header{
+    color:white;
+    padding: 3px;
+    border-radius:7px;
+    font-size:11px;
+  }
+  .editor-step-title{
+    text-align: left;
+    padding-left: 10px;
+    font-size:20px;
+    font-weight: 600;
+    font-family: "ubuntu", sans-serif;
+    margin-bottom: 3px;
+  }
+
+  .iPhone-editor-step-title{
+    text-align: left;
+    padding-left: 80px;
+    font-size:20px;
+    font-weight: 600;
+    font-family: "ubuntu", sans-serif;
+    margin-bottom: 3px;
+  }
+  .editor-listvalues .bullet-icon {
+    font-size: 12px;
+    padding: 0;
+    width: auto;
+    position: relative;
+    top: 2px;
+    height: 0;
+  }
+  .editor-header-position{
+    position: relative;
+    left:-7px;
+    top:-1px;
+  }
+
+  .steps-data-iphone{
+    /* overflow-y:scroll;
+    height:135px; */
+    margin-right: 20px;
+    margin-left: -10px;
+    margin-bottom: 5px;
+  }
+  .scrollable-iPhone{
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 445px;
+    margin-left: -30px;
+    padding-left: 0;
+  }
+
+  .pos {
+    float: right;
+    position: relative;
+    right: 15px;
+  }
+
+  .status-bar-left {
+    text-align: left;
+    font-size: 10px;
+    font-weight: bolder;
+    margin-left: 10px;
+    margin-top: 2px;
+  }
+
+  .status-bar-right {
+    text-align: right;
+    margin-left: -20px;
+  }
+
+  .iphone-status-bar-right {
+    text-align: right;
+  }
+
+  .status-bar-icons {
+    font-size: 12px;
+    font-weight: bolder;
+    width:10px;
+  }
+
+  .battery_full-icon {
+    transform: rotate(90deg);
+    position: relative;
+    top: -7px;
+    left: -3px;
+  }
+
+  .status-bar-icons-battery {
+    transform: rotate(90deg);
+    font-size: 13px;
+    font-weight: bolder;
+    width:15px;
+    height: 10px;
+  }
+
+  .status-bar-text {
+    font-size:9px;
+    font-weight: bolder;
+     position: relative;
+     top:-2px;
+  }
+
+  .btn-outline-blue:disabled {
+    color: #B2B2B2 !important;
+    border: 1px solid #B2B2B2 !important;
+  }
+
+
+  .start-with-voice-btn {
+    color:#4A85B6;
+    background:#E5E5E5;
+    display: inline-flex;
+    border: none;
+    padding: 4px 10px 2px 23px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    margin-left: 4px;
+  }
+
+  .start-btn {
+    background-color: #3678AF;
+    color: #FFFFFF;
+    border: none;
+    padding: 3px 0px 0px 0px;
+    border-radius: 7px;
+    text-align: center;
+    margin-left: 4px;
+    white-space: nowrap;
+    cursor: default;
+  }
+  .header-tab-row {
+    margin-left: 0px;
+  }
+
+  .header-tab-title {
+    text-align: left;
+    font-weight: bold;
+  }
+  .header-tab {
+    background-color:#E5E5E5;
+    border-left:5px solid white;
+    border-right:5px solid white;
+    border-radius:10px;
+    margin-bottom: 1rem;
+    align-self: start;
+  }
+  .header-tab-btns {
+    text-align: right;
+    float: right;
+    position: relative;
+    right: -5px;
+  }
+  .header-tab-icon {
+    font-size: 18px;
+    padding: 2px 2px 0px 0px;
+    width: 20px;
+  }
+  .header-tab-pos {
+    position: relative;
+    top:-4px;
+    left: -5px;
+  }
+
+  .header-tab-subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    color:black;
+    float: left;
+    position: relative;
+    top: 3px;
+    left: 15px;
+  }
+
+  .header-tab-data {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: left;
+    color:#484A4D;
+    pointer-events: none;
+  }
+
+  .header-tab-data-pos {
+    position: relative;
+    top: 3px;
+  }
+
+  .header-tab-hr {
+    margin: 6px 0px 0px 0px;
+    border: 0.5px solid #D5D5D5;
+  }
+
+  .header-tab-hr-m0 {
+    margin: 0;
+    border: 0.5px solid #D5D5D5;
+  }
+
+  .button-increment {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #E5E5E5;
+    border: none;
+    font-size: 12px;
+    position: relative;
+    top: 5px;
+    cursor: default;
+  }
+  .header-step-title {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 0.8px;
+    color: #25282B;
+    padding-left: 2px;
+    border-bottom: 1px solid #cccccc;
+    margin-left: 30px;
+    line-height: 2em;
+  }
+
+  .btn-pos {
+    text-align: right;
+    margin-left: -20px;
+  }
+
+  .footer-line{
+    margin-bottom: 7px;
+    margin-top: 7px;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 5px;
+    left: 80px;
+  }
