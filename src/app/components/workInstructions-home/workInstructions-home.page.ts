@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
 import { ModalController } from '@ionic/angular';
 import { MyModalPageComponent } from '../my-modal-page/my-modal-page.component';
@@ -29,10 +29,11 @@ export class WorkInstructionsHomeComponent implements OnInit {
   userImg = '/assets/images/User.svg';
   searchCriteria = '';
 
-  constructor(private http: HttpClient, 
-    private base64HelperService: Base64HelperService,
-    private _instructionSvc: InstructionService) { }
-  
+  constructor(private http: HttpClient,
+              private base64HelperService: Base64HelperService,
+              private _instructionSvc: InstructionService,
+              private router: Router) { }
+
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -75,6 +76,25 @@ export class WorkInstructionsHomeComponent implements OnInit {
           // this.spinner.hide();
         }
       );
+  }
+
+  uploadFile(event) {
+    // this.spinner.show();
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    if (file.type.indexOf('audio') === 0 || file.type.indexOf('video') === 0 || file.type.indexOf('image') === 0) {
+      formData.append('userDetails', localStorage.getItem('loggedInUser'));
+      this._instructionSvc.uploadWIAudioOrVideo(formData).subscribe(
+        resp => {
+          if (Object.keys(resp).length) {
+            console.log(resp);
+            // this.router.navigate(['/drafts']);
+          }
+          // this.spinner.hide();
+        }
+      );
+    }
   }
 
 

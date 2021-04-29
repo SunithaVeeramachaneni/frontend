@@ -253,6 +253,10 @@ export class InstructionService {
     return this._appService._postData('excel/upload-parser', form, info);
   }
 
+  uploadWIAudioOrVideo(form: FormData, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    return this._appService._postData('speech-to-text/converter', form, info);
+  }
+
   deleteAttachments(files: DeleteFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
     return this._appService._postData('api/v1/delete/', files, info);
   }

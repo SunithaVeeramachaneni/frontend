@@ -16,6 +16,8 @@ app.use(bodyParser.json({limit: '50mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 
+const speechToTextConverterRouter = require('./speech-to-text-converter')();
+app.use('/speech-to-text', speechToTextConverterRouter);
 
 app.post('/approvalmail', (req, res) => {
   transporter.sendMail(req.body, function (error) {
@@ -52,7 +54,7 @@ mongoose.connect(dbConfig.url, {
 
 require('./routes/instruction.routes.js')(app);
 require('./routes/category.routes.js')(app);
-// require('./routes/step.routes.js')(app);
+require('./routes/step.routes.js')(app);
 // require('./routes/user.routes.js')(app);
 // listen for requests
 app.listen(3000, () => {
