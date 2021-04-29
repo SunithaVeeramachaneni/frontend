@@ -23,6 +23,7 @@
     "express-session": "^1.17.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "font-awesome": "^4.7.0",
     "mongoose": "^5.10.2",
     "mongoose-auto-increment": "^5.0.1",
     "ng2-charts": "^2.3.0",

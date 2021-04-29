@@ -27,7 +27,7 @@ export class WorkInstructionsHomeComponent implements OnInit {
   editImg = '/assets/images/edit.svg';
   deleteImg = '/assets/images/delete.svg';
   userImg = '/assets/images/User.svg';
-
+  searchCriteria = '';
 
   constructor(private http: HttpClient, 
     private base64HelperService: Base64HelperService,

@@ -20,13 +20,16 @@ import { AppMaterialModules } from '../../material.module';
 import { ModalModule } from '../modal/modal.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
-import { OrderModule } from 'ngx-order-pipe';
 
 import { IonicModule } from '@ionic/angular';
 import { InstructionsHomePageRoutingModule } from './workInstructions-home-routing.module';
 import { CategoriesComponent } from './categories/categories.component';
 import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
 
+import {TimeAgoPipe} from "../../pipes/time-ago.pipe";
+import {DropDownFilterPipe} from "../../pipes/dropdown-filter.pipe";
+
+import { OrderModule } from 'ngx-order-pipe';
 
 @NgModule({
   imports: [
@@ -35,16 +38,22 @@ import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    InstructionsHomePageRoutingModule
+    InstructionsHomePageRoutingModule,
+    OrderModule,
+    NgpSortModule,
+    Ng2SearchPipeModule,
+    NgxPaginationModule
   ],
   declarations: [
-   
+    TimeAgoPipe,DropDownFilterPipe,
     WorkInstructionsHomeComponent, 
     CategoriesComponent
-   
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
-  
+  exports: [
+    TimeAgoPipe,
+    DropDownFilterPipe
+  ],
   entryComponents: []
 })
 export class WorkInstructionsHomeModule {}

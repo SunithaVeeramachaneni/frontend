@@ -159,6 +159,16 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     })
   }
 
+  menuVisible: boolean
+  
+  showNavigationMenu(): void {
+    this.menuVisible = true
+  }
+  
+  hideNavigationMenu(): void {
+    this.menuVisible = false
+  }
+
   ngAfterViewChecked(): void {
     if (this.image) {
       this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
