@@ -29,6 +29,7 @@
     "@ionic/angular": "^5.5.2",
     "@ngrx/store": "^9.2.1",
     "@ngrx/store-devtools": "^9.2.1",
+    "apexcharts": "^3.26.1",
     "aws-sdk": "^2.736.0",
     "axios": "^0.21.1",
     "base-64": "^0.1.0",
@@ -46,6 +47,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.10.2",
     "mongoose-auto-increment": "^5.0.1",
+    "ng-apexcharts": "^1.5.9",
     "ng2-charts": "^2.3.0",
     "ng2-search-filter": "^0.5.1",
     "ngp-sort-pipe": "0.0.4",
@@ -66,6 +68,7 @@
     "sweetalert2": "^9.17.1",
     "ts-helpers": "^1.1.2",
     "tslib": "1.10.0",
+    "zingchart-angular": "^1.0.1",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {

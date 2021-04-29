@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
 export class AppComponent {
   public appPages = [
     { title: 'Dashboard', url: 'Dashboard', icon: 'home' },
-    { title: 'Insights', url: '/components/Insights', icon: 'star' },
+    { title: 'Insights', url: 'Insights', icon: 'star' },
     { title: 'ROI Forecasting', url: '/components/ROIForecasting', icon: 'person' },
     { title: 'Chatter', url: '/components/Chatter', icon: 'chatbubbles' },
     { title: 'IOT and Alerts', url: '/components/IOTandAlerts', icon: 'notifications' },

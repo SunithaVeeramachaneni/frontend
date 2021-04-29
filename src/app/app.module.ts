@@ -44,7 +44,7 @@ import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor'
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-
+import { ZingchartAngularModule} from 'zingchart-angular';
 
 @NgModule({
   declarations: [
@@ -76,9 +76,10 @@ import { environment } from '../environments/environment';
     ErrorHandlerModule,
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ name: 'Work Instructions', maxAge: 25, logOnly: environment.production }),
-    IonicModule.forRoot(), 
-    AppRoutingModule
-  
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    ZingchartAngularModule
+
   ],
   providers: [
     AppService,

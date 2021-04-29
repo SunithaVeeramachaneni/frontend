@@ -10,7 +10,7 @@ const routes: Routes = [
   {
     path: 'Dashboard',
     // loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
-    loadChildren: () => import('./components/usedcars/usedcars.module').then( m => m.UsedcarsPageModule)
+    loadChildren: () => import('./components/insights/insights.module').then( m => m.InsightsPageModule)
 
   },
   {
@@ -26,6 +26,11 @@ const routes: Routes = [
   {
     path: 'usedcars',
     loadChildren: () => import('./components/usedcars/usedcars.module').then( m => m.UsedcarsPageModule)
+  },
+  {
+    path: 'Insights',
+    loadChildren: () => import('./components/insights/insights.module').then( m => m.InsightsPageModule)
+
   }
 ];
 
