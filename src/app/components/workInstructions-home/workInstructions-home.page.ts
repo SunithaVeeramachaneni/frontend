@@ -15,7 +15,7 @@ import {InstructionService} from './categories/workinstructions/instruction.serv
 @Component({
   selector: 'app-instruction-home',
   templateUrl: './workInstructions-home.page.html',
-  styleUrls: ['./workInstructions-home.page.scss'],
+  styleUrls: ['./workInstructions-home.page.css'],
 })
 export class WorkInstructionsHomeComponent implements OnInit {
 

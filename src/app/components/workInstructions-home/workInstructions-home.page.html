@@ -9,6 +9,32 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" >
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="input-prepend input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-lightgray"><img alt="Search" src="../../../assets/svg/search.svg" class="search-icon"/></span>
+        </div>
+        <input id="prependedInput" [(ngModel)]="searchCriteria"  class="form-control bg-lightgray search-data-area" size="10" type="search" placeholder="Search by title or author">
+      </div>
+    </div>
+    <div class="btn-group create-new-ins">
+      <button class="btn btn-primary btn-lg create-new-ins-btn" type="button" routerLink="/add-instruction">
+        <span class="float-left">
+           <img src="../assets/svg/createwi.svg" alt="" class="create-new-ins-icon"/>
+            <span class="float-left p-l-10 text-white data">CREATE NEW WORK INSTRUCTION </span> </span>
+      </button>
+      <button type="button" class="btn btn-lg p-t-10 btn-primary dropdown-toggle dropdown-toggle-split arrow-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <button class="dropdown-item" (click)="uploader.click()"><img alt="Import" src="../../../assets/svg/save.svg"/><span class="dropdown-item-title">Import File</span></button>
+        <button class="dropdown-item" (click)="copyWorkInstruction()"><img alt="Copy" src="../../../assets/svg/copy.svg"/><span class="dropdown-item-title">Copy Existing</span></button>
+        <button class="dropdown-item" (click)="exportAsXLSX()"><img alt="Download" src="../../../assets/svg/excel1.svg"/><span class="dropdown-item-title">Download Template</span></button>
+      </div>
+      <input hidden type="file" #uploader accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (change)="uploadFile($event)"/>
+    </div>
+  </div>
   <div class="row recents-favorites-row">
     <div class="col-xs-12 col-sm-12 col-md-6">
       <div class="recents-favorites-lst-header">
