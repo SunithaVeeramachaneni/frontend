@@ -1,6 +1,4 @@
-<div> Add Work Instructions</div>
-
-<!-- <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
+<!-- <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner> -->
 <div>
   <div class="row wi-status-container">
    <div class="col-lg-6 col-md-6">
@@ -17,7 +15,7 @@
                     (keyup)="titleChange(selectedInstruction.WI_Name, true)" #workInstructionTitle/>
                   </a>
   <!--                   {{ workInstructionTitle.focus() }}-->
-                <!-- <span class="btn wi-title-info-position">
+                <span class="btn wi-title-info-position">
                   <span class="f-left text-danger wi-title-info" *ngIf="titleErrors?.required">
                     Title is required
                   </span>
@@ -65,11 +63,11 @@
           <button [disabled]="!receivedInstruction" [ngClass]="{'fnt-white' : receivedInstruction, 'save' : !isWIPublished }" (click)="publishInstruction(selectedInstruction)"
           mat-raised-button  class="b-r-8 btn btn-primary publish-btn">
           <span *ngIf="!receivedInstruction">
-            <img alt="upload"  src="../../../../assets/svg/upload.svg"/>
+            <img alt="upload"  src="../../../../../../assets/svg/upload.svg"/>
             <span class="dis-publish">Publish</span>
           </span>
           <span *ngIf="receivedInstruction" >
-            <img alt="upload" src="../../../../assets/svg/upload-white.png"/>
+            <img alt="upload" src="../../../../../../assets/svg/upload-white.png"/>
             <span class="publish">Publish</span>
           </span>
           </button>
@@ -84,5 +82,5 @@
       <app-overview [titleProvided] = "titleProvided" [selectedInstruction] = "selectedInstruction" [setCategory]="setCategory" (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler()" (stepsDataEntry)="getStepsData($event)" (instructionDataEntry)="getWorkInstruction($event)"></app-overview>
     </div>
   </div>
-</div> -->
+</div>
 
