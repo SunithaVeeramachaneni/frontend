@@ -31,7 +31,6 @@ import { ChartsModule } from 'ng2-charts';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {WorkInstructionsModule} from './components/workInstructions-home/categories/workinstructions/workinstructions.module';
-import {WorkInstructionsHomeModule} from './components/workInstructions-home/workinstructions-home.module';
 import {UserManagementModule} from './components/user-management/user-management.module';
 import { SharedModule } from './shared/shared.module';
 import { ModalModule } from './components/modal/modal.module';
@@ -64,7 +63,7 @@ import { ZingchartAngularModule} from 'zingchart-angular';
     HttpClientModule,
     FormsModule,
     WorkInstructionsModule,
-    WorkInstructionsHomeModule,
+  
     ButtonsModule.forRoot(),
     NgxPaginationModule,
     Ng2SearchPipeModule,

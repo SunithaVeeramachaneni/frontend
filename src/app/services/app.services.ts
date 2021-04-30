@@ -11,7 +11,7 @@ import { Mail } from '../interfaces/mail';
 import { DeleteFile } from '../interfaces/delete-file';
 import { GetFile } from '../interfaces/upload-file';
 
-@Injectable()
+@Injectable({providedIn: "root"})
 export class AppService {
   private _headers: { [name: string]: any; } | null | undefined;
   public token: string | null;
