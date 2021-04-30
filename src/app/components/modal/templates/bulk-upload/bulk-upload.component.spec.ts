@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { InstructionService } from '../../../workInstructions-home/categories/workinstructions/instruction.service';
+import { InstructionService } from '../../../workinstructions/instruction.service';
 import { AlertService } from '../../alert/alert.service';
 import { ModalModule } from '../../modal.module';
 import { MyOverlayRef } from '../../myoverlay-ref';

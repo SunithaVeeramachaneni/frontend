@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ThemePalette} from '@angular/material/core';
 import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
-import {InstructionService} from "../../../workInstructions-home/categories/workinstructions/instruction.service";
+import {InstructionService} from "../../../workinstructions/instruction.service";
 import {Router} from "@angular/router";
 import {concatMap, map, mergeMap, toArray} from "rxjs/operators";
 import {AlertService} from '../../alert/alert.service';

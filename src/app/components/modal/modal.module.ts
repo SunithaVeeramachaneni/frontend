@@ -14,7 +14,7 @@ import {AlertComponent} from './alert/alert.component';
 import { BulkUploadComponent } from './templates/bulk-upload/bulk-upload.component';
 import { CopyInstructionComponent } from './templates/copy-instruction/copy-instruction.component';
 import {Ng2SearchPipeModule} from "ng2-search-filter";
-import {WorkInstructionsModule} from "../workInstructions-home/categories/workinstructions/workinstructions.module";
+import {WorkInstructionsModule} from "../workinstructions/workinstructions.module";
 import {NgxPaginationModule} from "ngx-pagination";
 import {SharedModule} from "../../shared/shared.module";
 import {NgpSortModule} from 'ngp-sort-pipe';

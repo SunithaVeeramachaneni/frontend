@@ -1,0 +1,243 @@
+<app-custom-stepper [titleProvided]="titleProvided" [selectedInstruction] = "selectedInstruction" [selectedInstructionData]="selectedInstructionData" (allStepData) = getAllStepData($event) (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler($event)" >
+  <cdk-step [stepControl]="createWIForm">
+    <button (click)="updatePreviewStatus(previewDisplay)" class="align-icon fa-pull-right p-t-2 btn btn-hide-show-preview" *ngIf="previewDisplay === false">SHOW PREVIEW</button>
+    <mat-tab-group class="width">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="details-tab">DETAILS</span>
+        </ng-template>
+        <form [formGroup]="createWIForm" class="header-container" novalidate>
+          <div class="row" *ngIf="previewDisplay === false" class="sixColsPreview">
+             <div class="col-md-6 col-sm-6 col-xs-6 pull-left">
+               <h5 mat-subheader>Assignment</h5>
+               <mat-divider></mat-divider>
+               <p class="margin">
+                 <mat-form-field appearance="outline">
+                   <mat-label>Categories</mat-label>
+                   <mat-select formControlName="categories" id="allCategories" (openedChange)="onCategoryOpenClose()" (selectionChange)="updateCategory(formControls.categories.value)"  multiple>
+                     <mat-option [value]="cat.Category_Name" *ngFor="let cat of categoriesList">{{cat.Category_Name}}</mat-option>
+                   </mat-select>
+                 </mat-form-field>
+                 <mat-select-trigger>
+                   <mat-chip-list>
+                     <mat-chip *ngFor="let obj of categoriesSelected"
+                               [removable]="true" (removed)="OnCategoryObjectsList(obj)" class="margin-bottom">
+                       {{ obj }}
+                       <mat-icon matChipRemove>cancel</mat-icon>
+                     </mat-chip>
+                   </mat-chip-list>
+                 </mat-select-trigger>
+               </p>
+               <p>
+                 <mat-form-field appearance="outline">
+                   <mat-label>Assigned Objects</mat-label>
+                   <mat-select id="allAssignedObjects" formControlName="assignedObjects" [compareWith]="assignedObjectsComparison" (openedChange)="onAssignedObjectsOpenClose()" (selectionChange)="updateAssignedObjects(formControls.assignedObjects.value)" multiple>
+                     <mat-option *ngFor="let assignedObject of assignedObjectsList" [value]="assignedObject">{{assignedObject.FIELDDESCRIPTION}}</mat-option>
+                   </mat-select>
+                 </mat-form-field>
+                 <mat-select-trigger>
+                   <mat-chip-list>
+                     <mat-chip *ngFor="let obj of assignedObjectsSelected"
+                               [removable]="true" (removed)="OnassignedObjectsList(obj)">
+                       {{ obj.FIELDDESCRIPTION }}
+                       <mat-icon matChipRemove>cancel</mat-icon>
+                     </mat-chip>
+                   </mat-chip-list>
+                 </mat-select-trigger>
+                 <mat-select-trigger>
+                   <mat-form-field class="input-group" appearance="outline" *ngFor="let obj of assignedObjectsSelected ; let i = index">
+                     <mat-label>{{ obj.FIELDDESCRIPTION }}</mat-label>
+                     <input (blur) = "updateBusinessObject(obj, $event.target.value)" (keyup.enter) = "updateBusinessObject(obj, $event.target.value)" [name]="obj.FILEDNAME" value="{{obj.Value}}" matInput   />
+                   </mat-form-field>
+                 </mat-select-trigger>
+               </p>
+               <h5 mat-subheader>Cover Image</h5>
+               <mat-divider></mat-divider>
+               <div *ngIf="coverImageFiles.length === 0">
+                 <img src="../../../../assets/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()"/>
+               </div>
+               <input hidden type="file" #coverImageuploader accept="image/x-png,image/jpeg" (change)="uploadCoverImageFile($event.target.files)"/>
+               <div *ngFor="let file of coverImageFiles;let i=index">
+                 <img [hidden]="!getImageSrc(file)" [attr.src]="getImageSrc(file)" alt=""  class="coverImage" (click)="coverImageuploader.click()"/>
+               </div>
+             </div>
+            <div class="col-md-6 col-sm-6 col-xs-6">
+              <h5 mat-subheader>Prerequisites</h5>
+              <mat-divider></mat-divider>
+              <p>
+                <mat-form-field class="input-group" appearance="outline">
+                  <mat-label>Tools</mat-label>
+                  <input (keyup.enter)="requisiteChange($event.target.value, 'Tools')"
+                         formControlName = "tools"
+                         matInput />
+                </mat-form-field>
+                <mat-select-trigger>
+                  <mat-chip-list>
+                    <mat-chip *ngFor="let tool of selectedTools"
+                              [removable]="true" (removed)="removePrequisite({ type: 'Tools', value: tool })" class="margin-bottom">
+                      {{ tool }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-select-trigger>
+              </p>
+              <p>
+                <mat-form-field appearance="outline">
+                  <mat-label>Safety & PPEs</mat-label>
+                  <input (keyup.enter)="requisiteChange($event.target.value, 'SafetyKit')"
+                         formControlName = "safetyKit"
+                         matInput />
+                </mat-form-field>
+                <mat-select-trigger>
+                  <mat-chip-list>
+                    <mat-chip *ngFor="let safetyKit of selectedSafetyKits"
+                              [removable]="true" (removed)="removePrequisite({ type: 'SafetyKit', value: safetyKit })" class="margin-bottom">
+                      {{ safetyKit }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-select-trigger>
+              </p>
+              <p>
+                <mat-form-field appearance="outline">
+                  <mat-label>Spare Parts</mat-label>
+                  <input (keyup.enter)="requisiteChange($event.target.value, 'SpareParts')"
+                         formControlName = "spareParts"
+                         matInput />
+                </mat-form-field>
+                <mat-select-trigger>
+                  <mat-chip-list>
+                    <mat-chip *ngFor="let sparePart of selectedSpareParts"
+                              [removable]="true" (removed)="removePrequisite({ type: 'SpareParts', value: sparePart })" class="margin-bottom">
+                      {{ sparePart }}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                  </mat-chip-list>
+                </mat-select-trigger>
+              </p>
+            </div>
+
+
+
+          </div>
+
+
+
+          <div *ngIf="previewDisplay">
+            <h5 mat-subheader>Assignment</h5>
+            <mat-divider></mat-divider>
+            <p class="margin">
+              <mat-form-field appearance="outline">
+                <mat-label>Categories</mat-label>
+                <mat-select formControlName="categories" id="allCategories" (openedChange)="onCategoryOpenClose()" (selectionChange)="updateCategory(formControls.categories.value)"  multiple>
+                  <mat-option [value]="cat.Category_Name" *ngFor="let cat of categoriesList">{{cat.Category_Name}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let obj of categoriesSelected"
+                            [removable]="true" (removed)="OnCategoryObjectsList(obj)" class="margin-bottom">
+                    {{ obj }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-select-trigger>
+            </p>
+            <p>
+              <mat-form-field appearance="outline">
+                <mat-label>Assigned Objects</mat-label>
+                <mat-select id="allAssignedObjects" formControlName="assignedObjects" [compareWith]="assignedObjectsComparison" (openedChange)="onAssignedObjectsOpenClose()" (selectionChange)="updateAssignedObjects(formControls.assignedObjects.value)" multiple>
+                  <mat-option *ngFor="let assignedObject of assignedObjectsList" [value]="assignedObject">{{assignedObject.FIELDDESCRIPTION}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let obj of assignedObjectsSelected"
+                            [removable]="true" (removed)="OnassignedObjectsList(obj)">
+                    {{ obj.FIELDDESCRIPTION }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-select-trigger>
+              <mat-select-trigger>
+                <mat-form-field class="input-group" appearance="outline" *ngFor="let obj of assignedObjectsSelected ; let i = index">
+                  <mat-label>{{ obj.FIELDDESCRIPTION }}</mat-label>
+                  <input (blur) = "updateBusinessObject(obj, $event.target.value)" (keyup.enter) = "updateBusinessObject(obj, $event.target.value)" [name]="obj.FILEDNAME" value="{{obj.Value}}" matInput   />
+                </mat-form-field>
+              </mat-select-trigger>
+            </p>
+            <h5 mat-subheader>Cover Image</h5>
+            <mat-divider></mat-divider>
+            <div *ngIf="coverImageFiles.length === 0">
+              <img src="../../../../assets/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()"/>
+            </div>
+            <input hidden type="file" #coverImageuploader accept="image/x-png,image/jpeg" (change)="uploadCoverImageFile($event.target.files)"/>
+            <div *ngFor="let file of coverImageFiles;let i=index">
+              <img [hidden]="!getImageSrc(file)" [attr.src]="getImageSrc(file)" alt=""  class="coverImage" (click)="coverImageuploader.click()"/>
+            </div>
+            <h5 mat-subheader>Prerequisites</h5>
+            <mat-divider></mat-divider>
+            <p>
+              <mat-form-field class="input-group" appearance="outline">
+                <mat-label>Tools</mat-label>
+                <input (keyup.enter)="requisiteChange($event.target.value, 'Tools')"
+                       formControlName = "tools"
+                       matInput />
+              </mat-form-field>
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let tool of selectedTools"
+                            [removable]="true" (removed)="removePrequisite({ type: 'Tools', value: tool })" class="margin-bottom">
+                    {{ tool }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-select-trigger>
+            </p>
+            <p>
+              <mat-form-field appearance="outline">
+                <mat-label>Safety & PPEs</mat-label>
+                <input (keyup.enter)="requisiteChange($event.target.value, 'SafetyKit')"
+                       formControlName = "safetyKit"
+                       matInput />
+              </mat-form-field>
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let safetyKit of selectedSafetyKits"
+                            [removable]="true" (removed)="removePrequisite({ type: 'SafetyKit', value: safetyKit })" class="margin-bottom">
+                    {{ safetyKit }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-select-trigger>
+            </p>
+            <p>
+              <mat-form-field appearance="outline">
+                <mat-label>Spare Parts</mat-label>
+                <input (keyup.enter)="requisiteChange($event.target.value, 'SpareParts')"
+                       formControlName = "spareParts"
+                       matInput />
+              </mat-form-field>
+              <mat-select-trigger>
+                <mat-chip-list>
+                  <mat-chip *ngFor="let sparePart of selectedSpareParts"
+                            [removable]="true" (removed)="removePrequisite({ type: 'SpareParts', value: sparePart })" class="margin-bottom">
+                    {{ sparePart }}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-select-trigger>
+            </p></div>
+
+
+
+        </form>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </cdk-step>
+
+
+</app-custom-stepper>

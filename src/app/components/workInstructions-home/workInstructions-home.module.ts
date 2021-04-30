@@ -28,8 +28,8 @@ import { InstructionsHomePageRoutingModule } from './workInstructions-home-routi
 import { CategoriesComponent } from './categories/categories.component';
 import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
 
-import {TimeAgoPipe} from "../../pipes/time-ago.pipe";
-import {DropDownFilterPipe} from "../../pipes/dropdown-filter.pipe";
+import {TimeAgoPipe} from '../../pipes/time-ago.pipe';
+import {DropDownFilterPipe} from '../../pipes/dropdown-filter.pipe';
 
 import { OrderModule } from 'ngx-order-pipe';
 
@@ -49,7 +49,7 @@ import { OrderModule } from 'ngx-order-pipe';
   ],
   declarations: [
     TimeAgoPipe,DropDownFilterPipe,
-    WorkInstructionsHomeComponent, 
+    WorkInstructionsHomeComponent,
     CategoriesComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],

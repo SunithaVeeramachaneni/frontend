@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {InstructionService} from "../../../workInstructions-home/categories/workinstructions/instruction.service";
+import {InstructionService} from "../../../workinstructions/instruction.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {ToastService} from "../../../../shared/toast";
 import { ErrorInfo } from '../../../../interfaces/error-info';

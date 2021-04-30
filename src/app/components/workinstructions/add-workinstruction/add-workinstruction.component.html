@@ -1,0 +1,88 @@
+<div> Add Work Instructions</div>
+
+<!-- <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
+<div>
+  <div class="row wi-status-container">
+   <div class="col-lg-6 col-md-6">
+       <ul class="wi-title width">
+        <li>
+          <h2>
+            <a matTooltip={{selectedInstruction.WI_Name}} matTooltipClass="" class="width">
+              <input type="text" id="wi_title"
+                    [(ngModel)]="selectedInstruction.WI_Name"
+                    [disabled] = "selectedInstruction.Published === true"
+                    class="wi_title_input" placeholder="Untitled Work Instruction"
+                    autofocus="true"
+                    value={{selectedInstruction.WI_Name}}
+                    (keyup)="titleChange(selectedInstruction.WI_Name, true)" #workInstructionTitle/>
+                  </a>
+  <!--                   {{ workInstructionTitle.focus() }}-->
+                <!-- <span class="btn wi-title-info-position">
+                  <span class="f-left text-danger wi-title-info" *ngIf="titleErrors?.required">
+                    Title is required
+                  </span>
+                </span>
+                <span class="btn wi-title-info-position">
+                  <span class="f-left text-danger wi-title-info" *ngIf="titleErrors?.exists">
+                    Title already exists!
+                  </span>
+                </span>
+          </h2>
+        </li>
+      </ul>
+   </div>
+   <div class="col-lg-6 col-md-6 alignment">
+      <ul class="wi-status display">
+        <li class="display">
+          <a [class.disabled] = "!titleProvided" (click)="setFav()">
+            <span *ngIf="!selectedInstruction.IsFavorite" matTooltip="Make it Favorite" matTooltipClass="">
+              <mat-icon>star_border</mat-icon>
+            </span>
+            <span *ngIf="selectedInstruction.IsFavorite" matTooltip="Make it UnFavorite" matTooltipClass="">
+                <mat-icon class="is-fav-icon">star</mat-icon>
+            </span></a>
+          <button [class.disabled] = "!titleProvided" matTooltip="More Options" matTooltipClass=""
+                  mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon class="more_horiz-icon">more_horiz</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="copyWI(selectedInstruction);" id="copyWorkInstruction" *ngIf="!isWIPublished">
+              <img alt="Copy Work Instruction" src="../../../assets/svg/copy.svg"/>
+              <span class="menu-text m-l-15">Copy Work Instruction</span>
+            </button>
+            <button mat-menu-item (click)="removeWI(selectedInstruction);" id="deleteWorkInstruction">
+              <mat-icon class="text-red">close</mat-icon>
+              <span class="menu-text text-red">Delete Work Instruction</span>
+            </button>
+          </mat-menu>
+        </li>
+        <li>
+          <div class="message" *ngIf="this.saveStatus === 'Saving..'"><mat-icon class="cached">cached</mat-icon>{{saveStatus}}</div>
+          <div class="message" *ngIf="this.saveStatus === 'All Changes Saved'">{{saveStatus}}</div>
+        </li>
+        <li>
+          <button [disabled]="!receivedInstruction" [ngClass]="{'fnt-white' : receivedInstruction, 'save' : !isWIPublished }" (click)="publishInstruction(selectedInstruction)"
+          mat-raised-button  class="b-r-8 btn btn-primary publish-btn">
+          <span *ngIf="!receivedInstruction">
+            <img alt="upload"  src="../../../../assets/svg/upload.svg"/>
+            <span class="dis-publish">Publish</span>
+          </span>
+          <span *ngIf="receivedInstruction" >
+            <img alt="upload" src="../../../../assets/svg/upload-white.png"/>
+            <span class="publish">Publish</span>
+          </span>
+          </button>
+        </li>
+      </ul>
+   </div>
+
+  </div>
+  <div class="clearfix"></div>
+  <div class="paginate-steps-container">
+    <div class="paginate-steps">
+      <app-overview [titleProvided] = "titleProvided" [selectedInstruction] = "selectedInstruction" [setCategory]="setCategory" (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler()" (stepsDataEntry)="getStepsData($event)" (instructionDataEntry)="getWorkInstruction($event)"></app-overview>
+    </div>
+  </div>
+</div> -->
+

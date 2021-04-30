@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {UserAccountService} from '../../../user-management/user-account.service';
 import {AlertService} from '../../alert/alert.service';
-import { InstructionService } from '../../../workInstructions-home/categories/workinstructions/instruction.service';
+import { InstructionService } from '../../../workinstructions/instruction.service';
 import { ErrorInfo } from '../../../../interfaces/error-info';
 
 @Component({

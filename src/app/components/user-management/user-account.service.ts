@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { User } from './user';
 import { of } from 'rxjs';
-import { InstructionService } from '../workInstructions-home/categories/workinstructions/instruction.service';
+import { InstructionService } from '../workinstructions/instruction.service';
 import { ErrorInfo } from '../../interfaces/error-info';
 
 @Injectable({ providedIn: 'root'})

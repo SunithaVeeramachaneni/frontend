@@ -11,7 +11,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ToastService } from '../shared/toast';
 import { ErrorInfo } from '../interfaces/error-info';
-import { InstructionService } from '../components/workInstructions-home/categories/workinstructions/instruction.service';
+import { InstructionService } from '../components/workinstructions/instruction.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {

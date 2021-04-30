@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { ErrorInfo } from "../../interfaces/error-info";
 import { UserOptional } from "../../interfaces/user";
-import { InstructionService } from "../workInstructions-home/categories/workinstructions/instruction.service";
+import { InstructionService } from "../workinstructions/instruction.service";
 import { User } from './user';
 import { UserAccountService } from './user-account.service';
 

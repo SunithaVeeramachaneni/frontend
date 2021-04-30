@@ -5,7 +5,7 @@ import {CategoryComponent} from '../../modal/templates/category/category.compone
 import {DeleteCategoryComponent} from '../../modal/templates/delete-category/delete-category.component' ;
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CategoryService } from './category.service';
-import { InstructionService } from './workinstructions/instruction.service';
+import { InstructionService } from '../../workinstructions/instruction.service';
 import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces/error-info';
 import { Base64HelperService } from '../../../shared/base64-helper.service';

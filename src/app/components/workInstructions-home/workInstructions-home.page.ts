@@ -10,7 +10,7 @@ import { Instruction } from '../../interfaces/instruction';
 import { ErrorInfo } from '../../interfaces/error-info';
 import {combineLatest, Subscription} from 'rxjs';
 import { Base64HelperService } from '../../shared/base64-helper.service';
-import {InstructionService} from './categories/workinstructions/instruction.service';
+import {InstructionService} from '../workinstructions/instruction.service';
 
 @Component({
   selector: 'app-instruction-home',
