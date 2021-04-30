@@ -7,8 +7,33 @@ import {AddWorkinstructionComponent } from './add-workinstruction/add-workinstru
 const routes: Routes = [
   {
     path: 'add-instruction',
+    data: {
+      title: 'Untitled Work Instruction'
+    },
     component: AddWorkinstructionComponent
-  }
+  },
+  {
+    path: 'add-instruction',
+    data: {
+      title: 'Untitled Work Instruction'
+    },
+    component: AddWorkinstructionComponent
+  },
+  {
+    path: 'add-instruction/:id',
+    data: {
+      title: ''
+    },
+    component: AddWorkinstructionComponent
+  },
+  {
+    path: 'drafts/add-instruction/:id',
+    data: {
+      title: ''
+    },
+    component: AddWorkinstructionComponent
+  },
+
 ];
 
 @NgModule({

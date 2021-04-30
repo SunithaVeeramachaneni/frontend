@@ -79,7 +79,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
   }
 
   public ngAfterViewInit(): void {
-    // this.workInstructionTitle.nativeElement.focus();
+    this.workInstructionTitle.nativeElement.focus();
   }
 
   ngOnInit(): void {
@@ -356,8 +356,17 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
 
   addTitleToInstruction() {
     this._commonSvc.stepDetailsSave('Saving..');
-    const userName = JSON.parse(localStorage.getItem("loggedInUser"));
-    this.route.data['value']['title'] = this.selectedInstruction?.WI_Name;
+    const userName = {
+      "id": "1",
+      "first_name": "Sunitha",
+      "last_name": "Veeramachaneni",
+      "email": "sunitha.veermchanneu@innovapptve.com",
+      "password": 'x123',
+      "role": "admin",
+      "empId": "5000343"
+    };
+    // console.log(this.route);
+    // this.route.data['value']['title'] = this.selectedInstruction?.WI_Name;
     const wid = this.route.snapshot.paramMap.get('id');
     const WI = this.selectedInstruction;
     if ((WI && WI.Id) || wid) {

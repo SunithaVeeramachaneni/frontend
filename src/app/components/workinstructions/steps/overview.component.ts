@@ -525,7 +525,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'app-custom-stepper',
   templateUrl: './step.component.html',
-  styleUrls: ['./step.component.css'],
+  styleUrls: ['step.component.css'],
   providers: [{provide: CdkStepper, useExisting: CustomStepperComponent}]
 })
 
