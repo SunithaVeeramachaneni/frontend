@@ -36,7 +36,7 @@ import {UserManagementModule} from './components/user-management/user-management
 import { SharedModule } from './shared/shared.module';
 import { ModalModule } from './components/modal/modal.module';
 import {ButtonsModule} from 'ngx-bootstrap/buttons';
-import {AppService} from './services/app.services';
+
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { ErrorHandlerModule } from './error-handler/error-handler.module';
@@ -82,7 +82,7 @@ import { ZingchartAngularModule} from 'zingchart-angular';
 
   ],
   providers: [
-    AppService,
+  
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'} },
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }

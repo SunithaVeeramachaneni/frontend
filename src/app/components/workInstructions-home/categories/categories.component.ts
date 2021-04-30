@@ -1,12 +1,15 @@
 import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
-import { Base64HelperService } from '../../../shared/base64-helper.service';
-
+import {OverlayService} from '../../modal/overlay.service';
 import {ComponentType} from '@angular/cdk/portal';
 import {CategoryComponent} from '../../modal/templates/category/category.component';
 import {DeleteCategoryComponent} from '../../modal/templates/delete-category/delete-category.component' ;
+import { NgxSpinnerService } from 'ngx-spinner';
+import { CategoryService } from './category.service';
+import { InstructionService } from './workinstructions/instruction.service';
+import {ToastService} from '../../../shared/toast';
+import { ErrorInfo } from '../../../interfaces/error-info';
+import { Base64HelperService } from '../../../shared/base64-helper.service';
 
-import { ModalController } from '@ionic/angular';
 @Component({
   selector: 'app-categories',
   templateUrl: 'categories.component.html',
@@ -48,7 +51,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     EditedBy: '',
     Published: false
   };
-
+  public catSubscribeComponent = CategoryComponent;
+  public delCatSubscribeComponent = DeleteCategoryComponent;
   public categoryDetailObject = null;
   public workInstructionsDetailObject = null;
   public imageHeight = '';
@@ -66,17 +70,16 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     }
   }
 
-  constructor(private modalCtrl: ModalController,private http: HttpClient, private cdrf: ChangeDetectorRef, private base64HelperService: Base64HelperService) {}
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  }
+  constructor(private spinner: NgxSpinnerService,
+              private overlayService: OverlayService,
+              private categoryService: CategoryService,
+              private _instructionSvc: InstructionService,
+              private _toastService: ToastService,
+              private cdrf: ChangeDetectorRef,
+              private base64HelperService: Base64HelperService) {}
 
   getAllCategories() {
-    this.http.get<any>('http://localhost:3000/categories')
-    .subscribe(categories => {
-      console.log(categories);
+    this._instructionSvc.getAllCategories().subscribe(categories => {
       for (let catCnt = 0; catCnt <= categories.length; catCnt++) {
         this.categoryDetail = {
           CId: '',
@@ -94,6 +97,26 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           this.categoryDetail.CId = categories[catCnt].Category_Id;
           this.categoryDetail.Cover_Image = categories[catCnt].Cover_Image;
           this.categoriesList.push(this.categoryDetail);
+        }
+      }
+
+      const index = this.categoriesList.findIndex(category => category.CId === "4d08pHYBr" && category.Category_Name === 'Dummy');
+      if (index !== -1) {
+        this.categoriesList.splice(index, 1);
+      }
+      if (this.categoriesList && this.categoriesList.length > 0) {
+        for (let catObj = 0; catObj <= this.categoriesList.length; catObj++) {
+          if (this.categoriesList[catObj]) {
+            this._instructionSvc.getInstructionsByCategoryId(this.categoriesList[catObj].CId).subscribe((wi_resp) => {
+              wi_resp.forEach(wi => {
+                if (wi.Published) {
+                  this.categoriesList[catObj].Published_Count += 1;
+                } else {
+                  this.categoriesList[catObj].Drafts_Count += 1;
+                }
+              });
+            });
+          }
         }
       }
     });
@@ -114,69 +137,111 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     this.cdrf.detectChanges();
   }
 
-  async openModal(obj){
-    console.log(obj)
-
-    if(obj === undefined) {
-      const modal = await this.modalCtrl.create({
-        component: CategoryComponent,
-        componentProps: {
-          CId : this.categoryDetail.CId,
-          Category_Name : this.categoryDetail.Category_Name,
-          Cover_Image :"assets/img/brand/category-placeholder.png",
-        }
-      });
-      await modal.present();
-      const data = await modal.onWillDismiss();
-      this.categoriesList=[];
-      this.getAllCategories();
-    }
-    else {
-      const modal = await this.modalCtrl.create({
-        component: CategoryComponent,
-        componentProps: {
-          CId : obj.CId,
-          Category_Name : obj.Category_Name,
-          Cover_Image : obj.Cover_Image,
-        }
-      });
-      await modal.present();
-      const data = await modal.onWillDismiss();
-      this.categoriesList=[];
-      this.getAllCategories();
-    }
-  }
-
-  delete(obj) {
-    console.log(obj);
-    this.http.delete(`http://localhost:3000/deleteCategory/${obj.CId}`, obj)
-    .subscribe(data => {
-      console.log(data);
-      this.categoriesList = [];
-      this.getAllCategories();
-     }, error => {
-      console.log(error);
-    })
-  }
-
-  menuVisible: boolean
-  
-  showNavigationMenu(): void {
-    this.menuVisible = true
-  }
-  
-  hideNavigationMenu(): void {
-    this.menuVisible = false
-  }
-
   ngAfterViewChecked(): void {
     if (this.image) {
       this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
     }
   }
 
+  open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
+    const ref = this.overlayService.open(content, obj);
+    ref.afterClosed$.subscribe(res => {
+      if (content === this.catSubscribeComponent) {
+        this.categoryDetailObject = res.data;
+        if (this.categoryDetailObject) {
+          const { cid: CId, title: Category_Name, coverImage: Cover_Image } = this.categoryDetailObject || {};
+          this.categoryService.removeDeleteFiles(Cover_Image);
+          if (CId) {
+            this._instructionSvc.updateCategory({ Category_Id: CId, Category_Name, Cover_Image }).subscribe(
+              response => {
+                this.categoriesList = [];
+                this.getAllCategories();
+                if (Object.keys(response).length) {
+                  this._toastService.show({
+                    text: "Category " + Category_Name + " has been updated successfully",
+                    type: 'success',
+                  });
+                }
+             },
+              error => {
+                console.log(error);
+              });
+          } else {
+            this._instructionSvc.addCategory({CId, Category_Name, Cover_Image}).subscribe(
+              response => {
+                this.CatName = Category_Name;
+                this.categoriesList = [];
+                this.getAllCategories();
+                if (Object.keys(response).length) {
+                  this._toastService.show({
+                    text: "Category " + Category_Name + " has been added successfully",
+                    type: 'success',
+                  });
+                }
+              },
+              error => {
+                console.log(error);
+              });
+          }
+        } else {
+          this.categoryService.removeDeleteFiles(obj.Cover_Image);
+        }
+
+        const files = this.categoryService.getDeleteFiles();
+        if (files.length) {
+          this._instructionSvc.deleteAttachments({ files }).subscribe(
+            resp => {
+              if (Object.keys(resp).length) {
+                const { Deleted: deletedFiles } = resp;
+                deletedFiles.forEach(file => {
+                  this.categoryService.removeDeleteFiles(file.Key);
+                });
+              }
+            },
+            error => console.log(error)
+          );
+        }
+      } else if (content === this.delCatSubscribeComponent) {
+        this.categoryDetailObject = ref.data;
+        if (this.categoryDetailObject.selectedButton === 'no') {
+          return;
+        }
+        const category = {
+          'Category_Name': this.categoryDetailObject.Category_Name,
+          'Category_Id': this.categoryDetailObject.CId,
+          'Cover_Image': this.categoryDetailObject.Cover_Image
+        };
+
+        this.spinner.show();
+        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+        this._instructionSvc.deleteCategory$(category, info)
+          .subscribe(
+            data => {
+              this.spinner.hide();
+              if (category.Cover_Image && category.Cover_Image.indexOf('assets') < 0) {
+                const files = [`${category.Cover_Image}`];
+                this._instructionSvc.deleteAttachments({ files }).subscribe({
+                  error: error => console.log(error)
+                });
+              }
+              this.categoriesList = [];
+              this.getAllCategories();
+              this._toastService.show({
+                text:  "Category " + category.Category_Name + " has been deleted successfully",
+                type: 'success',
+              });
+            },
+            error => {
+              this._instructionSvc.handleError(error);
+              this.spinner.hide();
+            }
+          );
+      }
+    });
+  }
+
   getImageSrc = (source: string) => {
-    return this.base64HelperService.getBase64ImageData(source);
+    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
   }
 
   getS3CoverImageStyles = (source: string) => {

@@ -6,10 +6,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {LocationStrategy, HashLocationStrategy, CommonModule} from '@angular/common';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgpSortModule } from "ngp-sort-pipe";
+import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from '@angular/material/form-field';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-
+import {AppService} from '../../services/app.services';
+import { HttpTimeoutInterceptor } from '../../interceptors/http-timeout.interceptor';
 import { DelayFocusDirective } from '../../directives/delayfocus';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
@@ -37,6 +39,7 @@ import { OrderModule } from 'ngx-order-pipe';
     FormsModule,
     IonicModule,
     FormsModule,
+    AppMaterialModules,
     ReactiveFormsModule,
     InstructionsHomePageRoutingModule,
     OrderModule,
@@ -50,6 +53,12 @@ import { OrderModule } from 'ngx-order-pipe';
     CategoriesComponent
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
+  providers: [
+    AppService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'} },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
+  ],
   exports: [
     TimeAgoPipe,
     DropDownFilterPipe
