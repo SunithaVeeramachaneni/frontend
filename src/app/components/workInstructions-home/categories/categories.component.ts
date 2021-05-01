@@ -100,7 +100,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
         }
       }
 
-      const index = this.categoriesList.findIndex(category => category.CId === "4d08pHYBr" && category.Category_Name === 'Dummy');
+      const index = this.categoriesList.findIndex(category => category.CId === "_UnassignedCategory_" && category.Category_Name === 'Dummy');
       if (index !== -1) {
         this.categoriesList.splice(index, 1);
       }
@@ -128,7 +128,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
 
   ngAfterViewInit(): void {
     this.categoriesList = [...this.categoriesList, {
-      "CId": "4d08pHYBr",
+      "CId": "_UnassignedCategory_",
       "Category_Name": "Dummy",
       "Drafts_Count": 0,
       "Published_Count": 0,

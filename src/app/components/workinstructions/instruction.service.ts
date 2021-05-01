@@ -496,7 +496,7 @@ export class InstructionService {
     const wiDetail = {
       WI_Id: null,
       Categories: JSON.stringify([
-        {Category_Id: '4d08pHYBr', Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png"}
+        {Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png"}
       ]),
       WI_Name: ins.WI_Name,
       IsFavorite: false,
@@ -707,7 +707,7 @@ export class InstructionService {
                 const updateInstruction = this.updateWorkInstruction({
                   ...workInstruction,
                   Categories: categories.length ? JSON.stringify(categories) : JSON.stringify([...categories,
-                    { Category_Id: '4d08pHYBr', Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png" }
+                    { Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png" }
                   ]),
                   categories: categories.length ? categories : [' Unassigned'],
                   IsFavorite: categories.length ? workInstruction.IsFavorite : false,

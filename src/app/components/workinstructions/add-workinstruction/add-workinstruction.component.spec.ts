@@ -26,7 +26,7 @@ import * as InstructionActions from '../state/intruction.actions';
 
 const categoryDetails = [
   {
-    Category_Id: '4d08pHYBr',
+    Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
     Cover_Image: 'assets/svg/Categories/default-category.png',
   },

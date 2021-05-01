@@ -496,11 +496,22 @@ const createWorkInstruction = (message, userDetails) => {
 
     if (title) {
       const instruction = new Instruction({
+        WI_Id: null,
         WI_Name: title.trim(),
         Categories: categories,
         Cover_Image: coverImage,
         CreatedBy: userName,
-        EditedBy: userName
+        EditedBy: userName,
+        WI_Desc: null,
+        Tools: null,
+        Equipements: null,
+        Locations: null,
+        IsFavorite: false,
+        AssignedObjects: null,
+        SpareParts: null,
+        SafetyKit: null,
+        Published: false,
+        IsPublishedTillSave: false,
       });
 
       instruction.save()
@@ -538,9 +549,14 @@ const createSteps = (stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id) 
         Fields: fields,
         Instructions: instructions,
         Warnings: warnings,
-        Hinst: hints,
-        Reaction_Plan: reactionPlan
-      })
+        Hints: hints,
+        Reaction_Plan: reactionPlan,
+        Description: null,
+        Status: null,
+        Attachment: null,
+        isCloned: false,
+        Published: false
+      });
 
       step.save()
         .then(result => {

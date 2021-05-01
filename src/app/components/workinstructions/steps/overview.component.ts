@@ -119,7 +119,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       category_names = [...category_names, 'Unassigned'];
       this.categoriesSelected = category_names;
       const defaultCategory = [
-        {'Category_Id': "4d08pHYBr", 'Category_Name': "Unassigned", 'Cover_Image': "assets/img/brand/category-placeholder.png"}
+        {'Category_Id': "_UnassignedCategory_", 'Category_Name': "Unassigned", 'Cover_Image': "assets/img/brand/category-placeholder.png"}
       ];
       this.recentWorkInstruction.Categories = JSON.stringify(defaultCategory);
     }
@@ -209,7 +209,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       this.formControls.categories.setValue(category_names);
       this.categoriesSelected = [...category_names];
       const defaultCategory = [
-        {'Category_Id': "4d08pHYBr ", 'Category_Name': "Unassigned", 'Cover_Image': "assets/img/brand/category-placeholder.png"}
+        {'Category_Id': "_UnassignedCategory_ ", 'Category_Name': "Unassigned", 'Cover_Image': "assets/img/brand/category-placeholder.png"}
       ];
       this.recentWorkInstruction.Categories = JSON.stringify(defaultCategory);
       this.instructionDataEntry.emit({insObj: this.recentWorkInstruction, update: true});

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 
 @Component({
@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public appPages = [
     { title: 'Dashboard', url: 'Dashboard', icon: 'home' },
     { title: 'Insights', url: 'Insights', icon: 'star' },
@@ -25,4 +25,17 @@ export class AppComponent {
   ];
   // public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   constructor() {}
+
+  ngOnInit(): void {
+    const userDetails = {
+      "id": "1",
+      "first_name": "Sunitha",
+      "last_name": "Veeramachaneni",
+      "email": "sunitha.veermchanneu@innovapptve.com",
+      "password": 'x123',
+      "role": "admin",
+      "empId": "5000343"
+    };
+    localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
+  }
 }

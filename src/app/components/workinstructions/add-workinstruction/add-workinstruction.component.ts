@@ -106,7 +106,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       this._instructionsvc.getInstructionsById(wid).subscribe((res) => {
         if (res && Object.keys(res).length > 0) {
           this.store.dispatch(InstructionActions.updateInstruction({ instruction: res }));
-          this.route.data['value']['title'] = res.WI_Name;
+          // this.route.data['value']['title'] = res.WI_Name;
           this.receivedInstruction = true;
           this.titleProvided = true;
           if (res.Published === true) {
@@ -356,15 +356,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
 
   addTitleToInstruction() {
     this._commonSvc.stepDetailsSave('Saving..');
-    const userName = {
-      "id": "1",
-      "first_name": "Sunitha",
-      "last_name": "Veeramachaneni",
-      "email": "sunitha.veermchanneu@innovapptve.com",
-      "password": 'x123',
-      "role": "admin",
-      "empId": "5000343"
-    };
+    const userName = JSON.parse(localStorage.getItem('loggedInUser'));
     // console.log(this.route);
     // this.route.data['value']['title'] = this.selectedInstruction?.WI_Name;
     const wid = this.route.snapshot.paramMap.get('id');

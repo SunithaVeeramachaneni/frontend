@@ -23,17 +23,17 @@ const wid = '3707';
 
 const categoryDetails = [
   {
-    Category_Id: '4d08pHYBr',
+    Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
     Cover_Image: 'assets/img/brand/category-placeholder.png',
   },
   {
-    Category_Id: '4d08pHYBr',
+    Category_Id: '_UnassignedCategory_',
     Category_Name: 'Health-Precautions',
     Cover_Image: 'assets/CoverImages/coverimage2.png',
   },
   {
-    Category_Id: '4d08pHYBr',
+    Category_Id: '_UnassignedCategory_',
     Category_Name: 'Sample Category',
     Cover_Image: 'assets/CoverImages/coverimage3.png',
   }

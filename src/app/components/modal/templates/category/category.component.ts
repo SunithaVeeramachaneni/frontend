@@ -3,7 +3,7 @@ import {FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors, F
 import {NgxSpinnerService} from "ngx-spinner";
 import {COVER_IMAGES} from "../../constants";
 import Swal from 'sweetalert2';
-import {CategoryService} from '../../../workinstructions-home/categories/category.service';
+import {CategoryService} from '../../../workInstructions-home/categories/category.service';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { ErrorInfo } from '../../../../interfaces/error-info';
@@ -36,7 +36,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   @Input() CId : any;
   @Input() Category_Name : any;
   @Input() Cover_Image : any;
-  
+
   constructor(private fb: FormBuilder,
               private spinner: NgxSpinnerService,
               private categoryService: CategoryService,
@@ -45,7 +45,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
               private modalCtrl: ModalController,private http: HttpClient,) {
   }
 
-    
+
 
   dismissModal(){
     this.modalCtrl.dismiss(null,"cancel");
@@ -147,7 +147,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         console.log(error);
       })
     }
-    
+
     else {
       const category = {
         "Category_Name": this.frmSubscribe.value.title,

@@ -14,7 +14,7 @@
 <ng-container *ngIf="(this.categoriesList | filter : searchCriteria | paginate: config) as result">
   <div class="row categories-details" [ngClass]="{'categories-details-with-no-results': result.length === 0}">
     <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" *ngFor="let obj of result">
-      <div *ngIf="obj.CId !== '4d08pHYBr'" class="card custom-card hoverWrapper categories-details-card">
+      <div *ngIf="obj.CId !== '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
         <a [routerLink]="['/instructions/', obj.CId]"><img class="card-img-top" [ngStyle]="getS3CoverImageStyles(obj.Cover_Image)" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/> </a>
         <div class="card-body categories-details-card-body">
           <p><a [routerLink]="['/instructions/', obj.CId]" class="categories-Title"> {{obj.Category_Name}}</a></p>
@@ -36,7 +36,7 @@
           </mat-menu>
         </div>
       </div>
-      <div *ngIf="obj.CId === '4d08pHYBr'" class="card custom-card hoverWrapper categories-details-card">
+      <div *ngIf="obj.CId === '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
         <a [routerLink]="['/instructions/', obj.CId]"><img #image class="card-img-top" src='{{obj.Cover_Image}}' alt=""/></a>
         <div class="card-body categories-details-card-body">
           <p><a [routerLink]="['/instructions/', obj.CId]" class="categories-Title">{{obj.Category_Name}}</a></p>

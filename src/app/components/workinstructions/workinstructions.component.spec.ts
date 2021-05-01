@@ -26,7 +26,7 @@ import { Base64HelperService } from '../../shared/base64-helper.service';
 
 const categoryDetails = [
   {
-    Category_Id: '4d08pHYBr',
+    Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
     Cover_Image: 'assets/svg/Categories/default-category.png',
   },
@@ -93,7 +93,7 @@ const instructions = [
     categories: categories2
   },
 ];
-const categoryId = '4d08pHYBr';
+const categoryId = '_UnassignedCategory_';
 const users = [
   {
     id: 1,
