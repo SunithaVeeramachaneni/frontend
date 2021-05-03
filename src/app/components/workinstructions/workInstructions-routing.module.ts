@@ -13,13 +13,6 @@ const routes: Routes = [
     component: AddWorkinstructionComponent
   },
   {
-    path: 'add-instruction',
-    data: {
-      title: 'Untitled Work Instruction'
-    },
-    component: AddWorkinstructionComponent
-  },
-  {
     path: 'add-instruction/:id',
     data: {
       title: ''
@@ -33,6 +26,13 @@ const routes: Routes = [
     },
     component: AddWorkinstructionComponent
   },
+  {
+    path: 'favorites/add-instruction/:id',
+    data: {
+      title: ''
+    },
+    component: AddWorkinstructionComponent
+  }
 
 ];
 
