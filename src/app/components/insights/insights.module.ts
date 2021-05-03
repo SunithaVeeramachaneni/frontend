@@ -10,6 +10,7 @@ import { InsightsPage } from './insights.page';
 import { ChartsModule } from 'ng2-charts';
 import {NgApexchartsModule} from 'ng-apexcharts';
 import { ZingchartAngularModule} from 'zingchart-angular';
+
 @NgModule({
   imports: [
     CommonModule,
