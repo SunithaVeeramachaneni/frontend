@@ -41,7 +41,7 @@
         <i class="fa fa-file-o draft-icon" aria-hidden="true"></i>
         <span class="p-l-5">Drafts</span>
       </div>
-      <ng-container *ngIf="(this.wiDraftedList | filter : searchCriteria | sortBy: 'desc':'CreatedOn' | slice:0:3) as result">
+      <ng-container *ngIf="(this.wiDraftedList | filter : searchCriteria | sortBy: 'desc':'created_at' | slice:0:3) as result">
         <app-dummy #recentDrafts [value]="result"></app-dummy>
       <ul class="recents-favorites-list">
         <li class="row list-data" *ngFor="let obj of result">
@@ -74,7 +74,7 @@
             <i class="fa fa-star-o favorite-icon" aria-hidden="true"></i>
             <span class="p-l-5">Favorites</span>
           </div>
-          <ng-container *ngIf="(this.wiFavList | filter : searchCriteria | sortBy: 'desc':'CreatedOn' | slice:0:3) as result">
+          <ng-container *ngIf="(this.wiFavList | filter : searchCriteria | sortBy: 'desc':'created_at' | slice:0:3) as result">
             <app-dummy #recentFavourites [value]="result"></app-dummy>
             <ul class="recents-favorites-list">
               <li class="row list-data" *ngFor="let obj of result">

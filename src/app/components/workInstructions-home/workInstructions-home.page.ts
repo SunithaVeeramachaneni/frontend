@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { MyModalPageComponent } from '../my-modal-page/my-modal-page.component';
 import { retry, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -11,6 +11,7 @@ import { ErrorInfo } from '../../interfaces/error-info';
 import {combineLatest, Subscription} from 'rxjs';
 import { Base64HelperService } from '../../shared/base64-helper.service';
 import {InstructionService} from '../workinstructions/instruction.service';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-instruction-home',
@@ -32,7 +33,9 @@ export class WorkInstructionsHomeComponent implements OnInit {
   constructor(private http: HttpClient,
               private base64HelperService: Base64HelperService,
               private _instructionSvc: InstructionService,
-              private router: Router) { }
+              private router: Router,
+              private loadingController: LoadingController,
+              private toastService: ToastService) { }
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -78,21 +81,33 @@ export class WorkInstructionsHomeComponent implements OnInit {
       );
   }
 
-  uploadFile(event) {
+  async uploadFile(event) {
     // this.spinner.show();
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
     if (file.type.indexOf('audio') === 0 || file.type.indexOf('video') === 0 || file.type.indexOf('image') === 0) {
       formData.append('userDetails', localStorage.getItem('loggedInUser'));
+      const loading = await this.loadingController.create({
+        cssClass: 'my-custom-class',
+        message: 'Please wait...',
+      });
+      await loading.present();
       this._instructionSvc.uploadWIAudioOrVideo(formData).subscribe(
         resp => {
           if (Object.keys(resp).length) {
+            loading.dismiss();
             console.log(resp);
             // this.router.navigate(['/drafts']);
+            this.toastService.show({
+              text:  `Work Instruction ${resp.WI_Name} has been added successfully`,
+              type: 'success',
+            });
+            this.getAllFavsDraftsAndRecentIns();
           }
           // this.spinner.hide();
-        }
+        },
+        error => loading.dismiss()
       );
     }
   }

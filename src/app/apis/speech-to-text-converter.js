@@ -519,7 +519,7 @@ const createWorkInstruction = (message, userDetails) => {
           console.log(result);
           const { _id: WI_Id } = result
           createSteps(stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id);
-          resolve({ result });
+          resolve(result);
         }).catch(error => {
           reject(error);
         });
@@ -798,8 +798,8 @@ const router = () => {
         // const transcription = "instruction title is equipment specific lockout tagout procedure step one title is notify instruction notifying all affected employees that servicing or maintenance is required on a mission or equipment and that emission or equipment must be shut down and locked out to perform the servicing or maintenance step 2 title is review lockout procedure instruction the authorized employee shall refer to the fence lock out procedure to identify the type and magnitude of the energy or equipment utilizes understand the hazards of the energy and she'll know the methods to control the energy step 3 title is perform Mission stop instruction if the mission or equipment is operating shut it down by the normal stopping procedures like the press the stop button open switch close ball stop";
         // const transcription = "Instruction title is equipment specific lock out tag out procedure step 1 title, IX notify instruction notify all affected employees that servicing or maintenance is required on a mission or equipment and that the nation or equipment must be shut down and logged out to perform the servicing or maintenance step to try to leave a review Lockout procedure instruction. The authorised employees shall refer to the pens Lockout procedure to identify the type and magnitude of the energy that the machine or equipment utilizes understand the hazards of the energy and shall know the methods to control the energy. Step 3 title Aise perform machine stop instruction if the machine or equipment is operating shut it down by the normal stopping procedure.  Like depress the stop button opens which close bol excetra we can repair operating procedure for normal shutdown.  Stop."
         // const transcription = "instruction title is  perform for checks on gas Forklift  step 1  Pak Forklift  instruction number one ensure your Forklift is parked safely on level ground and the park brake is engaged  number to open outdoors  number 3 lift seat to access engine and prop it up  warning number 1  do not remove radiator cap  number to crush if Forklift roles number 3 burns if coolant checked while engine oil Eid hot  reaction plan  Pak on level ground  hint  avoid contact  where gloves when refuelling  step 2  check level of engine oil  instruction  number 1 full voot dip stick number 2  wipe with a cloth or paper  number 3  Re insert dip stick all the way and pull out again number four check if oil between two markers on end of stick number 5 if insufficient oil notified to check for oil leaks  step 3 check coolant level  instruction  number 1  check level of coolant in overflow bottle number to check for any visible water leaks  number three if coolant level is below mark top up with water  warning number 1 do not remove radiator cap";
-        await createWorkInstruction(transcription, userDetails);
-        res.status(200).json({ fileName, transcription });
+        const { WI_Name } = await createWorkInstruction(transcription, userDetails);
+        res.status(200).json({ fileName, transcription, WI_Name });
       } catch ( error ) {
         console.log(error);
         res.status(500).send({ status: 500, message: error.stderr ? error.stderr : error.msg ? error.msg : error.message? error.message : error, error });
