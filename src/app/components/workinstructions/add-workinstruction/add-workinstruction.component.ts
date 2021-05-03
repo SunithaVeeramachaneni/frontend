@@ -300,7 +300,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
         this._instructionsvc.deleteWorkInstruction$(ID, info)
           .subscribe(
             data => {
-              this.router.navigate(['/home']);
+              this.router.navigate(['/WorkInstructions-Home']);
               this._toastService.show({
                 text: "Work instruction has been deleted",
                 type: 'success',

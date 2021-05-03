@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
 import { LoadingController, ModalController } from '@ionic/angular';
@@ -18,7 +18,7 @@ import { ToastService } from 'src/app/shared/toast';
   templateUrl: './workInstructions-home.page.html',
   styleUrls: ['./workInstructions-home.page.css'],
 })
-export class WorkInstructionsHomeComponent implements OnInit {
+export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
 
   public wiDraftedList: Instruction[] = [];
   public wiFavList: Instruction[] = [];
@@ -103,7 +103,6 @@ export class WorkInstructionsHomeComponent implements OnInit {
               text:  `Work Instruction ${resp.WI_Name} has been added successfully`,
               type: 'success',
             });
-            this.getAllFavsDraftsAndRecentIns();
           }
           // this.spinner.hide();
         },

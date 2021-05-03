@@ -490,7 +490,7 @@ const createWorkInstruction = (message, userDetails) => {
     console.log(stepRPlan);
 
     const categories = JSON.stringify([
-      {Category_Id: 20, Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png"}
+      {Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/img/brand/category-placeholder.png"}
     ]);
     const coverImage = '../../assets/img/brand/doc-placeholder.png';
 
