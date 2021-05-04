@@ -37,8 +37,8 @@
   font-style: normal;
 }
 
-* {
-font-family: 'Poppins-Regular' !important;
+body, span, button, h1, h2, h3, h4, h5, h6, p, ion-menu, ion-item, ion-title, ion-card, ion-card-content  {
+  font-family: 'Poppins-Regular' !important;
 }
 
 .split-pane-visible >.split-pane-side {

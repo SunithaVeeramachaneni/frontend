@@ -8,7 +8,7 @@ ion-menu.md ion-content {
   --padding-end: 8px;
   --padding-top: 0px;
   --padding-bottom: 20px;
-  
+
 }
 
 ion-menu.md ion-list {
@@ -75,6 +75,7 @@ ion-menu.md ion-item ion-icon {
 
 ion-menu.md ion-item ion-label {
   font-weight: 500;
+  font-family: "Poppins-Regular" !important;
 }
 
 ion-menu.ios ion-content {

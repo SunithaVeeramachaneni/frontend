@@ -4,11 +4,11 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'Dashboard',
+    redirectTo: 'Insights',
     pathMatch: 'full'
   },
   {
-    path: 'Dashboard',
+    path: 'Insights',
     // loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
     loadChildren: () => import('./components/insights/insights.module').then( m => m.InsightsPageModule)
 

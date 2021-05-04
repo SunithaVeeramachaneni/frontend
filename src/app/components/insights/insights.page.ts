@@ -1279,12 +1279,12 @@ chartone.hiddenState.properties.opacity = 0; // this creates initial fade-in
 chartone.data = [
   {
     country: "Nevada",
-    value: 70,
+    value: 76,
 
   },
   {
     country: "Merian",
-    value: 30
+    value: 24
   },
 ];
 chartone.radius = am4core.percent(70);
@@ -1293,6 +1293,10 @@ chartone.startAngle = 180;
 chartone.endAngle = 360;
 
 var series = chartone.series.push(new am4charts.PieSeries());
+series.colors.list = [
+  am4core.color("#FF5E54"),
+  am4core.color("#F7B259"),
+  am4core.color("#BC71D8")];
 series.dataFields.value = "value";
 series.dataFields.category = "country";
 
@@ -1312,17 +1316,21 @@ var charttwo = am4core.create("chartdivdonut", am4charts.PieChart);
 // Add data
 charttwo.data = [{
   "country": "Nevada",
-  "litres": 501.9
+  "litres": 10.0
 }, {
   "country": "Merian",
-  "litres": 301.9
+  "litres": 8.0
 }, {
   "country": "Others",
-  "litres": 201.1
+  "litres": 6.0
 }];
 
 // Add and configure Series
 var pieSeries = charttwo.series.push(new am4charts.PieSeries());
+pieSeries.colors.list = [
+  am4core.color("#FF5E54"),
+  am4core.color("#F7B259"),
+  am4core.color("#BC71D8")];
 pieSeries.dataFields.value = "litres";
 pieSeries.dataFields.category = "country";
 pieSeries.dataFields.hidden = "hidden";

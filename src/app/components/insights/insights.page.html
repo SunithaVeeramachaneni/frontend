@@ -9,109 +9,68 @@
 
 <ion-content>
   <ion-grid>
+
+
     <ion-row>
-      <ion-col>
-        <ion-row>
-          <ion-card style="height: 200px; border-radius: 1.2em;">
-            <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 12px;">$32</h2>
-            <ion-text style="font-size: small;color: black;font-weight: bold;">Maintenance Cost Per Unit Output</ion-text>
-            <div id="chartdivline" style=" height: 170px;width: 350px;">
-            </div>
-          </ion-card>
-        </ion-row>
-
-        <ion-row>
-          <ion-card style="height: 150px;border-radius: 1.2em;width: 350px;">
-            <h2 style="color:rgb(238, 108, 115);font-weight: bolder;margin-top: 15px;margin-left: 12px;">0.70</h2>
-            <ion-text style="font-size: small;color: black;font-weight: bold;">Preventive to Corrective Costs</ion-text>
-          </ion-card>
-        </ion-row>
-
-        <ion-row>
-          <ion-card style="height: 200px;border-radius: 1.2em;">
-            <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 12px;">410 hrs</h2>
-            <ion-text style="font-size: small;color: black;font-weight: bold;">Maintenance Backlog</ion-text>
-            <div id="chartdivlinetwo" style="height: 100px;width: 350px;margin-top: 69px;">
-            </div>
-          </ion-card>
-        </ion-row>
-      </ion-col>
-
-      <ion-col>
-        <ion-card class="welcome-card" style="height: 600px;border-radius: 1.2em;">
-          <ion-card-header>
-            <ion-card-title>$13k</ion-card-title>
-            <ion-card-subtitle>Cost of Emergency Repairs</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <div id="chartdivdonut" style=" height: 500px">
-            </div>
-            <!-- <div style="display: block;">
-            <canvas baseChart
-    [data]="doughnutChartData"
-    [labels]="doughnutChartLabels"
-    [chartType]="doughnutChartType"
-    [height]="400">
-  </canvas>
-  </div> -->
-
-            <!-- <zingchart-angular [config]="configone" [height]="500"></zingchart-angular> -->
-
-              <!-- <apx-chart #chart
-                [series]="chartOptionsTwo.series"
-                [chart]="chartOptionsTwo.chart"
-                [labels]="chartOptionsTwo.labels"
-                [responsive]="chartOptionsTwo.responsive"
-              ></apx-chart> -->
-
-            <!-- <div id="simplePie" style="width:100%; height:400px;"></div> -->
-          </ion-card-content>
+      <ion-col size="12" size-md="3">
+        <ion-card style="height: 200px; border-radius: 1.2em;">
+          <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">$32</h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold; padding-left: 10px;">Maintenance Cost Per Unit Output</ion-text>
+          <div id="chartdivline" style=" height: 170px;width: 350px;">
+          </div>
         </ion-card>
-      </ion-col>
-
-      <ion-col>
-        <ion-card class="welcome-card" style="height: 600px;border-radius: 1.2em;">
-          <ion-card-header>
-            <ion-card-title>$13k</ion-card-title>
-            <ion-card-subtitle>Cost of Emergency Repairs</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <div id="chartdivone" style=" height: 500px">
-
-            </div>
-            <!-- <zingchart-angular [config]="configtwo" [height]="500"></zingchart-angular> -->
-
-            <!-- <div  id="chartone">
-              <apx-chart #chartone
-                [series]="chartOptionsOne.series"
-                [chart]="chartOptionsOne.chart"
-                [plotOptions]="chartOptionsOne.plotOptions"
-                [labels]="chartOptionsOne.labels"
-                [fill]="chartOptionsOne.fill">
-              </apx-chart>
-            </div> -->
-          </ion-card-content>
+        <ion-card style="height: 150px;border-radius: 1.2em">
+          <h2 style="color:rgb(238, 108, 115);font-weight: bolder;margin-top: 15px;margin-left: 12px;">0.70</h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold; padding-left: 10px;">Preventive to Corrective Costs</ion-text>
         </ion-card>
-      </ion-col>
-
-      <ion-col>
-        <ion-card class="welcome-card" style="height: 600px;border-radius: 1.2em;">
-          <ion-card-header>
-            <ion-card-title>$13k</ion-card-title>
-            <ion-card-subtitle>Cost of Emergency Repairs</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <div id="chartdivvenn" style=" height: 500px">
-            </div>
-            <!-- <canvas
-            [data]="configVenn"
-            [labels]="configVenn"
-            [chartType]="configVenn"
-            [height]="400">
-          </canvas>            <zingchart-angular [config]="config" [height]="500"></zingchart-angular> -->
-          </ion-card-content>
+        <ion-card style="height: 200px;border-radius: 1.2em;">
+          <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 12px;">410 hrs</h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Maintenance Backlog</ion-text>
+          <div id="chartdivlinetwo" style="height: 100px;width: 350px;margin-top: 69px;">
+          </div>
         </ion-card>
+
       </ion-col>
-    </ion-row>
+      <ion-col size="12" size-md="3">
+        <ion-card style="height: 570px;border-radius: 1.2em;">
+       
+          <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">200 hrs</h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Downtime</ion-text>
+          <br />
+          <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">$24K </h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Loss in Revenue</ion-text>
+      
+      
+          <div id="chartdivdonut" style=" height: 300px">
+          </div>
+         
+
+      </ion-card></ion-col>
+      <ion-col size="12" size-md="3">      
+        <ion-card style="height: 570px;border-radius: 1.2em;">
+      
+          <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">76%</h2>
+          <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">% of Maintenance Effectiveness</ion-text>
+      
+     
+          <div id="chartdivone" style="padding: 10px;">
+
+          </div>
+       
+      
+      </ion-card></ion-col>
+      <ion-col size="12" size-md="3"> <ion-card style="height: 570px;border-radius: 1.2em">
+      
+        <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">$13k </h2>
+        <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Cost of Emergency Repairs</ion-text>
+        
+        
+          <div id="chartdivvenn" >
+          </div>
+     
+      
+      </ion-card></ion-col>
+      </ion-row>
+ 
   </ion-grid>
 </ion-content>
