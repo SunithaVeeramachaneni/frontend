@@ -83,6 +83,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
 
   async uploadFile(event) {
     // this.spinner.show();
+    const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
@@ -93,7 +94,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
         message: 'Please wait...',
       });
       await loading.present();
-      this._instructionSvc.uploadWIAudioOrVideo(formData).subscribe(
+      this._instructionSvc.uploadWIAudioOrVideo(formData, info).subscribe(
         resp => {
           if (Object.keys(resp).length) {
             loading.dismiss();
@@ -103,6 +104,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
               text:  `Work Instruction ${resp.WI_Name} has been added successfully`,
               type: 'success',
             });
+
           }
           // this.spinner.hide();
         },

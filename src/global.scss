@@ -30,3 +30,12 @@
   --spinner-color: #222;
   color: #222;
 }
+
+.split-pane-visible >.split-pane-side {
+  min-width: 290px!important;
+  max-width: 290px!important;
+}
+
+.has-text-right {
+  text-align: right !important;
+}
