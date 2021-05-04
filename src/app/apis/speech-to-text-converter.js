@@ -530,7 +530,7 @@ const createWorkInstruction = (message, userDetails) => {
 }
 
 const createSteps = (stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id) => {
-  stepTitles.forEach((value, index) => {
+  stepTitles.forEach(async (value, index) => {
     if (value) {
       const instructions = stepIns[index] ? instructionObject(stepIns[index].trim(), 'Instruction') : null
       const warnings = stepWarn[index] ? instructionObject(stepWarn[index].trim(), 'Warning') : null
@@ -558,12 +558,19 @@ const createSteps = (stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id) 
         Published: false
       });
 
-      step.save()
+      try {
+        const result = await step.save();
+        console.log(result);
+      } catch (error) {
+        console.log(error);
+      }
+
+      /* step.save()
         .then(result => {
           console.log(result);
         }).catch(error => {
           console.log(error);
-        });
+        }); */
     }
   });
 }
