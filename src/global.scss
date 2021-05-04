@@ -30,6 +30,20 @@
   --spinner-color: #222;
   color: #222;
 }
+<<<<<<< HEAD
+@font-face {
+  font-family: 'Poppins-Regular';
+  src: url('/assets/fonts/Poppins-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
+* {
+font-family: 'Poppins-Regular' !important;
+}
+=======
 
 .split-pane-visible >.split-pane-side {
   min-width: 290px!important;
@@ -39,3 +53,4 @@
 .has-text-right {
   text-align: right !important;
 }
+>>>>>>> 47c23d07c3e96005fd9fe2cf2a462ce55e79386c

@@ -25,12 +25,8 @@ const routes: Routes = [
   {
     path: 'usedcars',
     loadChildren: () => import('./components/usedcars/usedcars.module').then( m => m.UsedcarsPageModule)
-  },
-  {
-    path: 'Insights',
-    loadChildren: () => import('./components/insights/insights.module').then( m => m.InsightsPageModule)
-
   }
+
 ];
 
 @NgModule({
