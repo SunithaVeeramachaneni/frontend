@@ -498,6 +498,8 @@
   position: relative;
   top: -50px;
   margin: 0 10px 0 0px;
+  padding-left: 0;
+  list-style: none;
 }
 
 .preview-steps-title li {
