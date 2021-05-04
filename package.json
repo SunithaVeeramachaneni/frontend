@@ -40,6 +40,7 @@
     "bulma": "^0.8.0",
     "chart.js": "^2.9.3",
     "cordova-plugin-advanced-http": "^3.1.0",
+    "cordova-plugin-file": "^6.0.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",

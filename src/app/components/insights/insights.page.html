@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>DASHBOARD</ion-title>
+    <ion-menu-button slot="start"></ion-menu-button>
+    <ion-title>Analytics & Insights</ion-title>
     <ion-buttons slot="end">
       <img [src]="userImg"  style="cursor:pointer;width: 75%;height: 75%;" />
     </ion-buttons>
@@ -33,44 +34,44 @@
       </ion-col>
       <ion-col size="12" size-md="3">
         <ion-card style="height: 570px;border-radius: 1.2em;">
-       
+
           <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">200 hrs</h2>
           <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Downtime</ion-text>
           <br />
           <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">$24K </h2>
           <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Loss in Revenue</ion-text>
-      
-      
+
+
           <div id="chartdivdonut" style=" height: 300px">
           </div>
-         
+
 
       </ion-card></ion-col>
-      <ion-col size="12" size-md="3">      
+      <ion-col size="12" size-md="3">
         <ion-card style="height: 570px;border-radius: 1.2em;">
-      
+
           <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">76%</h2>
           <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">% of Maintenance Effectiveness</ion-text>
-      
-     
+
+
           <div id="chartdivone" style="padding: 10px;">
 
           </div>
-       
-      
+
+
       </ion-card></ion-col>
       <ion-col size="12" size-md="3"> <ion-card style="height: 570px;border-radius: 1.2em">
-      
+
         <h2 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">$13k </h2>
         <ion-text style="font-size: small;color: black;font-weight: bold;padding-left: 10px;">Cost of Emergency Repairs</ion-text>
-        
-        
+
+
           <div id="chartdivvenn" >
           </div>
-     
-      
+
+
       </ion-card></ion-col>
       </ion-row>
- 
+
   </ion-grid>
 </ion-content>
