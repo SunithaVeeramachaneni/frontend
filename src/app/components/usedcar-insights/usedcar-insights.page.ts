@@ -18,7 +18,7 @@ import { InstructionService } from '../workinstructions/instruction.service';
 import { ToastService } from 'src/app/shared/toast';
 import { isPlatformBrowser } from '@angular/common';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { MultiDataSet, Label } from 'ng2-charts';
+import { MultiDataSet, Label, Color, BaseChartDirective} from 'ng2-charts';
 import { castColor } from '@amcharts/amcharts4/core';
 
 
@@ -80,9 +80,83 @@ export class UsedcarInsightsComponent {
   public doughnutChartData: MultiDataSet = [
     [350, 100]
   ];
-
-
   public doughnutChartType: ChartType = 'doughnut';
+
+
+  public lineChartData: ChartDataSets[] = [
+    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' }
+
+  ];
+  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+    responsive: true,
+    scales: {
+      // We use this empty structure as a placeholder for dynamic theming.
+      xAxes: [{}],
+      yAxes: [
+        {
+          id: 'y-axis-0',
+          position: 'left',
+        },
+        {
+          id: 'y-axis-1',
+          position: 'right',
+          gridLines: {
+            color: 'rgba(255,0,0,0.3)',
+          },
+          ticks: {
+            fontColor: 'red',
+          }
+        }
+      ]
+    },
+    annotation: {
+      annotations: [
+        {
+          type: 'line',
+          mode: 'vertical',
+          scaleID: 'x-axis-0',
+          value: 'March',
+          borderColor: 'orange',
+          borderWidth: 2,
+          label: {
+            enabled: true,
+            fontColor: 'orange',
+            content: 'LineAnno'
+          }
+        },
+      ],
+    },
+  };
+  public lineChartColors: Color[] = [
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    }
+   
+  ];
+  public lineChartLegend = true;
+  public lineChartType: ChartType = 'line';
+
+
+  public stackChartOptions: ChartOptions = {
+    responsive: true
+  }
+  public stackChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+  public stackChartType: ChartType = 'bar';
+  public stackChartLegend = true;
+  public stackChartPlugins = [];
+
+  public stackChartData: ChartDataSets[] = [
+    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A', stack: 'a' },
+    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B', stack: 'a' }
+  ];
+
+  @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
   constructor(private http: HttpClient, private zone: NgZone) { }
 
@@ -151,7 +225,7 @@ export class UsedcarInsightsComponent {
           }
          
           console.log(carStatusObject.carsCount)
-       
+          
        }
 
      });
