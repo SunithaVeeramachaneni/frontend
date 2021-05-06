@@ -87,7 +87,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    if (file.type.indexOf('audio') === 0 || file.type.indexOf('video') === 0 || file.type.indexOf('image') === 0) {
+    if (file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1) {
       formData.append('userDetails', localStorage.getItem('loggedInUser'));
       const loading = await this.loadingController.create({
         cssClass: 'my-custom-class',

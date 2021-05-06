@@ -2,15 +2,19 @@ const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
 const speechToTextConverterRouter = express.Router();
-// Imports the Google Cloud client library
 const speech = require('@google-cloud/speech').v1p1beta1;
-const sox = require('sox');
 const ffmpeg = require('fluent-ffmpeg');
-const logger = require("./logger");
 const constants = require("./constants");
 const Instruction = require('./models/instruction.model');
 const Step = require('./models/step.model');
 const dirName = 'AudioOrVideoFiles';
+const spliFileDuration = 2;
+const encoding = 'FLAC';
+const languageCode = 'en-US';
+const sampleRateHertz = 44100;
+const enableAutomaticPunctuation = true;
+const alternativeLanguageCodes = ['en-IN', 'en-US'];
+let enableWordTimeOffsets = true;
 
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName);
@@ -37,89 +41,17 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-// Creates a client
 const client = new speech.SpeechClient();
 
-async function quickstart(filename) {
-  console.log(filename);
-  // The path to the remote LINEAR16 file
-  const gcsUri = 'gs://cloud-samples-data/speech/brooklyn_bridge.raw';
-
-  // The audio file's encoding, sample rate in hertz, and BCP-47 language code
-  const audio = {
-    // uri: gcsUri,
-    content: fs.readFileSync(`./${dirName}/${filename}`).toString('base64'),
-  };
-
-  const config = {
-    encoding: 'FLAC',
-    // sampleRateHertz: 16000,
-    languageCode: 'en-US',
-    // useEnhanced: true
-  };
-  const request = {
-    audio: audio,
-    config: config,
-  };
-
-  try {
-    // Detects speech in the audio file
-    const [response] = await client.recognize(request);
-    console.log(response);
-    const transcription = response.results
-      .map(result => result.alternatives[0].transcript)
-      .join('\n');
-    console.log(`Transcription: ${transcription}`);
-  } catch (error) {
-    console.log(error);
-  }
-}
-// quickstart();
-
-const speechToTextOld = filename => {
+const speechToText = filePath => {
+  let screenShotSecs = [];
   return new Promise((resolve, reject) => {
     const audio = {
-      content: fs.readFileSync(`./${dirName}/${filename}`).toString('base64'),
+      content: fs.readFileSync(filePath).toString('base64'),
     };
     const config = {
-      encoding: 'FLAC',
-      languageCode: 'en-US',
-    };
-    const request = {
-      audio,
-      config
-    };
-
-    const result = async () => {
-      try {
-        // Detects speech in the audio file
-        const [response] = await client.recognize(request);
-        console.log(response);
-        const transcription = response.results
-          .map(result => {
-            logger.logger1.info(result.alternatives);
-            return result.alternatives[0].transcript
-          })
-          .join('\n');
-        logger.logger1.info(`Transcription: ${transcription}`);
-        resolve({ transcription });
-      } catch (error) {
-        console.log(error);
-        reject(error);
-      }
-    }
-    result();
-  })
-}
-
-const speechToText = filename => {
-  return new Promise((resolve, reject) => {
-    const audio = {
-      content: fs.readFileSync(`./${dirName}/${filename}`).toString('base64'),
-    };
-    const config = {
-      encoding: 'FLAC',
-      languageCode: 'en-US',
+      encoding,
+      languageCode
     };
     const request = {
       audio,
@@ -132,17 +64,11 @@ const speechToText = filename => {
         const [operation] = await client.longRunningRecognize(request);
         // Get a Promise representation of the final result of the job
         const [response] = await operation.promise();
-        console.log(response);
-        const transcription = response.results
-          .map(result => {
-            logger.logger1.info(result.alternatives);
-            return result.alternatives[0].transcript
-          })
-          .join('\n');
-        logger.logger1.info(`Transcription: ${transcription}`);
-        resolve({ transcription });
+        console.log(response.results);
+        const transcription = response.results[0].alternatives[0].transcript;
+        screenShotSecs = avgWordTimings(data.results[0].alternatives[0].words);
+        resolve({ transcription, screenShotSecs });
       } catch (error) {
-        console.log(error);
         reject(error);
       }
     }
@@ -151,203 +77,114 @@ const speechToText = filename => {
 }
 
 const speechToTextWithStream = (filepath, key) => {
+  let screenShotSecs = [];
   return new Promise((resolve, reject) => {
     const config = {
-      encoding: 'FLAC',
-      sampleRateHertz: 44100,
-      languageCode: 'en-IN',
-      enableAutomaticPunctuation: true,
-      // alternativeLanguageCodes: ['en-IN', 'en-US']
+      encoding,
+      sampleRateHertz,
+      languageCode,
+      enableWordTimeOffsets,
+      enableAutomaticPunctuation,
+      // alternativeLanguageCodes
     };
     const request = {
       config,
       interimResults: false, // If you want interim results, set this to true
     };
-
     let transcription = [];
-    // Stream the audio to the Google Cloud Speech API
     const recognizeStream = client
       .streamingRecognize(request)
       .on('error', reject)
       .on('data', data => {
+        console.log(JSON.stringify(data.results[0]));
         // console.log(data.results[0]);
         /* console.log(
           `Transcription: ${data.results[0].alternatives[0].transcript}`
         ); */
         transcription = [...transcription, data.results[0].alternatives[0].transcript];
+        screenShotSecs = [...screenShotSecs, ...avgWordTimings(data.results[0].alternatives[0].words)];
       })
       .on('end', () => {
-        resolve({ [key]:  transcription.join(' ') });
+        resolve({ [key]:  transcription.join(' '), screenShotSecs });
       });
 
-    // Stream an audio file from disk to the Speech API, e.g. "./resources/audio.raw"
     fs.createReadStream(filepath).pipe(recognizeStream);
   })
 }
 
-const speechToTextWithTimeInfo = (filename) => {
+const avgWordTimings = words => {
   let avgSecs = [];
-  return new Promise((resolve, reject) => {
-    const audio = {
-      content: fs.readFileSync(`./${dirName}/${filename}`).toString('base64'),
-    };
-    const config = {
-      enableWordTimeOffsets: true,
-      encoding: 'FLAC',
-      languageCode: 'en-US',
-    };
-    const request = {
-      audio,
-      config
-    };
+  let startTime, endTime;
+  words.forEach(wordInfo => {
+    // NOTE: If you have a time offset exceeding 2^32 seconds, use the
+    // wordInfo.{x}Time.seconds.high to calculate seconds.
+    const startSecs =
+      `${wordInfo.startTime.seconds}` +
+      '.' +
+      wordInfo.startTime.nanos / 100000000;
+    const endSecs =
+      `${wordInfo.endTime.seconds}` +
+      '.' +
+      wordInfo.endTime.nanos / 100000000;
 
-    const result = async () => {
-      let startTime, endTime;
-      try {
-        // Detects speech in the audio file. This creates a recognition job that you
-        // can wait for now, or get its result later.
-        const [operation] = await client.longRunningRecognize(request);
+    if (wordInfo.word === constants.SCREEN_SHOT_WORD1) {
+      startTime = startSecs;
+    }
 
-        // Get a Promise representation of the final result of the job
-        const [response] = await operation.promise();
-        console.log(response);
-        const transcription = response.results
-          .map(result => {
-            logger.logger1.info(result.alternatives);
-            result.alternatives[0].words.forEach(wordInfo => {
-              // NOTE: If you have a time offset exceeding 2^32 seconds, use the
-              // wordInfo.{x}Time.seconds.high to calculate seconds.
-              const startSecs =
-                `${wordInfo.startTime.seconds}` +
-                '.' +
-                wordInfo.startTime.nanos / 100000000;
-              const endSecs =
-                `${wordInfo.endTime.seconds}` +
-                '.' +
-                wordInfo.endTime.nanos / 100000000;
-              if (wordInfo.word === 'much') {
-                startTime = startSecs;
-                logger.logger1.info(`Word: ${wordInfo.word}`);
-                logger.logger1.info(`\t ${startSecs} secs - ${endSecs} secs`);
-              }
-              if (wordInfo.word === 'better') {
-                logger.logger1.info(`Word: ${wordInfo.word}`);
-                logger.logger1.info(`\t ${startSecs} secs - ${endSecs} secs`);
-                endTime = endSecs;
-                avgSecs = [...avgSecs, parseFloat(((parseFloat(startTime) + parseFloat(endTime)) / 2).toFixed(1))];
-                console.log(avgSecs);
-                console.log(startTime);
-                console.log(endTime);
-              }
-            });
-            return result.alternatives[0].transcript
-          })
-          .join('\n');
-        logger.logger1.info(`Transcription: ${transcription}`);
-        resolve({ transcription, avgSecs });
-      } catch (error) {
-        console.log(error);
-        reject(error);
+    if (wordInfo.word === constants.SCREEN_SHOT_WORD2) {
+      endTime = endSecs;
+      if (startTime) {
+        avgSecs = [...avgSecs, parseFloat(((parseFloat(startTime) + parseFloat(endTime)) / 2).toFixed(1))];
+        startTime = undefined;
       }
     }
-    result();
-  })
+  });
+  console.log(avgSecs);
+  return avgSecs;
 }
 
-const convertWavToFlac = filename => {
+const convertToFlac = filePath => {
   return new Promise((resolve, reject) => {
-    sox.identify(`./${dirName}/${filename}`, function(err, results) {
-      console.log(results);
-    })
-    const fileDetails = filename.split('.');
-    const flacName = `${fileDetails[0]}.flac`;
-    const toFlac = sox.transcode(`./${dirName}/${filename}`, `./${dirName}/${flacName}`, {
-      format: 'FLAC',
-      channelCount: 1,
-      compressionQuality: -192
-    });
-    toFlac.on('error', function(error) {
-      reject(error);
-    });
-    toFlac.on('end', () => {
-      resolve({ filename: flacName });
-    });
-    toFlac.start();
-  })
-}
-
-const convert = (input, output, callback) => {
-  ffmpeg(input)
-      .output(output)
+    const flacFilePath =  `${filePath}.flac`;
+    ffmpeg(filePath)
+      .output(flacFilePath)
       .audioChannels(1)
+      .audioFrequency(44100)
       .on('end', function() {
-          console.log('conversion ended');
-          callback(null);
-      }).on('error', function(err){
-        console.log(err);
-          console.log('error: ', err.code, err.msg);
-          callback(err);
+        resolve({ flacFilePath });
+      }).on('error', function(error){
+        reject(error);
       }).run();
-}
-
-const convertToFlac = filename => {
-  return new Promise((resolve, reject) => {
-    const fileDetails = filename.split('.');
-    const flacName = `${fileDetails[0]}.flac`;
-    const input =  `./${dirName}/${filename}`;
-    const output =  `./${dirName}/${flacName}`;
-    /* ffmpeg.ffprobe(input, function(err, metadata) {
-      console.log(metadata);
-    }); */
-    ffmpeg(input)
-        .output(output)
-        .audioChannels(1)
-        .audioFrequency(44100)
-        /* .screenshots({
-          // Will take screens at 20%, 40%, 60% and 80% of the video
-          count: 4,
-          folder: `${dirName}/images`
-        }) */
-        .on('end', function() {
-          /* ffmpeg.ffprobe(output, function(err, metadata) {
-            console.log(metadata);
-          }); */
-          resolve({ filename: flacName });
-        }).on('error', function(error){
-          console.log(error);
-          console.log('error: ', error.code, error.msg);
-          reject(error);
-        }).run();
   });
 }
 
-const splitIntoMultipleFiles = filename => {
+const splitIntoMultipleFiles = filePath => {
   return new Promise((resolve, reject) => {
     let promises = [];
-    const file = filename.split('.');
-    const folderPath = `./${dirName}/${file[0]}`;
-    if (!fs.existsSync(folderPath)) {
-      fs.mkdirSync(folderPath, { recursive: true });
+    const splitFilesPath = filePath.replace('.', '');
+    if (!fs.existsSync(splitFilesPath)) {
+      fs.mkdirSync(splitFilesPath, { recursive: true });
     }
-    const input =  `./${dirName}/${filename}`;
-    ffmpeg.ffprobe(input, async function(err, metadata) {
-      const { format: { duration } } = metadata;
-      console.log(duration);
-      const fileDuration = 60;
-      for (let i = 0; i < Math.ceil(duration/fileDuration) ; i++ ) {
-        const { hours, minutes, seconds } = secondsToHms(i * fileDuration);
-        const seekInput = `${hours}:${minutes}:${seconds}`;
-        const output = `./${dirName}/${file[0]}/${i}.flac`;
-        promises = [
-          ...promises,
-          splitFile(input, seekInput, output, fileDuration)
-        ]
-      }
-      try {
-        await Promise.all(promises);
-        resolve({ success: true, folderPath, filesCount: Math.ceil(duration/fileDuration) });
-      } catch (error) {
-        reject(error);
+    ffmpeg.ffprobe(filePath, async function(err, metadata) {
+      if (err) {
+        reject(err);
+      } else {
+        const { format: { duration } } = metadata;
+        for (let i = 0; i < Math.ceil(duration/spliFileDuration) ; i++ ) {
+          const { hours, minutes, seconds } = secondsToHms(i * spliFileDuration);
+          const seekInput = `${hours}:${minutes}:${seconds}`;
+          const output = `${splitFilesPath}/${i}.flac`;
+          promises = [
+            ...promises,
+            splitFile(filePath, seekInput, output, spliFileDuration)
+          ]
+        }
+        try {
+          await Promise.all(promises);
+          resolve({ success: true, folderPath: splitFilesPath, filesCount: Math.ceil(duration/spliFileDuration) });
+        } catch (error) {
+          reject(error);
+        }
       }
     });
   })
@@ -377,64 +214,24 @@ const secondsToHms = s => ({
   seconds: s % 60
 })
 
-const convertToWav = filename => {
+const takeScreenShot = (filePath, secs) => {
   return new Promise((resolve, reject) => {
-    const fileDetails = filename.split('.');
-    const flacName = `${fileDetails[0]}.wav`;
-    const input =  `./${dirName}/${filename}`;
-    const output =  `./${dirName}/${flacName}`;
-    /* ffmpeg.ffprobe(input, function(err, metadata) {
-      console.log(metadata);
-    }); */
-    ffmpeg(input)
-        .output(output)
-        .audioChannels(1)
-        .audioFrequency(16000)
-        .on('end', function() {
-          /* ffmpeg.ffprobe(output, function(err, metadata) {
-            console.log(metadata);
-          }); */
-          resolve({ filename: flacName });
-        }).on('error', function(error){
-          console.log(error);
-          console.log('error: ', error.code, error.msg);
-          reject(error);
-        }).run();
+    ffmpeg(filePath)
+      .screenshots({
+        timestamps: [...secs],
+        filename: 'thumbnail-at-%s-seconds.png',
+        folder: `${dirName}/images`
+      })
+      .on('end', function() {
+        resolve({ screenshot: 'success' });
+      }).on('error', function(error){
+        reject(error);
+      });
   });
 }
-
-const takeScreenShot = (filename, secs) => {
-  return new Promise((resolve, reject) => {
-    const input =  `./${dirName}/${filename}`;
-    /* ffmpeg.ffprobe(input, function(err, metadata) {
-      console.log(metadata);
-    }); */
-    ffmpeg(input)
-        .screenshots({
-          timestamps: [...secs],
-          folder: `${dirName}/images`
-        })
-        .on('end', function() {
-          /* ffmpeg.ffprobe(output, function(err, metadata) {
-            console.log(metadata);
-          }); */
-          resolve({ screenshot: 'success' });
-        }).on('error', function(error){
-          console.log(error);
-          console.log('error: ', error.code, error.msg);
-          reject(error);
-        });
-  });
-}
-
-/* convert(`./${dirName}/1280.mp4`, `./${dirName}/1280.flac`, function(err){
-  if(!err) {
-    console.log('conversion complete');
-  }
-}); */
 
 const createWorkInstruction = (message, userDetails) => {
-  const { first_name = 'Test', last_name = 'User' } = userDetails || {};
+  const { first_name = '', last_name = '' } = userDetails || {};
   const userName = `${first_name} ${last_name}`;
   return new Promise((resolve, reject) => {
 
@@ -564,13 +361,6 @@ const createSteps = (stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id) 
       } catch (error) {
         console.log(error);
       }
-
-      /* step.save()
-        .then(result => {
-          console.log(result);
-        }).catch(error => {
-          console.log(error);
-        }); */
     }
   });
 }
@@ -767,14 +557,15 @@ const router = () => {
       res.status(500).send({ status: 500, message: req.fileValidationError });
     } else {
       const fileName = req.file.originalname;
+      if (!(req.file.mimetype.indexOf('video') > -1) && enableWordTimeOffsets) {
+        enableWordTimeOffsets = false;
+      }
+      console.log(enableWordTimeOffsets);
+      const filePath = `${dirName}/${fileName}`;
       const userDetails = req.body.userDetails ? JSON.parse(req.body.userDetails) : {};
-      // quickstart(fileName);
       try {
-        // const { filename: wavFileName } = await convertToWav(fileName);
-        // const { filename } = await convertWavToFlac(wavFileName);
-        // const { filename } = await convertWavToFlac(fileName);
-        const { filename } = await convertToFlac(fileName);
-        /* const { folderPath, filesCount } = await splitIntoMultipleFiles(fileName);
+        const { flacFilePath } = await convertToFlac(filePath);
+        /* const { folderPath, filesCount } = await splitIntoMultipleFiles(filePath);
         let promises = [];
         for (let i = 0; i < filesCount; i++) {
           promises = [
@@ -794,13 +585,11 @@ const router = () => {
         }
         combinedTranscription = combinedTranscription.trim();
         console.log(combinedTranscription); */
-        // const { transcription } = await speechToText(filename);
-        const { transcription } = await speechToTextWithStream(`./${dirName}/${filename}`, 'transcription');
-        console.log(transcription);
-        /* const { transcription, avgSecs } = await speechToTextWithTimeInfo(filename);
-        if (avgSecs.length) {
-          await takeScreenShot(fileName, avgSecs);
-        } */
+        // const { transcription, screenShotSecs } = await speechToText(flacFilePath);
+        const { transcription, screenShotSecs } = await speechToTextWithStream(flacFilePath, 'transcription');
+        if (screenShotSecs.length) {
+          await takeScreenShot(filePath, screenShotSecs);
+        }
         // const transcription = 'create new work instruction with name sample work instruction';
         // const transcription = "instruction title is equipment specific lockout tagout procedure step one title is notify instruction notifying all affected employees that servicing or maintenance is required on a mission or equipment and that emission or equipment must be shut down and locked out to perform the servicing or maintenance step 2 title is review lockout procedure instruction the authorized employee shall refer to the fence lock out procedure to identify the type and magnitude of the energy or equipment utilizes understand the hazards of the energy and she'll know the methods to control the energy step 3 title is perform Mission stop instruction if the mission or equipment is operating shut it down by the normal stopping procedures like the press the stop button open switch close ball stop";
         // const transcription = "Instruction title is equipment specific lock out tag out procedure step 1 title, IX notify instruction notify all affected employees that servicing or maintenance is required on a mission or equipment and that the nation or equipment must be shut down and logged out to perform the servicing or maintenance step to try to leave a review Lockout procedure instruction. The authorised employees shall refer to the pens Lockout procedure to identify the type and magnitude of the energy that the machine or equipment utilizes understand the hazards of the energy and shall know the methods to control the energy. Step 3 title Aise perform machine stop instruction if the machine or equipment is operating shut it down by the normal stopping procedure.  Like depress the stop button opens which close bol excetra we can repair operating procedure for normal shutdown.  Stop."

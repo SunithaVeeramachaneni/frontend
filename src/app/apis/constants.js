@@ -73,5 +73,7 @@ module.exports = Object.freeze({
   STEP_RPLAN_END_POSSIBILITIES: 7,
   NUMBERS: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve',
   'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty', 'twenty one',
-'twenty two', 'twenty three', 'twenty four', 'twenty five', 'twenty six', 'twenty seven', 'twenty eight', 'twenty nine', 'thirty', 'thirty one']
+'twenty two', 'twenty three', 'twenty four', 'twenty five', 'twenty six', 'twenty seven', 'twenty eight', 'twenty nine', 'thirty', 'thirty one'],
+  SCREEN_SHOT_WORD1: 'much',
+  SCREEN_SHOT_WORD2: 'better'
 })
