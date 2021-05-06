@@ -8,7 +8,7 @@ const constants = require("./constants");
 const Instruction = require('./models/instruction.model');
 const Step = require('./models/step.model');
 const dirName = 'AudioOrVideoFiles';
-const spliFileDuration = 2;
+const spliFileDuration = 20;
 const encoding = 'FLAC';
 const languageCode = 'en-US';
 const sampleRateHertz = 44100;
@@ -44,32 +44,36 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 const client = new speech.SpeechClient();
 
 const speechToText = filePath => {
-  let screenShotSecs = [];
   return new Promise((resolve, reject) => {
     const audio = {
       content: fs.readFileSync(filePath).toString('base64'),
     };
     const config = {
       encoding,
-      languageCode
+      languageCode,
+      enableWordTimeOffsets
     };
     const request = {
       audio,
       config
     };
+    let screenShotSeconds = [];
+    let startSecs;
 
     const result = async () => {
       try {
-        // Detects speech in the audio file
         const [operation] = await client.longRunningRecognize(request);
-        // Get a Promise representation of the final result of the job
         const [response] = await operation.promise();
-        console.log(response.results);
-        const transcription = response.results[0].alternatives[0].transcript;
-        screenShotSecs = avgWordTimings(data.results[0].alternatives[0].words);
-        resolve({ transcription, screenShotSecs });
+        const transcription = response.results.map(result => {
+          const { screenShotSecs, prevStartSecs }  = avgWordTimings(result.alternatives[0].words, startSecs);
+          startSecs = prevStartSecs;
+          screenShotSeconds = [...screenShotSeconds, ...screenShotSecs];
+          return result.alternatives[0].transcript
+        })
+        .join(' ');
+        resolve({ transcription, screenShotSecs: screenShotSeconds });
       } catch (error) {
-        reject(error);
+        reject({ message: 'Unable to do transcription!', error });
       }
     }
     result();
@@ -77,7 +81,6 @@ const speechToText = filePath => {
 }
 
 const speechToTextWithStream = (filepath, key) => {
-  let screenShotSecs = [];
   return new Promise((resolve, reject) => {
     const config = {
       encoding,
@@ -92,55 +95,52 @@ const speechToTextWithStream = (filepath, key) => {
       interimResults: false, // If you want interim results, set this to true
     };
     let transcription = [];
+    let screenShotSeconds = [];
+    let startSecs;
+
     const recognizeStream = client
       .streamingRecognize(request)
-      .on('error', reject)
+      .on('error', error => {
+        reject({ message: 'Unable to do transcription!', error });
+      })
       .on('data', data => {
-        console.log(JSON.stringify(data.results[0]));
+        // console.log(JSON.stringify(data.results[0]));
         // console.log(data.results[0]);
         /* console.log(
           `Transcription: ${data.results[0].alternatives[0].transcript}`
         ); */
         transcription = [...transcription, data.results[0].alternatives[0].transcript];
-        screenShotSecs = [...screenShotSecs, ...avgWordTimings(data.results[0].alternatives[0].words)];
+        const { screenShotSecs, prevStartSecs } = avgWordTimings(data.results[0].alternatives[0].words, startSecs);
+        startSecs = prevStartSecs;
+        screenShotSeconds = [...screenShotSeconds, ...screenShotSecs];
       })
       .on('end', () => {
-        resolve({ [key]:  transcription.join(' '), screenShotSecs });
+        resolve({ [key]:  transcription.join(' '), screenShotSecs: screenShotSeconds });
       });
 
     fs.createReadStream(filepath).pipe(recognizeStream);
   })
 }
 
-const avgWordTimings = words => {
+const avgWordTimings = (words, prevStartSecs = undefined) => {
   let avgSecs = [];
-  let startTime, endTime;
+  let startSecs, endSecs;
+  startSecs = prevStartSecs ? prevStartSecs : startSecs;
   words.forEach(wordInfo => {
     // NOTE: If you have a time offset exceeding 2^32 seconds, use the
     // wordInfo.{x}Time.seconds.high to calculate seconds.
-    const startSecs =
-      `${wordInfo.startTime.seconds}` +
-      '.' +
-      wordInfo.startTime.nanos / 100000000;
-    const endSecs =
-      `${wordInfo.endTime.seconds}` +
-      '.' +
-      wordInfo.endTime.nanos / 100000000;
-
     if (wordInfo.word === constants.SCREEN_SHOT_WORD1) {
-      startTime = startSecs;
+      startSecs = `${wordInfo.startTime.seconds}` + '.' + wordInfo.startTime.nanos / 100000000;
     }
-
     if (wordInfo.word === constants.SCREEN_SHOT_WORD2) {
-      endTime = endSecs;
-      if (startTime) {
-        avgSecs = [...avgSecs, parseFloat(((parseFloat(startTime) + parseFloat(endTime)) / 2).toFixed(1))];
-        startTime = undefined;
+      endSecs = `${wordInfo.endTime.seconds}` + '.' + wordInfo.endTime.nanos / 100000000;
+      if (startSecs) {
+        avgSecs = [...avgSecs, parseFloat(((parseFloat(startSecs) + parseFloat(endSecs)) / 2).toFixed(1))];
+        startSecs = undefined;
       }
     }
   });
-  console.log(avgSecs);
-  return avgSecs;
+  return startSecs ? { screenShotSecs: avgSecs, prevStartSecs: startSecs } : { screenShotSecs: avgSecs };
 }
 
 const convertToFlac = filePath => {
@@ -153,7 +153,7 @@ const convertToFlac = filePath => {
       .on('end', function() {
         resolve({ flacFilePath });
       }).on('error', function(error){
-        reject(error);
+        reject({ message: 'Unable to convert to flac!', error });
       }).run();
   });
 }
@@ -167,7 +167,7 @@ const splitIntoMultipleFiles = filePath => {
     }
     ffmpeg.ffprobe(filePath, async function(err, metadata) {
       if (err) {
-        reject(err);
+        reject({ message: 'Unable to get file metadata!', error: err });
       } else {
         const { format: { duration } } = metadata;
         for (let i = 0; i < Math.ceil(duration/spliFileDuration) ; i++ ) {
@@ -181,7 +181,7 @@ const splitIntoMultipleFiles = filePath => {
         }
         try {
           await Promise.all(promises);
-          resolve({ success: true, folderPath: splitFilesPath, filesCount: Math.ceil(duration/spliFileDuration) });
+          resolve({ folderPath: splitFilesPath, filesCount: Math.ceil(duration/spliFileDuration) });
         } catch (error) {
           reject(error);
         }
@@ -202,7 +202,7 @@ const splitFile = (input, seekInput, output, fileDuration) => {
         resolve({ success: true });
       })
       .on('error', error => {
-        reject(error);
+        reject({ message: 'Unable to split file!', error });
       })
       .run();
   });
@@ -223,9 +223,9 @@ const takeScreenShot = (filePath, secs) => {
         folder: `${dirName}/images`
       })
       .on('end', function() {
-        resolve({ screenshot: 'success' });
+        resolve({ success: true });
       }).on('error', function(error){
-        reject(error);
+        reject({ message: 'Unable to take screen shot!', error });
       });
   });
 }
@@ -311,57 +311,86 @@ const createWorkInstruction = (message, userDetails) => {
         IsPublishedTillSave: false,
       });
 
-      instruction.save()
-        .then(result => {
-          console.log(result);
-          const { _id: WI_Id } = result
-          createSteps(stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id);
-          resolve(result);
-        }).catch(error => {
-          reject(error);
-        });
+      const create = async () => {
+        try {
+          const workInstruction = await instruction.save();
+          const { _id: WI_Id } = workInstruction;
+          // let promises = [];
+          let steps = [];
+          let stepsCount = 0;
+          const actualSteps = stepTitles.filter(title => title);
+          stepTitles.forEach(async (value, index) => {
+            if (value) {
+              /* promises = [
+                ...promises,
+                createStep(value, stepIns[index], stepWarn[index], stepHint[index], stepRPlan[index], WI_Id);
+              ]; */
+              try {
+                const result = await createStep(value, stepIns[index], stepWarn[index], stepHint[index], stepRPlan[index], WI_Id);
+                stepsCount++;
+                steps = [...steps, result];
+                if (stepsCount === actualSteps.length) {
+                  resolve({ instruction: workInstruction, steps });
+                }
+              } catch (error) {
+                reject(error);
+              }
+            }
+          });
+          /* try {
+            const steps = await Promise.all(promises);
+            resolve({ workInstruction, steps });
+          } catch (error) {
+            reject(error);
+          } */
+        } catch (error) {
+          reject({ message: 'Unable to create a Work Instruction!', error });
+        }
+      }
+      create();
     } else {
-      reject({ message: 'transcription is not valid', transcription: message });
+      reject({ message: 'transcription is not valid', error: { transcription: message } });
     }
   });
 }
 
-const createSteps = (stepTitles, stepIns, stepWarn, stepHint, stepRPlan, WI_Id) => {
-  stepTitles.forEach(async (value, index) => {
-    if (value) {
-      const instructions = stepIns[index] ? instructionObject(stepIns[index].trim(), 'Instruction') : null
-      const warnings = stepWarn[index] ? instructionObject(stepWarn[index].trim(), 'Warning') : null
-      const hints = stepHint[index] ? instructionObject(stepHint[index].trim(), 'Hint') : null
-      const reactionPlan = stepRPlan[index] ? instructionObject(stepRPlan[index].trim(), 'Reaction Plan') : null
-      const fields = fieldsObject(
-        stepIns[index],
-        stepWarn[index],
-        stepHint[index],
-        stepRPlan[index],
-        null
-      )
-      const step = new Step({
-        WI_Id,
-        Title: value,
-        Fields: fields,
-        Instructions: instructions,
-        Warnings: warnings,
-        Hints: hints,
-        Reaction_Plan: reactionPlan,
-        Description: null,
-        Status: null,
-        Attachment: null,
-        isCloned: false,
-        Published: false
-      });
+const createStep = (title, instructions, warnings, hints, reactionPlans, WI_Id) => {
+  return new Promise((resolve, reject) => {
+    const fields = fieldsObject(
+      instructions,
+      warnings,
+      hints,
+      reactionPlans,
+      null
+    )
+    instructions = instructions ? instructionObject(instructions.trim(), 'Instruction') : null
+    warnings = warnings ? instructionObject(warnings.trim(), 'Warning') : null
+    hints = hints ? instructionObject(hints.trim(), 'Hint') : null
+    reactionPlans = reactionPlans ? instructionObject(reactionPlans.trim(), 'Reaction Plan') : null
+    const step = new Step({
+      WI_Id,
+      Title: title,
+      Fields: fields,
+      Instructions: instructions,
+      Warnings: warnings,
+      Hints: hints,
+      Reaction_Plan: reactionPlans,
+      Description: null,
+      Status: null,
+      Attachment: null,
+      isCloned: false,
+      Published: false
+    });
 
+    const create = async () => {
       try {
         const result = await step.save();
-        console.log(result);
+        resolve(result);
       } catch (error) {
-        console.log(error);
+        reject({ message: 'Unable to create a Step!', error });
       }
     }
+    create();
   });
 }
 
@@ -575,30 +604,37 @@ const router = () => {
         }
         const response = await Promise.all(promises);
         let responseObject = {};
+        let screenShotSeconds = [];
         response.forEach(value => {
-          responseObject = { ...responseObject, ...value }
+          const { screenShotSecs, ...rest } = value;
+          const keys = Object.keys(rest);
+          const screenShotSecsUpdated = screenShotSecs.map(sec => (parseInt(keys[0]) * spliFileDuration ) + sec);
+          screenShotSeconds = [...screenShotSeconds, ...screenShotSecsUpdated];
+          responseObject = { ...responseObject, ...rest }
         });
-        console.log(responseObject);
-        let combinedTranscription = '';
+        // console.log(responseObject);
+        const screenShotSecs = screenShotSeconds;
+        let transcription = '';
         for (let i = 0; i < filesCount; i++) {
-          combinedTranscription += ` ${responseObject[i]}`;
+          transcription += ` ${responseObject[i]}`;
         }
-        combinedTranscription = combinedTranscription.trim();
-        console.log(combinedTranscription); */
+        transcription = transcription.trim(); */
         // const { transcription, screenShotSecs } = await speechToText(flacFilePath);
         const { transcription, screenShotSecs } = await speechToTextWithStream(flacFilePath, 'transcription');
+        console.log(transcription);
+        console.log(screenShotSecs);
         if (screenShotSecs.length) {
           await takeScreenShot(filePath, screenShotSecs);
         }
-        // const transcription = 'create new work instruction with name sample work instruction';
-        // const transcription = "instruction title is equipment specific lockout tagout procedure step one title is notify instruction notifying all affected employees that servicing or maintenance is required on a mission or equipment and that emission or equipment must be shut down and locked out to perform the servicing or maintenance step 2 title is review lockout procedure instruction the authorized employee shall refer to the fence lock out procedure to identify the type and magnitude of the energy or equipment utilizes understand the hazards of the energy and she'll know the methods to control the energy step 3 title is perform Mission stop instruction if the mission or equipment is operating shut it down by the normal stopping procedures like the press the stop button open switch close ball stop";
-        // const transcription = "Instruction title is equipment specific lock out tag out procedure step 1 title, IX notify instruction notify all affected employees that servicing or maintenance is required on a mission or equipment and that the nation or equipment must be shut down and logged out to perform the servicing or maintenance step to try to leave a review Lockout procedure instruction. The authorised employees shall refer to the pens Lockout procedure to identify the type and magnitude of the energy that the machine or equipment utilizes understand the hazards of the energy and shall know the methods to control the energy. Step 3 title Aise perform machine stop instruction if the machine or equipment is operating shut it down by the normal stopping procedure.  Like depress the stop button opens which close bol excetra we can repair operating procedure for normal shutdown.  Stop."
         // const transcription = "instruction title is  perform for checks on gas Forklift  step 1  Pak Forklift  instruction number one ensure your Forklift is parked safely on level ground and the park brake is engaged  number to open outdoors  number 3 lift seat to access engine and prop it up  warning number 1  do not remove radiator cap  number to crush if Forklift roles number 3 burns if coolant checked while engine oil Eid hot  reaction plan  Pak on level ground  hint  avoid contact  where gloves when refuelling  step 2  check level of engine oil  instruction  number 1 full voot dip stick number 2  wipe with a cloth or paper  number 3  Re insert dip stick all the way and pull out again number four check if oil between two markers on end of stick number 5 if insufficient oil notified to check for oil leaks  step 3 check coolant level  instruction  number 1  check level of coolant in overflow bottle number to check for any visible water leaks  number three if coolant level is below mark top up with water  warning number 1 do not remove radiator cap";
-        const { WI_Name } = await createWorkInstruction(transcription, userDetails);
+        const { instruction, steps } = await createWorkInstruction(transcription, userDetails);
+        console.log(instruction);
+        console.log(steps);
+        const { WI_Name } = instruction;
         res.status(200).json({ fileName, transcription, WI_Name });
       } catch ( error ) {
         console.log(error);
-        res.status(500).send({ status: 500, message: error.stderr ? error.stderr : error.msg ? error.msg : error.message? error.message : error, error });
+        res.status(500).send({ status: 500, message: error.message, error: error.error });
       }
     }
   });
