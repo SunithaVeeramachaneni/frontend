@@ -9,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   public appPages = [
     { title: 'Dashboard', url: 'Dashboard', icon: 'home' },
+    { title: 'Used Cars Insights', url: 'UsedCar-Insights', icon: 'analytics' },
     { title: 'Insights', url: 'Insights', icon: 'star' },
     { title: 'ROI Forecasting', url: '/components/ROIForecasting', icon: 'person' },
     { title: 'Chatter', url: '/components/Chatter', icon: 'chatbubbles' },
