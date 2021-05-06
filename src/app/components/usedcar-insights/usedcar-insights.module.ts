@@ -13,6 +13,7 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import {AppService} from '../../services/app.services';
 import { HttpTimeoutInterceptor } from '../../interceptors/http-timeout.interceptor';
 import { DelayFocusDirective } from '../../directives/delayfocus';
+import { ChartsModule } from 'ng2-charts';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true
 };
@@ -37,6 +38,7 @@ import { OrderModule } from 'ngx-order-pipe';
   imports: [
     CommonModule,
     FormsModule,
+    ChartsModule,
     IonicModule,
     FormsModule,
     AppMaterialModules,
