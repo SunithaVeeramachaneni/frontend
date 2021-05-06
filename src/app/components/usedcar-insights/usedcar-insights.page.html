@@ -27,13 +27,10 @@
       <ion-col size="12" size-md="6"> 
         <ion-card style="border-radius: 1.2em;">
           <h6 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">Count of new cars by make</h6>
-          <canvas baseChart 
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
-          [options]="barChartOptions"
-          [plugins]="barChartPlugins"
-          [legend]="barChartLegend"
-          [chartType]="barChartType">
+          <canvas baseChart
+          [data]="doughnutChartData"
+          [labels]="doughnutChartLabels"
+          [chartType]="doughnutChartType">
         </canvas>
         </ion-card>
       
