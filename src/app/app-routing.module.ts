@@ -19,6 +19,11 @@ const routes: Routes = [
     loadChildren: () => import('./components/workInstructions-home/workInstructions-home.module').then( m => m.WorkInstructionsHomeModule)
   },
   {
+    path: 'UsedCar-Insights',
+   
+    loadChildren: () => import('./components/usedcar-insights/usedcar-insights.module').then( m => m.UsedCarsInsightsModule)
+  },
+  {
     path: 'main-menu',
     loadChildren: () => import('./components/main-menu/main-menu.module').then( m => m.MainMenuPageModule)
   },
