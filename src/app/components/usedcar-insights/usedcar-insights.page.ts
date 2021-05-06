@@ -78,7 +78,7 @@ export class UsedcarInsightsComponent {
   public doughnutChartLabels: Label[] = ['new cars', 'old cars'];
 
   public doughnutChartData: MultiDataSet = [
-    [350, 100]
+    [0, 0]
   ];
   public doughnutChartType: ChartType = 'doughnut';
 
@@ -137,7 +137,7 @@ export class UsedcarInsightsComponent {
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgba(148,159,177,0.8)'
     }
-   
+
   ];
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
@@ -210,30 +210,24 @@ export class UsedcarInsightsComponent {
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}`)
       .subscribe(response => {
         console.log(response);
-        let cars = response;
-        console.log(cars);
-        if (cars && cars.length > 0) {
-
-          const carsCount = cars.map(model => {
-           if(model.is_new !== null)
-            return model.carsCount
-          })
-
-          let carStatusObject = {
-            carsCount: carsCount,
-            make: makeName
+        let newCars = 0;
+        let oldCars = 0;
+        response.map(carMake => {
+          const { carsCount, _id: { is_new }} = carMake;
+          if (is_new === 'True') {
+            newCars += carsCount;
+          } else if (is_new === 'False') {
+            oldCars += carsCount;
           }
-         
-          console.log(carStatusObject.carsCount)
-          
-       }
-
+        });
+        const carDetails = [newCars, oldCars];
+        this.doughnutChartData = [carDetails];
      });
   }
 
 
   ngAfterViewInit() {
-    this.fetchNewCarsByModelAndYear()
+    this.fetchNewCarsByModelAndYear();
     this.fetchNewCarsByMakeName();
   }
 
