@@ -50,18 +50,18 @@ export class UsedcarInsightsComponent implements OnInit {
     tooltips: {
       enabled: true,
       callbacks: {
-        label: function (tooltipItem, data) {
-          let label = data.labels[tooltipItem.index];
-          let count = data
+        label: (tooltipItem, data) => {
+          const label = data.labels[tooltipItem.index];
+          const count = data
             .datasets[tooltipItem.datasetIndex]
             .data[tooltipItem.index];
-          return "New Cars Count in " + label + ": " + count;
+          return `${this.barChartModel}: ${count}`;
         },
       },
     },
     plugins: {
       datalabels: {
-        color: "white"
+        color: 'white'
       },
     },
   };
@@ -75,7 +75,7 @@ export class UsedcarInsightsComponent implements OnInit {
   public barChartData: ChartDataSets[] = [
     {
       data: [],
-      label: "",
+      label: '',
       backgroundColor: 'rgba(139,33,238,0.9)',
       borderColor: 'rgba(108,25,185,1)',
       borderWidth: 1,
@@ -99,11 +99,11 @@ export class UsedcarInsightsComponent implements OnInit {
   };
 
 
-  public lineChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' }
-
-  ];
-  public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public lineChartData: ChartDataSets[] = [{
+    data: [],
+    label: ''
+  }];
+  public lineChartLabels: Label[] = [];
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
     title: {
       text: 'Count of cars by model',
@@ -112,7 +112,7 @@ export class UsedcarInsightsComponent implements OnInit {
     responsive: true,
     scales: {
       // We use this empty structure as a placeholder for dynamic theming.
-      xAxes: [{}],
+      /* xAxes: [{}],
       yAxes: [
         {
           id: 'y-axis-0',
@@ -128,7 +128,7 @@ export class UsedcarInsightsComponent implements OnInit {
             fontColor: 'red',
           }
         }
-      ]
+      ] */
     },
     annotation: {
       annotations: [
@@ -170,24 +170,29 @@ export class UsedcarInsightsComponent implements OnInit {
     },
     responsive: true
   };
-  public stackChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+  public stackChartLabels: Label[] = [];
   public stackChartType: ChartType = 'bar';
-  public stackChartLegend = true;
+  public stackChartLegend = false;
   public stackChartPlugins = [];
 
-  public stackChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A', stack: 'a' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B', stack: 'a' }
-  ];
+  public stackChartData: ChartDataSets[] = [];
 
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
-  constructor(private http: HttpClient, private zone: NgZone) { }
+  constructor(private http: HttpClient,
+              private zone: NgZone,
+              private loadingController: LoadingController) { }
 
 
-  fetchNewCarsByModelAndYear = (modelName: string) => {
+  fetchNewCarsByModelAndYear = async (modelName: string) => {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByModelNameAndYear?model_name=${modelName}`)
       .subscribe(response => {
+        loading.dismiss();
         console.log(response);
 
         let cars = response;
@@ -222,14 +227,21 @@ export class UsedcarInsightsComponent implements OnInit {
 
         }
 
-      });
+      },
+      error => loading.dismiss()
+    );
 
   }
 
-  fetchNewCarsByMakeName = (makeName: string) => {
+  fetchNewCarsByMakeName = async (makeName: string) => {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}`)
       .subscribe(response => {
-        console.log(response);
+        loading.dismiss();
         let newCars = 0;
         let oldCars = 0;
         response.map(carMake => {
@@ -242,21 +254,67 @@ export class UsedcarInsightsComponent implements OnInit {
         });
         const carDetails = [newCars, oldCars];
         this.doughnutChartData = [carDetails];
-     });
+     },
+     error => loading.dismiss()
+     );
   }
 
-  fetchAllModelNameByMakeName = (makeName) => {
+  fetchAllModelNameByMakeName = async (makeName) => {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getMakeNameAndModelName?make_name=${makeName}`)
-      .subscribe(response => {
-        console.log(response);
-     });
+      .subscribe(
+        response => {
+          loading.dismiss();
+          let labels = [];
+          let data = [];
+          response.map(modelDetails => {
+            const { modelCount, _id: { model_name } } = modelDetails;
+            labels = [...labels, model_name];
+            data = [...data, modelCount];
+          });
+          this.lineChartData[0] = {...this.lineChartData[0], data, label: makeName};
+          this.lineChartLabels = labels;
+        },
+        error => loading.dismiss()
+      );
   }
 
-  fetchCountByMakeNameAndYear = (makeName) => {
+  fetchCountByMakeNameAndYear = async (makeName) => {
+    const loading = await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...',
+    });
+    await loading.present();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getCountByMakeNameAndYear?make_name=${makeName}`)
-      .subscribe(response => {
-        console.log(response);
-     });
+      .subscribe(
+        response => {
+          loading.dismiss();
+          let yearWiseModels = {};
+          let models = {};
+          response.map(modelDetails => {
+            const { count, _id: { year, model_name } } = modelDetails;
+            if (year) {
+              models = {...models, [model_name]: 1};
+              yearWiseModels[year] = yearWiseModels[year] ? yearWiseModels[year] : {};
+              yearWiseModels = { ...yearWiseModels, [year]: { ...yearWiseModels[year], [model_name]: count }};
+            }
+          });
+          const modelNames = Object.keys(models);
+          const years = Object.keys(yearWiseModels);
+          this.stackChartLabels = years;
+          this.stackChartData = modelNames.map(modelName => {
+            const data = years.map(year => {
+              return  yearWiseModels[year][modelName] ? yearWiseModels[year][modelName] : 0;
+            });
+            return { data, label: modelName, stack: 'a' };
+          });
+        },
+        error => loading.dismiss()
+      );
   }
 
   ngOnInit(): void {
@@ -266,10 +324,12 @@ export class UsedcarInsightsComponent implements OnInit {
     this.doughnutMakeName = initialMakeName;
     this.lineChartMakeName = initialMakeName;
     this.stackChartMakeName = initialMakeName;
-    this.fetchNewCarsByModelAndYear(initialModelName);
-    this.fetchNewCarsByMakeName(initialMakeName);
-    this.fetchAllModelNameByMakeName(initialMakeName);
-    this.fetchCountByMakeNameAndYear(initialMakeName);
+    this.lineChartData[0].label = this.lineChartMakeName;
+    this.barChartData[0].label = this.barChartModel;
+    this.fetchNewCarsByModelAndYear(this.barChartModel);
+    this.fetchNewCarsByMakeName(this.doughnutMakeName);
+    this.fetchAllModelNameByMakeName(this.lineChartMakeName);
+    this.fetchCountByMakeNameAndYear(this.stackChartMakeName);
   }
 }
 
