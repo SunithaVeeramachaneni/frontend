@@ -11,57 +11,87 @@
 <ion-content>
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-md="6"> 
+      <ion-col size="12" size-md="6">
         <ion-card style="border-radius: 1.2em;">
-          <h6 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">Count of new cars by model and year</h6>
-          <canvas baseChart 
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
-          [options]="barChartOptions"
-          [plugins]="barChartPlugins"
-          [legend]="barChartLegend"
-          [chartType]="barChartType">
-        </canvas>
+          <ion-list>
+            <ion-item>
+              <ion-label>Model</ion-label>
+              <ion-select [(ngModel)]="barChartModel" (ionChange)="fetchNewCarsByModelAndYear(barChartModel)"  interface="popover">
+                <ion-select-option *ngFor="let modelName of modelNames" [value]="modelName">{{modelName}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+          <canvas baseChart
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+            [plugins]="barChartPlugins"
+            [legend]="barChartLegend"
+            [chartType]="barChartType">
+          </canvas>
         </ion-card>
       </ion-col>
-      <ion-col size="12" size-md="6"> 
+      <ion-col size="12" size-md="6">
         <ion-card style="border-radius: 1.2em;">
-          <h6 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">Count of new cars by make</h6>
+          <ion-list>
+            <ion-item>
+              <ion-label>MakeName</ion-label>
+              <ion-select [(ngModel)]="doughnutMakeName" (ionChange)="fetchNewCarsByMakeName(doughnutMakeName)"  interface="popover">
+                <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
           <canvas baseChart
-          [data]="doughnutChartData"
-          [labels]="doughnutChartLabels"
-          [chartType]="doughnutChartType">
-        </canvas>
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            [labels]="doughnutChartLabels"
+            [chartType]="doughnutChartType">
+          </canvas>
         </ion-card>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="12" size-md="6"> 
+      <ion-col size="12" size-md="6">
         <ion-card style="border-radius: 1.2em;">
-          <h6 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">Count of cars by model</h6>
-          <canvas baseChart 
-          [datasets]="lineChartData"
-          [labels]="lineChartLabels"
-          [options]="lineChartOptions"
-          [colors]="lineChartColors"
-          [legend]="lineChartLegend"
-          [chartType]="lineChartType"
-          [plugins]="lineChartPlugins"
-          (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)"></canvas>
+          <ion-list>
+            <ion-item>
+              <ion-label>MakeName</ion-label>
+              <ion-select [(ngModel)]="lineChartMakeName" (ionChange)="fetchAllModelNameByMakeName(lineChartMakeName)"  interface="popover">
+                <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+          <canvas baseChart
+            [datasets]="lineChartData"
+            [labels]="lineChartLabels"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"
+            [plugins]="lineChartPlugins"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)">
+          </canvas>
         </ion-card>
       </ion-col>
-      <ion-col size="12" size-md="6"> 
+      <ion-col size="12" size-md="6">
         <ion-card style="border-radius: 1.2em;">
-          <h6 style="color:black;font-weight: bolder;margin-top: 15px;margin-left: 10px;">Count of makes by year</h6>
-          <canvas baseChart 
-          [datasets]="stackChartData"
-          [labels]="stackChartLabels"
-          [options]="stackChartOptions"
-          [plugins]="stackChartPlugins"
-          [legend]="stackChartLegend"
-          [chartType]="stackChartType">
-        </canvas>
+          <ion-list>
+            <ion-item>
+              <ion-label>MakeName</ion-label>
+              <ion-select [(ngModel)]="stackChartMakeName" (ionChange)="fetchCountByMakeNameAndYear(stackChartMakeName)" interface="popover">
+                <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+          <canvas baseChart
+            [datasets]="stackChartData"
+            [labels]="stackChartLabels"
+            [options]="stackChartOptions"
+            [plugins]="stackChartPlugins"
+            [legend]="stackChartLegend"
+            [chartType]="stackChartType">
+          </canvas>
         </ion-card>
       </ion-col>
     </ion-row>

@@ -30,13 +30,22 @@ import { castColor } from '@amcharts/amcharts4/core';
 })
 
 
-export class UsedcarInsightsComponent {
+export class UsedcarInsightsComponent implements OnInit {
 
-  public newCarsByModelAndYearBarData = {}
-  public newCarsByMakeDonutData = {}
-
+  public newCarsByModelAndYearBarData = {};
+  public newCarsByMakeDonutData = {};
+  makeNames = ['Kia', 'Mazda', 'Jeep', 'Nissan', 'Hyundai', 'Lexus'];
+  modelNames = ['Renegade', 'Discovery', 'Traverse', 'MAZDA3', 'CX-5', 'Equinox'];
+  barChartModel: string;
+  doughnutMakeName: string;
+  lineChartMakeName: string;
+  stackChartMakeName: string;
 
   public barChartOptions: ChartOptions = {
+    title: {
+      text: 'Count of new cars by model and year',
+      display: true
+    },
     responsive: true,
     tooltips: {
       enabled: true,
@@ -81,6 +90,13 @@ export class UsedcarInsightsComponent {
     [0, 0]
   ];
   public doughnutChartType: ChartType = 'doughnut';
+  public doughnutChartOptions: ChartOptions = {
+    title: {
+      text: 'Count of new cars by make',
+      display: true
+    },
+    responsive: true
+  };
 
 
   public lineChartData: ChartDataSets[] = [
@@ -89,6 +105,10 @@ export class UsedcarInsightsComponent {
   ];
   public lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
+    title: {
+      text: 'Count of cars by model',
+      display: true
+    },
     responsive: true,
     scales: {
       // We use this empty structure as a placeholder for dynamic theming.
@@ -144,8 +164,12 @@ export class UsedcarInsightsComponent {
 
 
   public stackChartOptions: ChartOptions = {
+    title: {
+      text: 'Count of makes by year',
+      display: true
+    },
     responsive: true
-  }
+  };
   public stackChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
   public stackChartType: ChartType = 'bar';
   public stackChartLegend = true;
@@ -161,9 +185,7 @@ export class UsedcarInsightsComponent {
   constructor(private http: HttpClient, private zone: NgZone) { }
 
 
-  fetchNewCarsByModelAndYear = () => {
-
-    let modelName = "Renegade";
+  fetchNewCarsByModelAndYear = (modelName: string) => {
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByModelNameAndYear?model_name=${modelName}`)
       .subscribe(response => {
         console.log(response);
@@ -204,9 +226,7 @@ export class UsedcarInsightsComponent {
 
   }
 
-  fetchNewCarsByMakeName = () => {
-    let model = 'Range Rover Evoque';
-    let makeName = "Kia"
+  fetchNewCarsByMakeName = (makeName: string) => {
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}`)
       .subscribe(response => {
         console.log(response);
@@ -225,12 +245,31 @@ export class UsedcarInsightsComponent {
      });
   }
 
-
-  ngAfterViewInit() {
-    this.fetchNewCarsByModelAndYear();
-    this.fetchNewCarsByMakeName();
+  fetchAllModelNameByMakeName = (makeName) => {
+    this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getMakeNameAndModelName?make_name=${makeName}`)
+      .subscribe(response => {
+        console.log(response);
+     });
   }
 
+  fetchCountByMakeNameAndYear = (makeName) => {
+    this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getCountByMakeNameAndYear?make_name=${makeName}`)
+      .subscribe(response => {
+        console.log(response);
+     });
+  }
 
+  ngOnInit(): void {
+    const [ initialModelName ] = this.modelNames;
+    const [ initialMakeName ] = this.makeNames;
+    this.barChartModel = initialModelName;
+    this.doughnutMakeName = initialMakeName;
+    this.lineChartMakeName = initialMakeName;
+    this.stackChartMakeName = initialMakeName;
+    this.fetchNewCarsByModelAndYear(initialModelName);
+    this.fetchNewCarsByMakeName(initialMakeName);
+    this.fetchAllModelNameByMakeName(initialMakeName);
+    this.fetchCountByMakeNameAndYear(initialMakeName);
+  }
 }
 
