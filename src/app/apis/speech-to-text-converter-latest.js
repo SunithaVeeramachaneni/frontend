@@ -1,9 +1,11 @@
 const express = require('express');
 const fs = require('fs');
+const fsPromises = fs.promises;
 const multer = require('multer');
 const speechToTextConverterRouter = express.Router();
 const speech = require('@google-cloud/speech').v1p1beta1;
 const ffmpeg = require('fluent-ffmpeg');
+const fullpath = require('path');
 const constants = require("./constants");
 const Instruction = require('./models/instruction.model');
 const Step = require('./models/step.model');
@@ -14,7 +16,8 @@ const languageCode = 'en-US';
 const sampleRateHertz = 44100;
 const enableAutomaticPunctuation = true;
 const alternativeLanguageCodes = ['en-IN', 'en-US'];
-let enableWordTimeOffsets = true;
+const wordTimeOffsets = true;
+let enableWordTimeOffsets;
 
 if (!fs.existsSync(dirName)) {
   fs.mkdirSync(dirName);
@@ -173,7 +176,7 @@ const splitIntoMultipleFiles = filePath => {
         for (let i = 0; i < Math.ceil(duration/spliFileDuration) ; i++ ) {
           const { hours, minutes, seconds } = secondsToHms(i * spliFileDuration);
           const seekInput = `${hours}:${minutes}:${seconds}`;
-          const output = `${splitFilesPath}/${i}.flac`;
+          const output = fullpath.join(splitFilesPath, `${i}.flac`);
           promises = [
             ...promises,
             splitFile(filePath, seekInput, output, spliFileDuration)
@@ -220,7 +223,7 @@ const takeScreenShot = (filePath, secs) => {
       .screenshots({
         timestamps: [...secs],
         filename: 'thumbnail-at-%s-seconds.png',
-        folder: `${dirName}/images`
+        folder: fullpath.join(dirName, 'images')
       })
       .on('end', function() {
         resolve({ success: true });
@@ -586,11 +589,13 @@ const router = () => {
       res.status(500).send({ status: 500, message: req.fileValidationError });
     } else {
       const fileName = req.file.originalname;
-      if (!(req.file.mimetype.indexOf('video') > -1) && enableWordTimeOffsets) {
+      if (!(req.file.mimetype.indexOf('video') > -1) && wordTimeOffsets) {
         enableWordTimeOffsets = false;
+      } else {
+        enableWordTimeOffsets = true;
       }
       console.log(enableWordTimeOffsets);
-      const filePath = `${dirName}/${fileName}`;
+      const filePath = fullpath.join(dirName, fileName);
       const userDetails = req.body.userDetails ? JSON.parse(req.body.userDetails) : {};
       try {
         const { flacFilePath } = await convertToFlac(filePath);
@@ -599,7 +604,7 @@ const router = () => {
         for (let i = 0; i < filesCount; i++) {
           promises = [
             ...promises,
-            speechToTextWithStream(`${folderPath}/${i}.flac`, i)
+            speechToTextWithStream(fullpath.join(folderPath, `${i}.flac`), i)
           ];
         }
         const response = await Promise.all(promises);
@@ -618,7 +623,8 @@ const router = () => {
         for (let i = 0; i < filesCount; i++) {
           transcription += ` ${responseObject[i]}`;
         }
-        transcription = transcription.trim(); */
+        transcription = transcription.trim();
+        await fsPromises.rmdir(folderPath, { recursive: true }); */
         // const { transcription, screenShotSecs } = await speechToText(flacFilePath);
         const { transcription, screenShotSecs } = await speechToTextWithStream(flacFilePath, 'transcription');
         console.log(transcription);
@@ -626,6 +632,11 @@ const router = () => {
         if (screenShotSecs.length) {
           await takeScreenShot(filePath, screenShotSecs);
         }
+        await fsPromises.unlink(filePath);
+        if (fs.existsSync(fullpath.join(dirName, 'images'))) {
+          await fsPromises.rmdir(fullpath.join(dirName, 'images'), { recursive: true });
+        }
+        await fsPromises.unlink(flacFilePath);
         // const transcription = "instruction title is  perform for checks on gas Forklift  step 1  Pak Forklift  instruction number one ensure your Forklift is parked safely on level ground and the park brake is engaged  number to open outdoors  number 3 lift seat to access engine and prop it up  warning number 1  do not remove radiator cap  number to crush if Forklift roles number 3 burns if coolant checked while engine oil Eid hot  reaction plan  Pak on level ground  hint  avoid contact  where gloves when refuelling  step 2  check level of engine oil  instruction  number 1 full voot dip stick number 2  wipe with a cloth or paper  number 3  Re insert dip stick all the way and pull out again number four check if oil between two markers on end of stick number 5 if insufficient oil notified to check for oil leaks  step 3 check coolant level  instruction  number 1  check level of coolant in overflow bottle number to check for any visible water leaks  number three if coolant level is below mark top up with water  warning number 1 do not remove radiator cap";
         const { instruction, steps } = await createWorkInstruction(transcription, userDetails);
         console.log(instruction);
