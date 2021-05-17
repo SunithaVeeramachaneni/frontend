@@ -44,6 +44,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { ZingchartAngularModule} from 'zingchart-angular';
+import { HttpResponseInterceptor } from './interceptors/http-response.interceptor';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { ZingchartAngularModule} from 'zingchart-angular';
 
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'} },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpResponseInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
 })
