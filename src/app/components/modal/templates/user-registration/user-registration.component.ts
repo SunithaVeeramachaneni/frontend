@@ -67,9 +67,9 @@ export class UserRegistrationComponent implements OnInit {
     // this.ref.close(this.registerFormGroup.value);
   }
 
-  // close() {
-  //   this.ref.close(null);
-  // }
+  close() {
+    // this.ref.close(null);
+  }
 
 
 }

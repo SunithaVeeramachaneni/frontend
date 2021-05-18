@@ -78,9 +78,9 @@ export class CopyInstructionComponent implements OnInit {
     });
   }
 
-  // close() {
-  //   this.ref.close();
-  // }
+  close() {
+    // this.ref.close();
+  }
 
   getImageSrc = (source: string) => {
     return source && source.indexOf('assets') > -1 ? source :  this.base64HelperService.getBase64ImageData(source);

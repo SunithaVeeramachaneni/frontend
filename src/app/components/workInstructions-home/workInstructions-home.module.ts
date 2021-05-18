@@ -28,27 +28,23 @@ import { InstructionsHomePageRoutingModule } from './workInstructions-home-routi
 import { CategoriesComponent } from './categories/categories.component';
 import { WorkInstructionsHomeComponent } from './workInstructions-home.page';
 
-import {TimeAgoPipe} from '../../pipes/time-ago.pipe';
-import {DropDownFilterPipe} from '../../pipes/dropdown-filter.pipe';
-
 import { OrderModule } from 'ngx-order-pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
     IonicModule,
     FormsModule,
-    AppMaterialModules,
     ReactiveFormsModule,
     InstructionsHomePageRoutingModule,
     OrderModule,
     NgpSortModule,
     Ng2SearchPipeModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    SharedModule
   ],
   declarations: [
-    TimeAgoPipe,DropDownFilterPipe,
     WorkInstructionsHomeComponent,
     CategoriesComponent
   ],
@@ -60,8 +56,6 @@ import { OrderModule } from 'ngx-order-pipe';
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
   ],
   exports: [
-    TimeAgoPipe,
-    DropDownFilterPipe
   ],
   entryComponents: []
 })

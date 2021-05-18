@@ -22,7 +22,6 @@ import { MultiDataSet, Label, Color, BaseChartDirective} from 'ng2-charts';
 import { castColor } from '@amcharts/amcharts4/core';
 
 
-
 @Component({
   selector: 'app-usedcar-insights',
   templateUrl: './usedcar-insights.page.html',
@@ -32,6 +31,7 @@ import { castColor } from '@amcharts/amcharts4/core';
 
 export class UsedcarInsightsComponent implements OnInit {
 
+  userImg = '/assets/images/User.svg';
   public newCarsByModelAndYearBarData = {};
   public newCarsByMakeDonutData = {};
   makeNames = ['Kia', 'Mazda', 'Jeep', 'Nissan', 'Hyundai', 'Lexus'];
@@ -161,6 +161,7 @@ export class UsedcarInsightsComponent implements OnInit {
   ];
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
+  public lineChartPlugins = [];
 
 
   public stackChartOptions: ChartOptions = {
@@ -315,6 +316,14 @@ export class UsedcarInsightsComponent implements OnInit {
         },
         error => loading.dismiss()
       );
+  }
+
+  chartClicked({ event, active }: { event?: MouseEvent, active?: {}[] }): void {
+    // impl
+  }
+
+  chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
+    console.log(event, active);
   }
 
   ngOnInit(): void {

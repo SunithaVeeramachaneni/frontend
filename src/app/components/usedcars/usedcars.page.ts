@@ -18,7 +18,6 @@ export class UsedcarsPage implements OnInit {
   deleteImg = '/assets/images/delete.svg';
   userImg = '/assets/images/User.svg';
 
-
   constructor(private http: HttpClient, private modalCtrl: ModalController
     ) { }
   httpOptions = {
@@ -27,7 +26,7 @@ export class UsedcarsPage implements OnInit {
     })
   }
 
-  cars:  [] ;
+  cars: any[];
 
   async openModal(){
     //const carDetails = this.getCarsDetails(modelname);

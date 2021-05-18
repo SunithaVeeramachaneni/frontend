@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { Instruction } from 'src/app/interfaces/instruction';
 import { Base64HelperService } from '../../../../shared/base64-helper.service';
 import { State } from '../../../../state/app.state';
 import { getCurrentStepImages } from '../../state/instruction.selectors';
@@ -15,8 +16,8 @@ export class IpadPreviewComponent implements OnInit, OnDestroy {
     @Input() titleProvided;
     @Input() selectedID;
     @Input() tabs;
-    @Input() selectedInstructionData: any[];
-    @Input() selectedInstruction: any[];
+    @Input() selectedInstructionData: any;
+    @Input() selectedInstruction: Instruction;
     @Input() loadedImages: any[];
     @Input() currentStepTitle;
     @Input() instructions;

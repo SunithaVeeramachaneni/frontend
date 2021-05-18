@@ -33,26 +33,25 @@ import {TimeAgoPipe} from '../../pipes/time-ago.pipe';
 import {DropDownFilterPipe} from '../../pipes/dropdown-filter.pipe';
 
 import { OrderModule } from 'ngx-order-pipe';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   imports: [
-    CommonModule,
     FormsModule,
     ChartsModule,
     IonicModule,
     FormsModule,
-    AppMaterialModules,
     ReactiveFormsModule,
     UsedCarsInsightsRoutingModule,
     OrderModule,
     NgpSortModule,
     Ng2SearchPipeModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    SharedModule
   ],
   declarations: [
-    TimeAgoPipe,DropDownFilterPipe,
     UsedcarInsightsComponent
-  
+
 ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA ],
   providers: [
@@ -62,8 +61,6 @@ import { OrderModule } from 'ngx-order-pipe';
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
   ],
   exports: [
-    TimeAgoPipe,
-    DropDownFilterPipe
   ],
   entryComponents: []
 })

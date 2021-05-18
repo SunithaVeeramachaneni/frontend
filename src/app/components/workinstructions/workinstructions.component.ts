@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { Base64HelperService } from '../../shared/base64-helper.service';
 import { DummyComponent } from '../../shared/dummy/dummy.component';
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
   templateUrl: 'workinstructions.component.html',
@@ -88,12 +89,12 @@ export class WorkInstructionsComponent implements OnInit, OnDestroy {
     this.reverseObj = {[value]: this.reverse};
   }
 
-  // tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+  tabChanged(tabChangeEvent: MatTabChangeEvent): void {
   //   this.tabIndex = tabChangeEvent.index;
   //   this.reverse = true;
   //   this.order = 'updated_at';
   //   this.reverseObj = {updated_at: true};
-  // }
+  }
 
   getAuthors() {
     this._instructionSvc.getUsers().subscribe((users) => {
@@ -138,7 +139,7 @@ export class WorkInstructionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  // removeWI(el) {
+  removeWI(el) {
   //   Swal.fire({
   //     title: 'Are you sure?',
   //     html: "Selected Workinstruction <strong>" + "'" + el.WI_Name + "'" + "</strong> gets deleted",
@@ -168,7 +169,7 @@ export class WorkInstructionsComponent implements OnInit, OnDestroy {
   //         );
   //     }
   //   });
-  // }
+  }
 
 
   getInstructionsWithCategoryName = (categoryId: string) => {

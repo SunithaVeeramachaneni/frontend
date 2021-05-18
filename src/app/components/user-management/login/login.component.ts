@@ -68,13 +68,13 @@ export class LoginComponent implements OnInit {
       });
     }
 
-  // open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
+  open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
   //   const ref = this.overlayService.open(content, obj);
   //   ref.afterClosed$.subscribe(res => {
   //     if (content === this.userRegSubscriptionComponent) {
   //       this.userRegDetailObject = res.data;
   //     }
   //   });
-  // }
+  }
 }
 

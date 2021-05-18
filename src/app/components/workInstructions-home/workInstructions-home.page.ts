@@ -113,6 +113,14 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  copyWorkInstruction = () => {
+    // impl
+  }
+
+  exportAsXLSX = () => {
+    // impl
+  }
+
 
   ngOnInit() {
     this.getAllFavsDraftsAndRecentIns();
