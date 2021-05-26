@@ -18,7 +18,7 @@ export class UsedcarsPage implements OnInit {
   deleteImg = '/assets/images/delete.svg';
   userImg = '/assets/images/User.svg';
   responseTime ='';
-
+  cachedData='';
   constructor(private http: HttpClient, private modalCtrl: ModalController
     ) { }
   httpOptions = {
@@ -68,6 +68,12 @@ export class UsedcarsPage implements OnInit {
     this.http.get<any>('https://invamdemo-dbapi.innovapptive.com/cars')
     .subscribe(response => {
       console.log(response);
+      if(response.cachedData === true) {
+           this.cachedData = "Cached Data";
+      }
+      else {
+        this.cachedData = "Uncached Data";
+      }
       if(Object.keys(response).length) {
         this.cars = response.usedcars ? response.usedcars : [];
         this.responseTime= localStorage.getItem("response");
