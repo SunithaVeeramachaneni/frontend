@@ -17,6 +17,7 @@ export class UsedcarsPage implements OnInit {
   editImg = '/assets/images/edit.svg';
   deleteImg = '/assets/images/delete.svg';
   userImg = '/assets/images/User.svg';
+  responseTime ='';
 
   constructor(private http: HttpClient, private modalCtrl: ModalController
     ) { }
@@ -69,6 +70,7 @@ export class UsedcarsPage implements OnInit {
       console.log(response);
       if(Object.keys(response).length) {
         this.cars = response.usedcars ? response.usedcars : [];
+        this.responseTime= localStorage.getItem("response");
         console.log(this.cars);
       }
     });
