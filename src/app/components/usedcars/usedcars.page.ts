@@ -33,7 +33,7 @@ export class UsedcarsPage implements OnInit {
       component: MyModalPageComponent,
       componentProps: {
         type:"Add",
-        modelname : "Range Rover Velar",
+        model : "Range Rover Velar",
         make : "Land Rover",
         bodytype : "Sedan",
         city : "San Juan",
@@ -55,7 +55,7 @@ export class UsedcarsPage implements OnInit {
       componentProps: {
         type:"Edit",
         id: car.id,
-        modelname : car.model,
+        model : car.model,
         make : car.make,
         bodytype : car.body_type,
         city : car.city,
@@ -81,23 +81,6 @@ export class UsedcarsPage implements OnInit {
       })
     })
   }
-
-
-
-  // async getCarsDetails(model){
-  //   this.http.get<any>('https://invamdemo-dbapi.innovapptive.com/cars')
-  //   .subscribe(response => {
-  //     console.log(response);
-  //     // if(Object.keys(response).length) {
-  //     //   this.cars = response.usedcars ? response.usedcars : [];
-  //        console.log(response.usedcars[1]['model']);
-  //     // }
-  //     const model = this.cars['model'];
-  //     console.log(model);
-  //   });
-  //   return model;
-
-  // }
 
   getAllUsedCars() {
     let start = window.performance.now();

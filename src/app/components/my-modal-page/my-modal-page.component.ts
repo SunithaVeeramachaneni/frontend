@@ -19,7 +19,7 @@ import {SampleService} from '../../services/sample.service';
 export class MyModalPageComponent {
   public example : FormGroup;
 
-  @Input() modelname : any;
+  @Input() model : any;
   @Input() make : any;
   @Input() bodytype : any;
   @Input() city : any;
