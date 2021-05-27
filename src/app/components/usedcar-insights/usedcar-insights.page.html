@@ -15,7 +15,7 @@
         <ion-card style="border-radius: 1.2em;">
           <ion-list>
             <ion-item>
-              <ion-label>Model</ion-label>
+              <ion-label>Model - <span style="font-size: 11px;">Response Time : {{this.respBarChart}}ms ( {{this.cachedBarChart}} )</span></ion-label>
               <ion-select [(ngModel)]="barChartModel" (ionChange)="fetchNewCarsByModelAndYear(barChartModel)"  interface="popover">
                 <ion-select-option *ngFor="let modelName of modelNames" [value]="modelName">{{modelName}}</ion-select-option>
               </ion-select>
@@ -35,7 +35,7 @@
         <ion-card style="border-radius: 1.2em;">
           <ion-list>
             <ion-item>
-              <ion-label>MakeName</ion-label>
+              <ion-label>MakeName - <span style="font-size: 11px;">Response Time : {{this.respDonutChart}}ms ( {{this.cachedDonutChart}} )</span></ion-label>
               <ion-select [(ngModel)]="doughnutMakeName" (ionChange)="fetchNewCarsByMakeName(doughnutMakeName)"  interface="popover">
                 <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
               </ion-select>
@@ -55,7 +55,7 @@
         <ion-card style="border-radius: 1.2em;">
           <ion-list>
             <ion-item>
-              <ion-label>MakeName</ion-label>
+              <ion-label>MakeName - <span style="font-size: 11px;">Response Time : {{this.respLineChart}}ms ( {{this.cachedLineChart}} )</span></ion-label>
               <ion-select [(ngModel)]="lineChartMakeName" (ionChange)="fetchAllModelNameByMakeName(lineChartMakeName)"  interface="popover">
                 <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
               </ion-select>
@@ -78,7 +78,7 @@
         <ion-card style="border-radius: 1.2em;">
           <ion-list>
             <ion-item>
-              <ion-label>MakeName</ion-label>
+              <ion-label>MakeName - <span style="font-size: 11px;">Response Time : {{this.respStackChart}}ms ( {{this.cachedStackChart}} )</span></ion-label>
               <ion-select [(ngModel)]="stackChartMakeName" (ionChange)="fetchCountByMakeNameAndYear(stackChartMakeName)" interface="popover">
                 <ion-select-option *ngFor="let makeName of makeNames" [value]="makeName">{{makeName}}</ion-select-option>
               </ion-select>

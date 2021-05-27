@@ -41,6 +41,17 @@ export class UsedcarInsightsComponent implements OnInit {
   lineChartMakeName: string;
   stackChartMakeName: string;
 
+  respBarChart;
+  respDonutChart;
+  respLineChart;
+  respStackChart;
+
+  cachedBarChart ='';
+  cachedDonutChart = '';
+  cachedLineChart = '';
+  cachedStackChart ='';
+
+
   public barChartOptions: ChartOptions = {
     title: {
       text: 'Count of new cars by model and year',
@@ -191,11 +202,17 @@ export class UsedcarInsightsComponent implements OnInit {
       message: 'Please wait...',
     });
     await loading.present();
+    let start = window.performance.now();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByModelNameAndYear?model_name=${modelName}`)
       .subscribe(response => {
         loading.dismiss();
         console.log(response);
-
+        if(response.cachedData == true){
+          this.cachedBarChart = "Cached Data";
+        }
+        else {
+          this.cachedBarChart = "Uncached Data";
+        }
         let cars = response.data;
         console.log(cars);
         if (cars && cars.length > 0) {
@@ -217,7 +234,7 @@ export class UsedcarInsightsComponent implements OnInit {
           let carStatusObject = {
             years: years,
             carsCount: newCarsCount,
-            model_name: "Renegade",
+            model_name: modelName,
 
           }
           console.log("carsbarchart", carStatusObject)
@@ -225,7 +242,9 @@ export class UsedcarInsightsComponent implements OnInit {
           this.barChartLabels = carStatusObject.years;
           this.barChartData[0].label = carStatusObject.model_name
           this.barChartData[0].data = carStatusObject.carsCount
-
+          let end = window.performance.now();
+          let time= Math.round(end - start);
+          this.respBarChart = time;
         }
 
       },
@@ -240,11 +259,18 @@ export class UsedcarInsightsComponent implements OnInit {
       message: 'Please wait...',
     });
     await loading.present();
+    let start = window.performance.now();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getNewCarsByYear?make_name=${makeName}`)
       .subscribe(response => {
         loading.dismiss();
         let newCars = 0;
         let oldCars = 0;
+        if(response.cachedData == true){
+          this.cachedDonutChart = "Cached Data";
+        }
+        else {
+          this.cachedDonutChart = "Uncached Data";
+        }
         if(response && response.data) {
           response.data.map(carMake => {
             const { carsCount, _id: { is_new }} = carMake;
@@ -255,6 +281,9 @@ export class UsedcarInsightsComponent implements OnInit {
             }
             const carDetails = [newCars, oldCars];
             this.doughnutChartData = [carDetails];
+            let end = window.performance.now();
+            let time = Math.round(end-start);
+            this.respDonutChart= time;
           });
         }    
      },
@@ -268,12 +297,19 @@ export class UsedcarInsightsComponent implements OnInit {
       message: 'Please wait...',
     });
     await loading.present();
+    let start = window.performance.now();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getMakeNameAndModelName?make_name=${makeName}`)
       .subscribe(
         response => {
           loading.dismiss();
           let labels = [];
           let data = [];
+          if(response.cachedData == true){
+            this.cachedLineChart = "Cached Data";
+          }
+          else {
+            this.cachedLineChart = "Uncached Data";
+          }
           if(response && response.data){
             response.data.map(modelDetails => {
               const { modelCount, _id: { model_name } } = modelDetails;
@@ -282,6 +318,9 @@ export class UsedcarInsightsComponent implements OnInit {
             });
             this.lineChartData[0] = {...this.lineChartData[0], data, label: makeName};
             this.lineChartLabels = labels;
+            let end = window.performance.now();
+            let time= Math.round(end - start);
+            this.respLineChart = time;
           }
         },
         error => loading.dismiss()
@@ -294,12 +333,19 @@ export class UsedcarInsightsComponent implements OnInit {
       message: 'Please wait...',
     });
     await loading.present();
+    let start = window.performance.now();
     this.http.get<any>(`https://invamdemo-dbapi.innovapptive.com/getCountByMakeNameAndYear?make_name=${makeName}`)
       .subscribe(
         response => {
           loading.dismiss();
           let yearWiseModels = {};
           let models = {};
+          if(response.cachedData == true){
+            this.cachedStackChart = "Cached Data";
+          }
+          else {
+            this.cachedStackChart = "Uncached Data";
+          }
           if(response && response.data){
             response.data.map(modelDetails => {
               const { count, _id: { year, model_name } } = modelDetails;
@@ -316,8 +362,11 @@ export class UsedcarInsightsComponent implements OnInit {
               const data = years.map(year => {
                 return  yearWiseModels[year][modelName] ? yearWiseModels[year][modelName] : 0;
               });
-              return { data, label: modelName, stack: 'a' };
+              return { data, label: modelName, stack: 'a' };  
             });
+            let end = window.performance.now();
+            let time = Math.round(end - start);
+            this.respStackChart = time;
           }
         },
         error => loading.dismiss()
