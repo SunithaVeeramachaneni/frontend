@@ -24,95 +24,39 @@ export class MyModalPageComponent {
   @Input() bodytype : any;
   @Input() city : any;
   @Input() engine : any;
-
-  mName = new FormControl('',Validators.required);
-
+  @Input() type: any;
+  @Input() id:any;
 
   constructor(private modalCtrl: ModalController,
-    private http:HttpClient,public fb: FormBuilder,
-    private _carService: SampleService) {
-      this.example = this.fb.group({
-        mdName: ['', Validators.required]
-      });
-    }
-    public registerFormGroup: FormGroup;
+              private http:HttpClient) {}
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     })
   }
-  logForm(){
-    console.log(this.example.value)
-  }
+
   dismissModal(){
     this.modalCtrl.dismiss(null,"cancel");
   }
-  onSub():Observable<any>{
-    const car = {
-      "model_name": "SK011212",
-      "make_name": "SKODA",
-      "body_type": "ABC",
-      "city": "Chennai",
-      "engine_type": "15"
-    };
 
-  var header = { "headers": {"Content-Type": "application/json"} };
-
- return this.http.post('https://invamdemo-dbapi.innovapptive.com/cars', car, header)
-  .pipe(map((res: HttpResponse<any>) => {
-    return res;
-  }),
-  // .toPromise().then(data => {
-  //   return data;
-  // }).catch(error => {
-  //   console.log(error.status);
-  // });
-  catchError((error: any) => of([])));}
-  onSubmit(){
-
-   // const newModelName = this.modelname.value;
-   // this.modalCtrl.dismiss(this.modelname,"submitted");
-   let url = 'https://invamdemo-dbapi.innovapptive.com/cars';
-
+  register(formValue) {
+    if(this.type == "Add") {
+      this.http.post("https://invamdemo-dbapi.innovapptive.com/car", formValue)
+      .subscribe(data => {
+        this.modalCtrl.dismiss();
+       }, error => {
+        console.log(error);
+      })
+    }
+    else if(this.type == "Edit") {
+      this.http.put(`https://invamdemo-dbapi.innovapptive.com/updateCar/${this.id}`,formValue)
+      .subscribe(data => {
+        this.modalCtrl.dismiss();
+      }, error => {
+        console.log(error);
+      })
+    }
   }
-
-  register() {
-    console.log("worked");
-
-    const car = {
-        "model_name": "SK011212",
-        "make_name": "SKODA",
-        "body_type": "ABC",
-        "city": "Chennai",
-        "engine_type": "15"
-      };
-      // this.http.post("https://invamdemo-dbapi.innovapptive.com/cars", car, this.httpOptions)
-      // // .subscribe(data => {
-      // //   console.log(data);
-      // //  }, error => {
-      // //   console.log(error);
-      // // })
-      // .pipe(map((res:any) =>{
-      //   return res.data;
-      // }),catchError(err=>of([])));
-
-      return this._carService._postData('cars', car).pipe(map((res: any) => {
-        return res.data;
-      }), catchError(err => of([])));
-
-}
-
-// submitForm() {
-//   var formData: any = new FormData();
-//   formData.append("zxczc", this.form.get('mname').value);
-//   formData.append("zxczxc", this.form.get('mkname').value);
-
-//   this.http.post('https://invamdemo-dbapi.innovapptive.com/cars', formData).subscribe(
-//     (response) => console.log(response),
-//     (error) => console.log(error)
-//   )
-// }
-
 
 }

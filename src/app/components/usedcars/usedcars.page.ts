@@ -19,8 +19,7 @@ export class UsedcarsPage implements OnInit {
   userImg = '/assets/images/User.svg';
   responseTime ='';
   cachedData='';
-  constructor(private http: HttpClient, private modalCtrl: ModalController
-    ) { }
+  constructor(private http: HttpClient, private modalCtrl: ModalController) { }
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
@@ -29,11 +28,11 @@ export class UsedcarsPage implements OnInit {
 
   cars: any[];
 
-  async openModal(){
-    //const carDetails = this.getCarsDetails(modelname);
+  async openAddModal(){
     const modal = await this.modalCtrl.create({
       component: MyModalPageComponent,
       componentProps: {
+        type:"Add",
         modelname : "Range Rover Velar",
         make : "Land Rover",
         bodytype : "Sedan",
@@ -45,7 +44,42 @@ export class UsedcarsPage implements OnInit {
 
     const data = await modal.onWillDismiss();
     console.log(data);
+    this.cars =[];
+    this.getAllUsedCars();
+  }
 
+  async openEditModal(car){
+    console.log(car);
+    const modal = await this.modalCtrl.create({
+      component: MyModalPageComponent,
+      componentProps: {
+        type:"Edit",
+        id: car.id,
+        modelname : car.model,
+        make : car.make,
+        bodytype : car.body_type,
+        city : car.city,
+        engine : car.engine_type
+      }
+    });
+    await modal.present();
+
+    const data = await modal.onWillDismiss();
+    console.log(data);
+    this.cars = [];
+    this.getAllUsedCars();
+
+  }
+
+  async deleteCar(car) {
+    this.http.delete(`https://invamdemo-dbapi.innovapptive.com/deleteCar/${car.id}`).subscribe(data => {
+      console.log(data);
+      this.cars= this.cars.filter(i => i.id !== car.id);
+      this.http.get<any>('https://invamdemo-dbapi.innovapptive.com/cars')
+      .subscribe(response => {
+        console.log(response);
+      })
+    })
   }
 
 
@@ -64,22 +98,26 @@ export class UsedcarsPage implements OnInit {
   //   return model;
 
   // }
-  ngOnInit() {
+
+  getAllUsedCars() {
     this.http.get<any>('https://invamdemo-dbapi.innovapptive.com/cars')
     .subscribe(response => {
-      console.log(response);
       if(response.cachedData === true) {
            this.cachedData = "Cached Data";
       }
       else {
         this.cachedData = "Uncached Data";
       }
-      if(Object.keys(response).length) {
-        this.cars = response.usedcars ? response.usedcars : [];
+      if(response && response.data && response.data.usedcars) {
+        this.cars = response.data.usedcars ? response.data.usedcars : [];
         this.responseTime= localStorage.getItem("response");
         console.log(this.cars);
       }
     });
+  }
+
+  ngOnInit() {
+    this.getAllUsedCars();
   }
 
 }

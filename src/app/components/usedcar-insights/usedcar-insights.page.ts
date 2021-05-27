@@ -196,7 +196,7 @@ export class UsedcarInsightsComponent implements OnInit {
         loading.dismiss();
         console.log(response);
 
-        let cars = response;
+        let cars = response.data;
         console.log(cars);
         if (cars && cars.length > 0) {
 
@@ -245,16 +245,18 @@ export class UsedcarInsightsComponent implements OnInit {
         loading.dismiss();
         let newCars = 0;
         let oldCars = 0;
-        response.map(carMake => {
-          const { carsCount, _id: { is_new }} = carMake;
-          if (is_new === 'True') {
-            newCars += carsCount;
-          } else if (is_new === 'False') {
-            oldCars += carsCount;
-          }
-        });
-        const carDetails = [newCars, oldCars];
-        this.doughnutChartData = [carDetails];
+        if(response && response.data) {
+          response.data.map(carMake => {
+            const { carsCount, _id: { is_new }} = carMake;
+            if (is_new === 'True') {
+              newCars += carsCount;
+            } else if (is_new === 'False') {
+              oldCars += carsCount;
+            }
+            const carDetails = [newCars, oldCars];
+            this.doughnutChartData = [carDetails];
+          });
+        }    
      },
      error => loading.dismiss()
      );
@@ -272,13 +274,15 @@ export class UsedcarInsightsComponent implements OnInit {
           loading.dismiss();
           let labels = [];
           let data = [];
-          response.map(modelDetails => {
-            const { modelCount, _id: { model_name } } = modelDetails;
-            labels = [...labels, model_name];
-            data = [...data, modelCount];
-          });
-          this.lineChartData[0] = {...this.lineChartData[0], data, label: makeName};
-          this.lineChartLabels = labels;
+          if(response && response.data){
+            response.data.map(modelDetails => {
+              const { modelCount, _id: { model_name } } = modelDetails;
+              labels = [...labels, model_name];
+              data = [...data, modelCount];
+            });
+            this.lineChartData[0] = {...this.lineChartData[0], data, label: makeName};
+            this.lineChartLabels = labels;
+          }
         },
         error => loading.dismiss()
       );
@@ -296,23 +300,25 @@ export class UsedcarInsightsComponent implements OnInit {
           loading.dismiss();
           let yearWiseModels = {};
           let models = {};
-          response.map(modelDetails => {
-            const { count, _id: { year, model_name } } = modelDetails;
-            if (year) {
-              models = {...models, [model_name]: 1};
-              yearWiseModels[year] = yearWiseModels[year] ? yearWiseModels[year] : {};
-              yearWiseModels = { ...yearWiseModels, [year]: { ...yearWiseModels[year], [model_name]: count }};
-            }
-          });
-          const modelNames = Object.keys(models);
-          const years = Object.keys(yearWiseModels);
-          this.stackChartLabels = years;
-          this.stackChartData = modelNames.map(modelName => {
-            const data = years.map(year => {
-              return  yearWiseModels[year][modelName] ? yearWiseModels[year][modelName] : 0;
+          if(response && response.data){
+            response.data.map(modelDetails => {
+              const { count, _id: { year, model_name } } = modelDetails;
+              if (year) {
+                models = {...models, [model_name]: 1};
+                yearWiseModels[year] = yearWiseModels[year] ? yearWiseModels[year] : {};
+                yearWiseModels = { ...yearWiseModels, [year]: { ...yearWiseModels[year], [model_name]: count }};
+              }
             });
-            return { data, label: modelName, stack: 'a' };
-          });
+            const modelNames = Object.keys(models);
+            const years = Object.keys(yearWiseModels);
+            this.stackChartLabels = years;
+            this.stackChartData = modelNames.map(modelName => {
+              const data = years.map(year => {
+                return  yearWiseModels[year][modelName] ? yearWiseModels[year][modelName] : 0;
+              });
+              return { data, label: modelName, stack: 'a' };
+            });
+          }
         },
         error => loading.dismiss()
       );
