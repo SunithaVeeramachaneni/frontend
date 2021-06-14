@@ -441,7 +441,7 @@ const extractDetails = (message, extractFor, step, startPossibilities, endPossib
     case 'STEP_WARN':
     case 'STEP_HINT':
     case 'STEP_RPLAN':
-      const result = matchData(message, extractFor, step, startPossibilities, endPossibilities) ?? [];
+      const result = matchData(message, extractFor, step, startPossibilities, endPossibilities) || [];
       const [actualMessage, found = null] = result;
       const { index } = result;
       return { actualMessage, found, index };
@@ -641,8 +641,8 @@ const router = () => {
         const { instruction, steps } = await createWorkInstruction(transcription, userDetails);
         console.log(instruction);
         console.log(steps);
-        const { WI_Name } = instruction;
-        res.status(200).json({ fileName, transcription, WI_Name });
+        const { _id: Id, WI_Name } = instruction;
+        res.status(200).json({ fileName, transcription, WI_Name, Id });
       } catch ( error ) {
         console.log(error);
         res.status(500).send({ status: 500, message: error.message, error: error.error });

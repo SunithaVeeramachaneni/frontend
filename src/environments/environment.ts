@@ -8,7 +8,7 @@ export const environment = {
    apiUrl: 'http://localhost:3000/', // MONGO DEV
    abapApiUrl: 'http://3.215.240.187:7002/',      // For NGT Syetem - ABAP DEV
   //abapApiUrl: 'http://3.215.240.187:4200/',     // For NGQ System -  ABAP QA
-  requestTimeout: 60000
+  requestTimeout: 600000
 };
 
 /*

@@ -1,31 +1,32 @@
 
 var cors = require('cors');
-module.exports = (app) => {
+module.exports = (router) => {
     const Instructions = require('../controllers/instruction.controller.js');
 
-    app.post('/addWorkInstruction', Instructions.create);
+    router.post('/addWorkInstruction', Instructions.create);
 
-    app.get('/allInstructions', Instructions.findAll);
+    router.get('/allInstructions', Instructions.findAll);
 
-    app.get('/allInstructions/:Id', Instructions.findOne);
+    router.get('/allInstructions/:Id', Instructions.findOne);
 
-    app.put('/updateInstruction/:Id', Instructions.update);
+    router.put('/updateInstruction/:Id', Instructions.update);
 
-    app.delete('/deleteInstruction/:Id', Instructions.delete);
+    router.delete('/deleteInstruction/:Id', Instructions.delete);
 
-    app.get('/favInstructions', Instructions.favInstructions);
+    router.get('/favInstructions', Instructions.favInstructions);
 
-    app.get('/draftedInstructions', Instructions.draftedInstructions);
+    router.get('/draftedInstructions', Instructions.draftedInstructions);
 
-    app.get('/publishedInstructions', Instructions.publishedInstructions);
+    router.get('/publishedInstructions', Instructions.publishedInstructions);
 
-    app.get('/allRecentInstructions', Instructions.allRecentInstructions);
+    router.get('/allRecentInstructions', Instructions.allRecentInstructions);
 
-    app.get('/getInstructionsByName/:name', Instructions.getInstructionsByName);
+    router.get('/getInstructionsByName/:name', Instructions.getInstructionsByName);
 
-    app.get('/allInstructionsByCategory/:CategoryId', Instructions.allInstructionsByCategory);
+    router.get('/allInstructionsByCategory/:CategoryId', Instructions.allInstructionsByCategory);
 
 
-    app.get('/getCopyInstructionsByName/:copyString', cors(), Instructions.find);
+    router.get('/getCopyInstructionsByName/:copyString', cors(), Instructions.find);
 
+    return router;
 }

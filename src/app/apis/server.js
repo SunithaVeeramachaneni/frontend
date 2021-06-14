@@ -16,10 +16,10 @@ app.use(bodyParser.json({limit: '50mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 
-const speechToTextConverterRouter = require('./speech-to-text-converter')();
-app.use('/speech-to-text', speechToTextConverterRouter);
+const speechToTextConverterRouter = require('./speech-to-text-converter-latest')();
+app.use('/cwpapi/speech-to-text', speechToTextConverterRouter);
 
-app.post('/approvalmail', (req, res) => {
+app.post('/cwpapi/approvalmail', (req, res) => {
   transporter.sendMail(req.body, function (error) {
     if (error) {
       logger.error(error);
@@ -52,10 +52,15 @@ mongoose.connect(dbConfig.url, {
   process.exit();
 });
 
-require('./routes/instruction.routes.js')(app);
-require('./routes/category.routes.js')(app);
-require('./routes/step.routes.js')(app);
-// require('./routes/user.routes.js')(app);
+const router = express.Router();
+const instRoutes = require('./routes/instruction.routes.js')(router, {});
+const catRoutes = require('./routes/category.routes.js')(router, {});
+const stepRoutes = require('./routes/step.routes.js')(router, {});
+// const userRoutes =  require('./routes/user.routes.js')(router, {});
+app.use('/cwpapi', instRoutes);
+app.use('/cwpapi', catRoutes);
+app.use('/cwpapi', stepRoutes);
+// app.use('/cwpapi', userRoutes);
 // listen for requests
 app.listen(3000, () => {
   console.log("Server is listening on port 3000");
