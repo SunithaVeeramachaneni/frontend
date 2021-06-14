@@ -5,9 +5,11 @@
 export const environment = {
   production: false,
   wiUrl: 'http://workinstructions.innovapptive.com:4202',
-   apiUrl: 'http://localhost:3000/', // MONGO DEV
-   abapApiUrl: 'http://3.215.240.187:7002/',      // For NGT Syetem - ABAP DEV
+  // apiUrl: 'http://localhost:3000/', // MONGO DEV
+  // abapApiUrl: 'http://3.215.240.187:7002/',      // For NGT Syetem - ABAP DEV
   //abapApiUrl: 'http://3.215.240.187:4200/',     // For NGQ System -  ABAP QA
+  apiUrl: 'https://wi.innovapptive.com/cwpapi/', // MONGO DEV
+  abapApiUrl: 'https://wi.innovapptive.com/abapapi/',      // For NGT Syetem - ABAP DEV
   requestTimeout: 600000
 };
 
