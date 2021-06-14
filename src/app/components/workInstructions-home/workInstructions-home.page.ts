@@ -103,7 +103,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
             // this.router.navigate(['/drafts']);
             Swal.fire({
               title: '',
-              html: "WorkInstruction ( " + resp.WI_Name + " ) Successfully Created",
+              html: 'WorkInstruction <b>"' + resp.WI_Name + '"</b> is successfully created',
               showCancelButton: false,
               confirmButtonColor: '#3085d6',
               confirmButtonText: 'Goto WorkInstruction'
