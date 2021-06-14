@@ -16,7 +16,7 @@ app.use(bodyParser.json({limit: '50mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 
-const speechToTextConverterRouter = require('./speech-to-text-converter-latest')();
+const speechToTextConverterRouter = require('./speech-to-text-converter')();
 app.use('/cwpapi/speech-to-text', speechToTextConverterRouter);
 
 app.post('/cwpapi/approvalmail', (req, res) => {
