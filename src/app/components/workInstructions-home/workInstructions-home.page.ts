@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit ,TemplateRef} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient,HttpErrorResponse,HttpHeaders  } from '@angular/common/http';
 import { LoadingController, ModalController } from '@ionic/angular';
@@ -12,6 +12,7 @@ import {combineLatest, Subscription} from 'rxjs';
 import { Base64HelperService } from '../../shared/base64-helper.service';
 import {InstructionService} from '../workinstructions/instruction.service';
 import { ToastService } from 'src/app/shared/toast';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-instruction-home',
@@ -91,7 +92,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
       formData.append('userDetails', localStorage.getItem('loggedInUser'));
       const loading = await this.loadingController.create({
         cssClass: 'my-custom-class',
-        message: 'Please wait...',
+        message: 'WorkInstruction conversion from audio <br/>" <b>' + file.name +' </b>" is In-progress',
       });
       await loading.present();
       this._instructionSvc.uploadWIAudioOrVideo(formData, info).subscribe(
@@ -100,9 +101,16 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
             loading.dismiss();
             console.log(resp);
             // this.router.navigate(['/drafts']);
-            this.toastService.show({
-              text:  `Work Instruction ${resp.WI_Name} has been added successfully`,
-              type: 'success',
+            Swal.fire({
+              title: '',
+              html: "WorkInstruction ( " + resp.WI_Name + " ) Successfully Created",
+              showCancelButton: false,
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Goto WorkInstruction'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.router.navigate(['/drafts/add-instruction/',resp.Id]);
+              }
             });
 
           }
