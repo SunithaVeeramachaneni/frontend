@@ -24,6 +24,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
   public wiDraftedList: Instruction[] = [];
   public wiFavList: Instruction[] = [];
   public wiRecentList: Instruction[] = [];
+  public wiPublishedList: Instruction[] = [];
   showMore = false;
   private getAllFavAndDraftInstSubscription: Subscription;
   editImg = '/assets/images/edit.svg';
@@ -53,24 +54,26 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  getAllFavsDraftsAndRecentIns() {
+  getAllFavsDraftsAndRecentPublishedIns() {
     // this.spinner.show();
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     this.getAllFavAndDraftInstSubscription = combineLatest([
       this._instructionSvc.getFavInstructions(info),
       this._instructionSvc.getDraftedInstructions(info),
-      this._instructionSvc.getRecentInstructions(info)
+      this._instructionSvc.getRecentInstructions(info),
+      this._instructionSvc.getPublishedInstructions(info)
     ])
       .pipe(
-        map(([favorites, drafts, recents]: [Instruction[], Instruction[], Instruction[]]) => ({favorites, drafts, recents}))
+        map(([favorites, drafts, recents, published]: [Instruction[], Instruction[], Instruction[], Instruction[]]) => ({favorites, drafts, recents, published}))
       )
       .subscribe(
-        ({favorites, drafts, recents}) => {
+        ({favorites, drafts, recents, published}) => {
           console.log(favorites);
           console.log(drafts);
           this.wiFavList = favorites;
           this.wiDraftedList = drafts;
           this.wiRecentList = recents;
+          this.wiPublishedList = published;
           // this.copyInstructionsData.recents = this.wiRecentList;
           // this.copyInstructionsData.favs = this.wiFavList;
           // this.spinner.hide();
@@ -83,16 +86,19 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
   }
 
   async uploadFile(event) {
+    console.log(event)
     // this.spinner.show();
     const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
     const file = event.target.files[0];
     const formData = new FormData();
+    console.log(file);
+    let filename = file.name.substr(0, file.name.length - 4);
     formData.append('file', file);
     if (file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1) {
       formData.append('userDetails', localStorage.getItem('loggedInUser'));
       const loading = await this.loadingController.create({
         cssClass: 'my-custom-class',
-        message: 'WorkInstruction conversion from audio <br/>" <b>' + file.name +' </b>" is In-progress',
+        message: 'Importing " <b>' + filename +' </b>" is In-progress',
       });
       await loading.present();
       this._instructionSvc.uploadWIAudioOrVideo(formData, info).subscribe(
@@ -103,10 +109,10 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
             // this.router.navigate(['/drafts']);
             Swal.fire({
               title: '',
-              html: 'WorkInstruction <b>"' + resp.WI_Name + '"</b> is successfully created',
+              html: 'Work Instructions <b>"' + resp.WI_Name + '"</b> successfully created',
               showCancelButton: false,
               confirmButtonColor: '#3085d6',
-              confirmButtonText: 'Goto WorkInstruction'
+              confirmButtonText: 'Go to Work Instructions'
             }).then((result) => {
               if (result.isConfirmed) {
                 this.router.navigate(['/drafts/add-instruction/',resp.Id]);
@@ -131,7 +137,7 @@ export class WorkInstructionsHomeComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.getAllFavsDraftsAndRecentIns();
+    this.getAllFavsDraftsAndRecentPublishedIns();
   }
 
   ngOnDestroy(): void {

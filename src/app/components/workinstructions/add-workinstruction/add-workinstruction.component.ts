@@ -163,8 +163,9 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'PUBLISH'
+      reverseButtons: true,
+      confirmButtonText: 'PUBLISH',
+
     }).then((result) => {
       if (result.isConfirmed) {
         this.spinner.show();
@@ -291,8 +292,8 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'DELETE'
+      confirmButtonText: 'DELETE',
+      reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         const ID = this.selectedInstruction?.Id;

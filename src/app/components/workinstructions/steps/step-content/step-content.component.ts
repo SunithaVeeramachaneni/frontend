@@ -218,8 +218,8 @@ export class StepContentComponent implements OnInit, OnDestroy {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'DELETE'
+      confirmButtonText: 'DELETE',
+      reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         this.removeStep();
@@ -317,8 +317,8 @@ export class StepContentComponent implements OnInit, OnDestroy {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'DELETE'
+      confirmButtonText: 'DELETE',
+      reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         this.deleteAttachment(index);
