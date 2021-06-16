@@ -1,0 +1,36 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <ion-row>
+      <ion-col size-lg="5" size-md="4" size-sm="12" size-xs="12">
+        <ion-toolbar class="width-auto">
+          <ion-menu-button slot="start"></ion-menu-button>
+          <ion-title class="header-title">Work Instructions</ion-title>
+        </ion-toolbar>
+      </ion-col>
+      <ion-col size-lg="4" size-md="4" size-sm="12" size-xs="12" class="header-cols">
+        <ion-toolbar class="width-auto">
+           <ion-searchbar></ion-searchbar>
+        </ion-toolbar>
+        <ion-toolbar class="width-auto">
+          <ion-icon name="chatbox-ellipses-outline" class="header-message-icon"></ion-icon>
+       </ion-toolbar>
+      </ion-col>
+      <ion-col  size-lg="3" size-md="4" size-sm="12" size-xs="12" class="header-cols">
+          <ion-toolbar class="width-auto">
+            <ion-label class="loggedin-user-name">Richard Newman</ion-label><br/>
+            <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
+          </ion-toolbar>
+          <ion-toolbar class="width-auto">
+            <img src="https://image.flaticon.com/icons/png/512/3135/3135715.png" alt="logged-user-image" class="header-user-icon">
+          </ion-toolbar>
+          <ion-toolbar class="width-auto">
+            <ion-icon name="chevron-down-outline"></ion-icon>
+          </ion-toolbar>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" >
+  WorkInstructions
+</ion-content>
