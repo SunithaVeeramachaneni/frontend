@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -14,20 +14,29 @@ import { ProfileComponent } from './profile/profile.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
 import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
+import { TenantConfigService } from './services/tenant-config.service';
 
 const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
+let hostname = window && window.location && window.location.hostname;
+if (hostname === 'localhost') {
+  hostname = 'cwppoc';
+} else {
+  hostname = hostname.split('.')[0];
+}
+console.log(hostname);
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
 }
 
-export function MSALInstanceFactory(): IPublicClientApplication {
+export function MSALInstanceFactory(tenantConfigService: TenantConfigService): IPublicClientApplication {
+  console.log(tenantConfigService.getTenantConfig(hostname));
+  const { clientId, authority, redirectUri } = tenantConfigService.getTenantConfig(hostname);
   return new PublicClientApplication({
     auth: {
-      clientId: '06a96c09-45cc-4120-8f96-9c0a0d89d6bc',
-      // authority: 'https://login.microsoftonline.com/organizations',
-      authority: 'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723',
-      redirectUri: 'http://localhost:4200/'
+      clientId,
+      authority,
+      redirectUri
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -43,11 +52,14 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   });
 }
 
-export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+export function MSALInterceptorConfigFactory(tenantConfigService: TenantConfigService): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
-  protectedResourceMap.set('http://localhost:5000', ['api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user']);
-  protectedResourceMap.set('http://localhost:8080', ['api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user']);
+  const { protectedResourceMaps } = tenantConfigService.getTenantConfig(hostname);
+  protectedResourceMaps.map((resourceMap: any) => {
+    const [url, scope] = resourceMap;
+    protectedResourceMap.set(url, scope);
+  });
+  // protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
 
   return {
     interactionType: InteractionType.Redirect,
@@ -81,6 +93,16 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     MsalModule
   ],
   providers: [
+    TenantConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (tenantConfigService: TenantConfigService) => () => tenantConfigService.config().then(
+        tenantsConfig => console.log(tenantsConfig),
+        error => console.log(error)
+      ),
+      deps: [TenantConfigService],
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
@@ -88,7 +110,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     {
       provide: MSAL_INSTANCE,
-      useFactory: MSALInstanceFactory
+      useFactory: MSALInstanceFactory,
+      deps: [TenantConfigService]
     },
     {
       provide: MSAL_GUARD_CONFIG,
@@ -96,7 +119,8 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     },
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory
+      useFactory: MSALInterceptorConfigFactory,
+      deps: [TenantConfigService]
     },
     MsalService,
     MsalGuard,
