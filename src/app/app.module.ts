@@ -18,9 +18,7 @@ import { TenantConfigService } from './services/tenant-config.service';
 
 const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigator.userAgent.indexOf("Trident/") > -1;
 let hostname = window && window.location && window.location.hostname;
-if (hostname === 'localhost') {
-  hostname = 'cwppoc';
-} else {
+if (hostname) {
   hostname = hostname.split('.')[0];
 }
 console.log(hostname);
