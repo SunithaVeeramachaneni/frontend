@@ -95,7 +95,7 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     {
       provide: APP_INITIALIZER,
       useFactory: (tenantConfigService: TenantConfigService) => () => tenantConfigService.config().then(
-        tenantsConfig => console.log(tenantsConfig),
+        data => console.log(data),
         error => console.log(error)
       ),
       deps: [TenantConfigService],
