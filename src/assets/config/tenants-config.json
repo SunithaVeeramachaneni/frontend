@@ -2,7 +2,7 @@
   "localhost": {
     "clientId": "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
     "authority": "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
-    "redirectUri": "http://localhost:4201/",
+    "redirectUri": "http://localhost:4200/",
     "protectedResourceMaps": [
       ["https://graph.microsoft.com/v1.0/me", ["user.read"]],
       ["http://localhost:5000", ["api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user"]],
