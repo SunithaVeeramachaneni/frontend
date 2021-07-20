@@ -14,61 +14,61 @@ export class AppComponent {
       url: '/dashboard',
       icon: 'home'
     },
-    {
-      title: 'Insights',
-      url: '/insights',
-      icon: 'flash'
-    },
+    // {
+    //   title: 'Insights',
+    //   url: '/insights',
+    //   icon: 'flash'
+    // },
     {
       title: 'Maintenance Control Center',
-      url: '/maintennace-control-center',
+      url: '/maintenance',
       icon: 'grid'
     },
-    {
-      title: 'Chatter',
-      url: '/chatter',
-      icon: 'chatbox-ellipses'
-    },
-    {
-      title: 'IOT and Alerts',
-      url: '/iot',
-      icon: 'notifications'
-    },
-    {
-      title: 'Maintenance Planner',
-      url: '/maintenance',
-      icon: 'calendar'
-    },
+    // {
+    //   title: 'Chatter',
+    //   url: '/chatter',
+    //   icon: 'chatbox-ellipses'
+    // },
+    // {
+    //   title: 'IOT and Alerts',
+    //   url: '/iot',
+    //   icon: 'notifications'
+    // },
+    // {
+    //   title: 'Maintenance Planner',
+    //   url: '/maintenance',
+    //   icon: 'calendar'
+    // },
     {
       title: 'Work Instructions Authoring',
       url: '/workinstructions',
       icon: 'pencil'
     },
-    {
-      title: 'Operator Rounds',
-      url: '/operator-rounds',
-      icon: 'ellipse'
-    },
-    {
-      title: 'Paperless Operations',
-      url: '/paperless-operations',
-      icon: 'square'
-    },
-    {
-      title: 'Asset Tracker',
-      url: '/asset-tracker',
-      icon: 'triangle'
-    },
+    // {
+    //   title: 'Operator Rounds',
+    //   url: '/operator-rounds',
+    //   icon: 'ellipse'
+    // },
+    // {
+    //   title: 'Paperless Operations',
+    //   url: '/paperless-operations',
+    //   icon: 'square'
+    // },
+    // {
+    //   title: 'Asset Tracker',
+    //   url: '/asset-tracker',
+    //   icon: 'triangle'
+    // },
     {
       title: 'Spare Parts Control Center',
       url: '/spareparts',
       icon: 'grid'
     },
-    {
-      title: 'Configure CWP',
-      url: '/configure',
-      icon: 'settings'
-    },
+    // {
+    //   title: 'Configure CWP',
+    //   url: '/configure',
+    //   icon: 'settings'
+    // },
   ];
   loggedIn = false;
   dark = false;

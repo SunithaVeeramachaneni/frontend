@@ -1,0 +1,74 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <app-component-header [title]=headerTitle></app-component-header>
+</ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+
+  <ion-row>
+    <ion-col>
+      <ion-list class="ion-list1">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData.length}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Unassigned Work Orders</span>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let obj of this.testData; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{obj.number}} - {{obj.name}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj.data}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj.date}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj.time}}</span>
+            </span>
+          </ion-label>        
+        </ion-item>
+       
+      </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list2">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Assigned Work Orders</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list3">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">In Progress</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list4">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Waiting For Approval</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+      </ion-col>
+  </ion-row> 
+</ion-content>

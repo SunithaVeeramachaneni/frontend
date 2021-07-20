@@ -1,0 +1,129 @@
+ion-content {
+  --ion-background-color: #E5E5E5;
+}
+
+ion-col {
+  padding: 20px 10px;
+}
+
+ion-list {
+  --ion-background-color: white;
+  border-radius: 8px;
+  padding: 0;
+}
+
+ion-item {
+  --ion-background-color: white;
+  border-bottom: 1px solid #CCCCCC; 
+  padding: 0;
+  --border-width: 0;
+  --border-color: transparent;
+}
+
+.kits-count {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 26px;
+  color: #000000;
+}
+
+.kit-heading {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000000;
+}
+
+.kit-number {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  color: #000000;
+}
+
+.filter-icon {
+  width: 15px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+
+.date-priority-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  color: #76767B;
+  padding: 2px 0;
+}
+
+.parts-available-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background: #34C759;
+  border-radius: 2px;
+  padding: 2px 6px;
+  margin-top: 2px;
+}
+
+.assign-picklist-btn {
+  background: #F2F2F2;
+  border-radius: 8px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  align-items: center;
+  color: #000000;
+  display: flex;
+  padding: 7px;
+  margin: 10px 0 0 0;
+}
+
+
+
+select#gender option[value="male"]   { background-image:url('../../../assets/spare-parts-icons/profilePicture1.svg');   }
+select#gender option[value="female"] { background-image:url('../../../assets/spare-parts-icons/profilePicture2.svg'); }
+select#gender option[value="others"] { background-image:url('../../../assets/spare-parts-icons/profilePicture3.svg'); }
+
+
+.ion-list1 {
+  border-top: 10px solid #5856D6;
+}
+.ion-list2 {
+  border-top: 10px solid #5AC8FA;
+}
+
+.ion-list3{
+  border-top: 10px solid#FFCC00;
+}
+
+.ion-list4{
+  border-top: 10px solid #FF9500;
+}
+
+.list-icons {
+  width: 20px;
+  padding-right: 7px;
+}
+
+.display-flex {
+  display: flex;
+}
