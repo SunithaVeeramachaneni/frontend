@@ -82,7 +82,7 @@ ion-item {
   margin-top: 2px;
 }
 
-.assign-btn {
+.assign-picklist-btn {
   background: #F2F2F2;
   border-radius: 8px;
   font-family: Roboto;
@@ -92,9 +92,8 @@ ion-item {
   line-height: 16px;
   align-items: center;
   color: #000000;
-  width: 100%;
   display: flex;
-  padding: 7px 7px 7px 50px;
+  padding: 7px;
   margin: 10px 0 0 0;
 }
 
@@ -104,27 +103,3 @@ select#gender option[value="male"]   { background-image:url('../../../assets/spa
 select#gender option[value="female"] { background-image:url('../../../assets/spare-parts-icons/profilePicture2.svg'); }
 select#gender option[value="others"] { background-image:url('../../../assets/spare-parts-icons/profilePicture3.svg'); }
 
-
-.ion-list1 {
-  border-top: 10px solid #5856D6;
-}
-.ion-list2 {
-  border-top: 10px solid #5AC8FA;
-}
-
-.ion-list3{
-  border-top: 10px solid#FFCC00;
-}
-
-.ion-list4{
-  border-top: 10px solid #FF9500;
-}
-
-.list-icons {
-  width: 20px;
-  padding-right: 7px;
-}
-
-.display-flex {
-  display: flex;
-}

@@ -1,0 +1,154 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <app-component-header [title]=headerTitle></app-component-header>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+
+  <ion-row>
+    <ion-col>
+      <ion-list style="border-top: 10px solid #AF52DE;">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData.length}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Required</span>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let obj of this.testData; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{obj.number}}</span><br>
+            <span style="display: flex;">
+              <ion-img [src]="dateIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+              <span class="date-priority-label">{{obj.date}}</span>
+            </span>
+            <span style="display: flex;">
+              <ion-img [src]="priorityIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+              <span class="date-priority-label">{{obj.priority}}</span>
+            </span>
+            <span style="display: flex;">
+              <ion-img [src]="partsIcon" style="width: 20px; padding-right: 7px;"></ion-img>
+              <span class="parts-available-label">PARTS AVAILABLE</span>
+            </span>
+            <span>
+              
+              <button (click)="openSelect()" class="assign-picklist-btn">
+                <ion-img [src]="assignIcon" style="width: 20px;"></ion-img>
+                <span style="padding-left: 5px;
+                padding-top: 2px;">ASSIGN PICKLIST</span> 
+              </button>          
+
+
+              <ion-item style="display: none;">
+               
+                <ion-label>Assign To:</ion-label>
+                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i);">
+                <ion-select-option>
+                  <ion-toolbar>
+                    <ion-img [src]="profile1"></ion-img>
+                    <ion-label>Amy Butcher</ion-label>
+                  </ion-toolbar>
+                   
+                </ion-select-option>
+                <ion-select-option><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
+                <ion-select-option><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
+                </ion-select>
+              </ion-item>
+              
+             
+            </span>
+          </ion-label>        
+        </ion-item>
+       
+      </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list style="border-top: 10px solid #5856D6;">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Assigned For Picking</span>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let obj of this.testData1; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{obj[0].number}}</span><br>
+            <span style="display: flex;">
+              <ion-img [src]="dateIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+              <span class="date-priority-label">{{obj[0].date}}</span>
+            </span>
+            <span style="display: flex;">
+              <ion-img [src]="priorityIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+              <span class="date-priority-label">{{obj[0].priority}}</span>
+            </span>
+            <span style="display: flex;">
+              <ion-img [src]="partsIcon" style="width: 20px; padding-right: 7px;"></ion-img>
+              <span class="parts-available-label">PARTS AVAILABLE</span>
+            </span>
+            <span>
+            
+        
+              
+           
+
+
+              <ion-item>
+               
+                <!-- <ion-label>Assign To:</ion-label> -->
+                <ion-select value="this.selectedUser" [interfaceOptions]="customPopoverOptions" interface="popover" mode="ios">
+                <ion-select-option value="Amy Butcher">
+                  <ion-toolbar>
+                    <ion-img [src]="profile1"></ion-img>
+                    <ion-label>Amy Butcher</ion-label>
+                  </ion-toolbar>
+                   
+                </ion-select-option>
+                <ion-select-option value="Carlos Arnal"><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
+                <ion-select-option value="Steve Austin"><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
+                </ion-select>
+              </ion-item> 
+              
+             
+            </span>
+          </ion-label>        
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list style="border-top: 10px solid #FFCC00;">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kitting In Progress</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list style="border-top: 10px solid #34C759;">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Complete</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list style="border-top: 10px solid #007AFF;">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Picked Up</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+  </ion-row> 
+</ion-content>

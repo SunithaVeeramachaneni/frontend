@@ -61,7 +61,7 @@ export class AppComponent {
     // },
     {
       title: 'Spare Parts Control Center',
-      url: '/spareparts',
+      url: '/spare-parts',
       icon: 'grid'
     },
     // {

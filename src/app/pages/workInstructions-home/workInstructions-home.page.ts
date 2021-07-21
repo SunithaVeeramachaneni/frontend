@@ -8,7 +8,7 @@ import { Component} from '@angular/core';
 })
 export class WorkInstructionsHomeComponent{
 
-
+  headerTitle = "Work Instructions";
   constructor() { }
 
 

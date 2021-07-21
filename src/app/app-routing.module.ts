@@ -18,8 +18,11 @@ const routes: Routes = [
   {
     path: 'maintenance',
     loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule)
+  },
+  {
+    path: 'spare-parts',
+    loadChildren: () => import('./pages/spare-parts/spare-parts.module').then(m => m.SparePartsModule)
   }
-
 ];
 
 @NgModule({
