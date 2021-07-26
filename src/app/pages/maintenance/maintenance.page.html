@@ -63,7 +63,7 @@
             <span class="kit-heading">Assigned Work Orders</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of this.workOrders['unassigned']; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of this.workOrders['assigned']; let i = index;">
           <ion-label>
             <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
