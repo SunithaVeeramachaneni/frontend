@@ -23,6 +23,7 @@ export class MaintenanceComponent{
   public timeIcon = "../../../assets/maintenance-icons/timeIcon.svg";
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
+  public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
 
   public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
