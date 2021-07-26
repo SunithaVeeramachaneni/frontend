@@ -110,7 +110,7 @@ setInterval(async () => {
 }, 1000 * 60 * csrfTokenExpireTime)
 
 const getSelectOptions = () => {
-  const selectOptionsList = ['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR', 'STATUS', 'WorkOrderOperationSet']
+  const selectOptionsList = ['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR', 'WorkOrderOperationSet/STATUS']
   
   let selectOptions = '';
   if (selectOptionsList.length > 0) {
@@ -122,7 +122,6 @@ const getSelectOptions = () => {
   }
   return selectOptions;
 }
-
 
 app.get('/abapapi/workOrdersAndOperations', (req, res) => {
   let url = baseUrl + `WorkOrdersCollection?$expand=WorkOrderOperationSet&` + getSelectOptions() + '$format=json&';

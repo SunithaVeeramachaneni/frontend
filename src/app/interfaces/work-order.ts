@@ -14,5 +14,5 @@ export interface WorkOrders {
     unassigned: WorkOrder[],
     assigned: WorkOrder[],
     inProgress: WorkOrder[],
-    complered: WorkOrder[]
+    completed: WorkOrder[]
 }

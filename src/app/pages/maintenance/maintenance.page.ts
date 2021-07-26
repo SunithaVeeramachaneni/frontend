@@ -17,7 +17,12 @@ export class MaintenanceComponent {
 
   public testData: any[] = [];
 
-  public workOrders: WorkOrders[] = [];
+  public workOrders: WorkOrders = {
+    unassigned:[],
+    assigned:[],
+    inProgress:[],
+    completed:[]
+  };
 
   public testData1 = [];
 
@@ -37,8 +42,8 @@ export class MaintenanceComponent {
 
   private statusMap = {
     "CRTD": "unassigned",
-    "PCNF": "assigned",
-    "REL": "in_progress",
+    "REL": "assigned",
+    "PCNF": "inProgress",
     "CNF": "completed"
   }
 
@@ -56,12 +61,13 @@ export class MaintenanceComponent {
   }
 
   getWorkOrders() {
-    const workOrders: WorkOrders[] = [];
-    let status = '';
     this._maintenanceSvc.getAllWorkOrders().subscribe((resp) => {
       if (resp && resp.length > 0) {
         resp.forEach((workOrder) => {
-            this.workOrders[`${this.statusMap['WorkOrderOperationSet']['STATUS']}`].push({
+            let status = this.statusMap[`${workOrder.WorkOrderOperationSet.results['0'].STATUS}`];
+            console.log("Status", status)
+            console.log("workOrders", this.workOrders)
+            this.workOrders[`${status}`].push({
               status: workOrder['WorkOrderOperationSet']['STATUS'],
               personDetails: workOrder['PARNR'],
               priorityNumber: workOrder['PRIOK'],
@@ -75,6 +81,7 @@ export class MaintenanceComponent {
         })
       }
     });
+    console.log(this.workOrders);
   }
 
   public openSelect() {
