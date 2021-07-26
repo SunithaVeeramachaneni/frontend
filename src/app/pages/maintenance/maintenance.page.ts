@@ -1,16 +1,23 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
 import * as data from './maintenance.json';
+import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
+
 
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
   styleUrls: ['./maintenance.page.css'],
 })
-export class MaintenanceComponent{
+export class MaintenanceComponent {
+
+
 
   public testData: any[] = [];
+
+  public workOrders: WorkOrders[] = [];
 
   public testData1 = [];
 
@@ -28,31 +35,62 @@ export class MaintenanceComponent{
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
+  private statusMap = {
+    "CRTD": "unassigned",
+    "PCNF": "assigned",
+    "REL": "in_progress",
+    "CNF": "completed"
+  }
+
   hideList = true;
 
   @ViewChild('select1') selectRef: IonSelect;
 
-  constructor() {}
+  constructor(
+    private _maintenanceSvc: MaintenanceService
+  ) { }
 
   ngOnInit() {
     this.testData = data.data;
+    this.getWorkOrders();
   }
 
+  getWorkOrders() {
+    const workOrders: WorkOrders[] = [];
+    let status = '';
+    this._maintenanceSvc.getAllWorkOrders().subscribe((resp) => {
+      if (resp && resp.length > 0) {
+        resp.forEach((workOrder) => {
+            this.workOrders[`${this.statusMap['WorkOrderOperationSet']['STATUS']}`].push({
+              status: workOrder['WorkOrderOperationSet']['STATUS'],
+              personDetails: workOrder['PARNR'],
+              priorityNumber: workOrder['PRIOK'],
+              priorityStatus: workOrder['PRIOKX'],
+              colour: workOrder['COLOUR'],
+              workOrderID: workOrder['AUFNR'],
+              workOrderDesc: workOrder['AUFTEXT'],
+              equipmentID: workOrder['ARBPL'],
+              equipmentName: workOrder['KTEXT'],
+            })
+        })
+      }
+    });
+  }
 
-  public openSelect(){
+  public openSelect() {
     this.selectRef.open()
   }
 
   public optionsFn(event, index) {
-      console.log(event.target.value)
-      console.log(index)
-      if(event.target.value) {
-        this.selectedUser= event.target.value;
-        this.testData1.push(this.testData.splice(index, 1));
-        console.log(this.testData);
-        console.log(this.testData1);
-      }
+    console.log(event.target.value)
+    console.log(index)
+    if (event.target.value) {
+      this.selectedUser = event.target.value;
+      this.testData1.push(this.testData.splice(index, 1));
+      console.log(this.testData);
+      console.log(this.testData1);
     }
+  }
 
 
 }
