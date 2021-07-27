@@ -124,10 +124,35 @@
       <ion-list class="ion-list3">
         <ion-item>
           <ion-label>
-            <span class="kits-count">0</span>
+            <span class="kits-count">{{this.workOrders['inProgress'].length}}</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">In Progress</span>
           </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let workOrder of this.workOrders['inProgress']; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">04-Jul-2021}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">6 hrs</span>
+            </span>
+
+            <span>
+               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
+                 <option value="Amy Butcher">Amy Butcher</option>
+                 <option value="Carlos Arnal">Carlos Arnal </option>
+                 <option value="Steve Austin">Steve Austin</option>
+               </select>   
+            </span>
+          </ion-label>        
         </ion-item>
        </ion-list>
     </ion-col>

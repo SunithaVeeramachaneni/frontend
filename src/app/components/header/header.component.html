@@ -7,11 +7,11 @@
     </ion-col>
     <ion-col  size-lg="6" size-md="6" size-sm="12" size-xs="12" class="header-cols">
         <ion-toolbar class="width-auto">
-          <ion-label class="loggedin-user-name">Richard Newman</ion-label><br/>
+          <ion-label class="loggedin-user-name">{{this.username}}</ion-label><br/>
           <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
         </ion-toolbar>
         <ion-toolbar class="width-auto">
-          <img src="https://image.flaticon.com/icons/png/512/3135/3135715.png" alt="logged-user-image" class="header-user-icon">
+          <img src={{this.userImage}} alt="logged-user-image" class="header-user-icon">
         </ion-toolbar>
         <ion-toolbar class="width-auto">
           <ion-icon name="chevron-down-outline"></ion-icon>

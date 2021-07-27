@@ -47,7 +47,8 @@ const timeout = 60000;
 
 
 var baseUrlWorkOrder = 'http://innongwtst.internal.innovapptive.com:8000/sap/opu/odata/INVMWO/MWORKORDER_SRV/';      // For NGQ System
-var baseUrlRace = 'http://54.208.180.228:8000/sap/opu/odata/INVCEC/RACE_SRV/'
+var baseUrlRace = 'http://innongwtst.internal.innovapptive.com:8000/sap/opu/odata/INVCEC/RACE_SRV/'
+
 
 
 
@@ -63,7 +64,7 @@ const reqHeaders = (base) => {
   // "Authorization": "Basic " + base64.encode('gurpreet.wo' + ':' + 'qa@54321'),      //Credentilas for NGQ System
    
   if (base === 'race')
-    headers = {"Authorization": "Basic " + base64.encode('MWORKINST1' + ':' + 'qwerty'), ...headers};
+    headers = {"Authorization": "Basic " + base64.encode('mworkorder1' + ':' + 'qwerty'), ...headers};
 
   return headers
 }

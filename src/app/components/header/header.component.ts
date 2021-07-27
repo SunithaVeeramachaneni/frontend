@@ -13,7 +13,7 @@ export class HeaderComponent {
   public sideBarMinimize = false;
   @Input() title;
   constructor(
-    private _headerSvc: HeaderService
+    private _headerSvc: HeaderService,
   ) { }
 
   ngOnInit() {
@@ -23,7 +23,8 @@ export class HeaderComponent {
   getLogonUserDetails = () =>{
     this._headerSvc.getLogonUserDetails().subscribe((resp)=>{
       if(resp){
-        console.log("The logon user detials are", resp[0])
+        this.userImage = "data:image/jpeg;base64,"+resp[0].FILECONTENT;
+        this.username=resp[0].SHORT;
       }
     })
   }
