@@ -1,6 +1,36 @@
 <ion-header className="nav-header">
   <ion-toolbar>
     <app-component-header [title]=headerTitle></app-component-header>
+    <ion-row>
+      <ion-col class="spareparts-header">
+          <ion-searchbar placeholder="Search Work Orders" class="searchbar"></ion-searchbar>
+          <button class="filter-btn">
+            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-label class="filter-btn-text">Filter</ion-label>
+            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
+          </button>
+        
+          <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="week" class="segment-group">
+            <ion-segment-button value="today" class="segment-button">
+              <ion-label>Today</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="week" class="segment-button">
+              <ion-label>Due This Week</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="month" class="segment-button">
+              <ion-label>This Month</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          
+            <!-- <ion-button style="display: flex; --background: transparent;
+            --color: black;
+            --box-shadow: none;">
+              <ion-img [src]="newWorkOrderIcon" style="width: 17px;"></ion-img>
+              <ion-label>NEW WORK ORDER</ion-label>
+            </ion-button>
+           -->
+      </ion-col>  
+    </ion-row>
   </ion-toolbar>
 </ion-header>
 
@@ -9,7 +39,7 @@
 
   <ion-row>
     <ion-col>
-      <ion-list style="border-top: 10px solid #AF52DE;">
+      <ion-list class="ion-list1">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{this.testData.length}}</span>
@@ -20,16 +50,16 @@
         <ion-item lines="none" *ngFor="let obj of this.testData; let i = index;">
           <ion-label>
             <span class="kit-number">{{obj.number}}</span><br>
-            <span style="display: flex;">
-              <ion-img [src]="dateIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{obj.date}}</span>
             </span>
-            <span style="display: flex;">
-              <ion-img [src]="priorityIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{obj.priority}}</span>
             </span>
-            <span style="display: flex;">
-              <ion-img [src]="partsIcon" style="width: 20px; padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="partsIcon" class="list-icons"></ion-img>
               <span class="parts-available-label">PARTS AVAILABLE</span>
             </span>
             <span>
@@ -65,7 +95,7 @@
       </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list style="border-top: 10px solid #5856D6;">
+      <ion-list class="ion-list2">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
@@ -76,16 +106,16 @@
         <ion-item lines="none" *ngFor="let obj of this.testData1; let i = index;">
           <ion-label>
             <span class="kit-number">{{obj[0].number}}</span><br>
-            <span style="display: flex;">
-              <ion-img [src]="dateIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{obj[0].date}}</span>
             </span>
-            <span style="display: flex;">
-              <ion-img [src]="priorityIcon" style="width: 20px;padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{obj[0].priority}}</span>
             </span>
-            <span style="display: flex;">
-              <ion-img [src]="partsIcon" style="width: 20px; padding-right: 7px;"></ion-img>
+            <span class="display-flex">
+              <ion-img [src]="partsIcon" class="list-icons"></ion-img>
               <span class="parts-available-label">PARTS AVAILABLE</span>
             </span>
             <span>
@@ -118,7 +148,7 @@
        </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list style="border-top: 10px solid #FFCC00;">
+      <ion-list class="ion-list3">
         <ion-item>
           <ion-label>
             <span class="kits-count">0</span>
@@ -129,7 +159,7 @@
        </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list style="border-top: 10px solid #34C759;">
+      <ion-list class="ion-list4">
         <ion-item>
           <ion-label>
             <span class="kits-count">0</span>
@@ -140,7 +170,7 @@
        </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list style="border-top: 10px solid #007AFF;">
+      <ion-list class="ion-list5">
         <ion-item>
           <ion-label>
             <span class="kits-count">0</span>

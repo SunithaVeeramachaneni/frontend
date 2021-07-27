@@ -128,3 +128,69 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 .display-flex {
   display: flex;
 }
+
+.maintenance-header {
+  display: flex;
+  padding: 10px 0 20px 0;
+}
+
+.searchbar {
+  width: 270px;     
+  margin: 0 10px;
+  padding: 0;
+}
+
+.filter-btn {
+  display: flex; 
+  height: 42px;
+  border-radius: 8px; 
+  padding: 0 10px;
+}
+
+.filter-btn-icon {
+  width: 15px; 
+  margin-top: 13px;
+}
+
+.filter-btn-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 42px;
+  align-items: center;
+  color: #7D7D7D;
+  padding-left: 10px;
+}
+
+.filter-btn-arrow {
+  margin-top: 16px; 
+  margin-left: 30px;
+}
+
+.segment-group {
+  margin: 0 10px;
+  height: 42px;
+}
+
+.segment-button {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  align-items: center;
+  --color: #7D7D7D;
+}
+
+.segment-button-checked {
+  background: transparent;
+  --indicator-height: 0;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
+  align-items: center;
+  --color: #000000;
+}

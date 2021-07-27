@@ -1,6 +1,36 @@
 <ion-header className="nav-header">
   <ion-toolbar>
     <app-component-header [title]=headerTitle></app-component-header>
+    <ion-row>
+      <ion-col class="maintenance-header">
+          <ion-searchbar placeholder="Search Work Orders" class="searchbar"></ion-searchbar>
+          <button class="filter-btn">
+            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-label class="filter-btn-text">Filter</ion-label>
+            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
+          </button>
+        
+          <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="week" class="segment-group">
+            <ion-segment-button value="today" class="segment-button">
+              <ion-label>Today</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="week" class="segment-button">
+              <ion-label>Due This Week</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="month" class="segment-button">
+              <ion-label>This Month</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          
+            <!-- <ion-button style="display: flex; --background: transparent;
+            --color: black;
+            --box-shadow: none;">
+              <ion-img [src]="newWorkOrderIcon" style="width: 17px;"></ion-img>
+              <ion-label>NEW WORK ORDER</ion-label>
+            </ion-button>
+           -->
+      </ion-col>  
+    </ion-row>
 </ion-toolbar>
 </ion-header>
 
@@ -85,18 +115,6 @@
                  <option value="Carlos Arnal">Carlos Arnal </option>
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
-
-
-               
-        
-              
-              <!-- <button (click)="openSelect()" class="assign-picklist-btn">
-                <ion-img [src]="assignIcon" style="width: 20px;"></ion-img>
-                <span style="padding-left: 5px;
-                padding-top: 2px;">ASSIGN PICKLIST</span> 
-              </button>           -->
-
-             
             </span>
           </ion-label>        
         </ion-item>
