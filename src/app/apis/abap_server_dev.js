@@ -133,14 +133,14 @@ app.get('/abapapi/workOrdersAndOperations', (req, res) => {
   });
 });
 
-app.get('/abapapi/getLogOnUserDetails', (req, res) => {
-  let url = baseUrlRace + `LogOnUserDetailsCollection` + '$format=json&';
+app.get('/abapapi/logOnUserDetails', (req, res) => {
+  let url = baseUrlRace + `LogonUserDetailsCollection?` + '$format=json&';
 
   console.log(`${getTime(new Date())} : logOnDetails : ${url}`);
   request({
     url: url,
     pool: separateReqPool,
-    headers: getReqHeaders,
+    headers: getReqHeaders('race'),
     timeout
   }, function (error, response) {
     if (error) {

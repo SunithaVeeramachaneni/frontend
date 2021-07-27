@@ -65,8 +65,6 @@ export class MaintenanceComponent {
       if (resp && resp.length > 0) {
         resp.forEach((workOrder) => {
             let status = this.statusMap[`${workOrder.WorkOrderOperationSet.results['0'].STATUS}`];
-            console.log("Status", status)
-            console.log("workOrders", this.workOrders)
             this.workOrders[`${status}`].push({
               status: workOrder['WorkOrderOperationSet']['STATUS'],
               personDetails: workOrder['PARNR'],
@@ -81,7 +79,6 @@ export class MaintenanceComponent {
         })
       }
     });
-    console.log(this.workOrders);
   }
 
   public openSelect() {
