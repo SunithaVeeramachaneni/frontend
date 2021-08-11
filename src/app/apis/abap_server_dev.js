@@ -3,10 +3,9 @@ const cors = require('cors');
 const app = express();
 var bodyParser = require('body-parser')
 let base64 = require('base-64');
-var request = require('request');
+const fetch = require('node-fetch');
 var session = require('express-session');
 const conntimeout = require('connect-timeout');
-var separateReqPool = { maxSockets: 10 };
 var port = 7002;
 var sessionOptions = {
   secret: '1234',
@@ -55,25 +54,25 @@ var baseUrlRace = 'http://innongwtst.internal.innovapptive.com:8000/sap/opu/odat
 const reqHeaders = (base) => {
 
   let headers = {
-  "Content-Type": "application/json",
-  "x-csrf-token": "Fetch"
+    "Content-Type": "application/json",
+    "x-csrf-token": "Fetch"
   }
   if (base === 'work_order')
-    headers = {"Authorization": "Basic " + base64.encode('mworkorder1' + ':' + 'qwerty'), ...headers};       //Credentilas for NDS System
-   //"Authorization": "Basic " + base64.encode('MWORKINST1' + ':' + 'qwerty'),         //Credentilas for NGT System
+    headers = { "Authorization": "Basic " + base64.encode('mworkorder1' + ':' + 'qwerty'), ...headers };       //Credentilas for NDS System
+  //"Authorization": "Basic " + base64.encode('MWORKINST1' + ':' + 'qwerty'),         //Credentilas for NGT System
   // "Authorization": "Basic " + base64.encode('gurpreet.wo' + ':' + 'qa@54321'),      //Credentilas for NGQ System
-   
+
   if (base === 'race')
-    headers = {"Authorization": "Basic " + base64.encode('mworkorder1' + ':' + 'qwerty'), ...headers};
+    headers = { "Authorization": "Basic " + base64.encode('mworkorder1' + ':' + 'qwerty'), ...headers };
 
   return headers
 }
 
-const getReqHeaders = (base) =>  reqHeaders(base) ;
-const postReqHeaders = (base) => { 
+const getReqHeaders = (base) => reqHeaders(base);
+const postReqHeaders = (base) => {
   const headers = reqHeaders(base);
   return { ...reqHeaders(base), 'x-csrf-token': '' }
- };
+};
 
 app.use(router);
 app.use(haltOnTimedout);
@@ -92,13 +91,13 @@ const getErrorResponseFormat = (status, data) => {
 }
 
 const getSelectOptions = () => {
-  const selectOptionsList = ['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR', 'WorkOrderOperationSet/STATUS']
-  
+  const selectOptionsList = ['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR', 'WorkOrderOperationSet/STATUS', 'WorkOrderOperationSet/ARBEI', 'TXT04']
+
   let selectOptions = '';
   if (selectOptionsList.length > 0) {
     selectOptions = '$select='
     selectOptionsList.forEach(option => {
-     selectOptions = selectOptions + option + ','
+      selectOptions = selectOptions + option + ','
     });
     selectOptions = selectOptions.slice(0, -1) + '&';
   }
@@ -106,33 +105,51 @@ const getSelectOptions = () => {
 }
 
 app.get('/abapapi/workOrdersAndOperations', (req, res) => {
-  let url = baseUrlWorkOrder + `WorkOrdersCollection?$expand=WorkOrderOperationSet&` + getSelectOptions() + '$format=json&';
+  let url = baseUrlWorkOrder + 'WorkOrdersCollection?' + '$expand=WorkOrderOperationSet&' + getSelectOptions() + '$format=json&';
+
+  let isPaginated = !!req.query.pagination;
+  let hasData = true;
+  console.log('isPaginated', isPaginated)
 
   console.log(`${getTime(new Date())} : workOrders : ${url}`);
-  request({
-    url: url,
-    pool: separateReqPool,
-    headers: (getReqHeaders('work_order')),
-    timeout
-  }, function (error, response) {
-    if (error) {
-      if (!req.timedout) {
-        res.status(500).json({ status: 500, message: 'Unable to get work Orders!', error });
+  while (hasData) {
+    result = {};
+    await request({
+      url: url,
+      pool: separateReqPool,
+      headers: (getReqHeaders('work_order')),
+      timeout
+    }, function (error, response) {
+      if (error) {
+        if (!req.timedout) {
+          res.status(500).json({ status: 500, message: 'Unable to get work Orders!', error });
+        }
+        console.log(`${getTime(new Date())} : workOrders : ${error}`);
       }
-      console.log(`${getTime(new Date())} : workOrders : ${error}`);
-    }
-    if (!error) {
-      console.log(`${getTime(new Date())} : workOrders : ${response.statusCode}`);
-      if (!req.timedout && response.statusCode === 200) {
-        res.status(200).json(JSON.parse(response.body).d.results);
-      } else if (!req.timedout) {
-        res.status(response.statusCode).json(getErrorResponseFormat(response.statusCode, response.body));
-      } else {
-        console.log(`${getTime(new Date())} : workOrders : ServiceUnavailableError: Response timeout`);
+      if (!error) {
+        console.log(`${getTime(new Date())} : workOrders : ${response.statusCode}`);
+        if (!req.timedout && response.statusCode === 200) {
+          result = {
+            ...result,
+            ...response.body.d
+          }
+          if (result.hasOwnProperty('__next') && isPaginated === true) {
+            console.log("In the if statement")
+            continue;
+          }
+          else {
+            hasData = false;
+            console.log("In the else statement, the result is ", result)
+            res.status(200).json(JSON.parse(result);
+          }
+        } else if (!req.timedout) {
+          res.status(response.statusCode).json(getErrorResponseFormat(response.statusCode, response.body));
+        } else {
+          console.log(`${getTime(new Date())} : workOrders : ServiceUnavailableError: Response timeout`);
+        }
       }
-    }
+    });
   });
-});
 
 app.get('/abapapi/logOnUserDetails', (req, res) => {
   let url = baseUrlRace + `LogonUserDetailsCollection?` + '$format=json&';
