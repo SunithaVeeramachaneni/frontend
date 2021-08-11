@@ -9,8 +9,9 @@ export class MaintenanceService {
   constructor(private _appService: AppService) {}
 
   
-getAllWorkOrders(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
+getAllWorkOrders(pagination: boolean = true,info: ErrorInfo = {} as ErrorInfo): Observable<any> {
     return this._appService._getRespFromGateway('workOrdersAndOperations', info);
   }
+
 
 }

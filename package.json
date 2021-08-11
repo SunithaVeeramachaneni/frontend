@@ -88,6 +88,7 @@
     "ngx-slickjs": "^1.5.0",
     "ngx-spinner": "^10.0.1",
     "node": "^14.17.3",
+    "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.15",
     "nodemon": "^2.0.12",
     "npm": "^7.19.1",

@@ -8,6 +8,10 @@ export interface WorkOrder {
     workOrderDesc: string,
     equipmentID: string,
     equipmentName: string,
+    kitStatus: string,
+    estimatedTime: string,
+    actualTime: string,
+    progress: number[],
 }
 
 export interface WorkOrders {

@@ -18,10 +18,10 @@ export class MaintenanceComponent {
   public testData: any[] = [];
 
   public workOrders: WorkOrders = {
-    unassigned:[],
-    assigned:[],
-    inProgress:[],
-    completed:[]
+    unassigned: [],
+    assigned: [],
+    inProgress: [],
+    completed: []
   };
 
   public testData1 = [];
@@ -42,10 +42,9 @@ export class MaintenanceComponent {
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
   private statusMap = {
-    "CRTD": "unassigned",
-    "REL": "assigned",
-    "PCNF": "inProgress",
-    "CNF": "completed"
+    "CRTD": "assigned",
+    "REL": "inProgress",
+    "TECO": "completed"
   }
 
   hideList = true;
@@ -59,28 +58,77 @@ export class MaintenanceComponent {
   ngOnInit() {
     this.testData = data.data;
     this.getWorkOrders();
+    // this.getAllWorkOrders();
+  }
+
+  formatTime = (inputHours) => { //move to utils directory
+    const minutes = Math.floor(inputHours % 1 * 60);
+    const hours = Math.floor(inputHours);
+    if (minutes !== 0)
+      return `${hours} hrs ${minutes} min`
+    else
+      return `${hours} hrs`
+  }
+
+  getEstimatedTime = (workOrder) => {
+    let time =0
+    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+      time += operation.ARBEI
+    });
+    return time;
+  }
+
+  getActualTime = (workOrder) => {
+    let time =0
+    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+      time += operation.ISMNW
+    });
+    return time;
+  }
+
+  getProgress = (workOrder) => {
+    let totalNoOfOperations = 0;
+    let noOfCompletedOperations = 0;
+    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+      totalNoOfOperations +=1;
+      if (operation.STATUS === 'cnf')
+        noOfCompletedOperations += 1;
+    });
+    return [noOfCompletedOperations, totalNoOfOperations]
   }
 
   getWorkOrders() {
     this._maintenanceSvc.getAllWorkOrders().subscribe((resp) => {
+      console.log("Resp is", resp)
       if (resp && resp.length > 0) {
-        resp.forEach((workOrder) => {
-            let status = this.statusMap[`${workOrder.WorkOrderOperationSet.results['0'].STATUS}`];
-            this.workOrders[`${status}`].push({
-              status: workOrder['WorkOrderOperationSet']['STATUS'],
-              personDetails: workOrder['PARNR'],
-              priorityNumber: workOrder['PRIOK'],
-              priorityStatus: workOrder['PRIOKX'],
-              colour: workOrder['COLOUR'],
-              workOrderID: workOrder['AUFNR'],
-              workOrderDesc: workOrder['AUFTEXT'],
-              equipmentID: workOrder['ARBPL'],
-              equipmentName: workOrder['KTEXT'],
-            })
-        })
-      }
-    });
-  }
+        const workOrderList = resp;
+        workOrderList.forEach((workOrder) => {
+          let order: WorkOrder = {
+            status: workOrder['IPHAS'],
+            personDetails: workOrder['PARNR'],
+            priorityNumber: workOrder['PRIOK'],
+            priorityStatus: workOrder['PRIOKX'],
+            colour: workOrder['COLOUR'],
+            workOrderID: workOrder['AUFNR'],
+            workOrderDesc: workOrder['AUFTEXT'],
+            equipmentID: workOrder['ARBPL'],
+            equipmentName: workOrder['KTEXT'],
+            kitStatus: workOrder['TXT04'],
+            estimatedTime: this.formatTime(this.getEstimatedTime(workOrder)),
+            actualTime: this.formatTime(this.getActualTime(workOrder)),
+            progress: this.getProgress(workOrder)
+          }
+          if(!order.personDetails) this.workOrders.unassigned.push(order)
+          else {
+            let status = this.statusMap[`${order.status}`]
+            this.workOrders[`${status}`].push(order)
+          }
+
+        }
+        )
+        }
+      })
+    }
 
   public openSelect() {
     this.selectRef.open()
