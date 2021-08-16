@@ -9,13 +9,14 @@ export interface WorkOrder {
     equipmentID: string,
     equipmentName: string,
     kitStatus: string,
+    dueDate: Date,
     estimatedTime: string,
     actualTime: string,
     progress: number[],
 }
 
 export interface WorkOrders {
-    unassigned: WorkOrder[],
+    unassigned : WorkOrder[],
     assigned: WorkOrder[],
     inProgress: WorkOrder[],
     completed: WorkOrder[]
