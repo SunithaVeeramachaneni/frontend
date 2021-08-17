@@ -108,6 +108,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 .ion-list1 {
   border-top: 10px solid #5856D6;
 }
+
 .ion-list2 {
   border-top: 10px solid #5AC8FA;
 }
@@ -193,4 +194,9 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #000000;
+}
+
+.mat-field {
+  width: 150px;
+  margin-right: 10px;
 }

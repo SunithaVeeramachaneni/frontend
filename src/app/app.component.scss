@@ -1,5 +1,10 @@
-.split-pane-visible > ion-menu {
+.split-pane-visible > ion-menu.custom-menu1 {
   max-width: 300px!important;
+}
+
+.split-pane-visible > ion-menu.custom-menu2 {
+  max-width: 70px!important;
+  min-width: 70px!important;
 }
 
 ion-menu ion-content {
@@ -111,4 +116,8 @@ ion-menu.ios ion-item.selected ion-icon {
 
 .sidebar-logo {
   padding: 15px 10px 10px 20px;
+}
+
+.icon-margin {
+  margin: 0;
 }

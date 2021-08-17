@@ -31,6 +31,7 @@ export class MaintenanceComponent{
 
   hideList = true;
 
+  showFilters = false;
   @ViewChild('select1') selectRef: IonSelect;
 
   constructor() {}
@@ -39,9 +40,30 @@ export class MaintenanceComponent{
     this.testData = data.data;
   }
 
+  showOverdue: string = 'Yes';
+  showOverdueList: string[] = ['Yes', 'No'];
+
+  priority: string[] = ['High','Medium'];
+  priorityList: string[] = ['High', 'Medium','Low'];
+
+  kitStatus: string[] = ['Kit Ready','Parts Available'];
+  kitStatusList: string[] = ['Kit Ready', 'Parts Available','Waiting On Parts'];
+
+  workCenter: string[] = ['Mechanical'];
+  workCenterList: string[] = ['Mechanical', 'Medium','Low'];
+
+  assign: string[] = ['Kerry Smith'];
+  assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
+
+
+
 
   public openSelect(){
     this.selectRef.open()
+  }
+
+  public myFunction() {
+    this.showFilters = !this.showFilters;
   }
 
   public optionsFn(event, index) {
