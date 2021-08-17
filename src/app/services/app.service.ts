@@ -38,7 +38,7 @@ export class AppService {
     }
 
     private getABAPUrl = (urlString: string): string => {
-        return `http://localhost:7002/abapapi/${urlString}`;
+        return `http://localhost:8000/abapapi/${urlString}`;
     }
 
     _getRespFromGateway(urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
