@@ -4,42 +4,78 @@
     <ion-row>
       <ion-col class="maintenance-header">
           <ion-searchbar placeholder="Search Work Orders" class="searchbar"></ion-searchbar>
-          <button class="filter-btn">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
-            <ion-label class="filter-btn-text">Filter</ion-label>
-            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
-          </button>
-        
           <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="week" class="segment-group">
             <ion-segment-button value="today" class="segment-button">
-              <ion-label>Today</ion-label>
+              <ion-label>Due Today</ion-label>
             </ion-segment-button>
             <ion-segment-button value="week" class="segment-button">
               <ion-label>Due This Week</ion-label>
             </ion-segment-button>
             <ion-segment-button value="month" class="segment-button">
-              <ion-label>This Month</ion-label>
+              <ion-label>Due This Month</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="custom" class="segment-button">
+              <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
-          
-            <!-- <ion-button style="display: flex; --background: transparent;
-            --color: black;
-            --box-shadow: none;">
-              <ion-img [src]="newWorkOrderIcon" style="width: 17px;"></ion-img>
-              <ion-label>NEW WORK ORDER</ion-label>
-            </ion-button>
-           -->
+          <button class="filter-btn" (click)="myFunction()">
+            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
+          </button>
       </ion-col>  
+    </ion-row>
+    <ion-row *ngIf="this.showFilters === true">
+      <ion-col>
+        <form #form="ngForm">
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Show Overdue</mat-label>
+            <mat-select [(ngModel)]="showOverdue" name="showOverdue">
+              <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
+                {{showdue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Priority</mat-label>
+            <mat-select name="priority" multiple [(ngModel)]="priority">
+              <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Kitting Status</mat-label>
+            <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
+              <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Work Center</mat-label>
+            <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
+              <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>Assignee</mat-label>
+            <mat-select name="assign" multiple [(ngModel)]="assign">
+              <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
+        </form>
+      </ion-col>
     </ion-row>
 </ion-toolbar>
 </ion-header>
 
 
 <ion-content [fullscreen]="true">
-
   <ion-row>
     <ion-col>
-      <ion-list class="ion-list1">
+      <ion-list class="unassigned-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{this.testData.length}}</span>
@@ -64,15 +100,14 @@
             </span>
 
             <button (click)="openSelect()" class="assign-btn">
-              <ion-img [src]="assignIcon" style="width: 20px;"></ion-img>
-              <span style="padding-left: 5px;
-              padding-top: 2px;">ASSIGN</span> 
+              <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+              <span class="assign-btn-text">ASSIGN</span> 
             </button>
 
-            <ion-item style="display: none;">
+            <ion-item class="assign-dropdown">
                
               <ion-label>Assign To:</ion-label>
-              <ion-select #select1 (ionChange)="optionsFn($event, i);" mode="ios">
+              <ion-select #operatorsList (ionChange)="optionsFn($event, i);" mode="ios">
                   <ion-select-option value="brown"><ion-img [src]="profile1"></ion-img>Amy Butcher</ion-select-option>
                   <ion-select-option value="pink"><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
                   <ion-select-option value="red"><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
@@ -85,7 +120,7 @@
       </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list class="ion-list2">
+      <ion-list class="assigned-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
@@ -121,7 +156,7 @@
        </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list class="ion-list3">
+      <ion-list class="in-progress-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">0</span>
@@ -132,12 +167,12 @@
        </ion-list>
     </ion-col>
     <ion-col>
-      <ion-list class="ion-list4">
+      <ion-list class="completed-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">0</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
-            <span class="kit-heading">Waiting For Approval</span>
+            <span class="kit-heading">Completed</span>
           </ion-label>
         </ion-item>
        </ion-list>

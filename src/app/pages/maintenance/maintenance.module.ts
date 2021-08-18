@@ -1,7 +1,6 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgModule} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {LocationStrategy, HashLocationStrategy, CommonModule} from '@angular/common';
+import { CommonModule} from '@angular/common';
 
 import { IonicModule } from '@ionic/angular';
 import { MaintenanceRoutingModule } from './maintenance-routing.module';
@@ -9,6 +8,7 @@ import { MaintenanceComponent } from './maintenance.page';
 
 import { HeaderModule } from '../../components/header/header.module';
 
+import { AppMaterialModules } from '../../material.module';
 
 @NgModule({
   imports: [
@@ -18,7 +18,8 @@ import { HeaderModule } from '../../components/header/header.module';
     ReactiveFormsModule,
     MaintenanceRoutingModule,
     HeaderModule,
-    CommonModule
+    CommonModule,
+    AppMaterialModules,
   ],
   declarations: [
     MaintenanceComponent

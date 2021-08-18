@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { CommonService } from '../../shared/service/common.service';
 
 @Component({
   selector: 'app-component-header',
@@ -7,15 +8,15 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 })
 export class HeaderComponent {
 
-  public sideBarMinimize = false;
+  public sidebarMinimize = false;
   @Input() title;
-  constructor( ) {}
+  constructor(private commonService: CommonService) {}
 
   ngOnInit() {}
 
   minimize() {
-    this.sideBarMinimize = !this.sideBarMinimize;
-    console.log(this.sideBarMinimize)
+     this.sidebarMinimize = !this.sidebarMinimize;
+    this.commonService.minimizeSidebar(this.sidebarMinimize);
   }
 
 }

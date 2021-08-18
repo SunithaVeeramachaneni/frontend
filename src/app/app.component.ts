@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonService } from './shared/service/common.service';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +7,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   styleUrls: ['./app.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public logo = "../assets/img/svg/innov-logo.svg";
+  public smallLogo = "../assets/img/svg/innov-small-logo.svg";
   appPages = [
     {
       title: 'Dashboard',
@@ -72,9 +74,15 @@ export class AppComponent {
   ];
   loggedIn = false;
   dark = false;
+  sidebar;
 
-  constructor( ) {}
+  constructor(private commonService: CommonService) {}
 
-  async ngOnInit() {}
+  ngOnInit() {
+    this.commonService.minimizeSidebarAction$.subscribe(data => {
+      console.log(data);
+      this.sidebar = data;
+    })
+  }
 
 }
