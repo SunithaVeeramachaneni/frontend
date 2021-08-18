@@ -32,7 +32,7 @@ export class MaintenanceComponent{
   hideList = true;
 
   showFilters = false;
-  @ViewChild('select1') selectRef: IonSelect;
+  @ViewChild('operatorsList') selectRef: IonSelect;
 
   constructor() {}
 
