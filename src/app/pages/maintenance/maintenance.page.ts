@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
-import * as data from './maintenance.json';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { combineLatest, Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -17,9 +16,6 @@ import { map, startWith, filter, tap } from 'rxjs/operators';
 export class MaintenanceComponent {
 
 
-
-  public testData: any[] = [];
-
   public workOrderList$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
@@ -29,7 +25,6 @@ export class MaintenanceComponent {
 
   public workOrders: Observable<WorkOrder[]>
 
-  public testData1 = [];
 
   public selectedUser;
 
@@ -55,7 +50,6 @@ export class MaintenanceComponent {
   ) { }
 
   ngOnInit() {
-    this.testData = data.data;
     this.getWorkOrders();
   }
 
@@ -118,13 +112,8 @@ export class MaintenanceComponent {
   }
 
   public optionsFn(event, index) {
-    console.log(event.target.value)
-    console.log(index)
     if (event.target.value) {
       this.selectedUser = event.target.value;
-      this.testData1.push(this.testData.splice(index, 1));
-      console.log(this.testData);
-      console.log(this.testData1);
     }
   }
 
