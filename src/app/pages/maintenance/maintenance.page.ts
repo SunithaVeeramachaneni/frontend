@@ -118,13 +118,9 @@ export class MaintenanceComponent {
   }
 
   public optionsFn(event, index) {
-    console.log(event.target.value)
-    console.log(index)
     if (event.target.value) {
       this.selectedUser = event.target.value;
       this.testData1.push(this.testData.splice(index, 1));
-      console.log(this.testData);
-      console.log(this.testData1);
     }
   }
 

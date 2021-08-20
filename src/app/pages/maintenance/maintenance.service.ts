@@ -34,9 +34,9 @@ export class MaintenanceService {
           equipmentName: rawWorkOrder['KTEXT'],
           kitStatus: rawWorkOrder['TXT04'],
           dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
-          estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder)),
-          actualTime: this.formatTime(this.getActualTime(rawWorkOrder)),
-          progress: this.getProgress(rawWorkOrder)
+          estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
+          actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
+          progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results)
         })
         workOrders[`${workOrder.status}`].push(workOrder)
       });
@@ -58,28 +58,28 @@ export class MaintenanceService {
       return `${hours} hrs`
   }
 
-  getEstimatedTime = (workOrder) => {
+  getEstimatedTime = (operations) => {
     let time = 0
-    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+    operations.forEach(operation => {
       time += operation.ARBEI
     });
     return time;
   }
 
-  getActualTime = (workOrder) => {
+  getActualTime = (operations) => {
     let time = 0
-    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+    operations.forEach(operation => {
       time += operation.ISMNW
     });
     return time;
   }
 
-  getProgress = (workOrder) => {
+  getProgress = (operations) => {
     let totalNoOfOperations = 0;
     let noOfCompletedOperations = 0;
-    workOrder.WorkOrderOperationSet.results.forEach(operation => {
+    operations.forEach(operation => {
       totalNoOfOperations += 1;
-      if (operation.STATUS === 'cnf')
+      if (operation.STATUS === 'CNF')
         noOfCompletedOperations += 1;
     });
     return [noOfCompletedOperations, totalNoOfOperations]
