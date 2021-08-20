@@ -1,20 +1,18 @@
 <ion-app [class.dark-theme]="dark">
   <ion-split-pane contentId="main-content">
 
-    <ion-menu contentId="main-content">
+    <ion-menu contentId="main-content" [ngClass]="{'custom-menu1': this.sidebar === false, 'custom-menu2' : this.sidebar === true }">
       <ion-header>
-        <ion-img [src]="logo" class="sidebar-logo"></ion-img>
-     </ion-header>
+        <ion-img [src]="logo" class="sidebar-logo" *ngIf="this.sidebar === false"></ion-img>
+        <ion-img [src]="smallLogo" class="sidebar-logo" *ngIf="this.sidebar === true"></ion-img>
+      </ion-header>
       <ion-content>
         <ion-list lines="none" class="p-0">
           <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
             <ion-item [routerLink]="p.url" routerLinkActive="selected" routerDirection="root" detail="false">
-              <ion-icon slot="start" [name]="p.icon + '-outline'"></ion-icon>
-              <ion-label>
-                {{p.title}}
-              </ion-label>
+              <ion-icon slot="start" [name]="p.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
+              <ion-label *ngIf="this.sidebar === false">{{p.title}}</ion-label>
             </ion-item>
-
           </ion-menu-toggle>
         </ion-list>
 

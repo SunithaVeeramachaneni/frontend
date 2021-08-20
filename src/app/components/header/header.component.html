@@ -1,7 +1,7 @@
 <ion-row>
     <ion-col size-lg="6" size-md="6" size-sm="12" size-xs="12">
       <ion-toolbar class="width-auto">
-        <ion-menu-button slot="start"></ion-menu-button>
+        <ion-menu-button slot="start" auto-hide="false" (click)="minimize()"></ion-menu-button>
         <ion-title class="header-title">{{title}}</ion-title>
       </ion-toolbar>
     </ion-col>

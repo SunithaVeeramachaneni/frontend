@@ -43,7 +43,8 @@ export class MaintenanceComponent {
 
   hideList = true;
 
-  @ViewChild('select1') selectRef: IonSelect;
+  showFilters = false;
+  @ViewChild('operatorsList') selectRef: IonSelect;
 
   constructor(
     private _maintenanceSvc: MaintenanceService
@@ -97,6 +98,23 @@ export class MaintenanceComponent {
     return someDate >= firstDayOfWeek && someDate <= lastDayOfWeek;
   }
 
+  showOverdue: string = 'Yes';
+  showOverdueList: string[] = ['Yes', 'No'];
+
+  priority: string[] = ['High','Medium'];
+  priorityList: string[] = ['High', 'Medium','Low'];
+
+  kitStatus: string[] = ['Kit Ready','Parts Available'];
+  kitStatusList: string[] = ['Kit Ready', 'Parts Available','Waiting On Parts'];
+
+  workCenter: string[] = ['Mechanical'];
+  workCenterList: string[] = ['Mechanical', 'Medium','Low'];
+
+  assign: string[] = ['Kerry Smith'];
+  assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
+
+
+
 
    public isThisMonth = (someDate) => {
     const today = new Date();
@@ -109,6 +127,10 @@ export class MaintenanceComponent {
     return someDate.getDate() == today.getDate() &&
       someDate.getMonth() == today.getMonth() &&
       someDate.getFullYear() == today.getFullYear()
+  }
+
+  public myFunction() {
+    this.showFilters = !this.showFilters;
   }
 
   public optionsFn(event, index) {

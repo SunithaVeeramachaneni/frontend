@@ -98,25 +98,37 @@ ion-item {
   margin: 10px 0 0 0;
 }
 
+.assign-btn-icon {
+  width: 20px;
+}
 
+.assign-btn-text {
+  padding-left: 5px;
+  padding-top: 2px;
+}
+
+.assign-dropdown {
+  display: none;
+}
 
 select#gender option[value="male"]   { background-image:url('../../../assets/spare-parts-icons/profilePicture1.svg');   }
 select#gender option[value="female"] { background-image:url('../../../assets/spare-parts-icons/profilePicture2.svg'); }
 select#gender option[value="others"] { background-image:url('../../../assets/spare-parts-icons/profilePicture3.svg'); }
 
 
-.ion-list1 {
+.unassigned-workorder-list {
   border-top: 10px solid #5856D6;
 }
-.ion-list2 {
+
+.assigned-workorder-list {
   border-top: 10px solid #5AC8FA;
 }
 
-.ion-list3{
+.in-progress-workorder-list{
   border-top: 10px solid#FFCC00;
 }
 
-.ion-list4{
+.completed-workorder-list{
   border-top: 10px solid #FF9500;
 }
 
@@ -193,4 +205,13 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #000000;
+}
+
+.mat-field {
+  width: 150px;
+  margin-right: 10px;
+}
+
+.reset-filters-btn {
+  background-color: white;
 }
