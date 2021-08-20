@@ -41,6 +41,25 @@ export class MaintenanceComponent {
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
+ public showOverdue: string = 'Yes';
+ public showOverdueList: string[] = ['Yes', 'No'];
+
+ public priority: string[] = ['High','Medium'];
+ public priorityList: string[] = ['High', 'Medium','Low'];
+
+ public kitStatus: string[] = ['Kit Ready','Parts Available'];
+ public kitStatusList: string[] = ['Kit Ready', 'Parts Available','Waiting On Parts'];
+
+ public workCenter: string[] = ['Mechanical'];
+ public workCenterList: string[] = ['Mechanical', 'Medium','Low'];
+
+ public assign: string[] = ['Kerry Smith'];
+ public assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
+
+
+
+
+
   hideList = true;
 
   showFilters = false;
@@ -87,33 +106,12 @@ export class MaintenanceComponent {
     const todayDate = todayObj.getDate();
     const todayDay = todayObj.getDay();
   
-    // get first date of week
     const firstDayOfWeek = new Date(todayObj.setDate(todayDate - todayDay));
-  
-    // get last date of week
     const lastDayOfWeek = new Date(firstDayOfWeek);
     lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6);
-  
-    // if date is equal or within the first and last dates of the week
+
     return someDate >= firstDayOfWeek && someDate <= lastDayOfWeek;
   }
-
-  showOverdue: string = 'Yes';
-  showOverdueList: string[] = ['Yes', 'No'];
-
-  priority: string[] = ['High','Medium'];
-  priorityList: string[] = ['High', 'Medium','Low'];
-
-  kitStatus: string[] = ['Kit Ready','Parts Available'];
-  kitStatusList: string[] = ['Kit Ready', 'Parts Available','Waiting On Parts'];
-
-  workCenter: string[] = ['Mechanical'];
-  workCenterList: string[] = ['Mechanical', 'Medium','Low'];
-
-  assign: string[] = ['Kerry Smith'];
-  assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
-
-
 
 
    public isThisMonth = (someDate) => {
