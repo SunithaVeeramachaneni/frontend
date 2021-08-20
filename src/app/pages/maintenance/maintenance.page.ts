@@ -114,10 +114,6 @@ export class MaintenanceComponent {
   public optionsFn(event, index) {
     if (event.target.value) {
       this.selectedUser = event.target.value;
-<<<<<<< HEAD
-      this.testData1.push(this.testData.splice(index, 1));
-=======
->>>>>>> 6f790b73041a3e4d6bd90784779f785dd3a9b041
     }
   }
 
