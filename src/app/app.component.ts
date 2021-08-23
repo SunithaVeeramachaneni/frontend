@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { CommonService } from './shared/service/common.service';
+import { CommonService } from './shared/services/common.service';
 
 @Component({
   selector: 'app-root',
