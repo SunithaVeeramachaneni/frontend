@@ -1,0 +1,176 @@
+<ngx-spinner size="large" color="grey" type="ball-clip-rotate-pulse"></ngx-spinner>
+<div class="col-md-12 p-l-10">
+  <div class="row">
+    <div class="col-sm-9 col-md-9">
+      <h2 class="step-title-heading">
+        <input type="text" id="step_title"
+               [(ngModel)]="selectedStep.Title"
+               class="wi_title_input"
+               placeholder="Title"
+               autofocus="true"
+               [disabled]="!titleProvided"
+               value={{selectedStep.Title}}
+               matTooltip={{selectedStep.Title}}
+               matTooltipClass=""
+               (ngModelChange)="this.steptitle.next($event)"/>
+        <span class="btn btn-success success-msg" *ngIf="showMsg">
+                  <span class="f-left success-icon"><mat-icon>done</mat-icon></span>
+                </span>
+      </h2>
+    </div>
+    <div class="col-sm-3 col-md-3 p-t-2 m-l-minus-15">
+      <button class="align-icon fa-pull-right p-t-5 p-l-25 btn btn-hide-show-preview" (click)="displayStatus(previewDisplay)"
+              *ngIf="previewDisplay === false">SHOW PREVIEW
+      </button>
+      <mat-icon class="delete-forever-icon align-icon p-t-5 p-l-15 step-action" title="Delete Step" (click)="deleteStep(this.step)">delete_forever</mat-icon>
+      <mat-icon class="align-icon fa-pull-right p-l-0 p-t-5 step-action" title="Clone Step"
+                (click)="cloneCurrentStep()">content_copy
+      </mat-icon>
+
+
+    </div>
+  </div>
+  <mat-divider class="mat-divider"></mat-divider>
+  <div *ngIf="twelveColumned === 'true'" class="step-content-container">
+    <form [formGroup]="stepContentForm" class="p-r-10">
+      <div class="form-group" *ngFor="let field of selectedStep.Fields; let i=index">
+        <div class="col-md-6 col-sm-6 col-xs-6 pull-left m-0 p-l-0">
+          <div *ngIf="field.FieldType === 'ATT'">
+            <p class="titles">Attachments</p>
+            <mat-divider class="mat-divider"></mat-divider>
+            <div class="uploadfilecontainer1" ngx-dropzone  accept="image/jpeg,image/jpg,image/png" (change)="uploadFile($event)">
+              <div *ngIf="files.length === 0" class="p-t-15">
+                <img src="assets/work-instructions-icons/svg/attachment_placeholder.svg" alt=""/>
+                <h3 class="attachment-placeholder-text">Pictures and videos can speak a thousand words</h3>
+              </div>
+              <input hidden type="file" accept="image/x-png,image/jpeg" #fileInput (change)="uploadFile($event)"
+                     placeholder="drop here">
+              <label class="uploadfilecontainertitle">
+                <span class="btn upload-btn p-l-10"><img src="assets/work-instructions-icons/svg/upload-icon-blue.svg" alt="" class="upload-img"/> <span class="upload-text"> UPLOAD </span></span>
+                <span class="drop-att">or drop attachments here </span>
+              </label>
+            </div>
+            <div class="clearfix"> </div>
+            <div class="row">
+              <div *ngFor="let file of files;let i=index" class="col-md-6">
+                <div class="responsive-img-container">
+                  <img alt="attachment" [hidden]="!stepImages[file]" [attr.src]="stepImages[file]"/>
+                  <br>
+                  <div class="image-title p-l-10"> {{file}}</div>
+                  <div class="delete-uploaded-file"> <button class="delete-file" (click)="deleteAtt(file, i)">
+                    <mat-icon class="delete-forever-icon">delete_forever</mat-icon>
+                  </button></div>
+                </div>
+
+              </div>
+            </div>
+           </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6 pull-left m-0 p-r-0">
+          <p *ngIf="field.FieldType === 'RTF' && field.FieldCategory === 'INS'" class="titles">Instructions</p>
+          <mat-divider class="mat-divider" *ngIf="field.FieldType === 'RTF' && field.FieldCategory === 'INS'"></mat-divider>
+          <p *ngIf="field.FieldType === 'RTF'">
+            <mat-form-field appearance="outline" class="form-field rtf-text">
+              <mat-label *ngIf="field.FieldCategory === 'INS'" class="mat-label m-b-35">
+                <mat-icon matSuffix class="icon-size sky-blue">error</mat-icon>
+                <span class="label-titles">Instructions</span>
+              </mat-label>
+              <mat-label *ngIf="field.FieldCategory === 'WARN'" class="mat-label m-b-35">
+                <mat-icon matSuffix class="icon-size orange">warning</mat-icon>
+                <span class="label-titles">Warnings</span>
+              </mat-label>
+              <mat-label *ngIf="field.FieldCategory === 'HINT'" class="mat-label m-b-35">
+                <mat-icon matSuffix class="icon-size green">help</mat-icon>
+                <span class="label-titles">Hints</span>
+              </mat-label>
+              <mat-label *ngIf="field.FieldCategory === 'REACTION PLAN'" class="mat-label m-b-35">
+                <mat-icon matSuffix class="icon-size blue">build</mat-icon>
+                <span class="label-titles">Reaction Plan</span>
+              </mat-label>
+              <quill-material
+                (editorChange)="handleEditorChange(field)"
+                (editorFocus)="updateQuillToolBarClass($event, field.Title)"
+                [ngClass]="{'display-toolbar': quillToolbarClass === field.Title}"
+                [formControlName]="field.Title"
+                [(ngModel)]="field.FieldValue"
+                placeholder="">
+              </quill-material>
+              <mat-error *ngIf="stepContentForm.get(field.Title).hasError('required')">Please enter a value</mat-error>
+            </mat-form-field>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="steps-block" *ngIf="twelveColumned === 'false'">
+    <form [formGroup]="stepContentForm" class="p-r-10">
+      <div class="form-group" *ngFor="let field of selectedStep.Fields; let i=index">
+        <div *ngIf="field.FieldType === 'ATT'">
+          <p class="titles">Attachments</p>
+          <mat-divider class="mat-divider"></mat-divider>
+          <div class="uploadfilecontainer1" ngx-dropzone accept="image/jpeg,image/jpg,image/png" (change)="uploadFile($event)">
+            <input hidden type="file" accept="image/x-png,image/jpeg" #fileInput (change)="uploadFile($event)"
+            placeholder="drop here">
+            <label class="uploadfilecontainertitle">
+                  <span class="btn upload-btn p-l-10"><img src="assets/work-instructions-icons/svg/upload-icon-blue.svg" alt="" class="upload-img"/> <span class="upload-text"> UPLOAD </span></span>
+                  <span class="drop-att">or drop attachments here </span>
+              </label>
+          </div>
+          <div class="row files-list" *ngFor="let file of files;let i=index">
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 f-left p-r-10 vertical-center"><img alt="Drag"
+              src="assets/work-instructions-icons/svg/drag_handle.svg" alt=""/></div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 f-left p-0"><img alt="Attachment" [hidden]="!stepImages[file]" [attr.src]="stepImages[file]"
+                                                                                          class="file-images"/></div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 fnt-gray p-0 vertical-center-file p-l-10">
+              {{file}}
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 p-0 vertical-center-icons">
+              <button class="delete-file" (click)="deleteAtt(file, i)">
+                <mat-icon class="delete-forever-icon">delete_forever</mat-icon>
+              </button>
+              <div ngx-dropzone class="customised-drop-zone" [accept]="'image/*'" (change)="uploadFile($event, i)">
+                <input hidden type="file" accept="image/x-png,image/jpeg" #fileInput (change)="uploadFile($event, i)"
+                       placeholder="drop here">
+                <mat-icon class="edit-icon">edit</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p *ngIf="field.FieldType === 'RTF' && field.FieldCategory === 'INS'" class="titles">Instructions</p>
+        <mat-divider class="mat-divider"
+                     *ngIf="field.FieldType === 'RTF' && field.FieldCategory === 'INS'"></mat-divider>
+        <p *ngIf="field.FieldType === 'RTF'">
+          <mat-form-field appearance="outline" class="form-field rtf-text">
+            <mat-label *ngIf="field.FieldCategory === 'INS'" class="mat-label m-b-35">
+              <mat-icon matSuffix class="icon-size sky-blue">error</mat-icon>
+              <span class="label-titles">Instructions</span>
+            </mat-label>
+            <mat-label *ngIf="field.FieldCategory === 'WARN'" class="mat-label m-b-35">
+              <mat-icon matSuffix class="icon-size orange">warning</mat-icon>
+              <span class="label-titles">Warnings</span>
+            </mat-label>
+            <mat-label *ngIf="field.FieldCategory === 'HINT'" class="mat-label m-b-35">
+              <mat-icon matSuffix class="icon-size green">help</mat-icon>
+              <span class="label-titles">Hints</span>
+            </mat-label>
+            <mat-label *ngIf="field.FieldCategory === 'REACTION PLAN'" class="mat-label m-b-35">
+              <mat-icon matSuffix class="icon-size blue">build</mat-icon>
+              <span class="label-titles">Reaction Plan</span>
+            </mat-label>
+            <quill-material
+              (editorChange)="handleEditorChange(field)"
+              (editorFocus)="updateQuillToolBarClass($event, field.Title)"
+              [ngClass]="{'display-toolbar': quillToolbarClass === field.Title}"
+              [formControlName]="field.Title"
+              [(ngModel)]="field.FieldValue"
+              placeholder="">
+            </quill-material>
+            <mat-error *ngIf="stepContentForm.get(field.Title).hasError('required')">Please enter a value</mat-error>
+          </mat-form-field>
+        </p>
+      </div>
+    </form>
+  </div>
+
+

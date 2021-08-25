@@ -1,3 +1,10 @@
+:host /deep/ .searchbar-input.sc-ion-searchbar-md {
+  background: #F2F2F2;
+  opacity: 0.75;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
 ion-content {
   --ion-background-color: #E5E5E5;
 }

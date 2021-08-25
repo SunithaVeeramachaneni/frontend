@@ -2,19 +2,17 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/cor
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.page';
-
-import { HeaderModule } from '../../components/header/header.module';
 
 @NgModule({
   imports: [
     FormsModule,
     IonicModule,
-    FormsModule,
     ReactiveFormsModule,
-    HeaderModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+    SharedModule
   ],
   declarations: [
     DashboardComponent,

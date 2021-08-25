@@ -3,7 +3,10 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
-  production: false
+  production: false,
+  abapApiUrl: 'http://localhost:7002/abapapi/',
+  apiUrl: 'http://localhost:7000/api/',
+  requestTimeout: 60000
 };
 
 /*

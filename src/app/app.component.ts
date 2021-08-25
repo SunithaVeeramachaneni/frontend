@@ -8,8 +8,8 @@ import { CommonService } from './shared/services/common.service';
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
-  public logo = "../assets/img/svg/innov-logo.svg";
-  public smallLogo = "../assets/img/svg/innov-small-logo.svg";
+  public logo = '../assets/img/svg/innov-logo.svg';
+  public smallLogo = '../assets/img/svg/innov-small-logo.svg';
   appPages = [
     {
       title: 'Dashboard',
@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
     // },
     {
       title: 'Work Instructions Authoring',
-      url: '/workinstructions',
+      url: '/work-instructions',
       icon: 'pencil'
     },
     // {
@@ -80,9 +80,19 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.commonService.minimizeSidebarAction$.subscribe(data => {
-      console.log(data);
       this.sidebar = data;
-    })
+    });
+
+    const userDetails = {
+      id: '1',
+      first_name: 'Sunitha',
+      last_name: 'Veeramachaneni',
+      email: 'sunitha.veermchanneu@innovapptve.com',
+      password: 'x123',
+      role: 'admin',
+      empId: '5000343'
+    };
+    localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
   }
 
 }

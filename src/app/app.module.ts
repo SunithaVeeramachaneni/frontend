@@ -17,6 +17,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ToastModule } from './shared/toast';
 
 @NgModule({
   imports: [
@@ -32,7 +35,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
     }),
-    AppRoutingModule
+    AppRoutingModule,
+    StoreModule.forRoot({}, {}),
+    StoreDevtoolsModule.instrument({ name: 'CWP', maxAge: 25, logOnly: environment.production }),
+    ToastModule.forRoot()
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
