@@ -1,9 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { rawWorkOrders$, expectedWorkOrders } from "./maintenance.mocks"
+import { rawWorkOrders$, expectedWorkOrders$ } from "./maintenance.mocks"
 import { MaintenanceService } from "./maintenance.service";
 import { AppService } from "../../services/app.service"
 import { WorkOrders } from "../../interfaces/work-order";
-import { isEqual } from "lodash";
+import { isEqual, isObject } from "lodash";
+import * as _ from "lodash";
 import { HttpClientModule } from "@angular/common/http";
 
 describe('Maintenance service', () => {
@@ -28,9 +29,10 @@ describe('Maintenance service', () => {
     spyOn(appService, '_getRespFromGateway').and.returnValue(rawWorkOrders$);
     let workOrders$ = service.getAllWorkOrders()
     let workOrders: WorkOrders;
+    let expectedWorkOrders: WorkOrders;
     workOrders$.subscribe((resp) => workOrders = resp);
-    // console.log("Work orders are", workOrders);
-    expect(isEqual(workOrders, expectedWorkOrders));
+    expectedWorkOrders$.subscribe((resp) => expectedWorkOrders = resp);
+    expect(isEqual(workOrders, expectedWorkOrders)).toBeTrue();
   })
 
 
@@ -38,7 +40,7 @@ describe('Maintenance service', () => {
     let stringDate: string = '/Date(1629331200000)/';
     let expectedDate: Date = new Date(1629331200000);
     let convertedDate: Date = service.parseJsonDate(stringDate);
-    expect(isEqual(convertedDate, expectedDate))
+    expect(isEqual(convertedDate, expectedDate)).toBeTrue();
   })
 
   it('formatTime should convert an integer amount of hours into a string', () => {
@@ -50,13 +52,13 @@ describe('Maintenance service', () => {
     formattedTime = service.formatTime(timeInHours);
     expectedTime = '5 hrs';
 
-    expect(isEqual(formattedTime, expectedTime));
+    expect(isEqual(formattedTime, expectedTime)).toBeTrue();
 
     timeInHours = 5.5;
     formattedTime = service.formatTime(timeInHours);
     expectedTime = '5 hrs 30 min'
 
-    expect(isEqual(formattedTime, expectedTime));
+    expect(isEqual(formattedTime, expectedTime)).toBeTrue();
   })
 
   it('getEstimatedTime should add up the estimated time of all work operations and return it', () => {
@@ -64,7 +66,7 @@ describe('Maintenance service', () => {
     let expectedTime: number = 18;
     let time: number = service.getEstimatedTime(operations);
 
-    expect(isEqual(expectedTime, time));
+    expect(isEqual(expectedTime, time)).toBeTrue();
   })
 
   it('getActualTime should add up the actual time of all work operations and return it', () => {
@@ -72,7 +74,7 @@ describe('Maintenance service', () => {
     let expectedTime: number = 10;
     let time: number = service.getActualTime(operations);
 
-    expect(isEqual(expectedTime, time));
+    expect(isEqual(expectedTime, time)).toBeTrue();
   })
 
   it('getProgress should return an array depicting the progress of a workOrder', () => {
@@ -80,17 +82,17 @@ describe('Maintenance service', () => {
     let expectedProgress: any[];
     let progress: number[];
 
-    operations = [{ STATUS: 'CRTD' }, { STATUS: 'REL' }, { STATUS: 'PCNF' }, { STATUS: 'CND' }];
+    operations = [{ STATUS: 'CRTD' }, { STATUS: 'REL' }, { STATUS: 'PCNF' }, { STATUS: 'CNF' }];
     expectedProgress = [1, 4];
     progress = service.getProgress(operations);
 
-    expect(isEqual(progress, expectedProgress));
+    expect(isEqual(progress, expectedProgress)).toBeTrue();
 
     operations = [{ STATUS: 'CNF' }, { STATUS: 'CNF' }, { STATUS: 'CNF' }];
     expectedProgress = [3, 3];
     progress = service.getProgress(operations);
 
-    expect(isEqual(progress, expectedProgress));
+    expect(isEqual(progress, expectedProgress)).toBeTrue();
 
 
   })
@@ -100,25 +102,26 @@ describe('Maintenance service', () => {
     let rawStatus = 'CRTD'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'unassigned'))
+    expect(isEqual(status, 'unassigned')).toBeTrue()
 
     personDetails = '001';
     rawStatus = 'CRTD'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'assigned'))
+    expect(isEqual(status, 'assigned')).toBeTrue()
 
     personDetails = '001';
     rawStatus = 'REL'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'inProgress'))
+    expect(isEqual(status, 'inProgress')).toBeTrue()
 
     personDetails = '001';
     rawStatus = 'TECO'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'completed'))
+    expect(isEqual(status, 'completed')).toBeTrue()
 
   })
+
 })
