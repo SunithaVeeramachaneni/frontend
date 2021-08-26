@@ -278,7 +278,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
           text: 'Selected work instruction has been successfully copied',
           type: 'success'
         });
-        this.router.navigate(['/home']);
+        this.router.navigate(['/work-instructions']);
       },
       error => {
         this.spinner.hide();
@@ -305,7 +305,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
         this._instructionsvc.deleteWorkInstruction$(ID, info)
           .subscribe(
             data => {
-              this.router.navigate(['/home']);
+              this.router.navigate(['/work-instructions']);
               this._toastService.show({
                 text: `Work instuction '${el.WI_Name}' has been deleted`,
                 type: 'success',

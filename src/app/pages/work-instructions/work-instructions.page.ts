@@ -40,7 +40,7 @@ export class WorkInstructionsPage {
   public assignedObjectsList;
   public copyInstructionsData = {
     recents: null,
-    favs: null,
+    favs: null
   };
 
   workbook = new ExcelJs.Workbook();
@@ -48,13 +48,13 @@ export class WorkInstructionsPage {
     id: 'recents',
     currentPage: 1,
     itemsPerPage: 5,
-    directionLinks: false,
+    directionLinks: false
   };
   favConfig: any = {
     id: 'favorites',
     currentPage: 1,
     itemsPerPage: 5,
-    directionLinks: false,
+    directionLinks: false
   };
   search: string;
   public authors = [];
@@ -73,87 +73,63 @@ export class WorkInstructionsPage {
     }
   }
 
-  constructor(
-    private spinner: NgxSpinnerService,
-    private excelSrv: ExcelService,
-    private _instructionSvc: InstructionService,
-    private overlayService: OverlayService,
-    private base64HelperService: Base64HelperService
-  ) {}
+  constructor(private spinner: NgxSpinnerService,
+              private excelSrv: ExcelService,
+              private _instructionSvc: InstructionService,
+              private overlayService: OverlayService,
+              private base64HelperService: Base64HelperService) {
+  }
 
   getBase64Images = (instructions: Instruction[]) => {
-    instructions.map((instruction) => {
+    instructions.map(instruction => {
       const { Cover_Image: coverImage } = instruction;
-      if (
-        coverImage.indexOf('assets') === -1 &&
-        !this.base64HelperService.getBase64ImageData(coverImage)
-      ) {
+      if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
         this.base64HelperService.getBase64Image(coverImage);
       }
     });
-  };
+  }
 
   setFav(event, el) {
     event.stopPropagation();
-    const userName = JSON.parse(localStorage.getItem('loggedInUser'));
-    const info: ErrorInfo = {
-      displayToast: false,
-      failureResponse: 'throwError',
-    };
+    const userName = JSON.parse(localStorage.getItem("loggedInUser"));
+    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     this._instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
-      (ins) => {
+      ins => {
         el.IsFavorite = ins.IsFavorite;
         if (userName) {
-          el.EditedBy = userName.first_name + ' ' + userName.last_name;
+          el.EditedBy = userName.first_name + " " + userName.last_name;
         }
         this.getAllFavsDraftsAndRecentIns();
       },
-      (error) => this._instructionSvc.handleError(error)
+      error => this._instructionSvc.handleError(error)
     );
   }
 
   exportAsXLSX(): void {
     const SheetProperties = {
       defaultRowHeight: 100,
-      tabColor: { argb: 'b2b2b2' },
+      tabColor: {argb: 'b2b2b2'}
     };
     const sheets = [
-      this.workbook.addWorksheet('WorkInstruction_Sample_1', {
-        properties: SheetProperties,
-      }),
-      this.workbook.addWorksheet('WorkInstruction_Sample_2', {
-        properties: SheetProperties,
-      }),
+      this.workbook.addWorksheet('WorkInstruction_Sample_1', { properties: SheetProperties}),
+      this.workbook.addWorksheet('WorkInstruction_Sample_2', { properties: SheetProperties})
     ];
-    this.excelSrv.exportAsExcelFile(
-      this.workbook,
-      sheets,
-      'WorkInstruction_Sample_Template.xlsx'
-    );
+    this.excelSrv.exportAsExcelFile(this.workbook, sheets, 'WorkInstruction_Sample_Template.xlsx');
   }
 
   getAllFavsDraftsAndRecentIns() {
     this.spinner.show();
-    const info: ErrorInfo = {
-      displayToast: false,
-      failureResponse: 'throwError',
-    };
+    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     this.getAllFavAndDraftInstSubscription = combineLatest([
       this._instructionSvc.getFavInstructions(info),
       this._instructionSvc.getDraftedInstructions(info),
-      this._instructionSvc.getRecentInstructions(info),
+      this._instructionSvc.getRecentInstructions(info)
     ])
       .pipe(
-        map(
-          ([favorites, drafts, recents]: [
-            Instruction[],
-            Instruction[],
-            Instruction[]
-          ]) => ({ favorites, drafts, recents })
-        )
+        map(([favorites, drafts, recents]: [Instruction[], Instruction[], Instruction[]]) => ({favorites, drafts, recents}))
       )
       .subscribe(
-        ({ favorites, drafts, recents }) => {
+        ({favorites, drafts, recents}) => {
           this.wiFavList = favorites;
           this.wiDraftedList = drafts;
           this.wiRecentList = recents;
@@ -161,7 +137,7 @@ export class WorkInstructionsPage {
           this.copyInstructionsData.favs = this.wiFavList;
           this.spinner.hide();
         },
-        (error) => {
+        error => {
           this._instructionSvc.handleError(error);
           this.spinner.hide();
         }
@@ -169,32 +145,20 @@ export class WorkInstructionsPage {
   }
 
   buildPayloadForInstruction(importedSheetsData: string) {
-    this.bulkUploadDialog(
-      this.bulkUploadComponent,
-      JSON.parse(importedSheetsData)
-    );
+    this.bulkUploadDialog(this.bulkUploadComponent, JSON.parse(importedSheetsData));
   }
 
-  bulkUploadDialog(
-    content: TemplateRef<any> | ComponentType<any> | string,
-    obj
-  ) {
+  bulkUploadDialog(content: TemplateRef<any> | ComponentType<any> | string, obj) {
     this.overlayService.open(content, obj);
   }
 
   copyWorkInstruction() {
-    this.copyInstructionDialog(
-      this.copyInstructionComponent,
-      this.copyInstructionsData
-    );
+    this.copyInstructionDialog(this.copyInstructionComponent, this.copyInstructionsData);
   }
 
-  copyInstructionDialog(
-    content: TemplateRef<any> | ComponentType<any> | string,
-    obj
-  ) {
+  copyInstructionDialog(content: TemplateRef<any> | ComponentType<any> | string, obj) {
     const ref = this.overlayService.open(content, obj);
-    ref.afterClosed$.subscribe((res) => {
+    ref.afterClosed$.subscribe(res => {
       this.getAllFavsDraftsAndRecentIns();
       this.searchCriteria = '';
     });
@@ -202,19 +166,20 @@ export class WorkInstructionsPage {
 
   uploadFile(event) {
     this.spinner.show();
-    const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
+    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     const file = event.target.files[0];
     const excelFormData = new FormData();
     excelFormData.append('file', file);
-    this._instructionSvc.uploadWIExcel(excelFormData, info).subscribe((resp) => {
-      if (Object.keys(resp).length) {
-        this.fileData = JSON.stringify(resp);
-        this.buildPayloadForInstruction(this.fileData);
+    this._instructionSvc.uploadWIExcel(excelFormData, info).subscribe(
+      resp => {
+        if (Object.keys(resp).length) {
+          this.fileData = JSON.stringify(resp);
+          this.buildPayloadForInstruction(this.fileData);
+        }
+        this.spinner.hide();
       }
-      this.spinner.hide();
-    });
+    );
   }
-
 
   ionViewWillEnter(): void {
     this.getAllFavsDraftsAndRecentIns();
@@ -227,8 +192,6 @@ export class WorkInstructionsPage {
   }
 
   getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1
-      ? source
-      : this.base64HelperService.getBase64ImageData(source);
-  };
+    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  }
 }

@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { WorkInstructionsPageRoutingModule } from './work-instructions-routing.module';
 
 import { WorkInstructionsPage } from './work-instructions.page';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { ModalModule } from './modal/modal.module';
 import { SharedModule } from '../../shared/shared.module';
 import { StoreModule } from '@ngrx/store';
@@ -31,6 +30,10 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { AppMaterialModules } from '../../material.module';
+import { DraftsComponent } from './drafts/drafts.component';
+import { PublishedComponent } from './published/published.component';
+import { RecentsComponent } from './recents/recents.component';
+import { FavoritesComponent } from './favorites/favorites.component';
 
 @NgModule({
   imports: [
@@ -41,7 +44,6 @@ import { AppMaterialModules } from '../../material.module';
     WorkInstructionsPageRoutingModule,
     AppMaterialModules,
     SharedModule,
-    NgxSpinnerModule,
     ModalModule,
     StoreModule.forFeature('workinstruction', instructionReducer),
     NgpSortModule,
@@ -72,7 +74,11 @@ import { AppMaterialModules } from '../../material.module';
     QuillMaterialComponent,
     NgCarousel,
     IphonePreviewComponent,
-    IpadPreviewComponent
+    IpadPreviewComponent,
+    DraftsComponent,
+    PublishedComponent,
+    RecentsComponent,
+    FavoritesComponent
   ]
 })
 export class WorkInstructionsPageModule {}

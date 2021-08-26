@@ -14,63 +14,36 @@ export class AppComponent implements OnInit {
     {
       title: 'Dashboard',
       url: '/dashboard',
-      icon: 'home'
+      icon: 'home',
+      showDetails: false,
+      subPages: null
     },
-    // {
-    //   title: 'Insights',
-    //   url: '/insights',
-    //   icon: 'flash'
-    // },
     {
       title: 'Maintenance Control Center',
       url: '/maintenance',
-      icon: 'grid'
+      icon: 'grid',
+      showDetails: false,
+      subPages: null
     },
-    // {
-    //   title: 'Chatter',
-    //   url: '/chatter',
-    //   icon: 'chatbox-ellipses'
-    // },
-    // {
-    //   title: 'IOT and Alerts',
-    //   url: '/iot',
-    //   icon: 'notifications'
-    // },
-    // {
-    //   title: 'Maintenance Planner',
-    //   url: '/maintenance',
-    //   icon: 'calendar'
-    // },
-    {
-      title: 'Work Instructions Authoring',
-      url: '/work-instructions',
-      icon: 'pencil'
-    },
-    // {
-    //   title: 'Operator Rounds',
-    //   url: '/operator-rounds',
-    //   icon: 'ellipse'
-    // },
-    // {
-    //   title: 'Paperless Operations',
-    //   url: '/paperless-operations',
-    //   icon: 'square'
-    // },
-    // {
-    //   title: 'Asset Tracker',
-    //   url: '/asset-tracker',
-    //   icon: 'triangle'
-    // },
     {
       title: 'Spare Parts Control Center',
       url: '/spare-parts',
-      icon: 'grid'
+      icon: 'grid',
+      showDetails: false,
+      subPages: null
     },
-    // {
-    //   title: 'Configure CWP',
-    //   url: '/configure',
-    //   icon: 'settings'
-    // },
+    {
+      title: 'Work Instructions Authoring',
+      url: '/work-instructions',
+      icon: 'pencil',
+      showDetails: false,
+      subPages: [
+        { title: 'Favorites', url:'/work-instructions/favorites', icon: '' },
+        { title: 'Drafts', url:'/work-instructions/drafts', icon: '' },
+        { title: 'Published', url:'/work-instructions/published', icon: '' },
+        { title: 'Recents', url:'/work-instructions/recents', icon: '' }
+      ]
+    },
   ];
   loggedIn = false;
   dark = false;
@@ -93,6 +66,14 @@ export class AppComponent implements OnInit {
       empId: '5000343'
     };
     localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
+  }
+
+  toggleDetails(p) {
+    if (p.showDetails) {
+      p.showDetails = false;
+    } else {
+      p.showDetails = true;
+    }
   }
 
 }

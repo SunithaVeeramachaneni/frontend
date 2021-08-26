@@ -4,7 +4,6 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
   <div>
     <div class="row wi-status-container">
      <div class="col-lg-6 col-md-6">
@@ -21,7 +20,7 @@
                       value={{selectedInstruction.WI_Name}}
                       (keyup)="titleChange(selectedInstruction.WI_Name, true)" #workInstructionTitle/>
                     </a>
-    <!--                   {{ workInstructionTitle.focus() }}-->
+                  {{ workInstructionTitle.focus() }}
                   <span class="btn wi-title-info-position">
                     <span class="f-left text-danger wi-title-info" *ngIf="titleErrors?.required">
                       Title is required

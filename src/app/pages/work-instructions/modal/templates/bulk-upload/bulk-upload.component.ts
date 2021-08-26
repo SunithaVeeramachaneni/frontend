@@ -201,12 +201,12 @@ export class BulkUploadComponent implements OnInit {
     const sheets = this.ref.data;
     if (this.loadResults === true) {
       if (this.isUploadSuccess()) {
-        this.router.navigate(['/drafts']);
+        this.router.navigate(['/work-instructions/drafts']);
       } else {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/work-instructions']);
       }
     } else if (this.loadResults === false) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/work-instructions']);
     }
   }
 
