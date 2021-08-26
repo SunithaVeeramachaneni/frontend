@@ -17,6 +17,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { AppService } from './services/app.service';
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    AppService
   ],
   bootstrap: [AppComponent]
 })

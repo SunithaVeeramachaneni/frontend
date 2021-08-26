@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { HeaderService } from './header.service';
 import { CommonService } from '../../shared/service/common.service';
 
 @Component({
@@ -8,11 +9,28 @@ import { CommonService } from '../../shared/service/common.service';
 })
 export class HeaderComponent {
 
+  public username : string;
+  public userImage: string;
   public sidebarMinimize = false;
   @Input() title;
-  constructor(private commonService: CommonService) {}
+  constructor(
+    private _headerSvc: HeaderService,
+    private commonService: CommonService
+  ) {}
 
-  ngOnInit() {}
+
+  ngOnInit() {
+    this.getLogonUserDetails();
+  }
+  
+  getLogonUserDetails = () =>{
+    this._headerSvc.getLogonUserDetails().subscribe((resp)=>{
+      if(resp){
+        this.userImage = "data:image/jpeg;base64,"+resp[0].FILECONTENT;
+        this.username=resp[0].SHORT;
+      }
+    })
+  }
 
   minimize() {
      this.sidebarMinimize = !this.sidebarMinimize;
