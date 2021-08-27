@@ -13,6 +13,14 @@
               <ion-icon slot="start" [name]="p.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
               <ion-label *ngIf="this.sidebar === false">{{p.title}}</ion-label>
             </ion-item>
+            <div *ngIf="p.showSubMenu && p.subPages !== null">
+              <ion-list lines="none" class="p-0" *ngFor="let submenuitem of p.subPages">
+                <ion-item class="submenu" [routerLink]="submenuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
+                  <ion-icon slot="start"></ion-icon>
+                  <ion-label>{{submenuitem.title}}</ion-label>
+                </ion-item>
+              </ion-list>
+            </div>
           </ion-menu-toggle>
         </ion-list>
 
