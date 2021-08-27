@@ -13,10 +13,10 @@ import { ComponentType } from '@angular/cdk/portal';
 import { BulkUploadComponent } from './modal/templates/bulk-upload/bulk-upload.component';
 import { OverlayService } from './modal/overlay.service';
 import { CopyInstructionComponent } from './modal/templates/copy-instruction/copy-instruction.component';
-import { Instruction } from '../../interfaces/instruction';
-import { ErrorInfo } from '../../interfaces/error-info';
+import { Instruction, ErrorInfo } from '../../interfaces';
 import { Base64HelperService } from './services/base64-helper.service';
 import { DummyComponent } from '../../shared/components/dummy/dummy.component';
+import { WiCommonService } from './services/wi-common.services';
 
 @Component({
   selector: 'app-work-instructions',
@@ -77,7 +77,8 @@ export class WorkInstructionsPage {
               private excelSrv: ExcelService,
               private _instructionSvc: InstructionService,
               private overlayService: OverlayService,
-              private base64HelperService: Base64HelperService) {
+              private base64HelperService: Base64HelperService,
+              private wiCommonService: WiCommonService) {
   }
 
   getBase64Images = (instructions: Instruction[]) => {
@@ -183,6 +184,7 @@ export class WorkInstructionsPage {
 
   ionViewWillEnter(): void {
     this.getAllFavsDraftsAndRecentIns();
+    this.wiCommonService.updateCategoriesComponent(true);
   }
 
   ionViewWillLeave(): void {

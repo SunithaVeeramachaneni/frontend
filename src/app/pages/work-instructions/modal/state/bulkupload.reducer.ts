@@ -1,6 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { Instruction } from '../../../../interfaces/instruction';
-import { Step } from '../../../../interfaces/step';
+import { Instruction, Step } from '../../../../interfaces';
 import * as AppState from '../../../../state/app.state';
 import * as BulkUploadActions from './bulkupload.actions';
 

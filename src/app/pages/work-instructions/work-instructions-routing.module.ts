@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AddWorkinstructionComponent } from './add-workinstruction/add-workinstruction.component';
+import { CategoryWiseInstructionsComponent } from './category-wise-instructions/category-wise-instructions.component';
 import { DraftsComponent } from './drafts/drafts.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { PublishedComponent } from './published/published.component';
@@ -12,6 +13,8 @@ const routes: Routes = [
   { path: '', component: WorkInstructionsPage },
   { path: 'create', data: {title: 'Untitled Work Instruction'}, component: AddWorkinstructionComponent },
   { path: 'edit/:id', data: {title: ''}, component: AddWorkinstructionComponent },
+  { path: 'category/:cid', data: {title: ''}, component: CategoryWiseInstructionsComponent },
+  { path: 'category/:cid/:id', data: {title: ''}, component: AddWorkinstructionComponent },
   { path: 'drafts', data: {title: 'Drafts'}, component: DraftsComponent },
   { path: 'drafts/:id', data: {title: ''}, component: AddWorkinstructionComponent },
   { path: 'favorites', data: {title: 'Favorites'}, component: FavoritesComponent },

@@ -7,7 +7,7 @@ import {Router} from '@angular/router';
 import {concatMap, map, mergeMap, toArray} from 'rxjs/operators';
 import {AlertService} from '../../alert/alert.service';
 import {from, of} from 'rxjs';
-import { ErrorInfo } from '../../../../../interfaces/error-info';
+import { ErrorInfo } from '../../../../../interfaces';
 import { InstructionWithSteps } from '../../state/bulkupload.reducer';
 import { State } from '../../../../../state/app.state';
 import { Store } from '@ngrx/store';

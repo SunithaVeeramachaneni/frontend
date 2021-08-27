@@ -9,7 +9,7 @@ import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
-import { ErrorInfo } from '../../interfaces/error-info';
+import { ErrorInfo } from '../../interfaces';
 import { AppMaterialModules } from '../../material.module';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { Base64HelperService } from '../../shared/base64-helper.service';

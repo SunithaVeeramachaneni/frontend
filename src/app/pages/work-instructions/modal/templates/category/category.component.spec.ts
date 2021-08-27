@@ -8,7 +8,7 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
-import { ErrorInfo } from '../../../../interfaces/error-info';
+import { ErrorInfo } from '../../../../../interfaces';
 import { AppMaterialModules } from '../../../../material.module';
 import { Base64HelperService } from '../../../../shared/base64-helper.service';
 import { CategoryService } from '../../../home/categories/category.service';

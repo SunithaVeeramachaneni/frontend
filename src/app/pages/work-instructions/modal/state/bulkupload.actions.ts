@@ -1,6 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Instruction } from "../../../../interfaces/instruction";
-import { Step } from "../../../../interfaces/step";
+import { Instruction, Step } from "../../../../interfaces";
 
 export const addInstructionWithSteps = createAction(
   '[BulkUpload] addInstructionWithSteps',

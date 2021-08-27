@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Instruction } from '../../../interfaces/instruction';
+import { Instruction } from '../../../interfaces';
 
 @Component({
   selector: 'app-dummy',

@@ -1,4 +1,4 @@
-import { Instruction } from '../../../interfaces/instruction';
+import { Instruction } from '../../../../interfaces';
 import * as BulkuploadReducer from './bulkupload.reducer';
 import { BulkuploadState } from './bulkupload.reducer';
 import * as BulkUploadActions from './bulkupload.actions';

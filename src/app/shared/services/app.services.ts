@@ -2,14 +2,20 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { ErrorInfo } from '../../interfaces/error-info';
-import { Instruction, InstructionOptional } from '../../interfaces/instruction';
-import { Step, StepOptional } from '../../interfaces/step';
-import { User, UserOptional } from '../../interfaces/user';
-import { Category, CategoryOptional } from '../../interfaces/category';
-import { Mail } from '../../interfaces/mail';
-import { DeleteFile } from '../../interfaces/delete-file';
-import { GetFile } from '../../interfaces/upload-file';
+import {
+  ErrorInfo,
+  Instruction,
+  InstructionOptional,
+  Step,
+  StepOptional,
+  User,
+  UserOptional,
+  Category,
+  CategoryOptional,
+  Mail,
+  DeleteFile,
+  GetFile
+} from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'

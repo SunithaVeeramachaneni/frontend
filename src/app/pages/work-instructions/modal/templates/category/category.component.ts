@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import {CategoryService} from '../../../services/category.service';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
-import { ErrorInfo } from '../../../../../interfaces/error-info';
+import { ErrorInfo } from '../../../../../interfaces';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 
 @Component({

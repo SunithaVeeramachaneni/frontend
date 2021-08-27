@@ -3,7 +3,7 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {InstructionService} from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import {ToastService} from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces/error-info';
+import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 

@@ -1,6 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Instruction } from "../../../interfaces/instruction";
-import { Step } from "../../../interfaces/step";
+import { Instruction, Step } from "../../../interfaces";
 import { StepImages } from "./instruction.reducer";
 
 export const addInstruction = createAction(

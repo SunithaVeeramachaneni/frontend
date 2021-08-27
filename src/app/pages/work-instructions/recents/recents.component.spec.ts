@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecentsComponent } from './recents.component';
 import { MockComponent } from 'ng-mocks';
-import { ErrorInfo } from '../../../interfaces/error-info';
+import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../../../shared/base64-helper.service';
 

@@ -2,14 +2,23 @@ import { concatMap, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { Injectable } from "@angular/core";
 import { AppService } from '../../../shared/services/app.services';
 import { combineLatest, forkJoin, from, Observable, of, throwError } from "rxjs";
-import { Category, CategoryOptional } from '../../../interfaces/category';
-import { ErrorInfo } from '../../../interfaces/error-info';
-import { Instruction, InstructionOptional, PublishInstruction } from '../../../interfaces/instruction';
-import { User, UserOptional } from '../../../interfaces/user';
-import { Step, StepOptional } from '../../../interfaces/step';
-import { Mail } from '../../../interfaces/mail';
-import { DeleteFile, DeleteFileResponse } from '../../../interfaces/delete-file';
-import { GetFile, UploadS3FileResponse } from '../../../interfaces/upload-file';
+import {
+  Category,
+  CategoryOptional,
+  ErrorInfo,
+  Instruction,
+  InstructionOptional,
+  PublishInstruction,
+  User,
+  UserOptional,
+  Step,
+  StepOptional,
+  Mail,
+  DeleteFile,
+  DeleteFileResponse,
+  GetFile,
+  UploadS3FileResponse
+} from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from '../../../shared/toast';
 import { Store } from '@ngrx/store';

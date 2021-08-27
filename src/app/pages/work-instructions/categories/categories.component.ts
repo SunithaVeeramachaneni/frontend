@@ -7,8 +7,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CategoryService } from '../services/category.service';
 import { InstructionService } from '../services/instruction.service';
 import {ToastService} from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces/error-info';
+import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
+import { WiCommonService } from '../services/wi-common.services';
 
 @Component({
   selector: 'app-categories',
@@ -77,7 +78,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               private _instructionSvc: InstructionService,
               private _toastService: ToastService,
               private cdrf: ChangeDetectorRef,
-              private base64HelperService: Base64HelperService) {}
+              private base64HelperService: Base64HelperService,
+              private wiCommonService: WiCommonService) {}
 
   getAllCategories() {
     this._instructionSvc.getAllCategories().subscribe(categories => {
@@ -128,7 +130,14 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngOnInit(): void {
-    this.getAllCategories();
+    this.wiCommonService.updateCategoriesComponentAction$.subscribe(
+      update => {
+        if (update) {
+          this.categoriesList = [];
+          this.getAllCategories();
+        }
+      }
+    )
   }
 
   ngAfterViewInit(): void {
