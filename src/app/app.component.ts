@@ -12,7 +12,7 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit {
   public logo = "../assets/img/svg/innov-logo.svg";
   public smallLogo = "../assets/img/svg/innov-small-logo.svg";
-  appPages = [
+  menus = [
     {
       title: 'Dashboard',
       url: '/dashboard',
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
       console.log(data);
       this.sidebar = data;
       if(this.currentRouteUrl) {
-        this.appPages = this.toggleSubMenu(this.appPages, this.currentRouteUrl, this.sidebar);
+        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
       }
     });
 
@@ -69,12 +69,12 @@ export class AppComponent implements OnInit {
     ).subscribe(
       (event: NavigationEnd)  => {
         this.currentRouteUrl = event.url;
-        this.appPages = this.toggleSubMenu(this.appPages, this.currentRouteUrl, this.sidebar);
+        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
   }
 
-  toggleSubMenu(appPages: any, currentRouteUrl: string, sidebarMinimized: boolean) {
-    return appPages.map(menuItem => {
+  toggleSubMenu(menus: any, currentRouteUrl: string, sidebarMinimized: boolean) {
+    return menus.map(menuItem => {
       let showSubMenu = false;
       if (menuItem.subPages !== null && !sidebarMinimized && currentRouteUrl.indexOf(menuItem.url) === 0) {
         showSubMenu = true;
