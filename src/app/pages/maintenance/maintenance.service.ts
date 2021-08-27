@@ -86,7 +86,7 @@ export class MaintenanceService {
   }
 
   getStatus(personDetails, status) {
-    if (!personDetails) return 'Unassigned'
+    if (!personDetails) return 'unassigned'
     else return this.statusMap[`${status}`]
   }
 
