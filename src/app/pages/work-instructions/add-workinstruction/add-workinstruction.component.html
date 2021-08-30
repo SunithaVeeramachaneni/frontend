@@ -40,10 +40,10 @@
           <li class="display">
             <a [class.disabled] = "!titleProvided" (click)="setFav()">
               <span *ngIf="!selectedInstruction.IsFavorite" matTooltip="Make it Favorite" matTooltipClass="">
-                <mat-icon>star_border</mat-icon>
+                <mat-icon class="mat-icon-star">star_border</mat-icon>
               </span>
               <span *ngIf="selectedInstruction.IsFavorite" matTooltip="Make it UnFavorite" matTooltipClass="">
-                  <mat-icon class="is-fav-icon">star</mat-icon>
+                  <mat-icon class="mat-icon-star is-fav-icon">star</mat-icon>
               </span></a>
             <button [class.disabled] = "!titleProvided" matTooltip="More" matTooltipClass=""
                     mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">

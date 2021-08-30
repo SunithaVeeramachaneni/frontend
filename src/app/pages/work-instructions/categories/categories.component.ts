@@ -218,7 +218,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
         }
       } else if (content === this.delCatSubscribeComponent) {
         this.categoryDetailObject = ref.data;
-        if (this.categoryDetailObject.selectedButton === 'no') {
+        if (this.categoryDetailObject.selectedButton !== 'yes') {
           return;
         }
         const category = {

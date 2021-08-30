@@ -78,7 +78,6 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   uploadFile(files: FileList) {
     if (this.files.length) {
       this.categoryService.setDeleteFiles(this.files[0]);
-      return;
     }
     this.spinner.show();
     const file = files[0];
