@@ -46,6 +46,7 @@ tbody tr td:nth-child(4) {
 
 .table th, .table td {
   vertical-align: middle;
+  border-bottom: 1px solid #c8ced3;
 }
 
 td:first-child{
