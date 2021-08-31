@@ -10,6 +10,8 @@ export class MaintenanceService {
 
   constructor(private _appService: AppService) { }
 
+  private selectOptions: string[] =['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR','IPHAS', 'WorkOrderOperationSet/STATUS','WorkOrderOperationSet/ARBEI', 'IPHAS', 'GSTRP']
+
   private statusMap = {
     "CRTD": "assigned",
     "REL": "inProgress",
@@ -17,7 +19,8 @@ export class MaintenanceService {
   }
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
-    let workOrders$ = this._appService._getRespFromGateway('workOrdersAndOperations', info);
+    const params: any = {selectOptions: this.selectOptions, collectionComponent: 'WorkOrdersCollection'}
+    let workOrders$ = this._appService._getRespFromGateway('workOrdersAndOperations/WorkOrderOperationSet', info);
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
@@ -86,7 +89,7 @@ export class MaintenanceService {
   }
 
   getStatus(personDetails, status) {
-    if (!personDetails) return 'Unassigned'
+    if (!personDetails) return 'unassigned'
     else return this.statusMap[`${status}`]
   }
 

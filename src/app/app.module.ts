@@ -8,7 +8,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonicModule } from '@ionic/angular';
-import { IonicStorageModule } from '@ionic/storage';
+// import { IonicStorageModule } from '@ionic/storage-angular';
 import { AppMaterialModules } from './material.module';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -29,7 +29,7 @@ import { AppService } from './services/app.service';
     FormsModule,
     ReactiveFormsModule,
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot(),
+    // IonicStorageModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
     }),

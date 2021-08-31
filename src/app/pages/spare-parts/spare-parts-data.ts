@@ -1,5 +1,4 @@
-{
-    "data":[
+export const data_test = [
         {
             "number":"53467",
             "date":"20-06-2021",
@@ -31,4 +30,3 @@
             "parts":"available"
         }
 ]
-}

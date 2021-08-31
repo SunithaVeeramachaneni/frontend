@@ -33,7 +33,8 @@ export class AppService {
                     displayToast,
                     failureResponse
                 })
-            })
+            },
+            )
         };
     }
 
