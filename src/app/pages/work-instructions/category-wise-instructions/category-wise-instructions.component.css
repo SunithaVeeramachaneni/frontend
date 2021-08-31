@@ -37,6 +37,7 @@ table {
 
 thead th {
   cursor: pointer;
+  border-top:none;
 }
 
 tbody tr td:nth-child(4) {

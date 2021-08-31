@@ -346,10 +346,11 @@
 
 
 .steps-block {
-  height: calc(100vh - 292px);
+  height: calc(100vh - 270px);
   overflow-y: scroll;
   overflow-x: hidden;
   margin-right: -15px;
+  border-bottom: 1px solid #cccccc;
 }
 
 .mce-content-body {

@@ -40,7 +40,7 @@
 
 .header-btn {
   position: absolute;
-  top: calc(100vh - 215px);
+  top: calc(100vh - 200px);
   width: 160px;
   height: 36px;
   background: #ffffff;
@@ -62,7 +62,7 @@
 
 .step-btn {
   position: absolute;
-  top: calc(100vh - 215px);
+  top: calc(100vh - 200px);
   right: 20px;
   width: 160px;
   height: 36px;
