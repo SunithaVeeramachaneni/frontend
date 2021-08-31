@@ -40,7 +40,7 @@
 
 .header-btn {
   position: absolute;
-  top: calc(100vh - 215px);
+  top: calc(100vh - 43px);
   width: 160px;
   height: 36px;
   background: #ffffff;
@@ -62,7 +62,7 @@
 
 .step-btn {
   position: absolute;
-  top: calc(100vh - 215px);
+  top: calc(100vh - 43px);
   right: 20px;
   width: 160px;
   height: 36px;
@@ -135,7 +135,7 @@ input:focus {
 }
 .section-block {
   overflow-y: scroll;
-  height: calc(100vh - 260px);
+  height: calc(100vh - 100px);
 }
 .ipad-iphone-dropdown {
   position: relative;
