@@ -1,16 +1,14 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { InstructionService } from '../../../home/categories/workinstructions/instruction.service';
-import { AlertService } from '../../alert/alert.service';
-import { ModalModule } from '../../modal.module';
+import { InstructionService } from '../../../services/instruction.service';
 import { MyOverlayRef } from '../../myoverlay-ref';
 
 import { BulkUploadComponent } from './bulk-upload.component';
 import {of} from "rxjs";
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { State } from '../../../../state/app.state';
-import { AppMaterialModules } from '../../../../material.module';
+import { State } from '../../../../../state/app.state';
+import { AppMaterialModules } from '../../../../../material.module';
 import { AlertComponent } from '../../alert/alert.component';
 import { MockComponent } from 'ng-mocks';
 
@@ -31,7 +29,7 @@ describe('BulkUploadComponent', () => {
   }];
 
   const headerData = {
-    Categories: '[{"Category_Id":604,"Category_Name":"Sample Category1","Cover_Image":"assets/img/brand/category-placeholder.png"}]',
+    Categories: '[{"Category_Id":604,"Category_Name":"Sample Category1","Cover_Image":"assets/work-instructions-icons/img/brand/category-placeholder.png"}]',
     Cover_Image: "doc-placeholder.png",
     CreatedBy: "Sunitha Veeramachaneni",
     created_at: "",
@@ -78,7 +76,7 @@ describe('BulkUploadComponent', () => {
       isCloned: null
   }];
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       data: {},
     });

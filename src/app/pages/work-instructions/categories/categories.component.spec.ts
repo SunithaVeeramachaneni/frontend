@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, DebugElement } from '@angular/core';
 import {
-  async,
+  waitForAsync,
   ComponentFixture,
   TestBed,
 } from '@angular/core/testing';
@@ -15,18 +15,19 @@ import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { SharedModule } from '../../../shared/shared.module';
 import { ToastService } from '../../../shared/toast';
-import { OverlayService } from '../../modal/overlay.service';
-import { CategoryComponent } from '../../modal/templates/category/category.component';
-import { DeleteCategoryComponent } from '../../modal/templates/delete-category/delete-category.component';
+import { OverlayService } from '../modal/overlay.service';
+import { CategoryComponent } from '../modal/templates/category/category.component';
+import { DeleteCategoryComponent } from '../modal/templates/delete-category/delete-category.component';
 import { CategoriesComponent } from './categories.component';
-import { CategoryService } from './category.service';
-import { InstructionService } from './workinstructions/instruction.service';
-import { COVER_IMAGES } from '../../modal/constants';
+import { CategoryService } from '../services/category.service';
+import { InstructionService } from '../services/instruction.service';
+import { COVER_IMAGES } from '../modal/constants';
 import { MockComponent } from 'ng-mocks';
 import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Base64HelperService } from '../../../shared/base64-helper.service';
+import { Base64HelperService } from '../services/base64-helper.service';
 import { OrderModule } from 'ngx-order-pipe';
+import { WiCommonService } from '../services/wi-common.services';
 
 const categoryDetails = [
   {
@@ -39,7 +40,7 @@ const categoryDetails = [
   {
     Category_Id: '177',
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
     Created_At: '2020-10-29T15:37:32.000Z',
     Updated_At: '2020-10-29T15:42:32.000Z'
   }
@@ -48,7 +49,7 @@ const categoryDetails = [
 const [category1, category2] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const instructions = [
   {
@@ -106,11 +107,12 @@ describe('CategoriesComponent', () => {
   let instructionServiceSpy: InstructionService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
+  let wiCommonServiceSpy: WiCommonService;
   let cdrfSpy: ChangeDetectorRef;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
@@ -128,6 +130,10 @@ describe('CategoriesComponent', () => {
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [],
+    {
+      updateCategoriesComponentAction$: of(true),
+    });
     cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
     TestBed.configureTestingModule({
       declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
@@ -147,6 +153,7 @@ describe('CategoriesComponent', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
       ],
     }).compileComponents();
@@ -184,7 +191,7 @@ describe('CategoriesComponent', () => {
         Category_Name: 'Dummy',
         Drafts_Count: 0,
         Published_Count: 0,
-        Cover_Image: 'assets/img/brand/category-placeholder.png',
+        Cover_Image: 'assets/work-instructions-icons/img/brand/category-placeholder.png',
         Created_At: new Date('2050-01-01').toISOString()
       },
     ]);
@@ -276,7 +283,7 @@ describe('CategoriesComponent', () => {
       const href = fixture.debugElement
         .query(By.css('.categories-details-card>a'))
         .nativeElement.getAttribute('href');
-      expect(href).toEqual('/instructions/_UnassignedCategory_');
+      expect(href).toEqual('/work-instructions/category/_UnassignedCategory_');
       expect(categoriesEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(categoriesEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
     });
@@ -362,7 +369,7 @@ describe('CategoriesComponent', () => {
         Category_Name: 'Dummy',
         Drafts_Count: 0,
         Published_Count: 0,
-        Cover_Image: 'assets/img/brand/category-placeholder.png',
+        Cover_Image: 'assets/work-instructions-icons/img/brand/category-placeholder.png',
         Created_At: new Date('2050-01-01').toISOString()
       };
       expect(component.categoriesList).toEqual([categoriesList]);
@@ -381,7 +388,7 @@ describe('CategoriesComponent', () => {
       const data = {
         cid: null,
         title: 'TestCategory',
-        coverImage: 'assets/CoverImages/coverimage2.png',
+        coverImage: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
       };
       const { cid: CId, title: Category_Name, coverImage: Cover_Image } = data;
       let response = { CId, Category_Name, Cover_Image };
@@ -417,7 +424,7 @@ describe('CategoriesComponent', () => {
       const data = {
         cid: null,
         title: 'TestCategory',
-        coverImage: 'assets/CoverImages/coverimage2.png',
+        coverImage: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
       };
       const { cid: CId, title: Category_Name, coverImage: Cover_Image } = data;
       (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
@@ -865,7 +872,7 @@ describe('CategoriesComponent', () => {
     });
 
     it('should return given source if source is from assets', () => {
-      const src = 'assets/image.jpg';
+      const src = 'assets/work-instructions-icons/image.jpg';
       expect(component.getImageSrc(src)).toBe(src);
     });
 
@@ -902,7 +909,7 @@ describe('CategoriesComponent', () => {
     });
 
     it('should return empty styles if cover image is from assets', () => {
-      const result = component.getS3CoverImageStyles('assets/coverimage.jpg');
+      const result = component.getS3CoverImageStyles('assets/work-instructions-icons/coverimage.jpg');
       expect(result).toEqual({});
     });
   });

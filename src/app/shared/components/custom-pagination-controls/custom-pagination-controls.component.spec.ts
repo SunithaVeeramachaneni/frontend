@@ -1,7 +1,7 @@
 import { Component, DebugElement, OnInit } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { AppMaterialModules } from '../../material.module';
+import { AppMaterialModules } from '../../../material.module';
 
 import { CustomPaginationControlsComponent } from './custom-pagination-controls.component';
 
@@ -11,7 +11,7 @@ describe('CustomPaginationControlsComponent', () => {
   let paginationDe: DebugElement;
   let paginationEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CustomPaginationControlsComponent, TestWrapperComponent],
       imports: [NgxPaginationModule, AppMaterialModules],

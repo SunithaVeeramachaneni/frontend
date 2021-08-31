@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -15,30 +15,30 @@ import { CustomPaginationControlsComponent } from '../../../../../shared/compone
 import { FormsModule } from '@angular/forms';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { DummyComponent } from '../../../../../shared/components/dummy/dummy.component';
-import { DropDownFilterPipe } from '../../../../pipes/dropdown-filter.pipe';
+import { DropDownFilterPipe } from '../../../../../shared/pipes/dropdown-filter.pipe';
 
 const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/svg/Categories/default-category.png',
+    Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
     Category_Id: 177,
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: 178,
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const users = [
   {
@@ -124,7 +124,7 @@ describe('CopyInstructionComponent', () => {
   const title = 'sample1';
   const user = 'author';
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       data: {},
     });
@@ -245,7 +245,7 @@ describe('CopyInstructionComponent', () => {
     });
 
     it('should return given source if source is from assets', () => {
-      const src = 'assets/image.jpg';
+      const src = 'assets/work-instructions-icons/image.jpg';
       expect(component.getImageSrc(src)).toBe(src);
     });
 

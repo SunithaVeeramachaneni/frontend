@@ -1,6 +1,6 @@
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,10 +8,10 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { AppMaterialModules } from '../../../../../material.module';
-import { Base64HelperService } from '../../../../../shared/base64-helper.service';
-import { State } from '../../../../../state/app.state';
-import { InstructionService } from '../instruction.service';
+import { AppMaterialModules } from '../../../material.module';
+import { Base64HelperService } from '../services/base64-helper.service';
+import { State } from '../../../state/app.state';
+import { InstructionService } from '../services/instruction.service';
 import { getInstruction } from '../state/instruction.selectors';
 import * as InstructionActions from '../state/intruction.actions';
 import {
@@ -25,24 +25,24 @@ const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/img/brand/category-placeholder.png',
+    Cover_Image: 'assets/work-instructions-icons/img/brand/category-placeholder.png',
   },
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const businessObjects = [
   {
@@ -163,7 +163,7 @@ describe('OverviewComponent', () => {
   let store: MockStore<State>;
   let mockInstructionSelector;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
         paramMap: convertToParamMap({

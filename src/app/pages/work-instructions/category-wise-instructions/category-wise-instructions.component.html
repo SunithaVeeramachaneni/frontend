@@ -1,13 +1,10 @@
 <ion-header className="nav-header">
   <ion-toolbar>
-    <app-component-header [title]="headerTitle"></app-component-header>
+    <app-header [title]="headerTitle"></app-header>
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
   <div class="work-instructions">
-    <div class="instructions-table-title" *ngIf="selectedCategory">
-      <h2>{{selectedCategory}}</h2>
-    </div>
     <br>
     <div class="input-prepend input-group p-b-10">
       <div class="input-group-prepend">

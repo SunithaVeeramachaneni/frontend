@@ -1,9 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DebugElement } from '@angular/core';
 import { CarouselComponent } from './carousel.component';
-import { Base64HelperService } from '../../../../../../shared/base64-helper.service';
+import { Base64HelperService } from '../../services/base64-helper.service';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { State } from '../../../../../../state/app.state';
+import { State } from '../../../../state/app.state';
 
 describe('CarouselComponent', () => {
   let component: CarouselComponent;
@@ -13,7 +13,7 @@ describe('CarouselComponent', () => {
   let carouselEl: HTMLElement;
   let store: MockStore<State>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData']);
     TestBed.configureTestingModule({
       declarations: [CarouselComponent],

@@ -1,46 +1,48 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import { ErrorInfo } from '../../interfaces';
 import { AppMaterialModules } from '../../material.module';
-import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
-import { Base64HelperService } from '../../shared/base64-helper.service';
+import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
+import { Base64HelperService } from './services/base64-helper.service';
 import { DummyComponent } from '../../shared/components/dummy/dummy.component';
-import { ToastService } from '../../shared/components/toast';
+import { ToastService } from '../../shared/toast';
 import { CategoriesComponent } from './categories/categories.component';
-import { InstructionService } from './categories/workinstructions/instruction.service';
-import { HomeComponent } from './home.component';
+import { InstructionService } from './services/instruction.service';
+import { WorkInstructionsPage } from './work-instructions.page';
+import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../shared/shared.module';
 
 const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/svg/Categories/default-category.png',
+    Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
     Category_Id: 177,
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: 178,
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const favorites = [
   {
@@ -138,9 +140,9 @@ const drafts = [
 
 const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 
-describe('HomeComponent', () => {
-  let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
+describe('WorkInstructionsPage', () => {
+  let component: WorkInstructionsPage;
+  let fixture: ComponentFixture<WorkInstructionsPage>;
   let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let toastServiceSpy: ToastService;
@@ -148,7 +150,7 @@ describe('HomeComponent', () => {
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getFavInstructions',
@@ -162,19 +164,20 @@ describe('HomeComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        HomeComponent,
+        WorkInstructionsPage,
         MockComponent(CategoriesComponent),
         TimeAgoPipe,
-        MockComponent(NgxSpinnerComponent),
         DummyComponent
       ],
       imports: [
+        IonicModule,
         NgxPaginationModule,
         NgpSortModule,
         Ng2SearchPipeModule,
         RouterTestingModule,
         AppMaterialModules,
-        FormsModule
+        FormsModule,
+        SharedModule
       ],
       providers: [
         { provide: NgxSpinnerService, useValue: spinnerSpy },
@@ -186,7 +189,7 @@ describe('HomeComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
+    fixture = TestBed.createComponent(WorkInstructionsPage);
     component = fixture.componentInstance;
     homeDe = fixture.debugElement;
     homeEl = homeDe.nativeElement;
@@ -223,13 +226,9 @@ describe('HomeComponent', () => {
     it('should contain lables, elements & attributes related to home', () => {
       spyOn(component, 'getBase64Images');
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-      component.ngOnInit();
+      component.ionViewWillEnter();
       fixture.detectChanges();
-      expect(homeEl.querySelectorAll('ngx-spinner').length).toBe(1);
-      expect(homeEl.querySelector('.main-heading').textContent).toContain(
-        'Work Instructions'
-      );
-      const imgs = homeEl.querySelectorAll('img');
+      const imgs = homeEl.querySelectorAll('ion-content img');
       expect(imgs[0].getAttribute('src')).toContain('search.svg');
       expect(imgs[1].getAttribute('src')).toContain('createwi.svg');
       const input = homeEl.querySelectorAll('input');
@@ -240,14 +239,14 @@ describe('HomeComponent', () => {
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(7);
       expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
-      expect(buttons[0].getAttribute('routerLink')).toBe('/add-instruction');
+      expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
       expect(buttons[3].textContent).toContain('Copy Existing');
       expect(buttons[4].textContent).toContain('Download Template');
-      expect(buttons[5].getAttribute('ng-reflect-router-link')).toBe('/drafts,');
+      expect(buttons[5].getAttribute('ng-reflect-router-link')).toBe('/work-instructions/drafts');
       expect(buttons[6].getAttribute('ng-reflect-router-link')).toBe(
-        '/favorites,'
+        '/work-instructions/favorites'
       );
       expect(homeEl.querySelectorAll('.recents-favorites-row').length).toBe(1);
       expect(
@@ -268,16 +267,13 @@ describe('HomeComponent', () => {
         'SEE ALL'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
+      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
       expect(homeEl.querySelectorAll('app-dummy').length).toBe(2);
       expect(component.getBase64Images).toHaveBeenCalledTimes(2);
     });
 
     it('should display No Drafted/Favorite Instructions found in case of no data', () => {
-      expect(homeEl.querySelectorAll('ngx-spinner').length).toBe(1);
-      expect(homeEl.querySelector('.main-heading').textContent).toContain(
-        'Work Instructions'
-      );
-      const imgs = homeEl.querySelectorAll('img');
+      const imgs = homeEl.querySelectorAll('ion-content img');
       expect(imgs[0].getAttribute('src')).toContain('search.svg');
       expect(imgs[1].getAttribute('src')).toContain('createwi.svg');
       const input = homeEl.querySelectorAll('input');
@@ -288,7 +284,7 @@ describe('HomeComponent', () => {
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(5);
       expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
-      expect(buttons[0].getAttribute('routerLink')).toBe('/add-instruction');
+      expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
       expect(buttons[3].textContent).toContain('Copy Existing');
@@ -310,6 +306,7 @@ describe('HomeComponent', () => {
       ).toBe(2);
       expect(homeEl.querySelectorAll('.recents-favorites-list').length).toBe(2);
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
+      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display three instructions of each darfted/favorites if more then 3 instructions are present', () => {
@@ -334,7 +331,7 @@ describe('HomeComponent', () => {
         .and.returnValue(of(combineDrafts))
         .and.callThrough();
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-      component.ngOnInit();
+      component.ionViewWillEnter();
       fixture.detectChanges();
       expect(homeEl.querySelectorAll('.recents-favorites-row').length).toBe(1);
       expect(
@@ -362,26 +359,11 @@ describe('HomeComponent', () => {
       expect(li[0].textContent).toContain(combineDrafts[1].categories.join());
       expect(li[0].textContent).toContain('Edited');
       expect(li[0].textContent).toContain(`by ${combineDrafts[1].EditedBy}`);
-      expect(li[0].textContent).toContain(`by ${combineDrafts[1].EditedBy}`);
-      expect(
-        (li[0].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
-          'ng-reflect-router-link'
-        )
-      ).toBe(`/drafts/add-instruction/,${combineDrafts[1].Id}`);
-
       expect(li[3].childNodes.length).toBe(3);
       expect(li[3].textContent).toContain(combineFavorites[1].WI_Name);
       expect(li[3].textContent).toContain(combineFavorites[1].categories.join());
       expect(li[3].textContent).toContain('Edited');
       expect(li[3].textContent).toContain(`by ${combineFavorites[1].EditedBy}`);
-      expect(
-        (li[3].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
-          'ng-reflect-router-link'
-        )
-      ).toContain(
-        // `/favorites/add-instruction/,${combineFavorites[1].Id}`
-        `/favorites/add-instruction/,`
-      );
     });
   });
 
@@ -445,29 +427,29 @@ describe('HomeComponent', () => {
     });
   });
 
-  describe('ngOnInit', () => {
+  describe('ionViewWillEnter', () => {
     it('should define function', () => {
-      expect(component.ngOnInit).toBeDefined();
+      expect(component.ionViewWillEnter).toBeDefined();
     });
 
     it('should call getAllFavsDraftsAndRecentIns', () => {
-      component.ngOnInit();
+      component.ionViewWillEnter();
       expect(
         component.getAllFavsDraftsAndRecentIns
       ).toHaveBeenCalledWith();
     });
   });
 
-  describe('ngOnDestroy', () => {
+  describe('ionViewWillLeave', () => {
     it('should define function', () => {
-      expect(component.ngOnDestroy).toBeDefined();
+      expect(component.ionViewWillLeave).toBeDefined();
     });
 
     it('should unsubscribe subscription', () => {
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
       component.getAllFavsDraftsAndRecentIns();
       spyOn(component['getAllFavAndDraftInstSubscription'], 'unsubscribe');
-      component.ngOnDestroy();
+      component.ionViewWillLeave();
       expect(component['getAllFavAndDraftInstSubscription'].unsubscribe).toHaveBeenCalledWith();
     });
   });
@@ -478,7 +460,7 @@ describe('HomeComponent', () => {
     });
 
     it('should return given source if source is from assets', () => {
-      const src = 'assets/image.jpg';
+      const src = 'assets/work-instructions-icons/image.jpg';
       expect(component.getImageSrc(src)).toBe(src);
     });
 

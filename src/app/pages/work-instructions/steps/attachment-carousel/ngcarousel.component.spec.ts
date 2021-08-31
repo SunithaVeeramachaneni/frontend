@@ -1,9 +1,9 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { NgxSlickJsModule } from 'ngx-slickjs';
-import { Base64HelperService } from '../../../../../../shared/base64-helper.service';
-import { State } from '../../../../../../state/app.state';
+import { Base64HelperService } from '../../services/base64-helper.service';
+import { State } from '../../../../state/app.state';
 import { NgCarousel } from './ngcarousel.component';
 
 describe('NgCarousel', () => {
@@ -14,7 +14,7 @@ describe('NgCarousel', () => {
   let ngCarouselEl: HTMLElement;
   let store: MockStore<State>
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData']);
     TestBed.configureTestingModule({
       declarations: [NgCarousel],

@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
-import { AppService } from "../../../../services/app.services";
-import { ToastService } from "../../../../shared/toast";
-import { State } from "../../../../state/app.state";
+import { AppService } from '../../../shared/services/app.services';
+import { ToastService } from '../../../shared/toast';
+import { State } from "../../../state/app.state";
 import { InstructionService } from "./instruction.service";
 
 describe("InstructionService", () => {

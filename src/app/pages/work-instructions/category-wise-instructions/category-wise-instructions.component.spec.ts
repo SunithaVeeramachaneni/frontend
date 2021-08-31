@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material';
 import { By } from '@angular/platform-browser';
@@ -9,43 +9,43 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
-import { AppMaterialModules } from '../../../../material.module';
+import { AppMaterialModules } from '../../../material.module';
 import Swal from 'sweetalert2';
-import { TimeAgoPipe } from '../../../../pipes/time-ago.pipe';
-import { SharedModule } from '../../../../shared/shared.module';
-import { InstructionService } from './instruction.service';
+import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
+import { SharedModule } from '../../../shared/shared.module';
+import { InstructionService } from '../services/instruction.service';
 import { CategoryWiseInstructionsComponent } from './category-wise-instructions.component';
-import { ToastService } from '../../../../shared/toast';
-import { DropDownFilterPipe } from '../../../../pipes/dropdown-filter.pipe';
-import { MockComponent } from 'ng-mocks';
+import { ToastService } from '../../../shared/toast';
+import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
 import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Base64HelperService } from '../../../../shared/base64-helper.service';
+import { Base64HelperService } from '../services/base64-helper.service';
+import { IonicModule } from '@ionic/angular';
 
 const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/svg/Categories/default-category.png',
+    Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
     Category_Id: 177,
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: 178,
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`, ` ${category2.Category_Name}`];
 const categories2 = [` ${category1.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const instructions = [
   {
@@ -117,9 +117,9 @@ const users = [
 
 const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 
-describe('WorkInstructionsComponent', () => {
-  let component: WorkInstructionsComponent;
-  let fixture: ComponentFixture<WorkInstructionsComponent>;
+describe('CategoryWiseInstructionsComponent', () => {
+  let component: CategoryWiseInstructionsComponent;
+  let fixture: ComponentFixture<CategoryWiseInstructionsComponent>;
   let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let toastServiceSpy: ToastService;
@@ -127,7 +127,7 @@ describe('WorkInstructionsComponent', () => {
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getInstructionsByCategoryId',
@@ -142,10 +142,9 @@ describe('WorkInstructionsComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        WorkInstructionsComponent,
+        CategoryWiseInstructionsComponent,
         TimeAgoPipe,
-        DropDownFilterPipe,
-        MockComponent(NgxSpinnerComponent)
+        DropDownFilterPipe
       ],
       imports: [
         AppMaterialModules,
@@ -156,6 +155,7 @@ describe('WorkInstructionsComponent', () => {
         Ng2SearchPipeModule,
         OrderModule,
         RouterTestingModule,
+        IonicModule
       ],
       providers: [
         { provide: NgxSpinnerService, useValue: spinnerSpy },
@@ -173,7 +173,7 @@ describe('WorkInstructionsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(WorkInstructionsComponent);
+    fixture = TestBed.createComponent(CategoryWiseInstructionsComponent);
     component = fixture.componentInstance;
     wiComponentDe = fixture.debugElement;
     wiComponentEl = wiComponentDe.nativeElement;
@@ -237,7 +237,7 @@ describe('WorkInstructionsComponent', () => {
         expect(
           wiComponentEl.querySelector('.instructions-table-title').textContent
         ).toContain(component.selectedCategory);
-        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -278,14 +278,14 @@ describe('WorkInstructionsComponent', () => {
           const anchors = wiComponentEl.querySelectorAll('table tbody tr a');
           expect(anchors.length).toBe(4);
           expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
-            `/drafts/add-instruction/${drafted.Id}`
+            `/work-instructions/drafts/${drafted.Id}`
           );
           expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
-            `/drafts/add-instruction/${drafted.Id}`
+            `/work-instructions/drafts/${drafted.Id}`
           );
 
           expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
-            `/drafts/add-instruction/${drafted.Id}`
+            `/work-instructions/drafts/${drafted.Id}`
           );
 
           const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -309,11 +309,11 @@ describe('WorkInstructionsComponent', () => {
               .nativeElement as HTMLElement).getAttribute(
               'ng-reflect-router-link'
             )
-          ).toBe(`/drafts/add-instruction/,${drafted.Id}`);
+          ).toBe(`/work-instructions/drafts/,${drafted.Id}`);
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('ngx-spinner').length).toBe(1);
+          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -423,7 +423,7 @@ describe('WorkInstructionsComponent', () => {
         expect(
           wiComponentEl.querySelector('.instructions-table-title').textContent
         ).toContain(component.selectedCategory);
-        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -463,14 +463,14 @@ describe('WorkInstructionsComponent', () => {
           const anchors = wiComponentEl.querySelectorAll('table tbody tr a');
           expect(anchors.length).toBe(4);
           expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
-            `/published/add-instruction/${published.Id}`
+            `/work-instructions/published/${published.Id}`
           );
           expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
-            `/published/add-instruction/${published.Id}`
+            `/work-instructions/published/${published.Id}`
           );
 
           expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
-            `/published/add-instruction/${published.Id}`
+            `/work-instructions/published/${published.Id}`
           );
 
           const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -494,12 +494,12 @@ describe('WorkInstructionsComponent', () => {
               .nativeElement as HTMLElement).getAttribute(
               'ng-reflect-router-link'
             )
-          // ).toBe(`/published/add-instruction/,${published.Id}`);
-          ).toContain(`/published/add-instruction/`);
+          // ).toBe(`/work-instructions/published,${published.Id}`);
+          ).toContain(`/work-instructions/published`);
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('ngx-spinner').length).toBe(1);
+          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -677,7 +677,7 @@ describe('WorkInstructionsComponent', () => {
       expect(component.tabChanged).toBeDefined();
     });
 
-    it('should set tabIndex, reverse, order & reverseObj', async(() => {
+    it('should set tabIndex, reverse, order & reverseObj', waitForAsync(() => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
@@ -1054,7 +1054,7 @@ describe('WorkInstructionsComponent', () => {
     });
 
     it('should return given source if source is from assets', () => {
-      const src = 'assets/image.jpg';
+      const src = 'assets/work-instructions-icons/image.jpg';
       expect(component.getImageSrc(src)).toBe(src);
     });
 

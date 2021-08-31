@@ -1,14 +1,22 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { CommonService } from '../../services/common.service';
 import { HeaderComponent } from './header.component';
 
-describe('DummyComponent', () => {
+describe('HeaderComponent', () => {
   let component: HeaderComponent;
+  let commonServiceSpy: CommonService;
   let fixture: ComponentFixture<HeaderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      minimizeSidebarAction$: of(false)
+    });
     TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
+      declarations: [ HeaderComponent ],
+      providers: [
+        { provide: CommonService, useValue: commonServiceSpy }
+      ]
     })
     .compileComponents();
   }));

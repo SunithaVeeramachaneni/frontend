@@ -1,11 +1,11 @@
 import { Component, DebugElement } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
-import { AppMaterialModules } from '../../../../../material.module';
-import { CommonService } from '../../../../../shared/common.services';
-import { ToastService } from '../../../../../shared/toast';
-import { InstructionService } from '../instruction.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { AppMaterialModules } from '../../../material.module';
+import { WiCommonService } from '../services/wi-common.services';
+import { ToastService } from '../../../shared/toast';
+import { InstructionService } from '../services/instruction.service';
 import { AddWorkinstructionComponent } from './add-workinstruction.component';
 import { MockComponent } from 'ng-mocks';
 import { OverviewComponent } from '../steps/overview.component';
@@ -19,32 +19,35 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Instruction, ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { State } from '../../../../../state/app.state';
+import { State } from '../../../state/app.state';
 import { getInsToBePublished, getInstruction, getSteps } from '../state/instruction.selectors';
 import * as InstructionActions from '../state/intruction.actions';
+import { CommonService } from '../../../shared/services/common.service';
+import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../../shared/shared.module';
 
 const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/svg/Categories/default-category.png',
+    Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
     Category_Id: 177,
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: 178,
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const addWI = [
   {
@@ -128,6 +131,7 @@ describe('AddWorkinstructionComponent', () => {
   let component: AddWorkinstructionComponent;
   let fixture: ComponentFixture<AddWorkinstructionComponent>;
   let spinnerSpy: NgxSpinnerService;
+  let wiCommonServiceSpy: WiCommonService;
   let commonServiceSpy: CommonService;
   let instructionServiceSpy: InstructionService;
   let toastServiceSpy: ToastService;
@@ -140,15 +144,18 @@ describe('AddWorkinstructionComponent', () => {
   let mockInstructionSelector;
   let mockStepsSelector;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['minimizeSidebar', 'stepDetailsSave'],
+    wiCommonServiceSpy = jasmine.createSpyObj(
+      'WiCommonService',
+      ['stepDetailsSave'],
       {
         stepDetailsSaveAction$: of('All Changes Saved'),
       }
     );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['minimizeSidebar'], {
+      minimizeSidebarAction$: of(false)
+    });
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getInstructionsById',
       'getInstructionsByName',
@@ -181,20 +188,22 @@ describe('AddWorkinstructionComponent', () => {
       declarations: [
         AddWorkinstructionComponent,
         MockComponent(OverviewComponent),
-        MockComponent(NgxSpinnerComponent),
       ],
       imports: [
         RouterTestingModule,
         AppMaterialModules,
         FormsModule,
         BrowserAnimationsModule,
+        IonicModule,
+        SharedModule
       ],
       providers: [
         { provide: NgxSpinnerService, useValue: spinnerSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
         provideMockStore()
       ],
     }).compileComponents();
@@ -253,12 +262,12 @@ describe('AddWorkinstructionComponent', () => {
     it('should contain labels & elements related to work instruction', () => {
       component.ngOnInit();
       fixture.detectChanges();
-      expect(addWIEl.querySelectorAll('ngx-spinner').length).toBe(1);
+      expect(addWIEl.querySelectorAll('app-header').length).toBe(1);
       expect(addWIEl.querySelectorAll('input').length).toBe(1);
       const buttons = addWIEl.querySelectorAll('button');
       expect(buttons[0].textContent).toBe('more_horiz');
       expect(buttons[1].textContent).toBe('Publish');
-      expect(addWIEl.querySelector('img').getAttribute('src')).toContain('upload-white.png');
+      expect(addWIEl.querySelector('ion-content img').getAttribute('src')).toContain('upload-white.png');
       expect(addWIEl.querySelectorAll('app-overview').length).toBe(1);
 
       (instructionServiceSpy.getInstructionsById as jasmine.Spy)
@@ -267,7 +276,7 @@ describe('AddWorkinstructionComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(addWIEl.querySelector('img').getAttribute('src')).toContain('upload.svg');
+      expect(addWIEl.querySelector('ion-content img').getAttribute('src')).toContain('upload.svg');
     });
 
     describe('OverviewComponent', () => {
@@ -326,7 +335,6 @@ describe('AddWorkinstructionComponent', () => {
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({ instruction: editWI })
         );
-        expect(activatedRouteSpy.data['value']['title']).toBe(editWI.WI_Name);
         expect(component.selectedInstruction).toEqual(editWI);
         expect(component.receivedInstruction).toBeTrue();
         expect(component.titleProvided).toBeTrue();
@@ -353,7 +361,6 @@ describe('AddWorkinstructionComponent', () => {
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({ instruction: { ...editWI, Published: true } })
         );
-        expect(activatedRouteSpy.data['value']['title']).toBe(editWI.WI_Name);
         expect(component.selectedInstruction).toEqual({ ...editWI, Published: true });
         expect(component.titleProvided).toBeTrue();
         expect(component.saveddata).toBeTrue();
@@ -383,7 +390,6 @@ describe('AddWorkinstructionComponent', () => {
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({ instruction: { ...editWI, Published: true, IsPublishedTillSave: true } })
         );
-        expect(activatedRouteSpy.data['value']['title']).toBe(editWI.WI_Name);
         expect(component.selectedInstruction).toEqual({ ...editWI, Published: true, IsPublishedTillSave: true });
         expect(component.titleProvided).toBeTrue();
         expect(component.saveddata).toBeTrue();
@@ -1355,8 +1361,7 @@ describe('AddWorkinstructionComponent', () => {
       mockInstructionSelector.setResult(addWI[0]);
       store.refreshState();
       fixture.detectChanges();
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
-      expect(activatedRouteSpy.data['value']['title']).toBe(WI_Name);
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
       expect(
         instructionServiceSpy.addWorkInstructionTitle
       ).toHaveBeenCalledWith(loggedInUser, selectedInstruction, info);
@@ -1371,7 +1376,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.afterSaveMessage).toBeFalse();
       expect(component.setCategory).toBeTrue();
       expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(false);
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith(
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith(
         'All Changes Saved'
       );
     });
@@ -1386,8 +1391,7 @@ describe('AddWorkinstructionComponent', () => {
       store.refreshState();
       component.addTitleToInstruction();
       fixture.detectChanges();
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
-      expect(activatedRouteSpy.data['value']['title']).toBe(WIName);
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
       expect(
         instructionServiceSpy.addWorkInstructionTitle
       ).toHaveBeenCalledWith(loggedInUser, selectedInstruction, info);
@@ -1419,15 +1423,14 @@ describe('AddWorkinstructionComponent', () => {
       store.refreshState();
       component.addTitleToInstruction();
       fixture.detectChanges();
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
-      expect(activatedRouteSpy.data['value']['title']).toBe(WIName);
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
       expect(
         instructionServiceSpy.editWorkInstructionTitle
       ).toHaveBeenCalledWith(editId, loggedInUser, selectedInstructionNew, info);
       expect(store.dispatch).toHaveBeenCalledWith(
         InstructionActions.updateInstruction({ instruction: selectedInstructionNew })
       );
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith(
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith(
         'All Changes Saved'
       );
     });
@@ -1451,8 +1454,7 @@ describe('AddWorkinstructionComponent', () => {
       component.selectedInstruction.WI_Name = WIName;
       component.addTitleToInstruction();
       fixture.detectChanges();
-      expect(commonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
-      expect(activatedRouteSpy.data['value']['title']).toBe(WIName);
+      expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith('Saving..');
       expect(
         instructionServiceSpy.editWorkInstructionTitle
       ).toHaveBeenCalledWith(editId, loggedInUser, selectedInstructionNew, info);

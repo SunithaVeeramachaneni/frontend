@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   AbstractControl,
   ReactiveFormsModule,
@@ -9,10 +9,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ErrorInfo } from '../../../../../interfaces';
-import { AppMaterialModules } from '../../../../material.module';
-import { Base64HelperService } from '../../../../shared/base64-helper.service';
-import { CategoryService } from '../../../home/categories/category.service';
-import { InstructionService } from '../../../home/categories/workinstructions/instruction.service';
+import { AppMaterialModules } from '../../../../../material.module';
+import { Base64HelperService } from '../../../services/base64-helper.service';
+import { CategoryService } from '../../../services/category.service';
+import { InstructionService } from '../../../services/instruction.service';
 import { COVER_IMAGES } from '../../constants';
 import { MyOverlayRef } from '../../myoverlay-ref';
 import { CategoryComponent } from './category.component';
@@ -56,7 +56,7 @@ describe('CategoryComponent', () => {
   let categoryServiceSpy: CategoryService;
   let base64HelperServiceSpy: Base64HelperService;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       data: {},
     });

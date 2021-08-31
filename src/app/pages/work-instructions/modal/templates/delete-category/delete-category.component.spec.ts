@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MyOverlayRef } from '../../myoverlay-ref';
 import { DeleteCategoryComponent } from './delete-category.component';
 
@@ -10,7 +10,7 @@ describe('DeleteCategoryComponent', () => {
   let deleteCategoryDe: DebugElement;
   let deleteCategoryEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       data: {},
     });

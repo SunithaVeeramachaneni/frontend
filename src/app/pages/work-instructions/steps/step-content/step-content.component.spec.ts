@@ -3,10 +3,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockComponent } from 'ng-mocks';
 import { NgxSpinnerComponent, NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { AppMaterialModules } from '../../../../../../material.module';
-import { CommonService } from '../../../../../../shared/common.services';
-import { ToastService } from '../../../../../../shared/toast';
-import { InstructionService } from '../../instruction.service';
+import { AppMaterialModules } from '../../../../material.module';
+import { WiCommonService } from '../../services/wi-common.services';
+import { ToastService } from '../../../../shared/toast';
+import { InstructionService } from '../../services/instruction.service';
 
 import { StepContentComponent } from './step-content.component';
 
@@ -15,7 +15,7 @@ xdescribe('StepContentComponent', () => {
   let fixture: ComponentFixture<StepContentComponent>;
   let spinnerSpy: NgxSpinnerService;
   let activatedRouteSpy: ActivatedRoute;
-  let commonServiceSpy: CommonService;
+  let wiCommonServiceSpy: WiCommonService;
   let toastServiceSpy: ToastService;
   let instructionServiceSpy: InstructionService;
 
@@ -28,7 +28,7 @@ xdescribe('StepContentComponent', () => {
         })
       }
     });
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [
       'stepDetailsSave',
       'setUpdatedSteps',
       'uploadImgToPreview',
@@ -61,7 +61,7 @@ xdescribe('StepContentComponent', () => {
       providers: [
         { provide: NgxSpinnerService, useValue: spinnerSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: InstructionService, useValue: instructionServiceSpy },
       ]

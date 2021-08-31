@@ -6,6 +6,7 @@ import { DummyComponent } from './components/dummy/dummy.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { DropDownFilterPipe } from './pipes/dropdown-filter.pipe';
 import { HeaderComponent } from './components/header/header.component';
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { HeaderComponent } from './components/header/header.component';
   ],
   imports: [
     CommonModule,
-    AppMaterialModules
+    AppMaterialModules,
+    IonicModule
   ],
   exports: [
     CustomPaginationControlsComponent,

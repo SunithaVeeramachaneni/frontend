@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material';
 import { By } from '@angular/platform-browser';
@@ -7,44 +7,44 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
-import { DropDownFilterPipe } from '../../../pipes/dropdown-filter.pipe';
-import { TimeAgoPipe } from '../../../pipes/time-ago.pipe';
+import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
+import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 import { SharedModule } from '../../../shared/shared.module';
 import { ToastService } from '../../../shared/toast';
-import { InstructionService } from '../categories/workinstructions/instruction.service';
+import { InstructionService } from '../services/instruction.service';
 import { DraftsComponent } from './drafts.component';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MockComponent } from 'ng-mocks';
 import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Base64HelperService } from '../../../shared/base64-helper.service';
+import { Base64HelperService } from '../services/base64-helper.service';
+import { IonicModule } from '@ionic/angular';
 
 const categoryDetails = [
   {
     Category_Id: '_UnassignedCategory_',
     Category_Name: 'Unassigned',
-    Cover_Image: 'assets/svg/Categories/default-category.png',
+    Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
     Category_Id: 177,
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
     Category_Id: 178,
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
 const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
-const image = '../assets/img/brand/doc-placeholder.png';
+const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const drafts = [
   {
@@ -126,7 +126,7 @@ describe('DraftsComponent', () => {
   let draftsDe: DebugElement;
   let draftsEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getDraftedInstructions',
@@ -142,8 +142,7 @@ describe('DraftsComponent', () => {
       declarations: [
         DraftsComponent,
         DropDownFilterPipe,
-        TimeAgoPipe,
-        MockComponent(NgxSpinnerComponent)
+        TimeAgoPipe
       ],
       imports: [
         NgxPaginationModule,
@@ -154,6 +153,7 @@ describe('DraftsComponent', () => {
         SharedModule,
         FormsModule,
         BrowserAnimationsModule,
+        IonicModule
       ],
       providers: [
         { provide: NgxSpinnerService, useValue: spinnerSpy },
@@ -220,12 +220,10 @@ describe('DraftsComponent', () => {
     });
 
     it('should contain labels related to drafts', () => {
-      const header = draftsEl.querySelector('.drafts-table-title h2');
-      expect(header.textContent).toContain('Drafts');
       expect(draftsEl.querySelectorAll('input').length).toBe(1);
       expect(draftsEl.querySelectorAll('select').length).toBe(1);
       expect(draftsEl.querySelectorAll('option').length).toBe(3);
-      expect(draftsEl.querySelector('img').getAttribute('src')).toContain(
+      expect(draftsEl.querySelector('ion-content img').getAttribute('src')).toContain(
         'search.svg'
       );
       expect(
@@ -263,16 +261,16 @@ describe('DraftsComponent', () => {
       expect(anchors.length).toBe(5);
 
       expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
-        `/drafts/add-instruction/${draft1.Id}`
+        `/work-instructions/drafts/${draft1.Id}`
       );
       expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
-        `/drafts/add-instruction/${draft1.Id}`
+        `/work-instructions/drafts/${draft1.Id}`
       );
       expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
-        `/drafts/add-instruction/${draft1.Id}`
+        `/work-instructions/drafts/${draft1.Id}`
       );
       expect((anchors[3] as HTMLElement).getAttribute('href')).toBe(
-        `/drafts/add-instruction/${draft1.Id}`
+        `/work-instructions/drafts/${draft1.Id}`
       );
 
       const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -288,7 +286,7 @@ describe('DraftsComponent', () => {
       expect(
         (draftsDe.query(By.css('#editWorkInstruction'))
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
-      ).toBe(`/drafts/add-instruction/,${draft1.Id}`);
+      ).toBe(`/work-instructions/drafts,${draft1.Id}`);
 
       expect(draftsEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
@@ -297,7 +295,7 @@ describe('DraftsComponent', () => {
       expect(
         draftsEl.querySelectorAll('app-dummy').length
       ).toBe(1);
-      expect(draftsEl.querySelectorAll('ngx-spinner').length).toBe(1);
+      expect(draftsEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display No Results Found if search item not present in work instructions', () => {
@@ -667,7 +665,7 @@ describe('DraftsComponent', () => {
     });
 
     it('should return given source if source is from assets', () => {
-      const src = 'assets/image.jpg';
+      const src = 'assets/work-instructions-icons/image.jpg';
       expect(component.getImageSrc(src)).toBe(src);
     });
 

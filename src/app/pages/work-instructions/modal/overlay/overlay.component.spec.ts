@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MyOverlayRef } from '../myoverlay-ref';
 import { DeleteCategoryComponent } from '../templates/delete-category/delete-category.component';
@@ -13,7 +13,7 @@ describe('OverlayComponent', () => {
   let overlayComponentDe: DebugElement;
   let overlayComponentEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       content: "string data",
       data: {}
@@ -57,7 +57,7 @@ describe('OverlayComponent', () => {
         CId: 290,
         Category_Name: categoryName,
         WI_Count: 0,
-        Cover_Image: 'assets/CoverImages/coverimage3.png',
+        Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
         selectedButton: 'no',
       });
       component.ngOnInit();

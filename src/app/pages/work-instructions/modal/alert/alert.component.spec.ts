@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AlertComponent, AlertConfig, AlertModule } from 'ngx-bootstrap/alert';
@@ -13,7 +13,7 @@ describe('AlertComponent', () => {
   let alertDe: DebugElement;
   let alertEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     alertServiceSpy = jasmine.createSpyObj('AlertService', ['onAlert', 'clear']);
 
     TestBed.configureTestingModule({

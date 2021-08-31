@@ -23,7 +23,7 @@ import { CommonService } from '../../../shared/services/common.service';
 
 export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('workInstructionTitle') workInstructionTitle: ElementRef;
-  headerTitle = 'Untitled Work Instruction'
+  headerTitle = 'Work Instructions'
   public wi_title = '';
   public selectedInstruction: Instruction = {
     Id: '',
@@ -107,7 +107,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       this._instructionsvc.getInstructionsById(wid).subscribe((res) => {
         if (res && Object.keys(res).length > 0) {
           this.store.dispatch(InstructionActions.updateInstruction({ instruction: res }));
-          this.headerTitle = res.WI_Name;
           this.receivedInstruction = true;
           this.titleProvided = true;
           if (res.Published === true) {
@@ -360,7 +359,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
   addTitleToInstruction() {
     this.wiCommonSvc.stepDetailsSave('Saving..');
     const userName = JSON.parse(localStorage.getItem('loggedInUser'));
-    this.headerTitle =  this.selectedInstruction?.WI_Name;
     const wid = this.route.snapshot.paramMap.get('id');
     const WI = this.selectedInstruction;
     if ((WI && WI.Id) || wid) {
