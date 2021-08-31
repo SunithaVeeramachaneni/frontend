@@ -56,9 +56,7 @@ export class MaintenanceComponent {
  public assign: string[] = ['Kerry Smith'];
  public assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
 
-
-
-
+ public showOperationsList: boolean = false;
 
   hideList = true;
 
@@ -137,6 +135,8 @@ export class MaintenanceComponent {
     }
   }
 
-
+  public showOperations() {
+    this.showOperationsList = !this.showOperationsList;
+  }
 }
 

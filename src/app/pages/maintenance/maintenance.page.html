@@ -4,11 +4,6 @@
     <ion-row>
       <ion-col class="maintenance-header">
           <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>
-          <button class="filter-btn">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
-            <ion-label class="filter-btn-text">Filter</ion-label>
-            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
-          </button>
         
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
@@ -121,6 +116,41 @@
                 </ion-select>
             </ion-item>
 
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show 3 Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide 3 Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList === true" class="operations-div">
+                <ion-item class="operations-list">
+                  <ion-label>
+                    <span class="kit-number">1 - Lock out tag out pump</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">P-1000-DF03 Electric Pump 001</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">14-Jul-2021</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">3hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
+
           </ion-label>           
         </ion-item>
        
@@ -158,6 +188,41 @@
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
             </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show 3 Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide 3 Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList === true" class="operations-div">
+                <ion-item class="operations-list">
+                  <ion-label>
+                    <span class="kit-number">1 - Lock out tag out pump</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">P-1000-DF03 Electric Pump 001</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">14-Jul-2021</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">3hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
           </ion-label>        
         </ion-item>
        </ion-list>
@@ -194,6 +259,41 @@
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
             </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show 3 Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide 3 Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList === true" class="operations-div">
+                <ion-item class="operations-list">
+                  <ion-label>
+                    <span class="kit-number">1 - Lock out tag out pump</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">P-1000-DF03 Electric Pump 001</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">14-Jul-2021</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">3hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
           </ion-label>        
         </ion-item>
        </ion-list>
@@ -229,6 +329,41 @@
                  <option value="Carlos Arnal">Carlos Arnal </option>
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
+            </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show 3 Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations()" class="show-operations-btn" *ngIf="this.showOperationsList === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide 3 Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList === true" class="operations-div">
+                <ion-item class="operations-list">
+                  <ion-label>
+                    <span class="kit-number">1 - Lock out tag out pump</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">P-1000-DF03 Electric Pump 001</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">14-Jul-2021</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">3hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
             </span>
           </ion-label>        
         </ion-item>
