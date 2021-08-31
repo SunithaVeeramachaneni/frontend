@@ -1,4 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { IonicModule } from '@ionic/angular';
 import { of } from 'rxjs';
 import { CommonService } from '../../services/common.service';
 import { HeaderComponent } from './header.component';
@@ -16,6 +17,9 @@ describe('HeaderComponent', () => {
       declarations: [ HeaderComponent ],
       providers: [
         { provide: CommonService, useValue: commonServiceSpy }
+      ],
+      imports:[
+        IonicModule
       ]
     })
     .compileComponents();

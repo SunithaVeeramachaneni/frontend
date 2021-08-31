@@ -162,7 +162,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: convertToParamMap({ id: categoryId }) },
+            snapshot: { paramMap: convertToParamMap({ cid: categoryId }) },
           },
         },
         { provide: InstructionService, useValue: instructionServiceSpy },
@@ -234,9 +234,6 @@ describe('CategoryWiseInstructionsComponent', () => {
     describe('drafts', () => {
       it('should contain labels related to category wise drafted work instrutions listing', (done) => {
         const [, drafted] = instructions;
-        expect(
-          wiComponentEl.querySelector('.instructions-table-title').textContent
-        ).toContain(component.selectedCategory);
         expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
           'search.svg'
         );
@@ -278,14 +275,14 @@ describe('CategoryWiseInstructionsComponent', () => {
           const anchors = wiComponentEl.querySelectorAll('table tbody tr a');
           expect(anchors.length).toBe(4);
           expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/drafts/${drafted.Id}`
+            `/work-instructions/category/${categoryId}/${drafted.Id}`
           );
           expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/drafts/${drafted.Id}`
+            `/work-instructions/category/${categoryId}/${drafted.Id}`
           );
 
           expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/drafts/${drafted.Id}`
+            `/work-instructions/category/${categoryId}/${drafted.Id}`
           );
 
           const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -309,7 +306,7 @@ describe('CategoryWiseInstructionsComponent', () => {
               .nativeElement as HTMLElement).getAttribute(
               'ng-reflect-router-link'
             )
-          ).toBe(`/work-instructions/drafts/,${drafted.Id}`);
+          ).toBe(`/work-instructions/category,${categoryId},${drafted.Id}`);
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
@@ -420,9 +417,6 @@ describe('CategoryWiseInstructionsComponent', () => {
     describe('published', () => {
       it('should contain labels related to category wise published work instrutions listing', (done) => {
         const [published] = instructions;
-        expect(
-          wiComponentEl.querySelector('.instructions-table-title').textContent
-        ).toContain(component.selectedCategory);
         expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
           'search.svg'
         );
@@ -463,14 +457,14 @@ describe('CategoryWiseInstructionsComponent', () => {
           const anchors = wiComponentEl.querySelectorAll('table tbody tr a');
           expect(anchors.length).toBe(4);
           expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/published/${published.Id}`
+            `/work-instructions/category/${categoryId}/${published.Id}`
           );
           expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/published/${published.Id}`
+            `/work-instructions/category/${categoryId}/${published.Id}`
           );
 
           expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
-            `/work-instructions/published/${published.Id}`
+            `/work-instructions/category/${categoryId}/${published.Id}`
           );
 
           const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -494,8 +488,8 @@ describe('CategoryWiseInstructionsComponent', () => {
               .nativeElement as HTMLElement).getAttribute(
               'ng-reflect-router-link'
             )
-          // ).toBe(`/work-instructions/published,${published.Id}`);
-          ).toContain(`/work-instructions/published`);
+          // ).toBe(`/work-instructions/category, ${categoryId}, ${published.Id}`);
+          ).toContain(`/work-instructions/category`);
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
