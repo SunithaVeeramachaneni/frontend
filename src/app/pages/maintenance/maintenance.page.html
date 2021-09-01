@@ -3,13 +3,7 @@
     <app-component-header [title]=headerTitle></app-component-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>
-          <button class="filter-btn">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
-            <ion-label class="filter-btn-text">Filter</ion-label>
-            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
-          </button>
-        
+          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>      
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
@@ -25,7 +19,6 @@
             </ion-segment-button>
           </ion-segment>
           <button class="filter-btn" (click)="myFunction()">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
             <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
           </button>
       </ion-col>  
@@ -86,7 +79,6 @@
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.unassigned.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Unassigned Work Orders</span>
           </ion-label>
         </ion-item>
@@ -131,7 +123,6 @@
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.assigned.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Assigned Work Orders</span>
           </ion-label>
         </ion-item>
@@ -167,7 +158,6 @@
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.inProgress.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">In Progress</span>
           </ion-label>
         </ion-item>
