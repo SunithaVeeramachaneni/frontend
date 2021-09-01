@@ -63,6 +63,11 @@ ion-menu.md ion-item.selected {
   padding: 0;
 }
 
+.submenu.selected{
+  border-left: none !important;
+  padding-left: 10px !important;
+}
+
 ion-menu.md ion-item.selected ion-icon {
   color: #2953E8;
 }
@@ -72,14 +77,6 @@ ion-menu.md ion-item ion-icon {
   color: var(--ion-color-step-650, #5f6368);
 }
 
-/* ion-menu.md ion-list:not(:last-of-type) {
-  border-bottom: 1px solid var(--ion-color-step-150, #d7d8da);
-} */
-
-
-/*
- * iOS Menu
-*/
 ion-menu.ios ion-list-header {
   padding-left: 16px;
   padding-right: 16px;

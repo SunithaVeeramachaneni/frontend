@@ -9,14 +9,14 @@
       </ion-header>
       <ion-content>
         <ion-list lines="none" class="p-0">
-          <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item [routerLink]="p.url" routerLinkActive="selected" routerDirection="root" detail="false" (click)="toggleDetails(p)">
-              <ion-icon slot="start" [name]="p.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
-              <ion-label *ngIf="this.sidebar === false">{{p.title}}</ion-label>
+          <ion-menu-toggle autoHide="false" *ngFor="let menuitem of menus; let i = index">
+            <ion-item [routerLink]="menuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
+              <ion-icon slot="start" [name]="menuitem.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
+              <ion-label *ngIf="this.sidebar === false">{{menuitem.title}}</ion-label>
             </ion-item>
-            <div *ngIf="p.showDetails && p.subPages !== null">
-              <ion-list lines="none" class="p-0" *ngFor="let submenuitem of p.subPages">
-                <ion-item [routerLink]="submenuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
+            <div *ngIf="menuitem.showSubMenu && menuitem.subPages !== null">
+              <ion-list lines="none" class="p-0" *ngFor="let submenuitem of menuitem.subPages">
+                <ion-item class="submenu" [routerLink]="submenuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
                   <ion-icon slot="start"></ion-icon>
                   <ion-label>{{submenuitem.title}}</ion-label>
                 </ion-item>

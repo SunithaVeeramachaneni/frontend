@@ -3,8 +3,14 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" class="searchbar"></ion-searchbar>
-          <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="week" class="segment-group">
+          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>
+          <button class="filter-btn">
+            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-label class="filter-btn-text">Filter</ion-label>
+            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
+          </button>
+        
+          <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
             </ion-segment-button>
@@ -73,30 +79,31 @@
 
 
 <ion-content [fullscreen]="true">
-  <ion-row>
+
+  <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders">
     <ion-col>
       <ion-list class="unassigned-workorder-list">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{this.testData.length}}</span>
+            <span class="kits-count">{{workOrders.unassigned.length}}</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Unassigned Work Orders</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let obj of this.testData; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of workOrders.unassigned; let i = index;">
           <ion-label>
-            <span class="kit-number">{{obj.number}} - {{obj.name}}</span><br>
+            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj.data}}</span>
+              <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj.date}}</span>
+              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj.time}}</span>
+              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
             <button (click)="openSelect()" class="assign-btn">
@@ -123,25 +130,25 @@
       <ion-list class="assigned-workorder-list">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
+            <span class="kits-count">{{workOrders.assigned.length}}</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Assigned Work Orders</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let obj of this.testData1; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of workOrders.assigned; let i = index;">
           <ion-label>
-            <span class="kit-number">{{obj[0].number}} - {{obj[0].name}}</span><br>
+            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj[0].data}}</span>
+              <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj[0].date}}</span>
+              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{obj[0].time}}</span>
+              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
             <span>
@@ -159,10 +166,35 @@
       <ion-list class="in-progress-workorder-list">
         <ion-item>
           <ion-label>
-            <span class="kits-count">0</span>
+            <span class="kits-count">{{workOrders.inProgress.length}}</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">In Progress</span>
           </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let workOrder of workOrders.inProgress; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+            </span>
+
+            <span>
+               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
+                 <option value="Amy Butcher">Amy Butcher</option>
+                 <option value="Carlos Arnal">Carlos Arnal </option>
+                 <option value="Steve Austin">Steve Austin</option>
+               </select>   
+            </span>
+          </ion-label>        
         </ion-item>
        </ion-list>
     </ion-col>
@@ -170,10 +202,35 @@
       <ion-list class="completed-workorder-list">
         <ion-item>
           <ion-label>
-            <span class="kits-count">0</span>
+            <span class="kits-count">{{workOrders.completed.length}}</span>
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Completed</span>
           </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let workOrder of workOrders.completed; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+            </span>
+
+            <span>
+               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
+                 <option value="Amy Butcher">Amy Butcher</option>
+                 <option value="Carlos Arnal">Carlos Arnal </option>
+                 <option value="Steve Austin">Steve Austin</option>
+               </select>   
+            </span>
+          </ion-label>        
         </ion-item>
        </ion-list>
       </ion-col>

@@ -7,10 +7,10 @@
           <button class="filter-btn">
             <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
             <ion-label class="filter-btn-text">Filter</ion-label>
-            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
+            <!-- <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img> -->
           </button>
         
-          <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="week" class="segment-group">
+          <ion-segment mode="ios" value="week" class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Today</ion-label>
             </ion-segment-button>

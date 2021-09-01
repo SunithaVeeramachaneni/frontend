@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
+import { Router ,NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -8,52 +10,65 @@ import { CommonService } from './shared/services/common.service';
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
-  public logo = '../assets/img/svg/innov-logo.svg';
-  public smallLogo = '../assets/img/svg/innov-small-logo.svg';
-  appPages = [
+  public logo = "../assets/img/svg/innov-logo.svg";
+  public smallLogo = "../assets/img/svg/innov-small-logo.svg";
+  menus = [
     {
       title: 'Dashboard',
       url: '/dashboard',
       icon: 'home',
-      showDetails: false,
+      showSubMenu: false,
       subPages: null
     },
     {
       title: 'Maintenance Control Center',
       url: '/maintenance',
       icon: 'grid',
-      showDetails: false,
+      showSubMenu: false,
       subPages: null
     },
     {
       title: 'Spare Parts Control Center',
       url: '/spare-parts',
       icon: 'grid',
-      showDetails: false,
+      showSubMenu: false,
       subPages: null
     },
     {
       title: 'Work Instructions Authoring',
-      url: '/work-instructions',
+      url: '/workinstructions',
       icon: 'pencil',
-      showDetails: false,
+      showSubMenu: false,
       subPages: [
-        { title: 'Favorites', url:'/work-instructions/favorites', icon: '' },
-        { title: 'Drafts', url:'/work-instructions/drafts', icon: '' },
-        { title: 'Published', url:'/work-instructions/published', icon: '' },
-        { title: 'Recents', url:'/work-instructions/recents', icon: '' }
+        { title: 'Favorites', url:'/favorites' },
+        { title: 'Drafts', url:'/workinstructions/drafts' },
+        { title: 'Published', url:'/published' },
+        { title: 'Recents', url:'/recents' }
       ]
     },
   ];
   loggedIn = false;
   dark = false;
-  sidebar;
+  sidebar: boolean;
+  currentRouteUrl: string;
 
-  constructor(private commonService: CommonService) {}
+  constructor(private commonService: CommonService, 
+              private router: Router) { }
 
   ngOnInit() {
     this.commonService.minimizeSidebarAction$.subscribe(data => {
       this.sidebar = data;
+      if(this.currentRouteUrl) {
+        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
+      }
+    });
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(
+      (event: NavigationEnd)  => {
+        this.currentRouteUrl = event.url;
+        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
 
     const userDetails = {
@@ -68,12 +83,13 @@ export class AppComponent implements OnInit {
     localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
   }
 
-  toggleDetails(p) {
-    if (p.showDetails) {
-      p.showDetails = false;
-    } else {
-      p.showDetails = true;
-    }
+  toggleSubMenu(menus: any, currentRouteUrl: string, sidebarMinimized: boolean) {
+    return menus.map(menuItem => {
+      let showSubMenu = false;
+      if (menuItem.subPages !== null && !sidebarMinimized && currentRouteUrl.indexOf(menuItem.url) === 0) {
+        showSubMenu = true;
+      }
+     return { ...menuItem, showSubMenu };
+   });
   }
-
 }

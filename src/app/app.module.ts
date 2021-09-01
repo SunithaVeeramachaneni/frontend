@@ -8,7 +8,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonicModule } from '@ionic/angular';
-import { IonicStorageModule } from '@ionic/storage';
+// import { IonicStorageModule } from '@ionic/storage-angular';
 import { AppMaterialModules } from './material.module';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -23,6 +23,7 @@ import { ToastModule } from './shared/toast';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
+import { AppService } from './services/app.service';
 
 @NgModule({
   imports: [
@@ -34,7 +35,7 @@ import { ErrorHandlerModule } from './shared/error-handler/error-handler.module'
     FormsModule,
     ReactiveFormsModule,
     IonicModule.forRoot(),
-    IonicStorageModule.forRoot(),
+    // IonicStorageModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
     }),
@@ -48,7 +49,8 @@ import { ErrorHandlerModule } from './shared/error-handler/error-handler.module'
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true },
+    AppService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,7 +1,7 @@
 import { Component, ViewChild} from '@angular/core';
 
 import { IonSelect } from '@ionic/angular';
-import * as data from './spare-parts.json';
+import { data_test } from './spare-parts-data';
 
 @Component({
   selector: 'app-spare-parts',
@@ -32,7 +32,7 @@ export class SparePartsComponent{
   constructor() {}
 
   ngOnInit() {
-    this.testData = data.data;
+    this.testData = data_test;
   }
 
 
