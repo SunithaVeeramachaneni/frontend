@@ -36,14 +36,14 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Work Instructions Authoring',
-      url: '/workinstructions',
+      url: '/work-instructions',
       icon: 'pencil',
       showSubMenu: false,
       subPages: [
-        { title: 'Favorites', url:'/favorites' },
-        { title: 'Drafts', url:'/workinstructions/drafts' },
-        { title: 'Published', url:'/published' },
-        { title: 'Recents', url:'/recents' }
+        { title: 'Favorites', url:'/work-instructions/favorites' },
+        { title: 'Drafts', url:'/work-instructions/drafts' },
+        { title: 'Published', url:'/work-instructions/published' },
+        { title: 'Recents', url:'/work-instructions/recents' }
       ]
     },
   ];

@@ -1,7 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
@@ -23,6 +23,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { HeaderService } from '../../../shared/services/header.service';
+import { logonUserDetails } from '../../../shared/services/header.service.mock';
 
 const categoryDetails = [
   {
@@ -125,6 +127,7 @@ describe('RecentsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
+  let headerServiceSpy: HeaderService;
   let recentsDe: DebugElement;
   let recentsEl: HTMLElement;
 
@@ -141,6 +144,7 @@ describe('RecentsComponent', () => {
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -165,6 +169,7 @@ describe('RecentsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -181,6 +186,10 @@ describe('RecentsComponent', () => {
     (instructionServiceSpy.getUsers as jasmine.Spy)
       .withArgs()
       .and.returnValue(of(users))
+      .and.callThrough();
+    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(logonUserDetails)
       .and.callThrough();
     fixture.detectChanges();
   });

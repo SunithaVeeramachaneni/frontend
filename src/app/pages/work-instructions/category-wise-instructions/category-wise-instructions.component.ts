@@ -1,7 +1,7 @@
 import {ActivatedRoute} from '@angular/router';
 import {Component, ChangeDetectionStrategy, OnInit, ViewChild, ChangeDetectorRef, OnDestroy, ElementRef} from '@angular/core';
 import {InstructionService} from '../services/instruction.service';
-import {MatTabChangeEvent} from '@angular/material';
+import {MatTabChangeEvent} from '@angular/material/tabs';
 import {ToastService} from '../../../shared/toast';
 import {Subscription} from 'rxjs';
 

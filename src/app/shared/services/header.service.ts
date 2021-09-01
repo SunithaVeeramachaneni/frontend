@@ -9,6 +9,7 @@ export class HeaderService {
   constructor(private _appService: AppService) {}
 
 getLogonUserDetails(info: ErrorInfo = {} as ErrorInfo): Observable<any[]>{
-    return this._appService._getRespFromGateway('logonUserDetails', info);
+    const { displayToast, failureResponse = [] } = info;
+    return this._appService._getRespFromGateway('logonUserDetails', { displayToast, failureResponse });
   }
 }

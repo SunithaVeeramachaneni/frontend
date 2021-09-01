@@ -20,7 +20,6 @@ import {
   UploadS3FileResponse
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ToastService } from '../../../shared/toast';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
@@ -33,7 +32,6 @@ export interface InstructionQuery {
 export class InstructionService {
 
   constructor(private _appService: AppService,
-              private toastService: ToastService,
               private store: Store<State>) {}
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {

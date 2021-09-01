@@ -4,8 +4,10 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
   production: false,
-  wiAbapApiUrl: 'http://localhost:7002/abapapi/',
   wiApiUrl: 'http://localhost:7000/api/',
+  wiAbapApiUrl: 'http://localhost:7002/abapapi/',
+  spccAbapApiUrl: 'http://localhost:7002/abapapi/',
+  mccAbapApiUrl: 'http://localhost:7002/abapapi/',
   requestTimeout: 60000
 };
 

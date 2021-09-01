@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { CommonService } from '../../services/common.service';
-import { HeaderService } from '../../service/header.service';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   selector: 'app-header',
@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit {
   
   getLogonUserDetails = () =>{
     this._headerSvc.getLogonUserDetails().subscribe((resp)=>{
-      if(resp){
+      if (resp.length) {
         this.userImage = "data:image/jpeg;base64,"+resp[0].FILECONTENT;
         this.username=resp[0].SHORT;
       }

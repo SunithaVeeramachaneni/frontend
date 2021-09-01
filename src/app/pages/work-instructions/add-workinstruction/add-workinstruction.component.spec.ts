@@ -13,7 +13,7 @@ import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Instruction, ErrorInfo } from '../../../interfaces';
@@ -26,6 +26,8 @@ import { CommonService } from '../../../shared/services/common.service';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../../shared/shared.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { HeaderService } from '../../../shared/services/header.service';
+import { logonUserDetails } from '../../../shared/services/header.service.mock';
 
 const categoryDetails = [
   {
@@ -138,6 +140,7 @@ describe('AddWorkinstructionComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let activatedRouteSpy: ActivatedRoute;
+  let headerServiceSpy: HeaderService;
   let addWIDe: DebugElement;
   let addWIEl: HTMLElement;
   let router: Router;
@@ -187,6 +190,7 @@ describe('AddWorkinstructionComponent', () => {
         },
       },
     });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -209,6 +213,7 @@ describe('AddWorkinstructionComponent', () => {
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: CommonService, useValue: commonServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
         provideMockStore()
       ],
     }).compileComponents();
@@ -229,6 +234,10 @@ describe('AddWorkinstructionComponent', () => {
     (instructionServiceSpy.getInstructionsById as jasmine.Spy)
       .withArgs(editWI.Id)
       .and.returnValue(of(editWI))
+      .and.callThrough();
+    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(logonUserDetails)
       .and.callThrough();
     fixture.detectChanges();
   });

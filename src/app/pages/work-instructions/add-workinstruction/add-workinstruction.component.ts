@@ -1,5 +1,5 @@
 import {Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
-import {Subscription} from 'rxjs/Subscription';
+import {Subscription} from 'rxjs';
 import {InstructionService} from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import {ActivatedRoute, Router} from '@angular/router';

@@ -42,9 +42,6 @@
                 "input": "node_modules/font-awesome/css/font-awesome.css"
               },
               {
-                "input": "node_modules/simple-line-icons/dist/styles/simple-line-icons.css"
-              },
-              {
                 "input": "src/scss/style.scss"
               }
             ],

@@ -22,6 +22,8 @@ import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../shared/shared.module';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 import { WiCommonService } from './services/wi-common.services';
+import { HeaderService } from '../../shared/services/header.service';
+import { logonUserDetails } from '../../shared/services/header.service.mock';
 
 const categoryDetails = [
   {
@@ -151,6 +153,7 @@ describe('WorkInstructionsPage', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let wiCommonServiceSpy: WiCommonService;
+  let headerServiceSpy: HeaderService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -168,6 +171,7 @@ describe('WorkInstructionsPage', () => {
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -193,6 +197,7 @@ describe('WorkInstructionsPage', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -213,6 +218,10 @@ describe('WorkInstructionsPage', () => {
     (instructionServiceSpy.getRecentInstructions as jasmine.Spy)
       .withArgs(info)
       .and.returnValue(of([...favorites, ...drafts]))
+      .and.callThrough();
+    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(logonUserDetails)
       .and.callThrough();
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
     fixture.detectChanges();

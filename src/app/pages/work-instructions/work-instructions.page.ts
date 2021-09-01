@@ -211,7 +211,6 @@ export class WorkInstructionsPage {
     if (!this.imageDataCalls[source] && source.indexOf('assets') === -1 &&
     !this.base64HelperService.getBase64ImageData(source)) {
       this.imageDataCalls[source] = true;
-      console.log(this.imageDataCalls);
       this.base64HelperService.getBase64Image(source);
     }
     return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);

@@ -1,13 +1,11 @@
 import {Component, OnInit, Input, OnDestroy, Output, EventEmitter} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {InstructionService} from '../../services/instruction.service';
-import {Observable} from 'rxjs/Observable';
-import {Subscription} from 'rxjs/Subscription';
 import Swal from "sweetalert2";
 import { WiCommonService } from '../../services/wi-common.services';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { debounceTime, distinctUntilChanged, skip, startWith } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {ToastService} from '../../../../shared/toast';
 import { Base64HelperService } from '../../services/base64-helper.service';

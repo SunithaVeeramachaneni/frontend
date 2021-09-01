@@ -1,14 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { AppService } from '../../../shared/services/app.services';
-import { ToastService } from '../../../shared/toast';
 import { State } from "../../../state/app.state";
 import { InstructionService } from "./instruction.service";
 
 describe("InstructionService", () => {
   let service: InstructionService;
   let appServiceSpy: AppService;
-  let toastServiceSpy: ToastService;
   let store: MockStore<State>;
 
   beforeEach(() => {
@@ -22,13 +20,11 @@ describe("InstructionService", () => {
       '_removeData',
       '_getDataFromGatewayById'
     ]);
-    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     TestBed.configureTestingModule({
       providers: [
         InstructionService,
         { provide: AppService, useValue: appServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy },
         provideMockStore()
       ]
     });

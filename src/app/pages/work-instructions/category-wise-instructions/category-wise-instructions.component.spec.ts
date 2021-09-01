@@ -1,7 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
@@ -24,6 +24,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { HeaderService } from '../../../shared/services/header.service';
+import { logonUserDetails } from '../../../shared/services/header.service.mock';
 
 const categoryDetails = [
   {
@@ -126,6 +128,7 @@ describe('CategoryWiseInstructionsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
+  let headerServiceSpy: HeaderService;
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
@@ -143,6 +146,7 @@ describe('CategoryWiseInstructionsComponent', () => {
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -173,6 +177,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -193,6 +198,10 @@ describe('CategoryWiseInstructionsComponent', () => {
     (instructionServiceSpy.getUsers as jasmine.Spy)
       .withArgs()
       .and.returnValue(of(users))
+      .and.callThrough();
+    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(logonUserDetails)
       .and.callThrough();
     fixture.detectChanges();
   });
@@ -311,7 +320,8 @@ describe('CategoryWiseInstructionsComponent', () => {
               .nativeElement as HTMLElement).getAttribute(
               'ng-reflect-router-link'
             )
-          ).toBe(`/work-instructions/category,${categoryId},${drafted.Id}`);
+          //).toBe(`/work-instructions/category,${categoryId},${drafted.Id}`);
+          ).toContain(`/work-instructions/category`);
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
