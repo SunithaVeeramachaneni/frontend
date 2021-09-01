@@ -61,7 +61,7 @@ export class AppService {
    * @returns string
    */
   private getUrl = (urlString: string): string => {
-    return `${environment.apiUrl}${urlString}`;
+    return `${environment.wiApiUrl}${urlString}`;
   }
 
   /**
@@ -72,7 +72,7 @@ export class AppService {
    * @returns string
    */
   private getABAPUrl = (urlString: string): string => {
-    return `${environment.abapApiUrl}${urlString}`;
+    return `${environment.wiAbapApiUrl}${urlString}`;
   }
 
   _getResp(urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {

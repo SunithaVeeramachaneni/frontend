@@ -23,6 +23,7 @@ import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 const categoryDetails = [
   {
@@ -122,6 +123,7 @@ describe('CategoryWiseInstructionsComponent', () => {
   let fixture: ComponentFixture<CategoryWiseInstructionsComponent>;
   let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let wiComponentDe: DebugElement;
@@ -135,6 +137,8 @@ describe('CategoryWiseInstructionsComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
@@ -168,6 +172,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -739,7 +744,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
+        expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
         done();
       });
     });
@@ -781,7 +786,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(published.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
+        expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
         done();
       });
     });
@@ -974,7 +979,7 @@ describe('CategoryWiseInstructionsComponent', () => {
             info
           );
           expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledTimes(1);
-          expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
+          expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
           done();
         });
       });
@@ -1022,7 +1027,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       expect(component.draftedInstructionsList).toEqual([]);
       expect(component.publishedInstructionsList).toEqual([]);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({message: error} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: error} as HttpErrorResponse);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(component.selectedCategory).toBe(Category_Name);
     });

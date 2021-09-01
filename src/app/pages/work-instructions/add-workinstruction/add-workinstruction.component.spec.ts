@@ -25,6 +25,7 @@ import * as InstructionActions from '../state/intruction.actions';
 import { CommonService } from '../../../shared/services/common.service';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../../shared/shared.module';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 const categoryDetails = [
   {
@@ -134,6 +135,7 @@ describe('AddWorkinstructionComponent', () => {
   let wiCommonServiceSpy: WiCommonService;
   let commonServiceSpy: CommonService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let activatedRouteSpy: ActivatedRoute;
   let addWIDe: DebugElement;
@@ -168,6 +170,8 @@ describe('AddWorkinstructionComponent', () => {
       'publishInstruction',
       'deleteWorkInstruction$',
       'updateGatewayFavWorkInstruction',
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
@@ -204,6 +208,7 @@ describe('AddWorkinstructionComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         provideMockStore()
       ],
     }).compileComponents();
@@ -291,14 +296,14 @@ describe('AddWorkinstructionComponent', () => {
 
   });
 
-  describe('ngAfterViewInit', () => {
+  describe('ionViewDidEnter', () => {
     it('should define function', () => {
-      expect(component.ngAfterViewInit).toBeDefined();
+      expect(component.ionViewDidEnter).toBeDefined();
     });
 
     it('should set focus on work instructtion title', () => {
       spyOn(component.workInstructionTitle.nativeElement, 'focus');
-      component.ngAfterViewInit();
+      component.ionViewDidEnter();
       expect(
         component.workInstructionTitle.nativeElement.focus
       ).toHaveBeenCalled();
@@ -494,7 +499,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(instructionServiceSpy.getInstructionsByName).toHaveBeenCalledWith(WIName, info);
       expect(component.addTitleToInstruction).not.toHaveBeenCalled();
       expect(component.titleErrors).toEqual({ required: false, exists: false});
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to fetch instruction' } as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to fetch instruction' } as HttpErrorResponse);
     }));
   });
 
@@ -728,7 +733,7 @@ describe('AddWorkinstructionComponent', () => {
           }, info);
           expect(component.updateFavFlag).not.toHaveBeenCalled();
           expect(component.updatePublishedTillSaveWI).not.toHaveBeenCalled();
-          expect(instructionServiceSpy.handleError).toHaveBeenCalledWith(
+          expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith(
             { message: 'Unable to publish work instruction' } as HttpErrorResponse
           );
           expect(spinnerSpy.hide).toHaveBeenCalledWith();
@@ -1057,7 +1062,7 @@ describe('AddWorkinstructionComponent', () => {
           info
         );
         expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledTimes(1);
-        expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
+        expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
         done();
       });
     });
@@ -1317,7 +1322,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(
         instructionServiceSpy.setFavoriteInstructions
       ).toHaveBeenCalledWith(Id, info);
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
     });
   });
 
@@ -1458,7 +1463,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(
         instructionServiceSpy.editWorkInstructionTitle
       ).toHaveBeenCalledWith(editId, loggedInUser, selectedInstructionNew, info);
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to update work instruction'} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to update work instruction'} as HttpErrorResponse);
     });
   });
 

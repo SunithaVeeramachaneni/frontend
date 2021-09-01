@@ -21,6 +21,8 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ToastModule } from './shared/toast';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
+import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
 
 @NgModule({
   imports: [
@@ -40,11 +42,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ name: 'CWP', maxAge: 25, logOnly: environment.production }),
     ToastModule.forRoot(),
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    ErrorHandlerModule
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

@@ -6,6 +6,7 @@ import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-published',
@@ -44,7 +45,8 @@ export class PublishedComponent implements OnInit {
   constructor(private spinner: NgxSpinnerService,
               private _toastService: ToastService,
               private _instructionSvc: InstructionService,
-              private base64HelperService: Base64HelperService) { }
+              private base64HelperService: Base64HelperService,
+              private errorHandlerService: ErrorHandlerService) { }
 
   ngOnInit() {
     this.getAllPublishedInstructions();
@@ -77,7 +79,7 @@ export class PublishedComponent implements OnInit {
           el.EditedBy = userName.first_name + " " + userName.last_name;
         }
       },
-      error => this._instructionSvc.handleError(error)
+      error => this.errorHandlerService.handleError(error)
     );
   }
 
@@ -97,7 +99,7 @@ export class PublishedComponent implements OnInit {
       },
       error => {
         this.spinner.hide();
-        this._instructionSvc.handleError(error);
+        this.errorHandlerService.handleError(error);
       }
     );
   }
@@ -128,7 +130,7 @@ export class PublishedComponent implements OnInit {
             },
             err => {
               this.spinner.hide();
-              this._instructionSvc.handleError(err);
+              this.errorHandlerService.handleError(err);
             }
           );
       }

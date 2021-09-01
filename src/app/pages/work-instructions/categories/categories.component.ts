@@ -10,6 +10,7 @@ import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { WiCommonService } from '../services/wi-common.services';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-categories',
@@ -79,7 +80,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               private _toastService: ToastService,
               private cdrf: ChangeDetectorRef,
               private base64HelperService: Base64HelperService,
-              private wiCommonService: WiCommonService) {}
+              private wiCommonService: WiCommonService,
+              private errorHandlerService: ErrorHandlerService) {}
 
   getAllCategories() {
     this._instructionSvc.getAllCategories().subscribe(categories => {
@@ -247,7 +249,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               });
             },
             error => {
-              this._instructionSvc.handleError(error);
+              this.errorHandlerService.handleError(error);
               this.spinner.hide();
             }
           );

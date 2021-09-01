@@ -28,6 +28,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { OrderModule } from 'ngx-order-pipe';
 import { WiCommonService } from '../services/wi-common.services';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 const categoryDetails = [
   {
@@ -105,6 +106,7 @@ describe('CategoriesComponent', () => {
   let overlayServiceSpy: OverlayService;
   let categoryServiceSpy: CategoryService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let wiCommonServiceSpy: WiCommonService;
@@ -126,6 +128,8 @@ describe('CategoriesComponent', () => {
       'deleteCategory$',
       'addCategory',
       'updateCategory',
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
@@ -155,6 +159,7 @@ describe('CategoriesComponent', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
       ],
     }).compileComponents();
   }));
@@ -862,7 +867,7 @@ describe('CategoriesComponent', () => {
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
       expect(toastServiceSpy.show).not.toHaveBeenCalled();
       expect(spinnerSpy.hide).toHaveBeenCalled();
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to delete Category'} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to delete Category'} as HttpErrorResponse);
     });
   });
 

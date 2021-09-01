@@ -17,6 +17,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../../../../state/app.state';
 import * as InstructionActions from '../../state/intruction.actions';
 import { getCurrentStep, getCurrentStepImages, getInstructionId, getSteps, getUploadedFile } from '../../state/instruction.selectors';
+import { ErrorHandlerService } from '../../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-step-content',
@@ -122,7 +123,8 @@ export class StepContentComponent implements OnInit, OnDestroy {
               private _instructionSvc: InstructionService,
               private fb: FormBuilder,
               private base64HelperService: Base64HelperService,
-              private store: Store<State>) { }
+              private store: Store<State>,
+              private errorHandlerService: ErrorHandlerService) { }
 
   handleInputChange(uploadedFile, uploadedImg) {
     const file = uploadedFile;
@@ -411,7 +413,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
               });
             }
           },
-          error => this._instructionSvc.handleError(error)
+          error => this.errorHandlerService.handleError(error)
         );
       }
     }

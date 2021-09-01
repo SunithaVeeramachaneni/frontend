@@ -14,6 +14,7 @@ import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { getInsToBePublished, getInstruction, getSteps } from '../state/instruction.selectors';
 import { CommonService } from '../../../shared/services/common.service';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -21,7 +22,7 @@ import { CommonService } from '../../../shared/services/common.service';
   styleUrls: ['./add-workinstruction.component.css']
 })
 
-export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   @ViewChild('workInstructionTitle') workInstructionTitle: ElementRef;
   headerTitle = 'Work Instructions'
   public wi_title = '';
@@ -76,10 +77,11 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
               private _toastService: ToastService,
               private router: Router,
               private store: Store<State>,
-              private commonService: CommonService) {
+              private commonService: CommonService,
+              private errorHandlerService: ErrorHandlerService) {
   }
 
-  public ngAfterViewInit(): void {
+  ionViewDidEnter() {
     this.workInstructionTitle.nativeElement.focus();
   }
 
@@ -145,7 +147,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
             this.addTitleToInstruction();
           }
         },
-        error => this._instructionsvc.handleError(error)
+        error => this.errorHandlerService.handleError(error)
       );
   }
 
@@ -192,7 +194,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
           },
           error => {
             this.spinner.hide();
-            this._instructionsvc.handleError(error);
+            this.errorHandlerService.handleError(error);
           }
         );
       }
@@ -279,7 +281,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       },
       error => {
         this.spinner.hide();
-        this._instructionsvc.handleError(error);
+        this.errorHandlerService.handleError(error);
       }
     );
   }
@@ -309,7 +311,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
               });
             },
             err => {
-              this._instructionsvc.handleError(err);
+              this.errorHandlerService.handleError(err);
             }
           );
       }
@@ -352,7 +354,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       ins => {
         this.store.dispatch(InstructionActions.updateInstruction({ instruction: ins }));
       },
-      error => this._instructionsvc.handleError(error)
+      error => this.errorHandlerService.handleError(error)
     );
   }
 
@@ -371,7 +373,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
           // document.getElementById('wi_title').blur();
           this.wiCommonSvc.stepDetailsSave('All Changes Saved');
         },
-        error => this._instructionsvc.handleError(error)
+        error => this.errorHandlerService.handleError(error)
       );
     } else {
       const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
@@ -389,7 +391,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
           this.wiCommonSvc.stepDetailsSave('All Changes Saved');
         }
       }, error => {
-        this._instructionsvc.handleError(error);
+        this.errorHandlerService.handleError(error);
       });
     }
   }

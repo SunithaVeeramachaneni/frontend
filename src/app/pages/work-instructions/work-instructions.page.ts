@@ -18,6 +18,7 @@ import { Base64HelperService } from './services/base64-helper.service';
 import { DummyComponent } from '../../shared/components/dummy/dummy.component';
 import { WiCommonService } from './services/wi-common.services';
 import { Router } from '@angular/router';
+import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-work-instructions',
@@ -61,6 +62,7 @@ export class WorkInstructionsPage {
   public authors = [];
   public CreatedBy = '';
   searchCriteria = '';
+  imageDataCalls = {};
 
   @ViewChild('recentDrafts', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
@@ -80,7 +82,8 @@ export class WorkInstructionsPage {
               private overlayService: OverlayService,
               private base64HelperService: Base64HelperService,
               private wiCommonService: WiCommonService,
-              private router: Router) { }
+              private router: Router,
+              private errorHandlerService: ErrorHandlerService) { }
 
   getBase64Images = (instructions: Instruction[]) => {
     instructions.map(instruction => {
@@ -103,7 +106,7 @@ export class WorkInstructionsPage {
         }
         this.getAllFavsDraftsAndRecentIns();
       },
-      error => this._instructionSvc.handleError(error)
+      error => this.errorHandlerService.handleError(error)
     );
   }
 
@@ -140,7 +143,7 @@ export class WorkInstructionsPage {
           this.spinner.hide();
         },
         error => {
-          this._instructionSvc.handleError(error);
+          this.errorHandlerService.handleError(error);
           this.spinner.hide();
         }
       );
@@ -193,6 +196,7 @@ export class WorkInstructionsPage {
   }
 
   ionViewWillEnter(): void {
+    this.imageDataCalls = {};
     this.getAllFavsDraftsAndRecentIns();
     this.wiCommonService.updateCategoriesComponent(true);
   }
@@ -204,6 +208,12 @@ export class WorkInstructionsPage {
   }
 
   getImageSrc = (source: string) => {
+    if (!this.imageDataCalls[source] && source.indexOf('assets') === -1 &&
+    !this.base64HelperService.getBase64ImageData(source)) {
+      this.imageDataCalls[source] = true;
+      console.log(this.imageDataCalls);
+      this.base64HelperService.getBase64Image(source);
+    }
     return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
   }
 }

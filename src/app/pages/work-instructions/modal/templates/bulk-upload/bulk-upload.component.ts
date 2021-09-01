@@ -12,6 +12,7 @@ import { InstructionWithSteps } from '../../state/bulkupload.reducer';
 import { State } from '../../../../../state/app.state';
 import { Store } from '@ngrx/store';
 import * as BulkUploadActions from '../../state/bulkupload.actions';
+import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 
 
 @Component({
@@ -33,7 +34,8 @@ export class BulkUploadComponent implements OnInit {
               private alertService: AlertService,
               private _instructionSvc: InstructionService,
               private router: Router,
-              private store: Store<State>) {}
+              private store: Store<State>,
+              private errorHandlerService: ErrorHandlerService) {}
 
   instructionObject = (obj, type) => {
     let instructionObject: object = {
@@ -303,7 +305,7 @@ export class BulkUploadComponent implements OnInit {
                     }
                   },
                   error => {
-                    this._instructionSvc.handleError(error);
+                    this.errorHandlerService.handleError(error);
                     currentIns.insPostingFailed = true;
                     const index = this.ins.findIndex(ins => ins.id === currentIns.id);
                     this.deleteIns(currentIns, index, false);
@@ -323,7 +325,7 @@ export class BulkUploadComponent implements OnInit {
         }
       },
       error => {
-        this._instructionSvc.handleError(error);
+        this.errorHandlerService.handleError(error);
         currentIns.insPostingFailed = true;
         if (currentInsCnt + 1 === allKeys.length) {
           this.loadResults = true;
@@ -345,7 +347,7 @@ export class BulkUploadComponent implements OnInit {
         },
         err => {
           if (displayAlert) {
-            this.alertService.error(this._instructionSvc.getErrorMessage(err));
+            this.alertService.error(this.errorHandlerService.getErrorMessage(err));
           }
         }
       );
@@ -438,7 +440,7 @@ export class BulkUploadComponent implements OnInit {
               }
             },
             error => {
-              this._instructionSvc.handleError(error);
+              this.errorHandlerService.handleError(error);
               insResultedObject.insPostingFailed = true;
               if (fieldKey + 1 === allKeys.length) {
                 this.loadResults = true;

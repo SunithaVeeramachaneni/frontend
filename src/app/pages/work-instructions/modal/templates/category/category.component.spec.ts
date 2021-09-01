@@ -10,6 +10,7 @@ import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ErrorInfo } from '../../../../../interfaces';
 import { AppMaterialModules } from '../../../../../material.module';
+import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { CategoryService } from '../../../services/category.service';
 import { InstructionService } from '../../../services/instruction.service';
@@ -53,6 +54,7 @@ describe('CategoryComponent', () => {
   let myOverlayRefSpy: MyOverlayRef;
   let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let categoryServiceSpy: CategoryService;
   let base64HelperServiceSpy: Base64HelperService;
 
@@ -64,6 +66,8 @@ describe('CategoryComponent', () => {
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'uploadAttachments',
       'getCategoriesByName',
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'getErrorMessage'
     ]);
     categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
@@ -80,6 +84,7 @@ describe('CategoryComponent', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: CategoryService, useValue: categoryServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
       ],
     }).compileComponents();
   }));
@@ -350,7 +355,7 @@ describe('CategoryComponent', () => {
       expect(component.files).toEqual([]);
       expect(component.frmSubscribe.patchValue).not.toHaveBeenCalled();
       expect(Swal.fire).toHaveBeenCalled();
-      expect(instructionServiceSpy.getErrorMessage).toHaveBeenCalledWith({message: 'Unable to uplaod file'} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.getErrorMessage).toHaveBeenCalledWith({message: 'Unable to uplaod file'} as HttpErrorResponse);
       // expect(Swal.fire).toHaveBeenCalledWith("Sorry", 'Unable to uplaod file', 'error');
     });
   });

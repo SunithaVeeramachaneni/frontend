@@ -20,6 +20,8 @@ import { InstructionService } from './services/instruction.service';
 import { WorkInstructionsPage } from './work-instructions.page';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../shared/shared.module';
+import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
+import { WiCommonService } from './services/wi-common.services';
 
 const categoryDetails = [
   {
@@ -145,8 +147,10 @@ describe('WorkInstructionsPage', () => {
   let fixture: ComponentFixture<WorkInstructionsPage>;
   let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
+  let wiCommonServiceSpy: WiCommonService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -157,10 +161,13 @@ describe('WorkInstructionsPage', () => {
       'getDraftedInstructions',
       'getRecentInstructions',
       'uploadWIExcel',
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -184,6 +191,8 @@ describe('WorkInstructionsPage', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -419,7 +428,7 @@ describe('WorkInstructionsPage', () => {
       expect(
         instructionServiceSpy.getDraftedInstructions
       ).toHaveBeenCalledWith(info);
-      expect(instructionServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to retrive favorites'} as HttpErrorResponse);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to retrive favorites'} as HttpErrorResponse);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(component.wiFavList).toEqual([]);
@@ -437,6 +446,8 @@ describe('WorkInstructionsPage', () => {
       expect(
         component.getAllFavsDraftsAndRecentIns
       ).toHaveBeenCalledWith();
+      expect(wiCommonServiceSpy.updateCategoriesComponent).toHaveBeenCalledWith(true);
+      expect(component.imageDataCalls).toEqual({});
     });
   });
 
@@ -464,10 +475,31 @@ describe('WorkInstructionsPage', () => {
       expect(component.getImageSrc(src)).toBe(src);
     });
 
-    it('should call getBase64ImageData if source is not from assets', () => {
+    it('should call getBase64Image & getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
       component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith(src);
       expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+    });
+
+    it(`should not call getBase64Image if source is from assets or getBase64ImageData already exists or image
+    data call already happend`, () => {
+      let src = 'assets/work-instructions-icons/image.jpg';
+      component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
+
+      src = 'image.jpg';
+      (base64HelperServiceSpy.getBase64ImageData as jasmine.Spy)
+        .withArgs(src)
+        .and.returnValue(of(src))
+        .and.callThrough();
+      component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
+
+      component.imageDataCalls[src] = true;
+      component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
+
     });
   });
 });

@@ -11,6 +11,7 @@ import { State } from '../../../../../state/app.state';
 import { AppMaterialModules } from '../../../../../material.module';
 import { AlertComponent } from '../../alert/alert.component';
 import { MockComponent } from 'ng-mocks';
+import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 
 describe('BulkUploadComponent', () => {
   let component: BulkUploadComponent;
@@ -18,6 +19,7 @@ describe('BulkUploadComponent', () => {
   let myOverlayRefSpy: MyOverlayRef;
   // let alertServiceSpy: AlertService;
   let instructionServiceSpy: InstructionService;
+  let errorHandlerServiceSpy: ErrorHandlerService;
   let router: Router;
   let store: MockStore<State>;
 
@@ -94,6 +96,11 @@ describe('BulkUploadComponent', () => {
       'deleteWorkInstruction$'
     ]);
 
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError',
+      'getErrorMessage'
+    ]);
+
     TestBed.configureTestingModule({
       declarations: [BulkUploadComponent, MockComponent(AlertComponent)],
       imports: [RouterTestingModule, AppMaterialModules],
@@ -101,6 +108,7 @@ describe('BulkUploadComponent', () => {
         { provide: MyOverlayRef, useValue: myOverlayRefSpy },
         // { provide: AlertService, useValue: alertServiceSpy },
         { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         provideMockStore()
       ]
     }).compileComponents();

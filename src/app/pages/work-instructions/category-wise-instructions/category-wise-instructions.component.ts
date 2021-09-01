@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 @Component({
   templateUrl: 'category-wise-instructions.component.html',
@@ -77,7 +78,8 @@ export class CategoryWiseInstructionsComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute,
               private _instructionSvc: InstructionService,
               private cdrf: ChangeDetectorRef,
-              private base64HelperService: Base64HelperService) {}
+              private base64HelperService: Base64HelperService,
+              private errorHandlerService: ErrorHandlerService) {}
 
   setOrder(value: string) {
     if (this.order === value) {
@@ -113,7 +115,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, OnDestroy {
         }
         this.cdrf.markForCheck();
       },
-      error => this._instructionSvc.handleError(error)
+      error => this.errorHandlerService.handleError(error)
     );
   }
 
@@ -134,7 +136,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, OnDestroy {
       },
       error => {
         this.spinner.hide();
-        this._instructionSvc.handleError(error);
+        this.errorHandlerService.handleError(error);
       }
     );
   }
@@ -165,7 +167,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, OnDestroy {
             },
             err => {
               this.spinner.hide();
-              this._instructionSvc.handleError(err);
+              this.errorHandlerService.handleError(err);
             }
           );
       }
@@ -205,7 +207,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, OnDestroy {
         this.spinner.hide();
       },
       error => {
-        this._instructionSvc.handleError(error);
+        this.errorHandlerService.handleError(error);
         this.spinner.hide();
       }
     );

@@ -10,6 +10,7 @@ import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { ErrorInfo } from '../../../../../interfaces';
 import { Base64HelperService } from '../../../services/base64-helper.service';
+import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-category',
@@ -37,7 +38,8 @@ export class CategoryComponent implements OnInit, AfterViewInit {
               private spinner: NgxSpinnerService,
               private _instructionSvc: InstructionService,
               private categoryService: CategoryService,
-              private base64HelperService: Base64HelperService) {
+              private base64HelperService: Base64HelperService,
+              private errorHandlerService: ErrorHandlerService) {
   }
 
   ngOnInit() {
@@ -94,7 +96,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         this.frmSubscribe.patchValue({coverImage: uploadedImage});
       },
       error => {
-        Swal.fire("Sorry", this._instructionSvc.getErrorMessage(error), 'error');
+        Swal.fire("Sorry", this.errorHandlerService.getErrorMessage(error), 'error');
         this.spinner.hide();
       },
       () => {

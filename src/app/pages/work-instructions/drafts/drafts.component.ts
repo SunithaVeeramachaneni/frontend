@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
+import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 @Component({
   selector: 'app-drafts',
@@ -46,7 +47,8 @@ export class DraftsComponent implements OnInit {
               private _instructionSvc: InstructionService,
               private _toastService: ToastService,
               private route: ActivatedRoute,
-              private base64HelperService: Base64HelperService) { }
+              private base64HelperService: Base64HelperService,
+              private errorHandlerService: ErrorHandlerService) { }
 
   ngOnInit() {
     this.getAllDraftedInstructions();
@@ -98,7 +100,7 @@ export class DraftsComponent implements OnInit {
             },
             err => {
               this.spinner.hide();
-              this._instructionSvc.handleError(err);
+              this.errorHandlerService.handleError(err);
             }
           );
       }
@@ -115,7 +117,7 @@ export class DraftsComponent implements OnInit {
           el.EditedBy = userName.first_name + " " + userName.last_name;
         }
       },
-      error => this._instructionSvc.handleError(error)
+      error => this.errorHandlerService.handleError(error)
     );
   }
 
@@ -146,7 +148,7 @@ export class DraftsComponent implements OnInit {
       },
       error => {
         this.spinner.hide();
-        this._instructionSvc.handleError(error);
+        this.errorHandlerService.handleError(error);
       }
     );
   }
