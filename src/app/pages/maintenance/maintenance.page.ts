@@ -17,6 +17,8 @@ export class MaintenanceComponent {
 
 
   public workOrderList$: Observable<WorkOrders>;
+  public updateWorkOrderList$: Observable<WorkOrders>;
+  public combinedWorkOrderList$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
@@ -70,6 +72,7 @@ export class MaintenanceComponent {
   ) { }
 
   ngOnInit() {
+    console.log("Page init")
     this.getWorkOrders();
   }
 
@@ -78,9 +81,26 @@ export class MaintenanceComponent {
     this.selectDate = new FormControl('week');
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
+
+
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    this.filteredWorkOrderList$ = combineLatest([this.workOrderList$, this.filter$, this.selectDate$]).pipe(
+    this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({unassigned:[], assigned:[], inProgress:[], completed:[]}));
+    this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
+      map(([oldWorkOrders, newWorkOrders]) => {
+        if(newWorkOrders){
+        console.log("Entered this", newWorkOrders)
+        oldWorkOrders['unassigned'] = [...newWorkOrders['unassigned'], ...oldWorkOrders['unassigned']];
+        oldWorkOrders['assigned'] = [...newWorkOrders['assigned'], ...oldWorkOrders['assigned']];
+        oldWorkOrders['inProgress'] = [...newWorkOrders['inProgress'], ...oldWorkOrders['inProgress']];
+        oldWorkOrders['completed'] = [...newWorkOrders['completed'], ...oldWorkOrders['completed']];
+        }
+        return oldWorkOrders;
+      })
+    )
+
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$]).pipe(
       map(([workOrders, filterString, filterDate]) => {
+        console.log("This is also being called");
         let filtered: WorkOrders = {unassigned:[], assigned:[], inProgress:[], completed:[]};
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
