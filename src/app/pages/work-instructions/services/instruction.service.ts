@@ -33,59 +33,56 @@ export interface InstructionQuery {
 export class InstructionService {
 
   constructor(private _appService: AppService,
-              private store: Store<State>) {
-                this._appService.setApiUrl(environment.wiApiUrl);
-                this._appService.setAbapApiUrl(environment.wiAbapApiUrl);
-              }
+              private store: Store<State>) {}
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
-    return this._appService._getResp('wiusers', info);
+    return this._appService._getResp(environment.wiApiUrl, 'wiusers', info);
   }
 
   getUsersByEmail(email: string, info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
-    return this._appService._getRespByName('wiuser/', email, info);
+    return this._appService._getRespByName(environment.wiApiUrl, 'wiuser/', email, info);
   }
 
   addUser(user: User | UserOptional, info: ErrorInfo = {} as ErrorInfo): Observable<User> {
-    return this._appService._postData('addwiUser', user, info);
+    return this._appService._postData(environment.wiApiUrl, 'addwiUser', user, info);
   }
 
   sendApprovalEmail(mail: Mail, info: ErrorInfo = {} as ErrorInfo): Observable<{data: string}> {
-    return this._appService._postData('approvalmail', mail, info);
+    return this._appService._postData(environment.wiApiUrl, 'approvalmail', mail, info);
   }
 
   getAllCategories(info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
-    return this._appService._getResp('categories', info);
+    return this._appService._getResp(environment.wiApiUrl, 'categories', info);
   }
 
   getSelectedCategory(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
-    return this._appService._getRespById('categories/', categoryId, info);
+    return this._appService._getRespById(environment.wiApiUrl, 'categories/', categoryId, info);
   }
 
   getCategoriesByName(catName: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
-    return this._appService._getRespByName('getCategoriesByName/', catName, info);
+    return this._appService._getRespByName(environment.wiApiUrl, 'getCategoriesByName/', catName, info);
   }
 
   addCategory(category: Category | CategoryOptional, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
-    return this._appService._postData('addCategory', category, info);
+    return this._appService._postData(environment.wiApiUrl, 'addCategory', category, info);
   }
 
   updateCategory(category: Category, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
-    return this._appService._updateData(`updateCategory/${category.Category_Id}`, category, info)
+    return this._appService._updateData(environment.wiApiUrl, `updateCategory/${category.Category_Id}`, category, info)
       .pipe(
         map(resp => resp === null ? category : resp)
       );
   }
 
   removeCategory(category: Category, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
-    return this._appService._removeData(`deleteCategory/${category.Category_Id}`, info)
+    return this._appService._removeData(environment.wiApiUrl, `deleteCategory/${category.Category_Id}`, info)
       .pipe(
         map(resp => resp === null ? category : resp)
       );
   }
 
   getAllBusinessObjects(info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this._appService._getRespFromGateway('businessObjects', info);
+    return this._appService._getRespFromGateway(environment.wiAbapApiUrl, 'businessObjects', info);
   }
 
   getFavInstructions(info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
@@ -105,7 +102,7 @@ export class InstructionService {
   }
 
   getAllInstructions(info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
-    return this._appService._getResp('allInstructions', info);
+    return this._appService._getResp(environment.wiApiUrl, 'allInstructions', info);
   }
 
   editWorkInstructionTitle(wid: string, user: User, ins: Instruction, info: ErrorInfo): Observable<Instruction> {
@@ -136,67 +133,67 @@ export class InstructionService {
   }
 
   getInstructionsByName(wiName: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
-    return this._appService._getRespByName('getInstructionsByName/', wiName, info);
+    return this._appService._getRespByName(environment.wiApiUrl, 'getInstructionsByName/', wiName, info);
   }
 
   getCopyInstructionsByName(wiName: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
-    return this._appService._getRespByName('getCopyInstructionsByName/', wiName, info);
+    return this._appService._getRespByName(environment.wiApiUrl, 'getCopyInstructionsByName/', wiName, info);
   }
 
   getInstructionsById(id: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
-    return this._appService._getRespById('allInstructions/', id, info);
+    return this._appService._getRespById(environment.wiApiUrl, 'allInstructions/', id, info);
   }
 
   getInstructionsByCategoryId(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
     const { displayToast, failureResponse = [] } = info;
-    return this._appService._getRespById('allInstructionsByCategory/', categoryId, { displayToast, failureResponse });
+    return this._appService._getRespById(environment.wiApiUrl, 'allInstructionsByCategory/', categoryId, { displayToast, failureResponse });
   }
 
   getInstructionsFromGateway(params: any, info: ErrorInfo = {} as ErrorInfo): Observable<any[]> {
-    return this._appService._getDataFromGatewayById('publishedInstructionsByName', params, info);
+    return this._appService._getDataFromGatewayById(environment.wiAbapApiUrl, 'publishedInstructionsByName', params, info);
   }
 
   addWorkInstruction(instruction: Instruction | InstructionOptional, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
-    return this._appService._postData('addWorkInstruction', instruction, info);
+    return this._appService._postData(environment.wiApiUrl, 'addWorkInstruction', instruction, info);
   }
 
   addWorkInstructionToGateway(payload: any, params = {}, info: ErrorInfo = {} as ErrorInfo): Observable<{ status: number }> {
-    return this._appService._postDataToGateway('publishInstruction', payload, info)
+    return this._appService._postDataToGateway(environment.wiAbapApiUrl, 'publishInstruction', payload, info)
       .pipe(
         map(resp => resp === null ? payload : resp)
       );
   }
 
   updateWorkInstruction(instruction: Instruction, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
-    return this._appService._updateData('updateInstruction/' + instruction.Id, instruction, info)
+    return this._appService._updateData(environment.wiApiUrl, 'updateInstruction/' + instruction.Id, instruction, info)
       .pipe(
         map(resp => resp === null ? instruction : resp)
       );
   }
 
   updateGatewayWorkInstruction(payload: any, params = {}, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._putDataToGateway('updateInstruction', payload, info)
+    return this._appService._putDataToGateway(environment.wiAbapApiUrl, 'updateInstruction', payload, info)
       .pipe(
         map(resp => resp === null ? payload : resp)
       );
   }
 
   updateGatewayFavWorkInstruction(payload: any, params = {}, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._putDataToGateway('favouriteInstruction', payload, info)
+    return this._appService._putDataToGateway(environment.wiAbapApiUrl, 'favouriteInstruction', payload, info)
       .pipe(
         map(resp => resp === null ? payload : resp)
       );
   }
 
   removeWorkInstruction(instruction: Instruction, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
-    return this._appService._removeData('deleteInstruction/' + instruction.Id, info)
+    return this._appService._removeData(environment.wiApiUrl, 'deleteInstruction/' + instruction.Id, info)
       .pipe(
         map(resp => resp === null ? instruction : resp)
       );
   }
 
   removeWorkInstructionFromGateway(payload: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._removeDataFromGateway('removeInstruction', payload, info)
+    return this._appService._removeDataFromGateway(environment.wiAbapApiUrl, 'removeInstruction', payload, info)
       .pipe(
         map(resp => resp === null ? payload : resp)
       );
@@ -207,65 +204,65 @@ export class InstructionService {
   }
 
   getSteps(info: ErrorInfo = {} as ErrorInfo): Observable<Step[]> {
-    return this._appService._getResp('steps', info);
+    return this._appService._getResp(environment.wiApiUrl, 'steps', info);
   }
 
   getStepById(id: string, info: ErrorInfo = {} as ErrorInfo): Observable<Step> {
-    return this._appService._getRespById('steps/', id, info);
+    return this._appService._getRespById(environment.wiApiUrl, 'steps/', id, info);
   }
 
   getStepsByWID(WID: string, info: ErrorInfo = {} as ErrorInfo): Observable<Step[]> {
     const { displayToast, failureResponse = [] } = info;
-    return this._appService._getRespById('stepsByInstructionId/', WID, { displayToast, failureResponse });
+    return this._appService._getRespById(environment.wiApiUrl, 'stepsByInstructionId/', WID, { displayToast, failureResponse });
   }
 
   getStepsByName(title: string, info: ErrorInfo = {} as ErrorInfo): Observable<Step[]> {
-    return this._appService._getRespByName('stepByName/', title, info);
+    return this._appService._getRespByName(environment.wiApiUrl, 'stepByName/', title, info);
   }
 
   getStepFromGateway(params: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._getDataFromGatewayByStep('getSteps', params, info);
+    return this._appService._getDataFromGatewayByStep(environment.wiAbapApiUrl, 'getSteps', params, info);
   }
 
   addStep(step: Step | StepOptional, info: ErrorInfo = {} as ErrorInfo): Observable<Step> {
-    return this._appService._postData('addStep', step, info);
+    return this._appService._postData(environment.wiApiUrl, 'addStep', step, info);
   }
 
   updateStep(step: Step, info: ErrorInfo = {} as ErrorInfo): Observable<Step> {
-    return this._appService._updateData('updateStep/' + step.StepId, step, info)
+    return this._appService._updateData(environment.wiApiUrl, 'updateStep/' + step.StepId, step, info)
       .pipe(
         map(resp => resp === null ? step : resp)
       );
   }
 
   removeStep(step: Step, info: ErrorInfo = {} as ErrorInfo): Observable<Step> {
-    return this._appService._removeData('deleteStep/' + step.StepId, info)
+    return this._appService._removeData(environment.wiApiUrl, 'deleteStep/' + step.StepId, info)
       .pipe(
         map(resp => resp === null ? step : resp)
       );
   }
 
   removeStepFromGateway(payload: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._removeDataFromGateway('removeStep', payload, info)
+    return this._appService._removeDataFromGateway(environment.wiAbapApiUrl, 'removeStep', payload, info)
       .pipe(
         map(resp => resp === null ? payload : resp)
       );
   }
 
   uploadAttachments(form: FormData, info: ErrorInfo = {} as ErrorInfo): Observable<UploadS3FileResponse> {
-    return this._appService._postData('api/v1/upload/', form, info);
+    return this._appService._postData(environment.wiApiUrl, 'api/v1/upload/', form, info);
   }
 
   getImage(file: GetFile, info: ErrorInfo = {} as ErrorInfo): Observable<{ base64Response: string }> {
-    return this._appService._postData('api/v1/getImage/', file, info);
+    return this._appService._postData(environment.wiApiUrl, 'api/v1/getImage/', file, info);
   }
 
   uploadWIExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    return this._appService._postData('excel/upload-parser', form, info);
+    return this._appService._postData(environment.wiApiUrl, 'excel/upload-parser', form, info);
   }
 
   deleteAttachments(files: DeleteFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
-    return this._appService._postData('api/v1/delete/', files, info);
+    return this._appService._postData(environment.wiApiUrl, 'api/v1/delete/', files, info);
   }
 
   newInstructionPromise(insPayload: Instruction, info: ErrorInfo): Observable<Instruction> {
@@ -535,7 +532,7 @@ export class InstructionService {
   }
 
   workInstructionsWithCategories$ = (requestType: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> =>
-    this._appService._getResp(requestType, info)
+    this._appService._getResp(environment.wiApiUrl, requestType, info)
       .pipe(
         map((workInstructions: Instruction[]) => {
           return workInstructions.map((workInstruction: Instruction) => {

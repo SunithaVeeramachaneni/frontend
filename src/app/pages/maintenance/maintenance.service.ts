@@ -9,9 +9,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: "root" })
 export class MaintenanceService {
 
-  constructor(private _appService: AppService) {
-    this._appService.setAbapApiUrl(environment.mccAbapApiUrl);
-  }
+  constructor(private _appService: AppService) {}
 
   private selectOptions: string[] =['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR','IPHAS', 'WorkOrderOperationSet/STATUS','WorkOrderOperationSet/ARBEI', 'IPHAS', 'GSTRP']
 
@@ -23,7 +21,7 @@ export class MaintenanceService {
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     const params: any = {selectOptions: this.selectOptions, collectionComponent: 'WorkOrdersCollection'}
-    let workOrders$ = this._appService._getRespFromGateway('workOrdersAndOperations/WorkOrderOperationSet', info);
+    let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;

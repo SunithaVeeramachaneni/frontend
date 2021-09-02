@@ -7,12 +7,10 @@ import { environment } from "../../../environments/environment";
 @Injectable({providedIn: "root"})
 export class HeaderService {
 
-  constructor(private _appService: AppService) {
-    this._appService.setAbapApiUrl(environment.mccAbapApiUrl);
-  }
+  constructor(private _appService: AppService) {}
 
 getLogonUserDetails(info: ErrorInfo = {} as ErrorInfo): Observable<any[]>{
     const { displayToast, failureResponse = [] } = info;
-    return this._appService._getRespFromGateway('logonUserDetails', { displayToast, failureResponse });
+    return this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'logonUserDetails', { displayToast, failureResponse });
   }
 }
