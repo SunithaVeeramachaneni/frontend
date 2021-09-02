@@ -48,13 +48,6 @@ ion-item {
   color: #000000;
 }
 
-.filter-icon {
-  width: 15px;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-}
-
 .date-priority-label {
   font-family: Roboto;
   font-style: normal;
@@ -214,4 +207,8 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .reset-filters-btn {
   background-color: white;
+}
+
+.filter-icon {
+  padding-top: 11px;
 }

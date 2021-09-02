@@ -7,7 +7,7 @@ import { SparePartsRoutingModule } from './spare-parts-routing.module';
 import { SparePartsComponent } from './spare-parts.page';
 
 import { HeaderModule } from '../../components/header/header.module';
-
+import { AppMaterialModules } from '../../material.module';
 
 @NgModule({
   imports: [
@@ -17,7 +17,8 @@ import { HeaderModule } from '../../components/header/header.module';
     ReactiveFormsModule,
     SparePartsRoutingModule,
     CommonModule,
-    HeaderModule
+    HeaderModule,
+    AppMaterialModules
   ],
   declarations: [
     SparePartsComponent
