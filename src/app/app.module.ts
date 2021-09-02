@@ -23,7 +23,6 @@ import { ToastModule } from './shared/toast';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
-import { AppService } from './services/app.service';
 
 @NgModule({
   imports: [
@@ -50,7 +49,6 @@ import { AppService } from './services/app.service';
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true },
-    AppService
   ],
   bootstrap: [AppComponent]
 })

@@ -18,7 +18,9 @@ describe("InstructionService", () => {
       '_postData',
       '_updateData',
       '_removeData',
-      '_getDataFromGatewayById'
+      '_getDataFromGatewayById',
+      'setApiUrl',
+      'setAbapApiUrl'
     ]);
 
     TestBed.configureTestingModule({

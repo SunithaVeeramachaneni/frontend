@@ -23,6 +23,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
+import { environment } from '../../../../environments/environment';
 
 export interface InstructionQuery {
   search: string;
@@ -32,7 +33,10 @@ export interface InstructionQuery {
 export class InstructionService {
 
   constructor(private _appService: AppService,
-              private store: Store<State>) {}
+              private store: Store<State>) {
+                this._appService.setApiUrl(environment.wiApiUrl);
+                this._appService.setAbapApiUrl(environment.wiAbapApiUrl);
+              }
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
     return this._appService._getResp('wiusers', info);

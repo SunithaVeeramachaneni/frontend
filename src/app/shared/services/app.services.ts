@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -21,18 +20,10 @@ import {
   providedIn: 'root'
 })
 export class AppService {
-  private _headers: { [name: string]: any; } | null | undefined;
-  public token: string | null;
-  public auth: string;
-  public authType = 'Basic ';
+  private apiUrl: string;
+  private abapApiUrl: string;
 
-  constructor(private http: HttpClient) {
-    // this.token = localStorage.getItem('key');
-    // this.auth = this.authType + this.token;
-    this._headers = new HttpHeaders();
-    this._headers.append('Authorization', '');
-    this._headers.append('Content-Type', 'application/json');
-  }
+  constructor(private http: HttpClient) { }
 
   /**
    * Will prepare http header data and returns
@@ -54,6 +45,28 @@ export class AppService {
   }
 
   /**
+   * Sets apiUrl private variable
+   *
+   * @param  {string} apiUrl
+   *
+   * @returns string
+   */
+   public setApiUrl = (apiUrl: string): void => {
+    this.apiUrl = apiUrl;
+  }
+
+  /**
+   * Sets abapApiUrl private variable
+   *
+   * @param  {string} abapApiUrl
+   *
+   * @returns string
+   */
+   public setAbapApiUrl = (abapApiUrl: string): void => {
+    this.abapApiUrl = abapApiUrl;
+  }
+
+  /**
    * Prepare http request url and returns it
    *
    * @param  {string} urlString
@@ -61,7 +74,7 @@ export class AppService {
    * @returns string
    */
   private getUrl = (urlString: string): string => {
-    return `${environment.wiApiUrl}${urlString}`;
+    return `${this.apiUrl}${urlString}`;
   }
 
   /**
@@ -72,7 +85,7 @@ export class AppService {
    * @returns string
    */
   private getABAPUrl = (urlString: string): string => {
-    return `${environment.wiAbapApiUrl}${urlString}`;
+    return `${this.abapApiUrl}${urlString}`;
   }
 
   _getResp(urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
