@@ -81,6 +81,21 @@ ion-item {
   padding: 2px 6px;
   margin-top: 2px;
 }
+.waiting-on-parts-label{
+
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    background: #FF9500;
+    border-radius: 2px;
+    padding: 2px 6px;
+    margin-top: 2px;
+}
 
 .assign-picklist-btn {
   background: #F2F2F2;
