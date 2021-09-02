@@ -19,7 +19,7 @@
 }
 
 ion-content {
-  --ion-background-color: #E5E5E5;
+  --ion-background-color: #f2f2f2;
 }
 
 ion-col {
@@ -234,4 +234,62 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .reset-filters-btn {
   background-color: white;
+}
+
+.high-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #FF3B30;
+}
+
+.medium-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #FF9800;
+}
+
+.low-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #4CAF50;
+}
+
+
+.kit-ready {
+  background-color: #34C759;
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  float: right;
 }
