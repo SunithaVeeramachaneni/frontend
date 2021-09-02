@@ -92,6 +92,11 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.unassigned; let i = index;">
           <ion-label>
+            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+            <span class="kit-ready">KIT READY</span>
+            <br/>
             <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
@@ -137,6 +142,11 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.assigned; let i = index;">
           <ion-label>
+            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+            <span class="kit-ready">KIT READY</span>
+            <br/>
             <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
@@ -173,6 +183,10 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.inProgress; let i = index;">
           <ion-label>
+            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+            <br/>
             <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
@@ -209,6 +223,10 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.completed; let i = index;">
           <ion-label>
+            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+            <br/>
             <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
             <span class="display-flex">
               <ion-img [src]="dataIcon" class="list-icons"></ion-img>
