@@ -20,6 +20,9 @@ export class HeaderComponent implements OnInit {
 
 
   ngOnInit() {
+    this.commonService.minimizeSidebarAction$.subscribe(data => {
+      this.sidebarMinimize = data;
+    });
     this.getLogonUserDetails();
   }
   
