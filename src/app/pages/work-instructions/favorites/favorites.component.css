@@ -1,0 +1,89 @@
+
+.fav-table-title h2 {
+  margin: 0;
+  padding: 15px 0px;
+  color: #000000;
+  background: #fff;
+  font-size: 1.5rem;
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 600;
+}
+.mat-icon-circle{
+  font-size: 35px;
+  vertical-align: middle;
+  position: relative;
+  left: -10px;
+  top: -5px;
+  color:#BDBDBD;
+}
+
+.mat-icon-star {
+  position: relative;
+  top: 6px
+}
+.input-group-text {
+  background: #F2F2F2;
+  border:none;
+}
+.search-icon {
+  height: 14px;
+}
+table {
+  width: 98%;
+}
+
+td{
+  font-size: 14px;
+  font-family: "Ubuntu", sans-serif;
+}
+.search-box{
+  width:50%;
+  background-color: #F2F2F2;
+  border:1px solid #F2F2F2;
+  border-radius: 5px;
+  height: 36px;
+}
+
+.font-color{
+  color: #000000;
+}
+
+.arrow {
+  font-size: 16px;
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+}
+
+.arrow-inactive {
+  color: white;
+}
+
+thead th {
+  cursor: pointer;
+  border-top:none;
+}
+
+tbody tr td:nth-child(5) {
+  text-align: right;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+  border-bottom: 1px solid #c8ced3;
+}
+
+.chip {
+  width: 46px;
+  height: 20px;
+  background: #CCCCCC;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 14px;
+  color: #FFFFFF;
+  margin-left: 10px;
+}

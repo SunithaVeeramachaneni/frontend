@@ -17,7 +17,12 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { AppService } from './services/app.service';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { ToastModule } from './shared/toast';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
+import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
 
 @NgModule({
   imports: [
@@ -33,12 +38,17 @@ import { AppService } from './services/app.service';
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
     }),
-    AppRoutingModule
+    AppRoutingModule,
+    StoreModule.forRoot({}, {}),
+    StoreDevtoolsModule.instrument({ name: 'CWP', maxAge: 25, logOnly: environment.production }),
+    ToastModule.forRoot(),
+    NgxSpinnerModule,
+    ErrorHandlerModule
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    AppService
+    { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

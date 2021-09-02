@@ -1,0 +1,28 @@
+
+<div class="modal-card custom-modal-card p-20 bulk-upload">
+  <h3 *ngIf="!loadResults" class="building-wi">Building your Work Instructions...</h3>
+  <h3 *ngIf="loadResults" class="building-wi">All done!</h3>
+  <img *ngIf="!loadResults" class="illustration_bulkupload" src="assets/work-instructions-icons/svg/illustration_bulkupload.svg" alt="Bulk Upload" />
+  <img *ngIf="loadResults && isUploadSuccess()" class="illustration_bulkupload_success" src="assets/work-instructions-icons/svg/illustration_bulkupload_success.svg" alt="Bulk Upload Success" />
+  <img *ngIf="loadResults && !isUploadSuccess()" class="illustration_bulkupload_success" src="assets/work-instructions-icons/svg/illustration_bulkupload_failure.svg" alt="Bulk Upload Failure" />
+  <br>
+  <mat-progress-bar *ngIf="!loadResults" mode="indeterminate"></mat-progress-bar>
+  <div class="font-weight-bold" *ngIf="loadResults && getDraftedInstructionsCount()">{{getDraftedInstructionsCount()}} Work Instruction<span *ngIf="getDraftedInstructionsCount() > 1">s</span> <span *ngIf="getDraftedInstructionsCount() === 1">has</span> <span *ngIf="getDraftedInstructionsCount() > 1">have</span>  been saved as draft<span *ngIf="getDraftedInstructionsCount() > 1">s</span>.</div>
+  <div class="font-weight-bold" *ngIf="loadResults && getDraftedInstructionsCount() === 0">{{getDeletedInstructionsCount()}} Work Instruction<span *ngIf="getDeletedInstructionsCount() > 1">s</span> <span *ngIf="getDeletedInstructionsCount() === 1">has</span> <span *ngIf="getDeletedInstructionsCount() > 1">have</span>  been deleted from drafts.</div>
+  <app-alert></app-alert>
+  <br>
+  <hr class="hrline-modal"/>
+  <ul class="bulk-upload-instructions-list">
+    <li *ngFor="let ins of this.ins; let i=index;">
+      <div *ngIf="!ins.insDeletedSuccessfully">
+        <div class="pull-left"><mat-progress-spinner *ngIf="!ins.insPostingFailed && !ins.insPostedSuccessfully" class="bulkupload-margin" diameter="20" [color]="color" [mode]="mode"></mat-progress-spinner><mat-icon class="bulkupload-success-mark-position mat-primary" *ngIf="ins.insPostingFailed">close</mat-icon><mat-icon class="bulkupload-success-mark-position mat-primary" *ngIf="ins.insPostedSuccessfully">check</mat-icon><span class="m-l-10">{{ins.instructionName}}</span></div>
+        <div class="pull-right" *ngIf="!ins.insPostingFailed"><mat-icon class="delete-forever-icon" (click)="deleteIns(ins,i)">delete_forever</mat-icon></div><br/>
+      </div>
+    </li>
+  </ul>
+  <div class="modal-footer">
+    <button type="button" disabled = "disabled" *ngIf="loadResults" class="btn btn-primary publishnow-btn">PUBLISH NOW</button>
+    <button type="button" *ngIf="loadResults" (click)="close()" class="btn btn-primary okay-btn" data-dismiss="modal">OKAY</button>
+    <button type="button" *ngIf="!loadResults" (click)="close()" class="btn btn-secondary cancel-btn" data-dismiss="modal">CANCEL</button>
+  </div>
+</div>

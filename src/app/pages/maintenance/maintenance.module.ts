@@ -6,20 +6,18 @@ import { IonicModule } from '@ionic/angular';
 import { MaintenanceRoutingModule } from './maintenance-routing.module';
 import { MaintenanceComponent } from './maintenance.page';
 
-import { HeaderModule } from '../../components/header/header.module';
-
 import { AppMaterialModules } from '../../material.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
     FormsModule,
     IonicModule,
-    FormsModule,
     ReactiveFormsModule,
     MaintenanceRoutingModule,
-    HeaderModule,
     CommonModule,
     AppMaterialModules,
+    SharedModule
   ],
   declarations: [
     MaintenanceComponent

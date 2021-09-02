@@ -1,0 +1,47 @@
+.custom-pagination {
+  display: flex;
+  margin: auto;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 15px;
+}
+
+.custom-pagination > div {
+  flex: 1;
+  cursor: pointer;
+  padding: 0px 0.625rem;
+  transition: 0.3s ease-in-out;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.custom-pagination > div:hover {
+  background: #e6e6e6;
+  text-decoration: underline;
+}
+
+.custom-pagination > div:focus {
+  outline: -webkit-focus-ring-color auto 1px;
+}
+
+.custom-pagination > div.current {
+  background: #124ED0;
+  color: #fefefe;
+  cursor: default;
+  pointer-events: none;
+  border-radius: 50%;
+  padding: 0.1875rem 0.625rem;
+  outline: none;
+}
+
+.disabled {
+  pointer-events: none;
+  cursor: default;
+  color: #b2b2b2;
+}
+
+.pagination-mat-icon {
+  position: relative;
+  top: 3px;
+}

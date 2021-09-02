@@ -1,5 +1,4 @@
 export interface ErrorInfo {
-    displayToast: boolean;
-    failureResponse: 'throwError' | {} | [];
-  }
-  
+  displayToast: boolean;
+  failureResponse: 'throwError' | {} | [];
+}

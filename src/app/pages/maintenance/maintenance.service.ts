@@ -3,12 +3,15 @@ import { Observable } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
-import { AppService } from "../../services/app.service"
+import { AppService } from "../../shared/services/app.services"
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: "root" })
 export class MaintenanceService {
 
-  constructor(private _appService: AppService) { }
+  constructor(private _appService: AppService) {
+    this._appService.setAbapApiUrl(environment.mccAbapApiUrl);
+  }
 
   private selectOptions: string[] =['PRIOK', 'PRIOKX', 'COLOUR', 'AUFNR', 'AUFTEXT', 'ARBPL', 'KTEXT', 'PARNR','IPHAS', 'WorkOrderOperationSet/STATUS','WorkOrderOperationSet/ARBEI', 'IPHAS', 'GSTRP']
 
