@@ -38,7 +38,7 @@ export class AppService {
         };
     }
 
-    private getABAPUrl = (urlString: string): string => {
+    public getABAPUrl = (urlString: string): string => {
         return `http://localhost:8000/abapapi/${urlString}`;
     }
 

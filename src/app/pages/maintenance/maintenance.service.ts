@@ -22,16 +22,19 @@ export class MaintenanceService {
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable(observer => {
       // console.log("Getting server sent event")
-      const eventSource = new EventSource('http://localhost:3000/events');
+      const eventSource = new EventSource(this._appService.getABAPUrl('updateWorkOrders'))
       eventSource.onmessage = event => {
         // console.log("Event", JSON.parse(event.data));
         let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
-        let rawWorkOrder = JSON.parse(event.data);
-        console.log("The raw work order is", rawWorkOrder);
-        if(rawWorkOrder !== []){
-        let workOrderAdd: WorkOrder = this.cleanWorkOrder(rawWorkOrder);
-        console.log("The cleaned work order is", workOrderAdd)
-        workOrders[`${workOrderAdd.status}`].push(workOrderAdd)
+        let workOrder: WorkOrder;
+        let rawWorkOrders = JSON.parse(event.data);
+        rawWorkOrders.forEach(rawWorkOrder => {
+          workOrder = this.cleanWorkOrder(rawWorkOrder)
+          workOrders[`${workOrder.status}`].push(workOrder)
+        });
+
+        console.log("The raw work order is", rawWorkOrders);
+        if(rawWorkOrders !== []){
         this._zone.run(() => {
         observer.next(workOrders);
         });
