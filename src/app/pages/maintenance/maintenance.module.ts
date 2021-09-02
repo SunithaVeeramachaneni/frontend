@@ -9,6 +9,8 @@ import { MaintenanceComponent } from './maintenance.page';
 import { AppMaterialModules } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
 
+import { NgxSpinnerModule } from 'ngx-spinner';
+
 @NgModule({
   imports: [
     FormsModule,
@@ -17,7 +19,8 @@ import { SharedModule } from '../../shared/shared.module';
     MaintenanceRoutingModule,
     CommonModule,
     AppMaterialModules,
-    SharedModule
+    SharedModule,
+    NgxSpinnerModule
   ],
   declarations: [
     MaintenanceComponent
