@@ -1,0 +1,15 @@
+<!-- carousel -->
+<div class="carousel">
+        <ng-container *ngFor="let slide of slides; let i = index">
+          <img
+            alt="Slide"
+            *ngIf="i === currentSlide"
+            [hidden]="!stepImages[slide.src]"
+            [attr.src]="stepImages[slide.src]"
+            class="slide"
+            [@slideAnimation]="animationType"
+          />
+        </ng-container>
+      </div>
+
+

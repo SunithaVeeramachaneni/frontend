@@ -84,6 +84,7 @@
       "app",
       "page",
       "kebab-case"
-    ]
+    ],
+    "no-string-literal": false
   }
 }

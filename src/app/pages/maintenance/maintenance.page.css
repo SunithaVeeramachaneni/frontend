@@ -1,5 +1,25 @@
+:host /deep/ .searchbar-input.sc-ion-searchbar-md {
+  background: #F2F2F2;
+  opacity: 0.75;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+:host /deep/ .mat-form-field-flex > .mat-form-field-infix { 
+  padding: 0.4em 0px !important;
+}
+
+:host /deep/ .mat-form-field-label-wrapper { 
+  top: -1.5em; 
+}
+
+:host /deep/ .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
 ion-content {
-  --ion-background-color: #E5E5E5;
+  --ion-background-color: #f2f2f2;
 }
 
 ion-col {
@@ -214,4 +234,62 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .reset-filters-btn {
   background-color: white;
+}
+
+.high-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #FF3B30;
+}
+
+.medium-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #FF9800;
+}
+
+.low-priority {
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  background-color: #4CAF50;
+}
+
+
+.kit-ready {
+  background-color: #34C759;
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  float: right;
 }

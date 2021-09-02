@@ -5,19 +5,16 @@ import {CommonModule} from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { SparePartsRoutingModule } from './spare-parts-routing.module';
 import { SparePartsComponent } from './spare-parts.page';
-
-import { HeaderModule } from '../../components/header/header.module';
-
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
     FormsModule,
     IonicModule,
-    FormsModule,
     ReactiveFormsModule,
     SparePartsRoutingModule,
     CommonModule,
-    HeaderModule
+    SharedModule
   ],
   declarations: [
     SparePartsComponent

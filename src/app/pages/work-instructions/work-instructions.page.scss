@@ -1,0 +1,262 @@
+.main-heading {
+    font-family: "Ubuntu", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.5em;
+    color: #25282B;
+    padding: 20px 20px 10px 20px;
+}
+.search-icon {
+  height: 15px;
+  position: relative;
+  top: 1px;
+}
+.input-group-text {
+  background: #F2F2F2;
+  border:none;
+}
+.input-group {
+  padding: 0 0 10px 20px;
+}
+.search-box{
+  width:85%;
+  background-color: #F2F2F2;
+  border:1px solid #F2F2F2;
+  border-radius: 5px;
+  height: 36px;
+}
+
+.search-data-area {
+  margin-left: -11px;
+}
+.create-new-ins {
+  height: 34px;
+}
+.create-new-ins-btn {
+  background-color: #1351D8;
+  border: none;
+}
+.create-new-ins-icon {
+  float: left; padding-top: 2px;
+}
+.drafts {
+  height: 20px;
+  position: relative;
+  top: 10px;
+}
+.row-gap {
+  height: 20px;
+  background: #f2f2f2;
+  position: relative;
+  top: 10px;
+}
+.recents-favorites-row {
+  padding: 20px 20px 0px 20px;
+  font-family: "Ubuntu", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #25282B;
+}
+.recent-wi-img{
+  width: 80px;
+}
+.list-data{
+  flex-wrap: nowrap;
+}
+.no-fav {
+  text-align: center;
+  width: 100%;
+  background: #f2f2f2;
+  margin: 0 auto;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px dashed #666;
+  margin-bottom: 20px;
+}
+
+.recents-favorites-list {
+  padding: 15px ; margin: 0;
+}
+
+.recents-favorites-lst-header {
+  padding: 5px 15px 5px 0; margin: 0;
+}
+
+.recents-favorites-lst-header span {
+  position: relative;
+  top: 3px
+}
+.recents-favorites-list li {
+  list-style-type: none;
+  padding-bottom: 20px;
+}
+
+.recent-title {
+    font-family: "Ubuntu", sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+    color: #25282B;
+    max-width: 100%;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    outline: none;
+    float: left;
+}
+
+.recent-title:focus {
+  outline: none;
+}
+
+.ellipsis{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.category-ellipsis {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ellipsis:focus{
+  outline: none;
+}
+.recent-subtitle {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 10px;
+    letter-spacing: 0.25px;
+    color: #76767B;
+    text-overflow: ellipsis;
+    outline: none
+}
+
+.recent-edited {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: right;
+    letter-spacing: 0.25px;
+    color: #76767B;
+    float: right;
+}
+.seeall{
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  color: #1351D8;
+  cursor: pointer;
+  border:none;
+  background:transparent;
+}
+.fav-icon {
+  position: relative;
+  left:5px;
+  top:0px;
+  margin-top: -5px;
+  float: left;
+}
+
+.draft-title {
+  padding: 0px 0px 0px 10px;
+}
+
+.seeall-fixed{
+  position: absolute;
+  bottom: -10px;
+  padding-bottom: 10px;
+}
+
+.data {
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  align-items: center;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+}
+
+.arrow-button {
+  background-color: #1351D8;
+  border: none;
+  border-left: 1px solid #25282B;
+}
+
+.draft-icon {
+  font-weight: 500;
+  font-size:18px;
+  position: relative;
+  top:2px;
+}
+
+.favorite-icon {
+  font-weight: 500;
+  font-size:22px;
+  position: relative;
+  top:3px;
+}
+
+.recents-favorites-list .chip {
+  width: 46px;
+  height: 20px;
+  background: #CCCCCC;
+  border-radius: 4px;
+  padding: 4px 5px;
+  font-size: 12px;
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 14px;
+  color: #FFFFFF;
+  margin-left: 10px;
+  text-align: center;
+  margin-top: -2px;
+
+}
+
+.dis-flex:focus{
+  outline: none;
+}
+
+.dropdown-item{
+  border-bottom: none;
+  padding: 7px 15px;
+}
+
+.dropdown-item-title {
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #25282B;
+  padding-left: 10px;
+  position: relative;
+  top:2px;
+}
+.dropdown-item-line {
+    margin-top: 0.5px;
+    margin-bottom: 0.5px;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

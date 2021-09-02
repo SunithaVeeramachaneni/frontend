@@ -37,8 +37,19 @@
               },
               {
                 "input": "src/global.scss"
+              },
+              {
+                "input": "node_modules/font-awesome/css/font-awesome.css"
+              },
+              {
+                "input": "src/scss/style.scss"
               }
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./node_modules"
+              ]
+            },
             "scripts": []
           },
           "configurations": {

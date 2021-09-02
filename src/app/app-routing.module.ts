@@ -12,17 +12,18 @@ const routes: Routes = [
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
   {
-    path: 'workinstructions',
-    loadChildren: () => import('./pages/workInstructions-home/workInstructions-home.module').then(m => m.WorkInstructionsHomeModule)
-  },
-  {
     path: 'maintenance',
     loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule)
   },
   {
     path: 'spare-parts',
     loadChildren: () => import('./pages/spare-parts/spare-parts.module').then(m => m.SparePartsModule)
+  },
+  {
+    path: 'work-instructions',
+    loadChildren: () => import('./pages/work-instructions/work-instructions.module').then( m => m.WorkInstructionsPageModule)
   }
+
 ];
 
 @NgModule({

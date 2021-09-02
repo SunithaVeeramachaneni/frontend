@@ -6,20 +6,21 @@ import { IonicModule } from '@ionic/angular';
 import { MaintenanceRoutingModule } from './maintenance-routing.module';
 import { MaintenanceComponent } from './maintenance.page';
 
-import { HeaderModule } from '../../components/header/header.module';
-
 import { AppMaterialModules } from '../../material.module';
+import { SharedModule } from '../../shared/shared.module';
+
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   imports: [
     FormsModule,
     IonicModule,
-    FormsModule,
     ReactiveFormsModule,
     MaintenanceRoutingModule,
-    HeaderModule,
     CommonModule,
     AppMaterialModules,
+    SharedModule,
+    NgxSpinnerModule
   ],
   declarations: [
     MaintenanceComponent

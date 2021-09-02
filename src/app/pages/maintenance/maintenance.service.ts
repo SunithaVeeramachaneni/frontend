@@ -3,7 +3,8 @@ import { Observable } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
-import { AppService } from "../../services/app.service"
+import { AppService } from "../../shared/services/app.services"
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: "root" })
 export class MaintenanceService {
@@ -22,7 +23,7 @@ export class MaintenanceService {
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable(observer => {
       // console.log("Getting server sent event")
-      const eventSource = new EventSource(this._appService.getABAPUrl('updateWorkOrders'))
+      const eventSource = new EventSource(this._appService.prepareUrl(environment.mccAbapApiUrl,'updateWorkOrders'))
       eventSource.onmessage = event => {
         // console.log("Event", JSON.parse(event.data));
         let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
@@ -45,9 +46,9 @@ export class MaintenanceService {
   }
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
-    const params: any = { selectOptions: this.selectOptions, collectionComponent: 'WorkOrdersCollection' }
-    let workOrders$ = this._appService._getRespFromGateway('workOrdersAndOperations/WorkOrderOperationSet', info);
-    this.transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
+    const params: any = {selectOptions: this.selectOptions, collectionComponent: 'WorkOrdersCollection'}
+    let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
+    let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
       rawWorkOrders.forEach(rawWorkOrder => {

@@ -6,6 +6,7 @@ import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { combineLatest, Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -15,7 +16,6 @@ import { map, startWith, filter, tap } from 'rxjs/operators';
 })
 export class MaintenanceComponent {
 
-
   public workOrderList$: Observable<WorkOrders>;
   public updateWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList$: Observable<WorkOrders>;
@@ -24,12 +24,8 @@ export class MaintenanceComponent {
   public filter$: Observable<string>;
   public selectDate: FormControl;
   public selectDate$: Observable<string>;
-
   public workOrders: Observable<WorkOrder[]>
-
-
   public selectedUser;
-
   headerTitle = "Maintenance Control Center";
   public newWorkOrderIcon = "../../../assets/maintenance-icons/new-workorderIcon.svg";
   public dataIcon = "../../../assets/maintenance-icons/dataIcon.svg";
@@ -38,7 +34,6 @@ export class MaintenanceComponent {
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
-
   public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
@@ -58,17 +53,14 @@ export class MaintenanceComponent {
  public assign: string[] = ['Kerry Smith'];
  public assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
 
-
-
-
-
   hideList = true;
-
   showFilters = false;
+
   @ViewChild('operatorsList') selectRef: IonSelect;
 
   constructor(
-    private _maintenanceSvc: MaintenanceService
+    private _maintenanceSvc: MaintenanceService,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
@@ -97,7 +89,7 @@ export class MaintenanceComponent {
         return oldWorkOrders;
       })
     )
-
+    this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$]).pipe(
       map(([workOrders, filterString, filterDate]) => {
         console.log("This is also being called");
@@ -107,6 +99,7 @@ export class MaintenanceComponent {
             workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 &&
             this.filterDate(workOrder.dueDate, filterDate)
             ) 
+        this.spinner.hide();
         return filtered;
       })
     );
