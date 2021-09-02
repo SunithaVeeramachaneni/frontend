@@ -156,6 +156,28 @@
             <span class="kit-heading">Kitting In Progress</span>
           </ion-label>
         </ion-item>
+        <ion-item lines="none">
+          <ion-label>
+            <span class="kit-number">502000</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">23-June-2021</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">High Priority</span>
+            </span>
+            <span>
+              <span class="display-flex">
+                <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">1 of 2 Parts Picked</span>
+              </span>
+              <ion-progress-bar value="0.5" color="medium" class="progress-bar"></ion-progress-bar>
+              <span class="parts-available-label m-l-20">PARTS AVAILABLE</span>
+            </span>
+            
+          </ion-label>        
+        </ion-item>
        </ion-list>
     </ion-col>
     <ion-col>
@@ -166,6 +188,28 @@
             <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
             <span class="kit-heading">Kits Complete</span>
           </ion-label>
+        </ion-item>
+        <ion-item lines="none" class="no-padding-item">
+          <ion-label class="no-margin">
+            <div class="pickedup-date-time">
+              Pickup Today, 10am-11am 
+            </div>
+            <div class="padding">
+              <span class="kit-number">502000</span><br>
+              <span class="display-flex">
+                <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">23-June-2021</span>
+              </span>
+              <span class="display-flex">
+                <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">High Priority</span>
+              </span>
+              <span class="display-flex">
+                  <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+                  <span class="date-priority-label">2 Parts</span>
+              </span>
+            </div>
+          </ion-label>        
         </ion-item>
        </ion-list>
     </ion-col>
