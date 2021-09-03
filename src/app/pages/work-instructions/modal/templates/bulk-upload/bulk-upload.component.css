@@ -89,7 +89,7 @@ ul.bulk-upload-instructions-list li{
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 20px 0px 0px 0px;
+  padding: 5px 0px 0px 0px;
   height: 35px;
   border-top: 1px solid #c8ced3;
   border-bottom-right-radius: 0.3rem;

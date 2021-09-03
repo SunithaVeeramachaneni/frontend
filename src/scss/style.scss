@@ -4,6 +4,7 @@
 
 // Custom Modal
 // @import '~bulma/css/bulma.css';
+@import "layout";
 
 // Quill
 @import '~quill/dist/quill.core.css';
@@ -384,4 +385,8 @@ button.mat-menu-item {
 
 .login .mat-form-field-appearance-outline .mat-form-field-wrapper {
   margin: .25em 0 0.75em 0;
+}
+
+a {
+  color:black;
 }
