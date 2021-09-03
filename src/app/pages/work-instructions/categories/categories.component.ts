@@ -1,4 +1,4 @@
-import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {OverlayService} from '../modal/overlay.service';
 import {ComponentType} from '@angular/cdk/portal';
 import {CategoryComponent} from '../modal/templates/category/category.component';
@@ -11,13 +11,14 @@ import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { WiCommonService } from '../services/wi-common.services';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-categories',
   templateUrl: 'categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   p = 1;
   count = 4;
   config: any = {
@@ -72,6 +73,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
       this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
     }
   }
+  private updateCategoriesComponentActionSub: Subscription;
 
   constructor(private spinner: NgxSpinnerService,
               private overlayService: OverlayService,
@@ -132,7 +134,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngOnInit(): void {
-    this.wiCommonService.updateCategoriesComponentAction$.subscribe(
+    this.updateCategoriesComponentActionSub = this.wiCommonService.updateCategoriesComponentAction$.subscribe(
       update => {
         if (update) {
           this.categoriesList = [];
@@ -269,4 +271,9 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.updateCategoriesComponentActionSub) {
+      this.updateCategoriesComponentActionSub.unsubscribe();
+    }    
+  }
 }

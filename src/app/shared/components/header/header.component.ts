@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
 
@@ -7,12 +8,14 @@ import { HeaderService } from '../../services/header.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   public username : string;
   public userImage: string;
   public sidebarMinimize = false;
   @Input() title;
+  private minimizeSidebarActionSubscription: Subscription;
+
   constructor(
     private _headerSvc: HeaderService,
     private commonService: CommonService
@@ -20,7 +23,7 @@ export class HeaderComponent implements OnInit {
 
 
   ngOnInit() {
-    this.commonService.minimizeSidebarAction$.subscribe(data => {
+    this.minimizeSidebarActionSubscription = this.commonService.minimizeSidebarAction$.subscribe(data => {
       this.sidebarMinimize = data;
     });
     this.getLogonUserDetails();
@@ -38,6 +41,12 @@ export class HeaderComponent implements OnInit {
   minimize() {
      this.sidebarMinimize = !this.sidebarMinimize;
     this.commonService.minimizeSidebar(this.sidebarMinimize);
+  }
+
+  ngOnDestroy(): void {
+    if (this.minimizeSidebarActionSubscription) {
+      this.minimizeSidebarActionSubscription.unsubscribe();
+    }    
   }
 
 }
