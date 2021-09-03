@@ -286,3 +286,33 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   color: #FFFFFF;
   float: right;
 }
+.show-operations-btn {
+  padding-top: 10px;
+  text-transform: initial;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  color: #76767B;
+  letter-spacing: 0;
+}
+
+.down-up-arrow {
+  padding-right: 5px;
+  font-size: 18px;
+}
+
+.operations-line {
+  height: 5px; 
+  margin:0;
+  border: 0;
+  box-shadow: 0 10px 10px -10px #8c8c8c inset;
+}
+
+.operations-div {
+  border-left: 2px solid #E5E5E5;
+}
+
+.operations-list {
+  border-bottom:none !important;
+}

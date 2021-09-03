@@ -13,6 +13,7 @@ export interface WorkOrder {
     estimatedTime: string,
     actualTime: string,
     progress: number[],
+    operations: any
 }
 
 export interface WorkOrders {
