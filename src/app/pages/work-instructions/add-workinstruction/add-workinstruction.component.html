@@ -69,11 +69,11 @@
             <button [disabled]="!receivedInstruction" [ngClass]="{'fnt-white' : receivedInstruction, 'save' : !isWIPublished }" (click)="publishInstruction(selectedInstruction)"
             mat-raised-button  class="b-r-8 btn btn-primary publish-btn">
             <span *ngIf="!receivedInstruction">
-              <img alt="upload"  src="assets/work-instructions-icons/svg/upload.svg"/>
+              <img alt="upload"  src="assets/work-instructions-icons/svg/upload.svg" class="publish-btn-icon"/>
               <span class="dis-publish">Publish</span>
             </span>
             <span *ngIf="receivedInstruction" >
-              <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png"/>
+              <img alt="upload" src="assets/work-instructions-icons/svg/upload-white.png" class="publish-btn-icon" />
               <span class="publish">Publish</span>
             </span>
             </button>

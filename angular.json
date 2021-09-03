@@ -32,24 +32,11 @@
               }
             ],
             "styles": [
-              {
-                "input": "src/theme/variables.scss"
-              },
-              {
-                "input": "src/global.scss"
-              },
-              {
-                "input": "node_modules/font-awesome/css/font-awesome.css"
-              },
-              {
-                "input": "src/scss/style.scss"
-              }
+              "src/theme/variables.scss",
+              "src/global.scss",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "src/scss/style.scss"
             ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "./node_modules"
-              ]
-            },
             "scripts": [],
             "aot": false,
             "vendorChunk": true,
@@ -75,7 +62,6 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "serviceWorker": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -117,12 +103,10 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "styles": [
-              {
-                "input": "src/theme/variables.scss"
-              },
-              {
-                "input": "src/global.scss"
-              }
+              "src/theme/variables.scss",
+              "src/global.scss",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "src/scss/style.scss"
             ],
             "scripts": [],
             "assets": [
