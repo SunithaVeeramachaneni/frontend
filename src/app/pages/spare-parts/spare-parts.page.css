@@ -6,7 +6,7 @@
 }
 
 ion-content {
-  --ion-background-color: #E5E5E5;
+  --ion-background-color: #f2f2f2;
 }
 
 ion-col {
@@ -39,7 +39,7 @@ ion-item {
 .kit-heading {
   font-family: Roboto;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   line-height: 16px;
   color: #000000;
@@ -55,18 +55,16 @@ ion-item {
   color: #000000;
 }
 
+
 .filter-icon {
-  width: 15px;
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  padding-top: 11px;
 }
 
 .date-priority-label {
   font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 19px;
   display: flex;
   align-items: center;
@@ -88,23 +86,42 @@ ion-item {
   padding: 2px 6px;
   margin-top: 2px;
 }
+.waiting-on-parts-label{
 
-.assign-picklist-btn {
-  background: #F2F2F2;
-  border-radius: 8px;
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 16px;
-  align-items: center;
-  color: #000000;
-  display: flex;
-  padding: 7px;
-  margin: 10px 0 0 0;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    background: #FF9500;
+    border-radius: 2px;
+    padding: 2px 6px;
+    margin-top: 2px;
 }
 
+.assign-picklist-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  color: #000000;
+  margin-top:10px;
+  --box-shadow: none;
+  --background:#F2F2F2;
+  height: 36px;
+}
 
+.assignIcon-class {
+  width: 20px;
+}
+
+.assign-text-class {
+  padding-left: 10px;
+  padding-top: 2px;
+}
 
 select#gender option[value="male"]   { background-image:url('../../../assets/spare-parts-icons/profilePicture1.svg');   }
 select#gender option[value="female"] { background-image:url('../../../assets/spare-parts-icons/profilePicture2.svg'); }
@@ -203,4 +220,54 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #000000;
+}
+
+.pickedup-date-time {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+  background-color: #E5E5E5; 
+  padding: 5px 15px;
+}
+
+.progress-bar-class {
+  margin-bottom: 7px;
+  height: 6px;
+  border-radius: 8px;
+  width: 85%;
+}
+
+.reset-filters-btn {
+  background-color: white;
+}
+
+
+.m-l-20 {
+  margin-left: 20px;
+}
+
+.no-padding-item {
+  --padding-start:0; 
+  --inner-padding-end:0;
+}
+
+.no-margin {
+  margin:0 !important;
+}
+
+.padding {
+  padding: 10px 0px 10px 15px;
+}
+
+.m-t-10 {
+  margin-top: 10px;
+}
+
+.m-l-10 {
+  margin-left: 10px;
 }
