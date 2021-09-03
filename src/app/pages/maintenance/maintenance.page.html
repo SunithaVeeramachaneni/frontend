@@ -3,13 +3,7 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>
-          <button class="filter-btn">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
-            <ion-label class="filter-btn-text">Filter</ion-label>
-            <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img>
-          </button>
-        
+          <!-- <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>       -->
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
@@ -25,7 +19,7 @@
             </ion-segment-button>
           </ion-segment>
           <button class="filter-btn" (click)="myFunction()">
-            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img>
             <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
           </button>
       </ion-col>  
@@ -35,14 +29,14 @@
         <form #form="ngForm">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Show Overdue</mat-label>
-            <mat-select [(ngModel)]="showOverdue" name="showOverdue">
+            <mat-select [formControl]="overdueFilter" name="showOverdue">
               <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
                 {{showdue}}
               </mat-option>
             </mat-select>
           </mat-form-field>
           
-          <mat-form-field appearance="outline" class="mat-field">
+          <!-- <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Priority</mat-label>
             <mat-select name="priority" multiple [(ngModel)]="priority">
               <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
@@ -68,7 +62,7 @@
             <mat-select name="assign" multiple [(ngModel)]="assign">
               <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field> -->
 
           <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
         </form>
@@ -81,12 +75,12 @@
 <ion-content [fullscreen]="true">
 
   <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders">
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.unassigned.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <br>
             <span class="kit-heading">Unassigned Work Orders</span>
           </ion-label>
         </ion-item>
@@ -131,12 +125,12 @@
        
       </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="assigned-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.assigned.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <br>
             <span class="kit-heading">Assigned Work Orders</span>
           </ion-label>
         </ion-item>
@@ -172,12 +166,12 @@
         </ion-item>
        </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="in-progress-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.inProgress.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <br>
             <span class="kit-heading">In Progress</span>
           </ion-label>
         </ion-item>
@@ -212,12 +206,12 @@
         </ion-item>
        </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="completed-workorder-list">
         <ion-item>
           <ion-label>
             <span class="kits-count">{{workOrders.completed.length}}</span>
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <br>
             <span class="kit-heading">Completed</span>
           </ion-label>
         </ion-item>

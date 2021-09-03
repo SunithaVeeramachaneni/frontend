@@ -49,7 +49,7 @@ export class AppService {
    *
    * @returns string
    */
-  private prepareUrl = (apiUrl: string, urlString: string): string => {
+  public prepareUrl = (apiUrl: string, urlString: string): string => {
     return `${apiUrl}${urlString}`;
   }
 
