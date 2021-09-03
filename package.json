@@ -40,7 +40,7 @@
     "@ionic/storage": "^3.0.6",
     "@ngrx/store": "^12.4.0",
     "@ngrx/store-devtools": "^12.4.0",
-    "bootstrap": "^5.1.0",
+    "bootstrap": "^4.6.0",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
