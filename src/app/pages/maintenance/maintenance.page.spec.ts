@@ -1,18 +1,19 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule, MatOptionModule, MatSelectModule } from '@angular/material';
+import { MatInputModule } from '@angular/material/input';
+
+
 import { BrowserModule, By } from "@angular/platform-browser";
 import { isEqual } from "lodash";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicModule, IonSearchbar, IonSelect } from '@ionic/angular';
 import { WorkOrders } from '../../interfaces/work-order';
-import { AppService } from "../../services/app.service";
+import { AppService } from "../../shared/services/app.services"
 import { expectedWorkOrders$ } from "./maintenance.mocks"
 import { MaintenanceComponent } from "./maintenance.page";
 import { MaintenanceService } from "./maintenance.service";
-import { of } from 'rxjs';
-import { HeaderModule } from '../../components/header/header.module';
+
 
 describe('Maintenance Page', () => {
   let service: MaintenanceService;
@@ -30,12 +31,9 @@ describe('Maintenance Page', () => {
       imports: [ReactiveFormsModule, FormsModule,
         BrowserModule,
         BrowserAnimationsModule,
-        MatSelectModule,
-        MatOptionModule,
         MatInputModule,
         HttpClientTestingModule,
         IonicModule,
-        HeaderModule,
       ],
     });
     service = TestBed.inject(MaintenanceService);
