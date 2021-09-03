@@ -3,7 +3,7 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>      
+          <!-- <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>       -->
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
@@ -19,6 +19,7 @@
             </ion-segment-button>
           </ion-segment>
           <button class="filter-btn" (click)="myFunction()">
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img>
             <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
           </button>
       </ion-col>  
@@ -35,7 +36,7 @@
             </mat-select>
           </mat-form-field>
           
-          <mat-form-field appearance="outline" class="mat-field">
+          <!-- <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Priority</mat-label>
             <mat-select name="priority" multiple [(ngModel)]="priority">
               <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
@@ -61,7 +62,7 @@
             <mat-select name="assign" multiple [(ngModel)]="assign">
               <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field> -->
 
           <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
         </form>
