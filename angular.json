@@ -32,10 +32,10 @@
               }
             ],
             "styles": [
-              "src/theme/variables.scss",
-              "src/global.scss",
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/bootstrap/dist/css/bootstrap.css",
+              "src/theme/variables.scss",
+              "src/global.scss",
               "src/scss/style.scss"
             ],
             "scripts": [
@@ -111,12 +111,17 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "styles": [
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/bootstrap/dist/css/bootstrap.css",
               "src/theme/variables.scss",
               "src/global.scss",
-              "node_modules/font-awesome/css/font-awesome.css",
               "src/scss/style.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ],
             "assets": [
               {
                 "glob": "favicon.ico",
