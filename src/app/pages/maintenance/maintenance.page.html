@@ -29,7 +29,7 @@
         <form #form="ngForm">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Show Overdue</mat-label>
-            <mat-select [(ngModel)]="showOverdue" name="showOverdue">
+            <mat-select [formControl]="overdueFilter" name="showOverdue">
               <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
                 {{showdue}}
               </mat-option>
