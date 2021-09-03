@@ -38,7 +38,11 @@
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "src/scss/style.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
