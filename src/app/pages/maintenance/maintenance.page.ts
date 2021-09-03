@@ -6,6 +6,7 @@ import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { combineLatest, Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 
 @Component({
@@ -15,19 +16,14 @@ import { map, startWith, filter, tap } from 'rxjs/operators';
 })
 export class MaintenanceComponent {
 
-
   public workOrderList$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
   public selectDate: FormControl;
   public selectDate$: Observable<string>;
-
   public workOrders: Observable<WorkOrder[]>
-
-
   public selectedUser;
-
   headerTitle = "Maintenance Control Center";
   public newWorkOrderIcon = "../../../assets/maintenance-icons/new-workorderIcon.svg";
   public dataIcon = "../../../assets/maintenance-icons/dataIcon.svg";
@@ -36,7 +32,6 @@ export class MaintenanceComponent {
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
-
   public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
@@ -56,17 +51,14 @@ export class MaintenanceComponent {
  public assign: string[] = ['Kerry Smith'];
  public assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
 
-
-
-
-
   hideList = true;
-
   showFilters = false;
+
   @ViewChild('operatorsList') selectRef: IonSelect;
 
   constructor(
-    private _maintenanceSvc: MaintenanceService
+    private _maintenanceSvc: MaintenanceService,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit() {
@@ -79,6 +71,7 @@ export class MaintenanceComponent {
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
+    this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.workOrderList$, this.filter$, this.selectDate$]).pipe(
       map(([workOrders, filterString, filterDate]) => {
         let filtered: WorkOrders = {unassigned:[], assigned:[], inProgress:[], completed:[]};
@@ -87,6 +80,7 @@ export class MaintenanceComponent {
             workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 &&
             this.filterDate(workOrder.dueDate, filterDate)
             ) 
+        this.spinner.hide();
         return filtered;
       })
     );
