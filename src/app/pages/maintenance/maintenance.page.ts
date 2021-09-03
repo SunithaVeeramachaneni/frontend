@@ -54,6 +54,7 @@ export class MaintenanceComponent {
 
   public assign: string[] = ['Kerry Smith'];
   public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
+ public showOperationsList = {};
 
   hideList = true;
   showFilters = false;
@@ -92,20 +93,23 @@ export class MaintenanceComponent {
         return oldWorkOrders;
       })
     )
-    // this.spinner.show();
+    this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$, this.overdueFilter$]).pipe(
       map(([workOrders, filterString, filterDate, overdue]) => {
         console.log("This is also being called");
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
-            (
-              workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
-              workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
+            // (
+              // workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
+              // workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
+            
             this.filterDate(workOrder.dueDate, filterDate) &&
             this.isOverdue(workOrder.dueDate, overdue)
           )
         this.spinner.hide();
+        this.showOperationsList = { 'unassigned': new Array(filtered['unassigned'].length).fill(false), 'assigned': new Array(filtered['assigned'].length).fill(false), 'inProgress': new Array(filtered['inProgress'].length).fill(false), 'completed': new Array(filtered['completed'].length).fill(false) }      
+        console.log(filtered)      
         return filtered;
       })
     );
@@ -170,6 +174,10 @@ export class MaintenanceComponent {
     }
   }
 
-
+  public showOperations(status, index) {
+    console.log("Status us", status);
+    console.log("Index is", index);
+    this.showOperationsList[`${status}`][index] = !this.showOperationsList[`${status}`][index];
+  }
 }
 
