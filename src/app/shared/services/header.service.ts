@@ -10,6 +10,6 @@ export class HeaderService {
   constructor(private _appService: AppService) {}
 
   getLogonUserDetails(info: ErrorInfo = {} as ErrorInfo): Observable<any[]>{
-    return this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'logonUserDetails', { displayToast, failureResponse });
+    return this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'logonUserDetails', info);
   }
 }
