@@ -74,7 +74,7 @@
 <ion-content [fullscreen]="true">
 
   <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders">
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
         <ion-item>
           <ion-label>
@@ -124,7 +124,7 @@
        
       </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="assigned-workorder-list">
         <ion-item>
           <ion-label>
@@ -165,7 +165,7 @@
         </ion-item>
        </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="in-progress-workorder-list">
         <ion-item>
           <ion-label>
@@ -205,7 +205,7 @@
         </ion-item>
        </ion-list>
     </ion-col>
-    <ion-col>
+    <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="completed-workorder-list">
         <ion-item>
           <ion-label>

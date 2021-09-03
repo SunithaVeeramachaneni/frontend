@@ -48,7 +48,7 @@ export class MaintenanceService {
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     const params: any = {selectOptions: this.selectOptions, collectionComponent: 'WorkOrdersCollection'}
     let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
-    let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
+    this.transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
       rawWorkOrders.forEach(rawWorkOrder => {

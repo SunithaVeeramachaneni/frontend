@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core"
 import { Observable } from "rxjs";
 import { map, tap } from "rxjs/operators";
+import { environment } from "../../../environments/environment";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/scc-work-order";
 import { Technician, Technicians } from "../../interfaces/technicians";
-import { AppService } from "../../services/app.service"
+import { AppService } from "../../shared/services/app.services"
 
 @Injectable({ providedIn: "root" })
 export class SparepartsService {
@@ -17,7 +18,7 @@ export class SparepartsService {
     "TECO": "kitscomplete"
   }
   getTechnicians(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
-    let technicians$ = this._appService._getRespFromGateway('technicians', info);
+    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'technicians', info);
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
       let technicians: Technicians = { technicians:[] };
       let technician: Technician;
@@ -37,7 +38,7 @@ export class SparepartsService {
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     console.log("getAllWorkOrders")
     //workOrdersAndOperations/WorkOrderComponentSet
-    let workOrders$ = this._appService._getRespFromGateway('sccmock', info);
+    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'sccmock', info);
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { kitsrequired: [], assingedforpicking: [], kittinginprogress: [], kitscomplete: [],kitspickedup:[] };
       let workOrder: WorkOrder;

@@ -74,11 +74,11 @@ export class MaintenanceComponent {
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
 
-
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({unassigned:[], assigned:[], inProgress:[], completed:[]}));
     this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
       map(([oldWorkOrders, newWorkOrders]) => {
+        console.log("Inside the mpa")
         if(newWorkOrders){
         console.log("Entered this", newWorkOrders)
         oldWorkOrders['unassigned'] = [...newWorkOrders['unassigned'], ...oldWorkOrders['unassigned']];
@@ -89,14 +89,15 @@ export class MaintenanceComponent {
         return oldWorkOrders;
       })
     )
-    this.spinner.show();
+    // this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$]).pipe(
       map(([workOrders, filterString, filterDate]) => {
         console.log("This is also being called");
         let filtered: WorkOrders = {unassigned:[], assigned:[], inProgress:[], completed:[]};
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
-            workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 &&
+            (workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
+            workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
             this.filterDate(workOrder.dueDate, filterDate)
             ) 
         this.spinner.hide();
