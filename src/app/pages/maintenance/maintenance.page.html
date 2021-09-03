@@ -120,6 +120,41 @@
                 </ion-select>
             </ion-item>
 
+            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-div">
+                <ion-item class="operations-list" *ngFor="let operation of workOrders.unassigned[i].operations; let j = index;">
+                  <ion-label>
+                    <span class="kit-number">Operation</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
+
           </ion-label>           
         </ion-item>
        
@@ -162,6 +197,41 @@
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
             </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList.assigned[i] === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList.assigned[i] === true" class="operations-div">
+                <ion-item class="operations-list" *ngFor="let operation of workOrders.assigned[i].operations; let j = index;">
+                  <ion-label>
+                    <span class="kit-number">Operation</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
           </ion-label>        
         </ion-item>
        </ion-list>
@@ -202,6 +272,41 @@
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
             </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-div">
+                <ion-item class="operations-list" *ngFor="let operation of workOrders.inProgress[i].operations; let j = index;">
+                  <ion-label>
+                    <span class="kit-number">Operation</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
+            </span>
           </ion-label>        
         </ion-item>
        </ion-list>
@@ -241,6 +346,41 @@
                  <option value="Carlos Arnal">Carlos Arnal </option>
                  <option value="Steve Austin">Steve Austin</option>
                </select>   
+            </span>
+
+            <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === false">
+              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+            </ion-button>
+            <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === true">
+              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+            </ion-button>
+            <hr *ngIf="this.showOperationsList.completed[i] === true" class="operations-line"/>
+            <span>
+              <div *ngIf="this.showOperationsList.completed[i] === true" class="operations-div">
+                <ion-item class="operations-list" *ngFor="let operation of workOrders.completed[i].operations; let j = index;">
+                  <ion-label>
+                    <span class="kit-number">Operation</span><br>
+                    <span class="display-flex">
+                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.equipmentID}} - {{workOrder.equipmentName}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                    </span>
+                    <span class="display-flex">
+                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                    </span>
+
+                    <span>
+                      <ion-button shape="round" color="light">
+                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                      </ion-button>
+                    </span>
+                  </ion-label>
+                </ion-item>
+              </div>
             </span>
           </ion-label>        
         </ion-item>

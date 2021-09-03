@@ -65,18 +65,25 @@ export class MaintenanceService {
   }
 
   formatTime = (inputHours) => { //move to utils directory
+    inputHours = parseInt(inputHours);
     const minutes = Math.floor(inputHours % 1 * 60);
     const hours = Math.floor(inputHours);
     if (minutes !== 0)
+      if( hours === 1)
+        return `${hours} hr ${minutes} min`
+      else
       return `${hours} hrs ${minutes} min`
     else
+    if( hours === 1)
+      return `${hours} hr`
+    else 
       return `${hours} hrs`
   }
 
   getEstimatedTime = (operations) => {
     let time = 0
     operations.forEach(operation => {
-      time += operation.ARBEI
+      time += parseInt(operation.ARBEI)
     });
     return time;
   }
@@ -84,7 +91,7 @@ export class MaintenanceService {
   getActualTime = (operations) => {
     let time = 0
     operations.forEach(operation => {
-      time += operation.ISMNW
+      time += parseInt(operation.ISMNW)
     });
     return time;
   }
@@ -120,7 +127,8 @@ export class MaintenanceService {
       dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
-      progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results)
+      progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results),
+      operations: rawWorkOrder.WorkOrderOperationSet.results
     })
   }
 
