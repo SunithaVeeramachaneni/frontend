@@ -399,6 +399,7 @@ h5.modal-title {
   font-size: 14px !important;
   line-height: 21px;
   color: rgb(37, 40, 43);
+  margin-top: 0;
 }
 
 .margin-search {

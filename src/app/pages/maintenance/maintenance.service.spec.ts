@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { rawWorkOrders$, expectedWorkOrders$ } from "./maintenance.mocks"
+import { rawWorkOrders$, expectedWorkOrders$ } from "./maintenance.mock"
 import { MaintenanceService } from "./maintenance.service";
 import { AppService } from "../../shared/services/app.services"
 import { WorkOrders } from "../../interfaces/work-order";

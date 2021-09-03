@@ -5,7 +5,7 @@
     <ion-menu contentId="main-content" [ngClass]="{'custom-menu1': this.sidebar === false, 'custom-menu2' : this.sidebar === true }">
       <ion-header>
         <ion-img [src]="logo" class="sidebar-logo" *ngIf="this.sidebar === false"></ion-img>
-        <ion-img [src]="smallLogo" class="sidebar-logo" *ngIf="this.sidebar === true"></ion-img>
+        <ion-img [src]="smallLogo" class="sidebar-small-logo" *ngIf="this.sidebar === true"></ion-img>
       </ion-header>
       <ion-content>
         <ion-list lines="none" class="p-0">
