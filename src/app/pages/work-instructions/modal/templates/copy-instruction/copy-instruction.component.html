@@ -1,0 +1,104 @@
+<div class="modal-card custom-modal-card p-10 copy-ins">
+      <div class="modal-header copy-ins-header">
+        <h5 class="modal-title">Copy Work Instructions</h5>
+        <button type="button" class="close" (click)="close()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-header">
+        <div class="col-lg-8 col-md-8 input-prepend input-group margin-search">
+          <div class="input-group-prepend">
+                <span class="input-group-text">
+                  <img src="assets/work-instructions-icons/svg/search.svg" alt="" class="search-icon"/></span>
+          </div>
+          <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search by title or author" class="search-box">
+        </div>
+        <select [(ngModel)]="CreatedBy" class="col-lg-4 col-md-4 filter-dropdowns minimal">
+          <option value="">Authors</option>
+          <option *ngFor="let obj of this.authors" [value]="obj">{{obj}}</option>
+        </select>
+      </div>
+      <div class="modal-body">
+        <mat-tab-group [(selectedIndex)]="recentsFavorites">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon>history</mat-icon>
+              <span class="p-l-5">Recents</span>
+            </ng-template>
+            <table class="table">
+              <tbody>
+                <ng-container *ngIf="( recentsAndFavsObject.recents | filter : search | dropdownFilter: CreatedBy | sortBy: 'desc':'updated_at' | paginate: recentsConfig ) as result">
+                  <app-dummy #recents [value]="result"></app-dummy>
+                  <tr *ngFor="let obj of result">
+                    <td class="width-10" class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/></td>
+                    <td class="width-70"><span class="tabs-recent-title">{{obj.WI_Name}}</span><span class="chip" *ngIf="obj.Published === false">Draft</span><br/>
+                      <span class="tabs-recent-subtitle">{{obj.categories}}</span>
+                    </td>
+                    <td class="width-20">
+                      <button class="tabs-recent-add" data-dismiss="modal" (click)="copyInstruction(obj.WI_Name);">
+                        <span class="tab-recent-add-title">COPY</span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <div class="no-fav" *ngIf="result.length === 0 && this.recentsAndFavsObject.recents.length > 0 ">
+                      No Result Found!
+                    </div>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            <div *ngIf="recentsAndFavsObject.recents && recentsAndFavsObject.recents.length === 0" class="no-fav">
+              No Recent Instructions found !!
+            </div>
+         </mat-tab>
+          <mat-tab label="Favorites">
+            <ng-template mat-tab-label>
+              <mat-icon>star</mat-icon>
+              <span class="p-l-5">Favorites</span>
+            </ng-template>
+            <table class="table">
+              <tbody>
+                <ng-container *ngIf="(recentsAndFavsObject.favs | filter : search | dropdownFilter: CreatedBy | sortBy: 'desc':'updated_at' | paginate: favConfig) as result">
+                  <app-dummy #favourites [value]="result"></app-dummy>
+                  <tr *ngFor="let obj of result">
+                    <td class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/></td>
+                    <td><span class="tabs-recent-title">{{obj.WI_Name}}</span><br/>
+                      <span class="tabs-recent-subtitle">{{obj.categories}}</span>
+                    </td>
+                    <td>
+                      <button class="tabs-recent-add" data-dismiss="modal" (click)="copyInstruction(obj.WI_Name);">
+                        <span class="tab-recent-add-title">COPY</span>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <div class="no-fav" *ngIf="result.length === 0 && this.recentsAndFavsObject.favs.length > 0 ">
+                      No Result Found!
+                    </div>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            <div *ngIf="recentsAndFavsObject.favs && recentsAndFavsObject.favs.length === 0" class="no-fav">
+              No Favorite Instructions found !!
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <div class="modal-footer">
+        <pagination-template #p="paginationApi"
+                             [id]="recentsConfig.id"
+                             (pageChange)="recentsConfig.currentPage = $event" *ngIf="recentsFavorites === 0"
+                             (pageBoundsCorrection)="recentsConfig.currentPage = $event">
+          <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+        </pagination-template>
+        <pagination-template #p="paginationApi"
+                             [id]="favConfig.id"
+                             (pageChange)="favConfig.currentPage = $event" *ngIf="recentsFavorites === 1"
+                             (pageBoundsCorrection)="favConfig.currentPage = $event">
+          <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+        </pagination-template>
+      </div>
+</div>
+

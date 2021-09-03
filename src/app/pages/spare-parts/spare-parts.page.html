@@ -1,0 +1,184 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <app-header [title]="headerTitle"></app-header>
+    <ion-row>
+      <ion-col class="spareparts-header">
+          <ion-searchbar placeholder="Search Work Orders" class="searchbar"></ion-searchbar>
+          <button class="filter-btn">
+            <ion-img [src]="filterIcon" class="filter-btn-icon"></ion-img>
+            <ion-label class="filter-btn-text">Filter</ion-label>
+            <!-- <ion-img [src]="filterArrowIcon" class="filter-btn-arrow"></ion-img> -->
+          </button>
+        
+          <ion-segment mode="ios" value="week" class="segment-group">
+            <ion-segment-button value="today" class="segment-button">
+              <ion-label>Today</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="week" class="segment-button">
+              <ion-label>Due This Week</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="month" class="segment-button">
+              <ion-label>This Month</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+          
+            <!-- <ion-button style="display: flex; --background: transparent;
+            --color: black;
+            --box-shadow: none;">
+              <ion-img [src]="newWorkOrderIcon" style="width: 17px;"></ion-img>
+              <ion-label>NEW WORK ORDER</ion-label>
+            </ion-button>
+           -->
+      </ion-col>  
+    </ion-row>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+
+  <ion-row>
+    <ion-col>
+      <ion-list class="ion-list1">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData.length}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Required</span>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let obj of this.testData; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{obj.number}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj.date}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj.priority}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+              <span class="parts-available-label">PARTS AVAILABLE</span>
+            </span>
+            <span>
+              
+              <button (click)="openSelect()" class="assign-picklist-btn">
+                <ion-img [src]="assignIcon" style="width: 20px;"></ion-img>
+                <span style="padding-left: 5px;
+                padding-top: 2px;">ASSIGN PICKLIST</span> 
+              </button>          
+
+
+              <ion-item style="display: none;">
+               
+                <ion-label>Assign To:</ion-label>
+                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i);">
+                <ion-select-option>
+                  <ion-toolbar>
+                    <ion-img [src]="profile1"></ion-img>
+                    <ion-label>Amy Butcher</ion-label>
+                  </ion-toolbar>
+                   
+                </ion-select-option>
+                <ion-select-option><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
+                <ion-select-option><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
+                </ion-select>
+              </ion-item>
+              
+             
+            </span>
+          </ion-label>        
+        </ion-item>
+       
+      </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list2">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">{{this.testData1.length ? this.testData1.length : '0'}}</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Assigned For Picking</span>
+          </ion-label>
+        </ion-item>
+        <ion-item lines="none" *ngFor="let obj of this.testData1; let i = index;">
+          <ion-label>
+            <span class="kit-number">{{obj[0].number}}</span><br>
+            <span class="display-flex">
+              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj[0].date}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{obj[0].priority}}</span>
+            </span>
+            <span class="display-flex">
+              <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+              <span class="parts-available-label">PARTS AVAILABLE</span>
+            </span>
+            <span>
+            
+        
+              
+           
+
+
+              <ion-item>
+               
+                <!-- <ion-label>Assign To:</ion-label> -->
+                <ion-select value="this.selectedUser" [interfaceOptions]="customPopoverOptions" interface="popover" mode="ios">
+                <ion-select-option value="Amy Butcher">
+                  <ion-toolbar>
+                    <ion-img [src]="profile1"></ion-img>
+                    <ion-label>Amy Butcher</ion-label>
+                  </ion-toolbar>
+                   
+                </ion-select-option>
+                <ion-select-option value="Carlos Arnal"><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
+                <ion-select-option value="Steve Austin"><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
+                </ion-select>
+              </ion-item> 
+              
+             
+            </span>
+          </ion-label>        
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list3">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kitting In Progress</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list4">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Complete</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+    <ion-col>
+      <ion-list class="ion-list5">
+        <ion-item>
+          <ion-label>
+            <span class="kits-count">0</span>
+            <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br>
+            <span class="kit-heading">Kits Picked Up</span>
+          </ion-label>
+        </ion-item>
+       </ion-list>
+    </ion-col>
+  </ion-row> 
+</ion-content>

@@ -1,0 +1,167 @@
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <app-header [title]="headerTitle"></app-header>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="work-instructions">
+    <br>
+    <div class="input-prepend input-group p-b-10">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <img src="assets/work-instructions-icons/svg/search.svg" alt="" class="search-icon"/></span>
+      </div>
+      <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search by title or author" class="search-box">
+      <select [(ngModel)]="CreatedBy" class="author-dropdown minimal">
+        <option value="">Authors</option>
+        <option *ngFor="let obj of this.authors" [value]="obj">{{obj}}</option>
+      </select>
+    </div>
+    <mat-tab-group  #tabGroup (selectedTabChange)="tabChanged($event)">
+      <mat-tab label="DRAFTS">
+        <div *ngIf="this.tabIndex=== 0 || this.tabGroup._selectedIndex===0">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col" class="width-40" (click)="setOrder('WI_Name')">Title
+                <span [hidden]="reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-25" (click)="setOrder('updated_at')">Last Edited
+                <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-25" (click)="setOrder('CreatedBy')">Author
+                <span [hidden]="reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-25"></th>
+            </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="( this.draftedInstructionsList | filter : search  | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: draftsConfig) as result">
+                <app-dummy #draftedFilteredResults [value]="result"></app-dummy>
+                <tr *ngFor="let obj of result">
+                  <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
+                  <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
+                  <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
+                  <td class="width-10">
+                    <a (click)="setFav(obj)">
+                      <span *ngIf="obj.IsFavorite === false"><mat-icon class="mat-icon-star">star_border</mat-icon></span>
+                      <span *ngIf="obj.IsFavorite !== false"><mat-icon class="mat-icon-star is-fav-icon">star</mat-icon></span>
+                    </a>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                      <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item [routerLink]="['/work-instructions/category', categoryId, obj.Id]" id="editWorkInstruction">
+                        <mat-icon>edit</mat-icon>
+                        <span class="menu-text">Edit Work Instruction</span>
+                      </button>
+                      <button mat-menu-item (click)="copyWI(obj);" id="copyWorkInstruction">
+                        <img alt="Copy" src="assets/work-instructions-icons/svg/copy.svg"/>
+                        <span class="menu-text m-l-15">Copy Work Instruction</span>
+                      </button>
+                      <button mat-menu-item (click)="removeWI(obj);" id="deleteWorkInstruction">
+                        <mat-icon class="text-red">close</mat-icon>
+                        <span class="menu-text text-red">Delete Work Instruction</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </tr>
+                <tr>
+                  <div class="no-search-records1" *ngIf="result.length === 0 && draftedInstructionsList.length > 0 ">
+                    No Result Found!
+                  </div>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+          <div class="no-records" *ngIf="this.draftedInstructionsList && this.draftedInstructionsList.length === 0">
+            No Drafted Work Instructions in Category <strong>"{{selectedCategory}}"</strong>
+          </div>
+          <div *ngIf="this.draftedInstructionsList && this.draftedInstructionsList.length > 0">
+            <pagination-template #p="paginationApi"
+                       [id]="draftsConfig.id"
+                       (pageChange)="draftsConfig.currentPage = $event"
+                       (pageBoundsCorrection)="draftsConfig.currentPage = $event">
+              <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+            </pagination-template>
+          </div>
+        </div>
+  
+  
+      </mat-tab>
+  
+    <mat-tab label="PUBLISHED">
+      <div *ngIf="this.tabIndex === 1">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col" class="width-40" (click)="setOrder('WI_Name')">Title
+                <span [hidden]="reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-25" (click)="setOrder('updated_at')">Last Edited
+                <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-25" (click)="setOrder('CreatedBy')">Author
+                <span [hidden]="reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_downward</mat-icon></span>
+                <span [hidden]="!reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_upward</mat-icon></span>
+              </th>
+              <th scope="col" class="width-10"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngIf="( this.publishedInstructionsList | filter : search | dropdownFilter: CreatedBy  | orderBy: order:reverse:'case-insensitive' | paginate: publishedConfig) as result">
+              <app-dummy #publishedFilteredResults [value]="result"></app-dummy>
+              <tr *ngFor="let obj of result">
+                <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
+                <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
+                <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
+                <td class="width-10">
+                  <a (click)="setFav(obj);">
+                    <span *ngIf="obj.IsFavorite === false"><mat-icon class="mat-icon-star">star_border</mat-icon></span>
+                    <span *ngIf="obj.IsFavorite !== false"><mat-icon class="mat-icon-star is-fav-icon">star</mat-icon></span>
+                  </a>
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <button mat-menu-item [routerLink]="['/work-instructions/category', categoryId, obj.Id]" id="editWorkInstruction">
+                      <mat-icon>edit</mat-icon>
+                      <span class="menu-text">Edit Work Instruction</span>
+                    </button>
+                    <button mat-menu-item (click)="removeWI(obj);" id="deleteWorkInstruction">
+                      <mat-icon class="text-red">close</mat-icon>
+                      <span class="menu-text text-red">Delete Work Instruction</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </tr>
+              <tr>
+                <div class="no-search-records1" *ngIf="result.length === 0 && this.publishedInstructionsList.length > 0 ">
+                  No Result Found!
+                </div>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+          <div class="no-records" *ngIf="this.publishedInstructionsList && this.publishedInstructionsList.length === 0">
+            No Published Work Instructions in Category <strong>"{{selectedCategory}}"</strong>
+          </div>
+          <div *ngIf="this.publishedInstructionsList && this.publishedInstructionsList.length > 0">
+            <pagination-template #p="paginationApi"
+                       [id]="publishedConfig.id"
+                       (pageChange)="publishedConfig.currentPage = $event"
+                       (pageBoundsCorrection)="publishedConfig.currentPage = $event">
+              <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+            </pagination-template>
+          </div>
+       </div>
+    </mat-tab>
+    </mat-tab-group>
+  </div>
+</ion-content>
+

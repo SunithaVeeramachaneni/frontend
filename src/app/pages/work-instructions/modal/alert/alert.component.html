@@ -1,0 +1,3 @@
+﻿<div *ngFor="let alert of alerts" class="{{cssClass(alert)}}">
+    <span [innerHTML]="alert.message"></span>
+</div>

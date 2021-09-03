@@ -1,0 +1,44 @@
+<ion-app [class.dark-theme]="dark">
+  <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
+  <ion-split-pane contentId="main-content">
+
+    <ion-menu contentId="main-content" [ngClass]="{'custom-menu1': this.sidebar === false, 'custom-menu2' : this.sidebar === true }">
+      <ion-header>
+        <ion-img [src]="logo" class="sidebar-logo" *ngIf="this.sidebar === false"></ion-img>
+        <ion-img [src]="smallLogo" class="sidebar-logo" *ngIf="this.sidebar === true"></ion-img>
+      </ion-header>
+      <ion-content>
+        <ion-list lines="none" class="p-0">
+          <ion-menu-toggle autoHide="false" *ngFor="let menuitem of menus; let i = index">
+            <ion-item [routerLink]="menuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
+              <ion-icon slot="start" [name]="menuitem.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
+              <ion-label *ngIf="this.sidebar === false">{{menuitem.title}}</ion-label>
+            </ion-item>
+            <div *ngIf="menuitem.showSubMenu && menuitem.subPages !== null">
+              <ion-list lines="none" class="p-0" *ngFor="let submenuitem of menuitem.subPages">
+                <ion-item class="submenu" [routerLink]="submenuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
+                  <ion-icon slot="start"></ion-icon>
+                  <ion-label>{{submenuitem.title}}</ion-label>
+                </ion-item>
+              </ion-list>
+            </div>
+          </ion-menu-toggle>
+        </ion-list>
+
+        <!-- <ion-list lines="none">
+          <ion-item>
+            <ion-icon slot="start" name="moon-outline"></ion-icon>
+            <ion-label>
+              Dark Mode
+            </ion-label>
+            <ion-toggle [(ngModel)]="dark"></ion-toggle>
+          </ion-item>
+        </ion-list> -->
+      </ion-content>
+    </ion-menu>
+
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+
+  </ion-split-pane>
+
+</ion-app>
