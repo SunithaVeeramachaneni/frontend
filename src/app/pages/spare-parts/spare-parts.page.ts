@@ -103,7 +103,7 @@ export class SparePartsComponent{
         let filtered: WorkOrders = {kitsrequired:[], assingedforpicking:[], kittinginprogress:[], kitscomplete:[],kitspickedup:[]};
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
-            workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 &&
+            // workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 &&
             this.filterDate(workOrder.dueDate, filterDate)
             ) 
         return filtered;
