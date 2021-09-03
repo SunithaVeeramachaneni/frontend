@@ -443,7 +443,7 @@
 
 .scroll-header {
   overflow-y: scroll;
-  height: 330px;
+  height: 310px;
   overflow-x: hidden;
 }
 
@@ -711,6 +711,7 @@
   font-size: 12px;
   font-weight: bolder;
   width: 10px;
+  margin-right: 3px;
 }
 
 .status-bar-icons-battery {
@@ -719,6 +720,8 @@
   font-weight: bolder;
   width: 15px;
   height: 10px;
+  position: relative;
+  top:1px;
 }
 
 .status-bar-text {
@@ -726,6 +729,7 @@
   font-weight: bolder;
   position: relative;
   top: -2px;
+  margin-right: 3px;
 }
 
 .btn-outline-blue:disabled {
@@ -779,7 +783,7 @@
 }
 .header-tab-icon {
   font-size: 18px;
-  padding: 2px 2px 0px 0px;
+  margin: 2px 5px 0px 0px;
   width: 20px;
 }
 .header-tab-pos {
@@ -815,11 +819,13 @@
 .header-tab-hr {
   margin: 6px 0px 0px 0px;
   border: 0.5px solid #d5d5d5;
+  height: 0px;
 }
 
 .header-tab-hr-m0 {
   margin: 0;
   border: 0.5px solid #d5d5d5;
+  height: 0px;
 }
 
 .button-increment {
