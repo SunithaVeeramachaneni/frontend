@@ -220,6 +220,10 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   --color: #000000;
 }
 
+.filter-icon {
+  padding-top: 11px;
+}
+
 .mat-field {
   width: 150px;
   margin-right: 10px;
