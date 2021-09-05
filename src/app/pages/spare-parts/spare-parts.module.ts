@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { SparePartsRoutingModule } from './spare-parts-routing.module';
 import { SparePartsComponent } from './spare-parts.page';
 import { SharedModule } from '../../shared/shared.module';
+import { AppMaterialModules } from '../../material.module';
 
 @NgModule({
   imports: [
@@ -14,7 +15,8 @@ import { SharedModule } from '../../shared/shared.module';
     ReactiveFormsModule,
     SparePartsRoutingModule,
     CommonModule,
-    SharedModule
+    SharedModule,
+    AppMaterialModules
   ],
   declarations: [
     SparePartsComponent

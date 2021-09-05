@@ -8,6 +8,7 @@ import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap } from 'rxjs/operators';
 import { Technicians } from '../../interfaces/technicians';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CommonService } from '../../shared/services/common.service';
 
 
 @Component({
@@ -70,10 +71,13 @@ export class SparePartsComponent{
  public imageUrl;
 
 
-  constructor(private _sparepartsSvc: SparepartsService, private sanitizer:DomSanitizer) {}
+  constructor(private _sparepartsSvc: SparepartsService, 
+              private sanitizer:DomSanitizer,
+              private commonService: CommonService) {}
 
   ngOnInit() {
     //this.testData = data.data;
+    this.commonService.minimizeSidebar(true);
     this.getWorkOrders();
     this.getTechnicians();
   }

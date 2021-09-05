@@ -3,18 +3,21 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>      
+          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>      
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
             </ion-segment-button>
+            <hr class="segmented-line"/>
             <ion-segment-button value="week" class="segment-button">
               <ion-label>Due This Week</ion-label>
             </ion-segment-button>
+            <hr class="segmented-line"/>
             <ion-segment-button value="month" class="segment-button">
               <ion-label>Due This Month</ion-label>
             </ion-segment-button>
-            <ion-segment-button value="custom" class="segment-button">
+            <hr class="segmented-line"/>
+            <ion-segment-button value="custom" class="segment-button" disabled>
               <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
@@ -25,7 +28,7 @@
       </ion-col>  
     </ion-row>
     <ion-row *ngIf="this.showFilters === true">
-      <ion-col>
+      <ion-col class="filters-row">
         <form #form="ngForm">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Show Overdue</mat-label>
@@ -105,22 +108,13 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <button (click)="openSelect()" class="assign-btn">
+            <ion-button disabled color="light" expand="full"> 
               <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
               <span class="assign-btn-text">ASSIGN</span> 
-            </button>
+            </ion-button>
 
-            <ion-item class="assign-dropdown">
-               
-              <ion-label>Assign To:</ion-label>
-              <ion-select #operatorsList (ionChange)="optionsFn($event, i);" mode="ios">
-                  <ion-select-option value="brown"><ion-img [src]="profile1"></ion-img>Amy Butcher</ion-select-option>
-                  <ion-select-option value="pink"><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
-                  <ion-select-option value="red"><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option>
-                </ion-select>
-            </ion-item>
-
-            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
+          
+            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false" disabled>
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
             </ion-button>
             <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
@@ -189,15 +183,7 @@
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
-
-            <span>
-               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
-                 <option value="Amy Butcher">Amy Butcher</option>
-                 <option value="Carlos Arnal">Carlos Arnal </option>
-                 <option value="Steve Austin">Steve Austin</option>
-               </select>   
-            </span>
-
+ 
             <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
             </ion-button>
@@ -223,11 +209,11 @@
                       <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
                     </span>
 
-                    <span>
+                    <!-- <span>
                       <ion-button shape="round" color="light">
                         <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
                       </ion-button>
-                    </span>
+                    </span> -->
                   </ion-label>
                 </ion-item>
               </div>
@@ -298,11 +284,11 @@
                       <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
                     </span>
 
-                    <span>
+                    <!-- <span>
                       <ion-button shape="round" color="light">
                         <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
                       </ion-button>
-                    </span>
+                    </span> -->
                   </ion-label>
                 </ion-item>
               </div>
@@ -373,11 +359,11 @@
                       <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
                     </span>
 
-                    <span>
+                    <!-- <span>
                       <ion-button shape="round" color="light">
                         <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
                       </ion-button>
-                    </span>
+                    </span> -->
                   </ion-label>
                 </ion-item>
               </div>
