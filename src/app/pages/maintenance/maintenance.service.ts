@@ -121,7 +121,7 @@ export class MaintenanceService {
       colour: rawWorkOrder['COLOUR'],
       workOrderID: rawWorkOrder['AUFNR'],
       workOrderDesc: rawWorkOrder['AUFTEXT'],
-      equipmentID: rawWorkOrder['ARBPL'],
+      workCenter: rawWorkOrder['ARBPL'],
       equipmentName: rawWorkOrder['KTEXT'],
       kitStatus: rawWorkOrder['TXT04'],
       dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),

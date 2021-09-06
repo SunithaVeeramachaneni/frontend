@@ -122,6 +122,7 @@ export class MaintenanceComponent {
       return this.isThisMonth(dueDate)
     if (filterDate === 'week')
       return this.isThisWeek(dueDate)
+      return true
   }
 
   isThisWeek(someDate) {

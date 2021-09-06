@@ -6,7 +6,7 @@ export interface WorkOrder {
     colour: string,
     workOrderID: number,
     workOrderDesc: string,
-    equipmentID: string,
+    workCenter: string,
     equipmentName: string,
     kitStatus: string,
     dueDate: Date,
