@@ -8,7 +8,7 @@ import { MaintenanceComponent } from './maintenance.page';
 
 import { AppMaterialModules } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
-
+import { ModalComponent } from './modal/modal.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
@@ -23,7 +23,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgxSpinnerModule
   ],
   declarations: [
-    MaintenanceComponent
+    MaintenanceComponent,
+    ModalComponent
   ],
   exports: [],
   entryComponents: []

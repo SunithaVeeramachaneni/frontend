@@ -108,13 +108,13 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <ion-button disabled color="light" expand="full"> 
+            <ion-button (click)="openModal()" color="light" expand="full"> 
               <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
               <span class="assign-btn-text">ASSIGN</span> 
             </ion-button>
 
           
-            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false" disabled>
+            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
             </ion-button>
             <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">

@@ -1,0 +1,27 @@
+<ion-header>
+    <ion-toolbar>
+        <span class="assign-work-order-heading">Assign Work Order</span>
+        <button (click)="dismiss()" class="modal-dismiss-class">X</button>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    
+    <mat-form-field appearance="outline" class="mat-field" style="margin: 10px 20px 0px 20px;">
+        <mat-label>Work Center</mat-label>
+        <mat-select [(ngModel)]="workCenter" name="workCenter">
+          <mat-option *ngFor="let work of workCenterList" [value]="work">{{work}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="mat-field" style="margin: 0px 20px 0px 20px;">
+        <mat-label>Assignee</mat-label>
+        <mat-select [(ngModel)]="assignee" name="assignee">
+          <mat-option *ngFor="let assign of assigneeList" [value]="assign">{{assign}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+</ion-content>
+<ion-footer>
+    <ion-button class="save-btn">Save</ion-button>
+    <ion-button fill="clear" class="cancel-btn" (click)="dismiss()">Cancel</ion-button>
+</ion-footer>
