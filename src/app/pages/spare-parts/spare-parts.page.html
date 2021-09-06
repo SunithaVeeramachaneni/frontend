@@ -3,17 +3,20 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="spareparts-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar"></ion-searchbar>
+          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>
           <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Today</ion-label>
             </ion-segment-button>
+            <hr class="segmented-line"/>
             <ion-segment-button value="week" class="segment-button">
               <ion-label>Due This Week</ion-label>
             </ion-segment-button>
+            <hr class="segmented-line"/>
             <ion-segment-button value="month" class="segment-button">
               <ion-label>This Month</ion-label>
             </ion-segment-button>
+            <hr class="segmented-line"/>
              <ion-segment-button value="custom" class="segment-button" disabled>
               <ion-label>Custom</ion-label>
             </ion-segment-button>
@@ -26,7 +29,7 @@
       </ion-col>  
     </ion-row>
     <ion-row *ngIf="this.showFilters === true">
-      <ion-col>
+      <ion-col class="filters-row">
         <form #form="ngForm">
           <mat-form-field appearance="outline" class="mat-field">
             <mat-label>Show Overdue</mat-label>

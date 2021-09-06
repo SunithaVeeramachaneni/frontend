@@ -5,6 +5,19 @@
   box-shadow: none;
 }
 
+:host /deep/ .mat-form-field-flex > .mat-form-field-infix { 
+  padding: 0.4em 0px !important;
+}
+
+:host /deep/ .mat-form-field-label-wrapper { 
+  top: -1.5em; 
+}
+
+:host /deep/ .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
 ion-content {
   --ion-background-color: #f2f2f2;
 }
@@ -39,7 +52,7 @@ ion-item {
 .kit-heading {
   font-family: Roboto;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   color: #000000;
@@ -105,7 +118,8 @@ ion-item {
 .assign-picklist-btn {
   font-family: Roboto;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: 0;
   font-size: 14px;
   color: #000000;
   margin-top:10px;
@@ -200,6 +214,12 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   height: 42px;
 }
 
+.segmented-line {
+  border: 1px solid #CCCCCC;
+  height: 22px;
+  margin-top: 9px;
+}
+
 .segment-button {
   font-family: Roboto;
   font-style: normal;
@@ -208,6 +228,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #7D7D7D;
+  min-width: 100px;
 }
 
 .segment-button-checked {
@@ -244,6 +265,9 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .reset-filters-btn {
   background-color: white;
+  position: relative;
+  top:-5px;
+  margin-left: 10px;
 }
 
 
@@ -270,4 +294,8 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .m-l-10 {
   margin-left: 10px;
+}
+
+.filters-row {
+  padding: 0px 10px;
 }

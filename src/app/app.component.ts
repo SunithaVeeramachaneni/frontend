@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
   menus = [
     {
       title: 'Dashboard',
-      url: '/dashboard',
+      url: '/dash',
       icon: 'home',
       showSubMenu: false,
       subPages: null

@@ -74,7 +74,7 @@ ion-item {
   font-weight: normal;
   font-size: 12px;
   line-height: 19px;
-  display: flex;
+  white-space:pre-wrap;
   align-items: center;
   color: #76767B;
   padding: 2px 0;
@@ -198,6 +198,12 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   height: 42px;
 }
 
+.segmented-line {
+  border: 1px solid #CCCCCC;
+  height: 22px;
+  margin-top: 9px;
+}
+
 .segment-button {
   font-family: Roboto;
   font-style: normal;
@@ -206,6 +212,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #7D7D7D;
+  min-width: 100px;
 }
 
 .segment-button-checked {
@@ -231,6 +238,9 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .reset-filters-btn {
   background-color: white;
+  position: relative;
+  top: -5px;
+  margin-left: 10px;
 }
 
 .high-priority {
@@ -319,4 +329,8 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .operations-list {
   border-bottom:none !important;
+}
+
+.filters-row {
+  padding: 0px 10px;
 }

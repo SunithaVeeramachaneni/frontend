@@ -70,7 +70,8 @@ export class SparePartsComponent{
  public imageUrl;
 
 
-  constructor(private _sparepartsSvc: SparepartsService, private sanitizer:DomSanitizer) {}
+  constructor(private _sparepartsSvc: SparepartsService, 
+              private sanitizer:DomSanitizer) {}
 
   ngOnInit() {
     //this.testData = data.data;

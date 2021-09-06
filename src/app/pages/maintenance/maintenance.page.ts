@@ -7,7 +7,8 @@ import { combineLatest, Observable } from 'rxjs';
 import { FormControl, FormGroupDirective } from '@angular/forms';
 import { map, startWith, filter, tap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
-
+import { ModalController } from '@ionic/angular';
+import { ModalComponent } from './modal/modal.component';
 
 @Component({
   selector: 'app-maintenance',
@@ -63,7 +64,8 @@ export class MaintenanceComponent {
 
   constructor(
     private _maintenanceSvc: MaintenanceService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private modalCtrl: ModalController
   ) { }
 
   ngOnInit() {
@@ -180,5 +182,13 @@ export class MaintenanceComponent {
     console.log("Index is", index);
     this.showOperationsList[`${status}`][index] = !this.showOperationsList[`${status}`][index];
   }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: ModalComponent
+    });
+    return await modal.present();
+  }
+
 }
 
