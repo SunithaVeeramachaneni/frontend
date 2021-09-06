@@ -13,12 +13,15 @@ export interface WorkOrder {
     estimatedTime: string,
     actualTime: string,
     progress: number[],
-    operations: any
+    partsavailable:string,
+    partscolor:string,
+    progressValue:number
 }
 
 export interface WorkOrders {
-    unassigned : WorkOrder[],
-    assigned: WorkOrder[],
-    inProgress: WorkOrder[],
-    completed: WorkOrder[]
+    kitsrequired : WorkOrder[],
+    assingedforpicking: WorkOrder[],
+    kittinginprogress: WorkOrder[],
+    kitscomplete: WorkOrder[],
+    kitspickedup: WorkOrder[]
 }

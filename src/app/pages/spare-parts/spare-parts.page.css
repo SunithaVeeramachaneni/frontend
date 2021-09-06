@@ -5,8 +5,21 @@
   box-shadow: none;
 }
 
+:host /deep/ .mat-form-field-flex > .mat-form-field-infix { 
+  padding: 0.4em 0px !important;
+}
+
+:host /deep/ .mat-form-field-label-wrapper { 
+  top: -1.5em; 
+}
+
+:host /deep/ .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
 ion-content {
-  --ion-background-color: #E5E5E5;
+  --ion-background-color: #f2f2f2;
 }
 
 ion-col {
@@ -55,18 +68,16 @@ ion-item {
   color: #000000;
 }
 
+
 .filter-icon {
-  width: 15px;
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  padding-top: 11px;
 }
 
 .date-priority-label {
   font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 19px;
   display: flex;
   align-items: center;
@@ -88,23 +99,43 @@ ion-item {
   padding: 2px 6px;
   margin-top: 2px;
 }
+.waiting-on-parts-label{
 
-.assign-picklist-btn {
-  background: #F2F2F2;
-  border-radius: 8px;
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 16px;
-  align-items: center;
-  color: #000000;
-  display: flex;
-  padding: 7px;
-  margin: 10px 0 0 0;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+    align-items: center;
+    text-align: center;
+    color: #FFFFFF;
+    background: #FF9500;
+    border-radius: 2px;
+    padding: 2px 6px;
+    margin-top: 2px;
 }
 
+.assign-picklist-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0;
+  font-size: 14px;
+  color: #000000;
+  margin-top:10px;
+  --box-shadow: none;
+  --background:#F2F2F2;
+  height: 36px;
+}
 
+.assignIcon-class {
+  width: 20px;
+}
+
+.assign-text-class {
+  padding-left: 10px;
+  padding-top: 2px;
+}
 
 select#gender option[value="male"]   { background-image:url('../../../assets/spare-parts-icons/profilePicture1.svg');   }
 select#gender option[value="female"] { background-image:url('../../../assets/spare-parts-icons/profilePicture2.svg'); }
@@ -183,6 +214,12 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   height: 42px;
 }
 
+.segmented-line {
+  border: 1px solid #CCCCCC;
+  height: 22px;
+  margin-top: 9px;
+}
+
 .segment-button {
   font-family: Roboto;
   font-style: normal;
@@ -191,6 +228,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #7D7D7D;
+  min-width: 100px;
 }
 
 .segment-button-checked {
@@ -203,4 +241,61 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   line-height: 16px;
   align-items: center;
   --color: #000000;
+}
+
+.pickedup-date-time {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  color: #000000;
+  background-color: #E5E5E5; 
+  padding: 5px 15px;
+}
+
+.progress-bar-class {
+  margin-bottom: 7px;
+  height: 6px;
+  border-radius: 8px;
+  width: 85%;
+}
+
+.reset-filters-btn {
+  background-color: white;
+  position: relative;
+  top:-5px;
+  margin-left: 10px;
+}
+
+
+.m-l-20 {
+  margin-left: 20px;
+}
+
+.no-padding-item {
+  --padding-start:0; 
+  --inner-padding-end:0;
+}
+
+.no-margin {
+  margin:0 !important;
+}
+
+.padding {
+  padding: 10px 0px 10px 15px;
+}
+
+.m-t-10 {
+  margin-top: 10px;
+}
+
+.m-l-10 {
+  margin-left: 10px;
+}
+
+.filters-row {
+  padding: 0px 10px;
 }

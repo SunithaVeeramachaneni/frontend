@@ -1,1 +1,15 @@
 @import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+.alert-head.sc-ion-alert-ios {
+    text-align: left;
+}
+
+.alert-tappable.sc-ion-alert-ios {
+    height: 44px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+.sc-ion-modal-md-h {
+    --width: 400px;
+    --height: 250px;
+}
