@@ -27,6 +27,8 @@ export class MaintenanceComponent {
   public selectDate$: Observable<string>;
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
+  public priorityFilter: FormControl;
+  public priorityFilter$: Observable<string>;
   public workOrders: Observable<WorkOrder[]>
   public selectedUser;
   headerTitle = "Maintenance Control Center";
@@ -44,7 +46,7 @@ export class MaintenanceComponent {
   public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
-  public priority: string[] = [''];
+  public priority: string[] = [];
   public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
   public kitStatus: string[] = [''];
@@ -80,6 +82,8 @@ export class MaintenanceComponent {
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
+    this.priorityFilter =new FormControl('');
+    this.priorityFilter$ = this.priorityFilter.valueChanges.pipe(startWith(''));
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
@@ -96,18 +100,20 @@ export class MaintenanceComponent {
       })
     )
     this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$, this.overdueFilter$]).pipe(
-      map(([workOrders, filterString, filterDate, overdue]) => {
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$, this.overdueFilter$,this.priorityFilter$]).pipe(
+      map(([workOrders, filterString, filterDate, overdue,priority]) => {
         console.log("This is also being called");
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
-            // (
-              // workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
-              // workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
+            (
+              workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
+              workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
             
             this.filterDate(workOrder.dueDate, filterDate) &&
-            this.isOverdue(workOrder.dueDate, overdue)
+            this.isOverdue(workOrder.dueDate, overdue) &&
+            this.filterPriority(workOrder.priorityStatus,priority)
+
           )
         this.spinner.hide();
         this.showOperationsList = { 'unassigned': new Array(filtered['unassigned'].length).fill(false), 'assigned': new Array(filtered['assigned'].length).fill(false), 'inProgress': new Array(filtered['inProgress'].length).fill(false), 'completed': new Array(filtered['completed'].length).fill(false) }      
@@ -115,6 +121,20 @@ export class MaintenanceComponent {
         return filtered;
       })
     );
+  }
+
+  public filterPriority =(status,priority)=>{
+    console.log("priority",priority.length)
+    if(priority.length==0){
+      return true;
+    }
+    else {
+      for (let i=0;i<priority.length;i++) {
+        if (priority[i]===status)
+          return true;
+      }
+      return false;
+    }
   }
 
   public filterDate(dueDate, filterDate) {

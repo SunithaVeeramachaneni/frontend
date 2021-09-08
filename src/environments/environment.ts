@@ -6,8 +6,8 @@ export const environment = {
   production: false,
   wiApiUrl: 'https://wi.innovapptive.com/api/',
   wiAbapApiUrl: 'https://wi.innovapptive.com/abapapi/',
-  spccAbapApiUrl: 'http://localhost:8000/abapapi/',
-  mccAbapApiUrl: 'http://localhost:8000/abapapi/',
+  spccAbapApiUrl: 'https://cwpqa.innovapptive.com/spccabapapi/abapapi/',
+  mccAbapApiUrl: 'https://cwpqa.innovapptive.com/spccabapapi/abapapi/',
   requestTimeout: 60000
 };
 

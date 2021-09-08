@@ -6,27 +6,35 @@ import { DummyComponent } from './components/dummy/dummy.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { DropDownFilterPipe } from './pipes/dropdown-filter.pipe';
 import { HeaderComponent } from './components/header/header.component';
+import { CommonFilterComponent } from './components/common-filter/common-filter.component';
 import { IonicModule } from '@ionic/angular';
-
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,
     DropDownFilterPipe,
-    HeaderComponent
+    HeaderComponent,
+    CommonFilterComponent,
+
   ],
   imports: [
+    FormsModule,
+    ReactiveFormsModule,
     CommonModule,
     AppMaterialModules,
-    IonicModule
+    IonicModule,
+    PopoverModule.forRoot()
   ],
   exports: [
     CustomPaginationControlsComponent,
     DummyComponent,
     HeaderComponent,
     TimeAgoPipe,
-    DropDownFilterPipe
+    DropDownFilterPipe,
+    CommonFilterComponent
   ]
 })
 export class SharedModule { }
