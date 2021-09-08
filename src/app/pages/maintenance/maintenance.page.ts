@@ -41,19 +41,19 @@ export class MaintenanceComponent {
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
-  public showOverdue: string = 'Yes';
+  public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
-  public priority: string[] = ['High', 'Medium'];
-  public priorityList: string[] = ['High', 'Medium', 'Low'];
+  public priority: string[] = [''];
+  public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
-  public kitStatus: string[] = ['Kit Ready', 'Parts Available'];
+  public kitStatus: string[] = [''];
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
 
-  public workCenter: string[] = ['Mechanical'];
-  public workCenterList: string[] = ['Mechanical', 'Medium', 'Low'];
+  public workCenter: string[] = [''];
+  public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
-  public assign: string[] = ['Kerry Smith'];
+  public assign: string[] = [''];
   public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
  public showOperationsList = {};
 

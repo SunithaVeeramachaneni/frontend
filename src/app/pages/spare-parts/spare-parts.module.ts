@@ -7,6 +7,7 @@ import { SparePartsRoutingModule } from './spare-parts-routing.module';
 import { SparePartsComponent } from './spare-parts.page';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { AppMaterialModules } from '../../material.module';
     SparePartsRoutingModule,
     CommonModule,
     SharedModule,
-    AppMaterialModules
+    AppMaterialModules,
+    PopoverModule.forRoot() 
   ],
   declarations: [
     SparePartsComponent
