@@ -13,3 +13,13 @@
     --width: 400px;
     --height: 250px;
 }
+
+.popover {
+    width: 382px;
+    // height: 425px;
+    max-width: 382px;
+}
+
+.popover .arrow {
+    display: none;
+}

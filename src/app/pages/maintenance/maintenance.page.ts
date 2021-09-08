@@ -7,7 +7,8 @@ import { combineLatest, Observable } from 'rxjs';
 import { FormControl, FormGroupDirective } from '@angular/forms';
 import { map, startWith, filter, tap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
-
+import { ModalController } from '@ionic/angular';
+import { ModalComponent } from './modal/modal.component';
 
 @Component({
   selector: 'app-maintenance',
@@ -40,19 +41,19 @@ export class MaintenanceComponent {
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
-  public showOverdue: string = 'Yes';
+  public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
-  public priority: string[] = ['High', 'Medium'];
-  public priorityList: string[] = ['High', 'Medium', 'Low'];
+  public priority: string[] = [''];
+  public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
-  public kitStatus: string[] = ['Kit Ready', 'Parts Available'];
+  public kitStatus: string[] = [''];
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
 
-  public workCenter: string[] = ['Mechanical'];
-  public workCenterList: string[] = ['Mechanical', 'Medium', 'Low'];
+  public workCenter: string[] = [''];
+  public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
-  public assign: string[] = ['Kerry Smith'];
+  public assign: string[] = [''];
   public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
  public showOperationsList = {};
 
@@ -63,7 +64,8 @@ export class MaintenanceComponent {
 
   constructor(
     private _maintenanceSvc: MaintenanceService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private modalCtrl: ModalController
   ) { }
 
   ngOnInit() {
@@ -179,5 +181,13 @@ export class MaintenanceComponent {
     console.log("Index is", index);
     this.showOperationsList[`${status}`][index] = !this.showOperationsList[`${status}`][index];
   }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: ModalComponent
+    });
+    return await modal.present();
+  }
+
 }
 

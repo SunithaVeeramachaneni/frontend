@@ -51,19 +51,19 @@ export class SparePartsComponent{
 
   @ViewChild('select1') selectRef: IonSelect ;
 
-  public showOverdue: string = 'Yes';
+  public showOverdue: string = '';
  public showOverdueList: string[] = ['Yes', 'No'];
 
- public priority: string[] = ['High','Medium'];
+ public priority: string[] = [''];
  public priorityList: string[] = ['High', 'Medium','Low'];
 
- public kitStatus: string[] = ['Kit Ready','Parts Available'];
+ public kitStatus: string[] = [''];
  public kitStatusList: string[] = ['Kit Ready', 'Parts Available','Waiting On Parts'];
 
- public workCenter: string[] = ['Mechanical'];
- public workCenterList: string[] = ['Mechanical', 'Medium','Low'];
+ public workCenter: string[] = [''];
+ public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
- public assign: string[] = ['Kerry Smith'];
+ public assign: string[] = [''];
  public assignList: string[] = ['Kerry Smith', 'Amy Butcher','Carlos Arnal', 'Steve Austin'];
 
  showFilters = false;

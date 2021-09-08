@@ -8,8 +8,10 @@ import { MaintenanceComponent } from './maintenance.page';
 
 import { AppMaterialModules } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
-
+import { ModalComponent } from './modal/modal.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+
+import { PopoverModule } from 'ngx-bootstrap/popover';
 
 @NgModule({
   imports: [
@@ -20,10 +22,12 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     CommonModule,
     AppMaterialModules,
     SharedModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    PopoverModule.forRoot() 
   ],
   declarations: [
-    MaintenanceComponent
+    MaintenanceComponent,
+    ModalComponent
   ],
   exports: [],
   entryComponents: []

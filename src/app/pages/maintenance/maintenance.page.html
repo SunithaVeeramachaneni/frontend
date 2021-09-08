@@ -3,7 +3,71 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>      
+          <!-- <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>       -->        
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fa fa-search" aria-hidden="true"></i>
+              </span>
+            </div>
+            <input type="text" placeholder="Search" aria-label="Search"style="border:1px solid #F2F2F2; opacity: 0.75; background:#F2F2F2;">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <ion-img [src]="filterIcon"
+                         [popover]="popTemplate"
+                         [placement]="'bottom'"
+                         [container]="'body'"
+                         #pop="bs-popover"></ion-img>
+              </span>
+            </div>
+          </div>
+
+          <ng-template #popTemplate>
+            <form #form="ngForm">
+              <mat-form-field appearance="outline" class="mat-field">
+                <mat-label>Show Overdue</mat-label>
+                <mat-select [formControl]="overdueFilter" name="showOverdue" [(ngModel)]="showOverdue">
+                  <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
+                    {{showdue}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="mat-field">
+                <mat-label>Priority</mat-label>
+                <mat-select name="priority" multiple [(ngModel)]="priority">
+                  <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+    
+              <mat-form-field appearance="outline" class="mat-field">
+                <mat-label>Kitting Status</mat-label>
+                <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
+                  <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+    
+              <mat-form-field appearance="outline" class="mat-field">
+                <mat-label>Work Center</mat-label>
+                <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
+                  <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+    
+              <mat-form-field appearance="outline" class="mat-field" *ngIf="workCenter != ''">
+                <mat-label>Assignee</mat-label>
+                <mat-select name="assign" multiple [(ngModel)]="assign">
+                  <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
+                </mat-select>
+              </mat-form-field> 
+
+              <br/>
+              <button class="btn apply-filters-btn" (click)="pop.hide()">Apply</button>
+              <button (click)="form.reset()" class="reset-filters-btn">Reset</button>
+              
+            </form>
+          </ng-template>
+
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
@@ -21,54 +85,6 @@
               <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
-          <button class="filter-btn" (click)="myFunction()">
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img>
-            <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
-          </button>
-      </ion-col>  
-    </ion-row>
-    <ion-row *ngIf="this.showFilters === true">
-      <ion-col class="filters-row">
-        <form #form="ngForm">
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Show Overdue</mat-label>
-            <mat-select [formControl]="overdueFilter" name="showOverdue">
-              <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
-                {{showdue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          
-          <!-- <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Priority</mat-label>
-            <mat-select name="priority" multiple [(ngModel)]="priority">
-              <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Kitting Status</mat-label>
-            <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
-              <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Work Center</mat-label>
-            <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
-              <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Assignee</mat-label>
-            <mat-select name="assign" multiple [(ngModel)]="assign">
-              <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
-            </mat-select>
-          </mat-form-field> -->
-
-          <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
-        </form>
       </ion-col>
     </ion-row>
 </ion-toolbar>
@@ -108,13 +124,13 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <ion-button disabled color="light" expand="full"> 
+            <ion-button (click)="openModal()" color="light" expand="full"> 
               <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
               <span class="assign-btn-text">ASSIGN</span> 
             </ion-button>
 
           
-            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false" disabled>
+            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
             </ion-button>
             <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
