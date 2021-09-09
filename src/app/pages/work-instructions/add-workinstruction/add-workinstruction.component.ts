@@ -15,6 +15,7 @@ import * as InstructionActions from '../state/intruction.actions';
 import { getInsToBePublished, getInstruction, getSteps } from '../state/instruction.selectors';
 import { CommonService } from '../../../shared/services/common.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -45,7 +46,10 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
     Equipements: '',
     Locations: '',
     updated_at: null,
-    Cover_Image: ''
+    Cover_Image: '',
+    IsFromAudioOrVideoFile: false,
+    FilePath: null,
+    FileType: null
   };
 
   insToBePublished: InsToBePublished[];
@@ -405,6 +409,10 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
     } else {
       this.titleErrors = {...this.titleErrors, required: true, exists: false};
     }
+  }
+
+  getS3Url = (filePath: string) => {
+    return `${environment.s3BaseUrl}${filePath}`;
   }
 
   public ngOnDestroy() {

@@ -19,6 +19,8 @@ import { DummyComponent } from '../../shared/components/dummy/dummy.component';
 import { WiCommonService } from './services/wi-common.services';
 import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
+import { ImportService } from './services/import.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-work-instructions',
@@ -37,8 +39,6 @@ export class WorkInstructionsPage {
   public categoryId;
   showMore = false;
   private getAllFavAndDraftInstSubscription: Subscription;
-  public fileData;
-  public allSheets;
   public assignedObjectsList;
   public copyInstructionsData = {
     recents: null,
@@ -83,7 +83,8 @@ export class WorkInstructionsPage {
               private base64HelperService: Base64HelperService,
               private wiCommonService: WiCommonService,
               private router: Router,
-              private errorHandlerService: ErrorHandlerService) { }
+              private errorHandlerService: ErrorHandlerService,
+              private importService: ImportService) { }
 
   getBase64Images = (instructions: Instruction[]) => {
     instructions.map(instruction => {
@@ -149,10 +150,6 @@ export class WorkInstructionsPage {
       );
   }
 
-  buildPayloadForInstruction(importedSheetsData: string) {
-    this.bulkUploadDialog(this.bulkUploadComponent, JSON.parse(importedSheetsData));
-  }
-
   bulkUploadDialog(content: TemplateRef<any> | ComponentType<any> | string, obj) {
     this.overlayService.open(content, obj);
   }
@@ -171,19 +168,51 @@ export class WorkInstructionsPage {
 
   uploadFile(event) {
     this.spinner.show();
-    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+    let isAudioOrVideoFile = false;
     const file = event.target.files[0];
-    const excelFormData = new FormData();
-    excelFormData.append('file', file);
-    this._instructionSvc.uploadWIExcel(excelFormData, info).subscribe(
-      resp => {
-        if (Object.keys(resp).length) {
-          this.fileData = JSON.stringify(resp);
-          this.buildPayloadForInstruction(this.fileData);
+    if (file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1) {
+      isAudioOrVideoFile = true;
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (isAudioOrVideoFile) {
+      formData.append('languageCode', 'en-US');
+      formData.append('userDetails', localStorage.getItem('loggedInUser'));
+      
+      this.importService.importFile(`${environment.wiApiUrl}speech-to-text/converter`, formData)
+        .subscribe(
+          data => {
+            console.log(data);
+            const { progress } = data;
+            if (progress === 0) {
+              this.spinner.hide();
+              this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile, redirectUrl: '/work-instructions/edit' });
+            } else if (progress === 100) {
+              this.wiCommonService.updateUploadInfo(data);
+              this.importService.closeConnection();
+            } else {
+              this.wiCommonService.updateUploadInfo(data);
+            }
+          },
+          error => {
+            console.log(error);
+            this.spinner.hide();
+            this.wiCommonService.updateUploadInfo({ message: error.message, progress: 100, isError: true });
+            this.errorHandlerService.handleError(error)
+            this.importService.closeConnection();
+          }
+        );
+    } else {
+      this._instructionSvc.uploadWIExcel(formData).subscribe(
+        resp => {
+          if (Object.keys(resp).length) {
+            this.bulkUploadDialog(this.bulkUploadComponent, { ...resp, isAudioOrVideoFile });
+          }
+          this.spinner.hide();
         }
-        this.spinner.hide();
-      }
-    );
+      );
+    }
   }
 
   resetFile(event: Event) {

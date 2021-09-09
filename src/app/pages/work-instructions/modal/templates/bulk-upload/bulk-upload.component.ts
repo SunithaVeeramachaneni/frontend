@@ -1,18 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {MyOverlayRef} from '../../myoverlay-ref';
-import {ThemePalette} from '@angular/material/core';
-import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
-import {InstructionService} from '../../../services/instruction.service';
-import {Router} from '@angular/router';
-import {concatMap, map, mergeMap, toArray} from 'rxjs/operators';
-import {AlertService} from '../../alert/alert.service';
-import {from, of} from 'rxjs';
-import { ErrorInfo } from '../../../../../interfaces';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MyOverlayRef } from '../../myoverlay-ref';
+import { ThemePalette } from '@angular/material/core';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { InstructionService } from '../../../services/instruction.service';
+import { Router } from '@angular/router';
+import { concatMap, map, mergeMap, toArray } from 'rxjs/operators';
+import { AlertService } from '../../alert/alert.service';
+import { from, of, Subscription } from 'rxjs';
+import { ErrorInfo, ImportFileEventData } from '../../../../../interfaces';
 import { InstructionWithSteps } from '../../state/bulkupload.reducer';
 import { State } from '../../../../../state/app.state';
 import { Store } from '@ngrx/store';
 import * as BulkUploadActions from '../../state/bulkupload.actions';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
+import { WiCommonService } from '../../../services/wi-common.services';
 
 
 @Component({
@@ -20,22 +21,26 @@ import { ErrorHandlerService } from '../../../../../shared/error-handler/error-h
   templateUrl: './bulk-upload.component.html',
   styleUrls: ['./bulk-upload.component.css']
 })
-export class BulkUploadComponent implements OnInit {
+export class BulkUploadComponent implements OnInit, OnDestroy {
 
   public steps = [];
-  public sheets = [];
   public ins = [];
   public assignedObjectsList;
   loadResults = false;
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'indeterminate';
+  isAudioOrVideoFile: boolean;
+  redirectUrl: string;
+  uploadInfo: ImportFileEventData;
+  private uploadInfoSubscription: Subscription;
 
   constructor(public ref: MyOverlayRef,
               private alertService: AlertService,
               private _instructionSvc: InstructionService,
               private router: Router,
               private store: Store<State>,
-              private errorHandlerService: ErrorHandlerService) {}
+              private errorHandlerService: ErrorHandlerService,
+              private wiCommonService: WiCommonService) {}
 
   instructionObject = (obj, type) => {
     let instructionObject: object = {
@@ -200,10 +205,13 @@ export class BulkUploadComponent implements OnInit {
 
   close() {
     this.ref.close();
-    const sheets = this.ref.data;
     if (this.loadResults === true) {
-      if (this.isUploadSuccess()) {
-        this.router.navigate(['/work-instructions/drafts']);
+      if (this.getDraftedInstructionsCount() && this.isUploadSuccess()) {
+        if (this.isAudioOrVideoFile) {
+          this.router.navigate([this.redirectUrl]);
+        } else {
+          this.router.navigate(['/work-instructions/drafts']);
+        }
       } else {
         this.router.navigate(['/work-instructions']);
       }
@@ -341,7 +349,6 @@ export class BulkUploadComponent implements OnInit {
         data => {
           if (displayAlert) {
             this.alertService.success('Instruction has be deleted');
-            // this.ins.splice(i, 1);
             this.ins[i].insDeletedSuccessfully = true;
           }
         },
@@ -378,75 +385,108 @@ export class BulkUploadComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getBusinessObjects();
-    const sheets = this.ref.data;
-    const allKeys = sheets ? Object.keys(sheets) : [];
-    for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
-      let steps = this.steps;
-      steps = sheets[allKeys[fieldKey]];
-      if (steps && steps.length !== 0) {
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-        const insResultedObject = {
-          instructionName: steps[0].WorkInstruction,
-          insPostedSuccessfully: false,
-          insPostingFailed: false,
-        };
-        this.ins = [...this.ins, insResultedObject];
-        const instructionHeaderPayload = {
-          AssignedObjects: this.businessObject(steps[0].AssignedObjects),
-          Categories: null,
-          CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-          created_at: '',
-          EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-          IsFavorite: false,
-          IsPublishedTillSave: false,
-          Published: false,
-          SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
-          SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
-          Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
-          Cover_Image: steps[0].Cover_Image_Name,
-          WI_Desc: null,
-          WI_Id: null,
-          WI_Name: steps[0].WorkInstruction.trim(),
-          updated_at: ''
-        };
-        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(',') : [];
+    this.uploadInfoSubscription = this.wiCommonService.uploadInfoAction$
+      .subscribe(
+        info => {
+          const { message, progress, wiName, id, isError } = info;
+          if (progress === 100) {
+            this.loadResults = true;
+            this.redirectUrl += `/${id}`;
+            let insPostedSuccessfully = true;
+            let insPostingFailed = false;
+            let instructionName = wiName;
 
-        from(catgrs)
-          .pipe(
-            concatMap((category: string) => {
-              category = category.trim();
-              return this._instructionSvc.getCategoriesByName(category, info)
-                .pipe(
-                  mergeMap(data => {
-                    if (data.length === 0) {
-                      return this.addCategory(category, info);
-                    } else {
-                      return of(data[0]);
-                    }
-                  })
-                );
-            }),
-            toArray()
-          ).subscribe(
-            categories => {
-              categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
-              instructionHeaderPayload.Categories = JSON.stringify(categories);
-              if (steps.length === 1) {
-                this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
-              } else {
-                this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
-              }
-            },
-            error => {
-              this.errorHandlerService.handleError(error);
-              insResultedObject.insPostingFailed = true;
-              if (fieldKey + 1 === allKeys.length) {
-                this.loadResults = true;
-              }
+            if (isError) {
+              insPostedSuccessfully = false;
+              insPostingFailed = true;
+              instructionName = message;
             }
-          );
+
+            this.ins = [ ...this.ins, { id, instructionName, insPostedSuccessfully, insPostingFailed }];
+          }
+          this.uploadInfo = info;
+        }
+      );
+
+    let data = this.ref.data;
+    const { isAudioOrVideoFile, redirectUrl } = data;
+    this.isAudioOrVideoFile = isAudioOrVideoFile;
+    this.redirectUrl = redirectUrl;
+    delete data.isAudioOrVideoFile;
+    delete data.redirectUrl;
+
+    if (isAudioOrVideoFile) {
+      this.uploadInfo = data;
+    } else {
+      this.getBusinessObjects();
+      const allKeys = data ? Object.keys(data) : [];
+      for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
+        let steps = this.steps;
+        steps = data[allKeys[fieldKey]];
+        if (steps && steps.length !== 0) {
+          const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+          const insResultedObject = {
+            instructionName: steps[0].WorkInstruction,
+            insPostedSuccessfully: false,
+            insPostingFailed: false,
+          };
+          this.ins = [...this.ins, insResultedObject];
+          const instructionHeaderPayload = {
+            AssignedObjects: this.businessObject(steps[0].AssignedObjects),
+            Categories: null,
+            CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+            created_at: '',
+            EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+            IsFavorite: false,
+            IsPublishedTillSave: false,
+            Published: false,
+            SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
+            SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
+            Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
+            Cover_Image: steps[0].Cover_Image_Name,
+            WI_Desc: null,
+            WI_Id: null,
+            WI_Name: steps[0].WorkInstruction.trim(),
+            updated_at: ''
+          };
+          const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+          const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(',') : [];
+  
+          from(catgrs)
+            .pipe(
+              concatMap((category: string) => {
+                category = category.trim();
+                return this._instructionSvc.getCategoriesByName(category, info)
+                  .pipe(
+                    mergeMap(data => {
+                      if (data.length === 0) {
+                        return this.addCategory(category, info);
+                      } else {
+                        return of(data[0]);
+                      }
+                    })
+                  );
+              }),
+              toArray()
+            ).subscribe(
+              categories => {
+                categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
+                instructionHeaderPayload.Categories = JSON.stringify(categories);
+                if (steps.length === 1) {
+                  this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
+                } else {
+                  this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
+                }
+              },
+              error => {
+                this.errorHandlerService.handleError(error);
+                insResultedObject.insPostingFailed = true;
+                if (fieldKey + 1 === allKeys.length) {
+                  this.loadResults = true;
+                }
+              }
+            );
+        }
       }
     }
   }
@@ -483,6 +523,24 @@ export class BulkUploadComponent implements OnInit {
       return true;
     } else {
       return false;
+    }
+  }
+
+  getBorderStyle = (hide: boolean = false) => {
+    let border;
+    if (this.isAudioOrVideoFile && this.uploadInfo.progress !== 100) {
+      border = 0;
+    } else if (hide && this.getDeletedInstructionsCount() === this.ins.length) {
+      border = 0;
+    } else {
+      border = '1px solid #c8ced3';
+    }
+    return { 'border-top': border };
+  }
+
+  ngOnDestroy(): void {
+    if (this.uploadInfoSubscription) {
+      this.uploadInfoSubscription.unsubscribe();
     }
   }
 }
