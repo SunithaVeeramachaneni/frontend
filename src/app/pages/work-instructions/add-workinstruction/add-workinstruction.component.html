@@ -42,7 +42,7 @@
             <button type="button" [popover]="popTemplate" [placement]="'bottom'" [container]="'body'" #pop="bs-popover" [outsideClick]="true"> <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon></button>
         
              <ng-template #popTemplate>
-               <!-- <plyr style="display: block; width: 640px;" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="player=$event" (plyrPlay)="played($event)"></plyr> -->
+               <plyr style="display: block; width: 640px;" plyrType="video" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="setPlayer($event)" (plyrPlay)="played($event)"></plyr>
                
                <button (click)="play()">Play</button>
                

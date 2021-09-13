@@ -99,10 +99,13 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
               private errorHandlerService: ErrorHandlerService) {
   }
 
+  setPlayer(event) {
+    this.player = event;
+  }
+
   ionViewDidEnter() {
     this.workInstructionTitle.nativeElement.focus();
   }
-
 
   ngOnInit(): void {
     this.insToBePublishedSubscription = this.store.select(getInsToBePublished).subscribe(
