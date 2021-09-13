@@ -59,8 +59,8 @@
                   <mat-card-content>
                     <div class="display">
                       <img src="../../../../assets//work-instructions-icons/svg/backward10sec.svg" class="backward-icon"/>
-                      <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/play_icon.svg" class="play-icon"/>
-                      <!-- <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/pause_icon.svg"/>-->
+                      <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/play_icon.svg" class="play-icon" [hidden]="this.getStatus === false"/>
+                      <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/pause_icon.svg" class="play-icon" [hidden]="this.getStatus === true"/>
                       <img src="../../../../assets//work-instructions-icons/svg/forward10sec.svg" class="forward-icon "/>
                     </div>
                     
