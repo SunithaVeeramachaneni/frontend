@@ -38,8 +38,26 @@
     width: 315px;
   }
   
- .popover {
+  .plyr__tooltip {
+      display: none;
+  }
+
+  .plyr__progress {
+      width: 50%;
+  }
+
+  .plyr__progress input {
+    width: 320px;
+    height: 2px;
+    margin: 30px 30px;
+  }
+
+ .audioPopover {
     width: 382px;
     height: 176px;
     max-width: 382px;
+  }
+
+  .popover-body {
+      padding: 0;
   }

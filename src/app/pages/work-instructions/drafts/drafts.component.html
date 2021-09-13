@@ -16,32 +16,6 @@
         <option *ngFor="let obj of this.authors" [value]="obj">{{obj}}</option>
       </select>
     </div>
-    <button type="button" [popover]="popTemplate"
-    [placement]="'bottom'"
-    [container]="'body'"
-    #pop="bs-popover"
-    [outsideClick]="true"
-    ><mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon></button>
-
-<ng-template #popTemplate class="audio-popover">
-  <div>
-  <span style="padding: 10px;">
-    <mat-icon style="margin-top: 10px;">music_note</mat-icon>
-    <span class="audio-title">Residential smart meter installation</span>
-  </span>
-  <br/>
-  <span>
-    <button (click)="play()">
-      {{this.getStatus=== false ? 'PLAY' : 'Pause'}}
-      <!-- <mat-icon *ngIf="this.getStatus === false">play_arrow</mat-icon>
-      <mat-icon *ngIf="this.getStatus === true">pause</mat-icon> -->
-    </button>
-  </span>
- 
-  <plyr style="display: block; width: 640px;" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="player = $event" (plyrPlay)="played($event)"></plyr>
-
-</div>
-</ng-template>
 
     <table id="draft-table" class="table">
       <thead>

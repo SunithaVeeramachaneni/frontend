@@ -74,17 +74,3 @@ tbody tr td:nth-child(5) {
   vertical-align: middle;
   border-bottom: 1px solid #c8ced3;
 }
-
-.audio-title {
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 143%;
-  align-items: center;
-  letter-spacing: 0.15px;
-  color: #000000;
-  margin-left: 20px;
-  position: relative;
-  top: -5px;
-}
