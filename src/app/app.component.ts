@@ -43,7 +43,8 @@ export class AppComponent implements OnInit {
         { title: 'Favorites', url:'/work-instructions/favorites' },
         { title: 'Drafts', url:'/work-instructions/drafts' },
         { title: 'Published', url:'/work-instructions/published' },
-        { title: 'Recents', url:'/work-instructions/recents' }
+        { title: 'Recents', url:'/work-instructions/recents' },
+        { title: 'Files', url:'/work-instructions/files' }
       ]
     },
   ];

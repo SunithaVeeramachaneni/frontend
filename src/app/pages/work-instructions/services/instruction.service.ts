@@ -55,6 +55,14 @@ export class InstructionService {
     return this._appService._getResp(environment.wiApiUrl, 'categories', info);
   }
 
+  getAllFolders(info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
+    return this._appService._getResp(environment.wiApiUrl, 'allMediaFolders', info);
+  }
+  
+  getAllMediaFiles(folder, info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
+    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFiles/', folder.Prefix, info);
+  }
+
   getSelectedCategory(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
     return this._appService._getRespById(environment.wiApiUrl, 'categories/', categoryId, info);
   }

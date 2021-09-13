@@ -6,7 +6,7 @@ import { DraftsComponent } from './drafts/drafts.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { PublishedComponent } from './published/published.component';
 import { RecentsComponent } from './recents/recents.component';
-
+import { MediaFilesComponent } from './files/files.component';
 import { WorkInstructionsPage } from './work-instructions.page';
 
 const routes: Routes = [
@@ -23,6 +23,8 @@ const routes: Routes = [
   { path: 'published/:id', data: {title: ''}, component: AddWorkinstructionComponent },
   { path: 'recents', data: {title: 'Recents'}, component: RecentsComponent },
   { path: 'recents/:id', data: {title: ''}, component: AddWorkinstructionComponent },
+  { path: 'files', data: {title: 'Files'}, component: MediaFilesComponent },
+  
 ];
 
 @NgModule({
