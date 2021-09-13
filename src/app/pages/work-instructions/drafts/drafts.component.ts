@@ -8,6 +8,8 @@ import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { PlyrComponent } from 'ngx-plyr';
+import * as Plyr from 'plyr';
 
 @Component({
   selector: 'app-drafts',
@@ -50,12 +52,37 @@ export class DraftsComponent implements OnInit {
               private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService) { }
 
+  @ViewChild(PlyrComponent)
+  plyr: PlyrComponent;
+  player: Plyr;
+  getStatus: boolean = false;
+
+  videoSources: Plyr.Source[] = [
+    {
+      src: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+      type: 'audio/mp3'
+    }
+  ];
   ngOnInit() {
     this.getAllDraftedInstructions();
     this.AuthorDropDown();
     this.route.queryParamMap.subscribe(params => {
       this.search = params.get('search');
     });
+  }
+
+  played(event: Plyr.PlyrEvent) {
+    console.log('played', event);
+  }
+
+  play(): void {
+    this.getStatus = !this.getStatus;
+    if(this.getStatus === true) {
+      this.player.play();
+    }
+    else {
+      this.player.pause();
+    }
   }
 
   AuthorDropDown () {

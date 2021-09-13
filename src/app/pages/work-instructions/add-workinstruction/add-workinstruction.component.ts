@@ -16,6 +16,8 @@ import { getInsToBePublished, getInstruction, getSteps } from '../state/instruct
 import { CommonService } from '../../../shared/services/common.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { environment } from '../../../../environments/environment';
+import { PlyrComponent } from 'ngx-plyr';
+import * as Plyr from 'plyr';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -74,6 +76,18 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   private instructionSubscription: Subscription;
   private stepsSubscription: Subscription;
 
+  @ViewChild(PlyrComponent)
+  plyr: PlyrComponent;
+  player: Plyr;
+  getStatus: boolean = false;
+
+  videoSources: Plyr.Source[] = [
+    {
+      src: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
+      type: 'audio/mp3'
+    }
+  ];
+
   constructor(private spinner: NgxSpinnerService,
               private route: ActivatedRoute,
               private wiCommonSvc: WiCommonService,
@@ -88,6 +102,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.workInstructionTitle.nativeElement.focus();
   }
+
 
   ngOnInit(): void {
     this.insToBePublishedSubscription = this.store.select(getInsToBePublished).subscribe(
@@ -203,6 +218,21 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  
+  played(event: Plyr.PlyrEvent) {
+    console.log('played', event);
+  }
+
+  play(): void {
+    this.getStatus = !this.getStatus;
+    if(this.getStatus === true) {
+      this.player.play();
+    }
+    else {
+      this.player.pause();
+    }
   }
 
   updateFavFlag(wiToBePublsihed) {

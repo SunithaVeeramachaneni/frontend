@@ -13,3 +13,33 @@
     --width: 400px;
     --height: 250px;
 }
+
+.plyr__control {
+    display: none;
+  }
+  
+  /* .plyr__controls__item {
+    display: none;
+  } */
+  
+  .plyr__progress__buffer {
+    display: none;
+  }
+  
+  .plyr__volume{
+    display: none;
+  }
+  
+  .plyr__time {
+    display: none;
+  }
+  
+  .plyr video {
+    width: 315px;
+  }
+  
+ .popover {
+    width: 382px;
+    height: 176px;
+    max-width: 382px;
+  }

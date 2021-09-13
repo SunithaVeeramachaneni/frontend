@@ -38,7 +38,17 @@
      <div class="col-lg-6 col-md-6 alignment">
         <ul class="wi-status display">
           <li class="display">
-            <a [matMenuTriggerFor]="player">
+          
+            <button type="button" [popover]="popTemplate" [placement]="'bottom'" [container]="'body'" #pop="bs-popover" [outsideClick]="true"> <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon></button>
+        
+             <ng-template #popTemplate>
+               <!-- <plyr style="display: block; width: 640px;" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="player=$event" (plyrPlay)="played($event)"></plyr> -->
+               
+               <button (click)="play()">Play</button>
+               
+             </ng-template>
+
+             <a [matMenuTriggerFor]="player">
               <span *ngIf="selectedInstruction.IsFromAudioOrVideoFile" matTooltip="Play Audio/Video File" matTooltipClass="">
                 <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon>
               </span>
