@@ -13,9 +13,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   imports: [
-    
+    FormsModule,
+    ReactiveFormsModule,
     IonicModule,
-   
     MaintenanceRoutingModule,
     CommonModule,
     AppMaterialModules,
