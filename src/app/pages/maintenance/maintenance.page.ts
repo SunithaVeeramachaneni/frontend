@@ -46,19 +46,26 @@ export class MaintenanceComponent {
   public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
-  public priority: string[] = [];
+  public priority: string[] = ['Very High'];
   public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
-  public kitStatus: string[] = [''];
+  public kitStatus: string[] = [];
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
 
-  public workCenter: string[] = [''];
+  public workCenter: string[] = [];
   public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
-  public assign: string[] = [''];
+  public assign: string[] = [];
   public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
-  public showOperationsList = {};
-  public initSearchFilter = {"priority":["Very High","High"],"showOverdue":"No"}
+  public showOperationsList = {}; 
+  public initSearchFilter = {
+    "priority": [],
+    "kitStatus": [],
+    "workCenter": [],
+    "assign": [],
+    "search":"",
+    "showOverdue": "",
+  }
 
   hideList = true;
   showFilters = false;
@@ -73,13 +80,13 @@ export class MaintenanceComponent {
 
   ngOnInit() {
     console.log("Page init")
-    this.getWorkOrders();
+    this.getWorkOrders(this.initSearchFilter);
   }
 
-  searchFilter(newItem: string) {
-    alert(JSON.stringify(newItem))
+  searchFilter(newItem) {
+      this.getWorkOrders(newItem);
   }
-  getWorkOrders() {
+  getWorkOrders(initSearchFilter) {
     this.selectDate = new FormControl('month');
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('month'));
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
@@ -105,14 +112,13 @@ export class MaintenanceComponent {
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
-            // (
-            //   workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
-            //   workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
+            (
+              workOrder.workOrderDesc.toLowerCase().indexOf(initSearchFilter['search']?initSearchFilter['search'].toLowerCase():"") !== -1 ||
+              workOrder.workOrderID.toLowerCase().indexOf(initSearchFilter['search']?initSearchFilter['search'].toLowerCase():"") !== -1) &&
             
-            this.filterDate(workOrder.dueDate, filterDate)
-            //  &&
-            // this.isOverdue(workOrder.dueDate, overdue) &&
-            // this.filterPriority(workOrder.priorityStatus,priority)
+              this.filterDate(workOrder.dueDate, filterDate) &&
+              this.isOverdue(workOrder.dueDate, initSearchFilter.showOverdue) &&
+              this.filterPriority(workOrder.priorityStatus,initSearchFilter.priority)
 
           )
         this.spinner.hide();
@@ -124,8 +130,7 @@ export class MaintenanceComponent {
   }
 
   public filterPriority =(status,priority)=>{
-    console.log("priority",priority.length)
-    if(priority.length==0){
+    if(priority===null || priority.length==0){
       return true;
     }
     else {

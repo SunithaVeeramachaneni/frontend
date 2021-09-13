@@ -4,7 +4,7 @@
         <i class="fa fa-search" aria-hidden="true"></i>
       </span>
     </div>
-    <input type="text" placeholder="Search" [(ngModel)]="searchValue"  aria-label="Search"style="border:1px solid #F2F2F2; opacity: 0.75; background:#F2F2F2;">
+    <input type="text" placeholder="Search" [(ngModel)]="searchValue" (change)="searchOrder($event)"  aria-label="Search"style="border:1px solid #F2F2F2; opacity: 0.75; background:#F2F2F2;">
     <div class="input-group-prepend">
       <span class="input-group-text">
         <ion-img [src]="filterIcon"

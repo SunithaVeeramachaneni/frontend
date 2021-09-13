@@ -17,19 +17,30 @@ export class CommonFilterComponent implements OnInit {
   @Input() assignList;
   @Output()  filterEvent = new EventEmitter<any>();
   
-  public searchValue;
-  public priority;
-  public showOverdue;
-  public kitStatus;
-  public workCenter;
-  public assign;
+  public searchValue="";
+  public priority=[];
+  public showOverdue="";
+  public kitStatus=[];
+  public workCenter=[];
+  public assign=[];
 
   constructor() { }
   ngOnInit() {}
 
   searchFilter() {
     this.filterEvent.emit({
-      searchValue:this.searchValue,
+      search:this.searchValue,
+      priority:this.priority,
+      showOverdue:this.showOverdue,
+      kitStatus:this.kitStatus,
+      workCenter:this.workCenter,
+      assign:this.assign
+    });
+  }
+
+  searchOrder(newValue){
+    this.filterEvent.emit({
+      search:newValue.target.value,
       priority:this.priority,
       showOverdue:this.showOverdue,
       kitStatus:this.kitStatus,
