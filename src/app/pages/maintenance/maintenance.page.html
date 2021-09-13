@@ -4,7 +4,14 @@
     <ion-row>
       <ion-col class="maintenance-header">
           <!-- <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>       -->        
-          <app-common-filter [title]="headerTitle" [showOverdueList]="showOverdueList"></app-common-filter>
+          <app-common-filter [title]="headerTitle" 
+          [showOverdueList]="showOverdueList"
+          [priorityList]="priorityList"
+          [kitStatusList]="kitStatusList"
+          [workCenterList]="workCenterList"
+          [assignList]="assignList"
+          (filterEvent)="searchFilter($event)">
+        </app-common-filter>
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>

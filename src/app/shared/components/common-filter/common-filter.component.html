@@ -4,7 +4,7 @@
         <i class="fa fa-search" aria-hidden="true"></i>
       </span>
     </div>
-    <input type="text" placeholder="Search" [formControl]="filter" aria-label="Search"style="border:1px solid #F2F2F2; opacity: 0.75; background:#F2F2F2;">
+    <input type="text" placeholder="Search" [(ngModel)]="searchValue"  aria-label="Search"style="border:1px solid #F2F2F2; opacity: 0.75; background:#F2F2F2;">
     <div class="input-group-prepend">
       <span class="input-group-text">
         <ion-img [src]="filterIcon"
@@ -20,16 +20,16 @@
     <form #form="ngForm">
       <mat-form-field appearance="outline" class="mat-field">
         <mat-label>Show Overdue</mat-label>
-        <mat-select [formControl]="overdueFilter" name="showOverdue" [(ngModel)]="showOverdue">
+        <mat-select name="showOverdue" [(ngModel)]="showOverdue">
           <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
             {{showdue}}
           </mat-option>
         </mat-select>
       </mat-form-field>
       
-      <!-- <mat-form-field appearance="outline" class="mat-field">
+      <mat-form-field appearance="outline" class="mat-field">
         <mat-label>Priority</mat-label>
-        <mat-select name="priority" multiple [(ngModel)]="priority" [formControl]="priorityFilter">
+        <mat-select name="priority" multiple [(ngModel)]="priority">
           <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -53,10 +53,10 @@
         <mat-select name="assign" multiple [(ngModel)]="assign">
           <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
         </mat-select>
-      </mat-form-field>  -->
+      </mat-form-field> 
 
       <br/>
-      <button class="btn apply-filters-btn" (click)="pop.hide()">Apply</button>
+      <button class="btn apply-filters-btn" (click)="pop.hide();searchFilter()">Apply</button>
       <button (click)="form.reset()" class="reset-filters-btn">Reset</button>
       
     </form>
