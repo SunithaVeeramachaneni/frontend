@@ -74,3 +74,39 @@ tbody tr td:nth-child(5) {
   vertical-align: middle;
   border-bottom: 1px solid #c8ced3;
 }
+
+.files-icons-list {
+  position: relative;
+  top: 5px;
+}
+
+.files-icons {
+  color: #76767B;
+  margin: 0 15px;
+  cursor: pointer;
+  font-size: 26px;
+}
+
+.create-wi-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 28px;
+  letter-spacing: 0.15px;
+  color: #3D5AFE;
+  background-color: transparent;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  border-radius: 4px;
+}
+
+.create-wi-btn-icon {
+  position: relative;
+  top: 5px;
+}
+
+.create-wi-btn-text {
+  position: relative;
+  top: -1px;
+  padding-left: 5px;
+}

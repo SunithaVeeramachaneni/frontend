@@ -21,9 +21,9 @@
             <span [hidden]="reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_downward</mat-icon></span>
             <span [hidden]="!reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_upward</mat-icon></span>
           </th>
-          <th scope="col" class="width-20" (click)="setOrder('Category_Name')">Date and Time
-            <span [hidden]="reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_upward</mat-icon></span>
+          <th scope="col" class="width-20" (click)="setOrder('updated_at')">Date and Time
+            <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_downward</mat-icon></span>
+            <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_upward</mat-icon></span>
           </th>
      
           <th scope="col" class="width-10"></th>
@@ -37,6 +37,15 @@
 
             <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/files', obj.Id]">{{obj.dateCreated}}</a></td>
             <td class="width-50">
+              <span class="files-icons-list">
+                <mat-icon class="files-icons">play_circle_outline</mat-icon>
+                <mat-icon class="files-icons">edit</mat-icon>
+                <mat-icon class="files-icons">delete_forever</mat-icon>
+              </span>          
+              <button class="create-wi-btn">
+                <mat-icon class="create-wi-btn-icon">add</mat-icon>
+                <span class="create-wi-btn-text">Create Work Instructions</span>
+              </button>
                   <!-- <button class="play_audio_button" 
                         [popover]="popTemplate" 
                         [placement]="'bottom'" 
@@ -83,6 +92,14 @@
     </table>
     <div class="no-records" *ngIf="this.wiMediaFiles && this.wiMediaFiles.length === 0">
       No Video/Audio Files available in the repository!
+    </div>
+    <div *ngIf="this.wiMediaFiles && this.wiMediaFiles.length > 0">
+      <pagination-template #p="paginationApi"
+                      [id]="config.id"
+                      (pageChange)="config.currentPage = $event"
+                      (pageBoundsCorrection)="config.currentPage = $event">
+        <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+      </pagination-template>
     </div>
     
   </div>
