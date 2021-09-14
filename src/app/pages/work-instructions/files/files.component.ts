@@ -20,7 +20,7 @@ export class MediaFilesComponent implements OnInit {
   public wiMediaFiles = [];
   public mediaFile = {
     fileName: '',
-    dateCreated: ''
+    updated_at: ''
   }
   config: any = {
     id: 'files',
@@ -112,13 +112,19 @@ export class MediaFilesComponent implements OnInit {
 
   convertDateAndTime(dateAndTime) {
     let dt = dateAndTime.substring(0, 8)   // Returns "Date"
-    let time = dateAndTime.substring(9)   // Returns "Time"
+    let time = dateAndTime.substring(8)   // Returns "Time"
+    let hours = dateAndTime.substring(8,10);
+    let mins = dateAndTime.substring(10,12);
+    let secs = dateAndTime.substring(12,14);
+    let timeForm = hours + ':' + mins + ':' + secs;
+
     let year = dt.substr(0, 4);
     let month = dt.substr(4, 2);
     let day = dt.substr(6, 2);
     let dateForm = month + '-' + day + '-' + year
     let monthAndYr = new Date(dateForm).toLocaleString('en-us', { month: 'short', year: 'numeric' });
-    return day + ' ' + monthAndYr;
+    //return day + ' ' + monthAndYr;
+    return day + ' ' + monthAndYr + ' | ' + timeForm;
   }
 
 
@@ -135,11 +141,11 @@ export class MediaFilesComponent implements OnInit {
                   let splitFile = this.splitFileFromFolder(file)
 
                   this.mediaFile.fileName = splitFile[2];
-                  this.mediaFile.dateCreated = this.convertDateAndTime(splitFile[1]);
+                  this.mediaFile.updated_at = this.convertDateAndTime(splitFile[1]);
                   this.wiMediaFiles.push(this.mediaFile);
                   this.mediaFile = {
                     fileName: '',
-                    dateCreated: ''
+                    updated_at: ''
                   }
                 });
               });
