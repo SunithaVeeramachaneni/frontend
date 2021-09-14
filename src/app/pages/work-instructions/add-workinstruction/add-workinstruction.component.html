@@ -38,44 +38,7 @@
      <div class="col-lg-6 col-md-6 alignment">
         <ul class="wi-status display">
           <li class="display">
-          
-            <button class="play_audio_button" 
-                    [popover]="popTemplate" 
-                    [placement]="'bottom'" 
-                    [container]="'body'" 
-                    #pop="bs-popover" 
-                    [outsideClick]="true"
-                    containerClass="audioPopover"
-            > 
-                    <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon>
-            </button>
-        
-             <ng-template #popTemplate>
-                <mat-card class="audio-card">
-                  <mat-card-header class="audio-header">
-                    <mat-icon>music_note</mat-icon>
-                    <span class="audio-title">Residential smart meter installation</span>
-                  </mat-card-header>  
-                  <mat-card-content>
-                    <div class="display">
-                      <img src="../../../../assets//work-instructions-icons/svg/backward10sec.svg" class="backward-icon"/>
-                      <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/play_icon.svg" class="play-icon" [hidden]="this.getStatus === false"/>
-                      <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/pause_icon.svg" class="play-icon" [hidden]="this.getStatus === true"/>
-                      <img src="../../../../assets//work-instructions-icons/svg/forward10sec.svg" class="forward-icon "/>
-                    </div>
-                    
-                    <plyr plyrType="video" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="setPlayer($event)" (plyrPlay)="played($event)"></plyr>
-              
-                  </mat-card-content>
-                  
-                </mat-card>
-            </ng-template>
-
-             <a [matMenuTriggerFor]="player">
-              <span *ngIf="selectedInstruction.IsFromAudioOrVideoFile" matTooltip="Play Audio/Video File" matTooltipClass="">
-                <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon>
-              </span>
-            </a>
+            <app-player *ngIf="selectedInstruction.IsFromAudioOrVideoFile" [fileInfo]="fileInfo"></app-player>
             <a [class.disabled] = "!titleProvided" (click)="setFav()">
               <span *ngIf="!selectedInstruction.IsFavorite" matTooltip="Make it Favorite" matTooltipClass="">
                 <mat-icon class="mat-icon-star">star_border</mat-icon>
@@ -100,9 +63,6 @@
               </button>
             </mat-menu>
 
-            <mat-menu #player="matMenu">
-              <audio [src]="getS3Url(selectedInstruction.FilePath)" controls></audio>
-            </mat-menu>
           </li>
           <li>
             <div class="message" *ngIf="this.saveStatus === 'Saving..'"><mat-icon class="cached">cached</mat-icon>{{saveStatus}}</div>

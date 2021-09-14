@@ -37,6 +37,7 @@ import { FavoritesComponent } from './favorites/favorites.component';
 import { CategoryWiseInstructionsComponent } from './category-wise-instructions/category-wise-instructions.component';
 import { PlyrModule } from 'ngx-plyr';
 import { PopoverModule } from 'ngx-bootstrap/popover';
+import { PlayerComponent } from './player/player.component';
 
 @NgModule({
   imports: [
@@ -84,7 +85,8 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     PublishedComponent,
     RecentsComponent,
     FavoritesComponent,
-    CategoryWiseInstructionsComponent
+    CategoryWiseInstructionsComponent,
+    PlayerComponent
   ]
 })
 export class WorkInstructionsPageModule {}

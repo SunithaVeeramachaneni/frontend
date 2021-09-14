@@ -47,7 +47,7 @@ export interface InstructionOptional {
   IsPublishedTillSave?: boolean;
   Cover_Image?: string;
   IsFromAudioOrVideoFile?: boolean;
-  FilePath?: boolean;
+  FilePath?: string;
   FileType?: string;
   categories?: string[];
 }

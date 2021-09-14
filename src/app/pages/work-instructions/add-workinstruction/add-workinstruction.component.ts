@@ -8,16 +8,13 @@ import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {WiCommonService} from '../services/wi-common.services';
 import {ToastService} from '../../../shared/toast';
-import { InsToBePublished, Instruction, ErrorInfo, Step } from '../../../interfaces';
+import { InsToBePublished, Instruction, ErrorInfo, Step, FileInfo } from '../../../interfaces';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { getInsToBePublished, getInstruction, getSteps } from '../state/instruction.selectors';
 import { CommonService } from '../../../shared/services/common.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { environment } from '../../../../environments/environment';
-import { PlyrComponent } from 'ngx-plyr';
-import * as Plyr from 'plyr';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -69,24 +66,13 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   titleTextChanged = new Subject<string>();
   titleErrors: any = {exists: false, required: false};
   addOrUpdateTitle = false;
+  fileInfo: FileInfo;
   private titleChangeSubscription: Subscription;
   private stepDetailsSaveSubscription: Subscription;
   private publishInstructionSubscription: Subscription;
   private insToBePublishedSubscription: Subscription;
   private instructionSubscription: Subscription;
   private stepsSubscription: Subscription;
-
-  @ViewChild(PlyrComponent)
-  plyr: PlyrComponent;
-  player: Plyr;
-  getStatus: boolean = false;
-
-  videoSources: Plyr.Source[] = [
-    {
-      src: 'http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3',
-      type: 'audio/mp3'
-    }
-  ];
 
   constructor(private spinner: NgxSpinnerService,
               private route: ActivatedRoute,
@@ -97,10 +83,6 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
               private store: Store<State>,
               private commonService: CommonService,
               private errorHandlerService: ErrorHandlerService) {
-  }
-
-  setPlayer(event) {
-    this.player = event;
   }
 
   ionViewDidEnter() {
@@ -115,6 +97,8 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
       instruction => {
         this.selectedInstruction = { ...instruction };
         this.instructionTitle = instruction.WI_Name;
+        const { FilePath: filePath, FileType: fileType } = this.selectedInstruction;
+        this.fileInfo = { filePath, fileType };
       }
     );
     this.stepsSubscription = this.store.select(getSteps).subscribe(
@@ -221,21 +205,6 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
         );
       }
     });
-  }
-
-  
-  played(event: Plyr.PlyrEvent) {
-    console.log('played', event);
-  }
-
-  play(): void {
-    this.getStatus = !this.getStatus;
-    if(this.getStatus === true) {
-      this.player.play();
-    }
-    else {
-      this.player.pause();
-    }
   }
 
   updateFavFlag(wiToBePublsihed) {
@@ -442,10 +411,6 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
     } else {
       this.titleErrors = {...this.titleErrors, required: true, exists: false};
     }
-  }
-
-  getS3Url = (filePath: string) => {
-    return `${environment.s3BaseUrl}${filePath}`;
   }
 
   public ngOnDestroy() {
