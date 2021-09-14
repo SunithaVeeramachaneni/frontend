@@ -33,9 +33,9 @@
         <ng-container *ngIf="( this.wiMediaFiles | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
           <app-dummy #filteredResults [value]="result"></app-dummy>
           <tr *ngFor="let obj of result">
-            <th scope="row" class="width-30">{{obj.fileName}}</th>
+            <th scope="row" class="width-30"><a class="files-names"><mat-icon class="music-icon"> music_note </mat-icon> {{obj.fileName}}</a></th>
 
-            <td class="width-20">{{obj.updated_at}}</td>
+            <td class="width-20"><a class="files-data">{{obj.updated_at}}</a></td>
             <td class="width-50">
               <span class="files-icons-list">
                 <mat-icon class="files-icons">play_circle_outline</mat-icon>

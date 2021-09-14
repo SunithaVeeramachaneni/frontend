@@ -140,7 +140,7 @@ export class MediaFilesComponent implements OnInit {
                 files.forEach(file => {
                   let splitFile = this.splitFileFromFolder(file)
 
-                  this.mediaFile.fileName = splitFile[2];
+                  this.mediaFile.fileName = splitFile[2].substring(0, splitFile[2].indexOf('.'));
                   this.mediaFile.updated_at = this.convertDateAndTime(splitFile[1]);
                   this.wiMediaFiles.push(this.mediaFile);
                   this.mediaFile = {
