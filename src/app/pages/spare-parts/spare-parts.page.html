@@ -70,11 +70,11 @@
               <ion-item style="display: none;" *ngIf="this.technicians$ | async as technicians">
                
                 <ion-label>Assign To:</ion-label>
-                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i);" [interfaceOptions]="customPopoverOptions" interface="popover">
+                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i,workOrder.workOrderID);" [interfaceOptions]="customPopoverOptions" interface="popover">
                 <ion-select-option *ngFor="let technician of technicians.technicians; let i = index;">
                   <ion-toolbar>
                     <ion-img [src]="profile1"></ion-img>
-                    <ion-label>{{technician.personName}}</ion-label>
+                    <ion-label>{{technician.fName}}</ion-label>
                   </ion-toolbar>
                    
                 </ion-select-option>

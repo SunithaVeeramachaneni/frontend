@@ -78,8 +78,8 @@ export class MaintenanceComponent {
     this.getWorkOrders();
   }
   getWorkOrders() {
-    this.selectDate = new FormControl('month');
-    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('month'));
+    this.selectDate = new FormControl('week');
+    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(

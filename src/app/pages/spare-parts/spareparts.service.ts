@@ -20,16 +20,18 @@ export class SparepartsService {
     "4": "Kits Complete",
     "5": "Kits Picked Up",
   }
-  getTechnicians(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
-    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'technicians', info);
+  getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
+    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist', info);
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
       let technicians: Technicians = { technicians:[] };
       let technician: Technician;
       rawTechnicians.forEach(rawTechnician => {
         console.log(rawTechnician)
         technician = ({
-          personName: rawTechnician['PERNRDesc'],
-          personKey: rawTechnician['PERNRKey']
+          userName: rawTechnician['UserName'],
+          userId: rawTechnician['UserID'],
+          fName:rawTechnician['FirstName'],
+          LName:rawTechnician['LastName']
         })
         technicians['technicians'].push(technician)
       });

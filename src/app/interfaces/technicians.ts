@@ -1,6 +1,8 @@
 export interface Technician {
-    personName: string,
-    personKey: string
+    userId:string,
+    userName:string,
+    fName:string,
+    LName:string
 
 }
 
