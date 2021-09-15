@@ -44,7 +44,7 @@
               <span class="files-icons-list">
                 <app-player [fileInfo]="fileInfo"></app-player>
                 <mat-icon class="files-icons">edit</mat-icon>
-                <mat-icon class="files-icons">delete_forever</mat-icon>
+                <mat-icon class="files-icons" (click)="removeFile(obj);">delete_forever</mat-icon>
               </span>          
               <button class="create-wi-btn">
                 <mat-icon class="create-wi-btn-icon">add</mat-icon>

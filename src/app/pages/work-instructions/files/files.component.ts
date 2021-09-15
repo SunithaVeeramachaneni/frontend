@@ -23,7 +23,8 @@ export class MediaFilesComponent implements OnInit {
   public mediaFile = {
     fileNameWithExtension: '',
     fileName: '',
-    updated_at: ''
+    updated_at: '',
+    fullFilePath:''
   }
   config: any = {
     id: 'files',
@@ -74,39 +75,6 @@ export class MediaFilesComponent implements OnInit {
     this.reverseObj = { [value]: this.reverse };
   }
 
-  removeFile(el) {
-    Swal.fire({
-      title: 'Are you sure?',
-      html: `Do you want to delete the media file <strong>'${el.fileName}'</strong> ?`,
-      icon: 'warning',
-      showCancelButton: true,
-      cancelButtonColor: '#888888',
-      confirmButtonColor: '#d33',
-      confirmButtonText: 'Delete',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.spinner.show();
-        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        this._instructionSvc.deleteWorkInstruction$(el.Id, info)
-          .subscribe(
-            data => {
-              this.spinner.hide();
-              this.getAllMediaFiles();
-              this._toastService.show({
-                text: "Work instuction '" + el.WI_Name + "' has been deleted",
-                type: 'success',
-              });
-            },
-            err => {
-              this.spinner.hide();
-              this.errorHandlerService.handleError(err);
-            }
-          );
-      }
-    });
-  }
-
   getFileTypeAndPath(file) {
     var str = file.Key;
     var res = { 'filePath': str, 'fileType' : 'audio'};
@@ -136,6 +104,11 @@ export class MediaFilesComponent implements OnInit {
     return day + ' ' + monthAndYr + ' | ' + timeForm;
   }
 
+  fullPath(file){
+    var res = file.Key;
+    return res;
+  }
+
 
   getAllMediaFiles() {
     this.wiMediaFiles = [];
@@ -149,7 +122,9 @@ export class MediaFilesComponent implements OnInit {
                 files.forEach(file => {
                   this.fileInfo = this.getFileTypeAndPath(file);
                   console.log(this.fileInfo);
+                  let fullPath = this.fullPath(file);
                   let splitFile = this.splitFileFromFolder(file);
+                  this.mediaFile.fullFilePath = fullPath;
                   this.mediaFile.fileNameWithExtension = splitFile[2];
                   this.mediaFile.fileName = splitFile[2].substring(0, splitFile[2].indexOf('.'));
                   this.mediaFile.updated_at = this.convertDateAndTime(splitFile[1]);
@@ -157,7 +132,8 @@ export class MediaFilesComponent implements OnInit {
                   this.mediaFile = {
                     fileNameWithExtension:'',
                     fileName: '',
-                    updated_at: ''
+                    updated_at: '',
+                    fullFilePath:''
                   }
                 });
               });
@@ -166,6 +142,44 @@ export class MediaFilesComponent implements OnInit {
         });
   }
 
-
+  removeFile(el) {
+    Swal.fire({
+      title: 'Are you sure?',
+      html: `You are deleting media file <strong>` + `${el.fileName}` +  `from the repository, this audio/video cannot be played anymore from the Work Instruction!</strong> ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#888888',
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Delete',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.spinner.show();
+        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+        const filesTobeDeleted =  {
+          files: []
+        };
+        console.log(el.fullFilePath);
+        filesTobeDeleted.files.push(el.fullFilePath);
+        console.log(filesTobeDeleted.files);
+        this._instructionSvc.deleteAttachments(filesTobeDeleted, info)
+          .subscribe(
+            data => {
+              this.spinner.hide();
+              this.getAllMediaFiles();
+              this._toastService.show({
+                text: "File" + el.fileName + "' has been deleted from S3 repository",
+                type: 'success',
+              });
+            },
+            err => {
+              this.spinner.hide();
+              this.errorHandlerService.handleError(err);
+            }
+          );
+     
+        }
+    });
+  }
 
 }
