@@ -177,13 +177,11 @@ export class WorkInstructionsPage {
     formData.append('file', file);
 
     if (isAudioOrVideoFile) {
-      formData.append('languageCode', 'en-US');
-      formData.append('userDetails', localStorage.getItem('loggedInUser'));
+      formData.append('userDetails', JSON.parse(localStorage.getItem('loggedInUser')));
       
       this.importService.importFile(`${environment.wiApiUrl}speech-to-text/converter`, formData)
         .subscribe(
           data => {
-            console.log(data);
             const { progress } = data;
             if (progress === 0) {
               this.spinner.hide();
@@ -196,7 +194,6 @@ export class WorkInstructionsPage {
             }
           },
           error => {
-            console.log(error);
             this.spinner.hide();
             this.wiCommonService.updateUploadInfo({ message: error.message, progress: 100, isError: true });
             this.errorHandlerService.handleError(error)

@@ -13,7 +13,6 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
 
   private _fileInfo: FileInfo;
   @Input() set fileInfo(fileInfo: FileInfo){
-    console.log(fileInfo);
     this._fileInfo = fileInfo;
     this.playSources = [{ src: this.getS3Url(fileInfo.filePath) }];
   }
@@ -79,27 +78,27 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
     return `${environment.s3BaseUrl}${filePath}`;
   }
 
-  getAudioTitle = (filepath: string) => {
-    return filepath.split('\\').slice(-1);
+  getAudioTitle = (filePath: string) => {
+    const splitString = filePath.includes('\\') ? '\\' : '/';
+    return filePath.split(splitString).slice(-1)[0];
   }
 
   secondsToHms = (d: number): string => {
     d = Number(d);
-    var h = Math.floor(d / 3600);
-    var m = Math.floor(d % 3600 / 60);
-    var s = Math.floor(d % 3600 % 60);
+    const h = Math.floor(d / 3600);
+    const m = Math.floor(d % 3600 / 60);
+    const s = Math.floor(d % 3600 % 60);
 
-    var hDisplay = h > 0 ? h + (h == 1 ? "" : "") : "";
-    var mDisplay = m > 0 ? m + (m == 1 ? "" : "") : "";
-    var sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "";
+    const hDisplay = h > 0 ? h + (h == 1 ? "" : "") : "";
+    const mDisplay = m > 0 ? m + (m == 1 ? "" : "") : "";
+    const sDisplay = s > 0 ? s + (s == 1 ? "" : "") : "";
+    
     if (hDisplay != "") {
-        return (hDisplay.length > 1 ? hDisplay : '0' + hDisplay) + ":" + (mDisplay.length > 1 ? mDisplay : '0' + mDisplay) + ":" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
-    }
-    else if (mDisplay != "") {
-        return (mDisplay.length > 1 ? mDisplay : '0' + mDisplay) + ":" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
-    }
-    else if (sDisplay != "") {
-        return "00:" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
+      return (hDisplay.length > 1 ? hDisplay : '0' + hDisplay) + ":" + (mDisplay.length > 1 ? mDisplay : '0' + mDisplay) + ":" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
+    } else if (mDisplay != "") {
+      return (mDisplay.length > 1 ? mDisplay : '0' + mDisplay) + ":" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
+    } else if (sDisplay != "") {
+      return "00:" + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
     }
     return "00:00"
   }
