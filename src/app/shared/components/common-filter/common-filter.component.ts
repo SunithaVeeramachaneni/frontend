@@ -1,5 +1,6 @@
 import { Component, OnInit ,Input, Output,EventEmitter} from '@angular/core';
-
+import { of } from "rxjs";
+import {CommonService}   from '../../services/common.service';
 @Component({
   selector: 'app-common-filter',
   templateUrl: './common-filter.component.html',
@@ -15,7 +16,6 @@ export class CommonFilterComponent implements OnInit {
   @Input() kitStatusList;
   @Input() workCenterList;
   @Input() assignList;
-  @Output()  filterEvent = new EventEmitter<any>();
   
   public searchValue="";
   public priority=[];
@@ -24,11 +24,11 @@ export class CommonFilterComponent implements OnInit {
   public workCenter=[];
   public assign=[];
 
-  constructor() { }
+  constructor(private _commonService:CommonService) { }
   ngOnInit() {}
 
   searchFilter() {
-    this.filterEvent.emit({
+    this._commonService.searchFilter({
       search:this.searchValue,
       priority:this.priority,
       showOverdue:this.showOverdue,
@@ -39,7 +39,7 @@ export class CommonFilterComponent implements OnInit {
   }
 
   searchOrder(newValue){
-    this.filterEvent.emit({
+    this._commonService.searchFilter({
       search:newValue.target.value,
       priority:this.priority,
       showOverdue:this.showOverdue,

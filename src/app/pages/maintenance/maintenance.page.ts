@@ -9,7 +9,7 @@ import { map, startWith, filter, tap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ModalController } from '@ionic/angular';
 import { ModalComponent } from './modal/modal.component';
-
+import {CommonService}   from '../../shared/services/common.service';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
@@ -29,7 +29,8 @@ export class MaintenanceComponent {
   public overdueFilter$: Observable<string>;
   public priorityFilter: FormControl;
   public priorityFilter$: Observable<string>;
-  public workOrders: Observable<WorkOrder[]>
+  public workOrders: Observable<WorkOrder[]>;
+  public filterObj$:Observable<any>;
   public selectedUser;
   headerTitle = "Maintenance Control Center";
   public newWorkOrderIcon = "../../../assets/maintenance-icons/new-workorderIcon.svg";
@@ -58,14 +59,6 @@ export class MaintenanceComponent {
   public assign: string[] = [];
   public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
   public showOperationsList = {}; 
-  public initSearchFilter = {
-    "priority": [],
-    "kitStatus": [],
-    "workCenter": [],
-    "assign": [],
-    "search":"",
-    "showOverdue": "",
-  }
 
   hideList = true;
   showFilters = false;
@@ -75,18 +68,16 @@ export class MaintenanceComponent {
   constructor(
     private _maintenanceSvc: MaintenanceService,
     private spinner: NgxSpinnerService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private _commonService:CommonService
   ) { }
 
   ngOnInit() {
     console.log("Page init")
-    this.getWorkOrders(this.initSearchFilter);
+    this.filterObj$= this._commonService.commonFilterAction$
+    this.getWorkOrders();
   }
-
-  searchFilter(newItem) {
-      this.getWorkOrders(newItem);
-  }
-  getWorkOrders(initSearchFilter) {
+  getWorkOrders() {
     this.selectDate = new FormControl('month');
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('month'));
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
@@ -105,20 +96,20 @@ export class MaintenanceComponent {
       })
     )
     this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$]).pipe(
-      map(([workOrders, filterDate]) => {
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$,this.filterObj$]).pipe(
+      map(([workOrders, filterDate,filterObj]) => {
         console.log("workOrders1111",workOrders)
         console.log("This is also being called");
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
             (
-              workOrder.workOrderDesc.toLowerCase().indexOf(initSearchFilter['search']?initSearchFilter['search'].toLowerCase():"") !== -1 ||
-              workOrder.workOrderID.toLowerCase().indexOf(initSearchFilter['search']?initSearchFilter['search'].toLowerCase():"") !== -1) &&
+              workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1 ||
+              workOrder.workOrderID.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1) &&
             
               this.filterDate(workOrder.dueDate, filterDate) &&
-              this.isOverdue(workOrder.dueDate, initSearchFilter.showOverdue) &&
-              this.filterPriority(workOrder.priorityStatus,initSearchFilter.priority)
+              this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
+              this.filterPriority(workOrder.priorityStatus,filterObj.priority)
 
           )
         this.spinner.hide();

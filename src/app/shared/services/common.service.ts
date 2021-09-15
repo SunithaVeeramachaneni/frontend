@@ -9,9 +9,21 @@ export class CommonService {
   private minimizeSidebarSubject = new BehaviorSubject<boolean>(false);
   minimizeSidebarAction$ = this.minimizeSidebarSubject.asObservable();
 
+  private commonFilterSubject = new BehaviorSubject<any>({
+    "priority": [],
+    "kitStatus": [],
+    "workCenter": [],
+    "assign": [],
+    "search":"",
+    "showOverdue": "",
+  });
+  commonFilterAction$ = this.commonFilterSubject.asObservable();
   constructor() { }
 
   minimizeSidebar(minimize: boolean) {
     this.minimizeSidebarSubject.next(minimize);
+  }
+  searchFilter(filterObj){
+    this.commonFilterSubject.next(filterObj);
   }
 }
