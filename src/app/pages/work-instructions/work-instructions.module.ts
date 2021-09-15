@@ -36,6 +36,9 @@ import { RecentsComponent } from './recents/recents.component';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { MediaFilesComponent } from './files/files.component';
 import { CategoryWiseInstructionsComponent } from './category-wise-instructions/category-wise-instructions.component';
+import { PlyrModule } from 'ngx-plyr';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { PlayerComponent } from './player/player.component';
 
 @NgModule({
   imports: [
@@ -56,6 +59,8 @@ import { CategoryWiseInstructionsComponent } from './category-wise-instructions/
     NgxDropzoneModule,
     BsDropdownModule,
     ButtonsModule.forRoot(),
+    PopoverModule.forRoot(),
+    PlyrModule,
     NgxSlickJsModule.forRoot({
       links: {
         jquery: 'https://code.jquery.com/jquery-3.4.0.min.js',
@@ -82,7 +87,8 @@ import { CategoryWiseInstructionsComponent } from './category-wise-instructions/
     RecentsComponent,
     FavoritesComponent,
     MediaFilesComponent,
-    CategoryWiseInstructionsComponent
+    CategoryWiseInstructionsComponent,
+    PlayerComponent
   ]
 })
 export class WorkInstructionsPageModule {}

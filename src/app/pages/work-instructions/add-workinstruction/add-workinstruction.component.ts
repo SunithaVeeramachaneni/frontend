@@ -8,7 +8,7 @@ import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {WiCommonService} from '../services/wi-common.services';
 import {ToastService} from '../../../shared/toast';
-import { InsToBePublished, Instruction, ErrorInfo, Step } from '../../../interfaces';
+import { InsToBePublished, Instruction, ErrorInfo, Step, FileInfo } from '../../../interfaces';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
@@ -45,7 +45,10 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
     Equipements: '',
     Locations: '',
     updated_at: null,
-    Cover_Image: ''
+    Cover_Image: '',
+    IsFromAudioOrVideoFile: false,
+    FilePath: null,
+    FileType: null
   };
 
   insToBePublished: InsToBePublished[];
@@ -63,6 +66,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   titleTextChanged = new Subject<string>();
   titleErrors: any = {exists: false, required: false};
   addOrUpdateTitle = false;
+  fileInfo: FileInfo;
   private titleChangeSubscription: Subscription;
   private stepDetailsSaveSubscription: Subscription;
   private publishInstructionSubscription: Subscription;
@@ -93,6 +97,8 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
       instruction => {
         this.selectedInstruction = { ...instruction };
         this.instructionTitle = instruction.WI_Name;
+        const { FilePath: filePath, FileType: fileType } = this.selectedInstruction;
+        this.fileInfo = { filePath, fileType };
       }
     );
     this.stepsSubscription = this.store.select(getSteps).subscribe(

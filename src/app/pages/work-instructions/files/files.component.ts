@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorInfo } from '../../../interfaces';
+import { FileInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
@@ -17,8 +18,10 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 
 export class MediaFilesComponent implements OnInit {
   headerTitle = 'Files';
+  fileInfo: FileInfo;
   public wiMediaFiles = [];
   public mediaFile = {
+    fileNameWithExtension: '',
     fileName: '',
     updated_at: ''
   }
@@ -104,6 +107,12 @@ export class MediaFilesComponent implements OnInit {
     });
   }
 
+  getFileTypeAndPath(file) {
+    var str = file.Key;
+    var res = { 'filePath': str, 'fileType' : 'audio'};
+    return res;
+  }
+
   splitFileFromFolder(file) {
     var str = file.Key;
     var res = str.split("/");
@@ -138,12 +147,15 @@ export class MediaFilesComponent implements OnInit {
           this._instructionSvc.getAllMediaFiles(folder).subscribe(
               files => {
                 files.forEach(file => {
-                  let splitFile = this.splitFileFromFolder(file)
-
+                  this.fileInfo = this.getFileTypeAndPath(file);
+                  console.log(this.fileInfo);
+                  let splitFile = this.splitFileFromFolder(file);
+                  this.mediaFile.fileNameWithExtension = splitFile[2];
                   this.mediaFile.fileName = splitFile[2].substring(0, splitFile[2].indexOf('.'));
                   this.mediaFile.updated_at = this.convertDateAndTime(splitFile[1]);
                   this.wiMediaFiles.push(this.mediaFile);
                   this.mediaFile = {
+                    fileNameWithExtension:'',
                     fileName: '',
                     updated_at: ''
                   }
