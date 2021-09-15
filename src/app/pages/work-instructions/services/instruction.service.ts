@@ -269,7 +269,7 @@ export class InstructionService {
     return this._appService._postData(environment.wiApiUrl, 'excel/upload-parser', form, info);
   }
 
-  deleteAttachments(files: DeleteFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
+  deleteFiles(files: DeleteFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
     return this._appService._postData(environment.wiApiUrl, 'api/v1/delete/', files, info);
   }
 

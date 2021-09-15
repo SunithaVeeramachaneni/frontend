@@ -122,7 +122,7 @@ describe('CategoriesComponent', () => {
       'getDeleteFiles',
     ]);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-      'deleteAttachments',
+      'deleteFiles',
       'getAllCategories',
       'getInstructionsByCategoryId',
       'deleteCategory$',
@@ -564,7 +564,7 @@ describe('CategoriesComponent', () => {
       const files = ['coverimage-from-s3.jpg'];
       const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteAttachments as jasmine.Spy)
+      (instructionServiceSpy.deleteFiles as jasmine.Spy)
         .withArgs({ files })
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();
@@ -578,10 +578,10 @@ describe('CategoriesComponent', () => {
         files[0]
       );
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledTimes(2);
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledWith({
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
         files,
       });
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
     });
 
     it('should handle s3 bucket delete file error in case of add category modal closed without saving', () => {
@@ -590,7 +590,7 @@ describe('CategoriesComponent', () => {
       });
       const files = ['coverimage-from-s3.jpg'];
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteAttachments as jasmine.Spy)
+      (instructionServiceSpy.deleteFiles as jasmine.Spy)
         .withArgs({ files })
         .and.returnValue(throwError('Unable to delete file'))
         .and.callThrough();
@@ -601,10 +601,10 @@ describe('CategoriesComponent', () => {
       );
       expect(categoryServiceSpy.getDeleteFiles).toHaveBeenCalledWith();
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledWith({
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
         files,
       });
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
     });
 
     it('should delete files from category service & s3 bucket in case of edit category modal closed without saving', () => {
@@ -622,7 +622,7 @@ describe('CategoriesComponent', () => {
       const files = ['coverimage-from-s3.jpg'];
       const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteAttachments as jasmine.Spy)
+      (instructionServiceSpy.deleteFiles as jasmine.Spy)
         .withArgs({ files })
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();
@@ -640,10 +640,10 @@ describe('CategoriesComponent', () => {
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
         files[0]
       );
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledWith({
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
         files,
       });
-      expect(instructionServiceSpy.deleteAttachments).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
     });
 
     it('should not delete category if selectedButton is "no"', () => {
@@ -761,7 +761,7 @@ describe('CategoriesComponent', () => {
         selectedButton: 'yes',
       };
       const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
-      (instructionServiceSpy.deleteAttachments as jasmine.Spy)
+      (instructionServiceSpy.deleteFiles as jasmine.Spy)
         .withArgs({ files: [Cover_Image] })
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();

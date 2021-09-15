@@ -162,7 +162,7 @@ export class MediaFilesComponent implements OnInit {
         console.log(el.fullFilePath);
         filesTobeDeleted.files.push(el.fullFilePath);
         console.log(filesTobeDeleted.files);
-        this._instructionSvc.deleteAttachments(filesTobeDeleted, info)
+        this._instructionSvc.deleteFiles(filesTobeDeleted, info)
           .subscribe(
             data => {
               this.spinner.hide();

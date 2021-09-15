@@ -208,7 +208,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
 
         const files = this.categoryService.getDeleteFiles();
         if (files.length) {
-          this._instructionSvc.deleteAttachments({ files }).subscribe(
+          this._instructionSvc.deleteFiles({ files }).subscribe(
             resp => {
               if (Object.keys(resp).length) {
                 const { Deleted: deletedFiles } = resp;
@@ -239,7 +239,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               this.spinner.hide();
               if (category.Cover_Image && category.Cover_Image.indexOf('assets') < 0) {
                 const files = [`${category.Cover_Image}`];
-                this._instructionSvc.deleteAttachments({ files }).subscribe({
+                this._instructionSvc.deleteFiles({ files }).subscribe({
                   error: error => console.log(error)
                 });
               }
