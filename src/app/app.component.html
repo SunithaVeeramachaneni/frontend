@@ -11,7 +11,8 @@
         <ion-list lines="none" class="p-0">
           <ion-menu-toggle autoHide="false" *ngFor="let menuitem of menus; let i = index">
             <ion-item [routerLink]="menuitem.url" routerLinkActive="selected" routerDirection="root" detail="false">
-              <ion-icon slot="start" [name]="menuitem.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon>
+              <!-- <ion-icon slot="start" [name]="menuitem.icon + '-outline'" [ngClass]="{'icon-margin': this.sidebar === true}"></ion-icon> -->
+              <mat-icon [ngClass]="{'icon-margin': this.sidebar === true}" style="width: 35px;">{{menuitem.icon}}</mat-icon>
               <ion-label *ngIf="this.sidebar === false">{{menuitem.title}}</ion-label>
             </ion-item>
             <div *ngIf="menuitem.showSubMenu && menuitem.subPages !== null">

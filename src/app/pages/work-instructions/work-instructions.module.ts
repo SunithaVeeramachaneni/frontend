@@ -34,6 +34,7 @@ import { DraftsComponent } from './drafts/drafts.component';
 import { PublishedComponent } from './published/published.component';
 import { RecentsComponent } from './recents/recents.component';
 import { FavoritesComponent } from './favorites/favorites.component';
+import { MediaFilesComponent } from './files/files.component';
 import { CategoryWiseInstructionsComponent } from './category-wise-instructions/category-wise-instructions.component';
 import { PlyrModule } from 'ngx-plyr';
 import { PopoverModule } from 'ngx-bootstrap/popover';
@@ -85,6 +86,7 @@ import { PlayerComponent } from './player/player.component';
     PublishedComponent,
     RecentsComponent,
     FavoritesComponent,
+    MediaFilesComponent,
     CategoryWiseInstructionsComponent,
     PlayerComponent
   ]

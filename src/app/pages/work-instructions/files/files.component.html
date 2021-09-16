@@ -1,0 +1,110 @@
+
+
+<ion-header className="nav-header">
+  <ion-toolbar>
+    <app-header [title]="headerTitle"></app-header>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="p-l-20 p-t-20">
+    <div class="input-prepend input-group p-b-10">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <img alt="Search" src="assets/work-instructions-icons/svg/search.svg" alt="" class="search-icon"/></span>
+      </div>
+      <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search File" class="search-box">
+    
+    </div>
+
+    <table id="draft-table" class="table">
+      <thead>
+        <tr>
+          <th scope="col" class="width-30" (click)="setOrder('fileName')">File Name
+            <span [hidden]="reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_downward</mat-icon></span>
+            <span [hidden]="!reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_upward</mat-icon></span>
+          </th>
+          <th scope="col" class="width-20" (click)="setOrder('updated_at')">Date and Time
+            <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
+            <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
+          </th>
+     
+          <th scope="col" class="width-10"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="( this.wiMediaFiles | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
+          <app-dummy #filteredResults [value]="result"></app-dummy>
+          <tr *ngFor="let obj of result">
+            <th scope="row" class="width-30"><a class="files-names">
+              <mat-icon class="music-icon"> music_note </mat-icon> {{obj.fileName}}</a>
+            </th>
+
+            <td class="width-20"><a class="files-data">{{obj.updated_at}}</a></td>
+            <td class="width-50">
+              <span class="files-icons-list">
+                <app-player [fileInfo]="fileInfo"></app-player>
+                <mat-icon class="files-icons">edit</mat-icon>
+                <mat-icon class="files-icons" (click)="removeFile(obj);">delete_forever</mat-icon>
+              </span>          
+              <button class="create-wi-btn">
+                <mat-icon class="create-wi-btn-icon">add</mat-icon>
+                <span class="create-wi-btn-text">Create Work Instruction</span>
+              </button>
+                  <!-- <button class="play_audio_button" 
+                        [popover]="popTemplate" 
+                        [placement]="'bottom'" 
+                        [container]="'body'" 
+                        #pop="bs-popover" 
+                        [outsideClick]="true"
+                        containerClass="audioPopover"> 
+                        <mat-icon class="mat-icon-play-circle">play_circle_outline</mat-icon>
+                </button>
+
+             
+                 <ng-template #popTemplate>
+                    <mat-card class="audio-card">
+                      <mat-card-header class="audio-header">
+                        <mat-icon>music_note</mat-icon>
+                        <span class="audio-title">{{obj.fileName}}</span>
+                      </mat-card-header>  
+                      <mat-card-content>
+                        <div class="display">
+                          <img src="../../../../assets//work-instructions-icons/svg/backward10sec.svg" class="backward-icon"/>
+                          <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/play_icon.svg" class="play-icon" [hidden]="this.getStatus === false"/>
+                          <img (click)="play()" src="../../../../assets//work-instructions-icons/svg/pause_icon.svg" class="play-icon" [hidden]="this.getStatus === true"/>
+                          <img src="../../../../assets//work-instructions-icons/svg/forward10sec.svg" class="forward-icon "/>
+                        </div>
+                        
+                        <plyr plyrType="video" plyrTitle="Video 1" [plyrPlaysInline]="true" [plyrSources]="videoSources" (plyrInit)="setPlayer($event)" (plyrPlay)="played($event)"></plyr>
+                  
+                      </mat-card-content>
+                      
+                    </mat-card>
+                </ng-template> -->
+               </td>
+              
+      
+            
+          </tr>
+          <tr>
+            <div class="no-search-records" *ngIf="result.length === 0 && this.wiMediaFiles.length > 0 ">
+              No Result Found!
+            </div>
+          </tr>
+        </ng-container>
+        </tbody>
+    </table>
+    <div class="no-records" *ngIf="this.wiMediaFiles && this.wiMediaFiles.length === 0">
+      No Video/Audio Files available in the repository!
+    </div>
+    <div *ngIf="this.wiMediaFiles && this.wiMediaFiles.length > 0">
+      <pagination-template #p="paginationApi"
+                      [id]="config.id"
+                      (pageChange)="config.currentPage = $event"
+                      (pageBoundsCorrection)="config.currentPage = $event">
+        <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+      </pagination-template>
+    </div>
+    
+  </div>
+</ion-content>

@@ -80,7 +80,8 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
 
   getAudioTitle = (filePath: string) => {
     const splitString = filePath.includes('\\') ? '\\' : '/';
-    return filePath.split(splitString).slice(-1)[0];
+    const string = filePath.split(splitString).slice(-1)[0];
+    return string.substring(0, string.indexOf('.'));
   }
 
   secondsToHms = (d: number): string => {
