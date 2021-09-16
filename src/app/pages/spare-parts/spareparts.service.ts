@@ -26,7 +26,8 @@ export class SparepartsService {
         console.log(rawTechnician)
         technician = ({
           personName: rawTechnician['PERNRDesc'],
-          personKey: rawTechnician['PERNRKey']
+          personKey: rawTechnician['PERNRKey'],
+          image: rawTechnician['Filecontent']
         })
         technicians['technicians'].push(technician)
       });

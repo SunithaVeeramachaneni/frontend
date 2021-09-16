@@ -1,3 +1,5 @@
+import { Technician } from "./technicians";
+
 export interface WorkOrder {
     status: string,
     personDetails: string,
@@ -13,7 +15,8 @@ export interface WorkOrder {
     estimatedTime: string,
     actualTime: string,
     progress: number[],
-    operations: any
+    operations: any,
+    technician?: Technician
 }
 
 export interface WorkOrders {

@@ -17,7 +17,7 @@
               <ion-label>Due This Month</ion-label>
             </ion-segment-button>
             <hr class="segmented-line"/>
-            <ion-segment-button value="custom" class="segment-button" disabled>
+            <ion-segment-button value="custom" class="segment-button">
               <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
@@ -108,7 +108,7 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <ion-button (click)="openModal()" color="light" expand="full"> 
+            <ion-button (click)="onAssignPress(workOrder)" color="light" expand="full"> 
               <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
               <span class="assign-btn-text">ASSIGN</span> 
             </ion-button>
@@ -183,6 +183,9 @@
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
+            <span class="display-flex">
+              <span class="date-priority-label">workOrder.personDetails}}</span>
+            </span>
  
             <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
@@ -208,6 +211,10 @@
                       <ion-img [src]="timeIcon" class="list-icons"></ion-img>
                       <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
                     </span>
+
+                      <!-- <img src={{this.userImage}} alt="logged-user-image" class="header-user-icon"> -->
+
+                      <!-- technicians.filter((technician) => technician.personKey === workOrder.personDetails) -->
 
                     <!-- <span>
                       <ion-button shape="round" color="light">
