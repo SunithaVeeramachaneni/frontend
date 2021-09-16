@@ -38,7 +38,7 @@
      <div class="col-lg-6 col-md-6 alignment">
         <ul class="wi-status display">
           <li class="display">
-            <app-player *ngIf="selectedInstruction.IsFromAudioOrVideoFile" [fileInfo]="fileInfo"></app-player>
+            <app-player *ngIf="selectedInstruction.IsFromAudioOrVideoFile && !selectedInstruction.IsAudioOrVideoFileDeleted" [fileInfo]="fileInfo"></app-player>
             <a [class.disabled] = "!titleProvided" (click)="setFav()">
               <span *ngIf="!selectedInstruction.IsFavorite" matTooltip="Make it Favorite" matTooltipClass="">
                 <mat-icon class="mat-icon-star">star_border</mat-icon>

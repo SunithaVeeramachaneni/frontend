@@ -21,6 +21,7 @@ export interface Instruction {
   IsPublishedTillSave: boolean;
   Cover_Image: string;
   IsFromAudioOrVideoFile: boolean;
+  IsAudioOrVideoFileDeleted: boolean;
   FilePath: string;
   FileType: string;
   categories?: string[];
@@ -47,6 +48,7 @@ export interface InstructionOptional {
   IsPublishedTillSave?: boolean;
   Cover_Image?: string;
   IsFromAudioOrVideoFile?: boolean;
+  IsAudioOrVideoFileDeleted?: boolean;
   FilePath?: string;
   FileType?: string;
   categories?: string[];

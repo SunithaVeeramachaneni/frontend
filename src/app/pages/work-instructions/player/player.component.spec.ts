@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { PlyrModule } from 'ngx-plyr';
+import { AppMaterialModules } from '../../../material.module';
 
 import { PlayerComponent } from './player.component';
 
@@ -10,7 +13,12 @@ describe('PlayerComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PlayerComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [
+        IonicModule.forRoot(),
+        PopoverModule,
+        AppMaterialModules,
+        PlyrModule
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerComponent);
