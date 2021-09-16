@@ -97,7 +97,11 @@ const workInstruction = [
     updated_at: '2020-12-09T09:02:19.000Z',
     Published: false,
     IsPublishedTillSave: false,
-    Cover_Image: image
+    Cover_Image: image,
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
 ];
 

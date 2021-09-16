@@ -70,7 +70,11 @@ const published = [
     Published: true,
     IsPublishedTillSave: null,
     Cover_Image: image,
-    categories: categories1
+    categories: categories1,
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
   {
     Id: '2845',
@@ -92,7 +96,11 @@ const published = [
     Published: true,
     IsPublishedTillSave: null,
     Cover_Image: image,
-    categories: categories2
+    categories: categories2,
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
 ];
 

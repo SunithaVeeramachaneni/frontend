@@ -74,6 +74,7 @@ const addWI = [
     IsPublishedTillSave: false,
     Cover_Image: "Thumbnail.jpg",
     IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
     FilePath: null,
     FileType: null
   },
@@ -100,6 +101,7 @@ const editWI = {
   IsPublishedTillSave: false,
   Cover_Image: "Thumbnail.jpg",
   IsFromAudioOrVideoFile: false,
+  IsAudioOrVideoFileDeleted: false,
   FilePath: null,
   FileType: null
 };
@@ -630,6 +632,7 @@ describe('AddWorkinstructionComponent', () => {
         updated_at: null,
         Cover_Image: '',
         IsFromAudioOrVideoFile: false,
+        IsAudioOrVideoFileDeleted: false,
         FilePath: null,
         FileType: null
       };
@@ -1264,6 +1267,7 @@ describe('AddWorkinstructionComponent', () => {
         updated_at: null,
         Cover_Image: '',
         IsFromAudioOrVideoFile: false,
+        IsAudioOrVideoFileDeleted: false,
         FilePath: null,
         FileType: null
       };
@@ -1370,6 +1374,7 @@ describe('AddWorkinstructionComponent', () => {
       updated_at: null,
       Cover_Image: '',
       IsFromAudioOrVideoFile: false,
+      IsAudioOrVideoFileDeleted: false,
       FilePath: null,
       FileType: null
     };

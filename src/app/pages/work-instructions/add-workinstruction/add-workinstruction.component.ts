@@ -47,6 +47,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
     updated_at: null,
     Cover_Image: '',
     IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
     FilePath: null,
     FileType: null
   };
