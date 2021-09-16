@@ -35,21 +35,25 @@
         <ng-container *ngIf="( this.wiMediaFiles | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
           <app-dummy #filteredResults [value]="result"></app-dummy>
           <tr *ngFor="let obj of result">
-            <th scope="row" class="width-30"><a class="files-names">
-              <mat-icon class="music-icon"> music_note </mat-icon> {{obj.fileName}}</a>
+            <th class="width-30"><a class="files-names">
+              <mat-icon class="music-icon"> music_note </mat-icon> 
+              <span *ngIf="this.showInput === false">{{obj.fileName}}</span>
+              <input type="text" class="files-input" value={{obj.fileName}} [(ngModel)]="obj.fileName" *ngIf="this.showInput === true"/>
+            </a>
             </th>
 
             <td class="width-20"><a class="files-data">{{obj.updated_at}}</a></td>
             <td class="width-50">
               <span class="files-icons-list">
-                <app-player [fileInfo]="fileInfo"></app-player>
-                <mat-icon class="files-icons">edit</mat-icon>
-                <mat-icon class="files-icons" (click)="removeFile(obj);">delete_forever</mat-icon>
+                <app-player [fileInfo]="fileInfo" *ngIf="this.showInput === false"></app-player>
+                <mat-icon class="files-icons" (click)="updateFile(obj)" *ngIf="this.showInput === false">edit</mat-icon>
+                <mat-icon class="files-icons" (click)="removeFile(obj);" *ngIf="this.showInput === false">delete_forever</mat-icon>
               </span>          
-              <button class="create-wi-btn">
+              <button class="create-wi-btn" *ngIf="this.showInput === false">
                 <mat-icon class="create-wi-btn-icon">add</mat-icon>
                 <span class="create-wi-btn-text">Create Work Instruction</span>
               </button>
+              <button class="save-files-btn" *ngIf="this.showInput === true" (click)="saveFile(obj)">SAVE</button>
                   <!-- <button class="play_audio_button" 
                         [popover]="popTemplate" 
                         [placement]="'bottom'" 

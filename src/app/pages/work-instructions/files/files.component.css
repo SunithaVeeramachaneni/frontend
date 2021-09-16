@@ -134,3 +134,22 @@ position: relative;
 top: 5px;
 margin-right: 10px;
 }
+
+.save-files-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 5px 10px;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  background: #3D5AFE;
+  border-radius: 4px;
+}
+
+.files-input {
+  height: 40px;
+  border: 1px solid #3D5AFE;
+  border-radius: 4px;
+}
