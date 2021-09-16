@@ -24,7 +24,7 @@ const routes: Routes = [
   { path: 'recents', data: {title: 'Recents'}, component: RecentsComponent },
   { path: 'recents/:id', data: {title: ''}, component: AddWorkinstructionComponent },
   { path: 'files', data: {title: 'Files'}, component: MediaFilesComponent },
-  
+  { path: 'files/:id', data: {title: ''}, component: AddWorkinstructionComponent },
 ];
 
 @NgModule({

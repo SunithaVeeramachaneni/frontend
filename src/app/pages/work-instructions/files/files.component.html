@@ -46,7 +46,7 @@
                 <mat-icon class="files-icons">edit</mat-icon>
                 <mat-icon class="files-icons" (click)="removeFile(obj);">delete_forever</mat-icon>
               </span>          
-              <button class="create-wi-btn">
+              <button class="create-wi-btn" (click)="createWorkInstruction(obj.fullFilePath)">
                 <mat-icon class="create-wi-btn-icon">add</mat-icon>
                 <span class="create-wi-btn-text">Create Work Instruction</span>
               </button>

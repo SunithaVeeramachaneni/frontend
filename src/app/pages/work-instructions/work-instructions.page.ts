@@ -177,15 +177,14 @@ export class WorkInstructionsPage {
     formData.append('file', file);
 
     if (isAudioOrVideoFile) {
-      formData.append('userDetails', JSON.parse(localStorage.getItem('loggedInUser')));
-      
+      formData.append('userDetails', localStorage.getItem('loggedInUser'));
       this.importService.importFile(`${environment.wiApiUrl}speech-to-text/converter`, formData)
         .subscribe(
           data => {
             const { progress } = data;
             if (progress === 0) {
               this.spinner.hide();
-              this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile, redirectUrl: '/work-instructions/edit' });
+              this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile, successUrl: '/work-instructions/edit', failureUrl: '/work-instructions' });
             } else if (progress === 100) {
               this.wiCommonService.updateUploadInfo(data);
               this.importService.closeConnection();
@@ -204,7 +203,7 @@ export class WorkInstructionsPage {
       this._instructionSvc.uploadWIExcel(formData).subscribe(
         resp => {
           if (Object.keys(resp).length) {
-            this.bulkUploadDialog(this.bulkUploadComponent, { ...resp, isAudioOrVideoFile });
+            this.bulkUploadDialog(this.bulkUploadComponent, { ...resp, isAudioOrVideoFile, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
           }
           this.spinner.hide();
         }

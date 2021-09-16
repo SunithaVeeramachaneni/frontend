@@ -30,7 +30,8 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'indeterminate';
   isAudioOrVideoFile: boolean;
-  redirectUrl: string;
+  successUrl: string;
+  failureUrl: string;
   uploadInfo: ImportFileEventData;
   private uploadInfoSubscription: Subscription;
 
@@ -207,16 +208,12 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     this.ref.close();
     if (this.loadResults === true) {
       if (this.getDraftedInstructionsCount() && this.isUploadSuccess()) {
-        if (this.isAudioOrVideoFile) {
-          this.router.navigate([this.redirectUrl]);
-        } else {
-          this.router.navigate(['/work-instructions/drafts']);
-        }
+        this.router.navigate([this.successUrl]);
       } else {
-        this.router.navigate(['/work-instructions']);
+        this.router.navigate([this.failureUrl]);
       }
     } else if (this.loadResults === false) {
-      this.router.navigate(['/work-instructions']);
+      this.router.navigate([this.failureUrl]);
     }
   }
 
@@ -391,7 +388,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           const { message, progress, wiName, id, isError } = info;
           if (progress === 100) {
             this.loadResults = true;
-            this.redirectUrl += `/${id}`;
+            this.successUrl += `/${id}`;
             let insPostedSuccessfully = true;
             let insPostingFailed = false;
             let instructionName = wiName;
@@ -409,11 +406,13 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       );
 
     let data = this.ref.data;
-    const { isAudioOrVideoFile, redirectUrl } = data;
+    const { isAudioOrVideoFile, successUrl, failureUrl } = data;
     this.isAudioOrVideoFile = isAudioOrVideoFile;
-    this.redirectUrl = redirectUrl;
+    this.successUrl = successUrl;
+    this.failureUrl = failureUrl;
     delete data.isAudioOrVideoFile;
-    delete data.redirectUrl;
+    delete data.successUrl;
+    delete data.failureUrl;
 
     if (isAudioOrVideoFile) {
       this.uploadInfo = data;
