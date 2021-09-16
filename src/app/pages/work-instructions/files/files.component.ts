@@ -216,7 +216,7 @@ export class MediaFilesComponent implements OnInit {
         },
         error => {
           this.spinner.hide();
-          this.wiCommonService.updateUploadInfo({ message: error.message, progress: 100, isError: true });
+          this.wiCommonService.updateUploadInfo({ message: this.errorHandlerService.getErrorMessage(error), progress: 100, isError: true });
           this.errorHandlerService.handleError(error)
           this.importService.closeConnection();
         }
