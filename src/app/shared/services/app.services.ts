@@ -99,7 +99,7 @@ export class AppService {
     return this.http.post<any>(url, data, httpOptions);
   }
 
-  _updateData(apiUrl: string, urlStr: string, data: Instruction | Step | Category, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _updateData(apiUrl: string, urlStr: string, data: Instruction | Step | Category | GetFile, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
     const httpOptions = this.getHttpOptions({

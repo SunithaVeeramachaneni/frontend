@@ -273,6 +273,10 @@ export class InstructionService {
     return this._appService._postData(environment.wiApiUrl, 'api/v1/delete/', files, info);
   }
 
+  updateFile(file: GetFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
+    return this._appService._updateData(environment.wiApiUrl, 'updateFileName/', file, info);
+  }
+
   newInstructionPromise(insPayload: Instruction, info: ErrorInfo): Observable<Instruction> {
     return this.getAllInstructions(info).pipe(mergeMap((instructions) => {
       if (instructions && instructions.length > 0) {

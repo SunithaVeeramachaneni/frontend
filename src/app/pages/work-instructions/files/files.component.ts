@@ -42,8 +42,8 @@ export class MediaFilesComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = { updated_at: true };
-  public bulkUploadComponent = BulkUploadComponent;
- 
+  bulkUploadComponent = BulkUploadComponent;
+  showInput= false;
 
   @ViewChild('filteredResults', { static: false }) set files(files: DummyComponent) {
     if (files) {
@@ -221,6 +221,33 @@ export class MediaFilesComponent implements OnInit {
           this.importService.closeConnection();
         }
       );
+  }
+
+  saveFile(file) {
+    this.showInput = false;
+    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+
+    let splitFileName = file.fullFilePath;
+  
+    splitFileName = splitFileName.split('/');
+    let getExtension = splitFileName[2].split('.');
+
+    let newFileName = splitFileName[0] + '/' + splitFileName[1] + '/' + file.fileName + '.' + getExtension[1];
+    console.log(newFileName)
+ 
+    const fileTobeUpdated =  {
+      file: ''
+    };
+    fileTobeUpdated.file = newFileName;
+    this._instructionSvc.updateFile(fileTobeUpdated, info)
+          .subscribe(
+               data => {
+                 console.log(data);
+          })
+  }
+
+  updateFile() {
+    this.showInput = true; 
   }
 
 }
