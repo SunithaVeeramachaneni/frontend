@@ -335,6 +335,34 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   padding: 0px 10px;
 }
 
+.assign-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #000000;
+}
+
+.assign-user-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.inprogress-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #76767B;
+  cursor: default;
+}
 .progress-bar-class {
   margin-bottom: 7px;
   margin-left: 20px;

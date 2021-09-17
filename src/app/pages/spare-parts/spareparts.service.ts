@@ -26,7 +26,8 @@ export class SparepartsService {
         console.log(rawTechnician)
         technician = ({
           personName: rawTechnician['PERNRDesc'],
-          personKey: rawTechnician['PERNRKey']
+          personKey: rawTechnician['PERNRKey'],
+          image: rawTechnician['Filecontent']
         })
         technicians['technicians'].push(technician)
       });
@@ -51,7 +52,7 @@ export class SparepartsService {
           colour: rawWorkOrder['COLOUR'],
           workOrderID: rawWorkOrder['AUFNR'],
           workOrderDesc: rawWorkOrder['AUFTEXT'],
-          equipmentID: rawWorkOrder['ARBPL'],
+          workCenter: rawWorkOrder['ARBPL'],
           equipmentName: rawWorkOrder['KTEXT'],
           kitStatus: rawWorkOrder['TXT04'],
           dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
