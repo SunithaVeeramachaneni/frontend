@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -9,6 +9,12 @@ import { FileInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { ImportService } from '../services/import.service';
+import { environment } from '../../../../environments/environment';
+import { OverlayService } from '../modal/overlay.service';
+import { ComponentType } from '@angular/cdk/portal';
+import { BulkUploadComponent } from '../modal/templates/bulk-upload/bulk-upload.component';
+import { WiCommonService } from '../services/wi-common.services';
 
 @Component({
   selector: 'app-files',
@@ -36,6 +42,7 @@ export class MediaFilesComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = { updated_at: true };
+  bulkUploadComponent = BulkUploadComponent;
   showInput= false;
 
   @ViewChild('filteredResults', { static: false }) set files(files: DummyComponent) {
@@ -50,11 +57,14 @@ export class MediaFilesComponent implements OnInit {
   }
 
   constructor(private spinner: NgxSpinnerService,
-    private _instructionSvc: InstructionService,
-    private _toastService: ToastService,
-    private route: ActivatedRoute,
-    private base64HelperService: Base64HelperService,
-    private errorHandlerService: ErrorHandlerService) { }
+              private _instructionSvc: InstructionService,
+              private _toastService: ToastService,
+              private route: ActivatedRoute,
+              private base64HelperService: Base64HelperService,
+              private errorHandlerService: ErrorHandlerService,
+              private importService: ImportService,
+              private overlayService: OverlayService,
+              private wiCommonService: WiCommonService) { }
 
   ngOnInit() {
     this.getAllMediaFiles();
@@ -182,6 +192,36 @@ export class MediaFilesComponent implements OnInit {
     });
   }
 
+  bulkUploadDialog(content: TemplateRef<any> | ComponentType<any> | string, obj) {
+    this.overlayService.open(content, obj);
+  }
+
+  createWorkInstruction = (filePath: string) => {
+    const formData = new FormData();
+    formData.append('filePath', filePath);
+    formData.append('userDetails', localStorage.getItem('loggedInUser'));
+    this.importService.importFile(`${environment.wiApiUrl}speech-to-text/download-converter`, formData)
+      .subscribe(
+        data => {
+          const { progress } = data;
+          if (progress === 0) {
+            this.spinner.hide();
+            this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile: true, successUrl: '/work-instructions/files', failureUrl: '/work-instructions/files' });
+          } else if (progress === 100) {
+            this.wiCommonService.updateUploadInfo(data);
+            this.importService.closeConnection();
+          } else {
+            this.wiCommonService.updateUploadInfo(data);
+          }
+        },
+        error => {
+          this.spinner.hide();
+          this.wiCommonService.updateUploadInfo({ message: this.errorHandlerService.getErrorMessage(error), progress: 100, isError: true });
+          this.errorHandlerService.handleError(error)
+          this.importService.closeConnection();
+        }
+      );
+  }
 
   saveFile(file) {
     this.showInput = false;
