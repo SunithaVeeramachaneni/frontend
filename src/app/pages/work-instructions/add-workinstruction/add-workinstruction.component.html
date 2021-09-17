@@ -38,13 +38,15 @@
      <div class="col-lg-6 col-md-6 alignment">
         <ul class="wi-status display">
           <li class="display">
+            <app-player *ngIf="selectedInstruction.IsFromAudioOrVideoFile && !selectedInstruction.IsAudioOrVideoFileDeleted" [fileInfo]="fileInfo"></app-player>
             <a [class.disabled] = "!titleProvided" (click)="setFav()">
               <span *ngIf="!selectedInstruction.IsFavorite" matTooltip="Make it Favorite" matTooltipClass="">
                 <mat-icon class="mat-icon-star">star_border</mat-icon>
               </span>
               <span *ngIf="selectedInstruction.IsFavorite" matTooltip="Make it UnFavorite" matTooltipClass="">
                   <mat-icon class="mat-icon-star is-fav-icon">star</mat-icon>
-              </span></a>
+              </span>
+            </a>
             <button [class.disabled] = "!titleProvided" matTooltip="More" matTooltipClass=""
                     mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
               <mat-icon class="more_horiz-icon">more_horiz</mat-icon>
@@ -60,6 +62,7 @@
                 <span class="menu-text text-red">Delete Work Instruction</span>
               </button>
             </mat-menu>
+
           </li>
           <li>
             <div class="message" *ngIf="this.saveStatus === 'Saving..'"><mat-icon class="cached">cached</mat-icon>{{saveStatus}}</div>

@@ -30,6 +30,10 @@ describe('Instruction Reducer', () => {
       Published: true,
       IsPublishedTillSave: true,
       Cover_Image: '../../assets/img/brand/doc-placeholder.png',
+      IsFromAudioOrVideoFile: false,
+      IsAudioOrVideoFileDeleted: false,
+      FilePath: null,
+      FileType: null
     },
     steps: [
       {

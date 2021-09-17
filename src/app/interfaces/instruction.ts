@@ -1,4 +1,3 @@
-import { Timestamp } from "rxjs";
 import { Step } from "./step";
 
 export interface Instruction {
@@ -21,6 +20,10 @@ export interface Instruction {
   Published: boolean;
   IsPublishedTillSave: boolean;
   Cover_Image: string;
+  IsFromAudioOrVideoFile: boolean;
+  IsAudioOrVideoFileDeleted: boolean;
+  FilePath: string;
+  FileType: string;
   categories?: string[];
 }
 
@@ -44,6 +47,10 @@ export interface InstructionOptional {
   Published?: boolean;
   IsPublishedTillSave?: boolean;
   Cover_Image?: string;
+  IsFromAudioOrVideoFile?: boolean;
+  IsAudioOrVideoFileDeleted?: boolean;
+  FilePath?: string;
+  FileType?: string;
   categories?: string[];
 }
 

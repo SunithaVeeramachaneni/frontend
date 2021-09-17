@@ -154,7 +154,7 @@ export class MaintenanceService {
     return time;
   }
 
-  getProgress = (operations) => {
+  getOperationProgress = (operations) => {
     let totalNoOfOperations = 0;
     let noOfCompletedOperations = 0;
     operations.forEach(operation => {
@@ -162,7 +162,14 @@ export class MaintenanceService {
       if (operation.STATUS === 'CNF')
         noOfCompletedOperations += 1;
     });
-    return [noOfCompletedOperations, totalNoOfOperations]
+    let completedOperationsProgressBar= (1 / totalNoOfOperations) * noOfCompletedOperations;
+    return [noOfCompletedOperations, totalNoOfOperations, completedOperationsProgressBar];
+  }
+
+  getTimeProgress = (estimatedTime, actualTime) => {
+    console.log("estimated time", estimatedTime, "actual time",actualTime);
+    let timeProgress = actualTime/estimatedTime
+    return timeProgress;
   }
 
   getStatus(personDetails, status) {
@@ -170,8 +177,20 @@ export class MaintenanceService {
     else return this.statusMap[`${status}`]
   }
 
+  cleanOperationTime = (operations) =>{
+    let cleaned = operations.map(operation =>{
+      return ({
+        "actualTime": this.formatTime(operation.ISMNW),
+        "estimatedTime": this.formatTime(operation.ARBEI),
+        "timeProgress": operation.ISMNW/operation.ARBEI
+      })
+    })
+    console.log("Operation Details", cleaned)
+    return cleaned
+
+  }
+
   cleanWorkOrder(rawWorkOrder, assignedTechnician) {
-    console.log("The WorkOrderID is", rawWorkOrder.AUFNR, "the PARNR is", rawWorkOrder['PARNR'])
     return ({
       status: rawWorkOrder['PARNR'] ? this.statusMap[`${rawWorkOrder['IPHAS']}`] : 'unassigned',
       personDetails: rawWorkOrder['PARNR'],
@@ -186,8 +205,9 @@ export class MaintenanceService {
       dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
-      progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results),
-      operations: rawWorkOrder.WorkOrderOperationSet.results,
+      operationProgress: this.getOperationProgress(rawWorkOrder.WorkOrderOperationSet.results),
+      operations: this.cleanOperationTime(rawWorkOrder.WorkOrderOperationSet.results),
+      timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       technician: assignedTechnician
     })
   }

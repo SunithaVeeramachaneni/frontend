@@ -4,10 +4,11 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
   production: false,
-  wiApiUrl: 'https://wi.innovapptive.com/api/',
-  wiAbapApiUrl: 'https://wi.innovapptive.com/abapapi/',
+  wiApiUrl: 'http://localhost:7000/',
+  wiAbapApiUrl: 'http://localhost:7002/abapapi',
   spccAbapApiUrl: 'http://localhost:8000/abapapi/',
   mccAbapApiUrl: 'http://localhost:8000/abapapi/',
+  s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000
 };
 

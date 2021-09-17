@@ -29,7 +29,7 @@
           <button class="dropdown-item" (click)="copyWorkInstruction()"><img alt="Copy" src="assets/work-instructions-icons/svg/copy.svg"/><span class="dropdown-item-title">Copy Existing</span></button>
           <button class="dropdown-item" (click)="exportAsXLSX()"><img alt="Download" src="assets/work-instructions-icons/svg/excel1.svg"/><span class="dropdown-item-title">Download Template</span></button>
         </div>
-        <input hidden type="file" #uploader accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (change)="uploadFile($event)" (click)="resetFile($event)"/>
+        <input hidden type="file" #uploader accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*" (change)="uploadFile($event)" (click)="resetFile($event)"/>
       </div>
     </div>
     <div class="row row-gap"> </div>
