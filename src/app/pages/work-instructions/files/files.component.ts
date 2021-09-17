@@ -171,16 +171,22 @@ export class MediaFilesComponent implements OnInit {
         };
         console.log(el.fullFilePath);
         filesTobeDeleted.files.push(el.fullFilePath);
-        console.log(filesTobeDeleted.files);
         this._instructionSvc.deleteFiles(filesTobeDeleted, info)
           .subscribe(
             data => {
               this.spinner.hide();
               this.getAllMediaFiles();
-              this._toastService.show({
-                text: "File" + el.fileName + "' has been deleted from S3 repository",
-                type: 'success',
-              });
+              this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath).subscribe(res => {
+                for(let i=0; i< res.length; i++) {
+                  res[i].IsAudioOrVideoFileDeleted = true;
+                  this._instructionSvc.updateWorkInstruction(res[i]).subscribe(() => {
+                    this._toastService.show({
+                      text: "File" + el.fileName + "' has been deleted from S3 repository",
+                      type: 'success',
+                    });
+                   })
+                }   
+              })
             },
             err => {
               this.spinner.hide();
@@ -239,11 +245,27 @@ export class MediaFilesComponent implements OnInit {
       file: ''
     };
     fileTobeUpdated.file = newFileName;
-    this._instructionSvc.updateFile(fileTobeUpdated, info)
-          .subscribe(
-               data => {
-                 console.log(data);
+
+    this._instructionSvc.updateFile(fileTobeUpdated, info).subscribe(() => {
+        const filesTobeDeleted =  {
+            files: []
+        };
+        filesTobeDeleted.files.push(file.fullFilePath);
+        this._instructionSvc.deleteFiles(filesTobeDeleted, info).subscribe(() => {
+          this._instructionSvc.getAllInstructionsByFilePath(file.fullFilePath).subscribe(res => {
+            for(let i=0; i< res.length; i++) {
+              res[i].FilePath = newFileName;
+              this._instructionSvc.updateWorkInstruction(res[i]).subscribe(() => {
+                console.log("success");
+                this._toastService.show({
+                  text: "File" + file.fileName + "' has been updated from S3 repository",
+                  type: 'success',
+                });
+               })
+            }   
           })
+        })
+    })
   }
 
   updateFile() {

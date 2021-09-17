@@ -63,6 +63,10 @@ export class InstructionService {
     return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFiles/', folder.Prefix, info);
   }
 
+  getAllInstructionsByFilePath(filepath:string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
+    return this._appService._getRespById(environment.wiApiUrl, 'getInstructionByFile/', filepath, info);
+  }
+
   getSelectedCategory(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
     return this._appService._getRespById(environment.wiApiUrl, 'categories/', categoryId, info);
   }
