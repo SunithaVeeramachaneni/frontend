@@ -13,7 +13,7 @@ import { WorkCenter } from '../../../interfaces/work-center';
 export class ModalComponent implements OnInit {
 
 
-   private workOrder;
+   private workOrderID;
    private defaultWorkCenter;
    private saveDisabled= true;
 
@@ -28,14 +28,15 @@ export class ModalComponent implements OnInit {
    }
 
   ngOnInit() {
-    console.log("Modal opened!");
+    // console.log("Modal opened!");
     this.assigneeList = this.navParams.get('techniciansList')
     this.workCenterList = this.navParams.get('workCenterList')
     this.defaultWorkCenter = this.navParams.get('defaultWorkCenter');
-    this.workOrder = this.navParams.get('workOrder');
+    this.workOrderID = this.navParams.get('workOrderID');
+    this.workCenter = this.defaultWorkCenter;
 
-    console.log("Technicians list is", this.assigneeList);
-    console.log("Work center list is", this.workCenterList);
+    // console.log("Technicians list is", this.assigneeList);
+    // console.log("Work center list is", this.workCenterList);
   }
 
   onCenterChange = ($event) => {
@@ -60,7 +61,7 @@ dismiss() {
     let resp = {
       assignee: this.assignee,
       workCenter: this.workCenter,
-      workOrderID: this.workOrder.workOrderID
+      workOrderID: this.workOrderID
     }
     console.log(resp)
     this.modalCtrl.dismiss(resp);

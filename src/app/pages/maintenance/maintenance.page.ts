@@ -75,7 +75,6 @@ export class MaintenanceComponent {
     this._maintenanceSvc.getAllWorkCenters().subscribe(resp => this.workCenterList = resp);
     this._maintenanceSvc.getTechnicians().subscribe(resp=> {
     this.technicians = resp;
-    console.log("Technicians assiged as", resp)
       })
     this.filter = new FormControl('');
     this.selectDate = new FormControl('week');
@@ -103,7 +102,6 @@ export class MaintenanceComponent {
         return oldWorkOrders;
       })
     )
-    console.log("hi")
 
 
     this.spinner.show();
@@ -190,14 +188,13 @@ export class MaintenanceComponent {
   }
 
   async onAssignPress(workOrder: WorkOrder) {
-    console.log("This . technicians is", this.technicians)
      const modal = await this.modalCtrl.create({
       component: ModalComponent,
       componentProps: {
         techniciansList: this.technicians,
         workCenterList: this.workCenterList,
         defaultWorkCenter: workOrder.workCenter,
-        workOrder: workOrder
+        workOrderID: workOrder.workOrderID
       }
     });
 
@@ -205,10 +202,9 @@ export class MaintenanceComponent {
       .then(async (data) => {
         if(data){
         const resp = data['data']; // Here's your selected user!
-        const workOrderID = resp.workOrderID;
-        console.log("Saving", resp)
         let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
         res.subscribe(resp => {
+          console.log("Resp from the PUT request is", res)
           if(resp === true){
             this.getWorkOrders();
           }

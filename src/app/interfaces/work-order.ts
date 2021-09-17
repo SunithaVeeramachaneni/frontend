@@ -2,7 +2,7 @@ import { Technician } from "./technicians";
 
 export interface WorkOrder {
     status: string,
-    personDetails: string,
+    personDetails: number,
     priorityNumber: number,
     priorityStatus: string,
     colour: string,

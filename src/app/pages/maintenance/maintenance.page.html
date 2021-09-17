@@ -183,8 +183,8 @@
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
-            <span class="display-flex">
-              <span class="date-priority-label">workOrder.personDetails}}</span>
+            <span *ngIf="workOrder.technician.length !== 0" class="display-flex" (click)="onAssignPress(workOrder)">
+              <span class="date-priority-label">{{workOrder.technician[0].personName}}</span>
             </span>
  
             <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">

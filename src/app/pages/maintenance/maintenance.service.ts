@@ -27,15 +27,13 @@ export class MaintenanceService {
 
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable(observer => {
-      // console.log("Getting server sent event")
       const eventSource = new EventSource(this._appService.prepareUrl(environment.mccAbapApiUrl, 'updateWorkOrders'))
       eventSource.onmessage = event => {
-        // console.log("Event", JSON.parse(event.data));
         let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         let workOrder: WorkOrder;
         let rawWorkOrders = JSON.parse(event.data);
         rawWorkOrders.forEach(rawWorkOrder => {
-          workOrder = this.cleanWorkOrder(rawWorkOrder)//, "")
+          workOrder = this.cleanWorkOrder(rawWorkOrder, "")
           workOrders[`${workOrder.status}`].push(workOrder)
         });
 
@@ -68,18 +66,18 @@ export class MaintenanceService {
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
-    this.workOrders$ = combineLatest([workOrders$]).pipe(map(([rawWorkOrders]) => { //, this.technicians$
+    this.workOrders$ = combineLatest([workOrders$, this.technicians$]).pipe(map(([rawWorkOrders, technicians]) => { 
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
+      let assignedTechnician = null;
       rawWorkOrders.forEach(rawWorkOrder => {
-        // console.log("Technicians are", technicians)
-        // console.log("Stringiefied", JSON.stringify(technicians));
-        // for(let key in technicians.keys())console.log("Key is", key)
-        // console.log("Raw work order's ARBPL is", rawWorkOrder.ARBPL)
-        // console.log("Hardcoded selection is", technicians.ELEKTRIK)
-        // console.log("The selection is",technicians[`${rawWorkOrder.ARBPL}`] )
-        // let assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician => technician.personKey === rawWorkOrder.PARNR)
-        workOrder = this.cleanWorkOrder(rawWorkOrder)//, assignedTechnician)
+        if(technicians[`${rawWorkOrder.ARBPL}`]){
+        assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician =>{
+          let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.PARNR)
+          return condition
+        })
+        }
+        workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
         workOrders[`${workOrder.status}`].push(workOrder)
       });
       return workOrders;
@@ -112,14 +110,8 @@ export class MaintenanceService {
       from(workCenters).pipe(
         mergeMap(workCenter =>
           this._appService._getRespFromGateway(environment.mccAbapApiUrl, `technicians/'${workCenter.workCenterKey}'`).pipe(tap(data =>{
-            console.log("Data: ",data);
-            console.log("WorkCenter", workCenter);
           }),
-          map(technicians =>{
-            let res = ({[workCenter.workCenterKey]:technicians});
-            console.log("The assembled object is", res)
-
-            
+          map(technicians =>{       
             return ({
             [workCenter.workCenterKey]:this.cleanTechnicians(technicians)
           })}
@@ -127,27 +119,9 @@ export class MaintenanceService {
           ))),
       )),
       reduce((acc: any, cur)=>{
-        console.log("cur is", cur);
-        console.log("acc is", acc);
         return acc = {...acc, ...cur}
       },{})
     )
-    
-    // this.workCenters$.pipe(map(workCenters =>{
-    //   workCenters.forEach(workCenter=>{
-    //     this._appService._getRespFromGateway(environment.mccAbapApiUrl, `technicians/'${workCenter.workCenterKey}'`).pipe([worke]
-
-        // )
-
-          // .subscribe(
-          //   resp => {
-          //     console.log("Testing 123")
-          //     technicians[workCenter.workCenterKey] = this.cleanTechnicians(resp)})
-    //         })
-    //         this.technicians$.next(technicians)
-    // return workCenters  
-    // })).subscribe(resp => console.log("Necessary subscription"))
-    // return this.technicians$;
     return this.technicians$
   }
   
@@ -194,7 +168,7 @@ export class MaintenanceService {
     else return this.statusMap[`${status}`]
   }
 
-  cleanWorkOrder(rawWorkOrder){//, assignedTechnician) {
+  cleanWorkOrder(rawWorkOrder, assignedTechnician) {
     return ({
       status: rawWorkOrder['PARNR'] ? this.statusMap[`${rawWorkOrder['IPHAS']}`] : 'unassigned',
       personDetails: rawWorkOrder['PARNR'],
@@ -211,7 +185,7 @@ export class MaintenanceService {
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results),
       operations: rawWorkOrder.WorkOrderOperationSet.results,
-      // technician: assignedTechnician
+      technician: assignedTechnician
     })
   }
 
