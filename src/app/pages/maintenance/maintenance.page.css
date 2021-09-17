@@ -349,3 +349,17 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   height: 36px;
   border-radius: 50%;
 }
+
+.cursor {
+  cursor: pointer;
+}
+
+.inprogress-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #76767B;
+  cursor: default;
+}

@@ -184,7 +184,7 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <div *ngIf="workOrder.technician.length !== 0" class="m-t-10" (click)="onAssignPress(workOrder)">
+            <div *ngIf="workOrder.technician.length !== 0" class="cursor m-t-10" (click)="onAssignPress(workOrder)">
               <img [src]="base64Code" class="assign-user-image"/>
               <span class="assign-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
             </div>
@@ -260,13 +260,10 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <span>
-               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
-                 <option value="Amy Butcher">Amy Butcher</option>
-                 <option value="Carlos Arnal">Carlos Arnal </option>
-                 <option value="Steve Austin">Steve Austin</option>
-               </select>   
-            </span>
+            <div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
+              <img [src]="base64Code" class="assign-user-image"/>
+              <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+            </div>
 
             <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
@@ -335,13 +332,10 @@
               <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
             </span>
 
-            <span>
-               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
-                 <option value="Amy Butcher">Amy Butcher</option>
-                 <option value="Carlos Arnal">Carlos Arnal </option>
-                 <option value="Steve Austin">Steve Austin</option>
-               </select>   
-            </span>
+            <div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
+              <img [src]="base64Code" class="assign-user-image"/>
+              <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+            </div>
 
             <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
