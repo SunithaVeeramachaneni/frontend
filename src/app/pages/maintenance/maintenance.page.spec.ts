@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IonicModule, IonSearchbar, IonSelect } from '@ionic/angular';
 import { WorkOrders } from '../../interfaces/work-order';
 import { AppService } from "../../shared/services/app.services"
-import { expectedWorkOrders$ } from "./maintenance.mocks"
+import { expectedWorkOrders$ } from "./maintenance.mock"
 import { MaintenanceComponent } from "./maintenance.page";
 import { MaintenanceService } from "./maintenance.service";
 

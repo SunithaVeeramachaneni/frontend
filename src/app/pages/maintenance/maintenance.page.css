@@ -72,12 +72,13 @@ ion-item {
   font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 19px;
   white-space:pre-wrap;
   align-items: center;
   color: #76767B;
   padding: 2px 0;
+  margin-left: 5px;
 }
 
 .parts-available-label {
@@ -146,8 +147,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 }
 
 .list-icons {
-  width: 20px;
-  padding-right: 7px;
+  width: 18px;
 }
 
 .display-flex {
@@ -333,4 +333,49 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
 
 .filters-row {
   padding: 0px 10px;
+}
+
+.assign-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #000000;
+}
+
+.assign-user-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.inprogress-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #76767B;
+  cursor: default;
+}
+.progress-bar-class {
+  margin-bottom: 7px;
+  margin-left: 20px;
+  height: 6px;
+  border-radius: 8px;
+  width: 90%;
+}
+
+.float-right {
+  float: right; 
+  text-align: right;
+}
+
+.width-100 {
+  width: 100%;
 }

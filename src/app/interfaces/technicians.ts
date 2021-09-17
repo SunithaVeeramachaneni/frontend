@@ -1,7 +1,7 @@
 export interface Technician {
     personName: string,
-    personKey: string
-
+    personKey: number,
+    image: string
 }
 
 export interface Technicians {
