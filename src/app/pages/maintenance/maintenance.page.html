@@ -125,7 +125,7 @@
               <div *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-div">
                 <ion-item class="operations-list" *ngFor="let operation of workOrders.unassigned[i].operations; let j = index;">
                   <ion-label>
-                    <span class="kit-number">Operation</span><br>
+                    <span class="kit-number">{{operation.operationName}}</span><br>
                     <span class="display-flex">
                       <ion-img [src]="dataIcon" class="list-icons"></ion-img>
                       <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
@@ -200,7 +200,7 @@
               <div *ngIf="this.showOperationsList.assigned[i] === true" class="operations-div">
                 <ion-item class="operations-list" *ngFor="let operation of workOrders.assigned[i].operations; let j = index;">
                   <ion-label>
-                    <span class="kit-number">Operation</span><br>
+                    <span class="kit-number">{{operation.operationName}}</span><br>
                     <span class="display-flex">
                       <ion-img [src]="dataIcon" class="list-icons"></ion-img>
                       <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
@@ -264,10 +264,7 @@
               </span>
             </span>
 
-            <div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
-              <img [src]="base64Code" class="assign-user-image"/>
-              <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
-            </div>
+
 
 <ion-progress-bar value="{{workOrder.timeProgress}}" color="medium" class="progress-bar-class"></ion-progress-bar>
 <span class="display-flex">
@@ -275,6 +272,11 @@
   <span class="date-priority-label">{{workOrder.operationProgress[0]}} of {{workOrder.operationProgress[1]}} Operations Completed</span>
 </span>
 <ion-progress-bar value="{{workOrder.operationProgress[2]}}" color="medium" class="progress-bar-class"></ion-progress-bar>
+
+<div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
+  <img [src]="base64Code" class="assign-user-image"/>
+  <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+</div>
            
             <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
@@ -287,7 +289,7 @@
               <div *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-div">
                 <ion-item class="operations-list" *ngFor="let operation of workOrders.inProgress[i].operations; let j = index;">
                   <ion-label>
-                    <span class="kit-number">Operation</span><br>
+                    <span class="kit-number">{{operation.operationName}}</span><br>
                     <span class="display-flex">
                       <ion-img [src]="dataIcon" class="list-icons"></ion-img>
                       <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
@@ -369,7 +371,7 @@
               <div *ngIf="this.showOperationsList.completed[i] === true" class="operations-div">
                 <ion-item class="operations-list" *ngFor="let operation of workOrders.completed[i].operations; let j = index;">
                   <ion-label>
-                    <span class="kit-number">Operation</span><br>
+                    <span class="kit-number">{{operation.operationName}}</span><br>
                     <span class="display-flex">
                       <ion-img [src]="dataIcon" class="list-icons"></ion-img>
                       <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>

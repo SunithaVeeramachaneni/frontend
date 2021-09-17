@@ -177,12 +177,13 @@ export class MaintenanceService {
     else return this.statusMap[`${status}`]
   }
 
-  cleanOperationTime = (operations) =>{
+  cleanOperation = (operations) =>{
     let cleaned = operations.map(operation =>{
       return ({
         "actualTime": this.formatTime(operation.ISMNW),
         "estimatedTime": this.formatTime(operation.ARBEI),
-        "timeProgress": operation.ISMNW/operation.ARBEI
+        "timeProgress": operation.ISMNW/operation.ARBEI,
+        "operationName": operation.LTXA1
       })
     })
     console.log("Operation Details", cleaned)
@@ -206,7 +207,7 @@ export class MaintenanceService {
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       operationProgress: this.getOperationProgress(rawWorkOrder.WorkOrderOperationSet.results),
-      operations: this.cleanOperationTime(rawWorkOrder.WorkOrderOperationSet.results),
+      operations: this.cleanOperation(rawWorkOrder.WorkOrderOperationSet.results),
       timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       technician: assignedTechnician
     })
