@@ -96,7 +96,7 @@ export class MaintenanceService {
     return time;
   }
 
-  getProgress = (operations) => {
+  getOperationProgress = (operations) => {
     let totalNoOfOperations = 0;
     let noOfCompletedOperations = 0;
     operations.forEach(operation => {
@@ -108,17 +108,28 @@ export class MaintenanceService {
     return [noOfCompletedOperations, totalNoOfOperations, completedOperationsProgressBar];
   }
 
-  getProgressValue = (estimatedTime, actualTime) => {
-    console.log(estimatedTime, actualTime);
-    let estTime = estimatedTime.substr(0,estimatedTime.indexOf(' '));
-    let actTime = actualTime.substr(0,actualTime.indexOf(' '));
-    let timeProgress = (1 / estTime) * actTime;
+  getTimeProgress = (estimatedTime, actualTime) => {
+    console.log("estimated time", estimatedTime, "actual time",actualTime);
+    let timeProgress = actualTime/estimatedTime
     return timeProgress;
   }
 
   getStatus(personDetails, status) {
     if (!personDetails) return 'unassigned'
     else return this.statusMap[`${status}`]
+  }
+
+  cleanOperationTime = (operations) =>{
+    let cleaned = operations.map(operation =>{
+      return ({
+        "actualTime": this.formatTime(operation.ISMNW),
+        "estimatedTime": this.formatTime(operation.ARBEI),
+        "timeProgress": operation.ISMNW/operation.ARBEI
+      })
+    })
+    console.log("Operation Details", cleaned)
+    return cleaned
+
   }
 
   cleanWorkOrder(rawWorkOrder) {
@@ -136,9 +147,9 @@ export class MaintenanceService {
       dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
-      progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results),
-      operations: rawWorkOrder.WorkOrderOperationSet.results,
-      timeProgress: this.getProgressValue(this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)), this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)))
+      operationProgress: this.getOperationProgress(rawWorkOrder.WorkOrderOperationSet.results),
+      operations: this.cleanOperationTime(rawWorkOrder.WorkOrderOperationSet.results),
+      timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results))
     })
   }
 
