@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   wiApiUrl: 'http://localhost:7000/',
-  wiAbapApiUrl: 'https://wi.innovapptive.com/abapapi/',
+  wiAbapApiUrl: 'http://localhost:7002/abapapi',
   spccAbapApiUrl: 'http://localhost:8000/abapapi/',
   mccAbapApiUrl: 'http://localhost:8000/abapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
