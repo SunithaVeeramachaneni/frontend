@@ -23,27 +23,28 @@ export class AppComponent implements OnInit {
     {
       title: 'Maintenance Control Center',
       url: '/maintenance',
-      icon: 'grid',
+      icon: 'view_column',
       showSubMenu: false,
       subPages: null
     },
     {
       title: 'Spare Parts Control Center',
       url: '/spare-parts',
-      icon: 'grid',
+      icon: 'view_column',
       showSubMenu: false,
       subPages: null
     },
     {
       title: 'Work Instructions Authoring',
       url: '/work-instructions',
-      icon: 'pencil',
+      icon: 'format_list_numbered',
       showSubMenu: false,
       subPages: [
         { title: 'Favorites', url:'/work-instructions/favorites' },
         { title: 'Drafts', url:'/work-instructions/drafts' },
         { title: 'Published', url:'/work-instructions/published' },
-        { title: 'Recents', url:'/work-instructions/recents' }
+        { title: 'Recents', url:'/work-instructions/recents' },
+        { title: 'Files', url:'/work-instructions/files' }
       ]
     },
   ];
