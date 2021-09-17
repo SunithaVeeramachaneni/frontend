@@ -72,7 +72,11 @@ const addWI = [
     updated_at: '2020-11-30T09:57:30.000Z',
     Published: false,
     IsPublishedTillSave: false,
-    Cover_Image: "Thumbnail.jpg"
+    Cover_Image: "Thumbnail.jpg",
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
 ];
 
@@ -95,7 +99,11 @@ const editWI = {
   updated_at: '2020-11-30T10:28:41.000Z',
   Published: false,
   IsPublishedTillSave: false,
-  Cover_Image: "Thumbnail.jpg"
+  Cover_Image: "Thumbnail.jpg",
+  IsFromAudioOrVideoFile: false,
+  IsAudioOrVideoFileDeleted: false,
+  FilePath: null,
+  FileType: null
 };
 
 const loggedInUser = {
@@ -622,7 +630,11 @@ describe('AddWorkinstructionComponent', () => {
         Equipements: '',
         Locations: '',
         updated_at: null,
-        Cover_Image: ''
+        Cover_Image: '',
+        IsFromAudioOrVideoFile: false,
+        IsAudioOrVideoFileDeleted: false,
+        FilePath: null,
+        FileType: null
       };
       const favAddWI = { ...addWI[0], IsFavorite: true };
       (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'snapshot')
@@ -1253,7 +1265,11 @@ describe('AddWorkinstructionComponent', () => {
         Equipements: '',
         Locations: '',
         updated_at: null,
-        Cover_Image: ''
+        Cover_Image: '',
+        IsFromAudioOrVideoFile: false,
+        IsAudioOrVideoFileDeleted: false,
+        FilePath: null,
+        FileType: null
       };
       (instructionServiceSpy.addWorkInstructionTitle as jasmine.Spy)
         .withArgs(loggedInUser, selectedInstruction, info)
@@ -1356,7 +1372,11 @@ describe('AddWorkinstructionComponent', () => {
       Equipements: '',
       Locations: '',
       updated_at: null,
-      Cover_Image: ''
+      Cover_Image: '',
+      IsFromAudioOrVideoFile: false,
+      IsAudioOrVideoFileDeleted: false,
+      FilePath: null,
+      FileType: null
     };
 
     it('should define function', () => {

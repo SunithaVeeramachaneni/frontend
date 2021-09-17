@@ -49,7 +49,6 @@ export class DraftsComponent implements OnInit {
               private route: ActivatedRoute,
               private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService) { }
-
   ngOnInit() {
     this.getAllDraftedInstructions();
     this.AuthorDropDown();

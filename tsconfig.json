@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "target": "es2015",
     "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
     "lib": [
       "es2017",
       "dom"
