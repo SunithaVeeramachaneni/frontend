@@ -77,7 +77,9 @@ export class MaintenanceService {
           return condition
         })
         }
+        console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
+        console.log(workOrder.workOrderID, " The work order after cleaning is", workOrder)
         workOrders[`${workOrder.status}`].push(workOrder)
       });
       return workOrders;
@@ -169,6 +171,7 @@ export class MaintenanceService {
   }
 
   cleanWorkOrder(rawWorkOrder, assignedTechnician) {
+    console.log("The WorkOrderID is", rawWorkOrder.AUFNR, "the PARNR is", rawWorkOrder['PARNR'])
     return ({
       status: rawWorkOrder['PARNR'] ? this.statusMap[`${rawWorkOrder['IPHAS']}`] : 'unassigned',
       personDetails: rawWorkOrder['PARNR'],
