@@ -136,7 +136,7 @@
                     </span>
                     <span class="display-flex">
                       <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                      <span class="date-priority-label">{{operation.estimatedTime}}</span>
                     </span>
 
                     <!-- <span>
@@ -206,7 +206,7 @@
                     </span>
                     <span class="display-flex">
                       <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                      <span class="date-priority-label">{{operation.estimatedTime}}</span>
                     </span>
 
                     <!-- <span>
@@ -248,17 +248,19 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+              <!-- <span class="date-priority-label">{{workOrder.estimatedTime}}</span> -->
+              <span class="width-100">
+                <span class="date-priority-label">Actual {{workOrder.actualTime}}</span>
+                <span class="date-priority-label float-right">Planned {{workOrder.estimatedTime}}</span>   
+              </span>
             </span>
-
-            <span>
-               <select class="form-control form-control-sm" [(ngModel)]="this.selectedUser">
-                 <option value="Amy Butcher">Amy Butcher</option>
-                 <option value="Carlos Arnal">Carlos Arnal </option>
-                 <option value="Steve Austin">Steve Austin</option>
-               </select>   
+            <ion-progress-bar value="{{workOrder.timeProgress}}" color="medium" class="progress-bar-class"></ion-progress-bar>
+            <span class="display-flex">
+              <ion-img [src]="operationsIcon" class="list-icons"></ion-img>
+              <span class="date-priority-label">{{workOrder.operationProgress[0]}} of {{workOrder.operationProgress[1]}} Operations Completed</span>
             </span>
-
+            <ion-progress-bar value="{{workOrder.operationProgress[2]}}" color="medium" class="progress-bar-class"></ion-progress-bar>
+           
             <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
               <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
             </ion-button>
@@ -281,8 +283,18 @@
                     </span>
                     <span class="display-flex">
                       <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                      <span class="width-100">
+                        <span class="date-priority-label">{{operation.estimatedTime}}</span>
+                        <!-- <span class="date-priority-label float-right">Planned {{operation.estimatedTime}}</span>    -->
+                      </span>
                     </span>
+                    <!-- <ion-progress-bar value="operation.timeProgress" color="medium" class="progress-bar-class"></ion-progress-bar>
+                    <span class="display-flex">
+                      <ion-img [src]="operationsIcon" class="list-icons"></ion-img>
+                      <span class="date-priority-label">2 of 4 Operations Completed</span>
+                    </span>
+                    <ion-progress-bar value="0.5" color="medium" class="progress-bar-class"></ion-progress-bar> -->
+                   
 
                     <!-- <span>
                       <ion-button shape="round" color="light">
@@ -356,7 +368,7 @@
                     </span>
                     <span class="display-flex">
                       <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.ARBEI | number }} hrs</span>
+                      <span class="date-priority-label">{{opearation.estimatedTime}}</span>
                     </span>
 
                     <!-- <span>

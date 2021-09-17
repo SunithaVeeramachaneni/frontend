@@ -12,7 +12,8 @@ export interface WorkOrder {
     dueDate: Date,
     estimatedTime: string,
     actualTime: string,
-    progress: number[],
+    operationProgress: number[],
+    timeProgress: number,
     operations: any
 }
 

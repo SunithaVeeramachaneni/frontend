@@ -33,6 +33,7 @@ export class MaintenanceComponent {
   public dataIcon = "../../../assets/maintenance-icons/dataIcon.svg";
   public dateIcon = "../../../assets/maintenance-icons/dateIcon.svg";
   public timeIcon = "../../../assets/maintenance-icons/timeIcon.svg";
+  public operationsIcon = "../../../assets/maintenance-icons/operationsIcon.svg";
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
@@ -96,10 +97,12 @@ export class MaintenanceComponent {
     this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$, this.overdueFilter$]).pipe(
       map(([workOrders, filterString, filterDate, overdue]) => {
+        console.log(workOrders)
         console.log("This is also being called");
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders)
           filtered[key] = workOrders[key].filter(workOrder =>
+            
             // (
               // workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
               // workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
