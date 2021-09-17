@@ -17,7 +17,8 @@ import {
   DeleteFile,
   DeleteFileResponse,
   GetFile,
-  UploadS3FileResponse
+  UploadS3FileResponse,
+  UpdateFileInfo
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -64,7 +65,7 @@ export class InstructionService {
   }
 
   getAllInstructionsByFilePath(filepath:string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
-    return this._appService._getRespById(environment.wiApiUrl, 'getInstructionByFile/', filepath, info);
+    return this._appService._getRespById(environment.wiApiUrl, 'getInstructionsByFile/', filepath, info);
   }
 
   getSelectedCategory(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
@@ -277,8 +278,11 @@ export class InstructionService {
     return this._appService._postData(environment.wiApiUrl, 'api/v1/delete/', files, info);
   }
 
-  updateFile(file: GetFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
-    return this._appService._updateData(environment.wiApiUrl, 'updateFileName/', file, info);
+  updateFile(fileInfo: UpdateFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<UpdateFileInfo> {
+    return this._appService._updateData(environment.wiApiUrl, 'updateFileName/', fileInfo, info)
+    .pipe(
+      map(resp => resp === null ? fileInfo : resp)
+    );
   }
 
   newInstructionPromise(insPayload: Instruction, info: ErrorInfo): Observable<Instruction> {
