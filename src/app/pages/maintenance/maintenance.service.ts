@@ -104,7 +104,16 @@ export class MaintenanceService {
       if (operation.STATUS === 'CNF')
         noOfCompletedOperations += 1;
     });
-    return [noOfCompletedOperations, totalNoOfOperations]
+    let completedOperationsProgressBar= (1 / totalNoOfOperations) * noOfCompletedOperations;
+    return [noOfCompletedOperations, totalNoOfOperations, completedOperationsProgressBar];
+  }
+
+  getProgressValue = (estimatedTime, actualTime) => {
+    console.log(estimatedTime, actualTime);
+    let estTime = estimatedTime.substr(0,estimatedTime.indexOf(' '));
+    let actTime = actualTime.substr(0,actualTime.indexOf(' '));
+    let timeProgress = (1 / estTime) * actTime;
+    return timeProgress;
   }
 
   getStatus(personDetails, status) {
@@ -128,7 +137,8 @@ export class MaintenanceService {
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       progress: this.getProgress(rawWorkOrder.WorkOrderOperationSet.results),
-      operations: rawWorkOrder.WorkOrderOperationSet.results
+      operations: rawWorkOrder.WorkOrderOperationSet.results,
+      timeProgress: this.getProgressValue(this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)), this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)))
     })
   }
 

@@ -33,6 +33,7 @@ export class MaintenanceComponent {
   public dataIcon = "../../../assets/maintenance-icons/dataIcon.svg";
   public dateIcon = "../../../assets/maintenance-icons/dateIcon.svg";
   public timeIcon = "../../../assets/maintenance-icons/timeIcon.svg";
+  public operationsIcon = "../../../assets/maintenance-icons/operationsIcon.svg";
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
