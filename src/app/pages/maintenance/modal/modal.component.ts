@@ -15,7 +15,7 @@ export class ModalComponent implements OnInit {
 
    private workOrderID;
    private defaultWorkCenter;
-   private saveDisabled= true;
+   public saveDisabled= true;
 
    public workCenter: string;
    public workCenterList: string[];

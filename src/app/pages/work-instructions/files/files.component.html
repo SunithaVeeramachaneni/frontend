@@ -32,7 +32,7 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="( this.wiMediaFiles | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
+        <ng-container *ngIf="( this.wiMediaFiles | filter : search | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
           <app-dummy #filteredResults [value]="result"></app-dummy>
           <tr *ngFor="let obj of result; let i=index">
             <th class="width-30">
