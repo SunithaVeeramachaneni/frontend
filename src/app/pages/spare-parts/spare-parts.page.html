@@ -6,9 +6,7 @@
          
         <app-common-filter [title]="headerTitle" 
         [showOverdueList]="showOverdueList"
-        [priorityList]="priorityList"
-      
-        (filterEvent)="searchFilter($event)">
+        [priorityList]="priorityList">
       </app-common-filter>
           
            <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
