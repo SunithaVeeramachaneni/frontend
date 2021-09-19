@@ -3,7 +3,15 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="maintenance-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>      
+          <!-- <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>       -->        
+          <app-common-filter [title]="headerTitle" 
+          [showOverdueList]="showOverdueList"
+          [priorityList]="priorityList"
+          [kitStatusList]="kitStatusList"
+          [workCenterList]="workCenterListDef"
+          [assignList]="assignList"
+          >
+        </app-common-filter>
           <ion-segment value="today" [formControl]="selectDate" mode="ios"  class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Due Today</ion-label>
@@ -21,54 +29,6 @@
               <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
-          <button class="filter-btn" (click)="myFunction()">
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img>
-            <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
-          </button>
-      </ion-col>  
-    </ion-row>
-    <ion-row *ngIf="this.showFilters === true">
-      <ion-col class="filters-row">
-        <form #form="ngForm">
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Show Overdue</mat-label>
-            <mat-select [formControl]="overdueFilter" name="showOverdue">
-              <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
-                {{showdue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          
-          <!-- <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Priority</mat-label>
-            <mat-select name="priority" multiple [(ngModel)]="priority">
-              <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Kitting Status</mat-label>
-            <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
-              <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Work Center</mat-label>
-            <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
-              <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Assignee</mat-label>
-            <mat-select name="assign" multiple [(ngModel)]="assign">
-              <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
-            </mat-select>
-          </mat-form-field> -->
-
-          <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
-        </form>
       </ion-col>
     </ion-row>
 </ion-toolbar>
@@ -89,7 +49,8 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.unassigned; let i = index;">
           <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
             <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
             <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
             <span class="kit-ready">KIT READY</span>
@@ -165,7 +126,8 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.assigned; let i = index;">
           <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
             <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
             <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
             <span class="kit-ready">KIT READY</span>
@@ -242,7 +204,8 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.inProgress; let i = index;">
           <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
             <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
             <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
             <br/>
@@ -337,7 +300,8 @@
         </ion-item>
         <ion-item lines="none" *ngFor="let workOrder of workOrders.completed; let i = index;">
           <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very high' || workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
             <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
             <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
             <br/>

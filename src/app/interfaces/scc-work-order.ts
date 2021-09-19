@@ -1,4 +1,5 @@
 export interface WorkOrder {
+    statusCode:string,
     status: string,
     personDetails: string,
     priorityNumber: number,
@@ -6,7 +7,7 @@ export interface WorkOrder {
     colour: string,
     workOrderID: number,
     workOrderDesc: string,
-    workCenter: string,
+    equipmentID: string,
     equipmentName: string,
     kitStatus: string,
     dueDate: Date,
@@ -14,14 +15,15 @@ export interface WorkOrder {
     actualTime: string,
     progress: number[],
     partsavailable:string,
-    partscolor:string,
-    progressValue:number
+    progressValue:number,
+    staged:number,
+    totItems:number
 }
 
 export interface WorkOrders {
-    kitsrequired : WorkOrder[],
-    assingedforpicking: WorkOrder[],
-    kittinginprogress: WorkOrder[],
-    kitscomplete: WorkOrder[],
-    kitspickedup: WorkOrder[]
+    "1" : WorkOrder[],
+    "2": WorkOrder[],
+    "3": WorkOrder[],
+    "4": WorkOrder[],
+    "5": WorkOrder[]
 }

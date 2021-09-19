@@ -1,0 +1,70 @@
+
+
+.reset-filters-btn {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    letter-spacing: 0.15px;
+    color: #3D5AFE;
+    background: transparent;
+    position: relative;
+    top: 5px;
+    right: 5px;
+    float: right;
+  }
+  
+  .apply-filters-btn {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.15px;
+    color: #FFFFFF;
+    float: right;
+    background: #3D5AFE;
+    border-radius: 4px;
+    margin-right: 10px;
+    margin-bottom: 15px;
+  }
+
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: auto;
+    padding-left: 15px;
+    height: 42px;
+  }
+  
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #F2F2F2;
+    border: 1px solid #F2F2F2;
+    border-radius: 8px;
+    opacity: 0.75;
+  }
+  
+  .input-group > .input-group-prepend:not(:first-child) > .input-group-text, .input-group > .input-group-prepend:first-child > .btn:not(:first-child), .input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child) {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+  }
+  
+  input:focus {
+    outline: none;
+  }
+
+  .mat-field {
+    width: 100%;
+  }

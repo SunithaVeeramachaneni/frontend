@@ -13,6 +13,7 @@ import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
 import { base64String } from './image'
+import {CommonService}   from '../../shared/services/common.service';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
@@ -30,6 +31,7 @@ export class MaintenanceComponent {
   public selectDate$: Observable<string>;
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
+  public filterObj$:Observable<any>;
   public workOrders: Observable<WorkOrder[]>
   public workCenterList: WorkCenter[];
   public workCenterList$: Observable<WorkCenter[]>;
@@ -50,14 +52,21 @@ export class MaintenanceComponent {
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
-  public showOverdue: string = 'Yes';
+  public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
-  public priority: string[] = ['High', 'Medium'];
-  public priorityList: string[] = ['High', 'Medium', 'Low'];
+  public priority: string[] = ['Very High'];
+  public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
-  public kitStatus: string[] = ['Kit Ready', 'Parts Available'];
+  public kitStatus: string[] = [];
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
+
+  public workCenter: string[] = [];
+  public workCenterListDef: string[] = ['Mechanical', 'Electrical'];
+
+  public assign: string[] = [];
+  public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
+
 
   public showOperationsList = {};
   public base64Code:any;
@@ -70,7 +79,8 @@ export class MaintenanceComponent {
     private _maintenanceSvc: MaintenanceService,
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
-    private sanitizer:DomSanitizer
+    private sanitizer:DomSanitizer,
+    private _commonService:CommonService
   ) { }
 
   ngOnInit() {
@@ -84,7 +94,9 @@ export class MaintenanceComponent {
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
+    this.filterObj$= this._commonService.commonFilterAction$
     this.getWorkOrders();
+
   }
 
   getData = () =>{
@@ -93,7 +105,6 @@ export class MaintenanceComponent {
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-
     let base64Image='data:image/jpeg;base64,'+ base64String;
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
@@ -110,16 +121,18 @@ export class MaintenanceComponent {
 
 
     this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.filter$, this.selectDate$, this.overdueFilter$]).pipe(
-      map(([workOrders, filterString, filterDate, overdue]) => {
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$ ,this.selectDate$,this.filterObj$]).pipe(
+      map(([workOrders, filterDate, filterObj]) => {
         console.log("Worokorders are", workOrders)
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders) {
           filtered[key] = workOrders[key].filter(workOrder => {
-            return (workOrder.workOrderDesc.toLowerCase().indexOf(filterString.toLowerCase()) !== -1 ||
-              workOrder.workOrderID.toLowerCase().indexOf(filterString.toLowerCase()) !== -1) &&
+            return (
+              workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1 ||
+              workOrder.workOrderID.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1) &&
               this.filterDate(workOrder.dueDate, filterDate) &&
-              this.isOverdue(workOrder.dueDate, overdue)
+              this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
+              this.filterPriority(workOrder.priorityStatus,filterObj.priority)
           }
           )
 
@@ -130,6 +143,21 @@ export class MaintenanceComponent {
       })
     );
   }
+
+  public filterPriority =(status,priority)=>{
+    console.log(status)
+   if(priority===null || priority.length==0){
+     return true;
+   }
+   else {
+     for (let i=0;i<priority.length;i++) {
+       if (priority[i]===status)
+         return true;
+     }
+     return false;
+   }
+ }
+
 
   public filterDate(dueDate, filterDate) {
     if (filterDate === 'today')

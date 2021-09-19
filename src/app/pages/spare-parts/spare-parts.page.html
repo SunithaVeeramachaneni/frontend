@@ -3,8 +3,15 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="spareparts-header">
-          <ion-searchbar placeholder="Search Work Orders" [formControl]="filter" class="searchbar" disabled></ion-searchbar>
-          <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
+         
+        <app-common-filter [title]="headerTitle" 
+        [showOverdueList]="showOverdueList"
+        [priorityList]="priorityList"
+      
+        (filterEvent)="searchFilter($event)">
+      </app-common-filter>
+          
+           <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
             <ion-segment-button value="today" class="segment-button">
               <ion-label>Today</ion-label>
             </ion-segment-button>
@@ -21,56 +28,7 @@
               <ion-label>Custom</ion-label>
             </ion-segment-button>
           </ion-segment>
-          
-          <button class="filter-btn" (click)="myFunction()">
-            <ion-img [src]="filterIcon" class="filter-icon"></ion-img>
-            <ion-label class="filter-btn-text">{{this.showFilters === false ? 'Show' : 'Hide'}} Filters</ion-label>
-          </button>
       </ion-col>  
-    </ion-row>
-    <ion-row *ngIf="this.showFilters === true">
-      <ion-col class="filters-row">
-        <form #form="ngForm">
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Show Overdue</mat-label>
-            <mat-select [(ngModel)]="showOverdue" name="showOverdue">
-              <mat-option *ngFor="let showdue of showOverdueList" [value]="showdue">
-                {{showdue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-<!--           
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Priority</mat-label>
-            <mat-select name="priority" multiple [(ngModel)]="priority">
-              <mat-option *ngFor="let prioritizedItem of priorityList" [value]="prioritizedItem">{{prioritizedItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Kitting Status</mat-label>
-            <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
-              <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Work Center</mat-label>
-            <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
-              <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="mat-field">
-            <mat-label>Assignee</mat-label>
-            <mat-select name="assign" multiple [(ngModel)]="assign">
-              <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
-            </mat-select>
-          </mat-form-field> -->
-
-          <button (click)="form.reset()" class="reset-filters-btn">Reset Filters</button>
-        </form>
-      </ion-col>
     </ion-row>
   </ion-toolbar>
 </ion-header>
@@ -82,12 +40,12 @@
       <ion-list class="ion-list1">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{workOrders.kitsrequired.length}}</span>
+            <span class="kits-count">{{workOrders['1'].length}}</span>
             <br>
             <span class="kit-heading">Kits Required</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.kitsrequired; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of workOrders['1']; let i = index;">
           <ion-label>
             <span class="kit-number">{{workOrder.workOrderID}}</span><br>
             <span class="display-flex">
@@ -96,7 +54,7 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.priorityStatus}} Priority</span>
+              <span class="date-priority-label">{{workOrder.priorityStatus}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="partsIcon" class="list-icons"></ion-img>
@@ -110,11 +68,11 @@
               <ion-item style="display: none;" *ngIf="this.technicians$ | async as technicians">
                
                 <ion-label>Assign To:</ion-label>
-                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i);" [interfaceOptions]="customPopoverOptions" interface="popover">
+                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i,workOrder.workOrderID);" [interfaceOptions]="customPopoverOptions" interface="popover">
                 <ion-select-option *ngFor="let technician of technicians.technicians; let i = index;">
                   <ion-toolbar>
                     <ion-img [src]="profile1"></ion-img>
-                    <ion-label>{{technician.personName}}</ion-label>
+                    <ion-label>{{technician.fName}}</ion-label>
                   </ion-toolbar>
                    
                 </ion-select-option>
@@ -132,12 +90,12 @@
       <ion-list class="ion-list2">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{workOrders.assingedforpicking.length}}</span>
+            <span class="kits-count">{{workOrders['2'].length}}</span>
             <br>
             <span class="kit-heading">Assigned For Picking</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.assingedforpicking; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of workOrders['2']; let i = index;">
           <ion-label>
             <span class="kit-number">{{workOrder.workOrderID}}</span><br>
             <span class="display-flex">
@@ -146,7 +104,7 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.priorityStatus}} Priority</span>
+              <span class="date-priority-label">{{workOrder.priorityStatus}}</span>
             </span>
             <span class="display-flex">
               <ion-img [src]="partsIcon" class="list-icons"></ion-img>
@@ -179,12 +137,12 @@
       <ion-list class="ion-list3">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{workOrders.kittinginprogress.length}}</span>
+            <span class="kits-count">{{workOrders['3'].length}}</span>
             <br>
             <span class="kit-heading">Kitting In Progress</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.kittinginprogress; let i = index;">
+        <ion-item lines="none" *ngFor="let workOrder of workOrders['3']; let i = index;">
           <ion-label>
             <span class="kit-number">{{workOrder.workOrderID}}</span><br>
             <span class="display-flex">
@@ -193,12 +151,12 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="priorityIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.priorityStatus}} Priority</span>
+              <span class="date-priority-label">{{workOrder.priorityStatus}}</span>
             </span>
             <span>
               <span class="display-flex">
                 <ion-img [src]="partsIcon" class="list-icons"></ion-img>
-                <span class="date-priority-label">{{workOrder.progress[0]}} of {{workOrder.progress[1]}} Parts Picked</span>
+                <span class="date-priority-label">{{workOrder.staged}} of {{workOrder.totItems}} Parts Picked</span>
               </span>
               <div class="m-l-20">
                 <ion-progress-bar value={{workOrder.progressValue}} color="medium" class="progress-bar-class"></ion-progress-bar>
@@ -218,13 +176,13 @@
       <ion-list class="ion-list4">
         <ion-item>
           <ion-label>
-            <span class="kits-count">{{workOrders.kitscomplete.length}}</span>
+            <span class="kits-count">{{workOrders['4'].length}}</span>
             <!-- <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br> -->
             <br>
             <span class="kit-heading">Kits Complete</span>
           </ion-label>
        </ion-item>
-        <ion-item lines="none"  class="no-padding-item" *ngFor="let workOrder of workOrders.kitscomplete; let i = index;">
+        <ion-item lines="none"  class="no-padding-item" *ngFor="let workOrder of workOrders['4']; let i = index;">
           <ion-label class="no-margin">
             <div class="pickedup-date-time">
               Pickup Today, 10am-11am 
@@ -241,7 +199,7 @@
               </span>
               <span class="display-flex">
                   <ion-img [src]="partsIcon" class="list-icons"></ion-img>
-                  <span class="date-priority-label">{{workOrder.progress[0]}} Parts</span>
+                  <span class="date-priority-label">{{workOrder.totItems}} Parts</span>
               </span>
             </div>
           </ion-label>        

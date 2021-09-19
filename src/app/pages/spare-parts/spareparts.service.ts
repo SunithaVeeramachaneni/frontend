@@ -5,7 +5,8 @@ import { environment } from "../../../environments/environment";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/scc-work-order";
 import { Technician, Technicians } from "../../interfaces/technicians";
-import { AppService } from "../../shared/services/app.services"
+import { AppService } from "../../shared/services/app.services";
+import * as moment from 'moment';
 
 @Injectable({ providedIn: "root" })
 export class SparepartsService {
@@ -13,21 +14,24 @@ export class SparepartsService {
   constructor(private _appService: AppService) { }
 
   private statusMap = {
-    "CRTD": "assingedforpicking",
-    "REL": "kittinginprogress",
-    "TECO": "kitscomplete"
+    "1": "Kits Required",
+    "2": "Assigned for Picking",
+    "3": "Kitting in Progress",
+    "4": "Kits Complete",
+    "5": "Kits Picked Up",
   }
-  getTechnicians(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
-    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'technicians', info);
+  getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
+    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist', info);
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
       let technicians: Technicians = { technicians:[] };
       let technician: Technician;
       rawTechnicians.forEach(rawTechnician => {
         console.log(rawTechnician)
         technician = ({
-          personName: rawTechnician['PERNRDesc'],
-          personKey: rawTechnician['PERNRKey'],
-          image: rawTechnician['Filecontent']
+          userName: rawTechnician['UserName'],
+          userId: rawTechnician['UserID'],
+          fName:rawTechnician['FirstName'],
+          LName:rawTechnician['LastName']
         })
         technicians['technicians'].push(technician)
       });
@@ -36,34 +40,41 @@ export class SparepartsService {
     return transformedObservable$;
   }
 
-  getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
+  getAllWorkOrders(date,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     console.log("getAllWorkOrders")
-    //workOrdersAndOperations/WorkOrderComponentSet
-    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'sccmock', info);
+    let filterDate=this.getStartAndEndDate(date);
+    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${filterDate['startDate']}&enddate=${filterDate['endDate']}`, info);
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
-      let workOrders: WorkOrders = { kitsrequired: [], assingedforpicking: [], kittinginprogress: [], kitscomplete: [],kitspickedup:[] };
+      let workOrders: WorkOrders = { "1": [], "2": [], "3": [], "4": [],"5":[] };
       let workOrder: WorkOrder;
       rawWorkOrders.forEach(rawWorkOrder => {
         workOrder = ({
-          status: rawWorkOrder['PARNR'] ? this.statusMap[`${rawWorkOrder['IPHAS']}`]: 'kitsrequired',
-          personDetails: rawWorkOrder['PARNR'],
+          statusCode:rawWorkOrder['STATUSKEY'],
+          status: this.statusMap[`${rawWorkOrder['STATUSKEY']}`],
+          personDetails: "",
+          //rawWorkOrder['PARNR'],
           priorityNumber: rawWorkOrder['PRIOK'],
-          priorityStatus: rawWorkOrder['PRIOKX'],
-          colour: rawWorkOrder['COLOUR'],
+          priorityStatus: rawWorkOrder['PRIOKX']?rawWorkOrder['PRIOKX']+" Priority":"",
+          colour: "",
+          //rawWorkOrder['COLOUR'],
           workOrderID: rawWorkOrder['AUFNR'],
-          workOrderDesc: rawWorkOrder['AUFTEXT'],
-          workCenter: rawWorkOrder['ARBPL'],
-          equipmentName: rawWorkOrder['KTEXT'],
+          workOrderDesc: "",
+          //rawWorkOrder['AUFTEXT'],
+          equipmentID: "",
+          //rawWorkOrder['ARBPL'],
+          equipmentName: "",
+          //rawWorkOrder['KTEXT'],
           kitStatus: rawWorkOrder['TXT04'],
           dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
           estimatedTime: '',
           actualTime: '',
           progress: rawWorkOrder['PROGRESS'],
-          partsavailable:rawWorkOrder['TXT04'],
-          partscolor:rawWorkOrder['TXT04-C'],
-          progressValue:rawWorkOrder['PROGRESS'][0]/rawWorkOrder['PROGRESS'][1]
+          partsavailable:rawWorkOrder['PARTS_AVAIL']?"PARTS AVAILABLE":"WAITING ON PARTS",
+          progressValue:rawWorkOrder['STAGED']/rawWorkOrder['TOTITEMS'],
+          staged:rawWorkOrder['STAGED'],
+          totItems:rawWorkOrder['TOTITEMS'],
         })
-        workOrders[`${workOrder.status}`].push(workOrder)
+        workOrders[`${workOrder.statusCode}`].push(workOrder)
       });
       return workOrders;
     }))
@@ -73,6 +84,51 @@ export class SparepartsService {
 
   parseJsonDate(jsonDateString) {
     return new Date(parseInt(jsonDateString.replace('/Date(', '')));
+  }
+
+  getStartAndEndDate=(date)=>{
+    if(date === 'today')
+    return this.todayStartAndEndDate();
+    if(date === 'month')
+    return this.monthStartAndEndDate()
+    if(date === 'week')
+    return this.weekStartAndEndDate()
+  }
+
+  todayStartAndEndDate=() =>{
+    var sDate = moment().utcOffset(0);
+    sDate.set({hour:0,minute:0,second:0,millisecond:0})
+    var eDate = moment().utcOffset(0);
+    eDate.set({hour:23,minute:59,second:59,millisecond:0})
+    return {
+      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
+    };
+  }
+
+  weekStartAndEndDate=() =>{
+    var sDate = moment().startOf('week').utcOffset(0);
+    sDate.set({hour:0,minute:0,second:0,millisecond:0})
+
+    var eDate = moment().endOf('week').utcOffset(0);
+    eDate.set({hour:23,minute:59,second:59,millisecond:0})
+    return {
+      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
+    };
+  }
+
+  monthStartAndEndDate=() =>{
+    var sDate = moment().startOf('month').utcOffset(0);
+    sDate.set({hour:0,minute:0,second:0,millisecond:0})
+
+    var eDate = moment().endOf('month').utcOffset(0);
+    eDate.set({hour:23,minute:59,second:59,millisecond:0})
+
+    return {
+      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
+    };
   }
 
   formatTime = (inputHours) => { //move to utils directory

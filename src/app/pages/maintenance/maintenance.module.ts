@@ -14,13 +14,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 @NgModule({
   imports: [
     FormsModule,
-    IonicModule,
     ReactiveFormsModule,
+    IonicModule,
     MaintenanceRoutingModule,
     CommonModule,
     AppMaterialModules,
     SharedModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
   ],
   declarations: [
     MaintenanceComponent,
