@@ -121,6 +121,7 @@ export class MaintenanceComponent {
   }
 
   public filterPriority =(status,priority)=>{
+     console.log(status)
     if(priority===null || priority.length==0){
       return true;
     }
@@ -134,7 +135,6 @@ export class MaintenanceComponent {
   }
 
   public filterDate(dueDate, filterDate) {
-    console.log(filterDate)
     if (filterDate === 'today')
       return this.isToday(dueDate)
     if (filterDate === 'month')

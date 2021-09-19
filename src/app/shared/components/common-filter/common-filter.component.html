@@ -34,30 +34,30 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="mat-field">
+      <mat-form-field *ngIf="kitStatusList" appearance="outline" class="mat-field">
         <mat-label>Kitting Status</mat-label>
-        <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
+        <mat-select disabled name="kitStatus" multiple [(ngModel)]="kitStatus">
           <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="mat-field">
+      <mat-form-field *ngIf="workCenterList" appearance="outline" class="mat-field">
         <mat-label>Work Center</mat-label>
-        <mat-select name="workCenter" multiple [(ngModel)]="workCenter">
+        <mat-select disabled name="workCenter" multiple [(ngModel)]="workCenter">
           <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="mat-field" *ngIf="workCenter != ''">
+      <mat-form-field disabled appearance="outline" class="mat-field" *ngIf="workCenter != ''">
         <mat-label>Assignee</mat-label>
-        <mat-select name="assign" multiple [(ngModel)]="assign">
+        <mat-select disabled name="assign" multiple [(ngModel)]="assign">
           <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
         </mat-select>
       </mat-form-field> 
 
       <br/>
       <button class="btn apply-filters-btn" (click)="pop.hide();searchFilter()">Apply</button>
-      <button (click)="form.reset()" class="reset-filters-btn">Reset</button>
+      <button (click)="form.reset();searchFilter()" class="reset-filters-btn">Reset</button>
       
     </form>
   </ng-template>

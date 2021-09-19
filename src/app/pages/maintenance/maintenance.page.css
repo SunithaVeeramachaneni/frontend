@@ -275,6 +275,19 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   align-items: center;
   text-align: center;
   color: #FFFFFF;
+  background-color: #f39f9b;
+}
+.very-high-priority{
+  font-family: Roboto;
+  padding: 5px 7px 3px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
   background-color: #FF3B30;
 }
 
