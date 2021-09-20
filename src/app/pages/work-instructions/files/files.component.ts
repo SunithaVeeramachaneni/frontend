@@ -243,7 +243,8 @@ export class MediaFilesComponent implements OnInit {
   }
 
   saveFile(file, index: number) {
-    const { fileName, fullFilePath, originalFileName } = file;
+    let { fileName, fullFilePath, originalFileName } = file;
+    fileName = fileName.trim();
 
     if (fileName === originalFileName) {
       this._toastService.show({
