@@ -179,7 +179,7 @@ export class MediaFilesComponent implements OnInit {
               this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath, info)
                 .pipe(
                   mergeMap(instructions => {
-                    if (instructions) {
+                    if (instructions.length) {
                       return from(instructions)
                         .pipe(
                           mergeMap(instruction => {
