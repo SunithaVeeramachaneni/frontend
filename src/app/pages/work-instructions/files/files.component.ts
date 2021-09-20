@@ -16,7 +16,7 @@ import { ComponentType } from '@angular/cdk/portal';
 import { BulkUploadComponent } from '../modal/templates/bulk-upload/bulk-upload.component';
 import { WiCommonService } from '../services/wi-common.services';
 import { mergeMap } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, of } from 'rxjs';
 
 @Component({
   selector: 'app-files',
@@ -178,14 +178,19 @@ export class MediaFilesComponent implements OnInit {
             mergeMap(() => 
               this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath, info)
                 .pipe(
-                  mergeMap(instructions =>
-                    from(instructions)
-                      .pipe(
-                        mergeMap(instruction => {
-                          instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
-                          return this._instructionSvc.updateWorkInstruction(instruction, info)
-                        })
-                      )
+                  mergeMap(instructions => {
+                    if (instructions) {
+                      return from(instructions)
+                        .pipe(
+                          mergeMap(instruction => {
+                            instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
+                            return this._instructionSvc.updateWorkInstruction(instruction, info)
+                          })
+                        )
+                    } else {
+                      return of(instructions);
+                    }
+                  }
                   )
                 )
             )
@@ -265,14 +270,19 @@ export class MediaFilesComponent implements OnInit {
         mergeMap(updateFileInfo => 
           this._instructionSvc.getAllInstructionsByFilePath(updateFileInfo.filePath, info)
             .pipe(
-              mergeMap(instructions => 
-                from(instructions)
-                  .pipe(
-                    mergeMap(instruction => {
-                      instruction = { ...instruction, FilePath: newFilePath };
-                      return this._instructionSvc.updateWorkInstruction(instruction, info)
-                    })
-                  )
+              mergeMap(instructions => {
+                if (instructions.length) {
+                  return from(instructions)
+                    .pipe(
+                      mergeMap(instruction => {
+                        instruction = { ...instruction, FilePath: newFilePath };
+                        return this._instructionSvc.updateWorkInstruction(instruction, info)
+                      })
+                    )
+                } else {
+                  return of(instructions);
+                }
+              }
               )
             )
         )
