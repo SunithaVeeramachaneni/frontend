@@ -3,30 +3,28 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="spareparts-header">
-         
-        <app-common-filter [title]="headerTitle" 
-        [showOverdueList]="showOverdueList"
-        [priorityList]="priorityList">
-      </app-common-filter>
-          
-           <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
-            <ion-segment-button value="today" class="segment-button">
-              <ion-label>Today</ion-label>
-            </ion-segment-button>
-            <hr class="segmented-line"/>
-            <ion-segment-button value="week" class="segment-button">
-              <ion-label>Due This Week</ion-label>
-            </ion-segment-button>
-            <hr class="segmented-line"/>
-            <ion-segment-button value="month" class="segment-button">
-              <ion-label>This Month</ion-label>
-            </ion-segment-button>
-            <hr class="segmented-line"/>
-             <ion-segment-button value="custom" class="segment-button" disabled>
-              <ion-label>Custom</ion-label>
-            </ion-segment-button>
-          </ion-segment>
-      </ion-col>  
+
+        <app-common-filter [title]="headerTitle" [showOverdueList]="showOverdueList" [priorityList]="priorityList">
+        </app-common-filter>
+
+        <ion-segment [formControl]="selectDate" mode="ios" value="today" class="segment-group">
+          <ion-segment-button value="today" class="segment-button">
+            <ion-label>Today</ion-label>
+          </ion-segment-button>
+          <hr class="segmented-line" />
+          <ion-segment-button value="week" class="segment-button">
+            <ion-label>Due This Week</ion-label>
+          </ion-segment-button>
+          <hr class="segmented-line" />
+          <ion-segment-button value="month" class="segment-button">
+            <ion-label>This Month</ion-label>
+          </ion-segment-button>
+          <hr class="segmented-line" />
+          <ion-segment-button value="custom" class="segment-button" disabled>
+            <ion-label>Custom</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
     </ion-row>
   </ion-toolbar>
 </ion-header>
@@ -56,32 +54,34 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="partsIcon" class="list-icons"></ion-img>
-              <span [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
+              <span
+                [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
             </span>
             <span>
-              <ion-button (click)="openSelect()" expand="full" class="assign-picklist-btn">
+              <ion-button (click)="openSelect(i)" expand="full" class="assign-picklist-btn">
                 <ion-img [src]="assignIcon" class="assignIcon-class"></ion-img>
-                <span class="assign-text-class">ASSIGN PICKLIST</span> 
-              </ion-button>          
+                <span class="assign-text-class">ASSIGN PICKLIST</span>
+              </ion-button>
               <ion-item style="display: none;" *ngIf="this.technicians$ | async as technicians">
-               
+
                 <ion-label>Assign To:</ion-label>
-                <ion-select #select1 mode="ios" (ionChange)="optionsFn($event, i,workOrder.workOrderID);" [interfaceOptions]="customPopoverOptions" interface="popover">
-                <ion-select-option *ngFor="let technician of technicians.technicians; let i = index;">
-                  <ion-toolbar>
-                    <ion-img [src]="profile1"></ion-img>
-                    <ion-label>{{technician.fName}}</ion-label>
-                  </ion-toolbar>
-                   
-                </ion-select-option>
-                <!-- <ion-select-option><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
+                <ion-select #select1 mode="ios" (ionChange)="assignTech($event,workOrder.workOrderID);"
+                  [interfaceOptions]="customPopoverOptions" interface="popover">
+                  <ion-select-option *ngFor="let technician of technicians; let i = index;">
+                    <ion-toolbar>
+                      <ion-img [src]="profile1"></ion-img>
+                      <ion-label>{{technician.fName}}</ion-label>
+                    </ion-toolbar>
+
+                  </ion-select-option>
+                  <!-- <ion-select-option><ion-img [src]="profile2"></ion-img>Carlos Arnal </ion-select-option>
                 <ion-select-option><ion-img [src]="profile3"></ion-img>Steve Austin</ion-select-option> -->
                 </ion-select>
               </ion-item>
             </span>
-          </ion-label>        
+          </ion-label>
         </ion-item>
-       
+
       </ion-list>
     </ion-col>
     <ion-col>
@@ -106,7 +106,8 @@
             </span>
             <span class="display-flex">
               <ion-img [src]="partsIcon" class="list-icons"></ion-img>
-              <span [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
+              <span
+                [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
             </span>
             <span>
               <!-- <ion-item>
@@ -124,12 +125,12 @@
               </ion-item>   -->
             </span>
             <div class="m-t-10">
-              <img [src]="baseCode"/>
-              <span class="m-l-10">Amy Butcher</span>
-            </div>  
-          </ion-label>        
+              <img [src]="baseCode" />
+              <span class="m-l-10">{{workOrder.assignee}}</span>
+            </div>
+          </ion-label>
         </ion-item>
-       </ion-list>
+      </ion-list>
     </ion-col>
     <ion-col>
       <ion-list class="ion-list3">
@@ -157,18 +158,20 @@
                 <span class="date-priority-label">{{workOrder.staged}} of {{workOrder.totItems}} Parts Picked</span>
               </span>
               <div class="m-l-20">
-                <ion-progress-bar value={{workOrder.progressValue}} color="medium" class="progress-bar-class"></ion-progress-bar>
-                <span [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
+                <ion-progress-bar value={{workOrder.progressValue}} color="medium" class="progress-bar-class">
+                </ion-progress-bar>
+                <span
+                  [ngClass]="{'parts-available-label':workOrder.partsavailable==='PARTS AVAILABLE' , 'waiting-on-parts-label': workOrder.partsavailable==='WAITING ON PARTS'}">{{workOrder.partsavailable}}</span>
               </div>
-             
+
             </span>
             <div class="m-t-10">
-              <img [src]="baseCode"/>
-              <span class="m-l-10">Amy Butcher</span>
-            </div>  
-          </ion-label>        
+              <img [src]="baseCode" />
+              <span class="m-l-10">{{workOrder.assignee}}</span>
+            </div>
+          </ion-label>
         </ion-item>
-       </ion-list>
+      </ion-list>
     </ion-col>
     <ion-col>
       <ion-list class="ion-list4">
@@ -179,11 +182,11 @@
             <br>
             <span class="kit-heading">Kits Complete</span>
           </ion-label>
-       </ion-item>
-        <ion-item lines="none"  class="no-padding-item" *ngFor="let workOrder of workOrders['4']; let i = index;">
+        </ion-item>
+        <ion-item lines="none" class="no-padding-item" *ngFor="let workOrder of workOrders['4']; let i = index;">
           <ion-label class="no-margin">
             <div class="pickedup-date-time">
-              Pickup Today, 10am-11am 
+              Pickup Today, 10am-11am
             </div>
             <div class="padding">
               <span class="kit-number">{{workOrder.workOrderID}}</span><br>
@@ -196,13 +199,13 @@
                 <span class="date-priority-label">{{workOrder.priorityStatus}}</span>
               </span>
               <span class="display-flex">
-                  <ion-img [src]="partsIcon" class="list-icons"></ion-img>
-                  <span class="date-priority-label">{{workOrder.totItems}} Parts</span>
+                <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">{{workOrder.totItems}} Parts</span>
               </span>
             </div>
-          </ion-label>        
+          </ion-label>
         </ion-item>
-       </ion-list>
+      </ion-list>
     </ion-col>
     <ion-col>
       <ion-list class="ion-list5">
@@ -214,7 +217,7 @@
             <span class="kit-heading">Kits Picked Up</span>
           </ion-label>
         </ion-item>
-       </ion-list>
+      </ion-list>
     </ion-col>
-  </ion-row> 
+  </ion-row>
 </ion-content>
