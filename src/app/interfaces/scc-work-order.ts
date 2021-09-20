@@ -17,7 +17,9 @@ export interface WorkOrder {
     partsavailable:string,
     progressValue:number,
     staged:number,
-    totItems:number
+    totItems:number,
+    assigneeId:string,
+    assignee:string
 }
 
 export interface WorkOrders {
