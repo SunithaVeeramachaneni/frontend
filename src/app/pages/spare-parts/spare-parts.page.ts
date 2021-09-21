@@ -1,4 +1,4 @@
-import { Component, ViewChild} from '@angular/core';
+import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import { SparepartsService } from './spareparts.service';
 import { IonSelect } from '@ionic/angular';
 import { data_test } from './spare-parts-data';
@@ -6,7 +6,7 @@ import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
 import { combineLatest, Observable,of ,Subscription} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap,mergeMap,switchMap } from 'rxjs/operators';
-import { Technicians } from '../../interfaces/technicians';
+import { Technician } from '../../interfaces/technicians';
 import { DomSanitizer } from '@angular/platform-browser';
 import {CommonService}   from '../../shared/services/common.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -24,13 +24,15 @@ export class SparePartsComponent{
 
   public workOrderList$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
+  public combineWorkOrderList$: Observable<WorkOrders>;
+  public updatedWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
   public selectDate: FormControl;
   public selectDate$: Observable<string>;
 
   public workOrders: Observable<WorkOrder[]>
-  public technicians$: Observable<Technicians>
+  public technicians$: Observable<Technician[]>
   public filterObj$: Observable<any>
 
   public baseCode:any;
@@ -50,7 +52,7 @@ export class SparePartsComponent{
 
   hideList = true;
 
-  @ViewChild('select1') selectRef: IonSelect ;
+  @ViewChildren('select1') selectRef: QueryList<IonSelect> ;
 
   public showOverdue: string = '';
  public showOverdueList: string[] = ['Yes', 'No'];
@@ -77,7 +79,9 @@ export class SparePartsComponent{
               private spinner: NgxSpinnerService,) {}
 
   ngOnInit() {
-    this.filterObj$= this._commonService.commonFilterAction$
+    this.filterObj$= this._commonService.commonFilterAction$;
+    this.selectDate = new FormControl('week');
+    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.getWorkOrders();
     this.getTechnicians();
   }
@@ -91,11 +95,6 @@ export class SparePartsComponent{
   }
 
   getWorkOrders() {
-
-    this.filter = new FormControl('');
-    this.selectDate = new FormControl('week');
-    this.filter$ = this.filter.valueChanges.pipe(startWith(''));
-    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.spinner.show();
     this.workOrderList$ =this.selectDate$.pipe(mergeMap(val=>{
       this.spinner.show();
@@ -118,19 +117,38 @@ export class SparePartsComponent{
     );
   }
 
-openSelect(){
-  this.selectRef.open()
+openSelect(i){
+  console.log(this.selectRef.length);
+  const popover = this.selectRef.find((select,index) => index === i);
+  console.log(this.selectRef);
+  popover.open();
 }
 
-optionsFn(event, index,id) {
-  alert(event.target.value)
-  alert(id)
-  this.selectedUser= event.target.value;
-  if(event.target.value) {
-    this.testData1.push(this.testData.splice(index, 1));
-    console.log(this.testData);
-    console.log(this.testData1);
-  }
+assignTech(event,workorderid) {
+  alert(workorderid)
+ let technician= this.technicians$.pipe(map(epics => epics.filter(epic => epic.fName ===event.target.value)));
+ technician.subscribe(technician=>{
+  let data = {
+    USNAM:technician[0].userId ,
+    ASSIGNEE: technician[0].fName,
+    AUFNR:workorderid,
+    }
+    alert(JSON.stringify(data))
+    this._sparepartsSvc.assignTechnicianToWorkorder(data).subscribe(res=>{
+      this.getWorkOrders();
+      // this.filteredWorkOrderList$= this.filteredWorkOrderList$.pipe(map(obj=>{
+      //    console.log('obj1',obj)
+      //    let kitsFiltered=  obj['1'].filter(orders=>orders.workOrderID===workorderid)
+      //    let kitsFilteredExclude = obj['1'].filter(orders=>orders.workOrderID!==workorderid)
+      //    kitsFiltered[0].assignee=data.ASSIGNEE;
+      //    kitsFiltered[0].assigneeId=data.USNAM;
+      //    obj['2'].unshift(kitsFiltered[0]);
+      //    obj['1']=kitsFilteredExclude;
+      //    console.log('obj2',obj)
+      //    return obj;
+      //   }));
+    })
+ })
 }
 
 public filterDate(dueDate, filterDate){

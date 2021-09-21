@@ -20,10 +20,10 @@ export class SparepartsService {
     "4": "Kits Complete",
     "5": "Kits Picked Up",
   }
-  getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technicians>{
+  getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technician[]>{
     let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist', info);
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
-      let technicians: Technicians = { technicians:[] };
+      let technicians: Technician[] =[]
       let technician: Technician;
       rawTechnicians.forEach(rawTechnician => {
         console.log(rawTechnician)
@@ -33,11 +33,15 @@ export class SparepartsService {
           fName:rawTechnician['FirstName'],
           LName:rawTechnician['LastName']
         })
-        technicians['technicians'].push(technician)
+        technicians.push(technician)
       });
       return technicians;
     }))
     return transformedObservable$;
+  }
+  assignTechnicianToWorkorder(data,info: ErrorInfo = {} as ErrorInfo):Observable<any>{
+    let updateResp$ = this._appService._putDataToGateway(environment.spccAbapApiUrl,`workorderspcc/${data.AUFNR}`,data);
+    return updateResp$;
   }
 
   getAllWorkOrders(date,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
@@ -73,6 +77,8 @@ export class SparepartsService {
           progressValue:rawWorkOrder['STAGED']/rawWorkOrder['TOTITEMS'],
           staged:rawWorkOrder['STAGED'],
           totItems:rawWorkOrder['TOTITEMS'],
+          assigneeId:rawWorkOrder['USNAM'],
+          assignee:rawWorkOrder['ASSIGNEE']
         })
         workOrders[`${workOrder.statusCode}`].push(workOrder)
       });
