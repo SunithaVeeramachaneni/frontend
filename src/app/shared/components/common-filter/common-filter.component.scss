@@ -30,13 +30,9 @@
   }
 
 .input-group {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    width: auto;
     padding-left: 15px;
     height: 42px;
+    flex-wrap: nowrap;
   }
   
   .input-group-text {
@@ -67,4 +63,14 @@
 
   .mat-field {
     width: 100%;
+  }
+
+  .common-filter-search {
+    border:1px solid #F2F2F2; 
+    opacity: 0.75; 
+    background:#F2F2F2;
+  }
+
+  .common-filter-icon {
+    width: 18px;
   }

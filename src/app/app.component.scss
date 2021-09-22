@@ -1,10 +1,12 @@
 .split-pane-visible > ion-menu.custom-menu1 {
   max-width: 300px!important;
+  border: none;
 }
 
 .split-pane-visible > ion-menu.custom-menu2 {
   max-width: 80px!important;
   min-width: 80px!important;
+  border: none;
 }
 
 ion-menu ion-content {

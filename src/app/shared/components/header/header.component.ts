@@ -13,6 +13,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public username : string;
   public userImage: string;
   public sidebarMinimize = false;
+  public sideBarOpen = '../../../../assets/img/sidebar-opened.svg';
+  public sideBarClosed = '../../../../assets/img/sidebar-closed.svg';
   @Input() title;
   private minimizeSidebarActionSubscription: Subscription;
 

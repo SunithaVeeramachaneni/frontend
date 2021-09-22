@@ -1,3 +1,8 @@
+ion-content {
+  --ion-background-color: #f2f2f2;
+  --offset-top: 0px !important;
+}
+
 .main-heading {
     font-family: "Ubuntu", sans-serif;
     font-style: normal;
@@ -75,12 +80,18 @@
   margin-bottom: 20px;
 }
 
+.drafts-favorites-div {
+   border-radius: 8px;
+   height: 100%;
+}
+
 .recents-favorites-list {
   padding: 15px ; margin: 0;
 }
 
 .recents-favorites-lst-header {
-  padding: 5px 15px 5px 0; margin: 0;
+  padding: 7px 15px;
+  margin: 0;
 }
 
 .recents-favorites-lst-header span {
@@ -90,6 +101,7 @@
 .recents-favorites-list li {
   list-style-type: none;
   padding-bottom: 20px;
+  padding-left: 12px;
 }
 
 .recent-title {

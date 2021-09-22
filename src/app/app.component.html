@@ -3,7 +3,7 @@
   <ion-split-pane contentId="main-content">
 
     <ion-menu contentId="main-content" [ngClass]="{'custom-menu1': this.sidebar === false, 'custom-menu2' : this.sidebar === true }">
-      <ion-header>
+      <ion-header class="ion-no-border">
         <ion-img [src]="logo" class="sidebar-logo" *ngIf="this.sidebar === false"></ion-img>
         <ion-img [src]="smallLogo" class="sidebar-small-logo" *ngIf="this.sidebar === true"></ion-img>
       </ion-header>
