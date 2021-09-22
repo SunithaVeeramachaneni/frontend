@@ -8,3 +8,4 @@ export * from  './upload-file';
 export * from  './user';
 export * from  './import-file-event';
 export * from  './file-info';
+export * from './files';
