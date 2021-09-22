@@ -40,8 +40,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
   }
 
-  minimize() {
-     this.sidebarMinimize = !this.sidebarMinimize;
+  minimize(e) {
+    this.sidebarMinimize = e;
     this.commonService.minimizeSidebar(this.sidebarMinimize);
   }
 
