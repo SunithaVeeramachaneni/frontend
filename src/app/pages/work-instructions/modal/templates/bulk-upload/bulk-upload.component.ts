@@ -25,7 +25,6 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
 
   public steps = [];
   public ins = [];
-  public assignedObjectsList;
   loadResults = false;
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'indeterminate';
@@ -217,38 +216,26 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     }
   }
 
-  getBusinessObjects() {
-    this._instructionSvc.getAllBusinessObjects().subscribe((resp) => {
-      if (resp && resp.length > 0) {
-        this.assignedObjectsList = resp;
-      }
-    });
-  }
-
-  businessObject = (obj) => {
-    let businessObject: object;
-    let fieldName;
-    const finalObject = [];
-    const Fields = obj.split(',');
-    if (this.assignedObjectsList && this.assignedObjectsList.length !== 0) {
-      for (let i = 0; i < Fields.length; i++) {
-        const splitData = Fields[i].split(':');
-        for (let objCnt = 0; objCnt < this.assignedObjectsList.length; objCnt++) {
-          if (this.assignedObjectsList[objCnt].FIELDDESCRIPTION === splitData[0]) {
-            fieldName = this.assignedObjectsList[objCnt].FILEDNAME;
-          }
-        }
-        businessObject = {
-          OBJECTCATEGORY: 'WORKORDER',
-          FILEDNAME: fieldName,
-          FIELDDESCRIPTION: splitData[0],
-          Value: splitData[1],
-        };
-        finalObject.push({...businessObject});
-      }
-      businessObject = finalObject;
-      return JSON.stringify(businessObject);
+  getBusinessObjects = (assignedObjectsString: string, businessObjects: any) => {
+    const assignedObjects = assignedObjectsString ? assignedObjectsString.split(',') : [];
+    let objectsValue = {};
+    for (let assignedObject of assignedObjects) {
+      const details = assignedObject.split(':');
+      let [description, value] = details;
+      if (description && value && description.trim() && value.trim() && value.trim().toLowerCase() !== '{value}') {
+        objectsValue = { ...objectsValue, [description.trim()]: value.trim() };
+      } 
     }
+
+    const filteredBusinessObjects = businessObjects.map(function(businessObject: any) {
+      const { FIELDDESCRIPTION } = businessObject;
+      const Value = this[FIELDDESCRIPTION];
+      if (Value) {
+        return { ...businessObject, Value };
+      }
+    }, objectsValue).filter((object: any) => object);
+    
+    return filteredBusinessObjects.length ? JSON.stringify(filteredBusinessObjects) : null;
   }
 
   addIns(payload, steps, allKeys, currentInsCnt, currentIns) {
@@ -417,76 +404,92 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     if (isAudioOrVideoFile) {
       this.uploadInfo = data;
     } else {
-      this.getBusinessObjects();
-      const allKeys = data ? Object.keys(data) : [];
-      for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
-        let steps = this.steps;
-        steps = data[allKeys[fieldKey]];
-        if (steps && steps.length !== 0) {
-          const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-          const insResultedObject = {
-            instructionName: steps[0].WorkInstruction,
-            insPostedSuccessfully: false,
-            insPostingFailed: false,
-          };
-          this.ins = [...this.ins, insResultedObject];
-          const instructionHeaderPayload = {
-            AssignedObjects: this.businessObject(steps[0].AssignedObjects),
-            Categories: null,
-            CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-            created_at: '',
-            EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
-            IsFavorite: false,
-            IsPublishedTillSave: false,
-            Published: false,
-            SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
-            SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
-            Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
-            Cover_Image: steps[0].Cover_Image_Name,
-            WI_Desc: null,
-            WI_Id: null,
-            WI_Name: steps[0].WorkInstruction.trim(),
-            updated_at: ''
-          };
-          const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-          const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(',') : [];
-  
-          from(catgrs)
-            .pipe(
-              concatMap((category: string) => {
-                category = category.trim();
-                return this._instructionSvc.getCategoriesByName(category, info)
+      this._instructionSvc.getAllBusinessObjects()
+        .pipe(
+          map(businessObjects => {
+            let objects = [];
+            for (let businessObject of businessObjects) {
+              delete businessObject.APPNAME;
+              delete businessObject.__metadata;
+              businessObject = { ...businessObject, Value: '' };
+              objects = [...objects, businessObject];
+            }
+            return objects;
+          })
+        ).subscribe(
+          businessObjects => {
+            const allKeys = data ? Object.keys(data) : [];
+            for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
+              let steps = this.steps;
+              steps = data[allKeys[fieldKey]];
+              if (steps && steps.length !== 0) {
+                const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+                const insResultedObject = {
+                  instructionName: steps[0].WorkInstruction,
+                  insPostedSuccessfully: false,
+                  insPostingFailed: false,
+                };
+                this.ins = [...this.ins, insResultedObject];
+                const instructionHeaderPayload = {
+                  AssignedObjects: this.getBusinessObjects(steps[0].AssignedObjects, businessObjects),
+                  Categories: null,
+                  CreatedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+                  created_at: '',
+                  EditedBy: loggedInUser.first_name + ' ' + loggedInUser.last_name,
+                  IsFavorite: false,
+                  IsPublishedTillSave: false,
+                  Published: false,
+                  SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
+                  SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
+                  Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
+                  Cover_Image: steps[0].Cover_Image_Name,
+                  WI_Desc: null,
+                  WI_Id: null,
+                  WI_Name: steps[0].WorkInstruction.trim(),
+                  updated_at: ''
+                };
+                const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+                const catgrs = steps[0].Category?.trim().length ? steps[0].Category.split(',') : [];
+        
+                from(catgrs)
                   .pipe(
-                    mergeMap(data => {
-                      if (data.length === 0) {
-                        return this.addCategory(category, info);
+                    concatMap((category: string) => {
+                      category = category.trim();
+                      return this._instructionSvc.getCategoriesByName(category, info)
+                        .pipe(
+                          mergeMap(data => {
+                            if (data.length === 0) {
+                              return this.addCategory(category, info);
+                            } else {
+                              return of(data[0]);
+                            }
+                          })
+                        );
+                    }),
+                    toArray()
+                  ).subscribe(
+                    categories => {
+                      categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
+                      instructionHeaderPayload.Categories = JSON.stringify(categories);
+                      if (steps.length === 1) {
+                        this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
                       } else {
-                        return of(data[0]);
+                        this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
                       }
-                    })
+                    },
+                    error => {
+                      this.errorHandlerService.handleError(error);
+                      insResultedObject.insPostingFailed = true;
+                      if (fieldKey + 1 === allKeys.length) {
+                        this.loadResults = true;
+                      }
+                    }
                   );
-              }),
-              toArray()
-            ).subscribe(
-              categories => {
-                categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
-                instructionHeaderPayload.Categories = JSON.stringify(categories);
-                if (steps.length === 1) {
-                  this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
-                } else {
-                  this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
-                }
-              },
-              error => {
-                this.errorHandlerService.handleError(error);
-                insResultedObject.insPostingFailed = true;
-                if (fieldKey + 1 === allKeys.length) {
-                  this.loadResults = true;
-                }
               }
-            );
-        }
-      }
+            }
+          }
+        );
+
     }
   }
 

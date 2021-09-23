@@ -112,6 +112,7 @@ export class WorkInstructionsPage {
   }
 
   exportAsXLSX(): void {
+    this.workbook = new ExcelJs.Workbook();
     const SheetProperties = {
       defaultRowHeight: 100,
       tabColor: {argb: 'b2b2b2'}
