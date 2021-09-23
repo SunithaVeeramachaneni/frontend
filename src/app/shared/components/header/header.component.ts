@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, Input, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { LogonUserDetails } from '../../../interfaces';
 import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
 
@@ -13,6 +14,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public username : string;
   public userImage: string;
   public sidebarMinimize = false;
+  logonUserDetails$: Observable<LogonUserDetails>;
   @Input() title;
   private minimizeSidebarActionSubscription: Subscription;
 
@@ -26,16 +28,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.minimizeSidebarActionSubscription = this.commonService.minimizeSidebarAction$.subscribe(data => {
       this.sidebarMinimize = data;
     });
-    this.getLogonUserDetails();
-  }
-  
-  getLogonUserDetails = () =>{
-    this._headerSvc.getLogonUserDetails().subscribe((resp)=>{
-      if (resp.length) {
-        this.userImage = "data:image/jpeg;base64,"+resp[0].FILECONTENT;
-        this.username=resp[0].SHORT;
-      }
-    })
+    this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
   }
 
   minimize() {
