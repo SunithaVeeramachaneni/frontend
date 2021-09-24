@@ -47,7 +47,7 @@
             <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/>
             </div>
             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">
-              <div class="ellipsis" (click)="navigate(obj.Id)">
+              <div class="ellipsis" [routerLink]="['/work-instructions/edit', obj.Id]">
               <a><span class="recent-title" matTooltip={{obj.WI_Name}} matTooltipClass="">{{ obj.WI_Name }}</span></a></div>
               <div class="category-ellipsis" >
                   <span class="recent-subtitle" matTooltip={{obj.categories}} matTooltipClass="">{{ obj.categories}}</span>
@@ -81,7 +81,7 @@
                   </div>
 
                   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">
-                    <div (click)="navigate(obj.Id)" class="dis-flex">
+                    <div [routerLink]="['/work-instructions/edit', obj.Id]"  class="dis-flex">
                       <a class="ellipsis"><span class="recent-title"  matTooltip={{obj.WI_Name}} matTooltipClass="">{{ obj.WI_Name }}</span></a>
                       <a (click)="setFav($event, obj)"><mat-icon class="mat-icon-star is-fav-icon fav-icon">star</mat-icon></a> <span class="chip" *ngIf="obj.Published === false">Draft</span></div>
                     <div class="category-ellipsis">

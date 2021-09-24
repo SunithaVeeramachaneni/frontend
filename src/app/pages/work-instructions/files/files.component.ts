@@ -3,7 +3,6 @@ import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
-import { ActivatedRoute } from '@angular/router';
 import { ErrorInfo } from '../../../interfaces';
 import { FileInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
@@ -62,7 +61,6 @@ export class MediaFilesComponent implements OnInit {
   constructor(private spinner: NgxSpinnerService,
               private _instructionSvc: InstructionService,
               private _toastService: ToastService,
-              private route: ActivatedRoute,
               private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService,
               private importService: ImportService,
@@ -71,9 +69,6 @@ export class MediaFilesComponent implements OnInit {
 
   ngOnInit() {
     this.getAllMediaFiles();
-    this.route.queryParamMap.subscribe(params => {
-      this.search = params.get('search');
-    });
   }
 
 
@@ -135,7 +130,6 @@ export class MediaFilesComponent implements OnInit {
               files => {
                 files.forEach(file => {
                   this.fileInfo = this.getFileTypeAndPath(file);
-                  console.log(this.fileInfo);
                   let fullPath = this.fullPath(file);
                   let splitFile = this.splitFileFromFolder(file);
                   this.mediaFile.fullFilePath = fullPath;

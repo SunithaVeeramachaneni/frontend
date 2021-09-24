@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { InstructionService } from './services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, Subscription, timer } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExcelService } from './services/excel.service';
 import * as ExcelJs from 'exceljs/dist/exceljs.min.js';
@@ -17,7 +17,6 @@ import { Instruction, ErrorInfo } from '../../interfaces';
 import { Base64HelperService } from './services/base64-helper.service';
 import { DummyComponent } from '../../shared/components/dummy/dummy.component';
 import { WiCommonService } from './services/wi-common.services';
-import { Router } from '@angular/router';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 import { ImportService } from './services/import.service';
 import { environment } from '../../../environments/environment';
@@ -82,7 +81,6 @@ export class WorkInstructionsPage {
               private overlayService: OverlayService,
               private base64HelperService: Base64HelperService,
               private wiCommonService: WiCommonService,
-              private router: Router,
               private errorHandlerService: ErrorHandlerService,
               private importService: ImportService) { }
 
@@ -215,10 +213,6 @@ export class WorkInstructionsPage {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-  }
-
-  navigate(id: string) {
-    timer(10).subscribe(time => this.router.navigate(['/work-instructions/edit', id]));
   }
 
   ionViewWillEnter(): void {

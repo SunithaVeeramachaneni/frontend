@@ -272,7 +272,7 @@ describe('WorkInstructionsPage', () => {
       );
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(7);
-      expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
+      expect(buttons[0].textContent).toContain('CREATE WORK INSTRUCTION');
       expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
@@ -317,7 +317,7 @@ describe('WorkInstructionsPage', () => {
       );
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(5);
-      expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
+      expect(buttons[0].textContent).toContain('CREATE WORK INSTRUCTION');
       expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
@@ -393,11 +393,21 @@ describe('WorkInstructionsPage', () => {
       expect(li[0].textContent).toContain(combineDrafts[1].categories.join());
       expect(li[0].textContent).toContain('Edited');
       expect(li[0].textContent).toContain(`by ${combineDrafts[1].EditedBy}`);
+      expect(
+        (li[0].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
+          'ng-reflect-router-link'
+        )
+      ).toBe(`/work-instructions/edit,${combineDrafts[1].Id}`);
       expect(li[3].childNodes.length).toBe(3);
       expect(li[3].textContent).toContain(combineFavorites[1].WI_Name);
       expect(li[3].textContent).toContain(combineFavorites[1].categories.join());
       expect(li[3].textContent).toContain('Edited');
       expect(li[3].textContent).toContain(`by ${combineFavorites[1].EditedBy}`);
+      expect(
+        (li[3].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
+          'ng-reflect-router-link'
+        )
+      ).toContain(`/work-instructions/edit,${combineFavorites[1].Id}`);
     });
   });
 

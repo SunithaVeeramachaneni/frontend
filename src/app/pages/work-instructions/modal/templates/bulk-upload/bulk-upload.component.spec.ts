@@ -135,8 +135,6 @@ describe('BulkUploadComponent', () => {
 
   it('Get Business Objects assigned to a product', () => {
     expect(component.getBusinessObjects).toBeDefined();
-    expect(component.assignedObjectsList).toBeDefined();
-    expect((component.assignedObjectsList).length).not.toBe(0);
   });
 
   it('Add header data from imported sheet', () => {
