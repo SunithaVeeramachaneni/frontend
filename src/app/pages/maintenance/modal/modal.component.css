@@ -48,9 +48,17 @@
     text-transform: uppercase;
     color: #76767B;
     float: right;
+    --background-hover : none;
   }
 
   .save-btn {
     float: right;
     margin-right: 20px;
+    margin-top: 7px;
+    --background-hover : none;
+  }
+
+  ion-footer {
+    height: 50px;
+    min-height: 50px;
   }

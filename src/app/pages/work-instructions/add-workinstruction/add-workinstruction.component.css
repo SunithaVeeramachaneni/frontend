@@ -233,7 +233,12 @@ input[type="text"]:focus {
   border-color: #1351d8;
 }
 
+.more_horiz_btn {
+  position: relative;
+  top: -5px;
+}
+
 .more_horiz-icon {
   position: relative;
-  top: -8px;
+  top: -3px;
 }

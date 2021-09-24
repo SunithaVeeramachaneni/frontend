@@ -45,72 +45,68 @@
             <span class="kit-heading">Unassigned Work Orders</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.unassigned; let i = index;">
-          <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
-            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-            <span class="kit-ready">KIT READY</span>
-            <br/>
-            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
-            <span class="display-flex">
-              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
-            </span>
+        <div class="column-height">
+          <ion-item lines="none" *ngFor="let workOrder of workOrders.unassigned; let i = index;" class="ion-item-cols">
+            <ion-label>
+              <div class="p-l-15 p-r-15">
+              <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+              <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+              <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+              <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+              <span class="kit-ready">KIT READY</span>
+              <br/> 
+              <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
+              <span class="display-flex">
+                <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+              </span>
+              <span class="display-flex">
+                <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+              </span>
+              <span class="display-flex">
+                <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+              </span>
 
-            <ion-button (click)="onAssignPress(workOrder)" color="light" expand="full"> 
-              <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
-              <span class="assign-btn-text">ASSIGN</span> 
-            </ion-button>
-
-          
-            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
-              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
-            </ion-button>
-            <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
-              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
-            </ion-button>
-            <hr *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-line"/>
-            <span>
-              <div *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-div">
-                <ion-item class="operations-list" *ngFor="let operation of workOrders.unassigned[i].operations; let j = index;">
-                  <ion-label>
-                    <span class="kit-number">{{operation.operationName}}</span><br>
-                    <span class="display-flex">
-                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.estimatedTime}}</span>
-                    </span>
-
-                    <!-- <span>
-                      <ion-button shape="round" color="light">
-                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
-                      </ion-button>
-                    </span> -->
-                  </ion-label>
-                </ion-item>
+              <ion-button (click)="onAssignPress(workOrder)" expand="full" class="assign-btn"> 
+                <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
+                <span class="assign-btn-text">ASSIGN</span> 
+              </ion-button>
               </div>
-            </span>
 
-          </ion-label>           
-        </ion-item>
-       
+              <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
+                <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+              </ion-button>
+              <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
+                <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+              </ion-button>
+              <hr *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-line"/>
+              <span>
+                <div *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-div">
+                  <ion-item class="operations-list" *ngFor="let operation of workOrders.unassigned[i].operations; let j = index;">
+                    <ion-label>
+                      <span class="kit-number">{{operation.operationName}}</span>
+                      <span class="display-flex">
+                        <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                      </span>
+                      <span class="display-flex">
+                        <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                      </span>
+                      <span class="display-flex">
+                        <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{operation.estimatedTime}}</span>
+                      </span>
+                    </ion-label>
+                  </ion-item>
+                </div>
+              </span>
+
+            </ion-label>           
+          </ion-item>
+        </div>
       </ion-list>
     </ion-col>
     <ion-col size-lg="3" size-md="3" size-sm="3">
@@ -122,73 +118,66 @@
             <span class="kit-heading">Assigned Work Orders</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.assigned; let i = index;">
-          <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
-            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-            <span class="kit-ready">KIT READY</span>
-            <br/>
-            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
-            <span class="display-flex">
-              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
-            </span>
+        <div class="column-height">
+            <ion-item lines="none" *ngFor="let workOrder of workOrders.assigned; let i = index;" class="ion-item-cols">
+              <ion-label>
+                <div class="p-l-15 p-r-15">
+                  <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+                  <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+                  <span class="kit-ready">KIT READY</span>
+                  <br/>
+                  <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
+                  <span class="display-flex">
+                    <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+                  </span>
+                  <div *ngIf="workOrder.technician.length !== 0" class="cursor m-t-10 display-flex" (click)="onAssignPress(workOrder)">
+                    <img [src]="base64Code" class="assign-user-image"/>
+                    <span class="assign-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+                  </div>  
+                </div>
 
-            <div *ngIf="workOrder.technician.length !== 0" class="cursor m-t-10" (click)="onAssignPress(workOrder)">
-              <img [src]="base64Code" class="assign-user-image"/>
-              <span class="assign-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
-            </div>
- 
-            <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
-              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
-            </ion-button>
-            <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === true">
-              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
-            </ion-button>
-            <hr *ngIf="this.showOperationsList.assigned[i] === true" class="operations-line"/>
-            <span>
-              <div *ngIf="this.showOperationsList.assigned[i] === true" class="operations-div">
-                <ion-item class="operations-list" *ngFor="let operation of workOrders.assigned[i].operations; let j = index;">
-                  <ion-label>
-                    <span class="kit-number">{{operation.operationName}}</span><br>
-                    <span class="display-flex">
-                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{operation.estimatedTime}}</span>
-                    </span>
-
-                      <!-- <img src={{this.userImage}} alt="logged-user-image" class="header-user-icon"> -->
-
-                      <!-- technicians.filter((technician) => technician.personKey === workOrder.personDetails) -->
-
-                    <!-- <span>
-                      <ion-button shape="round" color="light">
-                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
-                      </ion-button>
-                    </span> -->
-                  </ion-label>
-                </ion-item>
-              </div>
-            </span>
-          </ion-label>        
-        </ion-item>
+                <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
+                  <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+                </ion-button>
+                <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === true">
+                  <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+                </ion-button>
+                <hr *ngIf="this.showOperationsList.assigned[i] === true" class="operations-line"/>
+                <span>
+                  <div *ngIf="this.showOperationsList.assigned[i] === true" class="operations-div">
+                    <ion-item class="operations-list" *ngFor="let operation of workOrders.assigned[i].operations; let j = index;">
+                      <ion-label>
+                        <span class="kit-number">{{operation.operationName}}</span>
+                        <span class="display-flex">
+                          <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                          <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                        </span>
+                        <span class="display-flex">
+                          <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                          <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                        </span>
+                        <span class="display-flex">
+                          <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                          <span class="date-priority-label">{{operation.estimatedTime}}</span>
+                        </span>
+                      </ion-label>
+                    </ion-item>
+                  </div>
+                </span>
+              </ion-label>        
+            </ion-item>
+        </div>
        </ion-list>
     </ion-col>
     <ion-col size-lg="3" size-md="3" size-sm="3">
@@ -200,91 +189,77 @@
             <span class="kit-heading">In Progress</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.inProgress; let i = index;">
-          <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
-            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-            <br/>
-            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
-            <span class="display-flex">
-              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <!-- <span class="date-priority-label">{{workOrder.estimatedTime}}</span> -->
-              <span class="width-100">
-                <span class="date-priority-label">Actual {{workOrder.actualTime}}</span>
-                <span class="date-priority-label float-right">Planned {{workOrder.estimatedTime}}</span>   
-              </span>
-            </span>
-
-
-
-<ion-progress-bar value="{{workOrder.timeProgress}}" color="medium" class="progress-bar-class"></ion-progress-bar>
-<span class="display-flex">
-  <ion-img [src]="operationsIcon" class="list-icons"></ion-img>
-  <span class="date-priority-label">{{workOrder.operationProgress[0]}} of {{workOrder.operationProgress[1]}} Operations Completed</span>
-</span>
-<ion-progress-bar value="{{workOrder.operationProgress[2]}}" color="medium" class="progress-bar-class"></ion-progress-bar>
-
-<div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
-  <img [src]="base64Code" class="assign-user-image"/>
-  <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
-</div>
-           
-            <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
-              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
-            </ion-button>
-            <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === true">
-              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
-            </ion-button>
-            <hr *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-line"/>
-            <span>
-              <div *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-div">
-                <ion-item class="operations-list" *ngFor="let operation of workOrders.inProgress[i].operations; let j = index;">
-                  <ion-label>
-                    <span class="kit-number">{{operation.operationName}}</span><br>
-                    <span class="display-flex">
-                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+        <div class="column-height">
+            <ion-item lines="none" *ngFor="let workOrder of workOrders.inProgress; let i = index;" class="ion-item-cols">
+              <ion-label>
+                <div class="p-l-15 p-r-15">
+                  <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+                  <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+                  <br/>
+                  <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
+                  <span class="display-flex">
+                    <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                    <span class="width-100 display-flex">
+                      <span class="date-priority-label">Actual {{workOrder.actualTime}}</span>
+                      <span class="date-priority-label float-right">Planned {{workOrder.estimatedTime}}</span>   
                     </span>
-                    <span class="display-flex">
-                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="width-100">
-                        <span class="date-priority-label">{{operation.estimatedTime}}</span>
-                        <!-- <span class="date-priority-label float-right">Planned {{operation.estimatedTime}}</span>    -->
-                      </span>
-                    </span>
-                    <!-- <ion-progress-bar value="operation.timeProgress" color="medium" class="progress-bar-class"></ion-progress-bar>
-                    <span class="display-flex">
-                      <ion-img [src]="operationsIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">2 of 4 Operations Completed</span>
-                    </span>
-                    <ion-progress-bar value="0.5" color="medium" class="progress-bar-class"></ion-progress-bar> -->
-                   
+                  </span>
+                  <ion-progress-bar value="{{workOrder.timeProgress}}" color="medium" class="progress-bar-class"></ion-progress-bar>
+                  <span class="display-flex">
+                    <ion-img [src]="operationsIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.operationProgress[0]}} of {{workOrder.operationProgress[1]}} Operations Completed</span>
+                  </span>
 
-                    <!-- <span>
-                      <ion-button shape="round" color="light">
-                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
-                      </ion-button>
-                    </span> -->
-                  </ion-label>
-                </ion-item>
-              </div>
-            </span>
-          </ion-label>        
-        </ion-item>
+                  <ion-progress-bar value="{{workOrder.operationProgress[2]}}" color="medium" class="progress-bar-class"></ion-progress-bar>
+                  <div *ngIf="workOrder.technician.length !== 0" class="m-t-10 display-flex">
+                    <img [src]="base64Code" class="assign-user-image"/>
+                    <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+                  </div>
+                </div>
+              
+                <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
+                  <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+                </ion-button>
+                <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === true">
+                  <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+                </ion-button>
+                <hr *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-line"/>
+                <span>
+                  <div *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-div">
+                    <ion-item class="operations-list" *ngFor="let operation of workOrders.inProgress[i].operations; let j = index;">
+                      <ion-label>
+                        <span class="kit-number">{{operation.operationName}}</span>
+                        <span class="display-flex">
+                          <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                          <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                        </span>
+                        <span class="display-flex">
+                          <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                          <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                        </span>
+                        <span class="display-flex">
+                          <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                          <span class="width-100">
+                            <span class="date-priority-label">{{operation.estimatedTime}}</span>
+                          </span>
+                        </span>
+                      </ion-label>
+                    </ion-item>
+                  </div>
+                </span>
+              </ion-label>        
+            </ion-item>
+        </div>
        </ion-list>
     </ion-col>
     <ion-col size-lg="3" size-md="3" size-sm="3">
@@ -296,68 +271,66 @@
             <span class="kit-heading">Completed</span>
           </ion-label>
         </ion-item>
-        <ion-item lines="none" *ngFor="let workOrder of workOrders.completed; let i = index;">
-          <ion-label>
-            <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
-            <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
-            <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-            <br/>
-            <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span><br>
-            <span class="display-flex">
-              <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-            </span>
-            <span class="display-flex">
-              <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-              <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
-            </span>
+        <div class="column-height">
+          <ion-item lines="none" *ngFor="let workOrder of workOrders.completed; let i = index;" class="ion-item-cols">
+            <ion-label>
+              <div class="p-l-15 p-r-15">
+                  <span *ngIf="workOrder.priorityStatus==='Very High'" class="very-high-priority">VERY HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
+                  <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
+                  <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
+                  <br/>
+                  <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
+                  <span class="display-flex">
+                    <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                  </span>
+                  <span class="display-flex">
+                    <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                    <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
+                  </span>
 
-            <div *ngIf="workOrder.technician.length !== 0" class="m-t-10">
-              <img [src]="base64Code" class="assign-user-image"/>
-              <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
-            </div>
-
-            <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === false">
-              <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
-            </ion-button>
-            <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === true">
-              <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
-            </ion-button>
-            <hr *ngIf="this.showOperationsList.completed[i] === true" class="operations-line"/>
-            <span>
-              <div *ngIf="this.showOperationsList.completed[i] === true" class="operations-div">
-                <ion-item class="operations-list" *ngFor="let operation of workOrders.completed[i].operations; let j = index;">
-                  <ion-label>
-                    <span class="kit-number">{{operation.operationName}}</span><br>
-                    <span class="display-flex">
-                      <ion-img [src]="dataIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="dateIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
-                    </span>
-                    <span class="display-flex">
-                      <ion-img [src]="timeIcon" class="list-icons"></ion-img>
-                      <span class="date-priority-label">{{opearation.estimatedTime}}</span>
-                    </span>
-
-                    <!-- <span>
-                      <ion-button shape="round" color="light">
-                        <ion-img [src]="assignIcon" class="assign-btn-icon"></ion-img>
-                      </ion-button>
-                    </span> -->
-                  </ion-label>
-                </ion-item>
+                  <div *ngIf="workOrder.technician.length !== 0" class="m-t-10 display-flex">
+                    <img [src]="base64Code" class="assign-user-image"/>
+                    <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
+                  </div>
               </div>
-            </span>
-          </ion-label>        
-        </ion-item>
+
+              <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === false">
+                <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
+              </ion-button>
+              <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === true">
+                <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
+              </ion-button>
+              <hr *ngIf="this.showOperationsList.completed[i] === true" class="operations-line"/>
+              <span>
+                <div *ngIf="this.showOperationsList.completed[i] === true" class="operations-div">
+                  <ion-item class="operations-list" *ngFor="let operation of workOrders.completed[i].operations; let j = index;">
+                    <ion-label>
+                      <span class="kit-number">{{operation.operationName}}</span>
+                      <span class="display-flex">
+                        <ion-img [src]="dataIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{workOrder.workCenter}} - {{workOrder.equipmentName}}</span>
+                      </span>
+                      <span class="display-flex">
+                        <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yy'}}</span>
+                      </span>
+                      <span class="display-flex">
+                        <ion-img [src]="timeIcon" class="list-icons"></ion-img>
+                        <span class="date-priority-label">{{opearation.estimatedTime}}</span>
+                      </span>
+                    </ion-label>
+                  </ion-item>
+                </div>
+              </span>
+            </ion-label>        
+          </ion-item>
+        </div>
        </ion-list>
       </ion-col>
   </ion-row> 

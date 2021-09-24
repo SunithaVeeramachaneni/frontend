@@ -17,6 +17,10 @@
 </div>
 
 <ng-template #popTemplate>
+  <div class="filter-modal">
+    <span class="filter-modal-heading">Filter</span>
+    <button class="filter-modal-cancel" (click)="pop.hide();">X</button>
+  </div>
   <form #form="ngForm">
     <mat-form-field appearance="outline" class="mat-field">
       <mat-label>Show Overdue</mat-label>
