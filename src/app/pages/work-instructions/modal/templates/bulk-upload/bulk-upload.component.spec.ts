@@ -12,81 +12,28 @@ import { AppMaterialModules } from '../../../../../material.module';
 import { AlertComponent } from '../../alert/alert.component';
 import { MockComponent } from 'ng-mocks';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
+import { AlertService } from '../../alert/alert.service';
+import { businessObjects } from './bulk-upload.component.mock';
+import { importedWorkInstructions } from '../../../work-instructions.page.mock';
 
 describe('BulkUploadComponent', () => {
   let component: BulkUploadComponent;
   let fixture: ComponentFixture<BulkUploadComponent>;
   let myOverlayRefSpy: MyOverlayRef;
-  // let alertServiceSpy: AlertService;
+  let alertServiceSpy: AlertService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let router: Router;
   let store: MockStore<State>;
 
-  const businessObjects = [{
-      APPNAME: 'MWORKORDER',
-      OBJECTCATEGORY: 'WORKORDER',
-      FILEDNAME: "ATNAM",
-      FIELDDESCRIPTION: "CHARACTERISTIC NAME"
-  }];
-
-  const headerData = {
-    Categories: '[{"Category_Id":604,"Category_Name":"Sample Category1","Cover_Image":"assets/work-instructions-icons/img/brand/category-placeholder.png"}]',
-    Cover_Image: "doc-placeholder.png",
-    CreatedBy: "Sunitha Veeramachaneni",
-    created_at: "",
-    EditedBy: "Sunitha Veeramachaneni",
-    IsFavorite: false,
-    IsPublishedTillSave: false,
-    Published: false,
-    SafetyKit: '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"SafetyKit","Position":1,"FieldValue":["Sample Kit1"," Sample Kit2 "]}',
-    SpareParts: '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Spareparts","Position":2,"FieldValue":["Sample Spare Part1"," Sample Spare Part2"]}',
-    Tools: '{"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","Title":"Tools","Position":0,"FieldValue":["Sample Tool1"," Sample Tool2"]}',
-    WI_Desc: null,
-    WI_Id: 8,
-    WI_Name: "Sample WorkInstruction1",
-    updated_at: ""
-  };
-  const headerDataResp = 'WI is added Successfully';
-  const steps = [{
-    Attachment: '["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]',
-    Description: null,
-    Fields: '[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":"[\"SampleImgWIMVP.jpg\",\"SampleImgWIMVP.jpg\"]"},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1 \r</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ol><li>Sample Warning1 \r</li><li>Sample Warning2</li></ol>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]',
-    Hints: '{"Title":"Hint","Active":"true","FieldValue":"<p>Sample Hint</p>","Position":3,"FieldType":"RTF","FieldCategory":"HINT"}',
-    Instructions: '{"Title":"Instruction","Active":"true","FieldValue":"<ol><li>Sample Instruction1 \r</li><li>Sample Instruction2</li></ol>","Position":1,"FieldType":"RTF","FieldCategory":"INS"}',
-    Published: false,
-    Reaction_Plan: '{"Title":"Reaction Plan","Active":"true","FieldValue":"<p>Sample ReactionPlan</p>"}',
-    Status: null,
-    StepId: '',
-    Title: "Sample Title2",
-    WI_Id: '4428',
-    Warnings: '{"Title":"Warning","Active":"true","FieldValue":"<ol><li>Sample Warning1 \r</li><li>Sample Warning2</li></ol>","Position":2,"FieldType":"RTF","FieldCategory":"WARN"}',
-    isCloned: null},
-    {
-      Attachment: '["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]',
-      Description: null,
-      Fields: '[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":"[\"SampleImgWIMVP.jpg\",\"SampleImgWIMVP.jpg\"]"},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1 \r</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ol><li>Sample Warning1 \r</li><li>Sample Warning2</li></ol>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]',
-      Hints: '{"Title":"Hint","Active":"true","FieldValue":"<p>Sample Hint</p>","Position":3,"FieldType":"RTF","FieldCategory":"HINT"}',
-      Instructions: '{"Title":"Instruction","Active":"true","FieldValue":"<ol><li>Sample Instruction1 \r</li><li>Sample Instruction2</li></ol>","Position":1,"FieldType":"RTF","FieldCategory":"INS"}',
-      Published: false,
-      Reaction_Plan: '{"Title":"Reaction Plan","Active":"true","FieldValue":"<p>Sample ReactionPlan</p>"}',
-      Status: null,
-      StepId: '',
-      Title: "Sample Title3",
-      WI_Id: '4429',
-      Warnings: '{"Title":"Warning","Active":"true","FieldValue":"<ol><li>Sample Warning1 \r</li><li>Sample Warning2</li></ol>","Position":2,"FieldType":"RTF","FieldCategory":"WARN"}',
-      isCloned: null
-  }];
-
   beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
       data: {},
     });
-    // alertServiceSpy = jasmine.createSpyObj('AlertService', [
-    //   'onAlert',
-    //   'success',
-    //   'error',
-    // ]);
+    alertServiceSpy = jasmine.createSpyObj('AlertService', [
+      'success',
+      'error',
+    ]);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getAllBusinessObjects',
       'addInstructionFromImportedData',
@@ -106,7 +53,7 @@ describe('BulkUploadComponent', () => {
       imports: [RouterTestingModule, AppMaterialModules],
       providers: [
         { provide: MyOverlayRef, useValue: myOverlayRefSpy },
-        // { provide: AlertService, useValue: alertServiceSpy },
+        { provide: AlertService, useValue: alertServiceSpy },
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         provideMockStore()
@@ -133,15 +80,177 @@ describe('BulkUploadComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Get Business Objects assigned to a product', () => {
-    expect(component.getBusinessObjects).toBeDefined();
+  describe('getStepField', () => {
+    it('should define function', () => {
+      expect(component.getStepField).toBeDefined();
+    });
+
+    it('should return instruction step field', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_1;
+      const { Instruction } = step1;
+      spyOn(component, 'convertStrToList')
+        .withArgs(Instruction)
+        .and.returnValue(Instruction);
+      const result = component.getStepField(Instruction, 'Instruction');
+      expect(result).toBe(JSON.stringify({
+        Title: 'Instruction',
+        Active: 'true',
+        FieldValue: Instruction,
+        Position: 1,
+        FieldType: 'RTF',
+        FieldCategory: 'INS'
+      }));
+    });
+
+    it('should return warning step field', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_1;
+      const { Warning } = step1;
+      spyOn(component, 'convertStrToList')
+        .withArgs(Warning)
+        .and.returnValue(Warning);
+      const result = component.getStepField(Warning, 'Warning');
+      expect(result).toBe(JSON.stringify({
+        Title: 'Warning',
+        Active: 'true',
+        FieldValue: Warning,
+        Position: 2,
+        FieldType: 'RTF',
+        FieldCategory: 'WARN'
+      }));
+    });
+
+    it('should return hint step field', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_1;
+      const { Hint } = step1;
+      spyOn(component, 'convertStrToList')
+        .withArgs(Hint)
+        .and.returnValue(Hint);
+      const result = component.getStepField(Hint, 'Hint');
+      expect(result).toBe(JSON.stringify({
+        Title: 'Hint',
+        Active: 'true',
+        FieldValue: Hint,
+        Position: 3,
+        FieldType: 'RTF',
+        FieldCategory: 'HINT'
+      }));
+    });
+
+    it('should return reaction plan step field', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_1;
+      const { ReactionPlan } = step1;
+      spyOn(component, 'convertStrToList')
+        .withArgs(ReactionPlan)
+        .and.returnValue(ReactionPlan);
+      const result = component.getStepField(ReactionPlan, 'ReactionPlan');
+      expect(result).toBe(JSON.stringify({
+        Title: 'ReactionPlan',
+        Active: 'true',
+        FieldValue: ReactionPlan,
+        Position: 4,
+        FieldType: 'RTF',
+        FieldCategory: 'REACTION PLAN'
+      }));
+    });
   });
 
-  it('Add header data from imported sheet', () => {
-    if (headerData) {
+  describe('convertStrToList', () => {
+    it('should define function', () => {
+      expect(component.convertStrToList).toBeDefined();
+    });
+  });
+
+  describe('fieldsObject', () => {
+    it('should define function', () => {
+      expect(component.fieldsObject).toBeDefined();
+    });
+  });
+
+  describe('addCategory', () => {
+    it('should define function', () => {
+      expect(component.addCategory).toBeDefined();
+    });
+  });
+
+  describe('setStepAttachments', () => {
+    it('should define function', () => {
+      expect(component.setStepAttachments).toBeDefined();
+    });
+  });
+
+  describe('close', () => {
+    it('should define function', () => {
+      expect(component.close).toBeDefined();
+    });
+  });
+
+  describe('getBusinessObjects', () => {
+    it('should define function', () => {
+      expect(component.getBusinessObjects).toBeDefined();
+    });
+  });
+  
+  describe('addIns', () => {
+    it('should define function', () => {
       expect(component.addIns).toBeDefined();
-    }
+    });
   });
 
+  describe('deleteIns', () => {
+    it('should define function', () => {
+      expect(component.deleteIns).toBeDefined();
+    });
+  });
 
+  describe('prequisiteObject', () => {
+    it('should define function', () => {
+      expect(component.prequisiteObject).toBeDefined();
+    });
+  });
+
+  describe('ngOnInit', () => {
+    it('should define function', () => {
+      expect(component.ngOnInit).toBeDefined();
+    });
+  });
+
+  describe('getDraftedInstructionsCount', () => {
+    it('should define function', () => {
+      expect(component.getDraftedInstructionsCount).toBeDefined();
+    });
+  });
+
+  describe('getDeletedInstructionsCount', () => {
+    it('should define function', () => {
+      expect(component.getDeletedInstructionsCount).toBeDefined();
+    });
+  });
+
+  describe('isUploadSuccess', () => {
+    it('should define function', () => {
+      expect(component.isUploadSuccess).toBeDefined();
+    });
+  });
+
+  describe('getBorderStyle', () => {
+    it('should define function', () => {
+      expect(component.getBorderStyle).toBeDefined();
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('should define function', () => {
+      expect(component.ngOnDestroy).toBeDefined();
+    });
+
+    it('should unsubscribe subscriptions', () => {
+      spyOn(component['uploadInfoSubscription'], 'unsubscribe');
+      component.ngOnDestroy();
+      expect(component['uploadInfoSubscription'].unsubscribe).toHaveBeenCalledWith();
+    });
+  });
 });

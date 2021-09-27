@@ -42,25 +42,16 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
               private errorHandlerService: ErrorHandlerService,
               private wiCommonService: WiCommonService) {}
 
-  instructionObject = (obj, type) => {
-    let instructionObject: object = {
-      Title: type,
+  getStepField = (value: string, field: string) => {
+    let stepFieldObject: object = {
+      Title: field,
       Active: 'true',
-      FieldValue: this.convertStrToList(obj)
+      FieldValue: this.convertStrToList(value)
     };
-    switch (type) {
-      case 'Attachment': {
-        instructionObject = {
-          ...instructionObject,
-          Position: 0,
-          FieldType: 'ATT',
-          FieldCategory: 'ATT'
-        };
-        break;
-      }
+    switch (field) {
       case 'Instruction': {
-        instructionObject = {
-          ...instructionObject,
+        stepFieldObject = {
+          ...stepFieldObject,
           Position: 1,
           FieldType: 'RTF',
           FieldCategory: 'INS'
@@ -68,8 +59,8 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         break;
       }
       case 'Warning': {
-        instructionObject = {
-          ...instructionObject,
+        stepFieldObject = {
+          ...stepFieldObject,
           Position: 2,
           FieldType: 'RTF',
           FieldCategory: 'WARN'
@@ -77,8 +68,8 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         break;
       }
       case 'Hint': {
-        instructionObject = {
-          ...instructionObject,
+        stepFieldObject = {
+          ...stepFieldObject,
           Position: 3,
           FieldType: 'RTF',
           FieldCategory: 'HINT',
@@ -86,8 +77,8 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         break;
       }
       case 'ReactionPlan': {
-        instructionObject = {
-          ...instructionObject,
+        stepFieldObject = {
+          ...stepFieldObject,
           Position: 4,
           FieldType: 'RTF',
           FieldCategory: 'REACTION PLAN',
@@ -95,7 +86,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         break;
       }
     }
-    return JSON.stringify(instructionObject);
+    return JSON.stringify(stepFieldObject);
   }
 
   convertStrToList(obj) {
@@ -258,17 +249,17 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
               const stepPayload = {
                 Attachment: attachments,
                 Description: null,
-                Hints: filteredSteps[cnt].Hint ? this.instructionObject(filteredSteps[cnt].Hint, 'Hint') : null,
+                Hints: filteredSteps[cnt].Hint ? this.getStepField(filteredSteps[cnt].Hint, 'Hint') : null,
                 Instructions:
-                  filteredSteps[cnt].Instruction ? this.instructionObject(filteredSteps[cnt].Instruction, 'Instruction') : null,
+                  filteredSteps[cnt].Instruction ? this.getStepField(filteredSteps[cnt].Instruction, 'Instruction') : null,
                 Published: false,
                 Reaction_Plan: filteredSteps[cnt].ReactionPlan ?
-                  this.instructionObject(filteredSteps[cnt].ReactionPlan, 'Reaction Plan') : null,
+                  this.getStepField(filteredSteps[cnt].ReactionPlan, 'Reaction Plan') : null,
                 Status: null,
                 StepId: '',
                 Title: filteredSteps[cnt].StepTitle,
                 WI_Id: instruction ? instruction.Id : '',
-                Warnings: filteredSteps[cnt].Warning ? this.instructionObject(filteredSteps[cnt].Warning, 'Warning') : null,
+                Warnings: filteredSteps[cnt].Warning ? this.getStepField(filteredSteps[cnt].Warning, 'Warning') : null,
                 Fields: this.fieldsObject(
                   filteredSteps[cnt].Instruction,
                   filteredSteps[cnt].Warning,
