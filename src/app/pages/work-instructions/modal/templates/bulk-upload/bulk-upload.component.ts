@@ -23,7 +23,6 @@ import { WiCommonService } from '../../../services/wi-common.services';
 })
 export class BulkUploadComponent implements OnInit, OnDestroy {
 
-  public steps = [];
   public ins = [];
   loadResults = false;
   color: ThemePalette = 'primary';
@@ -43,10 +42,11 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
               private wiCommonService: WiCommonService) {}
 
   getStepField = (value: string, field: string) => {
+    value = value.trim();
     let stepFieldObject: object = {
       Title: field,
       Active: 'true',
-      FieldValue: this.convertStrToList(value)
+      FieldValue: value ? this.convertStrToList(value) : ''
     };
     switch (field) {
       case 'Instruction': {
@@ -89,26 +89,28 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     return JSON.stringify(stepFieldObject);
   }
 
-  convertStrToList(obj) {
-    if (obj) {
-      if (/1\./.test(obj)) {
-        const numberedList = obj.split(/^\d+\.+\s+|\s\d\.\s/);
-        const listInfo = numberedList.shift();
-        const numberedListResult = '<ol><li>' + numberedList.join('</li><li>') + '</li></ol>';
-        return listInfo.trim() ? `<p>${listInfo}</p>${numberedListResult}` : numberedListResult;
-      } else if (/●/.test(obj)) {
-        const bulletedList = obj.split('●');
-        const listInfo = bulletedList.shift();
-        const bulletedListResult = '<ul><li>' + bulletedList.join('</li><li>') + '</li></ul>';
-        return listInfo.trim() ? `<p>${listInfo}</p>${bulletedListResult}` : bulletedListResult;
-      } else {
-        const para = '<p>' + obj + '</p>';
-        return para;
-      }
+  convertStrToList(value: string) {
+    if (/1\./.test(value)) {
+      const numberedList = value.split(/^\d+\.+\s+|\s\d\.\s/);
+      const listInfo = numberedList.shift();
+      const numberedListResult = '<ol><li>' + numberedList.join('</li><li>') + '</li></ol>';
+      return listInfo.trim() ? `<p>${listInfo}</p>${numberedListResult}` : numberedListResult;
+    } else if (/●/.test(value)) {
+      const bulletedList = value.split('●');
+      const listInfo = bulletedList.shift();
+      const bulletedListResult = '<ul><li>' + bulletedList.join('</li><li>') + '</li></ul>';
+      return listInfo.trim() ? `<p>${listInfo}</p>${bulletedListResult}` : bulletedListResult;
+    } else {
+      const para = '<p>' + value + '</p>';
+      return para;
     }
   }
 
-  fieldsObject = (ins, warn, hint, reactionplan, attachments) => {
+  getStepFields = (ins: string, warn: string, hint: string, reactionplan: string, attachments: string) => {
+    ins = ins.trim();
+    warn = warn.trim();
+    hint = hint.trim();
+    reactionplan = reactionplan.trim();
     const instruction = ins ? this.convertStrToList(ins) : '';
     const warning = warn ? this.convertStrToList(warn) : '';
     const hints = hint ? this.convertStrToList(hint) : '';
@@ -159,7 +161,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     return JSON.stringify(fieldsObject);
   }
 
-  addCategory = (cat, info: ErrorInfo = {} as ErrorInfo) => {
+  addCategory = (cat: string, info: ErrorInfo = {} as ErrorInfo) => {
     const newCategory = {
       Category_Name: cat,
       CId: null,
@@ -174,7 +176,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     );
   }
 
-  setStepAttachments = (stepData) => {
+  getStepAttachments = (stepData: any): string | null => {
     const keys = Object.keys(stepData);
     const attachments = keys.map(key => {
       if (/Attachment_(\d+)_Name/.test(key)) {
@@ -245,7 +247,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           for (let cnt = 0; cnt < filteredSteps.length; cnt++) {
             const instruction = headerDataResp;
             if (filteredSteps[cnt].StepTitle && filteredSteps[cnt].StepTitle !== '') {
-              const attachments = this.setStepAttachments(filteredSteps[cnt]);
+              const attachments = this.getStepAttachments(filteredSteps[cnt]);
               const stepPayload = {
                 Attachment: attachments,
                 Description: null,
@@ -260,11 +262,11 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                 Title: filteredSteps[cnt].StepTitle,
                 WI_Id: instruction ? instruction.Id : '',
                 Warnings: filteredSteps[cnt].Warning ? this.getStepField(filteredSteps[cnt].Warning, 'Warning') : null,
-                Fields: this.fieldsObject(
-                  filteredSteps[cnt].Instruction,
-                  filteredSteps[cnt].Warning,
-                  filteredSteps[cnt].Hint,
-                  filteredSteps[cnt].ReactionPlan,
+                Fields: this.getStepFields(
+                  filteredSteps[cnt].Instruction ? filteredSteps[cnt].Instruction : '',
+                  filteredSteps[cnt].Warning ? filteredSteps[cnt].Warning : '',
+                  filteredSteps[cnt].Hint ? filteredSteps[cnt].Hint : '',
+                  filteredSteps[cnt].ReactionPlan ? filteredSteps[cnt].ReactionPlan : '',
                   attachments
                 ),
                 isCloned: null
@@ -335,28 +337,33 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       );
   }
 
-  prequisiteObject = (prerequisite, type) => {
-    const prereq = prerequisite.split(',');
-    let prerequisiteObject: object = {
-      Active: 'true',
-      FieldCategory: 'HEADER',
-      FieldType: 'RTF',
-    };
-    switch (type) {
-      case 'Tools': {
-        prerequisiteObject = {...prerequisiteObject, Title: 'Tools', Position: 0, FieldValue: prereq};
-        break;
+  getPrerequisite = (value: string, type: string) => {
+    value = value.trim();
+    if (value) {
+      const prereq = value.split(',');
+      let prerequisiteObject: object = {
+        Active: 'true',
+        FieldCategory: 'HEADER',
+        FieldType: 'RTF',
+      };
+      switch (type) {
+        case 'Tools': {
+          prerequisiteObject = {...prerequisiteObject, Title: 'Tools', Position: 0, FieldValue: prereq};
+          break;
+        }
+        case 'SafetyKit': {
+          prerequisiteObject = {...prerequisiteObject, Title: 'SafetyKit', Position: 1, FieldValue: prereq};
+          break;
+        }
+        case 'Spareparts': {
+          prerequisiteObject = {...prerequisiteObject, Title: 'Spareparts', Position: 2, FieldValue: prereq};
+          break;
+        }
       }
-      case 'SafetyKit': {
-        prerequisiteObject = {...prerequisiteObject, Title: 'SafetyKit', Position: 1, FieldValue: prereq};
-        break;
-      }
-      case 'Spareparts': {
-        prerequisiteObject = {...prerequisiteObject, Title: 'Spareparts', Position: 2, FieldValue: prereq};
-        break;
-      }
+      return JSON.stringify(prerequisiteObject);
+    } else {
+      return null;
     }
-    return JSON.stringify(prerequisiteObject);
   }
 
   ngOnInit(): void {
@@ -411,8 +418,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           businessObjects => {
             const allKeys = data ? Object.keys(data) : [];
             for (let fieldKey = 0; fieldKey < allKeys.length; fieldKey++) {
-              let steps = this.steps;
-              steps = data[allKeys[fieldKey]];
+              let steps = data[allKeys[fieldKey]];
               if (steps && steps.length !== 0) {
                 const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
                 const insResultedObject = {
@@ -430,9 +436,9 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                   IsFavorite: false,
                   IsPublishedTillSave: false,
                   Published: false,
-                  SafetyKit: this.prequisiteObject(steps[0].SafetyKit, 'SafetyKit'),
-                  SpareParts: this.prequisiteObject(steps[0].SpareParts, 'Spareparts'),
-                  Tools: this.prequisiteObject(steps[0].Tools, 'Tools'),
+                  SafetyKit: steps[0].SafetyKit ? this.getPrerequisite(steps[0].SafetyKit, 'SafetyKit') : null,
+                  SpareParts: steps[0].SpareParts ? this.getPrerequisite(steps[0].SpareParts, 'Spareparts') : null,
+                  Tools: steps[0].Tools ? this.getPrerequisite(steps[0].Tools, 'Tools') : null,
                   Cover_Image: steps[0].Cover_Image_Name,
                   WI_Desc: null,
                   WI_Id: null,
