@@ -5,7 +5,7 @@ import { InstructionService } from '../../../services/instruction.service';
 import { MyOverlayRef } from '../../myoverlay-ref';
 
 import { BulkUploadComponent } from './bulk-upload.component';
-import {of} from "rxjs";
+import {of, throwError} from "rxjs";
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { State } from '../../../../../state/app.state';
 import { AppMaterialModules } from '../../../../../material.module';
@@ -13,9 +13,12 @@ import { AlertComponent } from '../../alert/alert.component';
 import { MockComponent } from 'ng-mocks';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 import { AlertService } from '../../alert/alert.service';
-import { businessObjects, category1, userDetails } from './bulk-upload.component.mock';
+import { businessObjects, category1, category2, category3, inst1Details, inst2Details, inst3Details, inst1Resp, userDetails, inst1StepDetails, inst1StepResp, inst3Resp } from './bulk-upload.component.mock';
 import { importedWorkInstructions } from '../../../work-instructions.page.mock';
-import { ErrorInfo } from '../../../../../interfaces';
+import { ErrorInfo, Instruction } from '../../../../../interfaces';
+import { WiCommonService } from '../../../services/wi-common.services';
+import { HttpErrorResponse } from '@angular/common/http';
+import * as BulkUploadActions from '../../state/bulkupload.actions';
 
 fdescribe('BulkUploadComponent', () => {
   let component: BulkUploadComponent;
@@ -23,13 +26,14 @@ fdescribe('BulkUploadComponent', () => {
   let myOverlayRefSpy: MyOverlayRef;
   let alertServiceSpy: AlertService;
   let instructionServiceSpy: InstructionService;
+  let wiCommonServiceSpy: WiCommonService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let router: Router;
   let store: MockStore<State>;
 
   beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
-      data: importedWorkInstructions,
+      data: { ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' }
     });
     alertServiceSpy = jasmine.createSpyObj('AlertService', [
       'success',
@@ -43,6 +47,10 @@ fdescribe('BulkUploadComponent', () => {
       'addCategory',
       'deleteWorkInstruction$'
     ]);
+
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
+      uploadInfoAction$: of({})
+    })
 
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError',
@@ -70,11 +78,10 @@ fdescribe('BulkUploadComponent', () => {
 
     (instructionServiceSpy.getAllBusinessObjects as jasmine.Spy)
       .withArgs()
-      .and.returnValue(of(businessObjects))
-      .and.callThrough();
+      .and.returnValue(of(businessObjects));
     localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
-    component.ngOnInit();
-    fixture.detectChanges();
+    // component.ngOnInit();
+    // fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -342,10 +349,127 @@ fdescribe('BulkUploadComponent', () => {
   });
   
   describe('addIns', () => {
+    let info: ErrorInfo;
+    beforeEach(() => {
+      info = { displayToast: false, failureResponse: 'throwError' };
+      spyOn(store, 'dispatch');
+    });
+    
     it('should define function', () => {
       expect(component.addIns).toBeDefined();
     });
+
+    it('should create instruction and its steps', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [step1, step2, step3] = inst1StepDetails;
+      const [step1Resp, step2Resp, step3Resp] = inst1StepResp;
+      const { Id, WI_Id} = inst1Resp;
+      const ins = {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false};
+      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy).and.returnValue({ WorkInstruction_Sample_1 });
+      (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
+        .withArgs(inst1Details, info)
+        .and.returnValue(of(inst1Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step1, info)
+        .and.returnValue(of(step1Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step2, info)
+        .and.returnValue(of(step2Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step3, info)
+        .and.returnValue(of(step3Resp));
+      component.ins = [ins];
+      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(3);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step1, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step2, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
+      expect(component.loadResults).toBe(true);
+      expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
+        instruction: inst1Resp,
+        steps: inst1StepResp
+      }));
+    });
+
+    it('should delete instruction if any step creation in instruction got failed', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [step1, step2, step3] = inst1StepDetails;
+      const [step1Resp, step2Resp] = inst1StepResp;
+      const { Id, WI_Id} = inst1Resp;
+      const ins = {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false};
+      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy).and.returnValue({ WorkInstruction_Sample_1 });
+      (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
+        .withArgs(inst1Details, info)
+        .and.returnValue(of(inst1Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step1, info)
+        .and.returnValue(of(step1Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step2, info)
+        .and.returnValue(of(step2Resp));
+      (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
+        .withArgs(step3, info)
+        .and.returnValue(throwError({message: 'Unable to create step'}));
+      spyOn(component, 'deleteIns');
+      component.ins = [ins];
+      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(3);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step1, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step2, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
+      expect(component.deleteIns).toHaveBeenCalledWith({ ...ins, id: Id, WI_Id }, 0, false);
+      expect(component.loadResults).toBe(true);
+      expect(component.ins).toEqual([{ ...ins, insPostingFailed: true, id: Id, WI_Id }]);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create step'} as HttpErrorResponse);
+    });
+
+    it('should create instruction without steps if steps are empty', () => {
+      const { WorkInstruction_Sample_3 } = importedWorkInstructions;
+      const { Id, WI_Id} = inst3Resp;
+      const ins = {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: false};
+      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy).and.returnValue({ WorkInstruction_Sample_3 });
+      (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
+        .withArgs(inst3Details, info)
+        .and.returnValue(of(inst3Resp));
+      component.ins = [ins];
+      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, info);
+      expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(0);
+      expect(component.loadResults).toBe(true);
+      expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
+        instruction: inst3Resp,
+        steps: []
+      }));
+    });
+
+    it('should handle instruction creation failure', () => {
+      const { WorkInstruction_Sample_3 } = importedWorkInstructions;
+      const ins = {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: false};
+      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy).and.returnValue({ WorkInstruction_Sample_3 });
+      (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
+        .withArgs(inst3Details, info)
+        .and.returnValue(throwError({message: 'Unable to create instruction'}));
+      component.ins = [ins];
+      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins);
+      expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, info);
+      expect(component.loadResults).toBe(true);
+      expect(component.ins).toEqual([{ ...ins, insPostingFailed: true }]);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create instruction'} as HttpErrorResponse);
+    });
   });
+
 
   describe('deleteIns', () => {
     it('should define function', () => {
@@ -385,6 +509,83 @@ fdescribe('BulkUploadComponent', () => {
     it('should define function', () => {
       expect(component.ngOnInit).toBeDefined();
     });
+
+    it('should not make any iunstruction service calls if data object is empty', () => {
+      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy).and.returnValue({});
+      component.ngOnInit();
+      expect(instructionServiceSpy.getAllBusinessObjects).not.toHaveBeenCalled();
+      expect(instructionServiceSpy.getCategoriesByName).not.toHaveBeenCalled();
+    });
+
+    it('should call addIns function on instruction service call success response', () => {
+      const { WorkInstruction_Sample_1, WorkInstruction_Sample_2, WorkInstruction_Sample_3 } = importedWorkInstructions;
+      const ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: false, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: false}
+      ];
+      const [ins1, ins2, ins3] = ins;
+      const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category1', info)
+        .and.returnValue(of([category1]));
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category2', info)
+        .and.returnValue(of([category2]));
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category3', info)
+        .and.returnValue(of([]));
+      spyOn(component, 'addCategory')
+        .withArgs('Sample Category3', info)
+        .and.returnValue(of(category3));
+      spyOn(component, 'addIns');
+      component.ngOnInit();
+      expect(instructionServiceSpy.getAllBusinessObjects).toHaveBeenCalledWith();
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledTimes(3);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category1', info);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category2', info);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category3', info);
+      expect(component.addCategory).toHaveBeenCalledTimes(1);
+      expect(component.addCategory).toHaveBeenCalledWith('Sample Category3', info);
+      expect(component.addIns).toHaveBeenCalledTimes(3);
+      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1);
+      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2);
+      expect(component.addIns).toHaveBeenCalledWith(inst3Details, [], Object.keys(importedWorkInstructions), 2, ins3);
+      expect(component.ins).toEqual(ins);
+    });
+
+    it('should handle error on instruction service call failure response', () => {
+      const { WorkInstruction_Sample_1, WorkInstruction_Sample_2 } = importedWorkInstructions;
+      const ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: false, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: true}
+      ];
+      const [ins1, ins2, ins3] = ins;
+      const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category1', info)
+        .and.returnValue(of([category1]));
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category2', info)
+        .and.returnValue(of([category2]));
+      (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
+        .withArgs('Sample Category3', info)
+        .and.returnValue(throwError({ message: 'Unable to fetch category details'}));
+      spyOn(component, 'addIns');
+      component.ngOnInit();
+      expect(instructionServiceSpy.getAllBusinessObjects).toHaveBeenCalledWith();
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledTimes(3);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category1', info);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category2', info);
+      expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category3', info);
+      expect(component.addIns).toHaveBeenCalledTimes(2);
+      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1);
+      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2);
+      expect(component.ins).toEqual(ins);
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to fetch category details'} as HttpErrorResponse);
+      expect(component.loadResults).toBe(true);
+    });
   });
 
   describe('getDraftedInstructionsCount', () => {
@@ -393,7 +594,12 @@ fdescribe('BulkUploadComponent', () => {
     });
 
     it('should return drafted instructions count', () => {
-      console.log(component.ins);
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: true, insPostingFailed: false, insDeletedSuccessfully: true}
+      ];
+      expect(component.getDraftedInstructionsCount()).toBe(2);
     });
   });
 
@@ -401,17 +607,62 @@ fdescribe('BulkUploadComponent', () => {
     it('should define function', () => {
       expect(component.getDeletedInstructionsCount).toBeDefined();
     });
+
+    it('should return deleted instructions count', () => {
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: true, insPostingFailed: false, insDeletedSuccessfully: true}
+      ];
+      expect(component.getDeletedInstructionsCount()).toBe(1);
+    });
   });
 
   describe('isUploadSuccess', () => {
     it('should define function', () => {
       expect(component.isUploadSuccess).toBeDefined();
     });
+
+    it('should return true if upload is success', () => {
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: true}
+      ];
+      expect(component.isUploadSuccess()).toBe(true);
+    });
+
+    it('should return false if upload is failure', () => {
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: true},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: true}
+      ];
+      expect(component.isUploadSuccess()).toBe(false);
+    });
   });
 
   describe('getBorderStyle', () => {
     it('should define function', () => {
       expect(component.getBorderStyle).toBeDefined();
+    });
+
+    it('should return 0px border top if deleted instruction count is same as instruction count', () => {
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: true, insPostingFailed: false, insDeletedSuccessfully: true},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false, insDeletedSuccessfully: true},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: true, insPostingFailed: false, insDeletedSuccessfully: true}
+      ];
+      expect(component.getBorderStyle(true)).toEqual({ 'border-top': 0 });
+    });
+
+    it('should return 1px border top if deleted instruction count not same as instruction count', () => {
+      component.ins = [
+        {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction2', insPostedSuccessfully: true, insPostingFailed: false},
+        {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: true, insPostingFailed: false}
+      ];
+      expect(component.getBorderStyle()).toEqual({ 'border-top': '1px solid #c8ced3' });
     });
   });
 
@@ -421,6 +672,7 @@ fdescribe('BulkUploadComponent', () => {
     });
 
     it('should unsubscribe subscriptions', () => {
+      component.ngOnInit();
       spyOn(component['uploadInfoSubscription'], 'unsubscribe');
       component.ngOnDestroy();
       expect(component['uploadInfoSubscription'].unsubscribe).toHaveBeenCalledWith();

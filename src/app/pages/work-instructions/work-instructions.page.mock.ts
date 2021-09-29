@@ -153,9 +153,9 @@ export const importedWorkInstructions = {
   ],
   WorkInstruction_Sample_3: [
     {
-      WorkInstruction: "Sample WorkInstruction1",
+      WorkInstruction: "Sample WorkInstruction3",
       AssignedObjects: "",
-      Category: "Sample Category1",
+      Category: "Sample Category3",
       SafetyKit: "Sample Kit1, Sample Kit2 ",
       SpareParts: "Sample Spare Part1, Sample Spare Part2",
       Tools: "Sample Tool1, Sample Tool2",
