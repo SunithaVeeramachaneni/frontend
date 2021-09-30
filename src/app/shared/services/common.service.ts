@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class CommonService {
 
-  private minimizeSidebarSubject = new BehaviorSubject<boolean>(false);
+  private minimizeSidebarSubject = new BehaviorSubject<boolean>(true);
   minimizeSidebarAction$ = this.minimizeSidebarSubject.asObservable();
 
   private commonFilterSubject = new BehaviorSubject<any>({

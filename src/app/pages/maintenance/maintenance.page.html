@@ -35,7 +35,7 @@
 
 <ion-content [fullscreen]="true">
 
-  <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders">
+  <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders" class="maintenance-page">
     <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
         <ion-item>
