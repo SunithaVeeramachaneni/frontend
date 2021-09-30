@@ -191,8 +191,6 @@ describe('WorkInstructionsPage', () => {
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({

@@ -330,9 +330,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           }
         },
         err => {
-          if (displayAlert) {
-            this.alertService.error(this.errorHandlerService.getErrorMessage(err));
-          }
+          this.alertService.error(this.errorHandlerService.getErrorMessage(err));
         }
       );
   }
@@ -398,6 +396,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     delete data.isAudioOrVideoFile;
     delete data.successUrl;
     delete data.failureUrl;
+    this.ins = [];
 
     if (isAudioOrVideoFile) {
       this.uploadInfo = data;
