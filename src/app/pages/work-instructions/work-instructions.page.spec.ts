@@ -24,6 +24,8 @@ import { ErrorHandlerService } from '../../shared/error-handler/error-handler.se
 import { WiCommonService } from './services/wi-common.services';
 import { HeaderService } from '../../shared/services/header.service';
 import { logonUserDetails } from '../../shared/services/header.service.mock';
+import { importedWorkInstructions } from './work-instructions.page.mock';
+import { OverlayService } from './modal/overlay.service';
 
 const categoryDetails = [
   {
@@ -169,6 +171,7 @@ describe('WorkInstructionsPage', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let wiCommonServiceSpy: WiCommonService;
+  let overlayServiceSpy: OverlayService;
   let headerServiceSpy: HeaderService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
@@ -187,6 +190,7 @@ describe('WorkInstructionsPage', () => {
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
+    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
 
     TestBed.configureTestingModule({
@@ -213,6 +217,8 @@ describe('WorkInstructionsPage', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
       ]
     }).compileComponents();
@@ -272,7 +278,7 @@ describe('WorkInstructionsPage', () => {
       );
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(7);
-      expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
+      expect(buttons[0].textContent).toContain('CREATE WORK INSTRUCTION');
       expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
@@ -317,7 +323,7 @@ describe('WorkInstructionsPage', () => {
       );
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons.length).toBe(5);
-      expect(buttons[0].textContent).toContain('CREATE NEW WORK INSTRUCTION');
+      expect(buttons[0].textContent).toContain('CREATE WORK INSTRUCTION');
       expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
       expect(buttons[1].textContent).toContain('Toggle Dropdown');
       expect(buttons[2].textContent).toContain('Import File');
@@ -393,11 +399,21 @@ describe('WorkInstructionsPage', () => {
       expect(li[0].textContent).toContain(combineDrafts[1].categories.join());
       expect(li[0].textContent).toContain('Edited');
       expect(li[0].textContent).toContain(`by ${combineDrafts[1].EditedBy}`);
+      expect(
+        (li[0].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
+          'ng-reflect-router-link'
+        )
+      ).toBe(`/work-instructions/edit,${combineDrafts[1].Id}`);
       expect(li[3].childNodes.length).toBe(3);
       expect(li[3].textContent).toContain(combineFavorites[1].WI_Name);
       expect(li[3].textContent).toContain(combineFavorites[1].categories.join());
       expect(li[3].textContent).toContain('Edited');
       expect(li[3].textContent).toContain(`by ${combineFavorites[1].EditedBy}`);
+      expect(
+        (li[3].childNodes[1].childNodes[0] as HTMLElement).getAttribute(
+          'ng-reflect-router-link'
+        )
+      ).toContain(`/work-instructions/edit,${combineFavorites[1].Id}`);
     });
   });
 
@@ -460,6 +476,93 @@ describe('WorkInstructionsPage', () => {
       expect(component.wiDraftedList).toEqual([]);
     });
   });
+
+  describe('bulkUploadDialog', () => {
+    it('should define function', () => {
+      expect(component.bulkUploadDialog).toBeDefined();
+    });
+
+    it('should open bulkupload component', () => {
+      component.bulkUploadDialog(component.bulkUploadComponent, {
+        ...importedWorkInstructions,
+        isAudioOrVideoFile: false,
+        successUrl: '/work-instructions/drafts',
+        failureUrl: '/work-instructions'
+      });
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(component.bulkUploadComponent, {
+        ...importedWorkInstructions,
+        isAudioOrVideoFile: false,
+        successUrl: '/work-instructions/drafts',
+        failureUrl: '/work-instructions'
+      });
+    });
+  });
+  
+
+  describe('uploadFile', () => {
+    it('should define function', () => {
+      expect(component.uploadFile).toBeDefined();
+    });
+
+    it('should call uploadFile when click on import and selecting file', () => {
+      spyOn(component, 'uploadFile');
+      const dropdownMenu = homeEl.querySelectorAll('.dropdown-menu .dropdown-item');
+      (dropdownMenu[0] as HTMLElement).click();
+      const upload = homeEl.querySelector('#upload');
+      upload.dispatchEvent(new Event('change'));
+      expect(component.uploadFile).toHaveBeenCalled();
+    });
+
+    it('should call bulkUploadDialog function on uploadWIExcel response', () => {
+      const formData = new FormData();
+      const file = new File([], 'excel-file.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      formData.append('file', file);
+      const target = { files: [file] };
+      (instructionServiceSpy.uploadWIExcel as jasmine.Spy)
+        .withArgs(formData)
+        .and.returnValue(of(importedWorkInstructions))
+        .and.callThrough();
+      spyOn(component, 'bulkUploadDialog');
+      component.uploadFile({ target });
+      expect(component.bulkUploadDialog).toHaveBeenCalledWith(component.bulkUploadComponent, {
+        ...importedWorkInstructions,
+        isAudioOrVideoFile: false,
+        successUrl: '/work-instructions/drafts',
+        failureUrl: '/work-instructions'
+      });
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+    });
+
+    it('should not call bulkUploadDialog function on uploadWIExcel empty response', () => {
+      const formData = new FormData();
+      const file = new File([], 'excel-file.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      formData.append('file', file);
+      const target = { files: [file] };
+      (instructionServiceSpy.uploadWIExcel as jasmine.Spy)
+        .withArgs(formData)
+        .and.returnValue(of([]))
+        .and.callThrough();
+      spyOn(component, 'bulkUploadDialog');
+      component.uploadFile({ target });
+      expect(component.bulkUploadDialog).not.toHaveBeenCalled();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('resetFile', () => {
+    it('should define function', () => {
+      expect(component.resetFile).toBeDefined();
+    });
+
+    it('should call resetFile when click on import', () => {
+      spyOn(component, 'resetFile').and.callThrough();
+      const dropdownMenu = homeEl.querySelectorAll('.dropdown-menu .dropdown-item');
+      (dropdownMenu[0] as HTMLElement).click();
+      expect(component.resetFile).toHaveBeenCalled();
+    });
+  });
+  
+  
 
   describe('ionViewWillEnter', () => {
     it('should define function', () => {

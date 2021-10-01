@@ -3,7 +3,6 @@ import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
-import { ActivatedRoute } from '@angular/router';
 import { ErrorInfo } from '../../../interfaces';
 import { FileInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
@@ -62,7 +61,6 @@ export class MediaFilesComponent implements OnInit {
   constructor(private spinner: NgxSpinnerService,
               private _instructionSvc: InstructionService,
               private _toastService: ToastService,
-              private route: ActivatedRoute,
               private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService,
               private importService: ImportService,
@@ -71,9 +69,6 @@ export class MediaFilesComponent implements OnInit {
 
   ngOnInit() {
     this.getAllMediaFiles();
-    this.route.queryParamMap.subscribe(params => {
-      this.search = params.get('search');
-    });
   }
 
   setOrder(value: string) {
@@ -226,8 +221,8 @@ export class MediaFilesComponent implements OnInit {
         },
         error => {
           this.spinner.hide();
-          this.wiCommonService.updateUploadInfo({ message: this.errorHandlerService.getErrorMessage(error), progress: 100, isError: true });
-          this.errorHandlerService.handleError(error)
+          this.wiCommonService.updateUploadInfo({ message: this.errorHandlerService.getErrorMessage(error, true), progress: 100, isError: true });
+          this.errorHandlerService.handleError(error, true)
           this.importService.closeConnection();
         }
       );

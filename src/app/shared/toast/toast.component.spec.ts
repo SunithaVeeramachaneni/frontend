@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModules } from '../../material.module';
 import {
@@ -18,7 +18,7 @@ describe('ToastComponent', () => {
   let toastDe: DebugElement;
   let toastEl: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     toastRefSpy = jasmine.createSpyObj('ToastRef', ['close']);
     toastDataSpy = jasmine.createSpyObj('ToastData', [], {
       type: 'success',
