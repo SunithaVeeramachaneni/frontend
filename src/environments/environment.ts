@@ -8,6 +8,8 @@ export const environment = {
   wiAbapApiUrl: 'http://localhost:7002/abapapi/',
   spccAbapApiUrl: 'https://cwpqa.innovapptive.com/spccabapapi/abapapi/',
   mccAbapApiUrl: 'https://cwpqa.innovapptive.com/spccabapapi/abapapi/',
+  // spccAbapApiUrl: 'http://localhost:8002/abapapi/',
+  // mccAbapApiUrl: 'http://localhost:8002/abapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000
 };
