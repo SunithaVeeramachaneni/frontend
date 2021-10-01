@@ -48,9 +48,23 @@
     text-transform: uppercase;
     color: #76767B;
     float: right;
+    --background-hover : none;
   }
 
   .save-btn {
     float: right;
     margin-right: 20px;
+    margin-top: 7px;
+    --background-hover : none;
   }
+
+  ion-footer {
+    height: 50px;
+    min-height: 50px;
+  }
+
+  .assign{
+    /* background:  url("https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg")  center / contain no-repeat; */
+    white-space: nowrap
+  }
+  

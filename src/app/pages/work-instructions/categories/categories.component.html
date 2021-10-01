@@ -1,4 +1,5 @@
-<div class="row categories-header">
+<div class="bg-white categories-div">
+  <div class="row categories-header">
     <div class="col-lg-8 categories-row-heading">
       <img src="./assets/work-instructions-icons/svg/categories.svg" alt=""/>
       <span class="categories-heading">Categories</span>
@@ -10,51 +11,54 @@
         <span class="addcategory">ADD CATEGORY</span>
       </button>
     </div>
-  </div>
-  <ng-container *ngIf="(this.categoriesList | filter : searchCriteria | orderBy:'Created_At':true:'case-insensitive' | paginate: config) as result">
-    <div class="row categories-details" [ngClass]="{'categories-details-with-no-results': result.length === 0}">
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" *ngFor="let obj of result">
-        <div *ngIf="obj.CId !== '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
-          <a [routerLink]="['/work-instructions/category', obj.CId]"><img class="card-img-top" [ngStyle]="getS3CoverImageStyles(obj.Cover_Image)" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/> </a>
-          <div class="card-body categories-details-card-body">
-            <p><a [routerLink]="['/work-instructions/category', obj.CId]" class="categories-Title"> {{obj.Category_Name}}</a></p>
-            <p class="categories-Wicount"><strong>{{obj.Drafts_Count}}</strong> Drafted - <strong>{{obj.Published_Count}}</strong> Published</p>
-          </div>
-          <div id="hoverShow1" class="categories-details-card-hover">
-            <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-              <mat-icon>more_horiz</mat-icon>
+</div>
+<ng-container *ngIf="(this.categoriesList | filter : searchCriteria | orderBy:'Created_At':true:'case-insensitive' | paginate: config) as result">
+  <div class="row categories-details" [ngClass]="{'categories-details-with-no-results': result.length === 0}">
+    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" *ngFor="let obj of result">
+      <div *ngIf="obj.CId !== '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
+        <a [routerLink]="['/work-instructions/category', obj.CId]"><img class="card-img-top" [ngStyle]="getS3CoverImageStyles(obj.Cover_Image)" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/> </a>
+        <div class="card-body categories-details-card-body">
+          <p><a [routerLink]="['/work-instructions/category', obj.CId]" class="categories-Title"> {{obj.Category_Name}}</a></p>
+          <p class="categories-Wicount"><strong>{{obj.Drafts_Count}}</strong> Drafted - <strong>{{obj.Published_Count}}</strong> Published</p>
+        </div>
+        <div id="hoverShow1" class="categories-details-card-hover">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="open(catSubscribeComponent, obj)" id="editCategory">
+              <mat-icon>edit</mat-icon>
+              <span class="menu-text">Edit Category</span>
             </button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="open(catSubscribeComponent, obj)" id="editCategory">
-                <mat-icon>edit</mat-icon>
-                <span class="menu-text">Edit Category</span>
-              </button>
-              <button mat-menu-item (click)="open(delCatSubscribeComponent, obj)" id="deleteCategory">
-                <mat-icon class="text-red">close</mat-icon>
-                <span class="menu-text text-red">Delete Category</span>
-              </button>
-            </mat-menu>
-          </div>
-        </div>
-        <div *ngIf="obj.CId === '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
-          <a [routerLink]="['/work-instructions/category', obj.CId]"><img #image class="card-img-top" src='{{obj.Cover_Image}}' alt=""/></a>
-          <div class="card-body categories-details-card-body">
-            <p><a [routerLink]="['/work-instructions/category', obj.CId]" class="categories-Title">{{obj.Category_Name}}</a></p>
-            <p class="categories-Wicount"><strong>{{obj.Drafts_Count}}</strong> Drafted - <strong>{{obj.Published_Count}}</strong> Published</p>
-          </div>
+            <button mat-menu-item (click)="open(delCatSubscribeComponent, obj)" id="deleteCategory">
+              <mat-icon class="text-red">close</mat-icon>
+              <span class="menu-text text-red">Delete Category</span>
+            </button>
+          </mat-menu>
         </div>
       </div>
-      <div *ngIf="result.length === 0 && this.categoriesList.length > 0 || categoriesList && categoriesList.length === 0" class="no-categories">
-        {{categoriesList.length ? 'No Results Found !!' : 'No Categories found !!' }}
+      <div *ngIf="obj.CId === '_UnassignedCategory_'" class="card custom-card hoverWrapper categories-details-card">
+        <a [routerLink]="['/work-instructions/category', obj.CId]"><img #image class="card-img-top" src='{{obj.Cover_Image}}' alt=""/></a>
+        <div class="card-body categories-details-card-body">
+          <p><a [routerLink]="['/work-instructions/category', obj.CId]" class="categories-Title">{{obj.Category_Name}}</a></p>
+          <p class="categories-Wicount"><strong>{{obj.Drafts_Count}}</strong> Drafted - <strong>{{obj.Published_Count}}</strong> Published</p>
+        </div>
       </div>
     </div>
-    <div class="col-lg-12" [hidden]="result.length === 0">
-      <pagination-template #p="paginationApi"
-                       [id]="config.id"
-                       (pageChange)="config.currentPage = $event"
-                       (pageBoundsCorrection)="config.currentPage = $event">
-        <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
-      </pagination-template>
+    <div *ngIf="result.length === 0 && this.categoriesList.length > 0 || categoriesList && categoriesList.length === 0" class="no-categories">
+      {{categoriesList.length ? 'No Results Found !!' : 'No Categories found !!' }}
     </div>
-  </ng-container>
+  </div>
+  <div class="col-lg-12" [hidden]="result.length === 0">
+    <pagination-template #p="paginationApi"
+                      [id]="config.id"
+                      (pageChange)="config.currentPage = $event"
+                      (pageBoundsCorrection)="config.currentPage = $event">
+      <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+    </pagination-template>
+  </div>
+</ng-container>
+</div>
+
+
 

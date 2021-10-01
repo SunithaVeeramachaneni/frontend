@@ -1,11 +1,18 @@
 <ion-row>
-    <ion-col size-lg="6" size-md="6" size-sm="12" size-xs="12">
+    <ion-col size-lg="6" size-md="6" size-sm="8" size-xs="12">
       <ion-toolbar class="width-auto">
-        <ion-menu-button slot="start" auto-hide="false" (click)="minimize()"></ion-menu-button>
-        <ion-title class="header-title">{{title}}</ion-title>
+       
+        <div class="sidebar-minimize-icons">
+          <ion-menu-button slot="start" (click)="minimize(false)"></ion-menu-button>
+          <ion-img [src]="sideBarClosed" (click)="minimize(true)" *ngIf="this.sidebarMinimize === false" class="sidebar-close"></ion-img>   
+          <ion-img [src]="sideBarOpen" (click)="minimize(false)" *ngIf="this.sidebarMinimize === true" class="sidebar-open"></ion-img>  
+          <ion-title class="header-title">{{title}}</ion-title>
+        </div>
+       
+       
       </ion-toolbar>
     </ion-col>
-    <ion-col  size-lg="6" size-md="6" size-sm="12" size-xs="12" class="header-cols" *ngIf="logonUserDetails$ | async as userDetails">
+    <ion-col  size-lg="6" size-md="6" size-sm="4" size-xs="12" class="header-cols" *ngIf="logonUserDetails$ | async as userDetails">
         <ion-toolbar class="width-auto">
           <ion-label class="loggedin-user-name">{{userDetails.userName}}</ion-label><br/>
           <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
@@ -13,8 +20,8 @@
         <ion-toolbar class="width-auto">
           <img src={{userDetails.userImage}} alt="logged-user-image" class="header-user-icon">
         </ion-toolbar>
-        <ion-toolbar class="width-auto">
+        <!-- <ion-toolbar class="width-auto">
           <ion-icon name="chevron-down-outline"></ion-icon>
-        </ion-toolbar>
+        </ion-toolbar> -->
     </ion-col>
   </ion-row>

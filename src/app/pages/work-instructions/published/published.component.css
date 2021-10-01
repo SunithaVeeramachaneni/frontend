@@ -1,3 +1,9 @@
+.publish-main {
+  border-top:1px solid #E5E5E5;
+  border-left:1px solid #E5E5E5;
+  border-radius: 10px 0px 0px 0px;
+  height: 100%;
+}
 
 .published-table-title h2 {
   margin: 0;

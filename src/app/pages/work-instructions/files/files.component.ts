@@ -71,8 +71,6 @@ export class MediaFilesComponent implements OnInit {
     this.getAllMediaFiles();
   }
 
-
-
   setOrder(value: string) {
     if (this.order === value) {
       this.reverse = !this.reverse;
@@ -95,61 +93,55 @@ export class MediaFilesComponent implements OnInit {
     return res;
   }
 
-  convertDateAndTime(dateAndTime) {
-    let dt = dateAndTime.substring(0, 8)   // Returns "Date"
-    let time = dateAndTime.substring(8)   // Returns "Time"
-    let hours = dateAndTime.substring(8,10);
-    let mins = dateAndTime.substring(10,12);
-    let secs = dateAndTime.substring(12,14);
-    let timeForm = hours + ':' + mins + ':' + secs;
+  convertDateAndTime(file) {
+    let dateAndTime = file.LastModified;
 
-    let year = dt.substr(0, 4);
-    let month = dt.substr(4, 2);
-    let day = dt.substr(6, 2);
-    let dateForm = month + '-' + day + '-' + year
-    let monthAndYr = new Date(dateForm).toLocaleString('en-us', { month: 'short', year: 'numeric' });
-    //return day + ' ' + monthAndYr;
-    return day + ' ' + monthAndYr + ' | ' + timeForm;
+    let getDate = new Date(dateAndTime).toDateString();
+    let dateString = getDate.split(" ");
+  
+    let getTime = new Date(dateAndTime).toTimeString();
+    var timeString = getTime.substring(0,9);
+
+    var res = dateString[2] + " " + dateString[1] + " " + dateString[3] + " | " + timeString;
+    return res;  
   }
-
-  fullPath(file){
-    var res = file.Key;
-    return res;
-  }
-
 
   getAllMediaFiles() {
     this.wiMediaFiles = [];
     this.spinner.show();
     this._instructionSvc.getAllFolders()
-      .subscribe(
-        folders => {
-          this.editRows = new Array(folders.length).fill(false);
-          folders.forEach(folder => {
-          this._instructionSvc.getAllMediaFiles(folder).subscribe(
-              files => {
-                files.forEach(file => {
-                  this.fileInfo = this.getFileTypeAndPath(file);
-                  let fullPath = this.fullPath(file);
-                  let splitFile = this.splitFileFromFolder(file);
-                  this.mediaFile.fullFilePath = fullPath;
-                  this.mediaFile.fileNameWithExtension = splitFile[2];
-                  this.mediaFile.fileName = splitFile[2].split('.').slice(0, -1).join('.');
-                  this.mediaFile.originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
-                  this.mediaFile.updated_at = this.convertDateAndTime(splitFile[1]);
-                  this.wiMediaFiles.push(this.mediaFile);
-                  this.mediaFile = {
-                    fileNameWithExtension:'',
-                    fileName: '',
-                    updated_at: '',
-                    fullFilePath:'',
-                    originalFileName: ''
-                  }
-                });
-              });
-          });
-          this.spinner.hide();
-        });
+      .pipe(
+        mergeMap(folders => {
+          if (folders.length) {
+            this.editRows = new Array(folders.length).fill(false);
+            return from(folders)
+              .pipe(
+                mergeMap(folder => {
+                  return this._instructionSvc.getAllMediaFiles(folder)
+                })
+              )
+          } 
+      }))
+      .subscribe((file) => {
+        this.fileInfo = this.getFileTypeAndPath(file[0]);
+        let splitFile = this.splitFileFromFolder(file[0]);
+
+        this.mediaFile.fileNameWithExtension = splitFile[2];
+        this.mediaFile.fileName = splitFile[2].split('.').slice(0, -1).join('.');
+        this.mediaFile.fullFilePath = file[0].Key;
+        this.mediaFile.originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
+        this.mediaFile.updated_at = this.convertDateAndTime(file[0]);
+
+        this.wiMediaFiles.push(this.mediaFile);
+        this.mediaFile = {
+          fileNameWithExtension:'',
+          fileName: '',
+          updated_at: '',
+          fullFilePath:'',
+          originalFileName: ''
+        }
+        this.spinner.hide();
+    })
   }
 
   removeFile(el) {
@@ -283,6 +275,7 @@ export class MediaFilesComponent implements OnInit {
         )
       ).subscribe(
         () => {
+          this.getAllMediaFiles();
           this.editRows[index] = false;
           this.spinner.hide();
           this._toastService.show({

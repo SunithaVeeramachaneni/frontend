@@ -40,7 +40,7 @@ export class CommonFilterComponent implements OnInit {
 
   searchOrder(newValue){
     this._commonService.searchFilter({
-      search:newValue.target.value,
+      search:newValue,
       priority:this.priority,
       showOverdue:this.showOverdue,
       kitStatus:this.kitStatus,

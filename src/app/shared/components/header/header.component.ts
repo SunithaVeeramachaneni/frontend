@@ -15,6 +15,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public userImage: string;
   public sidebarMinimize = false;
   logonUserDetails$: Observable<LogonUserDetails>;
+  public sideBarOpen = '../../../../assets/img/sidebar-opened.svg';
+  public sideBarClosed = '../../../../assets/img/sidebar-closed.svg';
   @Input() title;
   private minimizeSidebarActionSubscription: Subscription;
 
@@ -31,8 +33,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
   }
 
-  minimize() {
-     this.sidebarMinimize = !this.sidebarMinimize;
+  minimize(e) {
+    this.sidebarMinimize = e;
     this.commonService.minimizeSidebar(this.sidebarMinimize);
   }
 
