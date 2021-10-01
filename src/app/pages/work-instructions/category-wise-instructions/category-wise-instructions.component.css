@@ -1,6 +1,14 @@
+ion-content {
+  --offset-top: 0px !important;
+}
+
 .work-instructions {
   background: #ffffff;
   padding-left: 20px;
+  border-top:1px solid #E5E5E5;
+  border-left:1px solid #E5E5E5;
+  border-radius: 10px 0px 0px 0px;
+  height: 100%;
 }
 
 .instructions-table-title {

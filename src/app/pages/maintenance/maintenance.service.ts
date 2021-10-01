@@ -132,7 +132,7 @@ export class MaintenanceService {
     return ({
       personName: rawTechnician.PERNRDesc,
       personKey: rawTechnician.PERNRKey,
-      image: rawTechnician.Filecontent
+      image: rawTechnician.FILECONTENT
     })
   })
   return technicians;

@@ -5,6 +5,8 @@ import { flatMap, toArray } from 'rxjs/operators';
 import { Technician, Technicians } from '../../../interfaces/technicians';
 import { WorkCenter } from '../../../interfaces/work-center';
 
+import { DomSanitizer } from '@angular/platform-browser';
+
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
@@ -24,7 +26,10 @@ export class ModalComponent implements OnInit {
    public assigneeList: any;
    public displayedAssigneeList: Observable<Technician>;
 
-  constructor(private modalCtrl: ModalController, private navParams: NavParams) {
+   public base64Code;
+
+  constructor(private modalCtrl: ModalController, private navParams: NavParams, 
+    private sanitizer:DomSanitizer,) {
    }
 
   ngOnInit() {
@@ -46,11 +51,20 @@ export class ModalComponent implements OnInit {
     this.displayedAssigneeList = this.assigneeList[newValue.workCenterKey];
     console.log("Is this an observable even")
     console.log("The displayed assignee list is," ,this.displayedAssigneeList)
+    let base64Image='data:image/jpeg;base64,'+ this.displayedAssigneeList[0].image;
+    console.log(base64Image);
+    this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    console.log(this.base64Code);
     console.log("now", this.workCenter);
   }
 
   onAssigneeChange = ($event) =>{
     this.saveDisabled = false;
+  }
+
+  getImageSrc = (source: string) => {
+    let base64Image='data:image/jpeg;base64,'+ source;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   }
 
 dismiss() {

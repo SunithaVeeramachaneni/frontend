@@ -3,6 +3,12 @@
   flex-wrap: nowrap;
 }
 
+.categories-div {
+  border-radius: 8px;
+  margin: 12px;
+  padding-bottom: 1px;
+}
+
 .categories-row-heading {
   font-family: "Ubuntu", sans-serif;
   font-style: normal;
