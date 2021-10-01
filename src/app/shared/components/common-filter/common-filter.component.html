@@ -1,5 +1,5 @@
 <div class="input-group">
-    <ion-searchbar [(ngModel)]="searchValue" (change)="searchOrder($event)" showClearButton="focus" class="common-filter-search"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchValue" (ngModelChange)="searchOrder($event)" showClearButton="focus" class="common-filter-search"></ion-searchbar>
     <div class="input-group-prepend">
       <span class="input-group-text">
         <ion-img [src]="filterIcon"
