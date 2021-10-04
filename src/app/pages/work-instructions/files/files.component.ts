@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, Files } from '../../../interfaces';
 import { FileInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
@@ -32,7 +32,8 @@ export class MediaFilesComponent implements OnInit {
     fileName: '',
     updated_at: '',
     fullFilePath:'',
-    originalFileName: ''
+    originalFileName: '',
+    fileType: ''
   }
   config: any = {
     id: 'files',
@@ -81,16 +82,9 @@ export class MediaFilesComponent implements OnInit {
     this.reverseObj = { [value]: this.reverse };
   }
 
-  getFileTypeAndPath(file) {
-    var str = file.Key;
-    var res = { 'filePath': str, 'fileType' : 'audio'};
-    return res;
-  }
-
-  splitFileFromFolder(file) {
-    var str = file.Key;
-    var res = str.split("/");
-    return res;
+  splitFileFromFolder(file: Files) {
+    const str = file.Key;
+    return str.split("/");
   }
 
   convertDateAndTime(file) {
@@ -109,7 +103,8 @@ export class MediaFilesComponent implements OnInit {
   getAllMediaFiles() {
     this.wiMediaFiles = [];
     this.spinner.show();
-    this._instructionSvc.getAllFolders()
+    const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
+    this._instructionSvc.getAllFolders(info)
       .pipe(
         mergeMap(folders => {
           if (folders.length) {
@@ -117,31 +112,36 @@ export class MediaFilesComponent implements OnInit {
             return from(folders)
               .pipe(
                 mergeMap(folder => {
-                  return this._instructionSvc.getAllMediaFiles(folder)
+                  return this._instructionSvc.getAllMediaFiles(folder, info)
                 })
               )
           } 
       }))
-      .subscribe((file) => {
-        this.fileInfo = this.getFileTypeAndPath(file[0]);
-        let splitFile = this.splitFileFromFolder(file[0]);
-
-        this.mediaFile.fileNameWithExtension = splitFile[2];
-        this.mediaFile.fileName = splitFile[2].split('.').slice(0, -1).join('.');
-        this.mediaFile.fullFilePath = file[0].Key;
-        this.mediaFile.originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
-        this.mediaFile.updated_at = this.convertDateAndTime(file[0]);
-
-        this.wiMediaFiles.push(this.mediaFile);
-        this.mediaFile = {
-          fileNameWithExtension:'',
-          fileName: '',
-          updated_at: '',
-          fullFilePath:'',
-          originalFileName: ''
-        }
-        this.spinner.hide();
-    })
+      .subscribe(
+        (files) => {
+          if (files.length) {
+            let splitFile = this.splitFileFromFolder(files[0]);
+            this.mediaFile.fileNameWithExtension = splitFile[2];
+            this.mediaFile.fileName = splitFile[2].split('.').slice(0, -1).join('.');
+            this.mediaFile.fullFilePath = files[0].Key;
+            this.mediaFile.originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
+            this.mediaFile.updated_at = this.convertDateAndTime(files[0]);
+            this.mediaFile.fileType = files[0].MimeType.split('/')[0];
+    
+            this.wiMediaFiles.push(this.mediaFile);
+            this.mediaFile = {
+              fileNameWithExtension:'',
+              fileName: '',
+              updated_at: '',
+              fullFilePath:'',
+              originalFileName: '',
+              fileType: ''
+            }
+          }
+          this.spinner.hide();
+        },
+        () => this.spinner.hide()
+      );
   }
 
   removeFile(el) {

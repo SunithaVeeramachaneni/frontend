@@ -46,7 +46,7 @@
             <td class="width-20"><span class="files-data">{{obj.updated_at}}</span></td>
             <td class="width-50">
               <span class="files-icons-list">
-                <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: 'audio'}" *ngIf="this.editRows[i] === false"></app-player>
+                <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: obj.fileType}" *ngIf="this.editRows[i] === false"></app-player>
                 <mat-icon class="files-icons" (click)="updateEditRow(i)" *ngIf="this.editRows[i] === false">edit</mat-icon>
                 <mat-icon class="files-icons" (click)="removeFile(obj);" *ngIf="this.editRows[i] === false">delete_forever</mat-icon>
               </span>          

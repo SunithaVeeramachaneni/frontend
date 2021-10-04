@@ -5,4 +5,5 @@ export interface Files {
     Size: string;
     StorageClass: string;
     Owner:any;
+    MimeType: string;
   }
