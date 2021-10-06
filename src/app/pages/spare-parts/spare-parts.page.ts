@@ -126,7 +126,6 @@ openSelect(i){
 }
 
 assignTech(event,workorderid) {
-  alert(workorderid)
  let technician= this.technicians$.pipe(map(epics => epics.filter(epic => epic.fName ===event.target.value)));
  technician.subscribe(technician=>{
   let data = {
@@ -134,7 +133,6 @@ assignTech(event,workorderid) {
     ASSIGNEE: technician[0].fName,
     AUFNR:workorderid,
     }
-    alert(JSON.stringify(data))
     this._sparepartsSvc.assignTechnicianToWorkorder(data).subscribe(res=>{
       this.getWorkOrders();
       // this.filteredWorkOrderList$= this.filteredWorkOrderList$.pipe(map(obj=>{
