@@ -192,9 +192,9 @@
         <div class="column-height">
             <ion-item lines="none" class="no-padding-item" *ngFor="let workOrder of workOrders['4']; let i = index;">
               <ion-label class="no-margin">
-                <div class="pickedup-date-time">
+                <!-- <div class="pickedup-date-time">
                   Pickup Today, 10am-11am
-                </div>
+                </div> -->
                 <div class="padding">
                   <span class="kit-number">{{workOrder.workOrderID}}</span><br>
                   <span class="display-flex">
@@ -219,12 +219,33 @@
       <ion-list class="ion-list5">
         <ion-item>
           <ion-label>
-            <span class="kits-count">0</span>
+            <span class="kits-count">{{workOrders['5'].length}}</span>
             <!-- <ion-img [src]="filterIcon" class="filter-icon"></ion-img><br> -->
             <br>
             <span class="kit-heading">Kits Picked Up</span>
           </ion-label>
         </ion-item>
+        <div class="column-height">
+          <ion-item lines="none" class="no-padding-item" *ngFor="let workOrder of workOrders['5']; let i = index;">
+            <ion-label class="no-margin">
+              <div class="padding">
+                <span class="kit-number">{{workOrder.workOrderID}}</span><br>
+                <span class="display-flex">
+                  <ion-img [src]="dateIcon" class="list-icons"></ion-img>
+                  <span class="date-priority-label">{{workOrder.dueDate | date: 'd-MMM-yyyy'}}</span>
+                </span>
+                <span class="display-flex">
+                  <ion-img [src]="partsIcon" class="list-icons"></ion-img>
+                  <span class="date-priority-label">{{workOrder.totItems}} Parts</span>
+                </span>
+                <span class="display-flex">
+                  <ion-img [src]="pickedUpIcon" class="list-icons"></ion-img>
+                  <span class="date-priority-label">Picked up by {{workOrder.assignee}}</span>
+                </span>
+              </div>
+            </ion-label>
+          </ion-item>
+      </div>
       </ion-list>
     </ion-col>
   </ion-row>

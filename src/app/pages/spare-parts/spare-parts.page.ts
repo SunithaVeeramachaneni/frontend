@@ -46,6 +46,7 @@ export class SparePartsComponent{
   public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
+  public pickedUpIcon = "../../../assets/spare-parts-icons/pickedup.svg";
 
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
