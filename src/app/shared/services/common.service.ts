@@ -18,12 +18,21 @@ export class CommonService {
     "showOverdue": "",
   });
   commonFilterAction$ = this.commonFilterSubject.asObservable();
+
+  private selectedDateSubject = new BehaviorSubject<string>("week");
+  selectedDateAction$ = this.selectedDateSubject.asObservable();
+
   constructor() { }
+
 
   minimizeSidebar(minimize: boolean) {
     this.minimizeSidebarSubject.next(minimize);
   }
   searchFilter(filterObj){
     this.commonFilterSubject.next(filterObj);
+  }
+
+  selectDate(selectedDate){
+    this.selectedDateSubject.next(selectedDate)
   }
 }
