@@ -104,26 +104,19 @@ export class MaintenanceComponent {
   }
 
   getWorkOrders() {
-    console.log("hi, am here")
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    console.log("Got the work orders", this.workOrderList$)
-    this.workOrderList$.subscribe(resp => console.log("resp is", resp))
     let base64Image = 'data:image/jpeg;base64,' + base64String;
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
       map(([oldWorkOrders, newWorkOrders]) => {
         if (newWorkOrders) {
-          console.log("New work orders are", newWorkOrders)
           for (let key in newWorkOrders) {
-            console.log("New work order", newWorkOrders[key])
             if (newWorkOrders[key])
               newWorkOrders[key].forEach(workOrder => {
                 let id = workOrder.workOrderID;
-                console.log("The ID is", id);
                 for (let key2 in oldWorkOrders) {
                   oldWorkOrders[key2] = oldWorkOrders[key2].filter(oldWorkOrder => {
-                    console.log("oldWOrk order id is", oldWorkOrder.workOrderID)
                     return !(oldWorkOrder.workOrderID === id)})
                 }
               });
