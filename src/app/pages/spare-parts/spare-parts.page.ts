@@ -46,6 +46,7 @@ export class SparePartsComponent{
   public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
   public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
   public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
+  public pickedUpIcon = "../../../assets/spare-parts-icons/pickedup.svg";
 
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
@@ -125,7 +126,6 @@ openSelect(i){
 }
 
 assignTech(event,workorderid) {
-  alert(workorderid)
  let technician= this.technicians$.pipe(map(epics => epics.filter(epic => epic.fName ===event.target.value)));
  technician.subscribe(technician=>{
   let data = {
@@ -133,7 +133,6 @@ assignTech(event,workorderid) {
     ASSIGNEE: technician[0].fName,
     AUFNR:workorderid,
     }
-    alert(JSON.stringify(data))
     this._sparepartsSvc.assignTechnicianToWorkorder(data).subscribe(res=>{
       this.getWorkOrders();
       // this.filteredWorkOrderList$= this.filteredWorkOrderList$.pipe(map(obj=>{
