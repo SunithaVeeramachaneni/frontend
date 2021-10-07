@@ -7,7 +7,8 @@ import {DashboardComponent } from './dashboard.page';
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent
+    component: DashboardComponent,
+    data: { breadcrumb: { skip: true } }
   }
 ];
 

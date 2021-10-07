@@ -10,6 +10,8 @@ import { CommonFilterComponent } from './components/common-filter/common-filter.
 import { IonicModule } from '@ionic/angular';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BreadcrumbModule } from 'xng-breadcrumb';
+
 @NgModule({
   declarations: [
     CustomPaginationControlsComponent,
@@ -17,8 +19,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     TimeAgoPipe,
     DropDownFilterPipe,
     HeaderComponent,
-    CommonFilterComponent,
-
+    CommonFilterComponent
   ],
   imports: [
     FormsModule,
@@ -26,7 +27,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     AppMaterialModules,
     IonicModule,
-    PopoverModule.forRoot()
+    PopoverModule.forRoot(),
+    BreadcrumbModule
   ],
   exports: [
     CustomPaginationControlsComponent,

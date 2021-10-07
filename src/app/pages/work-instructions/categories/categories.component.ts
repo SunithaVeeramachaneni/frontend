@@ -9,7 +9,6 @@ import { InstructionService } from '../services/instruction.service';
 import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
-import { WiCommonService } from '../services/wi-common.services';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { Subscription } from 'rxjs';
 
@@ -82,7 +81,6 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               private _toastService: ToastService,
               private cdrf: ChangeDetectorRef,
               private base64HelperService: Base64HelperService,
-              private wiCommonService: WiCommonService,
               private errorHandlerService: ErrorHandlerService) {}
 
   getAllCategories() {
@@ -134,14 +132,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngOnInit(): void {
-    this.updateCategoriesComponentActionSub = this.wiCommonService.updateCategoriesComponentAction$.subscribe(
-      update => {
-        if (update) {
-          this.categoriesList = [];
-          this.getAllCategories();
-        }
-      }
-    )
+    this.getAllCategories();
   }
 
   ngAfterViewInit(): void {

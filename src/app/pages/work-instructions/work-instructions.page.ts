@@ -1,12 +1,15 @@
 import {
+  AfterViewChecked,
+  ChangeDetectorRef,
   Component,
+  OnInit,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { InstructionService } from './services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { ExcelService } from './services/excel.service';
 import * as ExcelJs from 'exceljs/dist/exceljs.min.js';
 import { ComponentType } from '@angular/cdk/portal';
@@ -20,30 +23,26 @@ import { WiCommonService } from './services/wi-common.services';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 import { ImportService } from './services/import.service';
 import { environment } from '../../../environments/environment';
+import { CommonService } from '../../shared/services/common.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { routingUrls } from '../../app.constants';
 
 @Component({
   selector: 'app-work-instructions',
   templateUrl: './work-instructions.page.html',
   styleUrls: ['./work-instructions.page.scss'],
 })
-export class WorkInstructionsPage {
-  headerTitle = 'Work Instructions';
-
-  public wiDraftedList: Instruction[] = [];
-  public wiFavList: Instruction[] = [];
-  public wiRecentList: Instruction[] = [];
+export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   public copyInstructionComponent = CopyInstructionComponent;
   public bulkUploadComponent = BulkUploadComponent;
   public myObject: object;
   public categoryId;
   showMore = false;
-  private getAllFavAndDraftInstSubscription: Subscription;
   public assignedObjectsList;
   public copyInstructionsData = {
     recents: null,
     favs: null
   };
-
   workbook = new ExcelJs.Workbook();
   recentsConfig: any = {
     id: 'recents',
@@ -62,6 +61,10 @@ export class WorkInstructionsPage {
   public CreatedBy = '';
   searchCriteria = '';
   imageDataCalls = {};
+  currentRouteUrl$: Observable<string>;
+  headerTitle$: Observable<string>;
+  workInstructions$: Observable<{favorites: Instruction[], drafts: Instruction[], recents: Instruction[]}>;
+  readonly routingUrls = routingUrls;
 
   @ViewChild('recentDrafts', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
@@ -82,7 +85,31 @@ export class WorkInstructionsPage {
               private base64HelperService: Base64HelperService,
               private wiCommonService: WiCommonService,
               private errorHandlerService: ErrorHandlerService,
-              private importService: ImportService) { }
+              private importService: ImportService,
+              private commonService: CommonService,
+              private breadcrumbService: BreadcrumbService,
+              private cdrf: ChangeDetectorRef) { }
+
+  ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        tap(currentRouteUrl => {
+          this.commonService.updateHeaderTitle(routingUrls.workInstructions.title);
+          if (currentRouteUrl === routingUrls.workInstructions.url) {
+            this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: true });
+          } else {
+            this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: false });
+          }
+        })
+      );
+    this.headerTitle$ = this.commonService.headerTitleAction$;
+    this.imageDataCalls = {};
+    this.getAllFavsDraftsAndRecentIns();
+  }
+
+  ngAfterViewChecked(): void {
+    this.cdrf.detectChanges();    
+  }
 
   getBase64Images = (instructions: Instruction[]) => {
     instructions.map(instruction => {
@@ -124,29 +151,18 @@ export class WorkInstructionsPage {
 
   getAllFavsDraftsAndRecentIns() {
     this.spinner.show();
-    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-    this.getAllFavAndDraftInstSubscription = combineLatest([
-      this._instructionSvc.getFavInstructions(info),
-      this._instructionSvc.getDraftedInstructions(info),
-      this._instructionSvc.getRecentInstructions(info)
-    ])
-      .pipe(
-        map(([favorites, drafts, recents]: [Instruction[], Instruction[], Instruction[]]) => ({favorites, drafts, recents}))
-      )
-      .subscribe(
-        ({favorites, drafts, recents}) => {
-          this.wiFavList = favorites;
-          this.wiDraftedList = drafts;
-          this.wiRecentList = recents;
-          this.copyInstructionsData.recents = this.wiRecentList;
-          this.copyInstructionsData.favs = this.wiFavList;
-          this.spinner.hide();
-        },
-        error => {
-          this.errorHandlerService.handleError(error);
-          this.spinner.hide();
-        }
-      );
+    this.workInstructions$ = combineLatest([
+      this._instructionSvc.getFavInstructions(),
+      this._instructionSvc.getDraftedInstructions(),
+      this._instructionSvc.getRecentInstructions()
+    ]).pipe(
+      map(([favorites, drafts, recents]: [Instruction[], Instruction[], Instruction[]]) => {
+        this.copyInstructionsData.recents = recents;
+        this.copyInstructionsData.favs = favorites;
+        this.spinner.hide();
+        return {favorites, drafts, recents}
+      })
+    );
   }
 
   bulkUploadDialog(content: TemplateRef<any> | ComponentType<any> | string, obj) {
@@ -215,24 +231,7 @@ export class WorkInstructionsPage {
     file.value = '';
   }
 
-  ionViewWillEnter(): void {
-    this.imageDataCalls = {};
-    this.getAllFavsDraftsAndRecentIns();
-    this.wiCommonService.updateCategoriesComponent(true);
-  }
-
-  ionViewWillLeave(): void {
-    if (this.getAllFavAndDraftInstSubscription) {
-      this.getAllFavAndDraftInstSubscription.unsubscribe();
-    }
-  }
-
   getImageSrc = (source: string) => {
-    if (!this.imageDataCalls[source] && source.indexOf('assets') === -1 &&
-    !this.base64HelperService.getBase64ImageData(source)) {
-      this.imageDataCalls[source] = true;
-      this.base64HelperService.getBase64Image(source);
-    }
     return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
   }
 }

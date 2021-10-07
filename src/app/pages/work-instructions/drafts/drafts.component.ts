@@ -4,10 +4,14 @@ import {InstructionService} from '../services/instruction.service';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {ToastService} from '../../../shared/toast';
 import { ActivatedRoute } from '@angular/router';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { CommonService } from '../../../shared/services/common.service';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { routingUrls } from '../../../app.constants';
 
 @Component({
   selector: 'app-drafts',
@@ -16,8 +20,6 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 })
 
 export class DraftsComponent implements OnInit {
-  headerTitle = 'Drafts';
-  public wiList = [];
   config: any = {
     id: 'drafts',
     currentPage: 1,
@@ -28,9 +30,13 @@ export class DraftsComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = {updated_at: true};
-  public authors = [];
   public CreatedBy = '';
   public EditedBy = '';
+  currentRouteUrl$: Observable<string>;
+  drafts$: Observable<Instruction[]>;
+  authors$: Observable<string[]>;
+  readonly routingUrls = routingUrls;
+  routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
@@ -48,8 +54,16 @@ export class DraftsComponent implements OnInit {
               private _toastService: ToastService,
               private route: ActivatedRoute,
               private base64HelperService: Base64HelperService,
-              private errorHandlerService: ErrorHandlerService) { }
+              private errorHandlerService: ErrorHandlerService,
+              private commonService: CommonService) { }
+  
   ngOnInit() {
+    this.spinner.hide();
+    this.routeWithSearch = `${routingUrls.drafts.url}?search=`;
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        tap(() => this.commonService.updateHeaderTitle(routingUrls.drafts.title))
+      );
     this.getAllDraftedInstructions();
     this.AuthorDropDown();
     this.route.queryParamMap.subscribe(params => {
@@ -58,9 +72,10 @@ export class DraftsComponent implements OnInit {
   }
 
   AuthorDropDown () {
-    this._instructionSvc.getUsers().subscribe((users) => {
-      this.authors = users.map(user => `${user.first_name} ${user.last_name}`);
-    });
+    this.authors$ = this._instructionSvc.getUsers()
+      .pipe(
+        map(users => users.map(user => `${user.first_name} ${user.last_name}`))
+      );
   }
 
   setOrder(value: string) {
@@ -122,12 +137,9 @@ export class DraftsComponent implements OnInit {
 
   getAllDraftedInstructions() {
     this.spinner.show();
-    this._instructionSvc.getDraftedInstructions()
-      .subscribe(
-        workInstructions => {
-          this.wiList = workInstructions;
-          this.spinner.hide();
-        }
+    this.drafts$ = this._instructionSvc.getDraftedInstructions()
+      .pipe(
+        tap(() => this.spinner.hide())
       );
   }
 

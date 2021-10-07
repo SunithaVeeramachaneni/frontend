@@ -1,10 +1,5 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <app-header [title]="headerTitle"></app-header>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
-  <div class="p-l-20 p-t-20 drafts-main">
+<ng-container *ngIf="(currentRouteUrl$ | async) as currentRouteUrl">
+  <div class="p-l-20 p-t-20 drafts-main" *ngIf="currentRouteUrl === routingUrls.drafts.url || currentRouteUrl.indexOf(routeWithSearch) === 0">
     <div class="input-prepend input-group p-b-10">
       <div class="input-group-prepend">
         <span class="input-group-text">
@@ -13,88 +8,91 @@
       <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search by title or author" class="search-box">
       <select [(ngModel)]="CreatedBy" class="author-dropdown minimal">
         <option value="">Authors</option>
-        <option *ngFor="let obj of this.authors" [value]="obj">{{obj}}</option>
+        <ng-container *ngIf="authors$ | async as authors">
+          <option *ngFor="let obj of authors" [value]="obj">{{obj}}</option>
+        </ng-container>
       </select>
     </div>
-
-    <table id="draft-table" class="table">
-      <thead>
-        <tr>
-          <th scope="col" class="width-30" (click)="setOrder('WI_Name')">Title
-            <span [hidden]="reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_upward</mat-icon></span>
-          </th>
-          <th scope="col" class="width-20" (click)="setOrder('Category_Name')">Category
-            <span [hidden]="reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_upward</mat-icon></span>
-          </th>
-          <th scope="col" class="width-20" (click)="setOrder('updated_at')">Last Edited
-            <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
-          </th>
-          <th scope="col" class="width-20" (click)="setOrder('CreatedBy')">Author
-            <span [hidden]="reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_upward</mat-icon></span>
-          </th>
-          <th scope="col" class="width-10"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="( this.wiList | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
-          <app-dummy #filteredResults [value]="result"></app-dummy>
-          <tr *ngFor="let obj of result">
-            <th scope="row" class="width-30"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/drafts', obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
-
-            <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]">{{obj.categories}}</a></td>
-
-            <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
-            <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
-            <td class="width-10">
-              <a (click)="setFav(obj)">
-                <span *ngIf="obj.IsFavorite === false"><mat-icon class="mat-icon-star">star_border</mat-icon></span>
-                <span *ngIf="obj.IsFavorite !== false"><mat-icon class="mat-icon-star is-fav-icon">star</mat-icon></span>
-              </a>
-              <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                <mat-icon  matTooltip="More" matTooltipClass="" >more_horiz</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item [routerLink]="['/work-instructions/drafts', obj.Id]" id="editWorkInstruction">
-                  <mat-icon>edit</mat-icon>
-                  <span class="menu-text">Edit Work Instruction</span>
-                </button>
-                <button mat-menu-item (click)="copyWI(obj);" id="copyWorkInstruction">
-                  <img src="assets/work-instructions-icons/svg/copy.svg" alt=""/>
-                  <span class="menu-text m-l-15">Copy Work Instruction</span>
-                </button>
-                <button mat-menu-item (click)="removeWI(obj);" id="deleteWorkInstruction">
-                  <mat-icon class="text-red">close</mat-icon>
-                  <span class="menu-text text-red">Delete Work Instruction</span>
-                </button>
-              </mat-menu>
-            </td>
-          </tr>
+    <ng-container *ngIf="drafts$ | async as drafts">
+      <table id="draft-table" class="table">
+        <thead>
           <tr>
-            <div class="no-search-records" *ngIf="result.length === 0 && this.wiList.length > 0 ">
-              No Result Found!
-            </div>
+            <th scope="col" class="width-30" (click)="setOrder('WI_Name')">Title
+              <span [hidden]="reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.WI_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'WI_Name'">arrow_upward</mat-icon></span>
+            </th>
+            <th scope="col" class="width-20" (click)="setOrder('Category_Name')">Category
+              <span [hidden]="reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.Category_Name"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'Category_Name'">arrow_upward</mat-icon></span>
+            </th>
+            <th scope="col" class="width-20" (click)="setOrder('updated_at')">Last Edited
+              <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
+            </th>
+            <th scope="col" class="width-20" (click)="setOrder('CreatedBy')">Author
+              <span [hidden]="reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.CreatedBy"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'CreatedBy'">arrow_upward</mat-icon></span>
+            </th>
+            <th scope="col" class="width-10"></th>
           </tr>
-        </ng-container>
-        </tbody>
-    </table>
-    <div class="no-records" *ngIf="this.wiList && this.wiList.length === 0">
-      No Drafted Work Instructions
-    </div>
-    <div *ngIf="this.wiList && this.wiList.length > 0">
-      <pagination-template #p="paginationApi"
-                      [id]="config.id"
-                      (pageChange)="config.currentPage = $event"
-                      (pageBoundsCorrection)="config.currentPage = $event">
-        <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
-      </pagination-template>
-    </div>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="(drafts | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
+            <app-dummy #filteredResults [value]="result"></app-dummy>
+            <tr *ngFor="let obj of result">
+              <th scope="row" class="width-30"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/drafts', obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
+  
+              <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]">{{obj.categories}}</a></td>
+  
+              <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
+              <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/drafts', obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
+              <td class="width-10">
+                <a (click)="setFav(obj)">
+                  <span *ngIf="obj.IsFavorite === false"><mat-icon class="mat-icon-star">star_border</mat-icon></span>
+                  <span *ngIf="obj.IsFavorite !== false"><mat-icon class="mat-icon-star is-fav-icon">star</mat-icon></span>
+                </a>
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+                  <mat-icon  matTooltip="More" matTooltipClass="" >more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item [routerLink]="['/work-instructions/drafts', obj.Id]" id="editWorkInstruction">
+                    <mat-icon>edit</mat-icon>
+                    <span class="menu-text">Edit Work Instruction</span>
+                  </button>
+                  <button mat-menu-item (click)="copyWI(obj);" id="copyWorkInstruction">
+                    <img src="assets/work-instructions-icons/svg/copy.svg" alt=""/>
+                    <span class="menu-text m-l-15">Copy Work Instruction</span>
+                  </button>
+                  <button mat-menu-item (click)="removeWI(obj);" id="deleteWorkInstruction">
+                    <mat-icon class="text-red">close</mat-icon>
+                    <span class="menu-text text-red">Delete Work Instruction</span>
+                  </button>
+                </mat-menu>
+              </td>
+            </tr>
+            <tr>
+              <div class="no-search-records" *ngIf="result.length === 0 && drafts.length > 0 ">
+                No Result Found!
+              </div>
+            </tr>
+          </ng-container>
+          </tbody>
+      </table>
+      <div class="no-records" *ngIf="drafts && drafts.length === 0">
+        No Drafted Work Instructions
+      </div>
+      <div *ngIf="drafts && drafts.length > 0">
+        <pagination-template #p="paginationApi"
+                        [id]="config.id"
+                        (pageChange)="config.currentPage = $event"
+                        (pageBoundsCorrection)="config.currentPage = $event">
+          <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+        </pagination-template>
+      </div>
+    </ng-container>
   </div>
-
-</ion-content>
+  <router-outlet></router-outlet>
+</ng-container>
 
 
 

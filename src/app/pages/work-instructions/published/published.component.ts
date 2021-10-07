@@ -3,10 +3,14 @@ import Swal from "sweetalert2";
 import {InstructionService} from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {ToastService} from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { CommonService } from '../../../shared/services/common.service';
+import { Observable } from 'rxjs';
+import { routingUrls } from '../../../app.constants';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-published',
@@ -14,8 +18,6 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
   styleUrls: ['./published.component.css']
 })
 export class PublishedComponent implements OnInit {
-  headerTitle = 'Published';
-  public wiList = [];
   config: any = {
     id: 'published',
     currentPage: 1,
@@ -26,10 +28,13 @@ export class PublishedComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = {updated_at: true};
-  sortedCollection: any[];
-  public authors = [];
   public CreatedBy = '';
   public EditedBy = '';
+  currentRouteUrl$: Observable<string>;
+  published$: Observable<Instruction[]>;
+  authors$: Observable<string[]>;
+  readonly routingUrls = routingUrls;
+  routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set published(published: DummyComponent) {
     if (published) {
@@ -46,17 +51,25 @@ export class PublishedComponent implements OnInit {
               private _toastService: ToastService,
               private _instructionSvc: InstructionService,
               private base64HelperService: Base64HelperService,
-              private errorHandlerService: ErrorHandlerService) { }
+              private errorHandlerService: ErrorHandlerService,
+              private commonService: CommonService) { }
 
   ngOnInit() {
+    this.spinner.hide();
+    this.routeWithSearch = `${routingUrls.published.url}?search=`;
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        tap(() => this.commonService.updateHeaderTitle(routingUrls.published.title))
+      );
     this.getAllPublishedInstructions();
     this.AuthorDropDown();
   }
 
   AuthorDropDown() {
-    this._instructionSvc.getUsers().subscribe((users) => {
-      this.authors = users.map(user => `${user.first_name} ${user.last_name}`);
-    });
+    this.authors$ = this._instructionSvc.getUsers()
+      .pipe(
+        map(users => users.map(user => `${user.first_name} ${user.last_name}`))
+      );
   }
 
   setOrder(value: string) {
@@ -139,12 +152,9 @@ export class PublishedComponent implements OnInit {
 
   getAllPublishedInstructions() {
     this.spinner.show();
-    this._instructionSvc.getPublishedInstructions()
-      .subscribe(
-        workInstructions => {
-          this.wiList = workInstructions;
-          this.spinner.hide();
-        }
+    this.published$ = this._instructionSvc.getPublishedInstructions()
+      .pipe(
+        tap(() => this.spinner.hide())
       );
   }
 
