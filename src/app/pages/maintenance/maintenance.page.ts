@@ -3,7 +3,7 @@ import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
-import { combineLatest, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, Observable, of } from 'rxjs';
 import { FormControl, FormGroupDirective } from '@angular/forms';
 import { map, startWith, filter, tap, mergeMap, toArray, flatMap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -13,7 +13,7 @@ import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
 import { base64String } from './image'
-import {CommonService}   from '../../shared/services/common.service';
+import { CommonService } from '../../shared/services/common.service';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
@@ -31,7 +31,7 @@ export class MaintenanceComponent {
   public selectDate$: Observable<string>;
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
-  public filterObj$:Observable<any>;
+  public filterObj$: Observable<any>;
   public workOrders: Observable<WorkOrder[]>
   public workCenterList: WorkCenter[];
   public workCenterList$: Observable<WorkCenter[]>;
@@ -69,7 +69,7 @@ export class MaintenanceComponent {
 
 
   public showOperationsList = {};
-  public base64Code:any;
+  public base64Code: any;
   hideList = true;
   showFilters = false;
 
@@ -79,39 +79,47 @@ export class MaintenanceComponent {
     private _maintenanceSvc: MaintenanceService,
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
-    private sanitizer:DomSanitizer,
-    private _commonService:CommonService
+    private sanitizer: DomSanitizer,
+    private _commonService: CommonService
   ) { }
 
   ngOnInit() {
     this._maintenanceSvc.getAllWorkCenters().subscribe(resp => this.workCenterList = resp);
-    this._maintenanceSvc.getTechnicians().subscribe(resp=> {
-    this.technicians = resp;
-      })
+    this._maintenanceSvc.getTechnicians().subscribe(resp => {
+      this.technicians = resp;
+    })
     this.filter = new FormControl('');
     this.selectDate = new FormControl('week');
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
-    this.filterObj$= this._commonService.commonFilterAction$
+    this.filterObj$ = this._commonService.commonFilterAction$
     this.getWorkOrders();
 
   }
 
-  getData = () =>{
+  getData = () => {
 
   }
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    let base64Image='data:image/jpeg;base64,'+ base64String;
+    let base64Image = 'data:image/jpeg;base64,' + base64String;
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
       map(([oldWorkOrders, newWorkOrders]) => {
         if (newWorkOrders) {
           for (let key in newWorkOrders) {
+            if (newWorkOrders[key])
+              newWorkOrders[key].forEach(workOrder => {
+                let id = workOrder.workOrderID;
+                for (let key2 in oldWorkOrders) {
+                  oldWorkOrders[key2] = oldWorkOrders[key2].filter(oldWorkOrder => {
+                    return !(oldWorkOrder.workOrderID === id)})
+                }
+              });
             oldWorkOrders[key] = [...newWorkOrders[key], ...oldWorkOrders[key]];
           }
         }
@@ -119,20 +127,19 @@ export class MaintenanceComponent {
       })
     )
 
-
     this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$ ,this.selectDate$,this.filterObj$]).pipe(
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$, this.filterObj$]).pipe(
       map(([workOrders, filterDate, filterObj]) => {
         console.log("Worokorders are", workOrders)
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders) {
           filtered[key] = workOrders[key].filter(workOrder => {
             return (
-              workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1 ||
-              workOrder.workOrderID.toLowerCase().indexOf(filterObj['search']?filterObj['search'].toLowerCase():"") !== -1) &&
+              workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1 ||
+              workOrder.workOrderID.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1) &&
               this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
-              this.filterPriority(workOrder.priorityStatus,filterObj.priority)
+              this.filterPriority(workOrder.priorityStatus, filterObj.priority)
           }
           )
 
@@ -144,19 +151,19 @@ export class MaintenanceComponent {
     );
   }
 
-  public filterPriority =(status,priority)=>{
+  public filterPriority = (status, priority) => {
     console.log(status)
-   if(priority===null || priority.length==0){
-     return true;
-   }
-   else {
-     for (let i=0;i<priority.length;i++) {
-       if (priority[i]===status)
-         return true;
-     }
-     return false;
-   }
- }
+    if (priority === null || priority.length == 0) {
+      return true;
+    }
+    else {
+      for (let i = 0; i < priority.length; i++) {
+        if (priority[i] === status)
+          return true;
+      }
+      return false;
+    }
+  }
 
 
   public filterDate(dueDate, filterDate) {
@@ -222,7 +229,7 @@ export class MaintenanceComponent {
   }
 
   async onAssignPress(workOrder: WorkOrder) {
-     const modal = await this.modalCtrl.create({
+    const modal = await this.modalCtrl.create({
       component: ModalComponent,
       componentProps: {
         techniciansList: this.technicians,
@@ -234,18 +241,19 @@ export class MaintenanceComponent {
 
     modal.onDidDismiss()
       .then(async (data) => {
-        if(data){
-        const resp = data['data']; // Here's your selected user!
-        let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
-        res.subscribe(resp => {
-          console.log("Resp from the PUT request is", res)
-          if(resp === true){
-            this.getWorkOrders();
-          }
-          
-        })
+        if (data) {
+          const resp = data['data']; // Here's your selected user!
+          let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
+          res.subscribe(resp => {
+            console.log("Resp from the PUT request is", res)
+            if (resp === true) {
+              console.log("Put succesful")
+              this.getWorkOrders();
+            }
+
+          })
         }
-    });
+      });
     return await modal.present();
   }
 }

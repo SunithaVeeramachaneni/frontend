@@ -14,6 +14,7 @@ export class MaintenanceService {
 
   private transformedObservable$;
   private technicians$: Observable<any>;
+  public workOrderBSubject: BehaviorSubject<any>;
   public workCenters$: Observable<WorkCenter[]>
   public workOrders$: Observable<WorkOrders>
 
@@ -60,7 +61,6 @@ export class MaintenanceService {
       });
       return workCenters
     }))
-
     return this.workCenters$;
   }
 
@@ -77,13 +77,14 @@ export class MaintenanceService {
           return condition
         })
         }
-        console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
+        // console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
-        console.log(workOrder.workOrderID, " The work order after cleaning is", workOrder)
+        // console.log(workOrder.workOrderID, " The work order after cleaning is", workOrder)
         workOrders[`${workOrder.status}`].push(workOrder)
       });
       return workOrders;
     }))
+    this.workOrders$.subscribe(this.workOrderBSubject)
     return this.workOrders$
   }
 
@@ -92,7 +93,7 @@ export class MaintenanceService {
   }
 
   formatTime = (inputHours) => { //move to utils directory
-    inputHours = parseInt(inputHours);
+    inputHours = parseFloat(inputHours);
     const minutes = Math.floor(inputHours % 1 * 60);
     const hours = Math.floor(inputHours);
     if (minutes !== 0)
@@ -141,7 +142,7 @@ export class MaintenanceService {
   getEstimatedTime = (operations) => {
     let time = 0
     operations.forEach(operation => {
-      time += parseInt(operation.ARBEI)
+      time += parseFloat(operation.ARBEI)
     });
     return time;
   }
@@ -149,7 +150,7 @@ export class MaintenanceService {
   getActualTime = (operations) => {
     let time = 0
     operations.forEach(operation => {
-      time += parseInt(operation.ISMNW)
+      time += parseFloat(operation.ISMNW)
     });
     return time;
   }
@@ -167,7 +168,7 @@ export class MaintenanceService {
   }
 
   getTimeProgress = (estimatedTime, actualTime) => {
-    console.log("estimated time", estimatedTime, "actual time",actualTime);
+    // console.log("estimated time", estimatedTime, "actual time",actualTime);
     let timeProgress = actualTime/estimatedTime
     return timeProgress;
   }
@@ -186,7 +187,7 @@ export class MaintenanceService {
         "operationName": operation.LTXA1
       })
     })
-    console.log("Operation Details", cleaned)
+    // console.log("Operation Details", cleaned)
     return cleaned
 
   }
@@ -203,7 +204,7 @@ export class MaintenanceService {
       workCenter: rawWorkOrder['ARBPL'],
       equipmentName: rawWorkOrder['KTEXT'],
       kitStatus: rawWorkOrder['TXT04'],
-      dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
+      dueDate: this.parseJsonDate(rawWorkOrder['GLTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       operationProgress: this.getOperationProgress(rawWorkOrder.WorkOrderOperationSet.results),
@@ -224,6 +225,19 @@ export class MaintenanceService {
     }
     let res =  await this._appService._putDataToGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations', req);
     return res;
+  }
+
+
+  getWorkOrderByID = async (id) => {
+    let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
+    let rawWorkOrder = await this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workOrder/${id}`)
+    let workOrder = this.cleanWorkOrder(rawWorkOrder, "")
+    workOrders[`${workOrder.status}`].push(workOrder);
+    return new Observable(observer => {
+    this._zone.run(() => {
+      observer.next(workOrders);
+    });
+  })
   }
 }
 
