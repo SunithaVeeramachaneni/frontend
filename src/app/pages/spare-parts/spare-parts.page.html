@@ -9,7 +9,7 @@
 
         <ion-segment mode="ios" (ionChange)="dateChanged($event)" [(ngModel)]="selectDate" class="segment-group">
           <ion-segment-button value="today" class="segment-button">
-            <ion-label>Today</ion-label>
+            <ion-label>Due Today</ion-label>
           </ion-segment-button>
           <hr class="segmented-line" />
           <ion-segment-button value="week" class="segment-button">
@@ -17,7 +17,7 @@
           </ion-segment-button>
           <hr class="segmented-line" />
           <ion-segment-button value="month" class="segment-button">
-            <ion-label>This Month</ion-label>
+            <ion-label>Due This Month</ion-label>
           </ion-segment-button>
           <hr class="segmented-line" />
           <ion-segment-button value="custom" class="segment-button" disabled>
