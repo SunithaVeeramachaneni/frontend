@@ -35,12 +35,18 @@ const routes: Routes = [
           { path: ':id', component: AddWorkinstructionComponent, resolve: [NavigationDelayResolverService] },
         ]
       },
+      { path: 'category/:cid', component: CategoryWiseInstructionsComponent,
+        children: [
+          { path: ':id', component: AddWorkinstructionComponent, resolve: [NavigationDelayResolverService] },
+        ]
+      },
+      { path: 'files', data: { breadcrumb: { label: 'Files' } }, component: MediaFilesComponent,
+        children: [
+          { path: ':id', component: AddWorkinstructionComponent },
+        ]
+      },
     ]
   },
-  { path: 'category/:cid', data: {title: ''}, component: CategoryWiseInstructionsComponent },
-  { path: 'category/:cid/:id', data: {title: ''}, component: AddWorkinstructionComponent, resolve: [NavigationDelayResolverService] },
-  { path: 'files', data: {title: 'Files'}, component: MediaFilesComponent },
-  { path: 'files/:id', data: {title: ''}, component: AddWorkinstructionComponent },
 ];
 
 @NgModule({

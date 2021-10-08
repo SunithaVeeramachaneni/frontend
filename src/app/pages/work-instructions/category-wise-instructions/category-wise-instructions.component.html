@@ -1,10 +1,5 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <app-header [title]="headerTitle"></app-header>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
-  <div class="work-instructions">
+<ng-container *ngIf="(currentRouteUrl$ | async) as currentRouteUrl">
+  <div class="work-instructions" *ngIf="currentRouteUrl === routeUrl">
     <br>
     <div class="input-prepend input-group p-b-10">
       <div class="input-group-prepend">
@@ -14,10 +9,12 @@
       <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search by title or author" class="search-box">
       <select [(ngModel)]="CreatedBy" class="author-dropdown minimal">
         <option value="">Authors</option>
-        <option *ngFor="let obj of this.authors" [value]="obj">{{obj}}</option>
+        <ng-container *ngIf="authors$ | async as authors">
+          <option *ngFor="let obj of authors" [value]="obj">{{obj}}</option>
+        </ng-container>
       </select>
     </div>
-    <mat-tab-group  #tabGroup (selectedTabChange)="tabChanged($event)">
+    <mat-tab-group  #tabGroup (selectedTabChange)="tabChanged($event)" *ngIf="workInstructions$ | async as workInstructions">
       <mat-tab label="DRAFTS">
         <div *ngIf="this.tabIndex=== 0 || this.tabGroup._selectedIndex===0">
           <table class="table">
@@ -39,7 +36,7 @@
             </tr>
             </thead>
             <tbody>
-              <ng-container *ngIf="( this.draftedInstructionsList | filter : search  | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: draftsConfig) as result">
+              <ng-container *ngIf="( workInstructions.drafts | filter : search  | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: draftsConfig) as result">
                 <app-dummy #draftedFilteredResults [value]="result"></app-dummy>
                 <tr *ngFor="let obj of result">
                   <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
@@ -70,17 +67,17 @@
                   </td>
                 </tr>
                 <tr>
-                  <div class="no-search-records1" *ngIf="result.length === 0 && draftedInstructionsList.length > 0 ">
+                  <div class="no-search-records1" *ngIf="result.length === 0 && workInstructions.drafts.length > 0 ">
                     No Result Found!
                   </div>
                 </tr>
               </ng-container>
             </tbody>
           </table>
-          <div class="no-records" *ngIf="this.draftedInstructionsList && this.draftedInstructionsList.length === 0">
+          <div class="no-records" *ngIf="workInstructions.drafts && workInstructions.drafts.length === 0">
             No Drafted Work Instructions in Category <strong>"{{selectedCategory}}"</strong>
           </div>
-          <div *ngIf="this.draftedInstructionsList && this.draftedInstructionsList.length > 0">
+          <div *ngIf="workInstructions.drafts && workInstructions.drafts.length > 0">
             <pagination-template #p="paginationApi"
                        [id]="draftsConfig.id"
                        (pageChange)="draftsConfig.currentPage = $event"
@@ -114,7 +111,7 @@
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngIf="( this.publishedInstructionsList | filter : search | dropdownFilter: CreatedBy  | orderBy: order:reverse:'case-insensitive' | paginate: publishedConfig) as result">
+            <ng-container *ngIf="( workInstructions.published | filter : search | dropdownFilter: CreatedBy  | orderBy: order:reverse:'case-insensitive' | paginate: publishedConfig) as result">
               <app-dummy #publishedFilteredResults [value]="result"></app-dummy>
               <tr *ngFor="let obj of result">
                 <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
@@ -141,17 +138,17 @@
                 </td>
               </tr>
               <tr>
-                <div class="no-search-records1" *ngIf="result.length === 0 && this.publishedInstructionsList.length > 0 ">
+                <div class="no-search-records1" *ngIf="result.length === 0 && workInstructions.published.length > 0 ">
                   No Result Found!
                 </div>
               </tr>
             </ng-container>
           </tbody>
         </table>
-          <div class="no-records" *ngIf="this.publishedInstructionsList && this.publishedInstructionsList.length === 0">
+          <div class="no-records" *ngIf="workInstructions.published && workInstructions.published.length === 0">
             No Published Work Instructions in Category <strong>"{{selectedCategory}}"</strong>
           </div>
-          <div *ngIf="this.publishedInstructionsList && this.publishedInstructionsList.length > 0">
+          <div *ngIf="workInstructions.published && workInstructions.published.length > 0">
             <pagination-template #p="paginationApi"
                        [id]="publishedConfig.id"
                        (pageChange)="publishedConfig.currentPage = $event"
@@ -163,5 +160,6 @@
     </mat-tab>
     </mat-tab-group>
   </div>
-</ion-content>
+  <router-outlet></router-outlet>
+</ng-container>
 
