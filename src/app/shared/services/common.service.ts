@@ -19,7 +19,7 @@ export class CommonService {
   });
   commonFilterAction$ = this.commonFilterSubject.asObservable();
 
-  private selectedDateSubject = new BehaviorSubject<string>("week");
+  private selectedDateSubject = new BehaviorSubject<string>("month");
   selectedDateAction$ = this.selectedDateSubject.asObservable();
 
   constructor() { }

@@ -10,7 +10,7 @@
                            [workCenterList]="workCenterListDef"
                            [assignList]="assignList">
         </app-common-filter>
-        <ion-segment mode="ios" (ionChange)="dateChanged($event)" [(ngModel)]="selectDate" class="segment-group">
+        <ion-segment mode="ios" (ionChange)="dateChanged($event)" [value]="selectDate$ | async" class="segment-group">
           <ion-segment-button value="today" class="segment-button">
             <ion-label>Due Today</ion-label>
           </ion-segment-button>

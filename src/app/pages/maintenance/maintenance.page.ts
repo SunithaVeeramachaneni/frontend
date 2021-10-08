@@ -27,7 +27,6 @@ export class MaintenanceComponent {
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
-  public selectDate="week";
   public selectDate$: Observable<string>;
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
@@ -99,7 +98,6 @@ export class MaintenanceComponent {
   }
 
   dateChanged(event){
-    this.selectDate=event.target.value;
     this._commonService.selectDate(event.target.value)
   }
   
