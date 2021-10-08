@@ -55,6 +55,7 @@
                 <span class="create-wi-btn-text">Create Work Instruction</span>
               </button>
               <button class="save-files-btn" *ngIf="this.editRows[i] === true" (click)="saveFile(obj, i)">SAVE</button>
+              <button class="cancel-files-btn" *ngIf="this.editRows[i] === true" (click)="this.editRows[i] = false">CANCEL</button>
             </td>
           </tr>
           <tr>
