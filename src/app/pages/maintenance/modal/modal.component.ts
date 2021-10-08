@@ -68,7 +68,7 @@ export class ModalComponent implements OnInit {
   }
 
 dismiss() {
-    this.modalCtrl.dismiss();
+    this.modalCtrl.dismiss(null);
   }
 
   onSave(){

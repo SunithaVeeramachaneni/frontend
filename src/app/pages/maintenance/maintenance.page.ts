@@ -27,7 +27,7 @@ export class MaintenanceComponent {
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
-  public selectDate: FormControl;
+  public selectDate="week";
   public selectDate$: Observable<string>;
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
@@ -89,9 +89,8 @@ export class MaintenanceComponent {
       this.technicians = resp;
     })
     this.filter = new FormControl('');
-    this.selectDate = new FormControl('week');
+    this.selectDate$ = this._commonService.selectedDateAction$;
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
-    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
     this.filterObj$ = this._commonService.commonFilterAction$
@@ -99,9 +98,11 @@ export class MaintenanceComponent {
 
   }
 
-  getData = () => {
-
+  dateChanged(event){
+    this.selectDate=event.target.value;
+    this._commonService.selectDate(event.target.value)
   }
+  
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
@@ -241,7 +242,8 @@ export class MaintenanceComponent {
 
     modal.onDidDismiss()
       .then(async (data) => {
-        if (data) {
+        if (data.data) {
+          this.spinner.show();
           const resp = data['data']; // Here's your selected user!
           let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
           res.subscribe(resp => {
