@@ -28,7 +28,6 @@ export class SparePartsComponent{
   public updatedWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
-  public selectDate="week";
   public selectDate$: Observable<string>;
 
   public workOrders: Observable<WorkOrder[]>
@@ -149,7 +148,6 @@ assignTech(event,workorderid) {
  })
 }
 dateChanged(event){
-  this.selectDate=event.target.value;
   this._commonService.selectDate(event.target.value)
 }
 
