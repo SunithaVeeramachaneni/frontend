@@ -23,7 +23,11 @@ export class CommonService {
   commonFilterAction$ = this.commonFilterSubject.asObservable();
   headerTitleAction$ = this.headerTitleSubject.asObservable();
 
+  private selectedDateSubject = new BehaviorSubject<string>("month");
+  selectedDateAction$ = this.selectedDateSubject.asObservable();
+
   constructor() { }
+
 
   minimizeSidebar(minimize: boolean) {
     this.minimizeSidebarSubject.next(minimize);
@@ -39,5 +43,9 @@ export class CommonService {
 
   updateHeaderTitle(value: string) {
     this.headerTitleSubject.next(value);
+  }
+  
+  selectDate(selectedDate){
+    this.selectedDateSubject.next(selectedDate)
   }
 }

@@ -28,7 +28,6 @@ export class SparePartsComponent{
   public updatedWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
-  public selectDate: FormControl;
   public selectDate$: Observable<string>;
 
   public workOrders: Observable<WorkOrder[]>
@@ -81,8 +80,7 @@ export class SparePartsComponent{
 
   ngOnInit() {
     this.filterObj$= this._commonService.commonFilterAction$;
-    this.selectDate = new FormControl('week');
-    this.selectDate$ = this.selectDate.valueChanges.pipe(startWith('week'));
+    this.selectDate$ = this._commonService.selectedDateAction$;
     this.getWorkOrders();
     this.getTechnicians();
   }
@@ -148,6 +146,9 @@ assignTech(event,workorderid) {
       //   }));
     })
  })
+}
+dateChanged(event){
+  this._commonService.selectDate(event.target.value)
 }
 
 public filterDate(dueDate, filterDate){
