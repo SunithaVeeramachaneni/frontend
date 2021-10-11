@@ -1,12 +1,6 @@
 
-
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <app-header [title]="headerTitle"></app-header>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
-  <div class="p-l-20 p-t-20 files">
+<ng-container *ngIf="(currentRouteUrl$ | async) as currentRouteUrl">
+  <div class="p-l-20 p-t-20 files" *ngIf="currentRouteUrl === routingUrls.files.url">
     <div class="input-prepend input-group p-b-10">
       <div class="input-group-prepend">
         <span class="input-group-text">
@@ -15,67 +9,67 @@
       <input id="prependedInput" type="text" [(ngModel)]="search" placeholder="Search File" class="search-box">
     
     </div>
-
-    <table id="draft-table" class="table">
-      <thead>
-        <tr>
-          <th scope="col" class="width-30" (click)="setOrder('fileName')">File Name
-            <span [hidden]="reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_upward</mat-icon></span>
-          </th>
-          <th scope="col" class="width-20" (click)="setOrder('updated_at')">Date and Time
-            <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
-            <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
-          </th>
-     
-          <th scope="col" class="width-10"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="( this.wiMediaFiles | filter : search | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
-          <app-dummy #filteredResults [value]="result"></app-dummy>
-          <tr *ngFor="let obj of result; let i=index">
-            <th class="width-30">
-              <span class="files-names">
-                <mat-icon class="music-icon"> music_note </mat-icon> 
-                <span *ngIf="this.editRows[i] === false">{{obj.fileName}}</span>
-                <input type="text" class="files-input" value={{obj.fileName}} [(ngModel)]="obj.fileName" *ngIf="this.editRows[i] === true"/>
-              </span>
-            </th>
-
-            <td class="width-20"><span class="files-data">{{obj.updated_at}}</span></td>
-            <td class="width-50">
-              <span class="files-icons-list">
-                <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: obj.fileType}" *ngIf="this.editRows[i] === false"></app-player>
-                <mat-icon class="files-icons" (click)="updateEditRow(i)" *ngIf="this.editRows[i] === false">edit</mat-icon>
-                <mat-icon class="files-icons" (click)="removeFile(obj);" *ngIf="this.editRows[i] === false">delete_forever</mat-icon>
-              </span>          
-              <button class="create-wi-btn" *ngIf="this.editRows[i] === false" (click)="createWorkInstruction(obj.fullFilePath)">
-                <mat-icon class="create-wi-btn-icon">add</mat-icon>
-                <span class="create-wi-btn-text">Create Work Instruction</span>
-              </button>
-              <button class="save-files-btn" *ngIf="this.editRows[i] === true" (click)="saveFile(obj, i)">SAVE</button>
-            </td>
-          </tr>
+    <ng-container *ngIf="mediaFiles$ | async as mediaFiles">
+      <table id="draft-table" class="table">
+        <thead>
           <tr>
-            <div class="no-search-records" *ngIf="result.length === 0 && this.wiMediaFiles.length > 0 ">
-              No Result Found!
-            </div>
+            <th scope="col" class="width-30" (click)="setOrder('fileName')">File Name
+              <span [hidden]="reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.fileName"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'fileName'">arrow_upward</mat-icon></span>
+            </th>
+            <th scope="col" class="width-20" (click)="setOrder('updated_at')">Date and Time
+              <span [hidden]="reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_downward</mat-icon></span>
+              <span [hidden]="!reverseObj.updated_at"><mat-icon class="arrow" [class.arrow-inactive]="order !== 'updated_at'">arrow_upward</mat-icon></span>
+            </th>
+       
+            <th scope="col" class="width-10"></th>
           </tr>
-        </ng-container>
-        </tbody>
-    </table>
-    <div class="no-records" *ngIf="this.wiMediaFiles && this.wiMediaFiles.length === 0">
-      No Video/Audio Files available in the repository!
-    </div>
-    <div *ngIf="this.wiMediaFiles && this.wiMediaFiles.length > 0">
-      <pagination-template #p="paginationApi"
-                      [id]="config.id"
-                      (pageChange)="config.currentPage = $event"
-                      (pageBoundsCorrection)="config.currentPage = $event">
-        <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
-      </pagination-template>
-    </div>
-    
+        </thead>
+        <tbody>
+          <ng-container *ngIf="( mediaFiles | filter : search | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
+            <tr *ngFor="let obj of result; let i=index">
+              <th class="width-30">
+                <span class="files-names">
+                  <mat-icon class="music-icon"> music_note </mat-icon> 
+                  <span *ngIf="this.editRows[i] === false">{{obj.fileName}}</span>
+                  <input type="text" class="files-input" value={{obj.fileName}} [(ngModel)]="obj.fileName" *ngIf="this.editRows[i] === true"/>
+                </span>
+              </th>
+  
+              <td class="width-20"><span class="files-data">{{obj.updated_at}}</span></td>
+              <td class="width-50">
+                <span class="files-icons-list">
+                  <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: obj.fileType}" *ngIf="this.editRows[i] === false"></app-player>
+                  <mat-icon class="files-icons" (click)="updateEditRow(i)" *ngIf="this.editRows[i] === false">edit</mat-icon>
+                  <mat-icon class="files-icons" (click)="removeFile(obj);" *ngIf="this.editRows[i] === false">delete_forever</mat-icon>
+                </span>          
+                <button class="create-wi-btn" *ngIf="this.editRows[i] === false" (click)="createWorkInstruction(obj.fullFilePath)">
+                  <mat-icon class="create-wi-btn-icon">add</mat-icon>
+                  <span class="create-wi-btn-text">Create Work Instruction</span>
+                </button>
+                <button class="save-files-btn" *ngIf="this.editRows[i] === true" (click)="saveFile(obj, i)">SAVE</button>
+              </td>
+            </tr>
+            <tr>
+              <div class="no-search-records" *ngIf="result.length === 0 && mediaFiles.length > 0 ">
+                No Result Found!
+              </div>
+            </tr>
+          </ng-container>
+          </tbody>
+      </table>
+      <div class="no-records" *ngIf="mediaFiles && mediaFiles.length === 0">
+        No Video/Audio Files available in the repository!
+      </div>
+      <div *ngIf="mediaFiles && mediaFiles.length > 0">
+        <pagination-template #p="paginationApi"
+                        [id]="config.id"
+                        (pageChange)="config.currentPage = $event"
+                        (pageBoundsCorrection)="config.currentPage = $event">
+          <app-custom-pagination-controls [paginationData]="p"></app-custom-pagination-controls>
+        </pagination-template>
+      </div>
+    </ng-container>
   </div>
-</ion-content>
+  <router-outlet></router-outlet>
+</ng-container>
