@@ -61,10 +61,9 @@ export class MaintenanceComponent {
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
 
   public workCenter: string[] = [];
-  public workCenterListDef: string[] = ['Mechanical', 'Electrical'];
+  public workCenterListDef: string[] = ['MECHANIK', 'ELEKTRIK'];
 
   public assign: string[] = [];
-  public assignList: string[] = ['Kerry Smith', 'Amy Butcher', 'Carlos Arnal', 'Steve Austin'];
 
 
   public showOperationsList = {};
@@ -95,6 +94,11 @@ export class MaintenanceComponent {
     this.filterObj$ = this._commonService.commonFilterAction$
     this.getWorkOrders();
 
+  }
+
+  getImageSrc = (source: string) => {
+    let base64Image='data:image/jpeg;base64,'+ source;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   }
 
   dateChanged(event){
@@ -129,7 +133,6 @@ export class MaintenanceComponent {
     this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$, this.filterObj$]).pipe(
       map(([workOrders, filterDate, filterObj]) => {
-        console.log("Worokorders are", workOrders)
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders) {
           filtered[key] = workOrders[key].filter(workOrder => {
@@ -138,7 +141,9 @@ export class MaintenanceComponent {
               workOrder.workOrderID.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1) &&
               this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
-              this.filterPriority(workOrder.priorityStatus, filterObj.priority)
+              this.filterPriority(workOrder.priorityStatus,filterObj.priority) &&
+              this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter) &&
+              this.filterAssignee( workOrder.technician[0],filterObj.assign);
           }
           )
 
@@ -150,8 +155,7 @@ export class MaintenanceComponent {
     );
   }
 
-  public filterPriority = (status, priority) => {
-    console.log(status)
+  filterPriority = (status, priority) => {
     if (priority === null || priority.length == 0) {
       return true;
     }
@@ -164,6 +168,33 @@ export class MaintenanceComponent {
     }
   }
 
+  filterWorkCenter =(status,workcenter)=>{
+    if(workcenter===null || workcenter.length==0){
+      return true;
+    }
+    else {
+      for(let i=0;i< workcenter.length;i++) {
+        if(workcenter[i] == status) {
+          return true;
+        }  
+      }
+      return false;
+    }
+  }
+
+  filterAssignee =(technician, assignee)=>{
+    if(assignee===null || assignee.length==0){
+      return true;
+    }
+    else {
+      for(let i=0;i< assignee.length;i++) {
+        if(technician && assignee[i].personName == technician.personName) {
+          return true;
+        }  
+      }
+      return false;
+    }
+  }
 
   public filterDate(dueDate, filterDate) {
     if (filterDate === 'today')
