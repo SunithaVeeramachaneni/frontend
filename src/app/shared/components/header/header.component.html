@@ -12,25 +12,25 @@
       </div>
     </ion-toolbar>
   </ion-col>
-  <ion-col  size-lg="6" size-md="6" size-sm="4" size-xs="12" class="header-cols" *ngIf="logonUserDetails$ | async as userDetails">
-      <ion-toolbar class="width-auto">
-        <ion-label class="loggedin-user-name">{{userDetails.userName}}</ion-label><br/>
-        <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
-      </ion-toolbar>
-      <ion-toolbar class="width-auto">
-        <img src={{userDetails.userImage}} alt="logged-user-image" class="header-user-icon">
-      </ion-toolbar>
-      <ion-toolbar class="width-auto">
-        <ion-icon name="chevron-down-outline" 
-                  class="m-r-10 cursor"
-                  [matMenuTriggerFor]="menu">
-        </ion-icon>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="signout()">
-            <mat-icon>exit_to_app</mat-icon>
-            <span>Sign Out</span>
-          </button>
-        </mat-menu>
-      </ion-toolbar>
+  <ion-col  size-lg="6" size-md="6" size-sm="4" size-xs="12" class="header-cols" *ngIf="userData$ | async as userDetails">
+    <ion-toolbar class="width-auto">
+      <ion-label class="loggedin-user-name">{{userDetails.userData.name}}</ion-label><br/>
+      <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
+    </ion-toolbar>
+    <ion-toolbar class="width-auto" *ngIf="logonUserDetails$ | async as logonUserDetails">
+      <img src={{logonUserDetails.userImage}} alt="logged-user-image" class="header-user-icon">
+    </ion-toolbar>
+    <ion-toolbar class="width-auto">
+      <ion-icon name="chevron-down-outline" 
+                class="m-r-10 cursor"
+                [matMenuTriggerFor]="menu">
+      </ion-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="signout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Sign Out</span>
+        </button>
+      </mat-menu>
+    </ion-toolbar>
   </ion-col>
 </ion-row>
