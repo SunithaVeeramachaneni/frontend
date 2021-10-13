@@ -39,7 +39,7 @@
               <td class="width-50">
                 <span class="files-icons-list">
                   <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: obj.fileType}" *ngIf="this.editRows[i] === false"></app-player>
-                  <mat-icon class="files-icons" (click)="updateEditRow(obj.fileName, i)" *ngIf="this.editRows[i] === false">edit</mat-icon>
+                  <mat-icon class="files-icons" (click)="updateEditRow(i)" *ngIf="this.editRows[i] === false">edit</mat-icon>
                   <mat-icon class="files-icons" (click)="removeFile(obj);" *ngIf="this.editRows[i] === false">delete_forever</mat-icon>
                 </span>          
                 <button class="create-wi-btn" *ngIf="this.editRows[i] === false" (click)="createWorkInstruction(obj.fullFilePath)">
@@ -47,7 +47,7 @@
                   <span class="create-wi-btn-text">Create Work Instruction</span>
                 </button>
                 <button class="save-files-btn" *ngIf="this.editRows[i] === true" (click)="saveFile(obj, i)">SAVE</button>
-                <button class="cancel-files-btn" *ngIf="this.editRows[i] === true" (click)="this.editRows[i] = false; obj.fileName = this.oldFileName;">CANCEL</button>
+                <button #cancel class="cancel-files-btn" *ngIf="this.editRows[i] === true" (click)="this.editRows[i] = false; obj.fileName = obj.originalFileName;">CANCEL</button>
               </td>
             </tr>
             <tr>

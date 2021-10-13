@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -26,7 +26,6 @@ import { CommonService } from '../../../shared/services/common.service';
 export class MediaFilesComponent implements OnInit {
   headerTitle = 'Files';
   fileInfo: FileInfo;
-  oldFileName: string;
   config: any = {
     id: 'files',
     currentPage: 1,
@@ -42,6 +41,7 @@ export class MediaFilesComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   mediaFiles$: Observable<MediaFile[]>;
   readonly routingUrls = routingUrls;
+  @ViewChild('cancel') cancel: ElementRef;
 
   constructor(private spinner: NgxSpinnerService,
               private _instructionSvc: InstructionService,
@@ -159,7 +159,7 @@ export class MediaFilesComponent implements OnInit {
             () => {
               this.spinner.hide();
               this._toastService.show({
-                text: "File name " + el.fileName + "' has been deleted from S3 repository",
+                text: "File name '" + el.fileName + "' has been deleted from S3 repository",
                 type: 'success',
               });
               this.getAllMediaFiles();
@@ -207,7 +207,7 @@ export class MediaFilesComponent implements OnInit {
 
     if (fileName === originalFileName) {
       this._toastService.show({
-        text: "File name" + fileName + "' not modified. Please update and try.",
+        text: "File name '" + fileName + "' not modified. Please update and try.",
         type: 'success',
       });
       return;
@@ -246,7 +246,7 @@ export class MediaFilesComponent implements OnInit {
           this.editRows[index] = false;
           this.spinner.hide();
           this._toastService.show({
-            text: "File name" + renameFileInfo.newFilePath + "' updated successfully",
+            text: "File name '" + renameFileInfo.newFilePath + "' updated successfully",
             type: 'success',
           });
           this.getAllMediaFiles();
@@ -255,8 +255,8 @@ export class MediaFilesComponent implements OnInit {
       );
   }
 
-  updateEditRow(filename, index: number) {
-    this.oldFileName = filename;
+  updateEditRow(index: number) {
+    this.cancel?.nativeElement.click();
     this.editRows = this.editRows.map(() => false);
     this.editRows[index] = true;
   }
