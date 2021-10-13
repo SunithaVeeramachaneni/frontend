@@ -256,7 +256,7 @@ export class MaintenanceComponent {
               console.log("Put succesful")
               let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(workOrderID);
               workOrder$.subscribe(workOrder => this.putWorkOrder$.next(workOrder))
-              this.spinner.hide();
+              // this.spinner.hide();
             }
 
           })
