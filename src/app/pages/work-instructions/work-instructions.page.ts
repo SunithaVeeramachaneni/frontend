@@ -113,9 +113,9 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
 
   getBase64Images = (instructions: Instruction[]) => {
     instructions.map(instruction => {
-      const { Cover_Image: coverImage } = instruction;
-      if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-        this.base64HelperService.getBase64Image(coverImage);
+      const { Cover_Image: coverImage, Id: path } = instruction;
+      if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage, path)) {
+        this.base64HelperService.getBase64Image(coverImage, path);
       }
     });
   }
@@ -199,7 +199,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
             const { progress } = data;
             if (progress === 0) {
               this.spinner.hide();
-              this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile, successUrl: '/work-instructions/edit', failureUrl: '/work-instructions' });
+              this.bulkUploadDialog(this.bulkUploadComponent, { ...data, isAudioOrVideoFile, successUrl: '/work-instructions/edit', failureUrl: '/work-instructions', s3Folder: '' });
             } else if (progress === 100) {
               this.wiCommonService.updateUploadInfo(data);
               this.importService.closeConnection();
@@ -215,10 +215,12 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
           }
         );
     } else {
+      const s3Folder = `bulkupload/${new Date().getTime()}`;
+      formData.append('s3Folder', s3Folder);
       this._instructionSvc.uploadWIExcel(formData).subscribe(
         resp => {
           if (Object.keys(resp).length) {
-            this.bulkUploadDialog(this.bulkUploadComponent, { ...resp, isAudioOrVideoFile, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+            this.bulkUploadDialog(this.bulkUploadComponent, { ...resp, isAudioOrVideoFile, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder });
           }
           this.spinner.hide();
         }
@@ -231,7 +233,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
     file.value = '';
   }
 
-  getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  getImageSrc = (source: string, path: string) => {
+    return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
 }

@@ -39,7 +39,7 @@
               <ng-container *ngIf="( workInstructions.drafts | filter : search  | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: draftsConfig) as result">
                 <app-dummy #draftedFilteredResults [value]="result"></app-dummy>
                 <tr *ngFor="let obj of result">
-                  <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
+                  <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
                   <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
                   <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
                   <td class="width-10">
@@ -114,7 +114,7 @@
             <ng-container *ngIf="( workInstructions.published | filter : search | dropdownFilter: CreatedBy  | orderBy: order:reverse:'case-insensitive' | paginate: publishedConfig) as result">
               <app-dummy #publishedFilteredResults [value]="result"></app-dummy>
               <tr *ngFor="let obj of result">
-                <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
+                <th scope="row" class="width-40"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a></th>
                 <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
                 <td class="width-25"><a class="font-color" [routerLink]="['/work-instructions/category', categoryId, obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>
                 <td class="width-10">

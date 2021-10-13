@@ -4,8 +4,8 @@
           <img
             alt="Slide"
             *ngIf="i === currentSlide"
-            [hidden]="!stepImages[slide.src]"
-            [attr.src]="stepImages[slide.src]"
+            [hidden]="!getStepImage(slide.src)"
+            [attr.src]="getStepImage(slide.src)"
             class="slide"
             [@slideAnimation]="animationType"
           />

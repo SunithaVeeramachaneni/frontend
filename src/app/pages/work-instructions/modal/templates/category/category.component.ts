@@ -25,6 +25,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   frmSubscribe: FormGroup;
   readonly coverImages = COVER_IMAGES;
   imageHeight = '';
+  path: string;
   @ViewChild('image', {static: false}) image: ElementRef;
   @ViewChild('CatName') private elementRef: ElementRef;
 
@@ -51,10 +52,11 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     });
     const {CId: cid, Category_Name: title, Cover_Image: coverImage} = this.ref.data;
     this.categoryValidatedMsg = '';
+    this.path = cid ? cid : 'category';
 
     if (cid) {
       this.title = 'Edit Category';
-      this.files = coverImage && coverImage.indexOf('assets') > -1 ? this.files : [coverImage];
+      this.files = coverImage && coverImage.indexOf('assets/') > -1 ? this.files : [coverImage];
       this.frmSubscribe.setValue({cid, title, coverImage});
     } else {
       this.title = 'Add New Category';
@@ -84,6 +86,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     this.spinner.show();
     const file = files[0];
     const imageForm = new FormData();
+    imageForm.append('path', this.path);
     imageForm.append('image', file);
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 
@@ -91,7 +94,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
       resp => {
         const {image: uploadedImage} = resp;
         this.files = [uploadedImage];
-        this.base64HelperService.getBase64Image(uploadedImage);
+        this.base64HelperService.getBase64Image(uploadedImage, this.path);
         this.categoryService.setDeleteFiles(uploadedImage);
         this.frmSubscribe.patchValue({coverImage: uploadedImage});
       },
@@ -132,7 +135,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   getImageSrc = (source: string) => {
-    return this.base64HelperService.getBase64ImageData(source);
+    return this.base64HelperService.getBase64ImageData(source, this.path);
   }
 
   getS3CoverImageHeight = () => {

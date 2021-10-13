@@ -44,7 +44,7 @@
             <ul class="recents-favorites-list">
               <li class="row list-data" *ngFor="let obj of result">
                 <div class=" col-xs-1 col-sm-1 col-md-1 col-lg-1 recent-wi-img p-0">
-                  <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/>
+                  <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/>
                 </div>
 
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">
@@ -81,7 +81,7 @@
               <ul class="recents-favorites-list">
                 <li class="row list-data" *ngFor="let obj of result">
                   <div class=" col-xs-1 col-sm-1 col-md-1 col-lg-1 recent-wi-img p-0">
-                    <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/>
+                    <img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/>
                   </div>
 
                   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 draft-title p-l-r-0 p-l-15">

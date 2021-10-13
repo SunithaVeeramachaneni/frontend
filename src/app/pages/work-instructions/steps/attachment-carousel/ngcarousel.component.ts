@@ -4,15 +4,16 @@ import { Slick } from 'ngx-slickjs';
 import { Subscription } from 'rxjs';
 import { Base64HelperService } from '../../services/base64-helper.service';
 import { State } from '../../../../state/app.state';
-import { getCurrentStepImages } from '../../state/instruction.selectors';
+import { getCurrentStep, getCurrentStepImages } from '../../state/instruction.selectors';
 import { Slide } from "./carousel.interface";
+import { Step } from '../../../../interfaces';
 
 @Component({
   selector: 'app-ngcarousel',
   template: `
                <div slickContainer #slickController="slick" [slickConfig]="config">
                 <ng-container *ngIf="slickController.initialize">
-                    <img slickItem *ngFor="let slide of slides; let i = index" [hidden]="!stepImages[slide.src]" [attr.src]="stepImages[slide.src]">
+                    <img slickItem *ngFor="let slide of slides; let i = index" [hidden]="!getStepImage(slide.src)" [attr.src]="getStepImage(slide.src)">
                 </ng-container>
                 </div>
                 `,
@@ -44,16 +45,24 @@ export class NgCarousel implements OnInit, OnDestroy {
 
   currentSlide = 0;
   stepImages = {};
+  step: Step;
   private currentStepImagesSubscription: Subscription;
+  private currentStepSubscription: Subscription;
 
   constructor(private base64HelperService: Base64HelperService,
               private store: Store<State>) {}
 
   ngOnInit() {
-    // this.preloadImages(); // for the demo
     this.currentStepImagesSubscription = this.store.select(getCurrentStepImages).subscribe(
       () => this.stepImages = this.base64HelperService.getBase64ImageDetails()
     );
+
+    this.currentStepSubscription = this.store.select(getCurrentStep)
+      .subscribe(step => this.step = step);
+  }
+
+  getStepImage = (file: string) => {
+    return this.stepImages[`${this.step?.WI_Id}/${this.step?.StepId}/${file}`];
   }
 
   ngOnDestroy() {
@@ -62,11 +71,10 @@ export class NgCarousel implements OnInit, OnDestroy {
     if (this.currentStepImagesSubscription) {
       this.currentStepImagesSubscription.unsubscribe();
     }
-  }
 
-  preloadImages() {
-    for (const slide of this.slides) {
-      new Image().src = this.base64HelperService.getBase64ImageData(slide.src);
+    if (this.currentStepSubscription) {
+      this.currentStepSubscription.unsubscribe();
     }
   }
+
 }

@@ -30,6 +30,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
   isAudioOrVideoFile: boolean;
   successUrl: string;
   failureUrl: string;
+  s3Folder: string;
   uploadInfo: ImportFileEventData;
   private uploadInfoSubscription: Subscription;
 
@@ -185,7 +186,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     }).filter(val => val);
     let att = [];
     attachments.forEach(value => {
-      if (stepData[value].trim()) {
+      if (stepData[value].trim() && stepData[value.split('_Name')[0]]) {
         att = [...att, stepData[value]];
       }
     });
@@ -231,10 +232,10 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     return filteredBusinessObjects.length ? JSON.stringify(filteredBusinessObjects) : null;
   }
 
-  addIns(payload: Instruction, steps: any, allKeys: any, currentInsCnt: number, currentIns: any) {
+  addIns(payload: Instruction, steps: any, allKeys: any, currentInsCnt: number, currentIns: any, s3Folder: string) {
     this.store.dispatch(BulkUploadActions.resetInstructionWithSteps());
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-    this._instructionSvc.addInstructionFromImportedData(payload, info).subscribe(
+    this._instructionSvc.addInstructionFromImportedData(payload, s3Folder, info).subscribe(
       (headerDataResp) => {
         let instructionWithSteps: InstructionWithSteps;
         currentIns.id = headerDataResp.Id;
@@ -281,12 +282,27 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                   stepData => {
                     allSteps = [...allSteps, stepData];
                     if (allSteps.length === stepPayloads.length) {
-                      instructionWithSteps = { ...instructionWithSteps, steps: allSteps };
-                      currentIns.insPostedSuccessfully = true;
-                      this.store.dispatch(BulkUploadActions.addInstructionWithSteps(instructionWithSteps));
-                      if (currentInsCnt + 1 === allKeys.length) {
-                        this.loadResults = true;
-                      }
+                      from(allSteps)
+                        .pipe(
+                          mergeMap(step => {
+                            if (Object.keys(step).length && step.Attachment && JSON.parse(step.Attachment).length > 0) {
+                              return this._instructionSvc.copyFiles({ filesPath: s3Folder, newFilesPath: `${step.WI_Id}/${step.StepId}` })
+                                .pipe(map(() => step));
+                            } else {
+                              return of(step);
+                            }
+                          }),
+                          toArray()
+                        ).subscribe(
+                          () => {
+                            instructionWithSteps = { ...instructionWithSteps, steps: allSteps };
+                            currentIns.insPostedSuccessfully = true;
+                            this.store.dispatch(BulkUploadActions.addInstructionWithSteps(instructionWithSteps));
+                            if (currentInsCnt + 1 === allKeys.length) {
+                              this.loadResults = true;
+                            }
+                          }
+                        )
                     }
                   },
                   error => {
@@ -389,13 +405,15 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       );
 
     let data = this.ref.data;
-    const { isAudioOrVideoFile, successUrl, failureUrl } = data;
+    const { isAudioOrVideoFile, successUrl, failureUrl, s3Folder } = data;
     this.isAudioOrVideoFile = isAudioOrVideoFile;
     this.successUrl = successUrl;
     this.failureUrl = failureUrl;
+    this.s3Folder = s3Folder;
     delete data.isAudioOrVideoFile;
     delete data.successUrl;
     delete data.failureUrl;
+    delete data.s3Folder;
     this.ins = [];
 
     if (isAudioOrVideoFile) {
@@ -439,7 +457,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                     SafetyKit: steps[0].SafetyKit ? this.getPrerequisite(steps[0].SafetyKit, 'SafetyKit') : null,
                     SpareParts: steps[0].SpareParts ? this.getPrerequisite(steps[0].SpareParts, 'Spareparts') : null,
                     Tools: steps[0].Tools ? this.getPrerequisite(steps[0].Tools, 'Tools') : null,
-                    Cover_Image: steps[0].Cover_Image_Name,
+                    Cover_Image: steps[0].Cover_Image ? steps[0].Cover_Image_Name : 'assets/work-instructions-icons/img/brand/doc-placeholder.png',
                     WI_Desc: null,
                     WI_Id: null,
                     WI_Name: steps[0].WorkInstruction.trim(),
@@ -476,9 +494,9 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                         categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
                         instructionHeaderPayload.Categories = JSON.stringify(categories);
                         if (steps.length === 1) {
-                          this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject);
+                          this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject, this.s3Folder);
                         } else {
-                          this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject);
+                          this.addIns(instructionHeaderPayload, steps, allKeys, fieldKey, insResultedObject, this.s3Folder);
                         }
                       },
                       error => {

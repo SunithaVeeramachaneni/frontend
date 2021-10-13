@@ -149,7 +149,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
       "fileName": this.uploadedFile,
       "fileType": ""
     };
-    this.base64HelperService.setBase64ImageDetails(this.uploadedFile, reader.result);
+    this.base64HelperService.setBase64ImageDetails(this.uploadedFile, reader.result, `${this.step.WI_Id}/${this.step.StepId}`);
     imageContent.fileType = this.base64HelperService.getExtention(this.uploadedFile);
     this.store.dispatch(InstructionActions.updateStepImagesContent({ attachment: this.uploadedFile, imageContent }));
     this.uploadedBase64Images = [...this.uploadedBase64Images, imageContent];
@@ -176,6 +176,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
     this._commonSvc.stepDetailsSave('Saving..');
     const FILE = event.addedFiles[0];
     const imageForm = new FormData();
+    imageForm.append('path', `${this.step.WI_Id}/${this.step.StepId}`);
     imageForm.append('image', FILE);
     this._instructionSvc.uploadAttachments(imageForm).subscribe(imgres => {
       if (Object.keys(imgres).length) {
@@ -477,7 +478,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
           this.store.dispatch(InstructionActions.updateStep({ step: selectedStep }));
           this.step = selectedStep;
           if (this.step) {
-            const { Attachment, Instructions, Warnings, Hints, Reaction_Plan, StepId } = this.step;
+            const { Attachment, Instructions, Warnings, Hints, Reaction_Plan, StepId, WI_Id } = this.step;
             const [, instructions, warnings, hints, reaction_plan] = this.selectedStep.Fields;
 
             this._commonSvc.updateStepDetails(Instructions ? JSON.parse(Instructions) : instructions);
@@ -488,10 +489,9 @@ export class StepContentComponent implements OnInit, OnDestroy {
             if (JSON.parse(Attachment) && JSON.parse(Attachment).length) {
               this.files = [];
               this.files = JSON.parse(Attachment) ;
-              this.imageContentsSubscription = this.base64HelperService.getImageContents(this.files).subscribe(
+              this.imageContentsSubscription = this.base64HelperService.getImageContents(this.files, `${WI_Id}/${StepId}`).subscribe(
                 imageContents => {
-                  imageContents = imageContents.filter(imageContent => Object.keys(imageContent).length !== 0);
-                  imageContents.forEach((imageContent: any) => this._commonSvc.uploadImgToPreview({ image: imageContent.fileName }));
+                  this.files.forEach((file: string) => this._commonSvc.uploadImgToPreview({ image: file }));
                   this.uploadedBase64Images = [...this.uploadedBase64Images, ...imageContents];
                   this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
                     stepId: StepId,
@@ -509,6 +509,8 @@ export class StepContentComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  getStepImage = (file: string) => this.stepImages[`${this.step.WI_Id}/${this.step.StepId}/${file}`];
 
   ngOnInit(): void {
     this.uploadedFileSubscription = this.store.select(getUploadedFile).subscribe(

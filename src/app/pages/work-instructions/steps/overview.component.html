@@ -55,7 +55,7 @@
                <h5 mat-subheader>Cover Image</h5>
                <mat-divider></mat-divider>
                <div *ngIf="coverImageFiles.length === 0">
-                 <img src="assets/work-instructions-icons/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()"/>
+                 <img src="assets/work-instructions-icons/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()" [ngClass]="{'disable-click': titleProvided !== true}"/>
                </div>
                <input hidden type="file" #coverImageuploader accept="image/x-png,image/jpeg" (change)="uploadCoverImageFile($event.target.files)"/>
                <div *ngFor="let file of coverImageFiles;let i=index">
@@ -170,7 +170,7 @@
             <h5 mat-subheader>Cover Image</h5>
             <mat-divider></mat-divider>
             <div *ngIf="coverImageFiles.length === 0">
-              <img src="assets/work-instructions-icons/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()"/>
+              <img src="assets/work-instructions-icons/img/brand/doc-placeholder.png" alt="" class="coverImage" (click)="coverImageuploader.click()" [ngClass]="{'disable-click': titleProvided !== true}"/>
             </div>
             <input hidden type="file" #coverImageuploader accept="image/x-png,image/jpeg" (change)="uploadCoverImageFile($event.target.files)"/>
             <div *ngFor="let file of coverImageFiles;let i=index">

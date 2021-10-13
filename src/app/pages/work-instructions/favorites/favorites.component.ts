@@ -40,9 +40,9 @@ export class FavoritesComponent implements OnInit {
   @ViewChild('filteredResults', { static: false }) set favorites(favorites: DummyComponent) {
     if (favorites) {
       favorites.value.map(instruction => {
-        const { Cover_Image: coverImage } = instruction;
-        if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-          this.base64HelperService.getBase64Image(coverImage);
+        const { Cover_Image: coverImage, Id: path } = instruction;
+        if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage, path)) {
+          this.base64HelperService.getBase64Image(coverImage, path);
         }
       });
     }
@@ -162,7 +162,7 @@ export class FavoritesComponent implements OnInit {
       );
   }
 
-  getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  getImageSrc = (source: string, path: string) => {
+    return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
 }

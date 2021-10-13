@@ -8,6 +8,10 @@ export interface Files {
   MimeType: string;
 }
 
+export interface Folder {
+  Prefix: string;
+}
+
 export interface MediaFile {
   fileNameWithExtension: string;
   fileName: string;

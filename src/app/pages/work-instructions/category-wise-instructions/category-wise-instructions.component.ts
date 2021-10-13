@@ -56,9 +56,9 @@ export class CategoryWiseInstructionsComponent implements OnInit {
   @ViewChild('publishedFilteredResults', { static: false }) set published(published: DummyComponent) {
     if (published) {
       published.value.map(instruction => {
-        const { Cover_Image: coverImage } = instruction;
-        if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-          this.base64HelperService.getBase64Image(coverImage);
+        const { Cover_Image: coverImage, Id: path } = instruction;
+        if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage,path)) {
+          this.base64HelperService.getBase64Image(coverImage,path);
         }
       });
     }
@@ -67,9 +67,9 @@ export class CategoryWiseInstructionsComponent implements OnInit {
   @ViewChild('draftedFilteredResults', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
       drafts.value.map(instruction => {
-        const { Cover_Image: coverImage } = instruction;
-        if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-          this.base64HelperService.getBase64Image(coverImage);
+        const { Cover_Image: coverImage, Id: path } = instruction;
+        if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage, path)) {
+          this.base64HelperService.getBase64Image(coverImage, path);
         }
       });
     }
@@ -219,7 +219,7 @@ export class CategoryWiseInstructionsComponent implements OnInit {
     this.getAuthors();
   }
 
-  getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  getImageSrc = (source: string, path: string) => {
+    return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
 }

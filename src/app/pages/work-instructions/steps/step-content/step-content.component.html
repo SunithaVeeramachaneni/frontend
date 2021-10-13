@@ -53,7 +53,7 @@
             <div class="row">
               <div *ngFor="let file of files;let i=index" class="col-md-6">
                 <div class="responsive-img-container">
-                  <img alt="attachment" [hidden]="!stepImages[file]" [attr.src]="stepImages[file]"/>
+                  <img alt="attachment" [hidden]="!getStepImage(file)" [attr.src]="getStepImage(file)"/>
                   <br>
                   <div class="image-title p-l-10"> {{file}}</div>
                   <div class="delete-uploaded-file"> <button class="delete-file" (click)="deleteAtt(file, i)">
@@ -118,7 +118,7 @@
           <div class="row files-list" *ngFor="let file of files;let i=index">
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 f-left p-r-10 vertical-center"><img alt="Drag"
               src="assets/work-instructions-icons/svg/drag_handle.svg" alt=""/></div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 f-left p-0"><img alt="Attachment" [hidden]="!stepImages[file]" [attr.src]="stepImages[file]"
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 f-left p-0"><img alt="Attachment" [hidden]="!getStepImage(file)" [attr.src]="getStepImage(file)"
                                                                                           class="file-images"/></div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 fnt-gray p-0 vertical-center-file p-l-10">
               {{file}}

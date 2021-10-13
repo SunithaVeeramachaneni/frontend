@@ -10,7 +10,8 @@ import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { Subscription } from 'rxjs';
+import { from, of, Subscription } from 'rxjs';
+import { map, mergeMap, toArray } from 'rxjs/operators';
 
 @Component({
   selector: 'app-categories',
@@ -95,9 +96,9 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           Created_At: ''
         };
         if (categories[catCnt]) {
-          const { Cover_Image: coverImage } = categories[catCnt];
-          if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-            this.base64HelperService.getBase64Image(coverImage);
+          const { Cover_Image: coverImage, Category_Id: path } = categories[catCnt];
+          if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage, path)) {
+            this.base64HelperService.getBase64Image(coverImage, path);
           }
           this.categoryDetail.Category_Name = categories[catCnt].Category_Name;
           this.categoryDetail.CId = categories[catCnt].Category_Id;
@@ -177,40 +178,47 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
                 console.log(error);
               });
           } else {
-            this._instructionSvc.addCategory({CId, Category_Name, Cover_Image}).subscribe(
-              response => {
-                this.CatName = Category_Name;
-                this.categoriesList = [];
-                this.getAllCategories();
-                if (Object.keys(response).length) {
-                  this._toastService.show({
-                    text: 'Category ' + Category_Name + ' has been added successfully',
-                    type: 'success',
-                  });
+            this._instructionSvc.addCategory({CId, Category_Name, Cover_Image})
+              .pipe(
+                mergeMap(category => {
+                  if (Object.keys(category).length && category.Cover_Image.indexOf('assets/') === -1){
+                    return this._instructionSvc.renameFile({ filePath: `category/${Cover_Image}` , newFilePath: `${category.Category_Id}/${Cover_Image}`})
+                      .pipe(map(() => category));
+                  } else {
+                    return of(category);
+                  }
+                })
+              ).subscribe(
+                response => {
+                  this.CatName = Category_Name;
+                  this.categoriesList = [];
+                  this.getAllCategories();
+                  if (Object.keys(response).length) {
+                    this._toastService.show({
+                      text: 'Category ' + Category_Name + ' has been added successfully',
+                      type: 'success',
+                    });
+                  }
                 }
-              },
-              error => {
-                console.log(error);
-              });
+              );
           }
         } else {
           this.categoryService.removeDeleteFiles(obj.Cover_Image);
         }
 
         const files = this.categoryService.getDeleteFiles();
-        if (files.length) {
-          this._instructionSvc.deleteFiles({ files }).subscribe(
-            resp => {
-              if (Object.keys(resp).length) {
-                const { Deleted: deletedFiles } = resp;
-                deletedFiles.forEach(file => {
-                  this.categoryService.removeDeleteFiles(file.Key);
-                });
+        const cid = obj.CId ? obj.CId : 'category';
+        from(files)
+          .pipe(
+            mergeMap(file => this._instructionSvc.deleteFile(`${cid}/${file}`)),
+            toArray()
+          ).subscribe(
+              files => {
+                for (let file of files) {
+                  this.categoryService.removeDeleteFiles(file.file);
+                }
               }
-            },
-            error => console.log(error)
           );
-        }
       } else if (content === this.delCatSubscribeComponent) {
         this.categoryDetailObject = ref.data;
         if (this.categoryDetailObject.selectedButton !== 'yes') {
@@ -228,9 +236,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           .subscribe(
             data => {
               this.spinner.hide();
-              if (category.Cover_Image && category.Cover_Image.indexOf('assets') < 0) {
-                const files = [`${category.Cover_Image}`];
-                this._instructionSvc.deleteFiles({ files }).subscribe({
+              if (category.Cover_Image && category.Cover_Image.indexOf('assets/') < 0) {
+                this._instructionSvc.deleteFile(`${category.Category_Id}/${category.Cover_Image}`).subscribe({
                   error: error => console.log(error)
                 });
               }
@@ -250,12 +257,12 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     });
   }
 
-  getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  getImageSrc = (source: string, path: string) => {
+    return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
 
   getS3CoverImageStyles = (source: string) => {
-    if (source && source.indexOf('assets') > -1) {
+    if (source && source.indexOf('assets/') > -1) {
       return {};
     } else {
       return {'object-fit': 'cover', 'border-radius': '3px', height: this.imageHeight ? this.imageHeight : '100%'};

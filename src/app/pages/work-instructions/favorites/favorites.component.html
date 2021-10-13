@@ -40,7 +40,7 @@
           <ng-container *ngIf="(favorites | filter : search | dropdownFilter: CreatedBy | orderBy: order:reverse:'case-insensitive' | paginate: config) as result">
           <app-dummy #filteredResults [value]="result"></app-dummy>
           <tr *ngFor="let obj of result">
-            <th scope="row" class="width-30"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/favorites', obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a><span class="chip" *ngIf="obj.Published === false">Draft</span></th>
+            <th scope="row" class="width-30"><a class="font-color list-ellipsis" [routerLink]="['/work-instructions/favorites', obj.Id]"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/><span class="p-l-10" matTooltip={{obj.WI_Name}} matTooltipClass="">{{obj.WI_Name}}</span></a><span class="chip" *ngIf="obj.Published === false">Draft</span></th>
             <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/favorites', obj.Id]">{{obj.categories}}</a></td>
             <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/favorites', obj.Id]">Edited {{obj.updated_at  | timeAgo}} by {{obj.EditedBy}}</a></td>
             <td class="width-20"><a class="font-color" [routerLink]="['/work-instructions/favorites', obj.Id]"><mat-icon class="mat-icon-circle">account_circle</mat-icon> {{obj.CreatedBy}}</a></td>

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
-import { Files, MediaFile } from '../../../interfaces';
+import { ErrorInfo, Files, MediaFile } from '../../../interfaces';
 import { FileInfo } from '../../../interfaces';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { ImportService } from '../services/import.service';
@@ -90,20 +90,16 @@ export class MediaFilesComponent implements OnInit {
 
   getAllMediaFiles() {
     this.spinner.show();
-    this.mediaFiles$ = this._instructionSvc.getAllFolders()
+    this.mediaFiles$ = this._instructionSvc.getAllFolders('media')
       .pipe(
         mergeMap(folders => {
-          if (folders.length) {
-            this.editRows = new Array(folders.length).fill(false);
-            return from(folders)
-              .pipe(
-                mergeMap(folder => {
-                  return this._instructionSvc.getAllMediaFiles(folder)
-                })
-              )
-          } else {
-            return of(folders)
-          } 
+          this.editRows = new Array(folders.length).fill(false);
+          return from(folders)
+            .pipe(
+              mergeMap(folder => {
+                return this._instructionSvc.getAllMediaFiles(folder.Prefix)
+              })
+            ) 
         }),
         toArray(),
         map(folderFiles => {
@@ -139,24 +135,21 @@ export class MediaFilesComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
+        const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
         this.spinner.show();
-        this._instructionSvc.deleteFiles({ files: [el.fullFilePath] })
+        this._instructionSvc.deleteFile(el.fullFilePath, info)
           .pipe(
             mergeMap(() => 
               this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath)
                 .pipe(
                   mergeMap(instructions => {
-                    if (instructions.length) {
-                      return from(instructions)
-                        .pipe(
-                          mergeMap(instruction => {
-                            instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
-                            return this._instructionSvc.updateWorkInstruction(instruction)
-                          })
-                        )
-                    } else {
-                      return of(instructions);
-                    }
+                    return from(instructions)
+                      .pipe(
+                        mergeMap(instruction => {
+                          instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
+                          return this._instructionSvc.updateWorkInstruction(instruction)
+                        })
+                      )
                   }),
                   toArray()
                 )
@@ -169,7 +162,8 @@ export class MediaFilesComponent implements OnInit {
                 type: 'success',
               });
               this.getAllMediaFiles();
-            }
+            },
+            () => this.spinner.hide()
           );
         }
     });
@@ -223,29 +217,25 @@ export class MediaFilesComponent implements OnInit {
     fileNameArr[0] = fileName;
     filePathArr[filePathArr.length - 1] = fileNameArr.join('.');
     const newFilePath = filePathArr.join('/');
-    const updateFileInfo =  {
+    const renameFileInfo =  {
       filePath: fullFilePath,
       newFilePath
     };
-
+    const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
     this.spinner.show();
-    this._instructionSvc.updateFile(updateFileInfo)
+    this._instructionSvc.renameFile(renameFileInfo, info)
       .pipe(
-        mergeMap(updateFileInfo => 
-          this._instructionSvc.getAllInstructionsByFilePath(updateFileInfo.filePath)
+        mergeMap(renameFileInfo => 
+          this._instructionSvc.getAllInstructionsByFilePath(renameFileInfo.filePath)
             .pipe(
               mergeMap(instructions => {
-                if (instructions.length) {
-                  return from(instructions)
-                    .pipe(
-                      mergeMap(instruction => {
-                        instruction = { ...instruction, FilePath: newFilePath };
-                        return this._instructionSvc.updateWorkInstruction(instruction)
-                      })
-                    )
-                } else {
-                  return of(instructions);
-                }
+                return from(instructions)
+                  .pipe(
+                    mergeMap(instruction => {
+                      instruction = { ...instruction, FilePath: newFilePath };
+                      return this._instructionSvc.updateWorkInstruction(instruction)
+                    })
+                  )
               }),
               toArray()
             )
@@ -255,11 +245,12 @@ export class MediaFilesComponent implements OnInit {
           this.editRows[index] = false;
           this.spinner.hide();
           this._toastService.show({
-            text: "File name" + updateFileInfo.newFilePath + "' updated successfully",
+            text: "File name" + renameFileInfo.newFilePath + "' updated successfully",
             type: 'success',
           });
           this.getAllMediaFiles();
-        }
+        },
+        () => this.spinner.hide()
       );
   }
 
