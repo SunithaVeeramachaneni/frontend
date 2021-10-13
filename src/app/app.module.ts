@@ -24,6 +24,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
 
+import { AuthConfigModule } from './auth-config.module';
+import { AuthInterceptor } from 'angular-auth-oidc-client';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -43,12 +46,18 @@ import { ErrorHandlerModule } from './shared/error-handler/error-handler.module'
     StoreDevtoolsModule.instrument({ name: 'CWP', maxAge: 25, logOnly: environment.production }),
     ToastModule.forRoot(),
     NgxSpinnerModule,
-    ErrorHandlerModule
+    ErrorHandlerModule,
+    AuthConfigModule
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: HttpTimeoutInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    }
   ],
   bootstrap: [AppComponent]
 })

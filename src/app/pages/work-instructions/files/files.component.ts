@@ -26,6 +26,7 @@ import { CommonService } from '../../../shared/services/common.service';
 export class MediaFilesComponent implements OnInit {
   headerTitle = 'Files';
   fileInfo: FileInfo;
+  oldFileName: string;
   config: any = {
     id: 'files',
     currentPage: 1,
@@ -254,7 +255,8 @@ export class MediaFilesComponent implements OnInit {
       );
   }
 
-  updateEditRow(index: number) {
+  updateEditRow(filename, index: number) {
+    this.oldFileName = filename;
     this.editRows = this.editRows.map(() => false);
     this.editRows[index] = true;
   }

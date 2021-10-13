@@ -24,10 +24,12 @@ export class MaintenanceComponent {
   public workOrderList$: Observable<WorkOrders>;
   public updateWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList$: Observable<WorkOrders>;
+  public combinedWorkOrderList1$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
   public selectDate$: Observable<string>;
+  public putWorkOrder$: BehaviorSubject<WorkOrders> = new BehaviorSubject({ unassigned: [], assigned: [], inProgress: [], completed: [] })
   public overdueFilter: FormControl;
   public overdueFilter$: Observable<string>;
   public filterObj$: Observable<any>;
@@ -107,25 +109,8 @@ export class MaintenanceComponent {
     let base64Image = 'data:image/jpeg;base64,' + base64String;
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
-    this.combinedWorkOrderList$ = combineLatest([this.workOrderList$, this.updateWorkOrderList$]).pipe(
-      map(([oldWorkOrders, newWorkOrders]) => {
-        if (newWorkOrders) {
-          for (let key in newWorkOrders) {
-            if (newWorkOrders[key])
-              newWorkOrders[key].forEach(workOrder => {
-                let id = workOrder.workOrderID;
-                for (let key2 in oldWorkOrders) {
-                  oldWorkOrders[key2] = oldWorkOrders[key2].filter(oldWorkOrder => {
-                    return !(oldWorkOrder.workOrderID === id)})
-                }
-              });
-            oldWorkOrders[key] = [...newWorkOrders[key], ...oldWorkOrders[key]];
-          }
-        }
-        return oldWorkOrders;
-      })
-    )
-
+    this.combinedWorkOrderList1$ = this.combineWorkOrders(this.workOrderList$, this.updateWorkOrderList$)
+    this.combinedWorkOrderList$ = this.combineWorkOrders(this.combinedWorkOrderList1$, this.putWorkOrder$)
     this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$, this.filterObj$]).pipe(
       map(([workOrders, filterDate, filterObj]) => {
@@ -148,6 +133,27 @@ export class MaintenanceComponent {
         return filtered;
       })
     );
+  }
+
+  combineWorkOrders = (oldWorkOrders$: Observable<WorkOrders>, newWorkOrders$: Observable<WorkOrders>): Observable<WorkOrders> =>{
+    return combineLatest([oldWorkOrders$, newWorkOrders$]).pipe(
+      map(([oldWorkOrders, newWorkOrders]) => {
+        if (newWorkOrders) {
+          for (let key in newWorkOrders) {
+            if (newWorkOrders[key])
+              newWorkOrders[key].forEach(workOrder => {
+                let id = workOrder.workOrderID;
+                for (let key2 in oldWorkOrders) {
+                  oldWorkOrders[key2] = oldWorkOrders[key2].filter(oldWorkOrder => {
+                    return !(oldWorkOrder.workOrderID === id)})
+                }
+              });
+            oldWorkOrders[key] = [...newWorkOrders[key], ...oldWorkOrders[key]];
+          }
+        }
+        return oldWorkOrders;
+      })
+    )
   }
 
   public filterPriority = (status, priority) => {
@@ -243,12 +249,14 @@ export class MaintenanceComponent {
         if (data.data) {
           this.spinner.show();
           const resp = data['data']; // Here's your selected user!
+          const workOrderID = resp.workOrderID
           let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
-          res.subscribe(resp => {
-            console.log("Resp from the PUT request is", res)
-            if (resp === true) {
+          res.subscribe(async response => {
+            if (response === true) {
               console.log("Put succesful")
-              this.getWorkOrders();
+              let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(workOrderID);
+              workOrder$.subscribe(workOrder => this.putWorkOrder$.next(workOrder))
+              // this.spinner.hide();
             }
 
           })

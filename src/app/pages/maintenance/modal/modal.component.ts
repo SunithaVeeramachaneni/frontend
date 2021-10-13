@@ -52,7 +52,6 @@ export class ModalComponent implements OnInit {
     console.log("Is this an observable even")
     console.log("The displayed assignee list is," ,this.displayedAssigneeList)
     let base64Image='data:image/jpeg;base64,'+ this.displayedAssigneeList[0].image;
-    console.log(base64Image);
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     console.log(this.base64Code);
     console.log("now", this.workCenter);

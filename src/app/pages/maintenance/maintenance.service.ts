@@ -32,7 +32,9 @@ export class MaintenanceService {
       eventSource.onmessage = event => {
         let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         let workOrder: WorkOrder;
+        let technicians
         let rawWorkOrders = JSON.parse(event.data);
+        this.technicians$.subscribe(resp => technicians = resp);
         rawWorkOrders.forEach(rawWorkOrder => {
           workOrder = this.cleanWorkOrder(rawWorkOrder, "")
           workOrders[`${workOrder.status}`].push(workOrder)
@@ -66,17 +68,12 @@ export class MaintenanceService {
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
-    this.workOrders$ = combineLatest([workOrders$, this.technicians$]).pipe(map(([rawWorkOrders, technicians]) => { 
+    this.workOrders$ = combineLatest([workOrders$, this.technicians$]).pipe(map(([rawWorkOrders, technicians]) => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
       let assignedTechnician = null;
       rawWorkOrders.forEach(rawWorkOrder => {
-        if(technicians[`${rawWorkOrder.ARBPL}`]){
-        assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician =>{
-          let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.PARNR)
-          return condition
-        })
-        }
+        assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
         // console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
         // console.log(workOrder.workOrderID, " The work order after cleaning is", workOrder)
@@ -109,35 +106,36 @@ export class MaintenanceService {
   }
 
   getTechnicians(info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    this.technicians$ =  this.workCenters$.pipe(mergeMap(workCenters =>
+    this.technicians$ = this.workCenters$.pipe(mergeMap(workCenters =>
       from(workCenters).pipe(
         mergeMap(workCenter =>
-          this._appService._getRespFromGateway(environment.mccAbapApiUrl, `technicians/'${workCenter.workCenterKey}'`).pipe(tap(data =>{
+          this._appService._getRespFromGateway(environment.mccAbapApiUrl, `technicians/'${workCenter.workCenterKey}'`).pipe(tap(data => {
           }),
-          map(technicians =>{       
-            return ({
-            [workCenter.workCenterKey]:this.cleanTechnicians(technicians)
-          })}
-          
-          ))),
+            map(technicians => {
+              return ({
+                [workCenter.workCenterKey]: this.cleanTechnicians(technicians)
+              })
+            }
+
+            ))),
       )),
-      reduce((acc: any, cur)=>{
-        return acc = {...acc, ...cur}
-      },{})
+      reduce((acc: any, cur) => {
+        return acc = { ...acc, ...cur }
+      }, {})
     )
     return this.technicians$
   }
-  
-  cleanTechnicians = (rawTechnicians):Technician[] =>{
-    let technicians  = rawTechnicians.map( rawTechnician =>{
-    return ({
-      personName: rawTechnician.PERNRDesc,
-      personKey: rawTechnician.PERNRKey,
-      image: rawTechnician.FILECONTENT
+
+  cleanTechnicians = (rawTechnicians): Technician[] => {
+    let technicians = rawTechnicians.map(rawTechnician => {
+      return ({
+        personName: rawTechnician.PERNRDesc,
+        personKey: rawTechnician.PERNRKey,
+        image: rawTechnician.FILECONTENT
+      })
     })
-  })
-  return technicians;
-}
+    return technicians;
+  }
 
   getEstimatedTime = (operations) => {
     let time = 0
@@ -163,27 +161,28 @@ export class MaintenanceService {
       if (operation.STATUS === 'CNF')
         noOfCompletedOperations += 1;
     });
-    let completedOperationsProgressBar= (1 / totalNoOfOperations) * noOfCompletedOperations;
+    let completedOperationsProgressBar = (1 / totalNoOfOperations) * noOfCompletedOperations;
     return [noOfCompletedOperations, totalNoOfOperations, completedOperationsProgressBar];
   }
 
   getTimeProgress = (estimatedTime, actualTime) => {
     // console.log("estimated time", estimatedTime, "actual time",actualTime);
-    let timeProgress = actualTime/estimatedTime
+    let timeProgress = actualTime / estimatedTime
     return timeProgress;
   }
 
-  getStatus(personDetails, status) {
+  getStatus(personDetails, rawStatus) {
+    let status = rawStatus.split(',')[0]
     if (!personDetails) return 'unassigned'
     else return this.statusMap[`${status}`]
   }
 
-  cleanOperation = (operations) =>{
-    let cleaned = operations.map(operation =>{
+  cleanOperation = (operations) => {
+    let cleaned = operations.map(operation => {
       return ({
         "actualTime": this.formatTime(operation.ISMNW),
         "estimatedTime": this.formatTime(operation.ARBEI),
-        "timeProgress": operation.ISMNW/operation.ARBEI,
+        "timeProgress": operation.ISMNW / operation.ARBEI,
         "operationName": operation.LTXA1
       })
     })
@@ -194,7 +193,7 @@ export class MaintenanceService {
 
   cleanWorkOrder(rawWorkOrder, assignedTechnician) {
     return ({
-      status: rawWorkOrder['PARNR'] ? this.statusMap[`${rawWorkOrder['IPHAS']}`] : 'unassigned',
+      status: this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS']),
       personDetails: rawWorkOrder['PARNR'],
       priorityNumber: rawWorkOrder['PRIOK'],
       priorityStatus: rawWorkOrder['PRIOKX'],
@@ -223,21 +222,35 @@ export class MaintenanceService {
         PARNR: params.assignee.personKey,
       }
     }
-    let res =  await this._appService._putDataToGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations', req);
+    let res = await this._appService._putDataToGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations', req);
     return res;
+  }
+
+  getAssignedTechnician = (technicians, rawWorkOrder) =>{
+    let assignedTechnician = null;
+    if (technicians[`${rawWorkOrder.ARBPL}`]) {
+      assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician => {
+        let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.PARNR)
+        return condition
+      })
+    }
+    return assignedTechnician;
   }
 
 
   getWorkOrderByID = async (id) => {
-    let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
-    let rawWorkOrder = await this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workOrder/${id}`)
-    let workOrder = this.cleanWorkOrder(rawWorkOrder, "")
-    workOrders[`${workOrder.status}`].push(workOrder);
-    return new Observable(observer => {
-    this._zone.run(() => {
-      observer.next(workOrders);
-    });
-  })
+    let rawWorkOrder$ = await this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workOrder/${id}`)
+    let workOrder$ = combineLatest([rawWorkOrder$, this.technicians$]).pipe(map(([rawWorkOrder, technicians]) => {
+      let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
+      let workOrder: WorkOrder;
+      let assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
+      workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
+      workOrders[`${workOrder.status}`].push(workOrder)
+      return workOrders;
+    }))
+
+    workOrder$.subscribe(resp => console.log("cleaned", resp))
+    return workOrder$
   }
 }
 
