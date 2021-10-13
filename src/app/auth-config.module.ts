@@ -7,13 +7,13 @@ import { environment } from '../environments/environment'
 
 let hostname = window && window.location && window.location.hostname;
 if (hostname) {
-  hostname = hostname.split('.')[0];
+  hostname = hostname.split('.')[1];
 }
 console.log(hostname);
 
 export const httpLoaderFactory = (httpClient: HttpClient) => {
   const config$ = httpClient
-    .get<any>(`${environment.spccAbapApiUrl}/${hostname}`)
+    .get<any>(`${environment.spccAbapApiUrl}user/${hostname}`)
     .pipe(
       map((tenatConfig: any) => {
         console.log("tenatConfig",tenatConfig)
