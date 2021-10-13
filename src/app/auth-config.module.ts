@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
 import { map } from 'rxjs/operators';
-import { IdpConfig } from "./interfaces/idpconfig";
+import { environment } from '../environments/environment'
 
 let hostname = window && window.location && window.location.hostname;
 if (hostname) {
@@ -13,10 +13,9 @@ console.log(hostname);
 
 export const httpLoaderFactory = (httpClient: HttpClient) => {
   const config$ = httpClient
-    .get<any>(`http://localhost:8002/abapapi/user/${hostname}`)
+    .get<any>(`${environment.spccAbapApiUrl}/${hostname}`)
     .pipe(
       map((tenatConfig: any) => {
-       // let tenatConfig =customConfig;
         console.log("tenatConfig",tenatConfig)
         return  ({
             authority:tenatConfig.authority ,
