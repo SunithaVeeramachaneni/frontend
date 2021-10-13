@@ -12,10 +12,10 @@ const routes: Routes = [
     redirectTo: '/maintenance',
     pathMatch: 'full'
   },
-  {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
-  },
+  // {
+  //   path: 'login',
+  //   loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
+  // },
   {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
@@ -27,11 +27,13 @@ const routes: Routes = [
   },
   {
     path: 'spare-parts',
-    loadChildren: () => import('./pages/spare-parts/spare-parts.module').then(m => m.SparePartsModule)
+    loadChildren: () => import('./pages/spare-parts/spare-parts.module').then(m => m.SparePartsModule),
+    canActivate: [AutoLoginAllRoutesGuard]
   },
   {
     path: 'work-instructions',
-    loadChildren: () => import('./pages/work-instructions/work-instructions.module').then( m => m.WorkInstructionsPageModule)
+    loadChildren: () => import('./pages/work-instructions/work-instructions.module').then( m => m.WorkInstructionsPageModule),
+    canActivate: [AutoLoginAllRoutesGuard]
   }
 
 ];
