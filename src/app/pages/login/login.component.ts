@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     this.userData$ = this.oidcSecurityService.userData$;
   }
 
-  login(event){
+  login(){
     alert(this.email);
     this.idpConfig$ =this._loginService.getIdpConfig(this.email);
     this.idpConfig$.subscribe(res=>{
