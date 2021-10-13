@@ -3,6 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 import { LogonUserDetails } from '../../../interfaces';
 import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
+import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-header',
@@ -20,9 +21,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Input() title;
   private minimizeSidebarActionSubscription: Subscription;
 
+  isAuthenticated = false;
+  userData$: Observable<UserDataResult>;
+
   constructor(
     private _headerSvc: HeaderService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    public oidcSecurityService: OidcSecurityService
   ) {}
 
 
@@ -31,6 +36,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.sidebarMinimize = data;
     });
     this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
+    this.logonUserDetails$.subscribe(res=>{
+      console.log("logindata",res)
+    })
+    this.userData$ = this.oidcSecurityService.userData$;
+    this.userData$.subscribe(res=>{
+      console.log("userData",res)
+    })
   }
 
   minimize(e) {
@@ -42,6 +54,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.minimizeSidebarActionSubscription) {
       this.minimizeSidebarActionSubscription.unsubscribe();
     }    
+  }
+
+  signout(){
+    console.log("logging off")
+    this.oidcSecurityService.logoff();
   }
 
 }
