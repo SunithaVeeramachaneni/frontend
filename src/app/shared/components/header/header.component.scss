@@ -48,6 +48,7 @@
   text-align: right;
   color: #000000;
   white-space: nowrap;
+  float: right;
 }
 
 .loggedin-user-role {
@@ -107,4 +108,12 @@
   .sidebar-close{
     display:none;
   }
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+::ng-deep .mat-menu-panel { 
+  margin-top: 20px;
 }

@@ -36,6 +36,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.sidebarMinimize = data;
     });
     this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
+    this.logonUserDetails$.subscribe(res=>{
+      console.log("logindata",res)
+    })
     this.userData$ = this.oidcSecurityService.userData$;
     this.userData$.subscribe(res=>{
       console.log("userData",res)
