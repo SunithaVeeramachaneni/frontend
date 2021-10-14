@@ -41,7 +41,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
     this.userData$ = this.oidcSecurityService.userData$;
     this.userData$.subscribe(res=>{
-      console.log("userData",res)
+      console.log("userData",res);
+      this.username = res.userData.name.split('.');
+      console.log(this.username);
     })
   }
 
