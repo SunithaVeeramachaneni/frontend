@@ -43,6 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userData$ = this.oidcSecurityService.userData$
       .pipe(
         tap(res => {
+          console.log("userData",res);
           this.username = res.userData ? res.userData.name.split('.') : [];
         })
       );
