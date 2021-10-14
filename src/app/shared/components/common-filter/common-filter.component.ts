@@ -1,6 +1,11 @@
-import { Component, OnInit ,Input, Output,EventEmitter} from '@angular/core';
-import { of } from "rxjs";
+import { Component, OnInit ,Input} from '@angular/core';
+import { Observable } from "rxjs";
+import { union } from 'lodash';
 import {CommonService}   from '../../services/common.service';
+import { Technician } from '../../../interfaces/technicians';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MaintenanceService } from '../../../pages/maintenance/maintenance.service';
+
 @Component({
   selector: 'app-common-filter',
   templateUrl: './common-filter.component.html',
@@ -15,7 +20,7 @@ export class CommonFilterComponent implements OnInit {
   @Input() priorityList;
   @Input() kitStatusList;
   @Input() workCenterList;
-  @Input() assignList;
+  @Input() technicians;
   
   public searchValue="";
   public priority=[];
@@ -23,9 +28,28 @@ export class CommonFilterComponent implements OnInit {
   public kitStatus=[];
   public workCenter=[];
   public assign=[];
+  public displayedAssigneeList: any[];
 
-  constructor(private _commonService:CommonService) { }
+
+
+  constructor(private _commonService:CommonService,
+              private _maintenanceSvc: MaintenanceService, 
+              private sanitizer:DomSanitizer) { }
+
   ngOnInit() {}
+
+  getImageSrc = (source: string) => {
+    let base64Image='data:image/jpeg;base64,'+ source;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+  }
+
+  onCenterChange = (event) => {
+    let workCenters = event.value;
+    this.displayedAssigneeList = []
+    workCenters.forEach(workCenter =>{
+      this.displayedAssigneeList = union(this.technicians[workCenter.workCenterKey], this.displayedAssigneeList);
+    });
+  }
 
   searchFilter() {
     this._commonService.searchFilter({

@@ -44,15 +44,18 @@
 
     <mat-form-field *ngIf="workCenterList" appearance="outline" class="mat-field">
       <mat-label>Work Center</mat-label>
-      <mat-select disabled name="workCenter" multiple [(ngModel)]="workCenter">
-        <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
+      <mat-select name="workCenter" multiple [(ngModel)]="workCenter" (selectionChange)="this.onCenterChange($event)">
+        <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem.workCenterKey}}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field disabled appearance="outline" class="mat-field" *ngIf="workCenter != ''">
+    <mat-form-field appearance="outline" class="mat-field" *ngIf="workCenter != ''">
       <mat-label>Assignee</mat-label>
-      <mat-select disabled name="assign" multiple [(ngModel)]="assign">
-        <mat-option *ngFor="let assigned of assignList" [value]="assigned">{{assigned}}</mat-option>
+      <mat-select name="assign" multiple [(ngModel)]="assign">
+        <mat-option *ngFor="let assigned of displayedAssigneeList" [value]="assigned">
+          <img [hidden]="!getImageSrc(assigned.image)" [attr.src]="getImageSrc(assigned.image)" alt="" style="width: 36px; height: 36px; border-radius: 50%; margin-right:5px;"/>
+          {{assigned.personName}}
+        </mat-option>
       </mat-select>
     </mat-form-field> 
 
