@@ -32,27 +32,31 @@ export class AppComponent implements OnInit {
       url: dashboard.url,
       icon: 'home',
       showSubMenu: false,
-      subPages: null
+      subPages: null,
+      disable: true
     },
     {
       title: maintenance.title,
       url: maintenance.url,
       icon: 'view_column',
       showSubMenu: false,
-      subPages: null
+      subPages: null,
+      disable: false
     },
     {
       title: spareParts.title,
       url: spareParts.url,
       icon: 'view_column',
       showSubMenu: false,
-      subPages: null
+      subPages: null,
+      disable: false
     },
     {
       title: workInstructions.title,
       url: workInstructions.url,
       icon: 'format_list_numbered',
       showSubMenu: false,
+      disable: false,
       subPages: [
         { title: favorites.title, url: favorites.url },
         { title: drafts.title, url: drafts.url },
