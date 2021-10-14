@@ -63,7 +63,6 @@ export class MaintenanceComponent {
   public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
 
   public workCenter: string[] = [];
-  public workCenterListDef: string[] = ['MECHANIK', 'ELEKTRIK'];
 
   public assign: string[] = [];
 

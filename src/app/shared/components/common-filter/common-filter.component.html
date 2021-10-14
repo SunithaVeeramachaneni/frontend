@@ -45,7 +45,7 @@
     <mat-form-field *ngIf="workCenterList" appearance="outline" class="mat-field">
       <mat-label>Work Center</mat-label>
       <mat-select name="workCenter" multiple [(ngModel)]="workCenter" (selectionChange)="this.onCenterChange($event)">
-        <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem}}</mat-option>
+        <mat-option *ngFor="let workCenterItem of workCenterList" [value]="workCenterItem">{{workCenterItem.workCenterKey}}</mat-option>
       </mat-select>
     </mat-form-field>
 

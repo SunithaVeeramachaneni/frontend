@@ -46,15 +46,9 @@ export class ModalComponent implements OnInit {
 
   onCenterChange = ($event) => {
     let newValue = $event.value;
-    console.log("New vlaue", newValue.workCenterKey);
-    console.log("The assignee list is", this.assigneeList);
     this.displayedAssigneeList = this.assigneeList[newValue.workCenterKey];
-    console.log("Is this an observable even")
-    console.log("The displayed assignee list is," ,this.displayedAssigneeList)
     let base64Image='data:image/jpeg;base64,'+ this.displayedAssigneeList[0].image;
     this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-    console.log(this.base64Code);
-    console.log("now", this.workCenter);
   }
 
   onAssigneeChange = ($event) =>{

@@ -1,5 +1,6 @@
 import { Component, OnInit ,Input} from '@angular/core';
 import { Observable } from "rxjs";
+import { union } from 'lodash';
 import {CommonService}   from '../../services/common.service';
 import { Technician } from '../../../interfaces/technicians';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -19,6 +20,7 @@ export class CommonFilterComponent implements OnInit {
   @Input() priorityList;
   @Input() kitStatusList;
   @Input() workCenterList;
+  @Input() technicians;
   
   public searchValue="";
   public priority=[];
@@ -26,19 +28,15 @@ export class CommonFilterComponent implements OnInit {
   public kitStatus=[];
   public workCenter=[];
   public assign=[];
-  public assigneeList: any;
-  public displayedAssigneeList: Observable<Technician>;
+  public displayedAssigneeList: any[];
+
 
 
   constructor(private _commonService:CommonService,
               private _maintenanceSvc: MaintenanceService, 
               private sanitizer:DomSanitizer) { }
 
-  ngOnInit() {
-    this._maintenanceSvc.getTechnicians().subscribe(resp => {
-      this.assigneeList= resp;
-    })
-  }
+  ngOnInit() {}
 
   getImageSrc = (source: string) => {
     let base64Image='data:image/jpeg;base64,'+ source;
@@ -46,10 +44,11 @@ export class CommonFilterComponent implements OnInit {
   }
 
   onCenterChange = (event) => {
-    let newValue = event.value;
-    for(let i=0; i< newValue.length; i++) {
-      this.displayedAssigneeList = this.assigneeList[newValue];
-    }
+    let workCenters = event.value;
+    this.displayedAssigneeList = []
+    workCenters.forEach(workCenter =>{
+      this.displayedAssigneeList = union(this.technicians[workCenter.workCenterKey], this.displayedAssigneeList);
+    });
   }
 
   searchFilter() {

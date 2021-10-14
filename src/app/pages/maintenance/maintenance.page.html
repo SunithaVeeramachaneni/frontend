@@ -7,7 +7,8 @@
                            [showOverdueList]="showOverdueList"
                            [priorityList]="priorityList"
                            [kitStatusList]="kitStatusList"
-                           [workCenterList]="workCenterListDef">
+                           [workCenterList]="workCenterList"
+                           [technicians]="technicians">
         </app-common-filter>
         <ion-segment mode="ios" (ionChange)="dateChanged($event)" [value]="selectDate$ | async" class="segment-group">
           <ion-segment-button value="today" class="segment-button">
