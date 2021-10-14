@@ -1,6 +1,6 @@
-ion-content {
-  --ion-background-color: #f2f2f2;
-  --offset-top: 0px !important;
+.content {
+  background-color: #f2f2f2;
+  min-height: 100%;
 }
 
 .main-heading {
@@ -71,7 +71,7 @@ ion-content {
 }
 .no-fav {
   text-align: center;
-  width: 100%;
+  width: 94%;
   background: #f2f2f2;
   margin: 0 auto;
   border-radius: 5px;

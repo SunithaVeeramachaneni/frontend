@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ImportFileEventData, Step } from '../../../interfaces';
 
 export interface IUploadedImageDetails {
@@ -19,7 +19,6 @@ export class WiCommonService {
   private imgArray = new Subject<[]>();
   private stepDetailsSaveSubject = new Subject<string>();
   private previewStatus = new Subject<boolean>();
-  private updateCategoriesComponentSubject = new Subject<boolean>();
   private uploadInfoSubject = new Subject<ImportFileEventData>();
 
   currentImgFromPreviewSection = this.imgSourceFromUploadedSection.asObservable();
@@ -29,7 +28,6 @@ export class WiCommonService {
   currentTabs = this.allSteps.asObservable();
   stepDetailsSaveAction$ = this.stepDetailsSaveSubject.asObservable();
   currentPreviewStatus = this.previewStatus.asObservable();
-  updateCategoriesComponentAction$ = this.updateCategoriesComponentSubject.asObservable();
   uploadInfoAction$ = this.uploadInfoSubject.asObservable();
 
   uploadImgToPreview(imageDetails: IUploadedImageDetails) {
@@ -58,10 +56,6 @@ export class WiCommonService {
 
   stepDetailsSave(value: string) {
     this.stepDetailsSaveSubject.next(value);
-  }
-
-  updateCategoriesComponent(update: boolean) {
-    this.updateCategoriesComponentSubject.next(update);
   }
 
   updateUploadInfo(info: ImportFileEventData) {

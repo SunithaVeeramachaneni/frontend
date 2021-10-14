@@ -1,8 +1,8 @@
 import {Component, ViewChild, ElementRef, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {combineLatest, Observable, Subscription} from 'rxjs';
 import {InstructionService} from '../services/instruction.service';
 import Swal from 'sweetalert2';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
@@ -15,6 +15,8 @@ import * as InstructionActions from '../state/intruction.actions';
 import { getInsToBePublished, getInstruction, getSteps } from '../state/instruction.selectors';
 import { CommonService } from '../../../shared/services/common.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -22,9 +24,8 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
   styleUrls: ['./add-workinstruction.component.css']
 })
 
-export class AddWorkinstructionComponent implements OnInit, OnDestroy {
+export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('workInstructionTitle') workInstructionTitle: ElementRef;
-  headerTitle = 'Work Instructions'
   public wi_title = '';
   public selectedInstruction: Instruction = {
     Id: '',
@@ -68,6 +69,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
   titleErrors: any = {exists: false, required: false};
   addOrUpdateTitle = false;
   fileInfo: FileInfo;
+  currentRouteUrl$: Observable<string>;
   private titleChangeSubscription: Subscription;
   private stepDetailsSaveSubscription: Subscription;
   private publishInstructionSubscription: Subscription;
@@ -80,37 +82,49 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
               private wiCommonSvc: WiCommonService,
               private _instructionsvc: InstructionService,
               private _toastService: ToastService,
-              private router: Router,
+              private location: Location,
               private store: Store<State>,
               private commonService: CommonService,
-              private errorHandlerService: ErrorHandlerService) {
+              private errorHandlerService: ErrorHandlerService,
+              private breadcrumbService: BreadcrumbService) {
   }
 
-  ionViewDidEnter() {
+  ngAfterViewInit() {
     this.workInstructionTitle.nativeElement.focus();
   }
 
   ngOnInit(): void {
-    this.insToBePublishedSubscription = this.store.select(getInsToBePublished).subscribe(
-      insToBePublished => this.insToBePublished = insToBePublished
-    );
-    this.instructionSubscription = this.store.select(getInstruction).subscribe(
-      instruction => {
+    this.spinner.hide();
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
+    this.insToBePublishedSubscription = this.store.select(getInsToBePublished)
+      .subscribe(
+        insToBePublished => this.insToBePublished = insToBePublished
+      );
+
+    this.instructionSubscription = combineLatest([
+      this.store.select(getInstruction),
+      this.currentRouteUrl$
+    ]).subscribe(
+      ([instruction, currentRouteUrl]) => {
         this.selectedInstruction = { ...instruction };
         this.instructionTitle = instruction.WI_Name;
-        const { FilePath: filePath, FileType: fileType } = this.selectedInstruction;
+        const { FilePath: filePath, FileType: fileType, WI_Name } = this.selectedInstruction;
         this.fileInfo = { filePath, fileType };
-      }
-    );
+        this.breadcrumbService.set(currentRouteUrl, { label: WI_Name ? WI_Name : 'Untitled Work Instruction' });
+        this.commonService.updateHeaderTitle(WI_Name ? WI_Name : 'Untitled Work Instruction');
+      });
+    
     this.stepsSubscription = this.store.select(getSteps).subscribe(
       steps => this.steps = steps
     );
+
     this.commonService.minimizeSidebar(true);
     this.stepDetailsSaveSubscription = this.wiCommonSvc.stepDetailsSaveAction$.subscribe(
       data => {
         this.saveStatus = data;
       }
     );
+
     const wid = this.route.snapshot.paramMap.get('id');
     if (wid) {
       this._instructionsvc.getInstructionsById(wid).subscribe((res) => {
@@ -284,7 +298,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
           text: 'Selected work instruction has been successfully copied',
           type: 'success'
         });
-        this.router.navigate(['/work-instructions']);
+        this.location.back();
       },
       error => {
         this.spinner.hide();
@@ -311,7 +325,7 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
         this._instructionsvc.deleteWorkInstruction$(ID, info)
           .subscribe(
             data => {
-              this.router.navigate(['/work-instructions']);
+              this.location.back();
               this._toastService.show({
                 text: `Work instuction '${el.WI_Name}' has been deleted`,
                 type: 'success',
@@ -376,7 +390,9 @@ export class AddWorkinstructionComponent implements OnInit, OnDestroy {
       this._instructionsvc.editWorkInstructionTitle(id, userName, this.selectedInstruction, info).subscribe(
         resp => {
           const instruction = resp;
-          this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+          if (Object.keys(instruction).length) {
+            this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+          }
           // document.getElementById('wi_title').blur();
           this.wiCommonSvc.stepDetailsSave('All Changes Saved');
         },

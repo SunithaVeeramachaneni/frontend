@@ -1,12 +1,10 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, Files, MediaFile } from '../../../interfaces';
 import { FileInfo } from '../../../interfaces';
-import { Base64HelperService } from '../services/base64-helper.service';
-import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { ImportService } from '../services/import.service';
 import { environment } from '../../../../environments/environment';
@@ -14,8 +12,10 @@ import { OverlayService } from '../modal/overlay.service';
 import { ComponentType } from '@angular/cdk/portal';
 import { BulkUploadComponent } from '../modal/templates/bulk-upload/bulk-upload.component';
 import { WiCommonService } from '../services/wi-common.services';
-import { mergeMap } from 'rxjs/operators';
-import { from, of } from 'rxjs';
+import { map, mergeMap, tap, toArray } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { routingUrls } from '../../../app.constants';
+import { CommonService } from '../../../shared/services/common.service';
 
 @Component({
   selector: 'app-files',
@@ -26,15 +26,6 @@ import { from, of } from 'rxjs';
 export class MediaFilesComponent implements OnInit {
   headerTitle = 'Files';
   fileInfo: FileInfo;
-  oldFileName: string;
-  public wiMediaFiles = [];
-  public mediaFile = {
-    fileNameWithExtension: '',
-    fileName: '',
-    updated_at: '',
-    fullFilePath:'',
-    originalFileName: ''
-  }
   config: any = {
     id: 'files',
     currentPage: 1,
@@ -47,28 +38,26 @@ export class MediaFilesComponent implements OnInit {
   reverseObj: any = { updated_at: true };
   bulkUploadComponent = BulkUploadComponent;
   editRows = [];
-
-  @ViewChild('filteredResults', { static: false }) set files(files: DummyComponent) {
-    if (files) {
-      /* files.value.map(file => {
-        const { Cover_Image: coverImage } = file;
-        if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-          this.base64HelperService.getBase64Image(coverImage);
-        }
-      }); */
-    }
-  }
+  currentRouteUrl$: Observable<string>;
+  mediaFiles$: Observable<MediaFile[]>;
+  readonly routingUrls = routingUrls;
+  @ViewChild('cancel') cancel: ElementRef;
 
   constructor(private spinner: NgxSpinnerService,
               private _instructionSvc: InstructionService,
               private _toastService: ToastService,
-              private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService,
               private importService: ImportService,
               private overlayService: OverlayService,
-              private wiCommonService: WiCommonService) { }
+              private wiCommonService: WiCommonService,
+              private commonService: CommonService) { }
 
   ngOnInit() {
+    this.spinner.hide();
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        tap(() => this.commonService.updateHeaderTitle(routingUrls.files.title))
+      );
     this.getAllMediaFiles();
   }
 
@@ -82,16 +71,9 @@ export class MediaFilesComponent implements OnInit {
     this.reverseObj = { [value]: this.reverse };
   }
 
-  getFileTypeAndPath(file) {
-    var str = file.Key;
-    var res = { 'filePath': str, 'fileType' : 'audio'};
-    return res;
-  }
-
-  splitFileFromFolder(file) {
-    var str = file.Key;
-    var res = str.split("/");
-    return res;
+  splitFileFromFolder(file: Files) {
+    const str = file.Key;
+    return str.split("/");
   }
 
   convertDateAndTime(file) {
@@ -108,41 +90,38 @@ export class MediaFilesComponent implements OnInit {
   }
 
   getAllMediaFiles() {
-    this.wiMediaFiles = [];
     this.spinner.show();
-    this._instructionSvc.getAllFolders()
+    this.mediaFiles$ = this._instructionSvc.getAllFolders('media')
       .pipe(
         mergeMap(folders => {
-          if (folders.length) {
-            this.editRows = new Array(folders.length).fill(false);
-            return from(folders)
-              .pipe(
-                mergeMap(folder => {
-                  return this._instructionSvc.getAllMediaFiles(folder)
-                })
-              )
-          } 
-      }))
-      .subscribe((file) => {
-        this.fileInfo = this.getFileTypeAndPath(file[0]);
-        let splitFile = this.splitFileFromFolder(file[0]);
-
-        this.mediaFile.fileNameWithExtension = splitFile[2];
-        this.mediaFile.fileName = splitFile[2].split('.').slice(0, -1).join('.');
-        this.mediaFile.fullFilePath = file[0].Key;
-        this.mediaFile.originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
-        this.mediaFile.updated_at = this.convertDateAndTime(file[0]);
-
-        this.wiMediaFiles.push(this.mediaFile);
-        this.mediaFile = {
-          fileNameWithExtension:'',
-          fileName: '',
-          updated_at: '',
-          fullFilePath:'',
-          originalFileName: ''
-        }
-        this.spinner.hide();
-    })
+          this.editRows = new Array(folders.length).fill(false);
+          return from(folders)
+            .pipe(
+              mergeMap(folder => {
+                return this._instructionSvc.getAllMediaFiles(folder.Prefix)
+              })
+            ) 
+        }),
+        toArray(),
+        map(folderFiles => {
+          let result: MediaFile[] = [];
+          for(let files of folderFiles) {
+            const res = files.map(file => {
+              const splitFile = this.splitFileFromFolder(file);
+              const fileNameWithExtension = splitFile[2];
+              const fileName = splitFile[2].split('.').slice(0, -1).join('.');
+              const fullFilePath = file.Key;
+              const originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
+              const updated_at = this.convertDateAndTime(file);
+              const fileType = file.MimeType.split('/')[0];
+              return { fileNameWithExtension, fileName, fullFilePath, originalFileName, updated_at, fileType };
+            });
+            result = [...result, ...res];
+          }
+          this.spinner.hide();
+          return result;
+        })
+      );
   }
 
   removeFile(el) {
@@ -157,44 +136,37 @@ export class MediaFilesComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        this.spinner.show();
         const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
-        
-        this._instructionSvc.deleteFiles({ files: [el.fullFilePath] }, info)
+        this.spinner.show();
+        this._instructionSvc.deleteFile(el.fullFilePath, info)
           .pipe(
             mergeMap(() => 
-              this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath, info)
+              this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath)
                 .pipe(
                   mergeMap(instructions => {
-                    if (instructions.length) {
-                      return from(instructions)
-                        .pipe(
-                          mergeMap(instruction => {
-                            instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
-                            return this._instructionSvc.updateWorkInstruction(instruction, info)
-                          })
-                        )
-                    } else {
-                      return of(instructions);
-                    }
-                  }
-                  )
+                    return from(instructions)
+                      .pipe(
+                        mergeMap(instruction => {
+                          instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
+                          return this._instructionSvc.updateWorkInstruction(instruction)
+                        })
+                      )
+                  }),
+                  toArray()
                 )
             )
           ).subscribe(
             () => {
               this.spinner.hide();
               this._toastService.show({
-                text: "File name " + el.fileName + "' has been deleted from S3 repository",
+                text: "File name '" + el.fileName + "' has been deleted from S3 repository",
                 type: 'success',
               });
-              this.wiMediaFiles = this.wiMediaFiles.filter(mediaFile => mediaFile.fullFilePath !== el.fullFilePath);
+              this.getAllMediaFiles();
             },
             () => this.spinner.hide()
           );
         }
-
-
     });
   }
 
@@ -235,7 +207,7 @@ export class MediaFilesComponent implements OnInit {
 
     if (fileName === originalFileName) {
       this._toastService.show({
-        text: "File name" + fileName + "' not modified. Please update and try.",
+        text: "File name '" + fileName + "' not modified. Please update and try.",
         type: 'success',
       });
       return;
@@ -246,59 +218,45 @@ export class MediaFilesComponent implements OnInit {
     fileNameArr[0] = fileName;
     filePathArr[filePathArr.length - 1] = fileNameArr.join('.');
     const newFilePath = filePathArr.join('/');
-    const updateFileInfo =  {
+    const renameFileInfo =  {
       filePath: fullFilePath,
       newFilePath
     };
     const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
-
     this.spinner.show();
-    this._instructionSvc.updateFile(updateFileInfo, info)
+    this._instructionSvc.renameFile(renameFileInfo, info)
       .pipe(
-        mergeMap(updateFileInfo => 
-          this._instructionSvc.getAllInstructionsByFilePath(updateFileInfo.filePath, info)
+        mergeMap(renameFileInfo => 
+          this._instructionSvc.getAllInstructionsByFilePath(renameFileInfo.filePath)
             .pipe(
               mergeMap(instructions => {
-                if (instructions.length) {
-                  return from(instructions)
-                    .pipe(
-                      mergeMap(instruction => {
-                        instruction = { ...instruction, FilePath: newFilePath };
-                        return this._instructionSvc.updateWorkInstruction(instruction, info)
-                      })
-                    )
-                } else {
-                  return of(instructions);
-                }
-              }
-              )
+                return from(instructions)
+                  .pipe(
+                    mergeMap(instruction => {
+                      instruction = { ...instruction, FilePath: newFilePath };
+                      return this._instructionSvc.updateWorkInstruction(instruction)
+                    })
+                  )
+              }),
+              toArray()
             )
         )
       ).subscribe(
         () => {
-          this.getAllMediaFiles();
           this.editRows[index] = false;
           this.spinner.hide();
           this._toastService.show({
-            text: "File name" + updateFileInfo.newFilePath + "' updated successfully",
+            text: "File name '" + renameFileInfo.newFilePath + "' updated successfully",
             type: 'success',
           });
-          this.wiMediaFiles = this.wiMediaFiles.map(mediaFile => {
-            if (mediaFile.fullFilePath === fullFilePath) {
-              let { fileName, fullFilePath, originalFileName } = mediaFile;
-              fullFilePath = fullFilePath.replace(originalFileName, fileName);
-              return { ...mediaFile, fullFilePath, originalFileName: fileName };
-            } else {
-              return mediaFile
-            }
-          });
+          this.getAllMediaFiles();
         },
         () => this.spinner.hide()
       );
   }
 
-  updateEditRow(filename, index: number) {
-    this.oldFileName = filename;
+  updateEditRow(index: number) {
+    this.cancel?.nativeElement.click();
     this.editRows = this.editRows.map(() => false);
     this.editRows[index] = true;
   }

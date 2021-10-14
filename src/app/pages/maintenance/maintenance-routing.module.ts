@@ -7,7 +7,8 @@ import {MaintenanceComponent } from './maintenance.page';
 const routes: Routes = [
   {
     path: '',
-    component: MaintenanceComponent
+    component: MaintenanceComponent,
+    data: { breadcrumb: { skip: true } }
   }
 ];
 

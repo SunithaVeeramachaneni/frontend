@@ -3,7 +3,12 @@ export interface FileInfo {
   fileType: string;
 }
 
-export interface UpdateFileInfo {
+export interface RenameFileInfo {
   filePath: string;
   newFilePath: string;
+}
+
+export interface CopyFilesPathInfo {
+  filesPath: string;
+  newFilesPath: string;
 }

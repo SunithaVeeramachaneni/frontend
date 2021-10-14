@@ -3,10 +3,14 @@ import {NgxSpinnerService} from 'ngx-spinner';
 import {InstructionService} from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import {ToastService} from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { Observable } from 'rxjs';
+import { routingUrls } from '../../../app.constants';
+import { CommonService } from '../../../shared/services/common.service';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-recents',
@@ -14,8 +18,6 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
   styleUrls: ['./recents.component.css']
 })
 export class RecentsComponent implements OnInit {
-  headerTitle = 'Recents';
-  public recents = [];
   config: any = {
     id: 'recents',
     currentPage: 1,
@@ -26,17 +28,20 @@ export class RecentsComponent implements OnInit {
   order = 'updated_at';
   reverse = true;
   reverseObj: any = {updated_at: true};
-  sortedCollection: any[];
-  public authors = [];
   public CreatedBy = '';
   public EditedBy = '';
+  currentRouteUrl$: Observable<string>;
+  recents$: Observable<Instruction[]>;
+  authors$: Observable<string[]>;
+  readonly routingUrls = routingUrls;
+  routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set recentWIs(recents: DummyComponent) {
     if (recents) {
       recents.value.map(instruction => {
-        const { Cover_Image: coverImage } = instruction;
-        if (coverImage.indexOf('assets') === -1 && !this.base64HelperService.getBase64ImageData(coverImage)) {
-          this.base64HelperService.getBase64Image(coverImage);
+        const { Cover_Image: coverImage, Id: path } = instruction;
+        if (coverImage.indexOf('assets/') === -1 && !this.base64HelperService.getBase64ImageData(coverImage, path)) {
+          this.base64HelperService.getBase64Image(coverImage, path);
         }
       });
     }
@@ -46,18 +51,26 @@ export class RecentsComponent implements OnInit {
               private _toastService: ToastService,
               private _instructionSvc: InstructionService,
               private base64HelperService: Base64HelperService,
-              private errorHandlerService: ErrorHandlerService) {
+              private errorHandlerService: ErrorHandlerService,
+              private commonService: CommonService) {
   }
 
   ngOnInit(): void {
+    this.spinner.hide();
+    this.routeWithSearch = `${routingUrls.recents.url}?search=`;
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        tap(() => this.commonService.updateHeaderTitle(routingUrls.recents.title))
+      );
     this.getAllRecentInstructions();
     this.AuthorDropDown();
   }
 
   AuthorDropDown() {
-    this._instructionSvc.getUsers().subscribe((users) => {
-      this.authors = users.map(user => `${user.first_name} ${user.last_name}`);
-    });
+    this.authors$ = this._instructionSvc.getUsers()
+      .pipe(
+        map(users => users.map(user => `${user.first_name} ${user.last_name}`))
+      );
   }
 
   setOrder(value: string) {
@@ -142,16 +155,13 @@ export class RecentsComponent implements OnInit {
 
   getAllRecentInstructions() {
     this.spinner.show();
-    this._instructionSvc.getRecentInstructions()
-      .subscribe(
-        workInstructions => {
-          this.recents = workInstructions;
-          this.spinner.hide();
-        }
+    this.recents$ = this._instructionSvc.getRecentInstructions()
+      .pipe(
+        tap(() => this.spinner.hide())
       );
   }
 
-  getImageSrc = (source: string) => {
-    return source && source.indexOf('assets') > -1 ? source : this.base64HelperService.getBase64ImageData(source);
+  getImageSrc = (source: string, path: string) => {
+    return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
 }

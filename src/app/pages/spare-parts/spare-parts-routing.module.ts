@@ -7,7 +7,8 @@ import {SparePartsComponent } from './spare-parts.page';
 const routes: Routes = [
   {
     path: '',
-    component: SparePartsComponent
+    component: SparePartsComponent,
+    data: { breadcrumb: { skip: true } }
   }
 ];
 

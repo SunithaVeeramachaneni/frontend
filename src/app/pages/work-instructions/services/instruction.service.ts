@@ -14,12 +14,12 @@ import {
   Step,
   StepOptional,
   Mail,
-  DeleteFile,
   DeleteFileResponse,
-  GetFile,
   UploadS3FileResponse,
-  UpdateFileInfo,
-  Files
+  Files,
+  RenameFileInfo,
+  CopyFilesPathInfo,
+  Folder
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -57,16 +57,16 @@ export class InstructionService {
     return this._appService._getResp(environment.wiApiUrl, 'categories', info);
   }
 
-  getAllFolders(info: ErrorInfo = {} as ErrorInfo): Observable<Files[]> {
-    return this._appService._getResp(environment.wiApiUrl, 'allMediaFolders', info);
+  getAllFolders(folderPath: string, info: ErrorInfo = {} as ErrorInfo): Observable<Folder[]> {
+    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFolders?folderPath=', folderPath, info);
   }
   
-  getAllMediaFiles(folder, info: ErrorInfo = {} as ErrorInfo): Observable<Files[]> {
-    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFiles/', folder.Prefix, info);
+  getAllMediaFiles(folderPath: string, info: ErrorInfo = {} as ErrorInfo): Observable<Files[]> {
+    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFiles?folderPath=', folderPath, info);
   }
 
-  getAllInstructionsByFilePath(filepath:string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
-    return this._appService._getRespById(environment.wiApiUrl, 'getInstructionsByFile/', filepath, info);
+  getAllInstructionsByFilePath(filePath:string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
+    return this._appService._getRespByName(environment.wiApiUrl, 'getInstructionsByFile?filePath=', filePath, info);
   }
 
   getSelectedCategory(categoryId: string, info: ErrorInfo = {} as ErrorInfo): Observable<Category> {
@@ -267,35 +267,49 @@ export class InstructionService {
     return this._appService._postData(environment.wiApiUrl, 'api/v1/upload/', form, info);
   }
 
-  getImage(file: GetFile, info: ErrorInfo = {} as ErrorInfo): Observable<{ base64Response: string }> {
-    return this._appService._postData(environment.wiApiUrl, 'api/v1/getImage/', file, info);
+  getImage(filePath: string, info: ErrorInfo = {} as ErrorInfo): Observable<{ base64Response: string }> {
+    return this._appService._getRespById(environment.wiApiUrl, 'api/v1/getImage?filePath=', filePath, info);
   }
 
   uploadWIExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
     return this._appService._postData(environment.wiApiUrl, 'excel/upload-parser', form, info);
   }
 
-  deleteFiles(files: DeleteFile, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
-    return this._appService._postData(environment.wiApiUrl, 'api/v1/delete/', files, info);
+  deleteFile(filePath: string, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
+    return this._appService._removeData(environment.wiApiUrl, `api/v1/delete?filePath=${filePath}`, info);
   }
 
-  updateFile(fileInfo: UpdateFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<UpdateFileInfo> {
-    return this._appService._updateData(environment.wiApiUrl, 'updateFileName/', fileInfo, info)
+  renameFile(fileInfo: RenameFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<RenameFileInfo> {
+    return this._appService._updateData(environment.wiApiUrl, 'renameFile/', fileInfo, info)
     .pipe(
       map(resp => resp === null ? fileInfo : resp)
     );
   }
 
-  newInstructionPromise(insPayload: Instruction, info: ErrorInfo): Observable<Instruction> {
+  copyFiles(pathInfo: CopyFilesPathInfo, info: ErrorInfo = {} as ErrorInfo): Observable<string[]> {
+    return this._appService._postData(environment.wiApiUrl, 'copyFiles/', pathInfo, info)
+  }
+
+  newInstructionPromise(insPayload: Instruction, s3Folder: string, info: ErrorInfo): Observable<Instruction> {
     return this.getAllInstructions(info).pipe(mergeMap((instructions) => {
       if (instructions && instructions.length > 0) {
         insPayload.WI_Id = instructions.length > 0 ? instructions.length + 1 : 1;
       }
-      return this.addWorkInstruction(insPayload, info);
+      return this.addWorkInstruction(insPayload, info)
+        .pipe(
+          mergeMap(instruction => {
+            if (Object.keys(instruction).length && instruction.Cover_Image.indexOf('assets/') === -1) {
+              return this.copyFiles({ filesPath: s3Folder, newFilesPath: instruction.Id })
+                .pipe(map(() => instruction));
+            } else {
+              return of(instruction);
+            }
+          })
+        );
     }));
   }
 
-  addInstructionFromImportedData(instructionHeaderPayload: Instruction, info: ErrorInfo): Observable<Instruction> {
+  addInstructionFromImportedData(instructionHeaderPayload: Instruction, s3Folder: string, info: ErrorInfo): Observable<Instruction> {
     const insName = instructionHeaderPayload.WI_Name;
     return this.getInstructionsByName(insName, info).pipe(mergeMap((existingInsResp) => {
       const copyString = insName + 'Copy';
@@ -305,13 +319,13 @@ export class InstructionService {
           if (copiedInsResp && copiedInsResp.length > 0) {
             const copiedInsCount = copiedInsResp.length + 1;
             instructionHeaderPayload.WI_Name = insName + 'Copy(' + copiedInsCount + ')';
-            return this.newInstructionPromise(instructionHeaderPayload, info);
+            return this.newInstructionPromise(instructionHeaderPayload, s3Folder, info);
           } else {
-            return this.newInstructionPromise(instructionHeaderPayload, info);
+            return this.newInstructionPromise(instructionHeaderPayload, s3Folder, info);
           }
         }));
       } else {
-        return this.newInstructionPromise(instructionHeaderPayload, info);
+        return this.newInstructionPromise(instructionHeaderPayload, s3Folder, info);
       }
     }));
  }
@@ -366,13 +380,31 @@ export class InstructionService {
                               WI_Id: instruction.Id,
                               Warnings: step.Warnings,
                             };
-                            return this.addStep(stepPayload, info);
+                            return this.addStep(stepPayload, info)
+                              .pipe(
+                                mergeMap(resp => {
+                                  if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length > 0) {
+                                    return this.copyFiles({ filesPath: `${step.WI_Id}/${step.StepId}`, newFilesPath: `${resp.WI_Id}/${resp.StepId}` })
+                                      .pipe(map(() => resp));
+                                  } else {
+                                    return of(resp);
+                                  }
+                                })
+                              );
                           }),
                           toArray(),
                           mergeMap(response => of({instruction, steps: response}))
                         );
                     } else {
                       return of({ instruction, steps: [] as Step[] });
+                    }
+                  }),
+                  mergeMap(({ instruction, steps }) => {
+                    if (Object.keys(instruction).length && instruction.Cover_Image.indexOf('assets/') === -1) {
+                      return this.copyFiles({ filesPath: `${existingIns.Id}`, newFilesPath: `${instruction.Id}` })
+                        .pipe(map(() => ({ instruction, steps })));
+                    } else {
+                      return of({ instruction, steps });
                     }
                   })
                 );
