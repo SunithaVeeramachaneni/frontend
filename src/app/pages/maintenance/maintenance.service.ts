@@ -71,7 +71,7 @@ export class MaintenanceService {
     this.workOrders$ = combineLatest([workOrders$, this.technicians$]).pipe(map(([rawWorkOrders, technicians]) => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
-      let assignedTechnician = null;
+      let assignedTechnician = [{}];
       rawWorkOrders.forEach(rawWorkOrder => {
         assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
         // console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
@@ -227,7 +227,7 @@ export class MaintenanceService {
   }
 
   getAssignedTechnician = (technicians, rawWorkOrder) =>{
-    let assignedTechnician = null;
+    let assignedTechnician = [{}];
     if (technicians[`${rawWorkOrder.ARBPL}`]) {
       assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician => {
         let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.PARNR)
