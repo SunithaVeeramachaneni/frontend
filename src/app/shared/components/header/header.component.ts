@@ -4,6 +4,7 @@ import { LogonUserDetails } from '../../../interfaces';
 import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -39,12 +40,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.logonUserDetails$.subscribe(res=>{
       console.log("logindata",res)
     })
-    this.userData$ = this.oidcSecurityService.userData$;
-    this.userData$.subscribe(res=>{
-      console.log("userData",res);
-      this.username = res.userData.name.split('.');
-      console.log(this.username);
-    })
+    this.userData$ = this.oidcSecurityService.userData$
+      .pipe(
+        tap(res => {
+          console.log("userData",res);
+          this.username = res.userData ? res.userData.name.split('.') : [];
+        })
+      );
   }
 
   minimize(e) {

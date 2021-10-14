@@ -60,7 +60,6 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   public authors = [];
   public CreatedBy = '';
   searchCriteria = '';
-  imageDataCalls = {};
   currentRouteUrl$: Observable<string>;
   headerTitle$: Observable<string>;
   workInstructions$: Observable<{favorites: Instruction[], drafts: Instruction[], recents: Instruction[]}>;
@@ -103,7 +102,6 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
         })
       );
     this.headerTitle$ = this.commonService.headerTitleAction$;
-    this.imageDataCalls = {};
     this.getAllFavsDraftsAndRecentIns();
   }
 
