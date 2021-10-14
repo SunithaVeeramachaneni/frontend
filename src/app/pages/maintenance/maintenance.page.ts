@@ -121,14 +121,16 @@ export class MaintenanceComponent {
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders) {
           filtered[key] = workOrders[key].filter(workOrder => {
+            console.log("Work order is", workOrder
+            )
             return (
               workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1 ||
               workOrder.workOrderID.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1) &&
               this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
               this.filterPriority(workOrder.priorityStatus,filterObj.priority) &&
-              this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter) &&
-              this.filterAssignee( workOrder.technician[0],filterObj.assign);
+              this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter);
+              // this.filterAssignee( workOrder.technician[0],filterObj.assign);
           }
           )
 
