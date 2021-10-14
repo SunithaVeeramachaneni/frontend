@@ -75,6 +75,11 @@ td:last-child{
   color: #25282B;
 }
 
+td {
+  font-size: 14px;
+  font-family: "Ubuntu", sans-serif;
+}
+
 .arrow {
   font-size: 16px;
   position: relative;

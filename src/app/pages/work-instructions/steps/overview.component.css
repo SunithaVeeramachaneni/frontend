@@ -146,3 +146,7 @@
   height: calc(100vh - 290px);
   display: flex;
 }
+
+.disable-click {
+  pointer-events: none;
+}

@@ -212,7 +212,7 @@
                 <div class="col-md-11 col-xs-11 col-sm-11 col-thumbnail">
                   <ul *ngFor="let img of loadedImages; let i = index" class="thumbnail">
                     <li class="thumbnail-list">
-                      <img alt="Thumbnail" class="thumbnail-img" [hidden]="!stepImages[img.src]" [attr.src]="stepImages[img.src]">
+                      <img alt="Thumbnail" class="thumbnail-img" [hidden]="!getStepImage(img.src)" [attr.src]="getStepImage(img.src)">
                     </li>
                   </ul>
                 </div>

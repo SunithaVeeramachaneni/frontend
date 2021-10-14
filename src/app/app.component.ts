@@ -2,6 +2,19 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router ,NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { routingUrls } from './app.constants';
+
+const {
+  dashboard,
+  spareParts,
+  maintenance,
+  workInstructions,
+  drafts,
+  favorites,
+  recents,
+  published,
+  files
+} = routingUrls;
 
 @Component({
   selector: 'app-root',
@@ -12,39 +25,40 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit {
   public logo = "../assets/img/svg/innov-logo.svg";
   public smallLogo = "../assets/img/svg/innov-small-logo.svg";
+
   menus = [
     {
-      title: 'Dashboard',
-      url: '/dashboard',
+      title: dashboard.title,
+      url: dashboard.url,
       icon: 'home',
       showSubMenu: false,
       subPages: null
     },
     {
-      title: 'Maintenance Control Center',
-      url: '/maintenance',
+      title: maintenance.title,
+      url: maintenance.url,
       icon: 'view_column',
       showSubMenu: false,
       subPages: null
     },
     {
-      title: 'Spare Parts Control Center',
-      url: '/spare-parts',
+      title: spareParts.title,
+      url: spareParts.url,
       icon: 'view_column',
       showSubMenu: false,
       subPages: null
     },
     {
-      title: 'Work Instructions Authoring',
-      url: '/work-instructions',
+      title: workInstructions.title,
+      url: workInstructions.url,
       icon: 'format_list_numbered',
       showSubMenu: false,
       subPages: [
-        { title: 'Favorites', url:'/work-instructions/favorites' },
-        { title: 'Drafts', url:'/work-instructions/drafts' },
-        { title: 'Published', url:'/work-instructions/published' },
-        { title: 'Recents', url:'/work-instructions/recents' },
-        { title: 'Files', url:'/work-instructions/files' }
+        { title: favorites.title, url: favorites.url },
+        { title: drafts.title, url: drafts.url },
+        { title: published.title, url: published.url },
+        { title: recents.title, url: recents.url },
+        { title: files.title, url: files.url }
       ]
     },
   ];
@@ -69,6 +83,7 @@ export class AppComponent implements OnInit {
     ).subscribe(
       (event: NavigationEnd)  => {
         this.currentRouteUrl = event.url;
+        this.commonService.updateCurrentRouteUrl(this.currentRouteUrl);
         this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
 

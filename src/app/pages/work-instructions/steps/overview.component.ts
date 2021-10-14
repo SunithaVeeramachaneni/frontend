@@ -5,9 +5,9 @@ import {InstructionService} from '../services/instruction.service';
 import {ActivatedRoute} from '@angular/router';
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import {NgZone, ViewChild} from '@angular/core';
-import {take} from 'rxjs/operators';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {WiCommonService} from '../services/wi-common.services';
-import {Subscription} from 'rxjs';
+import {of, Subscription} from 'rxjs';
 import {NgxSpinnerService} from 'ngx-spinner';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { Instruction, Step } from '../../../interfaces';
@@ -77,6 +77,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   private imageContentsSubscription: Subscription;
   private assignedObjcetsTmp: any[];
   frmSubscribe: FormGroup;
+  imageDataCalls: any = {};
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
@@ -312,13 +313,14 @@ export class OverviewComponent implements OnInit, OnDestroy {
     const wid = this.route.snapshot.paramMap.get('id') || this.recentWorkInstruction?.Id;
     const file = files[0];
     const imageForm = new FormData();
+    imageForm.append('path', wid);
     imageForm.append('image', file);
     this._instructionSvc.uploadAttachments(imageForm).subscribe(
       attachmentsResp => {
         if (Object.keys(attachmentsResp).length) {
           const {image: uploadedImage} = attachmentsResp;
           this.coverImageFiles = [uploadedImage];
-          this.base64HelperService.getBase64Image(uploadedImage);
+          this.base64HelperService.getBase64Image(uploadedImage, wid);
           this._instructionSvc.getInstructionsById(wid).subscribe((instruction) => {
             if (Object.keys(instruction).length) {
               instruction.Cover_Image = this.coverImageFiles[0];
@@ -333,7 +335,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
     );
   }
 
-  getImageSrc = (file: string) => this.base64HelperService.getBase64ImageData(file);
+  getImageSrc = (file: string) => {
+    if (!this.imageDataCalls[file] && !this.base64HelperService.getBase64ImageData(file, this.recentWorkInstruction.Id)) {
+      this.imageDataCalls[file] = true;
+      this.base64HelperService.getBase64Image(file, this.recentWorkInstruction.Id);
+    }
+    return this.base64HelperService.getBase64ImageData(file, this.recentWorkInstruction.Id);
+  }
 
   preparePrerequisite = ({prequisiteDetails, enteredVal, remove}) => {
     if (remove) {
@@ -441,7 +449,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       this.insByIdSubscription = this._instructionSvc.getInstructionsById(wid).subscribe((insdata) => {
         if (Object.keys(insdata).length) {
           const {Cover_Image: coverImage} = insdata;
-          this.coverImageFiles = coverImage && coverImage.indexOf('assets') > -1 ? this.coverImageFiles : [coverImage];
+          this.coverImageFiles = coverImage && coverImage.indexOf('assets/') > -1 ? this.coverImageFiles : [coverImage];
           this.formControls.coverImage.setValue({coverImage});
           this.formControls.coverImage.valueChanges.subscribe(val => {
             const [coverImg] = this.coverImageFiles;
@@ -455,12 +463,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
               if (stepsResp) {
                 const steps = stepsResp;
                 for (let stepCnt = 0; stepCnt < steps.length; stepCnt++) {
-                  const {Attachment, StepId} = steps[stepCnt];
+                  const {Attachment, StepId, WI_Id} = steps[stepCnt];
                   if (Attachment && JSON.parse(Attachment).length > 0) {
                     this.attachedStepImageFiles = JSON.parse(Attachment);
-                    this.imageContentsSubscription = this.base64HelperService.getImageContents(this.attachedStepImageFiles).subscribe(
+                    this.imageContentsSubscription = this.base64HelperService.getImageContents(this.attachedStepImageFiles, `${WI_Id}/${StepId}`).subscribe(
                       imageContents => {
-                        imageContents = imageContents.filter(imageContent => Object.keys(imageContent).length !== 0);
                         this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
                           stepId: StepId,
                           attachments: Attachment,
@@ -684,16 +691,27 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
     this.tabs.push('Step' + (this.tabs.length));
     step = {...step, isCloned: true};
 
-    this._instructionSvc.addStep(step).subscribe((resp) => {
-      if (Object.keys(resp).length) {
-        this.editByUser();
-        this.store.dispatch(InstructionActions.addStep({ step: resp }));
-        this.selectedID.setValue(this.tabs.length);
-        this._commonSvc.setUpdatedSteps(this.allSteps);
-        this.publishOnAddCloneSteps.emit(true);
-        this._commonSvc.stepDetailsSave('All Changes Saved');
-      }
-    });
+    this._instructionSvc.addStep(step)
+      .pipe(
+        mergeMap(resp => {
+          if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length > 0) {
+            return this._instructionSvc.copyFiles({ filesPath: `${step.WI_Id}/${step.StepId}`, newFilesPath: `${resp.WI_Id}/${resp.StepId}` })
+              .pipe(map(() => resp));
+          } else {
+            return of(resp);
+          }
+        })
+      )
+      .subscribe((resp) => {
+        if (Object.keys(resp).length) {
+          this.editByUser();
+          this.store.dispatch(InstructionActions.addStep({ step: resp }));
+          this.selectedID.setValue(this.tabs.length);
+          this._commonSvc.setUpdatedSteps(this.allSteps);
+          this.publishOnAddCloneSteps.emit(true);
+          this._commonSvc.stepDetailsSave('All Changes Saved');
+        }
+      });
   }
 
   getStepsByWId() {
@@ -710,7 +728,6 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
             for (let cnt = 1; cnt <= resp.length; cnt++) {
               const stepVal = cnt - 1;
               if (resp[stepVal]) {
-                // resp[stepVal].UNIQUEKEY = resp[stepVal].UNIQUEKEY;
                 this.tabs.push(resp[stepVal].Title);
               }
             }

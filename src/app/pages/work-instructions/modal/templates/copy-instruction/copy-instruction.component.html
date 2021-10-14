@@ -30,7 +30,7 @@
                 <ng-container *ngIf="( recentsAndFavsObject.recents | filter : search | dropdownFilter: CreatedBy | sortBy: 'desc':'updated_at' | paginate: recentsConfig ) as result">
                   <app-dummy #recents [value]="result"></app-dummy>
                   <tr *ngFor="let obj of result">
-                    <td class="width-10" class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/></td>
+                    <td class="width-10" class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/></td>
                     <td class="width-70"><span class="tabs-recent-title">{{obj.WI_Name}}</span><span class="chip" *ngIf="obj.Published === false">Draft</span><br/>
                       <span class="tabs-recent-subtitle">{{obj.categories}}</span>
                     </td>
@@ -62,7 +62,7 @@
                 <ng-container *ngIf="(recentsAndFavsObject.favs | filter : search | dropdownFilter: CreatedBy | sortBy: 'desc':'updated_at' | paginate: favConfig) as result">
                   <app-dummy #favourites [value]="result"></app-dummy>
                   <tr *ngFor="let obj of result">
-                    <td class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image)" [attr.src]="getImageSrc(obj.Cover_Image)" alt=""/></td>
+                    <td class="copy-ins-coverimages"><img class="coverImg" [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)" [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)" alt=""/></td>
                     <td><span class="tabs-recent-title">{{obj.WI_Name}}</span><br/>
                       <span class="tabs-recent-subtitle">{{obj.categories}}</span>
                     </td>

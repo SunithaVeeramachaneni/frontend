@@ -12,9 +12,8 @@ import {
   Category,
   CategoryOptional,
   Mail,
-  DeleteFile,
-  GetFile,
-  UpdateFileInfo
+  RenameFileInfo,
+  CopyFilesPathInfo
 } from '../../interfaces';
 
 @Injectable({
@@ -87,8 +86,7 @@ export class AppService {
   _postData(
     apiUrl: string,
     urlStr: string,
-    data: Instruction | InstructionOptional | Step | StepOptional | User | UserOptional | Category | CategoryOptional | Mail | DeleteFile |
-    FormData | GetFile,
+    data: Instruction | InstructionOptional | Step | StepOptional | User | UserOptional | Category | CategoryOptional | Mail | FormData | CopyFilesPathInfo,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
@@ -100,7 +98,7 @@ export class AppService {
     return this.http.post<any>(url, data, httpOptions);
   }
 
-  _updateData(apiUrl: string, urlStr: string, data: Instruction | Step | Category | GetFile | UpdateFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _updateData(apiUrl: string, urlStr: string, data: Instruction | Step | Category | RenameFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
     const httpOptions = this.getHttpOptions({

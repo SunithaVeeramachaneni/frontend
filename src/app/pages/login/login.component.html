@@ -1,0 +1,33 @@
+<!-- <div>
+  login page
+
+  <ion-item>
+    <ion-label fixed="">Email id</ion-label>
+    <ion-input type="text"  [(ngModel)]="username"></ion-input>
+
+  </ion-item>
+</div>> -->
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Log In</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form>
+    <ion-item lines="full">
+      <ion-label position="floating">Email</ion-label>
+      <ion-input [(ngModel)]="email" name="email" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="login()" type="submit" color="primary" expand="block">Next</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>

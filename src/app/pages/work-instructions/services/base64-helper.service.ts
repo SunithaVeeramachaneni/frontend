@@ -31,30 +31,30 @@ export class Base64HelperService {
       reader.readAsDataURL(blob);
     }))
 
-  getBase64Image = (file: string) => {
-    this.instructionService.getImage({ file }).subscribe(
+  getBase64Image = (file: string, path: string) => {
+    this.instructionService.getImage(`${path}/${file}`).subscribe(
       ({ base64Response }) =>
-        this.base64ImageDetails = { ...this.base64ImageDetails, [file]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(file).substring(1)};base64, ${base64Response}`) }
+        this.base64ImageDetails = { ...this.base64ImageDetails, [`${path}/${file}`]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(file).substring(1)};base64, ${base64Response}`) }
     );
   }
 
-  getImageContents = (files: any[]) => {
+  getImageContents = (files: any[], path: string) => {
     return from(files)
       .pipe(
         map((file: string, index: number) => [file, index]),
         mergeMap(([file, index]: [string, number]) => {
-          if (this.base64ImageDetails[file]) {
-            const { changingThisBreaksApplicationSecurity } = this.base64ImageDetails[file];
+          if (this.base64ImageDetails[`${path}/${file}`]) {
+            const { changingThisBreaksApplicationSecurity } = this.base64ImageDetails[`${path}/${file}`];
             return of({
               "fileContent": changingThisBreaksApplicationSecurity.split(', ')[1],
               "fileName": files[index],
               "fileType": this.getExtention(files[index])
             });
           } else {
-            return this.instructionService.getImage({ file })
+            return this.instructionService.getImage(`${path}/${files[index]}`)
               .pipe(
                 map(({ base64Response }) => {
-                  this.base64ImageDetails = { ...this.base64ImageDetails, [files[index]]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(files[index]).substring(1)};base64, ${base64Response}`) };
+                  this.base64ImageDetails = { ...this.base64ImageDetails, [`${path}/${files[index]}`]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(files[index]).substring(1)};base64, ${base64Response}`) };
                   return {
                     "fileContent": base64Response,
                     "fileName": files[index],
@@ -70,13 +70,13 @@ export class Base64HelperService {
 
   getBase64ImageDetails = () => this.base64ImageDetails;
 
-  getBase64ImageData = (file: string): string => this.base64ImageDetails[file];
+  getBase64ImageData = (file: string, path: string): string => this.base64ImageDetails[`${path}/${file}`];
 
-  setBase64ImageDetails = (file: string, base64ImageData: string) => {
-    this.base64ImageDetails = { ...this.base64ImageDetails, [file]: this.sanitizer.bypassSecurityTrustResourceUrl(base64ImageData) };
+  setBase64ImageDetails = (file: string, base64ImageData: string, path: string) => {
+    this.base64ImageDetails = { ...this.base64ImageDetails, [`${path}/${file}`]: this.sanitizer.bypassSecurityTrustResourceUrl(base64ImageData) };
   }
 
-  deleteBase64ImageDetails = (file: string) => delete this.base64ImageDetails[file];
+  deleteBase64ImageDetails = (file: string, path: string) => delete this.base64ImageDetails[`${path}/${file}`];
 
   resetBase64ImageDetails = () => this.base64ImageDetails = {};
 }

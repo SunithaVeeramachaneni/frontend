@@ -2,13 +2,12 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import {SparePartsComponent } from './spare-parts.page';
+import {LoginComponent } from './login.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SparePartsComponent,
-    data: { breadcrumb: { skip: true } }
+    component: LoginComponent
   }
 ];
 
@@ -16,4 +15,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes),ReactiveFormsModule],
   exports: [RouterModule],
 })
-export class SparePartsRoutingModule {}
+export class LoginRoutingModule {}
