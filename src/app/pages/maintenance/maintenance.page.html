@@ -141,7 +141,7 @@
                     <ion-img [src]="timeIcon" class="list-icons"></ion-img>
                     <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
                   </span>
-                  <div *ngIf="workOrder.technician.length !== 0" class="cursor m-t-10 display-flex" (click)="onAssignPress(workOrder)">
+                  <div *ngIf="workOrder && workOrder.technician && workOrder.technician.length !== 0" class="cursor m-t-10 display-flex" (click)="onAssignPress(workOrder)">
                     <img [src]="base64Code" class="assign-user-image"/>
                     <span class="assign-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
                   </div>  
@@ -221,7 +221,7 @@
                   </span>
 
                   <ion-progress-bar value="{{workOrder.operationProgress[2]}}" color="medium" class="progress-bar-class"></ion-progress-bar>
-                  <div *ngIf="workOrder.technician.length !== 0" class="m-t-10 display-flex">
+                  <div *ngIf="workOrder && workOrder.technician && workOrder.technician.length !== 0" class="m-t-10 display-flex">
                     <img [src]="base64Code" class="assign-user-image"/>
                     <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
                   </div>
@@ -294,7 +294,7 @@
                     <span class="date-priority-label">{{workOrder.estimatedTime}}</span>
                   </span>
 
-                  <div *ngIf="workOrder.technician.length !== 0" class="m-t-10 display-flex">
+                  <div *ngIf="workOrder && workOrder.technician && workOrder.technician.length !== 0" class="m-t-10 display-flex">
                     <img [src]="base64Code" class="assign-user-image"/>
                     <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
                   </div>

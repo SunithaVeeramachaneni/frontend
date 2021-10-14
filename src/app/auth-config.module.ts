@@ -7,7 +7,7 @@ import { environment } from '../environments/environment'
 
 let hostname = window && window.location && window.location.hostname;
 if (hostname) {
-  hostname = hostname.split('.')[1];
+  hostname = hostname.split('.')[0];
 }
 console.log(hostname);
 
