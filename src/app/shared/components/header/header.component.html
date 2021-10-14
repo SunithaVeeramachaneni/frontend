@@ -14,7 +14,7 @@
   </ion-col>
   <ion-col  size-lg="6" size-md="6" size-sm="4" size-xs="12" class="header-cols" *ngIf="userData$ | async as userDetails">
     <ion-toolbar class="width-auto">
-      <ion-label class="loggedin-user-name">{{userDetails.userData.name}}</ion-label><br/>
+      <ion-label class="loggedin-user-name">{{userDetails.userData?.name}}</ion-label><br/>
       <ion-label class="loggedin-user-role">Maintenance Manager</ion-label>
     </ion-toolbar>
     <ion-toolbar class="width-auto" *ngIf="logonUserDetails$ | async as logonUserDetails">

@@ -1,5 +1,5 @@
 import {ActivatedRoute} from '@angular/router';
-import {Component, ChangeDetectionStrategy, OnInit, ViewChild, ChangeDetectorRef} from '@angular/core';
+import {Component, ChangeDetectionStrategy, OnInit, ViewChild, ChangeDetectorRef, AfterContentChecked} from '@angular/core';
 import {InstructionService} from '../services/instruction.service';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {ToastService} from '../../../shared/toast';
@@ -7,8 +7,7 @@ import {Observable} from 'rxjs';
 
 import Swal from 'sweetalert2';
 import {NgxSpinnerService} from 'ngx-spinner';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
@@ -25,7 +24,7 @@ const { workInstructions: workInstructionsInfo } = routingUrls;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class CategoryWiseInstructionsComponent implements OnInit {
+export class CategoryWiseInstructionsComponent implements OnInit, AfterContentChecked {
   @ViewChild('tabGroup') tabGroup;
   categoryId: string;
   public selectedCategory = '';
@@ -84,6 +83,10 @@ export class CategoryWiseInstructionsComponent implements OnInit {
               private errorHandlerService: ErrorHandlerService,
               private breadcrumbService: BreadcrumbService,
               private commonService: CommonService) {}
+
+  ngAfterContentChecked() {
+    this.cdrf.markForCheck();
+  }
 
   setOrder(value: string) {
     if (this.order === value) {
@@ -184,16 +187,9 @@ export class CategoryWiseInstructionsComponent implements OnInit {
 
   getInstructionsWithCategoryName = (categoryId: string) => {
     this.spinner.show();
-    this.workInstructions$ = combineLatest([
-      this._instructionSvc.getInstructionsByCategoryId(categoryId),
-      this._instructionSvc.getSelectedCategory(categoryId)
-    ])
+    this.workInstructions$ = this._instructionSvc.getInstructionsByCategoryId(categoryId)
     .pipe(
-      map(([workInstructions, category]) => {
-        const { Category_Name } = category;
-        this.selectedCategory = Category_Name;
-        this.commonService.updateHeaderTitle(this.selectedCategory);
-        this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+      map(workInstructions => {
         let drafts: Instruction[] = [], published: Instruction[] = [];
         workInstructions.map(workInstruction => {
           const { Published } = workInstruction;
@@ -211,10 +207,24 @@ export class CategoryWiseInstructionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinner.hide();
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
     const cid = this.route.snapshot.paramMap.get('cid');
     this.categoryId = cid;
     this.routeUrl = `${workInstructionsInfo.url}/category/${cid}`;
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
+      .pipe(
+        mergeMap(currentRouteUrl => 
+          this._instructionSvc.getSelectedCategory(cid)
+            .pipe(
+              map(category => {
+                const { Category_Name } = category;
+                this.selectedCategory = Category_Name;
+                this.commonService.updateHeaderTitle(this.selectedCategory);
+                this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+                return currentRouteUrl;
+              })
+            )
+        )
+      );
     this.getInstructionsWithCategoryName(cid);
     this.getAuthors();
   }
