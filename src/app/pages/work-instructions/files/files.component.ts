@@ -141,14 +141,14 @@ export class MediaFilesComponent implements OnInit {
         this._instructionSvc.deleteFile(el.fullFilePath, info)
           .pipe(
             mergeMap(() => 
-              this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath)
+              this._instructionSvc.getAllInstructionsByFilePath(el.fullFilePath, info)
                 .pipe(
                   mergeMap(instructions => {
                     return from(instructions)
                       .pipe(
                         mergeMap(instruction => {
                           instruction = { ...instruction, IsAudioOrVideoFileDeleted: true };
-                          return this._instructionSvc.updateWorkInstruction(instruction)
+                          return this._instructionSvc.updateWorkInstruction(instruction, info)
                         })
                       )
                   }),
@@ -227,14 +227,14 @@ export class MediaFilesComponent implements OnInit {
     this._instructionSvc.renameFile(renameFileInfo, info)
       .pipe(
         mergeMap(renameFileInfo => 
-          this._instructionSvc.getAllInstructionsByFilePath(renameFileInfo.filePath)
+          this._instructionSvc.getAllInstructionsByFilePath(renameFileInfo.filePath, info)
             .pipe(
               mergeMap(instructions => {
                 return from(instructions)
                   .pipe(
                     mergeMap(instruction => {
                       instruction = { ...instruction, FilePath: newFilePath };
-                      return this._instructionSvc.updateWorkInstruction(instruction)
+                      return this._instructionSvc.updateWorkInstruction(instruction, info)
                     })
                   )
               }),

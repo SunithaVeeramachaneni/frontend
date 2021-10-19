@@ -276,7 +276,17 @@ export class InstructionService {
   }
 
   deleteFile(filePath: string, info: ErrorInfo = {} as ErrorInfo): Observable<DeleteFileResponse> {
-    return this._appService._removeData(environment.wiApiUrl, `api/v1/delete?filePath=${filePath}`, info);
+    return this._appService._removeData(environment.wiApiUrl, `api/v1/delete?filePath=${filePath}`, info)
+      .pipe(
+        map(resp => resp === null ? { file: filePath.split('/').pop() } : resp)
+      );
+  }
+
+  deleteFiles(folderPath: string, recursive: boolean = false, info: ErrorInfo = {} as ErrorInfo): Observable<string> {
+    return this._appService._removeData(environment.wiApiUrl, `deleteFiles?folderPath=${folderPath}&recursive=${recursive}`, info)
+      .pipe(
+        map(resp => resp === null ? folderPath.split('/').pop() : resp)
+      );
   }
 
   renameFile(fileInfo: RenameFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<RenameFileInfo> {
@@ -299,7 +309,7 @@ export class InstructionService {
         .pipe(
           mergeMap(instruction => {
             if (Object.keys(instruction).length && instruction.Cover_Image.indexOf('assets/') === -1) {
-              return this.copyFiles({ filesPath: s3Folder, newFilesPath: instruction.Id })
+              return this.copyFiles({ folderPath: s3Folder, newFolderPath: instruction.Id, copyFiles: [instruction.Cover_Image] }, info)
                 .pipe(map(() => instruction));
             } else {
               return of(instruction);
@@ -383,8 +393,8 @@ export class InstructionService {
                             return this.addStep(stepPayload, info)
                               .pipe(
                                 mergeMap(resp => {
-                                  if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length > 0) {
-                                    return this.copyFiles({ filesPath: `${step.WI_Id}/${step.StepId}`, newFilesPath: `${resp.WI_Id}/${resp.StepId}` })
+                                  if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length) {
+                                    return this.copyFiles({ folderPath: `${step.WI_Id}/${step.StepId}`, newFolderPath: `${resp.WI_Id}/${resp.StepId}` }, info)
                                       .pipe(map(() => resp));
                                   } else {
                                     return of(resp);
@@ -401,7 +411,7 @@ export class InstructionService {
                   }),
                   mergeMap(({ instruction, steps }) => {
                     if (Object.keys(instruction).length && instruction.Cover_Image.indexOf('assets/') === -1) {
-                      return this.copyFiles({ filesPath: `${existingIns.Id}`, newFilesPath: `${instruction.Id}` })
+                      return this.copyFiles({ folderPath: `${existingIns.Id}`, newFolderPath: `${instruction.Id}` }, info)
                         .pipe(map(() => ({ instruction, steps })));
                     } else {
                       return of({ instruction, steps });
@@ -523,6 +533,14 @@ export class InstructionService {
                 } else {
                   return deleteInstruction;
                 }
+              }),
+              mergeMap(deleteInstruction => {
+                if (Object.keys(deleteInstruction).length) {
+                  return this.deleteFiles(`${deleteInstruction.Id}`, true, info)
+                    .pipe(map(() => deleteInstruction))
+                } else {
+                  return of(deleteInstruction)
+                }
               })
             );
         } else {
@@ -541,6 +559,14 @@ export class InstructionService {
                     );
                 } else {
                   return deleteInstruction;
+                }
+              }),
+              mergeMap(deleteInstruction => {
+                if (Object.keys(deleteInstruction).length) {
+                  return this.deleteFiles(`${deleteInstruction.Id}`, true, info)
+                    .pipe(map(() => deleteInstruction))
+                } else {
+                  return of(deleteInstruction)
                 }
               })
             );

@@ -320,11 +320,13 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
+        this.spinner.show();
         const ID = this.selectedInstruction?.Id;
         const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
         this._instructionsvc.deleteWorkInstruction$(ID, info)
           .subscribe(
             data => {
+              this.spinner.hide();
               this.location.back();
               this._toastService.show({
                 text: `Work instuction '${el.WI_Name}' has been deleted`,
@@ -332,6 +334,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
               });
             },
             err => {
+              this.spinner.hide();
               this.errorHandlerService.handleError(err);
             }
           );

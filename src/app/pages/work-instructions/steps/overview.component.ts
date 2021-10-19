@@ -323,11 +323,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
           this.base64HelperService.getBase64Image(uploadedImage, wid);
           this._instructionSvc.getInstructionsById(wid).subscribe((instruction) => {
             if (Object.keys(instruction).length) {
+              const coverImage = instruction.Cover_Image;
               instruction.Cover_Image = this.coverImageFiles[0];
-              this._instructionSvc.updateWorkInstruction(instruction).subscribe(
-                () => {
-                  this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
-                });
+              this._instructionSvc.updateWorkInstruction(instruction)
+                .pipe(
+                  mergeMap(resp => {
+                    if (Object.keys(resp).length && coverImage.indexOf('assets/') === -1) {
+                      return this._instructionSvc.deleteFile(`${resp.Id}/${coverImage}`)
+                        .pipe(map(() => resp))
+                    } else {
+                      return of(resp);
+                    }
+                  })
+                ).subscribe(
+                  () => {
+                    this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+                  });
             }
           });
         }
@@ -694,8 +705,8 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
     this._instructionSvc.addStep(step)
       .pipe(
         mergeMap(resp => {
-          if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length > 0) {
-            return this._instructionSvc.copyFiles({ filesPath: `${step.WI_Id}/${step.StepId}`, newFilesPath: `${resp.WI_Id}/${resp.StepId}` })
+          if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length) {
+            return this._instructionSvc.copyFiles({ folderPath: `${step.WI_Id}/${step.StepId}`, newFolderPath: `${resp.WI_Id}/${resp.StepId}` })
               .pipe(map(() => resp));
           } else {
             return of(resp);

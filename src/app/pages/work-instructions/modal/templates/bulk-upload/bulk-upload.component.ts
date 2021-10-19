@@ -285,8 +285,8 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                       from(allSteps)
                         .pipe(
                           mergeMap(step => {
-                            if (Object.keys(step).length && step.Attachment && JSON.parse(step.Attachment).length > 0) {
-                              return this._instructionSvc.copyFiles({ filesPath: s3Folder, newFilesPath: `${step.WI_Id}/${step.StepId}` })
+                            if (Object.keys(step).length && step.Attachment && JSON.parse(step.Attachment).length) {
+                              return this._instructionSvc.copyFiles({ folderPath: s3Folder, newFolderPath: `${step.WI_Id}/${step.StepId}`, copyFiles: JSON.parse(step.Attachment) }, info)
                                 .pipe(map(() => step));
                             } else {
                               return of(step);
@@ -300,6 +300,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                             this.store.dispatch(BulkUploadActions.addInstructionWithSteps(instructionWithSteps));
                             if (currentInsCnt + 1 === allKeys.length) {
                               this.loadResults = true;
+                              this.deleteFiles(s3Folder);
                             }
                           }
                         )
@@ -312,6 +313,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                     this.deleteIns(currentIns, index, false);
                     if (currentInsCnt + 1 === allKeys.length) {
                       this.loadResults = true;
+                      this.deleteFiles(s3Folder);
                     }
                   }
                 );
@@ -321,6 +323,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
           if (allKeys.length > 0) {
             currentIns.insPostedSuccessfully = true;
             this.loadResults = true;
+            this.deleteFiles(s3Folder);
             this.store.dispatch(BulkUploadActions.addInstructionWithSteps(instructionWithSteps));
           }
         }
@@ -330,6 +333,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
         currentIns.insPostingFailed = true;
         if (currentInsCnt + 1 === allKeys.length) {
           this.loadResults = true;
+          this.deleteFiles(s3Folder);
         }
       }
     );
@@ -560,6 +564,10 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       border = '1px solid #c8ced3';
     }
     return { 'border-top': border };
+  }
+
+  deleteFiles = (folderPath: string) => {
+    this._instructionSvc.deleteFiles(folderPath).subscribe();
   }
 
   ngOnDestroy(): void {
