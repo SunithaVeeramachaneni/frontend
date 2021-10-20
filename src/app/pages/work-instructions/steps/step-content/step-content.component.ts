@@ -4,8 +4,8 @@ import {InstructionService} from '../../services/instruction.service';
 import Swal from "sweetalert2";
 import { WiCommonService } from '../../services/wi-common.services';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { debounceTime, distinctUntilChanged, skip, startWith } from 'rxjs/operators';
-import { combineLatest, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, mergeMap, skip, startWith } from 'rxjs/operators';
+import { combineLatest, of, Subscription } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {ToastService} from '../../../../shared/toast';
 import { Base64HelperService } from '../../services/base64-helper.service';
@@ -172,43 +172,75 @@ export class StepContentComponent implements OnInit, OnDestroy {
   }
 
   uploadFile(event, index?: number): void {
-    this.spinner.show();
-    this._commonSvc.stepDetailsSave('Saving..');
     const FILE = event.addedFiles[0];
-    const imageForm = new FormData();
-    imageForm.append('path', `${this.step.WI_Id}/${this.step.StepId}`);
-    imageForm.append('image', FILE);
-    this._instructionSvc.uploadAttachments(imageForm).subscribe(imgres => {
-      if (Object.keys(imgres).length) {
-        const uploadedImg = imgres;
-        if (index !== undefined) {
-          this.files.splice(index, 1, uploadedImg.image);
-        } else {
-          this.files = [...this.files, uploadedImg.image];
-        }
-        this.handleInputChange(FILE, uploadedImg);
-        this._instructionSvc.getStepById(this.step.StepId).subscribe((step_resp) => {
-          if (Object.keys(step_resp).length) {
-            step_resp.Attachment = JSON.stringify(this.files);
-            this.selectedStep.Fields[0].FieldValue = this.files;
-            this.onStepDataEntry.emit({});
-            step_resp.Fields = JSON.stringify(this.selectedStep.Fields);
-            this._instructionSvc.updateStep(step_resp).subscribe((step) => {
-              if (Object.keys(step).length) {
-                this.store.dispatch(InstructionActions.updateStep({ step: step_resp }));
-                this._commonSvc.setUpdatedSteps(this.steps);
-                if (uploadedImg && uploadedImg.image) {
-                  this._commonSvc.uploadImgToPreview({ image: uploadedImg.image, index });
-                }
-                this.editByUser();
-                this._commonSvc.stepDetailsSave('All Changes Saved');
+    let uploadToS3 = true;
+    const fileExists = this.files.find(file => file === FILE.name);
+    if (index !== undefined && fileExists !== this.files[index]) {
+      uploadToS3 = false;
+    }
+    
+    if (uploadToS3) {
+      this.spinner.show();
+      this._commonSvc.stepDetailsSave('Saving..');
+      const imageForm = new FormData();
+      imageForm.append('path', `${this.step.WI_Id}/${this.step.StepId}`);
+      imageForm.append('image', FILE);
+  
+      this._instructionSvc.uploadAttachments(imageForm).subscribe(uploadedImg => {
+        if (Object.keys(uploadedImg).length) {
+          let removedFile = [];
+          if (index !== undefined) {
+            removedFile = this.files.splice(index, 1, uploadedImg.image);
+          } else {
+            if (fileExists === undefined) {
+              this.files = [...this.files, uploadedImg.image];
+            }
+          }
+          this.handleInputChange(FILE, uploadedImg);
+  
+          if (fileExists === undefined) {
+            this._instructionSvc.getStepById(this.step.StepId).subscribe((step_resp) => {
+              if (Object.keys(step_resp).length) {
+                step_resp.Attachment = JSON.stringify(this.files);
+                this.selectedStep.Fields[0].FieldValue = this.files;
+                this.onStepDataEntry.emit({});
+                step_resp.Fields = JSON.stringify(this.selectedStep.Fields);
+                this._instructionSvc.updateStep(step_resp).pipe(
+                  mergeMap(resp => {
+                    if (Object.keys(resp).length && removedFile.length && removedFile[0] !== uploadedImg.image) {
+                      return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${removedFile[0]}`)
+                        .pipe(map(() => resp))
+                    } else {
+                      return of(resp);
+                    }
+                  })
+                ).subscribe((step) => {
+                  if (Object.keys(step).length) {
+                    this.store.dispatch(InstructionActions.updateStep({ step: step_resp }));
+                    this._commonSvc.setUpdatedSteps(this.steps);
+                    if (uploadedImg && uploadedImg.image) {
+                      this._commonSvc.uploadImgToPreview({ image: uploadedImg.image, index });
+                    }
+                    this.editByUser();
+                    this._commonSvc.stepDetailsSave('All Changes Saved');
+                  }
+                });
               }
             });
+          } else {
+            this.editByUser();
+            this._commonSvc.stepDetailsSave('All Changes Saved');
           }
-        });
-      }
-      this.spinner.hide();
-    });
+        }
+        this.spinner.hide();
+      });
+    } else {
+      this._toastService.show({
+        text: "Attachment name " + fileExists +" already exists!",
+        type: 'warning',
+      });
+    }
+
   }
 
   deleteStep (el) {
@@ -261,7 +293,18 @@ export class StepContentComponent implements OnInit, OnDestroy {
 
   removeStepAndContent(step: Step) {
     this._commonSvc.stepDetailsSave('Saving..');
-    this._instructionSvc.removeStep(step).subscribe((resp) => {
+    this._instructionSvc.removeStep(step)
+      .pipe(
+        mergeMap(resp => {
+          if (Object.keys(resp).length && resp.Attachment && JSON.parse(resp.Attachment).length) {
+            return this._instructionSvc.deleteFiles(`${resp.WI_Id}/${resp.StepId}`)
+              .pipe(map(() => resp))
+          } else {
+            return of(resp);
+          }
+        })
+      )
+      .subscribe((resp) => {
       if (Object.keys(resp).length) {
         this._toastService.show({
           text: "Step " + resp.Title +" is deleted successfully",
@@ -337,7 +380,16 @@ export class StepContentComponent implements OnInit, OnDestroy {
         step_resp.Attachment = JSON.stringify(this.files);
         this.selectedStep.Fields[0].FieldValue = this.files;
         step_resp.Fields = JSON.stringify(this.selectedStep.Fields);
-        this._instructionSvc.updateStep(step_resp).subscribe((step) => {
+        this._instructionSvc.updateStep(step_resp).pipe(
+          mergeMap(resp => {
+            if (Object.keys(resp).length) {
+              return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${attachment}`)
+                .pipe(map(() => resp))
+            } else {
+              return of(resp);
+            }
+          })
+        ).subscribe((step) => {
           if (Object.keys(step).length) {
             this.store.dispatch(InstructionActions.removeStepImagesContent({ attachment: attachment[0] }));
             this.onStepDataEntry.emit({});

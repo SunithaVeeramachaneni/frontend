@@ -328,7 +328,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
               this._instructionSvc.updateWorkInstruction(instruction)
                 .pipe(
                   mergeMap(resp => {
-                    if (Object.keys(resp).length && coverImage.indexOf('assets/') === -1) {
+                    if (Object.keys(resp).length && coverImage.indexOf('assets/') === -1 && coverImage !== resp.Cover_Image) {
                       return this._instructionSvc.deleteFile(`${resp.Id}/${coverImage}`)
                         .pipe(map(() => resp))
                     } else {
