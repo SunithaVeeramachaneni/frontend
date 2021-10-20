@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
@@ -7,7 +6,7 @@ import { environment } from '../environments/environment'
 
 let hostname = window && window.location && window.location.hostname;
 if (hostname) {
-  hostname = hostname.split('.')[0]; // must be made generic
+  hostname = hostname.split('.')[1]; // must be made generic
 }
 console.log(hostname);
 
