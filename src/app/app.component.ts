@@ -91,16 +91,16 @@ export class AppComponent implements OnInit {
         this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
 
-    const userDetails = {
-      id: '1',
-      first_name: 'Sunitha',
-      last_name: 'Veeramachaneni',
-      email: 'sunitha.veermchanneu@innovapptve.com',
-      password: 'x123',
-      role: 'admin',
-      empId: '5000343'
-    };
-    localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
+    // const userDetails = {
+    //   id: '1',
+    //   first_name: 'Sunitha',
+    //   last_name: 'Veeramachaneni',
+    //   email: 'sunitha.veermchanneu@innovapptve.com',
+    //   password: 'x123',
+    //   role: 'admin',
+    //   empId: '5000343'
+    // };
+    // localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
   }
 
   toggleSubMenu(menus: any, currentRouteUrl: string, sidebarMinimized: boolean) {
