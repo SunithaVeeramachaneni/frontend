@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core"
-import { Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { interval, Observable, Subject, timer } from "rxjs";
+import { catchError, map, retry, share, switchMap, takeUntil, tap } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/scc-work-order";
@@ -19,6 +19,14 @@ export class SparepartsService {
     "3": "Kitting in Progress",
     "4": "Kits Complete",
     "5": "Kits Picked Up",
+  }
+
+
+
+  private stopPolling = new Subject();
+
+  ngOnDestroy = () =>{
+    this.stopPolling.next();
   }
   getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technician[]>{
     let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist', info);
@@ -44,10 +52,16 @@ export class SparepartsService {
     return updateResp$;
   }
 
+
   getAllWorkOrders(date,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
-    console.log("getAllWorkOrders")
     let filterDate=this.getStartAndEndDate(date);
-    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${filterDate['startDate']}&enddate=${filterDate['endDate']}`, info);
+    let workOrders$ = timer(1, 1000 * 30).pipe(
+      switchMap(() => this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${filterDate['startDate']}&enddate=${filterDate['endDate']}`, info)),
+      retry(3),
+      share(),
+      takeUntil(this.stopPolling)
+ );
+
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { "1": [], "2": [], "3": [], "4": [],"5":[] };
       let workOrder: WorkOrder;
