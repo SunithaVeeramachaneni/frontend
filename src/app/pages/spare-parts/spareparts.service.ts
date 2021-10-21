@@ -55,7 +55,7 @@ export class SparepartsService {
 
   getAllWorkOrders(date,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     let filterDate=this.getStartAndEndDate(date);
-    let workOrders$ = timer(1, 1000 * 30).pipe(
+    let workOrders$ = timer(1, 1000 * 60 * 2).pipe(
       switchMap(() => this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${filterDate['startDate']}&enddate=${filterDate['endDate']}`, info)),
       retry(3),
       share(),
