@@ -5,11 +5,7 @@ export interface Files {
   Size: string;
   StorageClass: string;
   Owner:any;
-  MimeType: string;
-}
-
-export interface Folder {
-  Prefix: string;
+  MimeType?: string;
 }
 
 export interface MediaFile {

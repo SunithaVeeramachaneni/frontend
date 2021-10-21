@@ -91,33 +91,20 @@ export class MediaFilesComponent implements OnInit {
 
   getAllMediaFiles() {
     this.spinner.show();
-    this.mediaFiles$ = this._instructionSvc.getAllFolders('media')
+    this.mediaFiles$ = this._instructionSvc.getFiles('media', true)
       .pipe(
-        mergeMap(folders => {
-          this.editRows = new Array(folders.length).fill(false);
-          return from(folders)
-            .pipe(
-              mergeMap(folder => {
-                return this._instructionSvc.getAllMediaFiles(folder.Prefix)
-              })
-            ) 
-        }),
-        toArray(),
-        map(folderFiles => {
-          let result: MediaFile[] = [];
-          for(let files of folderFiles) {
-            const res = files.map(file => {
-              const splitFile = this.splitFileFromFolder(file);
-              const fileNameWithExtension = splitFile[2];
-              const fileName = splitFile[2].split('.').slice(0, -1).join('.');
-              const fullFilePath = file.Key;
-              const originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
-              const updated_at = this.convertDateAndTime(file);
-              const fileType = file.MimeType.split('/')[0];
-              return { fileNameWithExtension, fileName, fullFilePath, originalFileName, updated_at, fileType };
-            });
-            result = [...result, ...res];
-          }
+        map(files => {
+          this.editRows = new Array(files.length).fill(false);
+          const result: MediaFile[] = files.map(file => {
+            const splitFile = this.splitFileFromFolder(file);
+            const fileNameWithExtension = splitFile[2];
+            const fileName = splitFile[2].split('.').slice(0, -1).join('.');
+            const fullFilePath = file.Key;
+            const originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
+            const updated_at = this.convertDateAndTime(file);
+            const fileType = file.MimeType.split('/')[0];
+            return { fileNameWithExtension, fileName, fullFilePath, originalFileName, updated_at, fileType };
+          });
           this.spinner.hide();
           return result;
         })

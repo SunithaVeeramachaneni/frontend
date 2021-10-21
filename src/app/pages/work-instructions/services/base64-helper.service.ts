@@ -32,7 +32,7 @@ export class Base64HelperService {
     }))
 
   getBase64Image = (file: string, path: string) => {
-    this.instructionService.getImage(`${path}/${file}`).subscribe(
+    this.instructionService.getFile(`${path}/${file}`).subscribe(
       ({ base64Response }) =>
         this.base64ImageDetails = { ...this.base64ImageDetails, [`${path}/${file}`]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(file).substring(1)};base64, ${base64Response}`) }
     );
@@ -51,7 +51,7 @@ export class Base64HelperService {
               "fileType": this.getExtention(files[index])
             });
           } else {
-            return this.instructionService.getImage(`${path}/${files[index]}`)
+            return this.instructionService.getFile(`${path}/${files[index]}`)
               .pipe(
                 map(({ base64Response }) => {
                   this.base64ImageDetails = { ...this.base64ImageDetails, [`${path}/${files[index]}`]: this.sanitizer.bypassSecurityTrustResourceUrl(`data:image/${this.getExtention(files[index]).substring(1)};base64, ${base64Response}`) };

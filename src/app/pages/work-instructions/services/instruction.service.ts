@@ -18,8 +18,7 @@ import {
   UploadS3FileResponse,
   Files,
   RenameFileInfo,
-  CopyFilesPathInfo,
-  Folder
+  CopyFilesPathInfo
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -56,13 +55,9 @@ export class InstructionService {
   getAllCategories(info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
     return this._appService._getResp(environment.wiApiUrl, 'categories', info);
   }
-
-  getAllFolders(folderPath: string, info: ErrorInfo = {} as ErrorInfo): Observable<Folder[]> {
-    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFolders?folderPath=', folderPath, info);
-  }
   
-  getAllMediaFiles(folderPath: string, info: ErrorInfo = {} as ErrorInfo): Observable<Files[]> {
-    return this._appService._getRespByName(environment.wiApiUrl, 'allMediaFiles?folderPath=', folderPath, info);
+  getFiles(folderPath: string, recursive: boolean = false, info: ErrorInfo = {} as ErrorInfo): Observable<Files[]> {
+    return this._appService._getRespByName(environment.wiApiUrl, `getFiles?folderPath=${folderPath}&recursive=${recursive}`, '', info);
   }
 
   getAllInstructionsByFilePath(filePath:string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> {
@@ -267,8 +262,8 @@ export class InstructionService {
     return this._appService._postData(environment.wiApiUrl, 'api/v1/upload/', form, info);
   }
 
-  getImage(filePath: string, info: ErrorInfo = {} as ErrorInfo): Observable<{ base64Response: string }> {
-    return this._appService._getRespById(environment.wiApiUrl, 'api/v1/getImage?filePath=', filePath, info);
+  getFile(filePath: string, info: ErrorInfo = {} as ErrorInfo): Observable<{ base64Response: string }> {
+    return this._appService._getRespById(environment.wiApiUrl, 'api/v1/getFile?filePath=', filePath, info);
   }
 
   uploadWIExcel(form: FormData, info: ErrorInfo = {} as ErrorInfo): Observable<any> {

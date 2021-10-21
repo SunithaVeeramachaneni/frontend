@@ -1,9 +1,3 @@
-export const mediaFolders = [
-  {
-    Prefix: "media/20210920080515129/"
-  }
-];
-
 export const mediaFiles = [
   {
       "Key": "media/20210920080515129/Gas Forklift Inspection.m4a",
@@ -13,6 +7,7 @@ export const mediaFiles = [
       "StorageClass": "STANDARD",
       "Owner": {
           "ID": "8bb7ed54cec9d43c2de3db0991867a8ea5aaca213e6f962b9273cef7a317b008"
-      }
+      },
+      "MimeType": "audio/mp4"
   }
 ];
