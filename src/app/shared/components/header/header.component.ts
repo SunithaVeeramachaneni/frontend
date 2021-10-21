@@ -45,6 +45,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         tap(res => {
           console.log("userData",res);
           this.username = res.userData ? res.userData.name.split('.') : [];
+          let loggedInUser = {
+            "first_name": this.username[0],
+            'last_name': this.username[1]
+          }
+          localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
         })
       );
   }
