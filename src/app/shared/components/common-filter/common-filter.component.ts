@@ -1,8 +1,6 @@
 import { Component, OnInit ,Input} from '@angular/core';
-import { Observable } from "rxjs";
-import { union } from 'lodash';
+import { uniqBy } from 'lodash';
 import {CommonService}   from '../../services/common.service';
-import { Technician } from '../../../interfaces/technicians';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MaintenanceService } from '../../../pages/maintenance/maintenance.service';
 
@@ -47,7 +45,7 @@ export class CommonFilterComponent implements OnInit {
     let workCenters = event.value;
     this.displayedAssigneeList = []
     workCenters.forEach(workCenter =>{
-      this.displayedAssigneeList = union(this.technicians[workCenter.workCenterKey], this.displayedAssigneeList);
+      this.displayedAssigneeList = this.arrayUnion(this.technicians[workCenter.workCenterKey], this.displayedAssigneeList, 'personName')
     });
   }
 
@@ -72,5 +70,10 @@ export class CommonFilterComponent implements OnInit {
       assign:this.assign
     });
   }
+
+  arrayUnion = (arr1, arr2, identifier) => {
+    const array = [...arr1, ...arr2]
+    return uniqBy(array, identifier)
+   }
 
 }
