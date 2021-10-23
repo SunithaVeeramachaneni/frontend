@@ -51,6 +51,7 @@ export class MaintenanceService {
   }
 
   getAllWorkCenters = () => {
+    console.log("Can i see the environment variable", environment.mccAbapApiUrl)
     let rawObservable$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workCenters/${1000}`);
     this.workCenters$ = rawObservable$.pipe(map(rawWorkCenters => {
       let workCenters: WorkCenter[] = [];
