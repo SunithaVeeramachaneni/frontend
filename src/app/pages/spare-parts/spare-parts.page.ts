@@ -147,9 +147,6 @@ assignTech(event,workorderid) {
     })
  })
 }
-dateChanged(event){
-  this._commonService.selectDate(event.target.value)
-}
 
 public filterDate(dueDate, filterDate){
   if(filterDate === 'today')

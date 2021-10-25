@@ -3,27 +3,11 @@
     <app-header [title]="headerTitle"></app-header>
     <ion-row>
       <ion-col class="spareparts-header">
-
-        <app-common-filter [title]="headerTitle" [showOverdueList]="showOverdueList" [priorityList]="priorityList">
+        <app-common-filter [title]="headerTitle" 
+                           [showOverdueList]="showOverdueList" 
+                           [priorityList]="priorityList">
         </app-common-filter>
-
-        <ion-segment mode="ios" (ionChange)="dateChanged($event)"  [value]="selectDate$ | async" class="segment-group">
-          <ion-segment-button value="today" class="segment-button">
-            <ion-label>Due Today</ion-label>
-          </ion-segment-button>
-          <hr class="segmented-line" />
-          <ion-segment-button value="week" class="segment-button">
-            <ion-label>Due This Week</ion-label>
-          </ion-segment-button>
-          <hr class="segmented-line" />
-          <ion-segment-button value="month" class="segment-button">
-            <ion-label>Due This Month</ion-label>
-          </ion-segment-button>
-          <hr class="segmented-line" />
-          <ion-segment-button value="custom" class="segment-button" disabled>
-            <ion-label>Custom</ion-label>
-          </ion-segment-button>
-        </ion-segment>
+        <app-date-segment [selectDate$]="selectDate$"></app-date-segment>
       </ion-col>
     </ion-row>
   </ion-toolbar>

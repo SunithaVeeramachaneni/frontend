@@ -49,9 +49,6 @@ export class MaintenanceComponent {
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
-  public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
-  public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
-  public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
   public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
@@ -102,15 +99,8 @@ export class MaintenanceComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   }
 
-  dateChanged(event){
-    this._commonService.selectDate(event.target.value)
-  }
-  
-
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    let base64Image = 'data:image/jpeg;base64,' + base64String;
-    this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList1$ = this.combineWorkOrders(this.workOrderList$, this.updateWorkOrderList$)
     this.combinedWorkOrderList$ = this.combineWorkOrders(this.combinedWorkOrderList1$, this.putWorkOrder$)

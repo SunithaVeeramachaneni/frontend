@@ -1,0 +1,39 @@
+<div>
+  <ion-segment mode="ios" (ionChange)="dateChanged($event)" [value]="selectDate$ | async" class="segment-group">
+      <ion-segment-button value="today" class="segment-button">
+        <ion-label>Due Today</ion-label>
+      </ion-segment-button>
+      <hr class="segmented-line"/>
+      <ion-segment-button value="week" class="segment-button">
+        <ion-label>Due This Week</ion-label>
+      </ion-segment-button>
+      <hr class="segmented-line"/>
+      <ion-segment-button value="month" class="segment-button">
+        <ion-label>Due This Month</ion-label>
+      </ion-segment-button>
+      <hr class="segmented-line"/>
+      <ion-segment-button value="custom" class="segment-button" style="min-width: auto;" disabled>
+        <ion-label>
+          <button (click)="rangePicker.open()" class="custom-btn" #openbtn *ngIf="this.finalResult1 !== undefined && this.finalResult2 !== undefined">
+            {{this.finalResult1}} - {{this.finalResult2}}
+          </button>
+          <button (click)="rangePicker.open()" class="custom-btn" #openbtn *ngIf="this.finalResult1 === undefined && this.finalResult2 === undefined">
+            Custom 
+          </button> 
+        </ion-label>    
+      </ion-segment-button>
+  </ion-segment>
+
+  <mat-form-field appearance="fill" class="example-form-field" style="visibility: hidden; width: 0;">
+    <mat-date-range-input [rangePicker]="rangePicker">
+      <input type="button" matStartDate [(ngModel)]="startDate">
+      <input type="button" matEndDate [(ngModel)]="endDate">
+    </mat-date-range-input>
+    <mat-date-range-picker #rangePicker>
+      <mat-date-range-picker-actions>
+        <button mat-button matDateRangePickerCancel>Cancel</button>
+        <button mat-raised-button color="primary" matDateRangePickerApply (click)="appliedDateRange(startDate, endDate);">Apply</button>
+      </mat-date-range-picker-actions>
+    </mat-date-range-picker>
+  </mat-form-field> 
+</div>
