@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { AuthModule, LogLevel, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
