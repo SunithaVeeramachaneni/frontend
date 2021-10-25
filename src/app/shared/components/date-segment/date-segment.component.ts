@@ -1,5 +1,7 @@
-import { Component, Input, OnInit , ViewChild, ElementRef} from '@angular/core';
-import {CommonService}   from '../../services/common.service';
+import { Component, OnInit , Output, EventEmitter} from '@angular/core';
+import { DateSegmentService } from './date-segment.service';
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-date-segment',
@@ -7,47 +9,42 @@ import {CommonService}   from '../../services/common.service';
   styleUrls: ['./date-segment.component.css']
 })
 export class DateSegmentComponent implements OnInit {
-  @Input() selectDate$;
-  
-  @ViewChild('openbtn') openbtn: ElementRef;
+
+  public selectDate:string;
+  @Output() dateRangeEvent = new EventEmitter<any>();
   startDate;
   endDate;
   dateRange;
+  customText:string = "Custom";
 
-  constructor(private _commonService:CommonService){}
+  constructor(private _dateSegmentService:DateSegmentService){}
 
   ngOnInit() {
-    this.selectDate$ = this._commonService.selectedDateAction$;
-    console.log(this.selectDate$);
+    this.selectDate = "month"
+    this.dateRangeEvent.emit(this._dateSegmentService.getStartAndEndDate(this.selectDate))
   }
 
   dateChanged(event){
     if(event.target.value !== 'custom') {
-      this._commonService.selectDate(event.target.value)
-    }
-    else {
-      this.openbtn?.nativeElement.click();
+      this.selectDate = event.target.value;
+      this.dateRangeEvent.emit(this._dateSegmentService.getStartAndEndDate(this.selectDate))
     }
   }
 
   appliedDateRange(start, end) {
-    let startDate =  new Date(start).toLocaleDateString();
-    let endDate = new Date(end).toLocaleDateString();
+    var sDate = moment(start);
+    sDate.set({hour:0,minute:0,second:0,millisecond:0})
+
+    var eDate = moment(end);
+    eDate.set({hour:23,minute:59,second:59,millisecond:0})
+
+    this.dateRange = {
+      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
+      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
+    };
+    this.customText = sDate.format('YYYY-MM-DD') + ' / ' + eDate.format('YYYY-MM-DD');
     
-    console.log(startDate, endDate);
-    this.dateRange = startDate + '-' + endDate;
-    
-  //   let selectedMembers:any[] = [];
-  //   if(this.allWorkOrders.inProgress.length !== null) {
-  //     for(let i=0; i< this.allWorkOrders.inProgress.length; i++) {
-  //       let dd = new Date(this.allWorkOrders.inProgress[i].dueDate).toLocaleDateString();
-  //       console.log(dd);
-  //       if(dd >= start && dd <= end) {
-  //         selectedMembers.push(this.allWorkOrders.inProgress[i]);
-  //       }
-  //     }
-  //   }
-  //   console.log(selectedMembers);
+    this.dateRangeEvent.emit(this.dateRange)
   }
 
 }

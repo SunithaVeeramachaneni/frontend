@@ -1,5 +1,5 @@
 <div>
-  <ion-segment mode="ios" (ionChange)="dateChanged($event)" [value]="selectDate$ | async" class="segment-group">
+  <ion-segment mode="ios" (ionChange)="dateChanged($event)" [value]="selectDate" class="segment-group">
       <ion-segment-button value="today" class="segment-button">
         <ion-label>Due Today</ion-label>
       </ion-segment-button>
@@ -12,15 +12,8 @@
         <ion-label>Due This Month</ion-label>
       </ion-segment-button>
       <hr class="segmented-line"/>
-      <ion-segment-button value="custom" class="segment-button" style="min-width: auto;" disabled>
-        <ion-label>
-          <button (click)="rangePicker.open()" class="custom-btn" #openbtn *ngIf="this.finalResult1 !== undefined && this.finalResult2 !== undefined">
-            {{this.finalResult1}} - {{this.finalResult2}}
-          </button>
-          <button (click)="rangePicker.open()" class="custom-btn" #openbtn *ngIf="this.finalResult1 === undefined && this.finalResult2 === undefined">
-            Custom 
-          </button> 
-        </ion-label>    
+      <ion-segment-button value="custom" class="segment-button" style="min-width: auto;" (click)="rangePicker.open()">
+        <ion-label> {{customText}} </ion-label>    
       </ion-segment-button>
   </ion-segment>
 

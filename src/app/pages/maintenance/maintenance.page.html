@@ -10,7 +10,7 @@
                            [workCenterList]="workCenterList"
                            [technicians]="technicians">
         </app-common-filter>
-        <app-date-segment [selectDate$]="selectDate$ | async"></app-date-segment>
+        <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)"></app-date-segment>
       </ion-col>
     </ion-row>
 </ion-toolbar>

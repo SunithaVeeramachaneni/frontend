@@ -3,13 +3,14 @@ import { SparepartsService } from './spareparts.service';
 import { IonSelect } from '@ionic/angular';
 import { data_test } from './spare-parts-data';
 import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
-import { combineLatest, Observable,of ,Subscription} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable,Subscription} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap,mergeMap,switchMap } from 'rxjs/operators';
 import { Technician } from '../../interfaces/technicians';
 import { DomSanitizer } from '@angular/platform-browser';
 import {CommonService}   from '../../shared/services/common.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
 @Component({
   selector: 'app-spare-parts',
   templateUrl: './spare-parts.page.html',
@@ -28,7 +29,7 @@ export class SparePartsComponent{
   public updatedWorkOrderList$: Observable<WorkOrders>;
   public filter: FormControl;
   public filter$: Observable<string>;
-  public selectDate$: Observable<string>;
+  public dateRange$: BehaviorSubject<any>;
 
   public workOrders: Observable<WorkOrder[]>
   public technicians$: Observable<Technician[]>
@@ -76,11 +77,12 @@ export class SparePartsComponent{
   constructor(private _sparepartsSvc: SparepartsService, 
               private sanitizer:DomSanitizer,
               private _commonService:CommonService,
-              private spinner: NgxSpinnerService,) {}
+              private spinner: NgxSpinnerService,
+              private _dateSegmentService: DateSegmentService) {}
 
   ngOnInit() {
     this.filterObj$= this._commonService.commonFilterAction$;
-    this.selectDate$ = this._commonService.selectedDateAction$;
+    this.dateRange$= new BehaviorSubject(this._dateSegmentService.getStartAndEndDate("month"));
     this.getWorkOrders();
     this.getTechnicians();
   }
@@ -93,9 +95,13 @@ export class SparePartsComponent{
     this.showFilters = !this.showFilters;
   }
 
+  dateRangeEventHandler($event:any) {
+    this.dateRange$.next($event);
+  }
+
   getWorkOrders() {
     this.spinner.show();
-    this.workOrderList$ =this.selectDate$.pipe(mergeMap(val=>{
+    this.workOrderList$ =this.dateRange$.asObservable().pipe(mergeMap(val=>{
       this.spinner.show();
       return this._sparepartsSvc.getAllWorkOrders(val);
     }))
@@ -148,41 +154,6 @@ assignTech(event,workorderid) {
  })
 }
 
-public filterDate(dueDate, filterDate){
-  if(filterDate === 'today')
-  return this.isToday(dueDate)
-  if(filterDate === 'month')
-  return this.isThisMonth(dueDate)
-  if(filterDate === 'week')
-  return this.isThisWeek(dueDate)
-}
-
-
-isThisWeek(someDate) {
-  const todayObj = new Date();
-  const todayDate = todayObj.getDate();
-  const todayDay = todayObj.getDay();
-
-  const firstDayOfWeek = new Date(todayObj.setDate(todayDate - todayDay));
-  const lastDayOfWeek = new Date(firstDayOfWeek);
-  lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6);
-
-  return someDate >= firstDayOfWeek && someDate <= lastDayOfWeek;
-}
-
-
- public isThisMonth = (someDate) => {
-  const today = new Date();
-  return someDate.getMonth() == today.getMonth() &&
-  someDate.getFullYear() == today.getFullYear()
-}
-
-public isToday = (someDate) => {
-  const today = new Date()
-  return someDate.getDate() == today.getDate() &&
-    someDate.getMonth() == today.getMonth() &&
-    someDate.getFullYear() == today.getFullYear()
-}
 
 public isOverdue = (dueDate, overdue) => {
   if(overdue !== 'No') return true;

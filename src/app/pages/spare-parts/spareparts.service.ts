@@ -26,7 +26,6 @@ export class SparepartsService {
       let technicians: Technician[] =[]
       let technician: Technician;
       rawTechnicians.forEach(rawTechnician => {
-        console.log(rawTechnician)
         technician = ({
           userName: rawTechnician['UserName'],
           userId: rawTechnician['UserID'],
@@ -44,10 +43,9 @@ export class SparepartsService {
     return updateResp$;
   }
 
-  getAllWorkOrders(date,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
+  getAllWorkOrders(dateRange,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     console.log("getAllWorkOrders")
-    let filterDate=this.getStartAndEndDate(date);
-    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${filterDate['startDate']}&enddate=${filterDate['endDate']}`, info);
+    let workOrders$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${dateRange['startDate']}&enddate=${dateRange['endDate']}`, info);
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { "1": [], "2": [], "3": [], "4": [],"5":[] };
       let workOrder: WorkOrder;
@@ -90,51 +88,6 @@ export class SparepartsService {
 
   parseJsonDate(jsonDateString) {
     return new Date(parseInt(jsonDateString.replace('/Date(', '')));
-  }
-
-  getStartAndEndDate=(date)=>{
-    if(date === 'today')
-    return this.todayStartAndEndDate();
-    if(date === 'month')
-    return this.monthStartAndEndDate()
-    if(date === 'week')
-    return this.weekStartAndEndDate()
-  }
-
-  todayStartAndEndDate=() =>{
-    var sDate = moment().utcOffset(0);
-    sDate.set({hour:0,minute:0,second:0,millisecond:0})
-    var eDate = moment().utcOffset(0);
-    eDate.set({hour:23,minute:59,second:59,millisecond:0})
-    return {
-      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-  }
-
-  weekStartAndEndDate=() =>{
-    var sDate = moment().startOf('week').utcOffset(0);
-    sDate.set({hour:0,minute:0,second:0,millisecond:0})
-
-    var eDate = moment().endOf('week').utcOffset(0);
-    eDate.set({hour:23,minute:59,second:59,millisecond:0})
-    return {
-      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-  }
-
-  monthStartAndEndDate=() =>{
-    var sDate = moment().startOf('month').utcOffset(0);
-    sDate.set({hour:0,minute:0,second:0,millisecond:0})
-
-    var eDate = moment().endOf('month').utcOffset(0);
-    eDate.set({hour:23,minute:59,second:59,millisecond:0})
-
-    return {
-      startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
   }
 
   formatTime = (inputHours) => { //move to utils directory

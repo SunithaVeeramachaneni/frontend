@@ -7,7 +7,7 @@
                            [showOverdueList]="showOverdueList" 
                            [priorityList]="priorityList">
         </app-common-filter>
-        <app-date-segment [selectDate$]="selectDate$"></app-date-segment>
+        <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)"></app-date-segment>
       </ion-col>
     </ion-row>
   </ion-toolbar>
