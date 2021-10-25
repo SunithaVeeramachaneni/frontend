@@ -108,6 +108,7 @@ describe('CategoryComponent', () => {
     expect(component.coverImages).toBeDefined();
     expect(component.coverImages).toEqual(COVER_IMAGES);
     expect(component.imageHeight).toBeDefined();
+    expect(component.path).toBeDefined();
   });
 
   describe('template', () => {
@@ -193,6 +194,7 @@ describe('CategoryComponent', () => {
       expect(component.f.coverImage.value).toBe(component.coverImages[0]);
       expect(component.files).toEqual([]);
       expect(component.title).toBe('Add New Category');
+      expect(component.path).toBe('category');
     });
 
     it('should set form values for edit category', () => {
@@ -214,6 +216,7 @@ describe('CategoryComponent', () => {
       expect(component.f.coverImage.value).toBe(Cover_Image);
       expect(component.files).toEqual([]);
       expect(component.title).toBe('Edit Category');
+      expect(component.path).toBe(`${CId}`);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith(
         Category_Name
       );
@@ -326,7 +329,7 @@ describe('CategoryComponent', () => {
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(instructionServiceSpy.uploadAttachments).toHaveBeenCalled();
       expect(instructionServiceSpy.uploadAttachments).toHaveBeenCalledTimes(1);
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith(image);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith(image, 'category');
       expect(component.files).toEqual([image]);
       expect(component.frmSubscribe.patchValue).toHaveBeenCalledWith({
         coverImage: image,
@@ -467,8 +470,9 @@ describe('CategoryComponent', () => {
 
     it('should call getBase64ImageData', () => {
       const src = 'image.jpg';
+      component.path = 'path';
       component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, component.path);
     });
   });
 

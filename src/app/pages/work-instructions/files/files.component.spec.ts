@@ -17,7 +17,7 @@ import { PlayerComponent } from '../player/player.component';
 import { ImportService } from '../services/import.service';
 import { InstructionService } from '../services/instruction.service';
 import { WiCommonService } from '../services/wi-common.services';
-import { mediaFiles, mediaFolders } from './file.component.mock';
+import { mediaFiles } from './file.component.mock';
 
 import { MediaFilesComponent } from './files.component';
 
@@ -36,7 +36,6 @@ describe('MediaFilesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-      'getAllFolders',
       'getAllMediaFiles',
       'deleteFiles',
       'getAllInstructionsByFilePath',
@@ -78,13 +77,8 @@ describe('MediaFilesComponent', () => {
     filesDe = fixture.debugElement;
     filesEl = filesDe.nativeElement;
 
-    (instructionServiceSpy.getAllFolders as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of(mediaFolders))
-      .and.callThrough();
-
-    (instructionServiceSpy.getAllMediaFiles as jasmine.Spy)
-      .withArgs(mediaFolders[0])
+    (instructionServiceSpy.getFiles as jasmine.Spy)
+      .withArgs('media', true)
       .and.returnValue(of(mediaFiles))
       .and.callThrough();
       

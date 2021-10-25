@@ -223,7 +223,7 @@ export const inst1StepDetails = [
     isCloned: null,
   },
   {
-    Attachment: '["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]',
+    Attachment: null,
     Description: null,
     Hints:
       '{"Title":"Hint","Active":"true","FieldValue":"<p>Sample Hint</p>","Position":3,"FieldType":"RTF","FieldCategory":"HINT"}',
@@ -239,7 +239,7 @@ export const inst1StepDetails = [
     Warnings:
       '{"Title":"Warning","Active":"true","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>","Position":2,"FieldType":"RTF","FieldCategory":"WARN"}',
     Fields:
-      '[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]',
+      '[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":""},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]',
     isCloned: null,
   },
 ];

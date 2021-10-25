@@ -259,6 +259,7 @@ describe('OverviewComponent', () => {
     expect(component.recentWorkInstruction).toBeDefined();
     expect(component.selectedInstructionData).toBeDefined();
     expect(component.coverImageFiles).toBeDefined();
+    expect(component.imageDataCalls).toBeDefined();
   });
 
   describe('updateCategoryOnSetCategoryChange', () => {
@@ -644,8 +645,26 @@ describe('OverviewComponent', () => {
 
     it('should call getBase64ImageData', () => {
       const src = 'image.jpg';
+      component.recentWorkInstruction = workInstruction[0];
       component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, component.recentWorkInstruction.Id);
+    });
+    
+    it(`should not call getBase64Image if getBase64ImageData already exists or image
+    data call already happend`, () => {
+      component.recentWorkInstruction = workInstruction[0];      
+      let src = 'image.jpg';
+      (base64HelperServiceSpy.getBase64ImageData as jasmine.Spy)
+        .withArgs(src, component.recentWorkInstruction.Id)
+        .and.returnValue(of(src))
+        .and.callThrough();
+      component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
+
+      component.imageDataCalls[src] = true;
+      component.getImageSrc(src);
+      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
+
     });
   });
 

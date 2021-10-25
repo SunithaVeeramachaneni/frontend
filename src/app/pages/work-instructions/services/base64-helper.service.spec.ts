@@ -11,7 +11,7 @@ describe('Base64HelperService', () => {
   let sanitizerSpy: DomSanitizer;
 
   beforeEach(() => {
-    instructionServiceSpy = jasmine.createSpyObj('InstructionService', ['getImage']);
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', ['getFile']);
     sanitizerSpy = jasmine.createSpyObj('DomSanitizer', ['bypassSecurityTrustResourceUrl']);
     TestBed.configureTestingModule({
       providers: [
@@ -56,18 +56,19 @@ describe('Base64HelperService', () => {
     it('should get base64 image', () => {
       const file = 'image.jpg';
       const value = 'aW1hZ2UuanBn';
-      (instructionServiceSpy.getImage as jasmine.Spy)
-        .withArgs({ file })
+      const path = 'path';
+      (instructionServiceSpy.getFile as jasmine.Spy)
+        .withArgs(`${path}/${file}`)
         .and.returnValue(of({ base64Response: value }))
         .and.callThrough();
       (sanitizerSpy.bypassSecurityTrustResourceUrl as jasmine.Spy)
         .withArgs(`data:image/jpg;base64, ${value}`)
         .and.returnValue(`data:image/jpg;base64, ${value}`)
         .and.callThrough();
-      service.getBase64Image(file);
-      expect(instructionServiceSpy.getImage).toHaveBeenCalledWith({ file });
+      service.getBase64Image(file, path);
+      expect(instructionServiceSpy.getFile).toHaveBeenCalledWith(`${path}/${file}`);
       expect(sanitizerSpy.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith(`data:image/jpg;base64, ${value}`);
-      expect(service.getBase64ImageData(file)).toBe(`data:image/jpg;base64, ${value}`);
+      expect(service.getBase64ImageData(file, path)).toBe(`data:image/jpg;base64, ${value}`);
     });
   });
 
@@ -85,12 +86,13 @@ describe('Base64HelperService', () => {
     it('should get base64Details with given key', () => {
       const file = 'image.jpg';
       const value = 'aW1hZ2UuanBn';
+      const path = 'path';
       (sanitizerSpy.bypassSecurityTrustResourceUrl as jasmine.Spy)
         .withArgs(value)
         .and.returnValue(value)
         .and.callThrough();
-      service.setBase64ImageDetails(file, value);
-      expect(service.getBase64ImageDetails()).toEqual({ [file]: 'aW1hZ2UuanBn' });
+      service.setBase64ImageDetails(file, value, path);
+      expect(service.getBase64ImageDetails()).toEqual({ [`${path}/${file}`]: 'aW1hZ2UuanBn' });
     });
   });
 
@@ -102,13 +104,13 @@ describe('Base64HelperService', () => {
     it('should get base64Details with given key', () => {
       const file = 'image.jpg';
       const value = 'aW1hZ2UuanBn';
+      const path = 'path';
       (sanitizerSpy.bypassSecurityTrustResourceUrl as jasmine.Spy)
         .withArgs(value)
         .and.returnValue(value)
         .and.callThrough();
-      service.setBase64ImageDetails(file, value);
-      service.setBase64ImageDetails(file, value);
-      expect(service.getBase64ImageData(file)).toBe('aW1hZ2UuanBn');
+      service.setBase64ImageDetails(file, value, path);
+      expect(service.getBase64ImageData(file, path)).toBe('aW1hZ2UuanBn');
     });
   });
 
@@ -120,13 +122,14 @@ describe('Base64HelperService', () => {
     it('should set base64Details with given key', () => {
       const file = 'image.jpg';
       const value = 'aW1hZ2UuanBn';
+      const path = 'path';
       (sanitizerSpy.bypassSecurityTrustResourceUrl as jasmine.Spy)
         .withArgs(value)
         .and.returnValue(value)
         .and.callThrough();
-      service.setBase64ImageDetails(file, value);
+      service.setBase64ImageDetails(file, value, path);
       expect(sanitizerSpy.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith(value);
-      expect(service['base64ImageDetails']).toEqual({ [file]: 'aW1hZ2UuanBn' });
+      expect(service['base64ImageDetails']).toEqual({ [`${path}/${file}`]: 'aW1hZ2UuanBn' });
     });
   });
 
@@ -136,8 +139,8 @@ describe('Base64HelperService', () => {
     });
 
     it('should delete specified key from the object', () => {
-      service.setBase64ImageDetails('image.jpg', 'aW1hZ2UuanBn');
-      service.deleteBase64ImageDetails('image.jpg');
+      service.setBase64ImageDetails('image.jpg', 'aW1hZ2UuanBn', 'path');
+      service.deleteBase64ImageDetails('image.jpg', 'path');
       expect(service['base64ImageDetails']).toEqual({});
     });
   });

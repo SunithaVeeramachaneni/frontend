@@ -254,10 +254,6 @@ describe('WorkInstructionsPage', () => {
   });
 
   it('should define varibales & set defaults', () => {
-    expect(component.wiDraftedList).toBeDefined();
-    expect(component.wiDraftedList).toEqual([]);
-    expect(component.wiFavList).toBeDefined();
-    expect(component.wiFavList).toEqual([]);
     expect(component.showMore).toBeDefined();
     expect(component.showMore).toBeFalse();
   });
@@ -266,7 +262,7 @@ describe('WorkInstructionsPage', () => {
     it('should contain lables, elements & attributes related to home', () => {
       spyOn(component, 'getBase64Images');
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-      component.ionViewWillEnter();
+      component.ngOnInit();
       fixture.detectChanges();
       const imgs = homeEl.querySelectorAll('ion-content img');
       expect(imgs[0].getAttribute('src')).toContain('search.svg');
@@ -371,7 +367,7 @@ describe('WorkInstructionsPage', () => {
         .and.returnValue(of(combineDrafts))
         .and.callThrough();
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-      component.ionViewWillEnter();
+      component.ngOnInit();
       fixture.detectChanges();
       expect(homeEl.querySelectorAll('.recents-favorites-row').length).toBe(1);
       expect(
@@ -423,10 +419,11 @@ describe('WorkInstructionsPage', () => {
     });
 
     it('should call getBase64Image if Cover_Image is not from assets', () => {
+      const { Id } = favorites[0];
       component.getBase64Images([{...favorites[0], Cover_Image: 'Thumbnail.jpg' }]);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', Id);
       expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledTimes(1);
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', Id);
       expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledTimes(1);
     });
   });
@@ -449,9 +446,6 @@ describe('WorkInstructionsPage', () => {
       ).toHaveBeenCalledWith(info);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
-      expect(component.wiFavList).toEqual(favorites);
-      expect(component.wiDraftedList).toEqual(drafts);
-      expect(component.wiRecentList).toEqual([...favorites, ...drafts]);
     });
 
     it('should handle error while setting work instructions', () => {
@@ -472,8 +466,6 @@ describe('WorkInstructionsPage', () => {
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to retrive favorites'} as HttpErrorResponse);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
-      expect(component.wiFavList).toEqual([]);
-      expect(component.wiDraftedList).toEqual([]);
     });
   });
 
@@ -564,32 +556,16 @@ describe('WorkInstructionsPage', () => {
   
   
 
-  describe('ionViewWillEnter', () => {
+  describe('ngOnInit', () => {
     it('should define function', () => {
-      expect(component.ionViewWillEnter).toBeDefined();
+      expect(component.ngOnInit).toBeDefined();
     });
 
     it('should call getAllFavsDraftsAndRecentIns', () => {
-      component.ionViewWillEnter();
+      component.ngOnInit();
       expect(
         component.getAllFavsDraftsAndRecentIns
       ).toHaveBeenCalledWith();
-      expect(wiCommonServiceSpy.updateCategoriesComponent).toHaveBeenCalledWith(true);
-      expect(component.imageDataCalls).toEqual({});
-    });
-  });
-
-  describe('ionViewWillLeave', () => {
-    it('should define function', () => {
-      expect(component.ionViewWillLeave).toBeDefined();
-    });
-
-    it('should unsubscribe subscription', () => {
-      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-      component.getAllFavsDraftsAndRecentIns();
-      spyOn(component['getAllFavAndDraftInstSubscription'], 'unsubscribe');
-      component.ionViewWillLeave();
-      expect(component['getAllFavAndDraftInstSubscription'].unsubscribe).toHaveBeenCalledWith();
     });
   });
 
@@ -600,34 +576,15 @@ describe('WorkInstructionsPage', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
-    it('should call getBase64Image & getBase64ImageData if source is not from assets', () => {
+    it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
-    });
-
-    it(`should not call getBase64Image if source is from assets or getBase64ImageData already exists or image
-    data call already happend`, () => {
-      let src = 'assets/work-instructions-icons/image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
-
-      src = 'image.jpg';
-      (base64HelperServiceSpy.getBase64ImageData as jasmine.Spy)
-        .withArgs(src)
-        .and.returnValue(of(src))
-        .and.callThrough();
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
-
-      component.imageDataCalls[src] = true;
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
-
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });

@@ -24,8 +24,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { CommonService } from '../../../shared/services/common.service';
 
 const categoryDetails = [
   {
@@ -128,7 +127,7 @@ describe('CategoryWiseInstructionsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
@@ -146,7 +145,9 @@ describe('CategoryWiseInstructionsComponent', () => {
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions/category/_UnassignedCategory_')
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -177,7 +178,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -188,20 +189,16 @@ describe('CategoryWiseInstructionsComponent', () => {
     wiComponentDe = fixture.debugElement;
     wiComponentEl = wiComponentDe.nativeElement;
     (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-      .withArgs(categoryId, info)
+      .withArgs(categoryId)
       .and.returnValue(of(instructions))
       .and.callThrough();
     (instructionServiceSpy.getSelectedCategory as jasmine.Spy)
-      .withArgs(categoryId, info)
+      .withArgs(categoryId)
       .and.returnValue(of(category1))
       .and.callThrough();
     (instructionServiceSpy.getUsers as jasmine.Spy)
       .withArgs()
       .and.returnValue(of(users))
-      .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
       .and.callThrough();
     fixture.detectChanges();
   });
@@ -215,8 +212,6 @@ describe('CategoryWiseInstructionsComponent', () => {
   });
 
   it('should define variables & set defaults', () => {
-    expect(component.wiDetailObject).toBeDefined();
-    expect(component.wiDetailObject).toBeNull();
     expect(component.selectedCategory).toBeDefined();
     expect(component.draftsConfig).toBeDefined();
     expect(component.draftsConfig).toEqual({
@@ -232,8 +227,6 @@ describe('CategoryWiseInstructionsComponent', () => {
       itemsPerPage: 5,
       directionLinks: false,
     });
-    expect(component.draftedInstructionsList).toBeDefined();
-    expect(component.publishedInstructionsList).toBeDefined();
     expect(component.search).toBeUndefined();
     expect(component.order).toBeDefined();
     expect(component.order).toBe('updated_at');
@@ -241,14 +234,13 @@ describe('CategoryWiseInstructionsComponent', () => {
     expect(component.reverse).toBeTrue();
     expect(component.reverseObj).toBeDefined();
     expect(component.reverseObj).toEqual({ updated_at: true });
-    expect(component.sortedCollection).toBeUndefined();
   });
 
   describe('template', () => {
     describe('drafts', () => {
       it('should contain labels related to category wise drafted work instrutions listing', (done) => {
         const [, drafted] = instructions;
-        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -325,7 +317,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -355,7 +346,7 @@ describe('CategoryWiseInstructionsComponent', () => {
 
       it('should display No Drafted Work Instructions in Category if componet doesnt have data', (done) => {
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([]))
           .and.callThrough();
         component.ngOnInit();
@@ -413,7 +404,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const draftedCopy = {...drafted};
         draftedCopy.Cover_Image = 'Thumbnail.jpg';
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([draftedCopy, published]))
           .and.callThrough();
         component.ngOnInit();
@@ -422,8 +413,8 @@ describe('CategoryWiseInstructionsComponent', () => {
         (tabs[0] as HTMLElement).click();
         fixture.detectChanges();
         fixture.whenStable().then(() => {
-          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
+          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
           done();
         });
       });
@@ -432,7 +423,7 @@ describe('CategoryWiseInstructionsComponent', () => {
     describe('published', () => {
       it('should contain labels related to category wise published work instrutions listing', (done) => {
         const [published] = instructions;
-        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -508,7 +499,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -538,7 +528,7 @@ describe('CategoryWiseInstructionsComponent', () => {
 
       it('should display No Published Work Instructions in Category if componet doesnt have data', (done) => {
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([]))
           .and.callThrough();
         component.ngOnInit();
@@ -603,7 +593,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const publishedCopy = {...published};
         publishedCopy.Cover_Image = 'Thumbnail.jpg';
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([drafted, publishedCopy]))
           .and.callThrough();
         component.ngOnInit();
@@ -613,8 +603,8 @@ describe('CategoryWiseInstructionsComponent', () => {
         fixture.detectChanges();
         fixture.whenStable().then(() => {
           fixture.detectChanges();
-          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', publishedCopy.Id);
+          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', publishedCopy.Id);
           done();
         });
       });
@@ -710,7 +700,6 @@ describe('CategoryWiseInstructionsComponent', () => {
       );
       component.getAuthors();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
-      expect(component.authors).toEqual(authors);
     });
   });
 
@@ -734,7 +723,6 @@ describe('CategoryWiseInstructionsComponent', () => {
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(component.draftedInstructionsList[0].IsFavorite).toBe(true);
         done();
       });
     });
@@ -775,7 +763,6 @@ describe('CategoryWiseInstructionsComponent', () => {
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(published.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(component.publishedInstructionsList[0].IsFavorite).toBe(false);
         done();
       });
     });
@@ -1007,13 +994,10 @@ describe('CategoryWiseInstructionsComponent', () => {
       component.getInstructionsWithCategoryName(categoryId);
       expect(
         instructionServiceSpy.getInstructionsByCategoryId
-      ).toHaveBeenCalledWith(categoryId, info);
+      ).toHaveBeenCalledWith(categoryId);
       expect(instructionServiceSpy.getSelectedCategory).toHaveBeenCalledWith(
-        categoryId,
-        info
+        categoryId
       );
-      expect(component.draftedInstructionsList).toEqual([{ ...drafted }]);
-      expect(component.publishedInstructionsList).toEqual([{ ...published }]);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(component.selectedCategory).toBe(Category_Name);
@@ -1022,20 +1006,17 @@ describe('CategoryWiseInstructionsComponent', () => {
     it('should handle error', () => {
       const error = 'Unable to get instructions';
       (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-        .withArgs(categoryId, info)
+        .withArgs(categoryId)
         .and.returnValue(throwError({message: error}))
         .and.callThrough();
       const { Category_Name } = category1;
       component.getInstructionsWithCategoryName(categoryId);
       expect(
         instructionServiceSpy.getInstructionsByCategoryId
-      ).toHaveBeenCalledWith(categoryId, info);
+      ).toHaveBeenCalledWith(categoryId);
       expect(instructionServiceSpy.getSelectedCategory).toHaveBeenCalledWith(
-        categoryId,
-        info
+        categoryId
       );
-      expect(component.draftedInstructionsList).toEqual([]);
-      expect(component.publishedInstructionsList).toEqual([]);
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: error} as HttpErrorResponse);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
@@ -1064,13 +1045,15 @@ describe('CategoryWiseInstructionsComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });
