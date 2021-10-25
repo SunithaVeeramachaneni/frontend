@@ -34,7 +34,6 @@ export class PublishedComponent implements OnInit {
   published$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
   readonly routingUrls = routingUrls;
-  routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set published(published: DummyComponent) {
     if (published) {
@@ -56,10 +55,9 @@ export class PublishedComponent implements OnInit {
 
   ngOnInit() {
     this.spinner.hide();
-    this.routeWithSearch = `${routingUrls.published.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.published.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.published.title))
       );
     this.getAllPublishedInstructions();
     this.AuthorDropDown();

@@ -52,7 +52,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     });
     const {CId: cid, Category_Name: title, Cover_Image: coverImage} = this.ref.data;
     this.categoryValidatedMsg = '';
-    this.path = cid ? cid : 'category';
+    this.path = cid ? `${cid}` : 'category';
 
     if (cid) {
       this.title = 'Edit Category';

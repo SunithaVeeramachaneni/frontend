@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router ,NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -22,7 +22,7 @@ const {
   styleUrls: ['./app.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewChecked {
   public logo = "../assets/img/svg/innov-logo.svg";
   public smallLogo = "../assets/img/svg/innov-small-logo.svg";
 
@@ -72,7 +72,8 @@ export class AppComponent implements OnInit {
   currentRouteUrl: string;
 
   constructor(private commonService: CommonService, 
-              private router: Router) { }
+              private router: Router,
+              private cdrf: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.commonService.minimizeSidebarAction$.subscribe(data => {
@@ -87,7 +88,7 @@ export class AppComponent implements OnInit {
     ).subscribe(
       (event: NavigationEnd)  => {
         this.currentRouteUrl = event.url;
-        this.commonService.updateCurrentRouteUrl(this.currentRouteUrl);
+        this.commonService.setCurrentRouteUrl(this.currentRouteUrl);
         this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
 
@@ -101,6 +102,10 @@ export class AppComponent implements OnInit {
     //   empId: '5000343'
     // };
     // localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
+  }
+
+  ngAfterViewChecked(): void {
+    this.cdrf.detectChanges();
   }
 
   toggleSubMenu(menus: any, currentRouteUrl: string, sidebarMinimized: boolean) {

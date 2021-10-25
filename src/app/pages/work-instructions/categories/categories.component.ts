@@ -10,7 +10,7 @@ import {ToastService} from '../../../shared/toast';
 import { ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { from, of, Subscription } from 'rxjs';
+import { from, of } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 
 @Component({
@@ -18,7 +18,7 @@ import { map, mergeMap, toArray } from 'rxjs/operators';
   templateUrl: 'categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
+export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked {
   p = 1;
   count = 4;
   config: any = {
@@ -73,7 +73,6 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
       this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
     }
   }
-  private updateCategoriesComponentActionSub: Subscription;
 
   constructor(private spinner: NgxSpinnerService,
               private overlayService: OverlayService,
@@ -236,11 +235,6 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           .subscribe(
             data => {
               this.spinner.hide();
-              if (category.Cover_Image && category.Cover_Image.indexOf('assets/') < 0) {
-                this._instructionSvc.deleteFile(`${category.Category_Id}/${category.Cover_Image}`).subscribe({
-                  error: error => console.log(error)
-                });
-              }
               this.categoriesList = [];
               this.getAllCategories();
               this._toastService.show({
@@ -267,11 +261,5 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
     } else {
       return {'object-fit': 'cover', 'border-radius': '3px', height: this.imageHeight ? this.imageHeight : '100%'};
     }
-  }
-
-  ngOnDestroy(): void {
-    if (this.updateCategoriesComponentActionSub) {
-      this.updateCategoriesComponentActionSub.unsubscribe();
-    }    
   }
 }

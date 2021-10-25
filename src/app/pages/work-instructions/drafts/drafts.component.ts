@@ -62,7 +62,7 @@ export class DraftsComponent implements OnInit {
     this.routeWithSearch = `${routingUrls.drafts.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.drafts.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.drafts.title))
       );
     this.getAllDraftedInstructions();
     this.AuthorDropDown();

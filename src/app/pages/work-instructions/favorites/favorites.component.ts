@@ -62,7 +62,7 @@ export class FavoritesComponent implements OnInit {
     this.routeWithSearch = `${routingUrls.favorites.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.favorites.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.favorites.title))
       );
     this.getAllWorkInstructionsByFav();
     this.AuthorDropDown();

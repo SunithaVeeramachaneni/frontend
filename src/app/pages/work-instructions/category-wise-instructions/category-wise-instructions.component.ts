@@ -3,11 +3,11 @@ import {Component, ChangeDetectionStrategy, OnInit, ViewChild, ChangeDetectorRef
 import {InstructionService} from '../services/instruction.service';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {ToastService} from '../../../shared/toast';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 
 import Swal from 'sweetalert2';
 import {NgxSpinnerService} from 'ngx-spinner';
-import { map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
@@ -210,21 +210,20 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
     const cid = this.route.snapshot.paramMap.get('cid');
     this.categoryId = cid;
     this.routeUrl = `${workInstructionsInfo.url}/category/${cid}`;
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
-      .pipe(
-        mergeMap(currentRouteUrl => 
-          this._instructionSvc.getSelectedCategory(cid)
-            .pipe(
-              map(category => {
-                const { Category_Name } = category;
-                this.selectedCategory = Category_Name;
-                this.commonService.updateHeaderTitle(this.selectedCategory);
-                this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
-                return currentRouteUrl;
-              })
-            )
-        )
-      );
+
+    this.currentRouteUrl$ = combineLatest([
+      this.commonService.currentRouteUrlAction$,
+      this._instructionSvc.getSelectedCategory(cid)
+    ]).pipe(
+      map(([currentRouteUrl, category]) => {
+        const { Category_Name } = category;
+        this.selectedCategory = Category_Name;
+        this.commonService.setHeaderTitle(this.selectedCategory);
+        this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+        return currentRouteUrl;
+      })
+    );
+
     this.getInstructionsWithCategoryName(cid);
     this.getAuthors();
   }

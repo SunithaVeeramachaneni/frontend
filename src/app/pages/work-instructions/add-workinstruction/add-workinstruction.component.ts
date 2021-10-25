@@ -69,7 +69,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
   titleErrors: any = {exists: false, required: false};
   addOrUpdateTitle = false;
   fileInfo: FileInfo;
-  currentRouteUrl$: Observable<string>;
   private titleChangeSubscription: Subscription;
   private stepDetailsSaveSubscription: Subscription;
   private publishInstructionSubscription: Subscription;
@@ -95,7 +94,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
     this.spinner.hide();
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$;
     this.insToBePublishedSubscription = this.store.select(getInsToBePublished)
       .subscribe(
         insToBePublished => this.insToBePublished = insToBePublished
@@ -103,7 +101,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
 
     this.instructionSubscription = combineLatest([
       this.store.select(getInstruction),
-      this.currentRouteUrl$
+      this.commonService.currentRouteUrlAction$
     ]).subscribe(
       ([instruction, currentRouteUrl]) => {
         this.selectedInstruction = { ...instruction };
@@ -111,7 +109,7 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
         const { FilePath: filePath, FileType: fileType, WI_Name } = this.selectedInstruction;
         this.fileInfo = { filePath, fileType };
         this.breadcrumbService.set(currentRouteUrl, { label: WI_Name ? WI_Name : 'Untitled Work Instruction' });
-        this.commonService.updateHeaderTitle(WI_Name ? WI_Name : 'Untitled Work Instruction');
+        this.commonService.setHeaderTitle(WI_Name ? WI_Name : 'Untitled Work Instruction');
       });
     
     this.stepsSubscription = this.store.select(getSteps).subscribe(

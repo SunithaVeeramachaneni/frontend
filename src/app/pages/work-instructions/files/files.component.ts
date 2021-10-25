@@ -56,7 +56,7 @@ export class MediaFilesComponent implements OnInit {
     this.spinner.hide();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.files.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.files.title))
       );
     this.getAllMediaFiles();
   }

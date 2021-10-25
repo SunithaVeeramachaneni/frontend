@@ -816,7 +816,15 @@ export class InstructionService {
               toArray()
             )
         ),
-        switchMap(() => this.removeCategory(category, info))
+        mergeMap(() => this.removeCategory(category, info)),
+        mergeMap(category => {
+          if (Object.keys(category).length && category.Cover_Image.indexOf('assets/') === -1) {
+            return this.deleteFile(`${category.Category_Id}/${category.Cover_Image}`, info)
+              .pipe(map(() => category))
+          } else {
+            return of(category);
+          }
+        })
       );
   }
 

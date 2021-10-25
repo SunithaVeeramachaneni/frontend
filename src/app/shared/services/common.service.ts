@@ -37,11 +37,11 @@ export class CommonService {
     this.commonFilterSubject.next(filterObj);
   }
 
-  updateCurrentRouteUrl(value: string) {
+  setCurrentRouteUrl(value: string) {
     this.currentRouteUrlSubject.next(value);
   }
 
-  updateHeaderTitle(value: string) {
+  setHeaderTitle(value: string) {
     this.headerTitleSubject.next(value);
   }
   
