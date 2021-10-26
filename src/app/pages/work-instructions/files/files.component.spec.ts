@@ -36,7 +36,7 @@ describe('MediaFilesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-      'getAllMediaFiles',
+      'getFiles',
       'deleteFiles',
       'getAllInstructionsByFilePath',
       'updateWorkInstruction',
@@ -81,7 +81,6 @@ describe('MediaFilesComponent', () => {
       .withArgs('media', true)
       .and.returnValue(of(mediaFiles))
       .and.callThrough();
-      
     fixture.detectChanges();
   }));
 

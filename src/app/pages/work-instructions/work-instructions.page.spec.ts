@@ -26,6 +26,10 @@ import { HeaderService } from '../../shared/services/header.service';
 import { logonUserDetails } from '../../shared/services/header.service.mock';
 import { importedWorkInstructions } from './work-instructions.page.mock';
 import { OverlayService } from './modal/overlay.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { userData$ } from '../../shared/components/header/header.component.mock';
+import { CommonService } from '../../shared/services/common.service';
+import { routingUrls } from '../../app.constants';
 
 const categoryDetails = [
   {
@@ -173,6 +177,8 @@ describe('WorkInstructionsPage', () => {
   let wiCommonServiceSpy: WiCommonService;
   let overlayServiceSpy: OverlayService;
   let headerServiceSpy: HeaderService;
+  let oidcSecurityServiceSpy: OidcSecurityService;
+  let commonServiceSpy: CommonService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -192,6 +198,14 @@ describe('WorkInstructionsPage', () => {
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
+      userData$: userData$
+    });
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions'),
+      headerTitleAction$: of(routingUrls.workInstructions.title),
+      minimizeSidebarAction$: of(false)
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -217,9 +231,10 @@ describe('WorkInstructionsPage', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
-        { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -230,15 +245,15 @@ describe('WorkInstructionsPage', () => {
     homeDe = fixture.debugElement;
     homeEl = homeDe.nativeElement;
     (instructionServiceSpy.getFavInstructions as jasmine.Spy)
-      .withArgs(info)
+      .withArgs()
       .and.returnValue(of(favorites))
       .and.callThrough();
     (instructionServiceSpy.getDraftedInstructions as jasmine.Spy)
-      .withArgs(info)
+      .withArgs()
       .and.returnValue(of(drafts))
       .and.callThrough();
     (instructionServiceSpy.getRecentInstructions as jasmine.Spy)
-      .withArgs(info)
+      .withArgs()
       .and.returnValue(of([...favorites, ...drafts]))
       .and.callThrough();
     (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
@@ -304,11 +319,23 @@ describe('WorkInstructionsPage', () => {
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
       expect(homeEl.querySelectorAll('app-header').length).toBe(1);
+      expect(homeEl.querySelectorAll('router-outlet').length).toBe(1);
       expect(homeEl.querySelectorAll('app-dummy').length).toBe(2);
       expect(component.getBase64Images).toHaveBeenCalledTimes(2);
     });
 
     it('should display No Drafted/Favorite Instructions found in case of no data', () => {
+      (instructionServiceSpy.getFavInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([]))
+        .and.callThrough();
+      (instructionServiceSpy.getDraftedInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([]))
+        .and.callThrough();
+      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
       const imgs = homeEl.querySelectorAll('ion-content img');
       expect(imgs[0].getAttribute('src')).toContain('search.svg');
       expect(imgs[1].getAttribute('src')).toContain('createwi.svg');
@@ -341,6 +368,55 @@ describe('WorkInstructionsPage', () => {
         homeEl.querySelectorAll('.recents-favorites-lst-header').length
       ).toBe(2);
       expect(homeEl.querySelectorAll('.recents-favorites-list').length).toBe(2);
+      expect(homeEl.querySelectorAll('.no-fav').length).toBe(2);
+      expect(homeEl.querySelectorAll('.no-fav')[0].textContent).toContain('No Drafted Instructions found !!');
+      expect(homeEl.querySelectorAll('.no-fav')[1].textContent).toContain('No Favorite Instructions found !!');
+      expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
+      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
+    });
+
+    it('should display No Resulst found in case of search term not found in data', () => {
+      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
+      component.ngOnInit();
+      const searchInput = homeEl.querySelector('input');
+      searchInput.value = 'testing';
+      searchInput.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      const imgs = homeEl.querySelectorAll('ion-content img');
+      expect(imgs[0].getAttribute('src')).toContain('search.svg');
+      expect(imgs[1].getAttribute('src')).toContain('createwi.svg');
+      const input = homeEl.querySelectorAll('input');
+      expect(input.length).toBe(2);
+      expect(input[0].getAttribute('placeholder')).toBe(
+        'Search by title or author'
+      );
+      const buttons = homeEl.querySelectorAll('button');
+      expect(buttons.length).toBe(5);
+      expect(buttons[0].textContent).toContain('CREATE WORK INSTRUCTION');
+      expect(buttons[0].getAttribute('routerLink')).toBe('/work-instructions/create');
+      expect(buttons[1].textContent).toContain('Toggle Dropdown');
+      expect(buttons[2].textContent).toContain('Import File');
+      expect(buttons[3].textContent).toContain('Copy Existing');
+      expect(buttons[4].textContent).toContain('Download Template');
+      const images = homeEl.querySelectorAll('button img');
+      expect(images[0].getAttribute('src')).toContain('createwi.svg');
+      expect(images[1].getAttribute('src')).toContain('save.svg');
+      expect(images[2].getAttribute('src')).toContain('copy.svg');
+      expect(images[3].getAttribute('src')).toContain('excel1.svg');
+      expect(homeEl.querySelectorAll('.recents-favorites-row').length).toBe(1);
+      expect(
+        homeEl.querySelectorAll('.recents-favorites-row')[0].textContent
+      ).toContain('Drafts');
+      expect(
+        homeEl.querySelectorAll('.recents-favorites-row')[0].textContent
+      ).toContain('Favorites');
+      expect(
+        homeEl.querySelectorAll('.recents-favorites-lst-header').length
+      ).toBe(2);
+      expect(homeEl.querySelectorAll('.recents-favorites-list').length).toBe(2);
+      expect(homeEl.querySelectorAll('.no-fav').length).toBe(2);
+      expect(homeEl.querySelectorAll('.no-fav')[0].textContent).toContain('No Results Found !!');
+      expect(homeEl.querySelectorAll('.no-fav')[1].textContent).toContain('No Results Found !!');
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
       expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
@@ -359,11 +435,11 @@ describe('WorkInstructionsPage', () => {
       const combineDrafts = [...drafts, ...draftsLatest];
       const combineFavorites = [...favorites, ...favoritesLatest];
       (instructionServiceSpy.getFavInstructions as jasmine.Spy)
-        .withArgs(info)
+        .withArgs()
         .and.returnValue(of(combineFavorites))
         .and.callThrough();
       (instructionServiceSpy.getDraftedInstructions as jasmine.Spy)
-        .withArgs(info)
+        .withArgs()
         .and.returnValue(of(combineDrafts))
         .and.callThrough();
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
@@ -411,6 +487,35 @@ describe('WorkInstructionsPage', () => {
         )
       ).toContain(`/work-instructions/edit,${combineFavorites[1].Id}`);
     });
+
+    it('should display work instructions home template if current route url is work instructions', () => {
+      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      expect(homeEl.querySelector('.content').childNodes.length).not.toBe(0);
+    });
+
+    it('should not display work instructions home template if current route url is not work instructions', () => {
+      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/drafts/hxhgyHj'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(homeEl.querySelector('.content')).toBeNull();
+    });
+
+    it('should contain app header title', () => {
+      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
+
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      expect(homeEl.querySelector('.header-title').textContent).toBe(routingUrls.workInstructions.title);
+    });
   });
 
   describe('getBase64Images', () => {
@@ -437,35 +542,24 @@ describe('WorkInstructionsPage', () => {
       expect(component.getAllFavsDraftsAndRecentIns).toBeDefined();
     });
 
-    it('should set work instructions favorites and drafts list', () => {
+    it('should set work instructions observable', () => {
       component.getAllFavsDraftsAndRecentIns();
       fixture.detectChanges();
-      expect(instructionServiceSpy.getFavInstructions).toHaveBeenCalledWith(info);
+      expect(instructionServiceSpy.getFavInstructions).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getDraftedInstructions
-      ).toHaveBeenCalledWith(info);
+      ).toHaveBeenCalledWith();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
-    });
-
-    it('should handle error while setting work instructions', () => {
-      (instructionServiceSpy.getFavInstructions as jasmine.Spy)
-        .withArgs(info)
-        .and.returnValue(throwError({message: 'Unable to retrive favorites'}))
-        .and.callThrough();
-      (instructionServiceSpy.getDraftedInstructions as jasmine.Spy)
-        .withArgs(info)
-        .and.returnValue(throwError({message: 'Unable to retrive drafts'}))
-        .and.callThrough();
-      component.getAllFavsDraftsAndRecentIns();
-      fixture.detectChanges();
-      expect(instructionServiceSpy.getFavInstructions).toHaveBeenCalledWith(info);
-      expect(
-        instructionServiceSpy.getDraftedInstructions
-      ).toHaveBeenCalledWith(info);
-      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to retrive favorites'} as HttpErrorResponse);
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      component.workInstructions$.subscribe(
+        workInstructions => {
+          expect(workInstructions.drafts).toEqual(drafts);
+          expect(workInstructions.favorites).toEqual(favorites);
+          expect(workInstructions.recents).toEqual([...favorites, ...drafts]);
+          expect(component.copyInstructionsData.favs).toEqual(favorites);
+          expect(component.copyInstructionsData.recents).toEqual([...favorites, ...drafts]);
+        }
+      )
     });
   });
 
@@ -510,17 +604,20 @@ describe('WorkInstructionsPage', () => {
       const file = new File([], 'excel-file.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       formData.append('file', file);
       const target = { files: [file] };
+      const time = new Date().getTime();
       (instructionServiceSpy.uploadWIExcel as jasmine.Spy)
         .withArgs(formData)
         .and.returnValue(of(importedWorkInstructions))
         .and.callThrough();
       spyOn(component, 'bulkUploadDialog');
+      spyOn(component, 'getS3Folder').and.returnValue(`bulkupload/${time}`);
       component.uploadFile({ target });
       expect(component.bulkUploadDialog).toHaveBeenCalledWith(component.bulkUploadComponent, {
         ...importedWorkInstructions,
         isAudioOrVideoFile: false,
         successUrl: '/work-instructions/drafts',
-        failureUrl: '/work-instructions'
+        failureUrl: '/work-instructions',
+        s3Folder: `bulkupload/${time}`
       });
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
     });
@@ -587,4 +684,16 @@ describe('WorkInstructionsPage', () => {
       expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
+
+  describe('getS3Folder', () => {
+    it('should define function', () => {
+      expect(component.getS3Folder).toBeDefined();
+    });
+
+    it('should return S3 folder path', () => {
+      const time = new Date().getTime();
+      expect(component.getS3Folder(time)).toBe(`bulkupload/${time}`);
+    });
+  });
+  
 });

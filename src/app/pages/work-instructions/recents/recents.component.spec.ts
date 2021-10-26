@@ -527,7 +527,7 @@ describe('RecentsComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
@@ -735,7 +735,7 @@ describe('RecentsComponent', () => {
       expect(component.getAllRecentInstructions).toBeDefined();
     });
 
-    it('should set recent work instructions list', () => {
+    it('should set recents observable', () => {
       component.getAllRecentInstructions();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(

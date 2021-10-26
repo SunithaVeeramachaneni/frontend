@@ -492,7 +492,7 @@ describe('PublishedComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
@@ -700,7 +700,7 @@ describe('PublishedComponent', () => {
       expect(component.getAllPublishedInstructions).toBeDefined();
     });
 
-    it('should set published work instructions list', () => {
+    it('should set published observable', () => {
       component.getAllPublishedInstructions();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(

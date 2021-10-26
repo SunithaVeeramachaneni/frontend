@@ -506,7 +506,7 @@ describe('DraftsComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
@@ -716,7 +716,7 @@ describe('DraftsComponent', () => {
       expect(component.getAllDraftedInstructions).toBeDefined();
     });
 
-    it('should set drafted work instructions list', () => {
+    it('should set drafts observable', () => {
       component.getAllDraftedInstructions();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(

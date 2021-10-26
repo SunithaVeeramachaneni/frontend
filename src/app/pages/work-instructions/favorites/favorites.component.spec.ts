@@ -541,7 +541,7 @@ describe('FavoritesComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
@@ -733,7 +733,7 @@ describe('FavoritesComponent', () => {
       expect(component.getAllWorkInstructionsByFav).toBeDefined();
     });
 
-    it('should set favorite work instructions list', () => {
+    it('should set favorite observable', () => {
       component.getAllWorkInstructionsByFav();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(

@@ -187,7 +187,9 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
     let att = [];
     attachments.forEach(value => {
       if (stepData[value].trim() && stepData[value.split('_Name')[0]]) {
-        att = [...att, stepData[value]];
+        if (!att.includes(stepData[value])) {
+          att = [...att, stepData[value]];
+        }
       }
     });
     if (att.length) {

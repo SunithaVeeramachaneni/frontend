@@ -898,7 +898,7 @@ describe('OverviewComponent', () => {
         .and.returnValue(of([{...steps[0], Attachment: JSON.stringify([imageName])}, steps[1] ]))
         .and.callThrough();
       (base64HelperServiceSpy.getImageContents as jasmine.Spy)
-        .withArgs([imageName])
+        .withArgs([imageName], `${wid}/${steps[0].StepId}`)
         .and.returnValue(of(IMAGECONTENT))
         .and.callThrough();
       spyOn(component, 'reactiveForm');
@@ -972,7 +972,7 @@ describe('OverviewComponent', () => {
         .and.returnValue(of([{...steps[0], Attachment: JSON.stringify([imageName])}, steps[1] ]))
         .and.callThrough();
       (base64HelperServiceSpy.getImageContents as jasmine.Spy)
-        .withArgs([imageName])
+        .withArgs([imageName], `${wid}/${steps[0].StepId}`)
         .and.returnValue(of(IMAGECONTENT))
         .and.callThrough();
       component.ngOnInit();

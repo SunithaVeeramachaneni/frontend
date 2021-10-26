@@ -35,7 +35,7 @@ export const importedWorkInstructions = {
       Hint: "Sample Hint",
       Attachment_1_Name: "SampleImgWIMVP.jpg",
       Attachment_1: "U2FtcGxlSW1nV0lNVlAuanBn",
-      Attachment_2_Name: "SampleImgWIMVP.jpg",
+      Attachment_2_Name: "SampleImgWIMVP1.jpg",
       Attachment_2: "U2FtcGxlSW1nV0lNVlAuanBn",
     },
     {
