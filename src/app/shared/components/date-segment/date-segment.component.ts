@@ -12,9 +12,9 @@ export class DateSegmentComponent implements OnInit {
 
   public selectDate:string;
   @Output() dateRangeEvent = new EventEmitter<any>();
-  startDate;
-  endDate;
-  dateRange;
+  startDate:any;
+  endDate:any;
+  dateRange:any;
   customText:string = "Custom";
 
   constructor(private _dateSegmentService:DateSegmentService){}
@@ -27,6 +27,9 @@ export class DateSegmentComponent implements OnInit {
   dateChanged(event){
     if(event.target.value !== 'custom') {
       this.selectDate = event.target.value;
+      this.startDate = '';
+      this.endDate = '';
+      this.customText = "Custom";
       this.dateRangeEvent.emit(this._dateSegmentService.getStartAndEndDate(this.selectDate))
     }
   }
@@ -42,7 +45,7 @@ export class DateSegmentComponent implements OnInit {
       startDate:sDate.format('YYYY-MM-DDTHH:mm:ss'),
       endDate:eDate.format('YYYY-MM-DDTHH:mm:ss')
     };
-    this.customText = sDate.format('YYYY-MM-DD') + ' / ' + eDate.format('YYYY-MM-DD');
+    this.customText = sDate.format('DD MMM YYYY') + ' - ' + eDate.format('DD MMM YYYY');
     
     this.dateRangeEvent.emit(this.dateRange)
   }

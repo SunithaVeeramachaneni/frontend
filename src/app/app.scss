@@ -85,5 +85,5 @@
 .mat-datepicker-content {
   position: relative;
   top: -50px;
-  left: 100%;
+  right: calc(100% - 550px);
 }

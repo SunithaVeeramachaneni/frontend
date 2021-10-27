@@ -1,5 +1,6 @@
 .split-pane-visible > ion-menu.custom-menu1 {
-  max-width: 290px!important;
+  max-width: 250px!important;
+  min-width: 250px!important;
   border: none;
 }
 
@@ -106,7 +107,8 @@ ion-menu.ios ion-item.selected mat-icon {
 
 .item.sc-ion-label-md-h, .item .sc-ion-label-md-h {
   font-family: Poppins;
-  font-size: 14px
+  font-size: 14px;
+  white-space: pre-wrap;
 }
 
 .p-0 {
@@ -131,7 +133,7 @@ ion-menu.ios ion-item.selected mat-icon {
   } 
 }
 
-@media screen and (max-width:990px) {
+@media screen and (max-width:1022px) {
   .min-app {
     position: fixed;
     top: 40%;
@@ -144,7 +146,7 @@ ion-menu.ios ion-item.selected mat-icon {
   } 
 }
 
-@media screen and (max-width:990px) {
+@media screen and (max-width:1022px) {
   .main-app {
     display: none;
   } 

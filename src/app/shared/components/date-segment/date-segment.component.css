@@ -17,7 +17,7 @@
     line-height: 16px;
     align-items: center;
     --color: #7D7D7D;
-    min-width: 100px;
+    min-width: auto;
   }
   
   .segment-button-checked {
