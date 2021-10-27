@@ -203,7 +203,7 @@ export class MaintenanceService {
       workOrderDesc: rawWorkOrder['AUFTEXT'],
       workCenter: rawWorkOrder['ARBPL'],
       equipmentName: rawWorkOrder['KTEXT'],
-      kitStatus: rawWorkOrder['TXT04'],
+      kitStatus: this.getKitStatus(rawWorkOrder),
       dueDate: this.parseJsonDate(rawWorkOrder['GLTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
@@ -212,6 +212,22 @@ export class MaintenanceService {
       timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       technician: assignedTechnician
     })
+  }
+
+  getKitStatus = (rawWorkOrder) =>{
+    let id = parseInt(rawWorkOrder.AUFNR)
+    let status = this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS'])
+    if (status !== 'unassigned' && status !== 'assigned') return null;
+    let kitStatus = null;
+    if(id%10 === 0 || id%10 ===1)
+      kitStatus = 'Waiting On Parts'
+      else
+      if(id%10 === 2 || id%10 === 3)
+        kitStatus = 'Parts Available'
+        else
+          kitStatus = 'Kit Ready'
+    return kitStatus
+
   }
 
   setAssigneeAndWorkCenter = async (params) => {

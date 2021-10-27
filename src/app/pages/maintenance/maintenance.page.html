@@ -53,7 +53,10 @@
               <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
               <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
               <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-              <span class="kit-ready">KIT READY</span>
+
+              <span *ngIf="workOrder.kitStatus==='Parts Available'" class="parts-available">PARTS AVAILABLE</span>
+              <span *ngIf="workOrder.kitStatus==='Waiting On Parts'" class="waiting-on-parts">WAITING ON PARTS</span>
+              <span *ngIf="workOrder.kitStatus==='Kit Ready'" class="kit-ready">KIT READY</span>
               <br/> 
               <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
               <span class="display-flex">
@@ -126,7 +129,10 @@
                   <span *ngIf="workOrder.priorityStatus==='High'" class="high-priority">HIGH</span>
                   <span *ngIf="workOrder.priorityStatus==='Medium'" class="medium-priority">MEDIUM</span>
                   <span *ngIf="workOrder.priorityStatus==='Low'" class="low-priority">LOW</span>
-                  <span class="kit-ready">KIT READY</span>
+
+                  <span *ngIf="workOrder.kitStatus==='Parts Available'" class="parts-available">PARTS AVAILABLE</span>
+                  <span *ngIf="workOrder.kitStatus==='Waiting On Parts'" class="waiting-on-parts">WAITING ON PARTS</span>
+                  <span *ngIf="workOrder.kitStatus==='Kit Ready'" class="kit-ready">KIT READY</span>
                   <br/>
                   <span class="kit-number">{{workOrder.workOrderID}} - {{workOrder.workOrderDesc}}</span>
                   <span class="display-flex">
