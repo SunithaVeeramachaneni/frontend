@@ -85,7 +85,7 @@ export const importedWorkInstructions = {
       SpareParts: "Sample Spare Part1, Sample Spare Part2",
       Tools: "Sample Tool1, Sample Tool2",
       Cover_Image_Name: "doc-placeholder.png",
-      Cover_Image: "",
+      Cover_Image: "U2FtcGxlSW1nV0lNVlAuanBn",
       StepTitle: "",
       Instruction: "",
       Warning: "",

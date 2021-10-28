@@ -96,7 +96,6 @@ export class RecentsComponent implements OnInit {
   }
 
   copyWI(ins) {
-    console.log(ins);
     this.spinner.show();
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };

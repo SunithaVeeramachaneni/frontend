@@ -93,8 +93,8 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
         tap(currentRouteUrl => {
-          this.commonService.setHeaderTitle(routingUrls.workInstructions.title);
           if (currentRouteUrl === routingUrls.workInstructions.url) {
+            this.commonService.setHeaderTitle(routingUrls.workInstructions.title);
             this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: true });
           } else {
             this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: false });

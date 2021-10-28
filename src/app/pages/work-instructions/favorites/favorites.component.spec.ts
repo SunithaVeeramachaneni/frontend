@@ -18,7 +18,7 @@ import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FavoritesComponent } from './favorites.component';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
@@ -105,9 +105,9 @@ const favorites = [
   },
 ];
 
-const users = [
+const users: User[] = [
   {
-    id: 1,
+    id: '1',
     first_name: 'Tester',
     last_name: 'One',
     email: 'tester.one@innovapptive.com',
@@ -116,7 +116,7 @@ const users = [
     empId: '5000353',
   },
   {
-    id: 2,
+    id: '2',
     first_name: 'Tester',
     last_name: 'Two',
     email: 'tester.two@innovapptive.com',
@@ -148,6 +148,7 @@ describe('FavoritesComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
@@ -203,6 +204,7 @@ describe('FavoritesComponent', () => {
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -321,7 +323,9 @@ describe('FavoritesComponent', () => {
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
       // ).toBe(`/work-instructions/favorites,${favorite1.Id}`);
       ).toContain(`/work-instructions/favorites`);
-
+      const copyWIButton = favoritesDe.query(By.css('#copyWorkInstruction'))
+        .nativeElement as HTMLElement;
+      expect(copyWIButton.textContent).toContain('Copy Work Instruction');
       expect(favoritesEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
         favoritesEl.querySelectorAll('app-custom-pagination-controls').length
@@ -529,7 +533,8 @@ describe('FavoritesComponent', () => {
       expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.routeWithSearch).toBe(`${routingUrls.favorites.url}?search=`);
       component.currentRouteUrl$.subscribe(
-        () => {
+        data => {
+          expect(data).toBe(routingUrls.favorites.url);
           expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.favorites.title);
         }
       )
@@ -741,6 +746,67 @@ describe('FavoritesComponent', () => {
       ).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.favorites$.subscribe(data => expect(data).toEqual(favorites));
+    });
+  });
+
+  describe('copyWI', () => {
+    const [favorite] = favorites;
+    beforeEach(() => {
+      (instructionServiceSpy.getFavInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([favorite]))
+        .and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(favorite.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...favorite, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getAllWorkInstructionsByFav');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = favoritesDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(favorite.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(component.getAllWorkInstructionsByFav).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(favorite.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getAllWorkInstructionsByFav');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = favoritesDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(favorite.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(component.getAllWorkInstructionsByFav).not.toHaveBeenCalled();
     });
   });
 

@@ -30,6 +30,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { userData$ } from '../../shared/components/header/header.component.mock';
 import { CommonService } from '../../shared/services/common.service';
 import { routingUrls } from '../../app.constants';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 const categoryDetails = [
   {
@@ -179,6 +180,7 @@ describe('WorkInstructionsPage', () => {
   let headerServiceSpy: HeaderService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let commonServiceSpy: CommonService;
+  let breadcrumbService: BreadcrumbService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -240,6 +242,7 @@ describe('WorkInstructionsPage', () => {
   }));
 
   beforeEach(() => {
+    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(WorkInstructionsPage);
     component = fixture.componentInstance;
     homeDe = fixture.debugElement;
@@ -261,6 +264,7 @@ describe('WorkInstructionsPage', () => {
       .and.returnValue(logonUserDetails)
       .and.callThrough();
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
+    spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });
 
@@ -663,6 +667,29 @@ describe('WorkInstructionsPage', () => {
       expect(
         component.getAllFavsDraftsAndRecentIns
       ).toHaveBeenCalledWith();
+    });
+
+    it('should set header title & breadcrumb', () => {
+      component.currentRouteUrl$.subscribe(
+        data => {
+          expect(data).toBe(routingUrls.workInstructions.url);
+          expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.workInstructions.title);
+          expect(breadcrumbService.set).toHaveBeenCalledWith(routingUrls.workInstructions.url, { skip: true });
+        }
+      );
+      component.headerTitle$.subscribe(data => expect(data).toBe(routingUrls.workInstructions.title));
+
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/drafts/hxhgyHj'));
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      component.currentRouteUrl$.subscribe(
+        () => {
+          expect(breadcrumbService.set).toHaveBeenCalledWith(routingUrls.workInstructions.url, { skip: false });
+        }
+      );
     });
   });
 

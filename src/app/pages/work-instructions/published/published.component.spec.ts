@@ -18,7 +18,7 @@ import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PublishedComponent } from './published.component';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
@@ -104,9 +104,9 @@ const published = [
   },
 ];
 
-const users = [
+const users: User[] = [
   {
-    id: 1,
+    id: '1',
     first_name: 'Tester',
     last_name: 'One',
     email: 'tester.one@innovapptive.com',
@@ -115,7 +115,7 @@ const users = [
     empId: '5000353',
   },
   {
-    id: 2,
+    id: '2',
     first_name: 'Tester',
     last_name: 'Two',
     email: 'tester.two@innovapptive.com',
@@ -146,6 +146,7 @@ describe('PublishedComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
@@ -197,6 +198,7 @@ describe('PublishedComponent', () => {
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -313,7 +315,9 @@ describe('PublishedComponent', () => {
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
       // ).toBe(`/work-instructions/published,${publish1.Id}`);
       ).toContain(`/work-instructions/published`);
-
+      const copyWIButton = publishedDe.query(By.css('#copyWorkInstruction'))
+        .nativeElement as HTMLElement;
+      expect(copyWIButton.textContent).toContain('Copy Work Instruction');
       expect(publishedEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
         publishedEl.querySelectorAll('app-custom-pagination-controls').length
@@ -480,7 +484,8 @@ describe('PublishedComponent', () => {
     it('should set header title', () => {
       expect(spinnerSpy.hide).toHaveBeenCalled();
       component.currentRouteUrl$.subscribe(
-        () => {
+        data => {
+          expect(data).toBe(routingUrls.published.url);
           expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.published.title);
         }
       )
@@ -708,6 +713,67 @@ describe('PublishedComponent', () => {
       ).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.published$.subscribe(data => expect(data).toEqual(published));
+    });
+  });
+
+  describe('copyWI', () => {
+    const [publish] = published;
+    beforeEach(() => {
+      (instructionServiceSpy.getPublishedInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([publish]))
+        .and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(publish.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...publish, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getAllPublishedInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = publishedDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(publish.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(component.getAllPublishedInstructions).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(publish.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getAllPublishedInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = publishedDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(publish.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(component.getAllPublishedInstructions).not.toHaveBeenCalled();
     });
   });
 

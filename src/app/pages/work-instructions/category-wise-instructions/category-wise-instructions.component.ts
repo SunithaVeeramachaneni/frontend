@@ -136,7 +136,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
     this._instructionSvc.copyWorkInstruction(ins.WI_Name, userName, info).subscribe(
       () => {
         this.spinner.hide();
-        this.getInstructionsWithCategoryName(this.categoryId);
+        this.getInstructionsByCategoryId(this.categoryId);
         this.cdrf.markForCheck();
         this._toastService.show({
           text: "Selected work instruction has been successfully copied",
@@ -168,7 +168,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
           .subscribe(
             data => {
               this.spinner.hide();
-              this.getInstructionsWithCategoryName(this.categoryId);
+              this.getInstructionsByCategoryId(this.categoryId);
               this.cdrf.markForCheck();
               this._toastService.show({
                 text: "Work instuction '"+ el.WI_Name +"' has been deleted",
@@ -185,7 +185,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
   }
 
 
-  getInstructionsWithCategoryName = (categoryId: string) => {
+  getInstructionsByCategoryId = (categoryId: string) => {
     this.spinner.show();
     this.workInstructions$ = this._instructionSvc.getInstructionsByCategoryId(categoryId)
     .pipe(
@@ -224,7 +224,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
       })
     );
 
-    this.getInstructionsWithCategoryName(cid);
+    this.getInstructionsByCategoryId(cid);
     this.getAuthors();
   }
 

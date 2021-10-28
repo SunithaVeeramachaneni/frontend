@@ -510,6 +510,7 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                         insResultedObject.insPostingFailed = true;
                         if (fieldKey + 1 === allKeys.length) {
                           this.loadResults = true;
+                          this.deleteFiles(this.s3Folder);
                         }
                       }
                     );

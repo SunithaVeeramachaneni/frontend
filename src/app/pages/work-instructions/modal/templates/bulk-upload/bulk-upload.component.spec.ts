@@ -52,7 +52,8 @@ describe('BulkUploadComponent', () => {
       'getCategoriesByName',
       'addCategory',
       'deleteWorkInstruction$',
-      'deleteFiles'
+      'deleteFiles',
+      'copyFiles'
     ]);
 
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
@@ -278,7 +279,7 @@ describe('BulkUploadComponent', () => {
       spyOn(component, 'convertStrToList').and.callThrough();
 
       expect(component.getStepFields(Instruction, Warning, Hint, ReactionPlan, JSON.stringify([Attachment_1_Name, Attachment_2_Name])))
-      .toBe('[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]');
+      .toBe('[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":["SampleImgWIMVP.jpg","SampleImgWIMVP1.jpg"]},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]');
       expect(component.convertStrToList).toHaveBeenCalledWith(Instruction.trim());
       expect(component.convertStrToList).toHaveBeenCalledWith(Warning.trim());
       expect(component.convertStrToList).toHaveBeenCalledWith(Hint.trim());
@@ -346,6 +347,14 @@ describe('BulkUploadComponent', () => {
       expect(component.getStepAttachments(step1)).toBe(JSON.stringify([Attachment_1_Name, Attachment_2_Name]));
     });
 
+    it('should remove duplicate attachments name if attachment_name field values are duplicate', () => {
+      const { WorkInstruction_Sample_2 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_2;
+      const { Attachment_1_Name } = step1;
+
+      expect(component.getStepAttachments(step1)).toBe(JSON.stringify([Attachment_1_Name]));
+    });
+
     it('should return null if attachment field values empty in step data', () => {
       const { WorkInstruction_Sample_1 } = importedWorkInstructions;
       const [ , , , step3 ] = WorkInstruction_Sample_1;
@@ -378,7 +387,7 @@ describe('BulkUploadComponent', () => {
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
       spyOn(router, 'navigate');
 
@@ -398,7 +407,7 @@ describe('BulkUploadComponent', () => {
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(throwError({ message: 'Unable to create instruction'}));
       spyOn(router, 'navigate');
 
@@ -477,6 +486,10 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
         .withArgs(step3, info)
         .and.returnValue(of(step3Resp));
+      (instructionServiceSpy.copyFiles as jasmine.Spy)
+        .withArgs({ folderPath: 'bulkupload', newFolderPath: `${step1Resp.WI_Id}/${step1Resp.StepId}`, copyFiles: JSON.parse(step1Resp.Attachment) }, info)
+        .and.returnValue(of(JSON.parse(step1Resp.Attachment)));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
       component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins, 'bulkupload');
@@ -488,7 +501,10 @@ describe('BulkUploadComponent', () => {
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step1, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step2, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
+      expect(instructionServiceSpy.copyFiles).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.copyFiles).toHaveBeenCalledWith({ folderPath: 'bulkupload', newFolderPath: `${step1Resp.WI_Id}/${step1Resp.StepId}`, copyFiles: JSON.parse(step1Resp.Attachment) }, info);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
         instruction: inst1Resp,
@@ -517,6 +533,7 @@ describe('BulkUploadComponent', () => {
         .withArgs(step3, info)
         .and.returnValue(throwError({message: 'Unable to create step'}));
       spyOn(component, 'deleteIns');
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
       component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins, 'bulkupload');
@@ -530,6 +547,7 @@ describe('BulkUploadComponent', () => {
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
       expect(component.deleteIns).toHaveBeenCalledWith({ ...ins, id: Id, WI_Id }, 0, false);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostingFailed: true, id: Id, WI_Id }]);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create step'} as HttpErrorResponse);
     });
@@ -543,6 +561,7 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
         .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
       component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins, 'bulkupload');
@@ -552,6 +571,7 @@ describe('BulkUploadComponent', () => {
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, 'bulkupload', info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(0);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
         instruction: inst3Resp,
@@ -567,6 +587,7 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
         .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(throwError({message: 'Unable to create instruction'}));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
       component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins, 'bulkupload');
@@ -575,6 +596,7 @@ describe('BulkUploadComponent', () => {
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, 'bulkupload', info);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostingFailed: true }]);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create instruction'} as HttpErrorResponse);
     });
@@ -652,7 +674,7 @@ describe('BulkUploadComponent', () => {
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
       spyOn(component, 'deleteIns');
 
@@ -773,6 +795,7 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs('Sample Category3', info)
         .and.returnValue(throwError({ message: 'Unable to fetch category details'}));
+      spyOn(component, 'deleteFiles');
 
       component.ngOnInit();
 
@@ -789,6 +812,7 @@ describe('BulkUploadComponent', () => {
       expect(component.ins).toEqual(ins);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to fetch category details'} as HttpErrorResponse);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
     });
   });
 
@@ -875,6 +899,18 @@ describe('BulkUploadComponent', () => {
       expect(component.getBorderStyle()).toEqual({ 'border-top': '1px solid #c8ced3' });
     });
   });
+
+  describe('deleteFiles', () => {
+    it('should define function', () => {
+      expect(component.deleteFiles).toBeDefined();
+    });
+
+    it('should delete files from S3 given folder', () => {
+      component.deleteFiles('bulkupload');
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith('bulkupload');
+    });
+  });
+  
 
   describe('ngOnDestroy', () => {
     it('should define function', () => {

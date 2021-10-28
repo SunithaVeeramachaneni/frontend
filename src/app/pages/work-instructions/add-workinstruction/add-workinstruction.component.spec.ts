@@ -182,6 +182,7 @@ describe('AddWorkinstructionComponent', () => {
       'publishInstruction',
       'deleteWorkInstruction$',
       'updateGatewayFavWorkInstruction',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
@@ -984,6 +985,66 @@ describe('AddWorkinstructionComponent', () => {
       component.updatePublishedTillSaveWI(false);
       expect(instructionServiceSpy.getInstructionsById).not.toHaveBeenCalled();
       expect(instructionServiceSpy.updateWorkInstruction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('copyWI', () => {
+    beforeEach(() => {
+      (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'snapshot')
+        .get as jasmine.Spy).and.returnValue({
+        paramMap: convertToParamMap({
+          id: editWI.Id,
+        }),
+      });
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(editWI.WI_Name, loggedInUser, info)
+        .and.returnValue(of({ instruction: { ...editWI, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = addWIDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(editWI.WI_Name, loggedInUser, info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(locationSpy.back).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(editWI.WI_Name, loggedInUser, info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = addWIDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(editWI.WI_Name, loggedInUser, info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(locationSpy.back).not.toHaveBeenCalled();
     });
   });
 
