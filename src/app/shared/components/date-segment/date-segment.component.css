@@ -1,0 +1,43 @@
+.segment-group {
+    margin: 0 10px;
+    height: 42px;
+}
+  
+.segmented-line {
+    border: 1px solid #CCCCCC;
+    height: 22px;
+    margin-top: 9px;
+}
+  
+  .segment-button {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    align-items: center;
+    --color: #7D7D7D;
+    min-width: auto;
+  }
+  
+  .segment-button-checked {
+    background: transparent;
+    --indicator-height: 0;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 16px;
+    align-items: center;
+    --color: #000000;
+  }
+
+  .custom-btn {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    align-items: center;
+    color: #7D7D7D;
+  }
