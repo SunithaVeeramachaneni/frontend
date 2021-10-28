@@ -81,3 +81,9 @@
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
+
+.mat-datepicker-content {
+  position: relative;
+  top: -50px;
+  right: calc(100% - 550px);
+}

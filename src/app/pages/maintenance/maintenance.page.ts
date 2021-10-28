@@ -14,6 +14,8 @@ import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
 import { base64String } from './image'
 import { CommonService } from '../../shared/services/common.service';
+import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
+import * as moment from 'moment';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
@@ -38,6 +40,7 @@ export class MaintenanceComponent {
   public workCenterList$: Observable<WorkCenter[]>;
   public technicians: any = {};
   public technicians$: Observable<any> = new Observable;
+  public dateRange$: BehaviorSubject<any>;
   public techniciansDisplayList$
   public selectedUser;
   headerTitle = "Maintenance Control Center";
@@ -49,9 +52,6 @@ export class MaintenanceComponent {
   public assignIcon = "../../../assets/maintenance-icons/assignIcon.svg";
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
-  public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
-  public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
-  public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
 
   public showOverdue: string = '';
   public showOverdueList: string[] = ['Yes', 'No'];
@@ -79,16 +79,17 @@ export class MaintenanceComponent {
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
-    private _commonService: CommonService
+    private _commonService: CommonService,
+    private _dateSegmentService: DateSegmentService
   ) { }
 
   ngOnInit() {
+    this.dateRange$= new BehaviorSubject(this._dateSegmentService.getStartAndEndDate("month"));
     this._maintenanceSvc.getAllWorkCenters().subscribe(resp => this.workCenterList = resp);
     this._maintenanceSvc.getTechnicians().subscribe(resp => {
       this.technicians = resp;
     })
     this.filter = new FormControl('');
-    this.selectDate$ = this._commonService.selectedDateAction$;
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
@@ -102,20 +103,17 @@ export class MaintenanceComponent {
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   }
 
-  dateChanged(event){
-    this._commonService.selectDate(event.target.value)
+  dateRangeEventHandler($event:any) {
+    this.dateRange$.next($event);
   }
-  
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    let base64Image = 'data:image/jpeg;base64,' + base64String;
-    this.base64Code = this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
     this.combinedWorkOrderList1$ = this.combineWorkOrders(this.workOrderList$, this.updateWorkOrderList$)
     this.combinedWorkOrderList$ = this.combineWorkOrders(this.combinedWorkOrderList1$, this.putWorkOrder$)
     this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.selectDate$, this.filterObj$]).pipe(
+    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.dateRange$, this.filterObj$]).pipe(
       map(([workOrders, filterDate, filterObj]) => {
         let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         for (let key in workOrders) {
@@ -202,40 +200,12 @@ export class MaintenanceComponent {
   }
 
   public filterDate(dueDate, filterDate) {
-    if (filterDate === 'today')
-      return this.isToday(dueDate)
-    if (filterDate === 'month')
-      return this.isThisMonth(dueDate)
-    if (filterDate === 'week')
-      return this.isThisWeek(dueDate)
-    return true
+    var sDate = moment(dueDate);
+    sDate.set({hour:0,minute:0,second:0,millisecond:0})
+    let date = sDate.format('YYYY-MM-DDTHH:mm:ss');
+    return date >= filterDate.startDate && date <= filterDate.endDate;
   }
 
-  isThisWeek(someDate) {
-    const todayObj = new Date();
-    const todayDate = todayObj.getDate();
-    const todayDay = todayObj.getDay();
-
-    const firstDayOfWeek = new Date(todayObj.setDate(todayDate - todayDay));
-    const lastDayOfWeek = new Date(firstDayOfWeek);
-    lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6);
-
-    return someDate >= firstDayOfWeek && someDate <= lastDayOfWeek;
-  }
-
-
-  public isThisMonth = (someDate) => {
-    const today = new Date();
-    return someDate.getMonth() == today.getMonth() &&
-      someDate.getFullYear() == today.getFullYear()
-  }
-
-  public isToday = (someDate) => {
-    const today = new Date()
-    return someDate.getDate() == today.getDate() &&
-      someDate.getMonth() == today.getMonth() &&
-      someDate.getFullYear() == today.getFullYear()
-  }
 
   public isOverdue = (dueDate, overdue) => {
     if (overdue !== 'No') return true;
