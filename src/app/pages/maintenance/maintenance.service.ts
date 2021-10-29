@@ -219,12 +219,7 @@ export class MaintenanceService {
     let status = this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS'])
     if (status !== 'unassigned' && status !== 'assigned') return null;
     let kitStatus = null;
-    if(id%10 === 0 || id%10 ===1)
-      kitStatus = 'Waiting On Parts'
-      else
-      if(id%10 === 2 || id%10 === 3)
-        kitStatus = 'Parts Available'
-        else
+    if(rawWorkOrder['TXT04'] === 'KITD:INIT')
           kitStatus = 'Kit Ready'
     return kitStatus
 

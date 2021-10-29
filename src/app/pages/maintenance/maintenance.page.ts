@@ -60,7 +60,7 @@ export class MaintenanceComponent {
   public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
   public kitStatus: string[] = [];
-  public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
+  public kitStatusList: string[] = ['Kit Ready']//, 'Parts Available', 'Waiting On Parts'];
 
   public workCenter: string[] = [];
 
