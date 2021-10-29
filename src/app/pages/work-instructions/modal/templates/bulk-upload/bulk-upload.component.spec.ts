@@ -39,7 +39,7 @@ describe('BulkUploadComponent', () => {
 
   beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
-      data: { ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' }
+      data: { ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' }
     });
     alertServiceSpy = jasmine.createSpyObj('AlertService', [
       'success',
@@ -51,7 +51,9 @@ describe('BulkUploadComponent', () => {
       'addStepFromImportedData',
       'getCategoriesByName',
       'addCategory',
-      'deleteWorkInstruction$'
+      'deleteWorkInstruction$',
+      'deleteFiles',
+      'copyFiles'
     ]);
 
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
@@ -97,6 +99,9 @@ describe('BulkUploadComponent', () => {
     (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
       .withArgs('Sample Category3', info)
       .and.returnValue(of([category3]));
+    (instructionServiceSpy.deleteFiles as jasmine.Spy)
+      .withArgs('bulkupload')
+      .and.returnValue(of('bulkupload'));
     addInsSpy = spyOn(component, 'addIns');
     localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
     fixture.detectChanges();
@@ -274,7 +279,7 @@ describe('BulkUploadComponent', () => {
       spyOn(component, 'convertStrToList').and.callThrough();
 
       expect(component.getStepFields(Instruction, Warning, Hint, ReactionPlan, JSON.stringify([Attachment_1_Name, Attachment_2_Name])))
-      .toBe('[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":["SampleImgWIMVP.jpg","SampleImgWIMVP.jpg"]},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]');
+      .toBe('[{"Title":"Attachment","Position":0,"Active":"true","FieldCategory":"ATT","FieldType":"ATT","FieldValue":["SampleImgWIMVP.jpg","SampleImgWIMVP1.jpg"]},{"Title":"Instruction","Position":1,"Active":"true","FieldCategory":"INS","FieldType":"RTF","FieldValue":"<ol><li>Sample Instruction1</li><li>Sample Instruction2</li></ol>"},{"Title":"Warning","Position":2,"Active":"true","FieldCategory":"WARN","FieldType":"RTF","FieldValue":"<ul><li> Sample Warning1 </li><li> Sample Warning2</li></ul>"},{"Title":"Hint","Position":3,"Active":"true","FieldCategory":"HINT","FieldType":"RTF","FieldValue":"<p>Sample Hint</p>"},{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":"<p>Sample ReactionPlan</p>"}]');
       expect(component.convertStrToList).toHaveBeenCalledWith(Instruction.trim());
       expect(component.convertStrToList).toHaveBeenCalledWith(Warning.trim());
       expect(component.convertStrToList).toHaveBeenCalledWith(Hint.trim());
@@ -334,12 +339,27 @@ describe('BulkUploadComponent', () => {
       expect(component.getStepAttachments).toBeDefined();
     });
 
-    it('should return attachments if attachment_name field values present in step data', () => {
+    it('should return attachments if attachment & attachment_name field values present in step data', () => {
       const { WorkInstruction_Sample_1 } = importedWorkInstructions;
       const [ , step1 ] = WorkInstruction_Sample_1;
       const {Attachment_1_Name, Attachment_2_Name} = step1;
 
       expect(component.getStepAttachments(step1)).toBe(JSON.stringify([Attachment_1_Name, Attachment_2_Name]));
+    });
+
+    it('should remove duplicate attachments name if attachment_name field values are duplicate', () => {
+      const { WorkInstruction_Sample_2 } = importedWorkInstructions;
+      const [ , step1 ] = WorkInstruction_Sample_2;
+      const { Attachment_1_Name } = step1;
+
+      expect(component.getStepAttachments(step1)).toBe(JSON.stringify([Attachment_1_Name]));
+    });
+
+    it('should return null if attachment field values empty in step data', () => {
+      const { WorkInstruction_Sample_1 } = importedWorkInstructions;
+      const [ , , , step3 ] = WorkInstruction_Sample_1;
+
+      expect(component.getStepAttachments(step3)).toBeNull();
     });
 
     it('should return null if attachment_name field values empty in step data', () => {
@@ -362,12 +382,12 @@ describe('BulkUploadComponent', () => {
     it('should navigate to successUrl when click on okay if upload is success and drafted instruction count is non zero', () => {
       const { WorkInstruction_Sample_3 } = importedWorkInstructions;
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
       spyOn(router, 'navigate');
 
@@ -382,12 +402,12 @@ describe('BulkUploadComponent', () => {
     it('should navigate to failureUrl when click on okay if upload is failure or drafted instruction count is zero', () => {
       const { WorkInstruction_Sample_3 } = importedWorkInstructions;
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(throwError({ message: 'Unable to create instruction'}));
       spyOn(router, 'navigate');
 
@@ -453,9 +473,9 @@ describe('BulkUploadComponent', () => {
       const { Id, WI_Id} = inst1Resp;
       const ins = {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false};
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_1, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_1, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst1Details, info)
+        .withArgs(inst1Details, 'bulkupload', info)
         .and.returnValue(of(inst1Resp));
       (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
         .withArgs(step1, info)
@@ -466,18 +486,25 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
         .withArgs(step3, info)
         .and.returnValue(of(step3Resp));
+      (instructionServiceSpy.copyFiles as jasmine.Spy)
+        .withArgs({ folderPath: 'bulkupload', newFolderPath: `${step1Resp.WI_Id}/${step1Resp.StepId}`, copyFiles: JSON.parse(step1Resp.Attachment) }, info)
+        .and.returnValue(of(JSON.parse(step1Resp.Attachment)));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
-      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins);
+      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins, 'bulkupload');
 
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, info);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, 'bulkupload', info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(3);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step1, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step2, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
+      expect(instructionServiceSpy.copyFiles).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.copyFiles).toHaveBeenCalledWith({ folderPath: 'bulkupload', newFolderPath: `${step1Resp.WI_Id}/${step1Resp.StepId}`, copyFiles: JSON.parse(step1Resp.Attachment) }, info);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
         instruction: inst1Resp,
@@ -492,9 +519,9 @@ describe('BulkUploadComponent', () => {
       const { Id, WI_Id} = inst1Resp;
       const ins = {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false};
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_1, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_1, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst1Details, info)
+        .withArgs(inst1Details, 'bulkupload', info)
         .and.returnValue(of(inst1Resp));
       (instructionServiceSpy.addStepFromImportedData as jasmine.Spy)
         .withArgs(step1, info)
@@ -506,19 +533,21 @@ describe('BulkUploadComponent', () => {
         .withArgs(step3, info)
         .and.returnValue(throwError({message: 'Unable to create step'}));
       spyOn(component, 'deleteIns');
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
-      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins);
+      component.addIns(inst1Details, WorkInstruction_Sample_1, Object.keys({ WorkInstruction_Sample_1 }), 0, ins, 'bulkupload');
 
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, info);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst1Details, 'bulkupload', info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(3);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step1, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step2, info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledWith(step3, info);
       expect(component.deleteIns).toHaveBeenCalledWith({ ...ins, id: Id, WI_Id }, 0, false);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostingFailed: true, id: Id, WI_Id }]);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create step'} as HttpErrorResponse);
     });
@@ -528,19 +557,21 @@ describe('BulkUploadComponent', () => {
       const { Id, WI_Id} = inst3Resp;
       const ins = {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: false};
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
-      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins);
+      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins, 'bulkupload');
       
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, info);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, 'bulkupload', info);
       expect(instructionServiceSpy.addStepFromImportedData).toHaveBeenCalledTimes(0);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostedSuccessfully: true, id: Id, WI_Id }]);
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.addInstructionWithSteps({
         instruction: inst3Resp,
@@ -552,18 +583,20 @@ describe('BulkUploadComponent', () => {
       const { WorkInstruction_Sample_3 } = importedWorkInstructions;
       const ins = {instructionName: 'Sample WorkInstruction3', insPostedSuccessfully: false, insPostingFailed: false};
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(throwError({message: 'Unable to create instruction'}));
+      spyOn(component, 'deleteFiles');
       component.ins = [ins];
 
-      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins);
+      component.addIns(inst3Details, WorkInstruction_Sample_3, Object.keys({ WorkInstruction_Sample_3 }), 0, ins, 'bulkupload');
 
       expect(store.dispatch).toHaveBeenCalledWith(BulkUploadActions.resetInstructionWithSteps());
       expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, info);
+      expect(instructionServiceSpy.addInstructionFromImportedData).toHaveBeenCalledWith(inst3Details, 'bulkupload', info);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
       expect(component.ins).toEqual([{ ...ins, insPostingFailed: true }]);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: 'Unable to create instruction'} as HttpErrorResponse);
     });
@@ -636,12 +669,12 @@ describe('BulkUploadComponent', () => {
     it('should delete instruction when click on delete icon', () => {
       const { WorkInstruction_Sample_3 } = importedWorkInstructions;
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ WorkInstruction_Sample_3, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs('Sample Category3', info)
         .and.returnValue(of([category3]));
       (instructionServiceSpy.addInstructionFromImportedData as jasmine.Spy)
-        .withArgs(inst3Details, info)
+        .withArgs(inst3Details, 'bulkupload', info)
         .and.returnValue(of(inst3Resp));
       spyOn(component, 'deleteIns');
 
@@ -698,12 +731,13 @@ describe('BulkUploadComponent', () => {
       expect(component.isAudioOrVideoFile).toBeUndefined();
       expect(component.successUrl).toBeUndefined();
       expect(component.failureUrl).toBeUndefined();
+      expect(component.s3Folder).toBeUndefined();
       expect(component.ins).toEqual([]);
     });
 
     it('should call addIns function on instruction service call success response', () => {
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       const { WorkInstruction_Sample_1, WorkInstruction_Sample_2, WorkInstruction_Sample_3 } = importedWorkInstructions;
       const ins = [
         {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false},
@@ -729,21 +763,22 @@ describe('BulkUploadComponent', () => {
       expect(component.isAudioOrVideoFile).toBe(false);
       expect(component.successUrl).toBe('/work-instructions/drafts');
       expect(component.failureUrl).toBe('/work-instructions');
+      expect(component.s3Folder).toBe('bulkupload');
       expect(instructionServiceSpy.getAllBusinessObjects).toHaveBeenCalledWith();
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category1', info);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category2', info);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category3', info);
       expect(component.addCategory).toHaveBeenCalledTimes(1);
       expect(component.addCategory).toHaveBeenCalledWith('Sample Category3', info);
-      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1);
-      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2);
-      expect(component.addIns).toHaveBeenCalledWith(inst3Details, [], Object.keys(importedWorkInstructions), 2, ins3);
+      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1, 'bulkupload');
+      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2, 'bulkupload');
+      expect(component.addIns).toHaveBeenCalledWith(inst3Details, [], Object.keys(importedWorkInstructions), 2, ins3, 'bulkupload');
       expect(component.ins).toEqual(ins);
     });
 
     it('should handle error on instruction service call failure response', () => {
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data').get as jasmine.Spy)
-        .and.returnValue({ ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions' });
+        .and.returnValue({ ...importedWorkInstructions, isAudioOrVideoFile: false, successUrl: '/work-instructions/drafts', failureUrl: '/work-instructions', s3Folder: 'bulkupload' });
       const { WorkInstruction_Sample_1, WorkInstruction_Sample_2 } = importedWorkInstructions;
       const ins = [
         {instructionName: 'Sample WorkInstruction1', insPostedSuccessfully: false, insPostingFailed: false},
@@ -760,21 +795,24 @@ describe('BulkUploadComponent', () => {
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs('Sample Category3', info)
         .and.returnValue(throwError({ message: 'Unable to fetch category details'}));
+      spyOn(component, 'deleteFiles');
 
       component.ngOnInit();
 
       expect(component.isAudioOrVideoFile).toBe(false);
       expect(component.successUrl).toBe('/work-instructions/drafts');
       expect(component.failureUrl).toBe('/work-instructions');
+      expect(component.s3Folder).toBe('bulkupload');
       expect(instructionServiceSpy.getAllBusinessObjects).toHaveBeenCalledWith();
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category1', info);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category2', info);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith('Sample Category3', info);
-      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1);
-      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2);
+      expect(component.addIns).toHaveBeenCalledWith(inst1Details, WorkInstruction_Sample_1, Object.keys(importedWorkInstructions), 0, ins1, 'bulkupload');
+      expect(component.addIns).toHaveBeenCalledWith(inst2Details, WorkInstruction_Sample_2, Object.keys(importedWorkInstructions), 1, ins2, 'bulkupload');
       expect(component.ins).toEqual(ins);
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to fetch category details'} as HttpErrorResponse);
       expect(component.loadResults).toBe(true);
+      expect(component.deleteFiles).toHaveBeenCalledWith('bulkupload');
     });
   });
 
@@ -861,6 +899,18 @@ describe('BulkUploadComponent', () => {
       expect(component.getBorderStyle()).toEqual({ 'border-top': '1px solid #c8ced3' });
     });
   });
+
+  describe('deleteFiles', () => {
+    it('should define function', () => {
+      expect(component.deleteFiles).toBeDefined();
+    });
+
+    it('should delete files from S3 given folder', () => {
+      component.deleteFiles('bulkupload');
+      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith('bulkupload');
+    });
+  });
+  
 
   describe('ngOnDestroy', () => {
     it('should define function', () => {

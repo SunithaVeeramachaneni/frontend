@@ -1,5 +1,5 @@
 <ng-container *ngIf="(currentRouteUrl$ | async) as currentRouteUrl">
-  <div class="p-l-20 p-t-20 recents-main" *ngIf="currentRouteUrl === routingUrls.recents.url || currentRouteUrl.indexOf(routeWithSearch) === 0"> 
+  <div class="p-l-20 p-t-20 recents-main" *ngIf="currentRouteUrl === routingUrls.recents.url"> 
     <div class="input-prepend input-group p-b-10">
       <div class="input-group-prepend">
         <span class="input-group-text">

@@ -18,13 +18,13 @@ import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RecentsComponent } from './recents.component';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { CommonService } from '../../../shared/services/common.service';
+import { routingUrls } from '../../../app.constants';
 
 const categoryDetails = [
   {
@@ -104,7 +104,7 @@ const recents = [
   },
 ];
 
-const users = [
+const users: User[] = [
   {
     id: '1',
     first_name: 'Tester',
@@ -135,7 +135,7 @@ describe('RecentsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
   let recentsDe: DebugElement;
   let recentsEl: HTMLElement;
 
@@ -146,13 +146,16 @@ describe('RecentsComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions/recents')
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -177,7 +180,7 @@ describe('RecentsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -195,10 +198,7 @@ describe('RecentsComponent', () => {
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -211,7 +211,6 @@ describe('RecentsComponent', () => {
   });
 
   it('should define varibales & set defaults', () => {
-    expect(component.recents).toBeDefined();
     expect(component.config).toBeDefined();
     expect(component.config).toEqual({
       id: 'recents',
@@ -225,9 +224,15 @@ describe('RecentsComponent', () => {
     expect(component.reverse).toBeTrue();
     expect(component.reverseObj).toBeDefined();
     expect(component.reverseObj).toEqual({ updated_at: true });
-    expect(component.authors).toBeDefined();
     expect(component.CreatedBy).toBeDefined();
     expect(component.CreatedBy).toBe('');
+    expect(component.EditedBy).toBeDefined();
+    expect(component.EditedBy).toBe('');
+    expect(component.currentRouteUrl$).toBeDefined();
+    expect(component.recents$).toBeDefined();
+    expect(component.authors$).toBeDefined();
+    expect(component.routingUrls).toBeDefined();
+    expect(component.routingUrls).toEqual(routingUrls);
   });
 
   describe('template', () => {
@@ -245,7 +250,7 @@ describe('RecentsComponent', () => {
       expect(recentsEl.querySelectorAll('input').length).toBe(1);
       expect(recentsEl.querySelectorAll('select').length).toBe(1);
       expect(recentsEl.querySelectorAll('option').length).toBe(3);
-      expect(recentsEl.querySelector('ion-content img').getAttribute('src')).toContain(
+      expect(recentsEl.querySelector('img').getAttribute('src')).toContain(
         'search.svg'
       );
       expect(
@@ -310,13 +315,15 @@ describe('RecentsComponent', () => {
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
       // ).toBe(`/work-instructions/recents,${recent1.Id}`);
       ).toContain(`/work-instructions/recents`);
-
+      const copyWIButton = recentsDe.query(By.css('#copyWorkInstruction'))
+        .nativeElement as HTMLElement;
+      expect(copyWIButton.textContent).toContain('Copy Work Instruction');
       expect(recentsEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
         recentsEl.querySelectorAll('app-custom-pagination-controls').length
       ).toBe(1);
       expect(recentsEl.querySelectorAll('app-dummy').length).toBe(1);
-      expect(recentsEl.querySelectorAll('app-header').length).toBe(1);
+      expect(recentsEl.querySelectorAll('router-outlet').length).toBe(1);
     });
 
     it('should display No Results Found if search item not present in work instructions', () => {
@@ -469,8 +476,30 @@ describe('RecentsComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', recent.Id);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', recent.Id);
+    });
+
+    it('should display recents template if current route url is recents', () => {
+      expect(recentsEl.querySelector('.recents-main').childNodes.length).not.toBe(0);
+    });
+
+    it('should not display recents template if current route url is not recents', () => {
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/recents/hxhgyHj'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(recentsEl.querySelector('.recents-main')).toBeNull();
+
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/recents?search=test'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(recentsEl.querySelector('.recents-main')).toBeNull();
     });
   });
 
@@ -486,6 +515,16 @@ describe('RecentsComponent', () => {
       expect(component.getAllRecentInstructions).toHaveBeenCalledWith();
       expect(component.AuthorDropDown).toHaveBeenCalledWith();
     });
+
+    it('should set header title', () => {
+      expect(spinnerSpy.hide).toHaveBeenCalled();
+      component.currentRouteUrl$.subscribe(
+        data => {
+          expect(data).toBe(routingUrls.recents.url);
+          expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.recents.title);
+        }
+      )
+    });
   });
 
   describe('AuthorDropDown', () => {
@@ -493,13 +532,13 @@ describe('RecentsComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
       component.AuthorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
-      expect(component.authors).toEqual(authors);
+      component.authors$.subscribe(data => expect(data).toEqual(authors));
     });
   });
 
@@ -551,7 +590,6 @@ describe('RecentsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${recent.WI_Name}' ?`
@@ -587,7 +625,6 @@ describe('RecentsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${recent.WI_Name}' ?`
@@ -613,7 +650,6 @@ describe('RecentsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${recent.WI_Name}' ?`
@@ -656,7 +692,7 @@ describe('RecentsComponent', () => {
       (anchors[3] as HTMLElement).click();
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(recent.Id, info);
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-      expect(component.recents[0].IsFavorite).toBe(true);
+      component.recents$.subscribe(data => expect(data[0].IsFavorite).toBe(true));
     });
 
     it('should set work instruction as unfavorite', () => {
@@ -676,7 +712,7 @@ describe('RecentsComponent', () => {
       (anchors[3] as HTMLElement).click();
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(recent.Id, info);
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-      expect(component.recents[0].IsFavorite).toBe(false);
+      component.recents$.subscribe(data => expect(data[0].IsFavorite).toBe(false));
     });
 
     it('should handle error while setting work instruction as favorite', () => {
@@ -704,14 +740,75 @@ describe('RecentsComponent', () => {
       expect(component.getAllRecentInstructions).toBeDefined();
     });
 
-    it('should set recent work instructions list', () => {
+    it('should set recents observable', () => {
       component.getAllRecentInstructions();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getRecentInstructions
       ).toHaveBeenCalledWith();
-      expect(component.recents).toEqual(recents);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      component.recents$.subscribe(data => expect(data).toEqual(recents));
+    });
+  });
+
+  describe('copyWI', () => {
+    const [recent] = recents;
+    beforeEach(() => {
+      (instructionServiceSpy.getRecentInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([recent]))
+        .and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(recent.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...recent, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getAllRecentInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = recentsDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(recent.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(component.getAllRecentInstructions).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(recent.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getAllRecentInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = recentsDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(recent.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(component.getAllRecentInstructions).not.toHaveBeenCalled();
     });
   });
 
@@ -722,13 +819,15 @@ describe('RecentsComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });

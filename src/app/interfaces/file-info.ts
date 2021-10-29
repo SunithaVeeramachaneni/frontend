@@ -9,6 +9,8 @@ export interface RenameFileInfo {
 }
 
 export interface CopyFilesPathInfo {
-  filesPath: string;
-  newFilesPath: string;
+  folderPath: string;
+  newFolderPath: string;
+  copyFiles?: string[];
+  recursive?: boolean;
 }

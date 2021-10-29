@@ -1,4 +1,4 @@
-<div class="custom-pagination">
+<div class="custom-pagination" *ngIf="p.getTotalItems()">
   <div class="p-0" [class.disabled]="p.isFirstPage()" (click)="p.setCurrent(1)" tabindex="0">
     <a><mat-icon class="pagination-mat-icon">first_page</mat-icon></a>
   </div>

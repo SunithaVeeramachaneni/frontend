@@ -37,19 +37,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.sidebarMinimize = data;
     });
     this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
-    this.logonUserDetails$.subscribe(res=>{
-      console.log("logindata",res)
-    })
     this.userData$ = this.oidcSecurityService.userData$
       .pipe(
         tap(res => {
-          console.log("userData",res);
           this.username = res.userData ? res.userData.name.split('.') : [];
-          let loggedInUser = {
-            "first_name": this.username[0],
-            'last_name': this.username[1]
+          if (this.username.length) {
+            const loggedInUser = {
+              "first_name": this.username[0],
+              'last_name': this.username[1]
+            }
+            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
           }
-          localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
         })
       );
   }
@@ -66,7 +64,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout(){
-    console.log("logging off")
     this.oidcSecurityService.logoff();
   }
 

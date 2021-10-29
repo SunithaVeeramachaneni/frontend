@@ -35,12 +35,12 @@ export class ErrorHandlerService {
    */
   getErrorMessage = (error: HttpErrorResponse, sse: boolean = false): string => {
     if (sse === true) {
-      return error.message ? error.message : error.error.message;
+      return error.message ? error.message : error.error?.message ? error.error.message : 'Server Side Error!';
     } else {
       if (error.status === 0 && error.statusText === 'Unknown Error') {
         return 'Unable to connect to server!';
       } else {
-        return error.error.message ? error.error.message : error.error.error?.message ? error.error.error.message : error.message ? error.message : error.statusText;
+        return error.error?.message ? error.error.message : error.error?.error?.message ? error.error.error.message : error.message ? error.message : error.statusText;
       }
     }
   }

@@ -234,8 +234,8 @@ describe('CopyInstructionComponent', () => {
           favs: [{...fav, Cover_Image: 'Thumbnail.jpg', IsFavorite: true}]
         });
       fixture.detectChanges();
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', recent.Id);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', recent.Id);
     });
   });
 
@@ -246,13 +246,15 @@ describe('CopyInstructionComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });
