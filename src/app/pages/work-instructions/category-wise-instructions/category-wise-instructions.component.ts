@@ -129,7 +129,6 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
 
 
   copyWI(ins) {
-    const id = this.route.snapshot.paramMap.get('id');
     this.spinner.show();
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };

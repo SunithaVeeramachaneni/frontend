@@ -1150,6 +1150,9 @@ describe('AddWorkinstructionComponent', () => {
           info
         );
         expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledTimes(1);
+        expect(spinnerSpy.show).toHaveBeenCalled();
+        expect(spinnerSpy.hide).toHaveBeenCalled();
+        expect(locationSpy.back).not.toHaveBeenCalled();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
         done();
       });

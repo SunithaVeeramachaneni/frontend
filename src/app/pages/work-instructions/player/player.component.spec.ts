@@ -14,17 +14,20 @@ describe('PlayerComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ PlayerComponent ],
       imports: [
-        IonicModule.forRoot(),
+        IonicModule,
         PopoverModule,
         AppMaterialModules,
         PlyrModule
       ]
     }).compileComponents();
-
+  }));
+  
+  beforeEach(() => {
     fixture = TestBed.createComponent(PlayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
+  
 
   it('should create', () => {
     expect(component).toBeTruthy();
