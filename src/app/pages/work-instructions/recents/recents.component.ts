@@ -34,7 +34,6 @@ export class RecentsComponent implements OnInit {
   recents$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
   readonly routingUrls = routingUrls;
-  routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set recentWIs(recents: DummyComponent) {
     if (recents) {
@@ -57,10 +56,9 @@ export class RecentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.spinner.hide();
-    this.routeWithSearch = `${routingUrls.recents.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.recents.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.recents.title))
       );
     this.getAllRecentInstructions();
     this.AuthorDropDown();
@@ -98,7 +96,6 @@ export class RecentsComponent implements OnInit {
   }
 
   copyWI(ins) {
-    console.log(ins);
     this.spinner.show();
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };

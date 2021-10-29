@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed, ComponentFixtureAutoDetect } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
@@ -19,13 +19,14 @@ import { InstructionService } from '../services/instruction.service';
 import { CategoryWiseInstructionsComponent } from './category-wise-instructions.component';
 import { ToastService } from '../../../shared/toast';
 import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { CommonService } from '../../../shared/services/common.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { routingUrls } from '../../../app.constants';
 
 const categoryDetails = [
   {
@@ -71,7 +72,11 @@ const instructions = [
     Published: true,
     IsPublishedTillSave: true,
     Cover_Image: image,
-    categories: categories1
+    categories: categories1,
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
   {
     Id: '2639',
@@ -93,13 +98,17 @@ const instructions = [
     Published: false,
     IsPublishedTillSave: null,
     Cover_Image: image,
-    categories: categories2
+    categories: categories2,
+    IsFromAudioOrVideoFile: false,
+    IsAudioOrVideoFileDeleted: false,
+    FilePath: null,
+    FileType: null
   },
 ];
 const categoryId = '_UnassignedCategory_';
-const users = [
+const users: User[] = [
   {
-    id: 1,
+    id: '1',
     first_name: 'Tester',
     last_name: 'One',
     email: 'tester.one@innovapptive.com',
@@ -108,7 +117,7 @@ const users = [
     empId: '5000353',
   },
   {
-    id: 2,
+    id: '2',
     first_name: 'Tester',
     last_name: 'Two',
     email: 'tester.two@innovapptive.com',
@@ -128,7 +137,8 @@ describe('CategoryWiseInstructionsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
+  let breadcrumbServiceSpy: BreadcrumbService;
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
@@ -140,13 +150,17 @@ describe('CategoryWiseInstructionsComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions/category/_UnassignedCategory_')
+    });
+    breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -177,7 +191,8 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
       ]
     }).compileComponents();
   }));
@@ -188,21 +203,18 @@ describe('CategoryWiseInstructionsComponent', () => {
     wiComponentDe = fixture.debugElement;
     wiComponentEl = wiComponentDe.nativeElement;
     (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-      .withArgs(categoryId, info)
+      .withArgs(categoryId)
       .and.returnValue(of(instructions))
       .and.callThrough();
     (instructionServiceSpy.getSelectedCategory as jasmine.Spy)
-      .withArgs(categoryId, info)
+      .withArgs(categoryId)
       .and.returnValue(of(category1))
       .and.callThrough();
     (instructionServiceSpy.getUsers as jasmine.Spy)
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -215,8 +227,6 @@ describe('CategoryWiseInstructionsComponent', () => {
   });
 
   it('should define variables & set defaults', () => {
-    expect(component.wiDetailObject).toBeDefined();
-    expect(component.wiDetailObject).toBeNull();
     expect(component.selectedCategory).toBeDefined();
     expect(component.draftsConfig).toBeDefined();
     expect(component.draftsConfig).toEqual({
@@ -232,8 +242,6 @@ describe('CategoryWiseInstructionsComponent', () => {
       itemsPerPage: 5,
       directionLinks: false,
     });
-    expect(component.draftedInstructionsList).toBeDefined();
-    expect(component.publishedInstructionsList).toBeDefined();
     expect(component.search).toBeUndefined();
     expect(component.order).toBeDefined();
     expect(component.order).toBe('updated_at');
@@ -241,14 +249,17 @@ describe('CategoryWiseInstructionsComponent', () => {
     expect(component.reverse).toBeTrue();
     expect(component.reverseObj).toBeDefined();
     expect(component.reverseObj).toEqual({ updated_at: true });
-    expect(component.sortedCollection).toBeUndefined();
+    expect(component.currentRouteUrl$).toBeDefined();
+    expect(component.workInstructions$).toBeDefined();
+    expect(component.authors$).toBeDefined();
+    expect(component.routeUrl).toBeDefined();
   });
 
   describe('template', () => {
     describe('drafts', () => {
       it('should contain labels related to category wise drafted work instrutions listing', (done) => {
         const [, drafted] = instructions;
-        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -262,7 +273,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         expect((tabs[1] as HTMLElement).textContent).toContain('PUBLISHED');
         (tabs[0] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           const tableHeader = wiComponentEl.querySelectorAll('table thead tr th');
           expect(tableHeader[0].textContent).toContain('Title');
           expect(tableHeader[1].textContent).toContain('Last Edited');
@@ -271,7 +282,7 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('table thead tr th').length).toBe(
             4
           );
-
+  
           const tableBodyTh = wiComponentEl.querySelectorAll('table tbody tr th');
           const tableBodyTd = wiComponentEl.querySelectorAll('table tbody tr td');
           expect(tableBodyTh[0].textContent).toBe(drafted.WI_Name);
@@ -285,7 +296,7 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('table tbody tr td').length).toBe(
             3
           );
-
+  
           const anchors = wiComponentEl.querySelectorAll('table tbody tr a');
           expect(anchors.length).toBe(4);
           expect((anchors[0] as HTMLElement).getAttribute('href')).toBe(
@@ -294,11 +305,11 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect((anchors[1] as HTMLElement).getAttribute('href')).toBe(
             `/work-instructions/category/${categoryId}/${drafted.Id}`
           );
-
+  
           expect((anchors[2] as HTMLElement).getAttribute('href')).toBe(
             `/work-instructions/category/${categoryId}/${drafted.Id}`
           );
-
+  
           const menuTigger: MatMenuTrigger = fixture.debugElement
             .query(By.directive(MatMenuTrigger))
             .injector.get(MatMenuTrigger);
@@ -315,6 +326,9 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(deleteWIButton.textContent).toContain(
             'Delete Work Instruction'
           );
+          const copyWIButton = wiComponentDe.query(By.css('#copyWorkInstruction'))
+            .nativeElement as HTMLElement;
+          expect(copyWIButton.textContent).toContain('Copy Work Instruction');
           expect(
             (wiComponentDe.query(By.css('#editWorkInstruction'))
               .nativeElement as HTMLElement).getAttribute(
@@ -325,7 +339,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -355,7 +368,7 @@ describe('CategoryWiseInstructionsComponent', () => {
 
       it('should display No Drafted Work Instructions in Category if componet doesnt have data', (done) => {
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([]))
           .and.callThrough();
         component.ngOnInit();
@@ -363,14 +376,14 @@ describe('CategoryWiseInstructionsComponent', () => {
         const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
         (tabs[0] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           const tableHeader = wiComponentEl.querySelectorAll('table thead tr th');
           expect(tableHeader[0].textContent).toContain('Title');
           expect(tableHeader[1].textContent).toContain('Last Edited');
           expect(tableHeader[2].textContent).toContain('Author');
           expect(wiComponentEl.querySelectorAll('table thead tr').length).toBe(1);
           expect(tableHeader.length).toBe(4);
-
+  
           const tableBodyTh = wiComponentEl.querySelectorAll('table tbody tr th');
           const tableBodyTd = wiComponentEl.querySelectorAll('table tbody tr td');
           expect(wiComponentEl.querySelectorAll('table tbody tr').length).toBe(1);
@@ -413,7 +426,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const draftedCopy = {...drafted};
         draftedCopy.Cover_Image = 'Thumbnail.jpg';
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([draftedCopy, published]))
           .and.callThrough();
         component.ngOnInit();
@@ -421,9 +434,9 @@ describe('CategoryWiseInstructionsComponent', () => {
         const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
         (tabs[0] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
-          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+        setTimeout(() => {
+          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
+          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
           done();
         });
       });
@@ -432,7 +445,7 @@ describe('CategoryWiseInstructionsComponent', () => {
     describe('published', () => {
       it('should contain labels related to category wise published work instrutions listing', (done) => {
         const [published] = instructions;
-        expect(wiComponentEl.querySelector('ion-content img').getAttribute('src')).toContain(
+        expect(wiComponentEl.querySelector('img').getAttribute('src')).toContain(
           'search.svg'
         );
         expect(
@@ -446,7 +459,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         expect((tabs[1] as HTMLElement).textContent).toContain('PUBLISHED');
         (tabs[1] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           fixture.detectChanges();
           const tableHeader = wiComponentEl.querySelectorAll('table thead tr th');
           expect(tableHeader[0].textContent).toContain('Title');
@@ -508,7 +521,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(wiComponentEl.querySelectorAll('input').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('pagination-template').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
-          expect(wiComponentEl.querySelectorAll('app-header').length).toBe(1);
           expect(wiComponentEl.querySelectorAll('app-dummy').length).toBe(1);
           done();
         });
@@ -538,7 +550,7 @@ describe('CategoryWiseInstructionsComponent', () => {
 
       it('should display No Published Work Instructions in Category if componet doesnt have data', (done) => {
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([]))
           .and.callThrough();
         component.ngOnInit();
@@ -546,7 +558,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
         (tabs[1] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           fixture.detectChanges();
           const tableHeader = wiComponentEl.querySelectorAll('table thead tr th');
           expect(tableHeader[0].textContent).toContain('Title');
@@ -571,7 +583,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
         (tabs[1] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           fixture.detectChanges();
           const authorSelect = wiComponentEl.querySelector('select');
           authorSelect.selectedIndex = 1;
@@ -603,7 +615,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const publishedCopy = {...published};
         publishedCopy.Cover_Image = 'Thumbnail.jpg';
         (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-          .withArgs(categoryId, info)
+          .withArgs(categoryId)
           .and.returnValue(of([drafted, publishedCopy]))
           .and.callThrough();
         component.ngOnInit();
@@ -611,13 +623,27 @@ describe('CategoryWiseInstructionsComponent', () => {
         const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
         (tabs[1] as HTMLElement).click();
         fixture.detectChanges();
-        fixture.whenStable().then(() => {
+        setTimeout(() => {
           fixture.detectChanges();
-          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+          expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', publishedCopy.Id);
+          expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', publishedCopy.Id);
           done();
         });
       });
+    });
+
+    it('should display category wise template if current route url is category', () => {
+      expect(wiComponentEl.querySelector('.work-instructions').childNodes.length).not.toBe(0);
+    });
+
+    it('should not display drafts template if current route url is not drafts or drafts search', () => {
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/category/_UnassignedCategory_/hxhgyHj'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(wiComponentEl.querySelector('.work-instructions')).toBeNull();
     });
   });
 
@@ -630,7 +656,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const headings = wiComponentEl.querySelectorAll('.table th');
         (headings[1] as HTMLElement).click();
         expect(component.reverse).toBeFalse();
@@ -643,7 +669,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const headings = wiComponentEl.querySelectorAll('.table th');
         (headings[0] as HTMLElement).click();
         expect(component.reverse).toBeFalse();
@@ -656,7 +682,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const headings = wiComponentEl.querySelectorAll('.table th');
         (headings[1] as HTMLElement).click();
@@ -670,7 +696,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const headings = wiComponentEl.querySelectorAll('.table th');
         (headings[0] as HTMLElement).click();
@@ -686,17 +712,18 @@ describe('CategoryWiseInstructionsComponent', () => {
       expect(component.tabChanged).toBeDefined();
     });
 
-    it('should set tabIndex, reverse, order & reverseObj', waitForAsync(() => {
+    it('should set tabIndex, reverse, order & reverseObj', (done) => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         expect(component.tabIndex).toBe(1);
         expect(component.reverse).toBeTrue();
         expect(component.order).toBe('updated_at');
         expect(component.reverseObj).toEqual({ updated_at: true });
+        done();
       });
-    }));
+    });
   });
 
   describe('getAuthors', () => {
@@ -710,7 +737,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       );
       component.getAuthors();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
-      expect(component.authors).toEqual(authors);
+      component.authors$.subscribe(data => expect(data).toEqual(authors));
     });
   });
 
@@ -729,12 +756,11 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const anchors = wiComponentEl.querySelectorAll('.table tr td a');
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(component.draftedInstructionsList[0].IsFavorite).toBe(true);
         done();
       });
     });
@@ -749,7 +775,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const anchors = wiComponentEl.querySelectorAll('.table tr td a');
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
@@ -769,13 +795,12 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const anchors = wiComponentEl.querySelectorAll('.table tr td a');
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(published.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-        expect(component.publishedInstructionsList[0].IsFavorite).toBe(false);
         done();
       });
     });
@@ -790,13 +815,78 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const anchors = wiComponentEl.querySelectorAll('.table tr td a');
         (anchors[2] as HTMLElement).click();
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(published.Id, info);
         expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to set as favorite'} as HttpErrorResponse);
+        done();
+      });
+    });
+  });
+
+  describe('copyWI', () => {
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy drafted work instruction while clicking on copy work instruction from mat menu', (done) => {
+      const [, drafted] = instructions;
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(drafted.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...drafted, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getInstructionsByCategoryId');
+      const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
+      (tabs[0] as HTMLElement).click();
+      fixture.detectChanges();
+      setTimeout(() => {
+        const menuTigger: MatMenuTrigger = fixture.debugElement
+          .query(By.directive(MatMenuTrigger))
+          .injector.get(MatMenuTrigger);
+        menuTigger.openMenu();
+        const copyWorkInstructionButton = wiComponentDe.query(
+          By.css('#copyWorkInstruction')
+        ).nativeElement as HTMLElement;
+        copyWorkInstructionButton.click();
+        expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(drafted.WI_Name, users[0], info);
+        expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+        expect(spinnerSpy.show).toHaveBeenCalledWith();
+        expect(spinnerSpy.hide).toHaveBeenCalledWith();
+        expect(toastServiceSpy.show).toHaveBeenCalledWith({
+          text: "Selected work instruction has been successfully copied",
+          type: 'success',
+        });
+        expect(component.getInstructionsByCategoryId).toHaveBeenCalledWith(categoryId);
+        done();
+      });
+    });
+
+    it('should handle drafted copy work instruction error while clicking on copy work instruction from mat menu', (done) => {
+      const [, drafted] = instructions;
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(drafted.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getInstructionsByCategoryId');
+      const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
+      (tabs[0] as HTMLElement).click();
+      fixture.detectChanges();
+      setTimeout(() => {
+        const menuTigger: MatMenuTrigger = fixture.debugElement
+          .query(By.directive(MatMenuTrigger))
+          .injector.get(MatMenuTrigger);
+        menuTigger.openMenu();
+        const copyWorkInstructionButton = wiComponentDe.query(
+          By.css('#copyWorkInstruction')
+        ).nativeElement as HTMLElement;
+        copyWorkInstructionButton.click();
+        expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(drafted.WI_Name, users[0], info);
+        expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+        expect(spinnerSpy.show).toHaveBeenCalledWith();
+        expect(spinnerSpy.hide).toHaveBeenCalledWith();
+        expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+        expect(component.getInstructionsByCategoryId).not.toHaveBeenCalled();
         done();
       });
     });
@@ -816,7 +906,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const menuTigger: MatMenuTrigger = fixture.debugElement
           .query(By.directive(MatMenuTrigger))
@@ -826,7 +916,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           By.css('#deleteWorkInstruction')
         ).nativeElement as HTMLElement;
         deleteWorkInstructionButton.click();
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to delete the work instruction '${published.WI_Name}' ?`
@@ -847,7 +936,7 @@ describe('CategoryWiseInstructionsComponent', () => {
           });
           done();
         });
-      });
+      })
     });
 
     it('should not remove published work instruction when user click on cancel', (done) => {
@@ -859,7 +948,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const menuTigger: MatMenuTrigger = fixture.debugElement
           .query(By.directive(MatMenuTrigger))
@@ -869,7 +958,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           By.css('#deleteWorkInstruction')
         ).nativeElement as HTMLElement;
         deleteWorkInstructionButton.click();
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to delete the work instruction '${published.WI_Name}' ?`
@@ -892,7 +980,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const menuTigger: MatMenuTrigger = fixture.debugElement
           .query(By.directive(MatMenuTrigger))
           .injector.get(MatMenuTrigger);
@@ -901,7 +989,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           By.css('#deleteWorkInstruction')
         ).nativeElement as HTMLElement;
         deleteWorkInstructionButton.click();
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to delete the work instruction '${drafted.WI_Name}' ?`
@@ -920,8 +1007,8 @@ describe('CategoryWiseInstructionsComponent', () => {
             text: "Work instuction '"+ drafted.WI_Name +"' has been deleted",
             type: 'success'
           });
-          done();
         });
+        done();
       });
     });
 
@@ -934,7 +1021,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         const menuTigger: MatMenuTrigger = fixture.debugElement
           .query(By.directive(MatMenuTrigger))
           .injector.get(MatMenuTrigger);
@@ -943,7 +1030,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           By.css('#deleteWorkInstruction')
         ).nativeElement as HTMLElement;
         deleteWorkInstructionButton.click();
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to delete the work instruction '${drafted.WI_Name}' ?`
@@ -966,7 +1052,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
-      fixture.whenStable().then(() => {
+      setTimeout(() => {
         fixture.detectChanges();
         const menuTigger: MatMenuTrigger = fixture.debugElement
           .query(By.directive(MatMenuTrigger))
@@ -976,7 +1062,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           By.css('#deleteWorkInstruction')
         ).nativeElement as HTMLElement;
         deleteWorkInstructionButton.click();
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to delete the work instruction '${published.WI_Name}' ?`
@@ -996,50 +1081,20 @@ describe('CategoryWiseInstructionsComponent', () => {
     });
   });
 
-  describe('getInstructionsWithCategoryName', () => {
+  describe('getInstructionsByCategoryId', () => {
     it('should define function', () => {
-      expect(component.getInstructionsWithCategoryName).toBeDefined();
+      expect(component.getInstructionsByCategoryId).toBeDefined();
     });
 
-    it('should set drafted, published instructions list with category name', () => {
-      const [published, drafted] = instructions;
-      const { Category_Name } = category1;
-      component.getInstructionsWithCategoryName(categoryId);
+    it('should set workInstructions obervable', () => {
+      const [published, drafts] = instructions;
+      component.getInstructionsByCategoryId(categoryId);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getInstructionsByCategoryId
-      ).toHaveBeenCalledWith(categoryId, info);
-      expect(instructionServiceSpy.getSelectedCategory).toHaveBeenCalledWith(
-        categoryId,
-        info
-      );
-      expect(component.draftedInstructionsList).toEqual([{ ...drafted }]);
-      expect(component.publishedInstructionsList).toEqual([{ ...published }]);
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      ).toHaveBeenCalledWith(categoryId);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
-      expect(component.selectedCategory).toBe(Category_Name);
-    });
-
-    it('should handle error', () => {
-      const error = 'Unable to get instructions';
-      (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-        .withArgs(categoryId, info)
-        .and.returnValue(throwError({message: error}))
-        .and.callThrough();
-      const { Category_Name } = category1;
-      component.getInstructionsWithCategoryName(categoryId);
-      expect(
-        instructionServiceSpy.getInstructionsByCategoryId
-      ).toHaveBeenCalledWith(categoryId, info);
-      expect(instructionServiceSpy.getSelectedCategory).toHaveBeenCalledWith(
-        categoryId,
-        info
-      );
-      expect(component.draftedInstructionsList).toEqual([]);
-      expect(component.publishedInstructionsList).toEqual([]);
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({message: error} as HttpErrorResponse);
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
-      expect(component.selectedCategory).toBe(Category_Name);
+      component.workInstructions$.subscribe(data => expect(data).toEqual({ drafts: [drafts], published: [published] }));
     });
   });
 
@@ -1048,12 +1103,27 @@ describe('CategoryWiseInstructionsComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    it('should call getInstructionsWithCategoryName function', () => {
-      spyOn(component, 'getInstructionsWithCategoryName');
+    it('should call getInstructionsByCategoryId function', () => {
+      spyOn(component, 'getInstructionsByCategoryId');
       component.ngOnInit();
-      expect(component.getInstructionsWithCategoryName).toHaveBeenCalledWith(
+      expect(component.categoryId).toBe(categoryId);
+      expect(component.getInstructionsByCategoryId).toHaveBeenCalledWith(
         categoryId
       );
+    });
+
+    it('should set header title', () => {
+      const { Category_Name } = category1;
+      expect(spinnerSpy.hide).toHaveBeenCalled();
+      expect(component.routeUrl).toBe(`${routingUrls.workInstructions.url}/category/${categoryId}`);
+      component.currentRouteUrl$.subscribe(
+        data => {
+          expect(data).toBe(`${routingUrls.workInstructions.url}/category/${categoryId}`)
+          expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith(`${routingUrls.workInstructions.url}/category/${categoryId}`, Category_Name);
+          expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(Category_Name);
+          expect(component.selectedCategory).toBe(Category_Name);
+        }
+      )
     });
   });
 
@@ -1064,13 +1134,15 @@ describe('CategoryWiseInstructionsComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });

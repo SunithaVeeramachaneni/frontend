@@ -18,13 +18,14 @@ import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FavoritesComponent } from './favorites.component';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { CommonService } from '../../../shared/services/common.service';
+import { routingUrls } from '../../../app.constants';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
 const categoryDetails = [
   {
@@ -104,9 +105,9 @@ const favorites = [
   },
 ];
 
-const users = [
+const users: User[] = [
   {
-    id: 1,
+    id: '1',
     first_name: 'Tester',
     last_name: 'One',
     email: 'tester.one@innovapptive.com',
@@ -115,7 +116,7 @@ const users = [
     empId: '5000353',
   },
   {
-    id: 2,
+    id: '2',
     first_name: 'Tester',
     last_name: 'Two',
     email: 'tester.two@innovapptive.com',
@@ -135,7 +136,8 @@ describe('FavoritesComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
+  let activatedRouteSpy: ActivatedRoute;
   let favoritesDe: DebugElement;
   let favoritesEl: HTMLElement;
 
@@ -146,13 +148,19 @@ describe('FavoritesComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions/favorites')
+    });
+    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      queryParamMap: of(convertToParamMap({ }))
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -177,7 +185,8 @@ describe('FavoritesComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
       ]
     }).compileComponents();
   }));
@@ -195,10 +204,7 @@ describe('FavoritesComponent', () => {
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -211,7 +217,6 @@ describe('FavoritesComponent', () => {
   });
 
   it('should define varibales & set defaults', () => {
-    expect(component.wiList).toBeDefined();
     expect(component.config).toBeDefined();
     expect(component.config).toEqual({
       id: 'favorites',
@@ -219,15 +224,23 @@ describe('FavoritesComponent', () => {
       itemsPerPage: 6,
       directionLinks: false,
     });
+    expect(component.search).toBeDefined();
     expect(component.order).toBeDefined();
     expect(component.order).toBe('updated_at');
     expect(component.reverse).toBeDefined();
     expect(component.reverse).toBeTrue();
     expect(component.reverseObj).toBeDefined();
     expect(component.reverseObj).toEqual({ updated_at: true });
-    expect(component.authors).toBeDefined();
     expect(component.CreatedBy).toBeDefined();
     expect(component.CreatedBy).toBe('');
+    expect(component.EditedBy).toBeDefined();
+    expect(component.EditedBy).toBe('');
+    expect(component.currentRouteUrl$).toBeDefined();
+    expect(component.favorites$).toBeDefined();
+    expect(component.authors$).toBeDefined();
+    expect(component.routingUrls).toBeDefined();
+    expect(component.routingUrls).toBeDefined(routingUrls);
+    expect(component.routeWithSearch).toBeDefined();
   });
 
   describe('template', () => {
@@ -245,7 +258,7 @@ describe('FavoritesComponent', () => {
       expect(favoritesEl.querySelectorAll('input').length).toBe(1);
       expect(favoritesEl.querySelectorAll('select').length).toBe(1);
       expect(favoritesEl.querySelectorAll('option').length).toBe(3);
-      expect(favoritesEl.querySelector('ion-content img').getAttribute('src')).toContain(
+      expect(favoritesEl.querySelector('img').getAttribute('src')).toContain(
         'search.svg'
       );
       expect(
@@ -310,13 +323,15 @@ describe('FavoritesComponent', () => {
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
       // ).toBe(`/work-instructions/favorites,${favorite1.Id}`);
       ).toContain(`/work-instructions/favorites`);
-
+      const copyWIButton = favoritesDe.query(By.css('#copyWorkInstruction'))
+        .nativeElement as HTMLElement;
+      expect(copyWIButton.textContent).toContain('Copy Work Instruction');
       expect(favoritesEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
         favoritesEl.querySelectorAll('app-custom-pagination-controls').length
       ).toBe(1);
       expect(favoritesEl.querySelectorAll('app-dummy').length).toBe(1);
-      expect(favoritesEl.querySelectorAll('app-header').length).toBe(1);
+      expect(favoritesEl.querySelectorAll('router-outlet').length).toBe(1);
     });
 
     it('should display No Results Found if search item not present in work instructions', () => {
@@ -469,9 +484,35 @@ describe('FavoritesComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', favoriteCopy.Id);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', favoriteCopy.Id);
     });
+
+    it('should display favorites template if current route url is favorites or favorites search', () => {
+      expect(favoritesEl.querySelector('.favorites-main').childNodes.length).not.toBe(0);
+
+      (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParamMap')
+        .get as jasmine.Spy).and.returnValue(of(convertToParamMap({ search: 'test' })));
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/favorites?search=test'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(component.search).toBe('test');
+      expect(favoritesEl.querySelector('.favorites-main').childNodes.length).not.toBe(0);
+    });
+
+    it('should not display favorites template if current route url is not favorites or favorites search', () => {
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/favorites/hxhgyHj'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(favoritesEl.querySelector('.favorites-main')).toBeNull();
+    });
+
   });
 
   describe('ngOnInit', () => {
@@ -485,6 +526,18 @@ describe('FavoritesComponent', () => {
       component.ngOnInit();
       expect(component.getAllWorkInstructionsByFav).toHaveBeenCalledWith();
       expect(component.AuthorDropDown).toHaveBeenCalledWith();
+      expect(component.search).toBeNull();
+    });
+
+    it('should set header title', () => {
+      expect(spinnerSpy.hide).toHaveBeenCalled();
+      expect(component.routeWithSearch).toBe(`${routingUrls.favorites.url}?search=`);
+      component.currentRouteUrl$.subscribe(
+        data => {
+          expect(data).toBe(routingUrls.favorites.url);
+          expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.favorites.title);
+        }
+      )
     });
   });
 
@@ -493,13 +546,13 @@ describe('FavoritesComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
       component.AuthorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
-      expect(component.authors).toEqual(authors);
+      component.authors$.subscribe(data => expect(data).toEqual(authors));
     });
   });
 
@@ -551,7 +604,6 @@ describe('FavoritesComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${favorite.WI_Name}' ?`
@@ -587,7 +639,6 @@ describe('FavoritesComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${favorite.WI_Name}' ?`
@@ -613,7 +664,6 @@ describe('FavoritesComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${favorite.WI_Name}' ?`
@@ -657,8 +707,8 @@ describe('FavoritesComponent', () => {
       (anchors[3] as HTMLElement).click();
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(favorite.Id, info);
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-      expect(component.wiList[0].IsFavorite).toBe(false);
       expect(component.getAllWorkInstructionsByFav).toHaveBeenCalled();
+      component.favorites$.subscribe(data => expect(data[0].IsFavorite).toBe(false));
     });
 
     it('should handle error while setting work instruction as unfavorite', () => {
@@ -688,14 +738,75 @@ describe('FavoritesComponent', () => {
       expect(component.getAllWorkInstructionsByFav).toBeDefined();
     });
 
-    it('should set favorite work instructions list', () => {
+    it('should set favorite observable', () => {
       component.getAllWorkInstructionsByFav();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getFavInstructions
       ).toHaveBeenCalledWith();
-      expect(component.wiList).toEqual(favorites);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      component.favorites$.subscribe(data => expect(data).toEqual(favorites));
+    });
+  });
+
+  describe('copyWI', () => {
+    const [favorite] = favorites;
+    beforeEach(() => {
+      (instructionServiceSpy.getFavInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([favorite]))
+        .and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(favorite.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...favorite, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getAllWorkInstructionsByFav');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = favoritesDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(favorite.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(component.getAllWorkInstructionsByFav).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(favorite.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getAllWorkInstructionsByFav');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = favoritesDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(favorite.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(component.getAllWorkInstructionsByFav).not.toHaveBeenCalled();
     });
   });
 
@@ -706,13 +817,15 @@ describe('FavoritesComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });

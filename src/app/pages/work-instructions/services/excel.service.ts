@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map } from 'rxjs/operators';
-import { image } from '../../../../assets/work-instructions-icons/svg/image.const';
-import { coverImage } from '../../../../assets/work-instructions-icons/svg/ins-cover-image-placeholder';
 import { InstructionService } from './instruction.service';
 
 @Injectable({
@@ -43,9 +41,9 @@ export class ExcelService {
             { header: 'SafetyKit', key: 'safetyKit', width: 29.89, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
             { header: 'SpareParts', key: 'spareParts', width: 42.33, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
             { header: 'Tools', key: 'tools', width: 29.56, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
-            { header: 'Cover_Image_Name', key: 'cover_image_name', width: 44, height: 35,
+            { header: 'Cover_Image_Name', key: 'cover_image_name', width: 30.5, height: 35,
               style: { font: { name: 'Calibri', size: 12,  bold: true } } },
-            { header: 'Cover_Image', key: 'cover_image', width: 44, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
+            { header: 'Cover_Image', key: 'cover_image', width: 30.5, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
             { header: 'StepTitle', key: 'stepTitle', width: 30.5, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
             { header: 'Instruction', key: 'instruction', width: 38.89, height: 35,
               style: { font: { name: 'Calibri', size: 12,  bold: true } , alignment: { wrapText: true } } },
@@ -60,38 +58,18 @@ export class ExcelService {
               style: { font: { name: 'Calibri', size: 12,  bold: true } } },
             { header: 'Attachment_2', key: 'attachment_2', width: 35.3, height: 35, style: { font: { name: 'Calibri', size: 12,  bold: true } } },
           ];
-          const sampleAttachmentImage = image;
-          const sampleAttachmentImageId = book.addImage({
-            base64: sampleAttachmentImage,
-            extension: 'png',
-          });
-      
-          const base64ForCoverImage = coverImage;
-          const coverImageId = book.addImage({
-            base64: base64ForCoverImage,
-            extension: 'png',
-          });
+          
           for (let sheetCnt = 0; sheetCnt < sheets.length; sheetCnt++) {
             sheets[sheetCnt].columns = cols;
-            sheets[sheetCnt].addRow({ workInstruction: 'Sample WorkInstruction' + (sheetCnt + 1), assignedObjects, category: 'Sample Category' + (sheetCnt + 1), safetyKit: 'Sample Kit1, Sample Kit2 ', spareParts: 'Sample Spare Part1, Sample Spare Part2', tools: 'Sample Tool1, Sample Tool2',  cover_image_name: 'doc-placeholder.png', cover_image: '', stepTitle: '', instruction: '', warning: '', reactionPlan: '', hint: '', attachment_1_name: '', attachment_1: '', attachment_2_name: '', attachment_2: '' });
+            sheets[sheetCnt].addRow({ workInstruction: 'Sample WorkInstruction' + (sheetCnt + 1), assignedObjects, category: 'Sample Category' + (sheetCnt + 1), safetyKit: 'Sample Kit1, Sample Kit2 ', spareParts: 'Sample Spare Part1, Sample Spare Part2', tools: 'Sample Tool1, Sample Tool2',  cover_image_name: '', cover_image: '', stepTitle: '', instruction: '', warning: '', reactionPlan: '', hint: '', attachment_1_name: '', attachment_1: '', attachment_2_name: '', attachment_2: '' });
             sheets[sheetCnt].addRow(
-              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title1', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '● Sample Warning1 \r\n● Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: 'SampleImgWIMVP.jpg', attachment_1: '', attachment_2_name: 'SampleImgWIMVP.jpg',  attachment_2: '' });
+              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title1', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '● Sample Warning1 \r\n● Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: '', attachment_1: '', attachment_2_name: '',  attachment_2: '' });
             sheets[sheetCnt].addRow(
-              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title2', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '1. Sample Warning1 \r\n2. Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: 'SampleImgWIMVP.jpg', attachment_1: '', attachment_2_name: 'SampleImgWIMVP.jpg',  attachment_2: '' });
+              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title2', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '1. Sample Warning1 \r\n2. Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: '', attachment_1: '', attachment_2_name: '',  attachment_2: '' });
             sheets[sheetCnt].addRow(
-              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title3', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '● Sample Warning1 \r\n● Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: 'SampleImgWIMVP.jpg', attachment_1: '', attachment_2_name: 'SampleImgWIMVP.jpg',  attachment_2: '' });
+              { workInstruction: '', assignedObjects: '', category: '', safetyKit: '', spareParts: '', tools: '', cover_image: '', stepTitle: 'Sample Title3', instruction: '1. Sample Instruction1 \r\n2. Sample Instruction2', warning: '● Sample Warning1 \r\n● Sample Warning2', reactionPlan: 'Sample ReactionPlan', hint: 'Sample Hint', attachment_1_name: '', attachment_1: '', attachment_2_name: '',  attachment_2: '' });
             sheets[sheetCnt].properties.defaultRowHeight = 50;
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'O3:O3');
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'Q3:Q3');
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'O4:O4');
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'Q4:Q4');
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'O5:O5');
-            sheets[sheetCnt].addImage(sampleAttachmentImageId, 'Q5:Q5');
-            sheets[sheetCnt].addImage(coverImageId, {
-              tl: { col: 7, row: 1 },
-              ext: { width: 48, height: 48 }
-            });
-      
+            
             // Comments for the cells
             sheets[sheetCnt].getCell('A1').note = 'Creates new WorkInstruction title. Please enter a unique WorkInstruction title. By default two instructions are created with "Sample WorkInstruction1" & "Sample WorkInstruction2"';
             sheets[sheetCnt].getCell('B1').note = 'Please replace {value} with the actual assigned object values.';

@@ -62,7 +62,7 @@ export class DraftsComponent implements OnInit {
     this.routeWithSearch = `${routingUrls.drafts.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
-        tap(() => this.commonService.updateHeaderTitle(routingUrls.drafts.title))
+        tap(() => this.commonService.setHeaderTitle(routingUrls.drafts.title))
       );
     this.getAllDraftedInstructions();
     this.AuthorDropDown();
@@ -144,7 +144,6 @@ export class DraftsComponent implements OnInit {
   }
 
   copyWI(ins) {
-    console.log(ins);
     this.spinner.show();
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };

@@ -93,8 +93,8 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
       .pipe(
         tap(currentRouteUrl => {
-          this.commonService.updateHeaderTitle(routingUrls.workInstructions.title);
           if (currentRouteUrl === routingUrls.workInstructions.url) {
+            this.commonService.setHeaderTitle(routingUrls.workInstructions.title);
             this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: true });
           } else {
             this.breadcrumbService.set(routingUrls.workInstructions.url, { skip: false });
@@ -213,7 +213,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
           }
         );
     } else {
-      const s3Folder = `bulkupload/${new Date().getTime()}`;
+      const s3Folder = this.getS3Folder(new Date().getTime());
       formData.append('s3Folder', s3Folder);
       this._instructionSvc.uploadWIExcel(formData).subscribe(
         resp => {
@@ -234,4 +234,8 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   getImageSrc = (source: string, path: string) => {
     return source && source.indexOf('assets/') > -1 ? source : this.base64HelperService.getBase64ImageData(source, path);
   }
+
+  getS3Folder = (time: number) => {
+    return `bulkupload/${time}`;
+  };
 }

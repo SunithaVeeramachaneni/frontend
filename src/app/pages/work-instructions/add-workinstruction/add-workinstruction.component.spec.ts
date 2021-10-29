@@ -26,8 +26,8 @@ import { CommonService } from '../../../shared/services/common.service';
 import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../../shared/shared.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Location } from '@angular/common';
 
 const categoryDetails = [
   {
@@ -148,10 +148,10 @@ describe('AddWorkinstructionComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let activatedRouteSpy: ActivatedRoute;
-  let headerServiceSpy: HeaderService;
+  let breadcrumbServiceSpy: BreadcrumbService;
+  let locationSpy: Location;
   let addWIDe: DebugElement;
   let addWIEl: HTMLElement;
-  let router: Router;
   let store: MockStore<State>;
   let mockInsToBePublishedSelector;
   let mockInstructionSelector;
@@ -166,8 +166,9 @@ describe('AddWorkinstructionComponent', () => {
         stepDetailsSaveAction$: of('All Changes Saved'),
       }
     );
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['minimizeSidebar'], {
-      minimizeSidebarAction$: of(false)
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['minimizeSidebar', 'setHeaderTitle'], {
+      minimizeSidebarAction$: of(false),
+      currentRouteUrlAction$: of('work-instructions/create')
     });
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getInstructionsById',
@@ -181,6 +182,7 @@ describe('AddWorkinstructionComponent', () => {
       'publishInstruction',
       'deleteWorkInstruction$',
       'updateGatewayFavWorkInstruction',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
@@ -190,15 +192,11 @@ describe('AddWorkinstructionComponent', () => {
       snapshot: {
         paramMap: convertToParamMap({
           id: '',
-        }),
-      },
-      data: {
-        value: {
-          title: '',
-        },
-      },
+        })
+      }
     });
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
+    locationSpy = jasmine.createSpyObj('Location', ['back']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -221,7 +219,8 @@ describe('AddWorkinstructionComponent', () => {
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: CommonService, useValue: commonServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
+        { provide: Location, useValue: locationSpy },
         provideMockStore()
       ],
     }).compileComponents();
@@ -234,7 +233,6 @@ describe('AddWorkinstructionComponent', () => {
     mockStepsSelector = store.overrideSelector(getSteps, steps);
     spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(AddWorkinstructionComponent);
-    router = TestBed.inject(Router);
     component = fixture.componentInstance;
     addWIDe = fixture.debugElement;
     addWIEl = addWIDe.nativeElement;
@@ -242,10 +240,6 @@ describe('AddWorkinstructionComponent', () => {
     (instructionServiceSpy.getInstructionsById as jasmine.Spy)
       .withArgs(editWI.Id)
       .and.returnValue(of(editWI))
-      .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
       .and.callThrough();
     fixture.detectChanges();
   });
@@ -284,12 +278,11 @@ describe('AddWorkinstructionComponent', () => {
     it('should contain labels & elements related to work instruction', () => {
       component.ngOnInit();
       fixture.detectChanges();
-      expect(addWIEl.querySelectorAll('app-header').length).toBe(1);
       expect(addWIEl.querySelectorAll('input').length).toBe(1);
       const buttons = addWIEl.querySelectorAll('button');
       expect(buttons[0].textContent).toBe('more_horiz');
       expect(buttons[1].textContent).toBe('Publish');
-      expect(addWIEl.querySelector('ion-content img').getAttribute('src')).toContain('upload-white.png');
+      expect(addWIEl.querySelector('.add-instruction-main img').getAttribute('src')).toContain('upload-white.png');
       expect(addWIEl.querySelectorAll('app-overview').length).toBe(1);
 
       (instructionServiceSpy.getInstructionsById as jasmine.Spy)
@@ -298,7 +291,7 @@ describe('AddWorkinstructionComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(addWIEl.querySelector('ion-content img').getAttribute('src')).toContain('upload.svg');
+      expect(addWIEl.querySelector('.add-instruction-main img').getAttribute('src')).toContain('upload.svg');
     });
 
     describe('OverviewComponent', () => {
@@ -313,14 +306,14 @@ describe('AddWorkinstructionComponent', () => {
 
   });
 
-  describe('ionViewDidEnter', () => {
+  describe('ngAfterViewInit', () => {
     it('should define function', () => {
-      expect(component.ionViewDidEnter).toBeDefined();
+      expect(component.ngAfterViewInit).toBeDefined();
     });
 
     it('should set focus on work instructtion title', () => {
       spyOn(component.workInstructionTitle.nativeElement, 'focus');
-      component.ionViewDidEnter();
+      component.ngAfterViewInit();
       expect(
         component.workInstructionTitle.nativeElement.focus
       ).toHaveBeenCalled();
@@ -346,6 +339,25 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.steps).toEqual(steps);
       expect(component.selectedInstruction).toEqual(editWI);
       expect(component.instructionTitle).toEqual(editWI.WI_Name);
+    });
+
+    it('should set breadcrumb & header title', () => {
+      mockInstructionSelector.setResult({});
+      store.refreshState();
+      component.ngOnInit();
+      expect(spinnerSpy.hide).toHaveBeenCalled();
+      expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith('work-instructions/create', {label: 'Untitled Work Instruction'});
+      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith('Untitled Work Instruction');
+
+      const { Id, WI_Name } = editWI;
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$').get as jasmine.Spy).and.returnValue(
+        of(`work-instructions/edit/${Id}`)
+      );
+      mockInstructionSelector.setResult(editWI);
+      store.refreshState();
+      component.ngOnInit();
+      expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith('work-instructions/create', { label: WI_Name });
+      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(WI_Name);
     });
 
     it('should set initilization data for work instruction', (done) => {
@@ -579,7 +591,6 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to publish work instruction '${editWI.WI_Name}' ?`
@@ -678,7 +689,6 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to publish work instruction '${addWI[0].WI_Name}' ?`
@@ -736,7 +746,6 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to publish work instruction '${editWI.WI_Name}' ?`
@@ -775,7 +784,6 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.isVisible()).toBeTruthy();
         expect(Swal.getTitle().textContent).toEqual('Are you sure?');
         expect(Swal.getHtmlContainer().textContent).toEqual(
           `Do you want to publish work instruction '${editWI.WI_Name}' ?`
@@ -980,6 +988,66 @@ describe('AddWorkinstructionComponent', () => {
     });
   });
 
+  describe('copyWI', () => {
+    beforeEach(() => {
+      (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'snapshot')
+        .get as jasmine.Spy).and.returnValue({
+        paramMap: convertToParamMap({
+          id: editWI.Id,
+        }),
+      });
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(editWI.WI_Name, loggedInUser, info)
+        .and.returnValue(of({ instruction: { ...editWI, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = addWIDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(editWI.WI_Name, loggedInUser, info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(locationSpy.back).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(editWI.WI_Name, loggedInUser, info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = addWIDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(editWI.WI_Name, loggedInUser, info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(locationSpy.back).not.toHaveBeenCalled();
+    });
+  });
+
   describe('removeWI', () => {
     beforeEach(() => {
       (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'snapshot')
@@ -1001,7 +1069,6 @@ describe('AddWorkinstructionComponent', () => {
         .withArgs(editWI.Id, info)
         .and.returnValue(of(editWI))
         .and.callThrough();
-      spyOn(router, 'navigate');
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
         .injector.get(MatMenuTrigger);
@@ -1010,7 +1077,6 @@ describe('AddWorkinstructionComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${editWI.WI_Name}' ?`
@@ -1018,6 +1084,9 @@ describe('AddWorkinstructionComponent', () => {
       expect(Swal.getConfirmButton().textContent).toEqual('Delete');
       Swal.clickConfirm();
       setTimeout(() => {
+        expect(spinnerSpy.show).toHaveBeenCalled();
+        expect(spinnerSpy.hide).toHaveBeenCalled();
+        expect(locationSpy.back).toHaveBeenCalled();
         expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledWith(
           editWI.Id,
           info
@@ -1044,7 +1113,6 @@ describe('AddWorkinstructionComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${editWI.WI_Name}' ?`
@@ -1070,7 +1138,6 @@ describe('AddWorkinstructionComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${editWI.WI_Name}' ?`
@@ -1083,6 +1150,9 @@ describe('AddWorkinstructionComponent', () => {
           info
         );
         expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledTimes(1);
+        expect(spinnerSpy.show).toHaveBeenCalled();
+        expect(spinnerSpy.hide).toHaveBeenCalled();
+        expect(locationSpy.back).not.toHaveBeenCalled();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
         done();
       });

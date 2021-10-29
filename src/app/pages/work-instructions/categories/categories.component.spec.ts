@@ -27,7 +27,6 @@ import { ErrorInfo } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { OrderModule } from 'ngx-order-pipe';
-import { WiCommonService } from '../services/wi-common.services';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 
 const categoryDetails = [
@@ -109,7 +108,6 @@ describe('CategoriesComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let wiCommonServiceSpy: WiCommonService;
   let cdrfSpy: ChangeDetectorRef;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
@@ -122,23 +120,21 @@ describe('CategoriesComponent', () => {
       'getDeleteFiles',
     ]);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-      'deleteFiles',
+      'deleteFile',
       'getAllCategories',
       'getInstructionsByCategoryId',
       'deleteCategory$',
       'addCategory',
       'updateCategory',
+      'renameFile'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [],
-    {
-      updateCategoriesComponentAction$: of(true),
-    });
     cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
+
     TestBed.configureTestingModule({
       declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
       imports: [
@@ -157,7 +153,6 @@ describe('CategoriesComponent', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-        { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
       ],
@@ -347,8 +342,8 @@ describe('CategoriesComponent', () => {
         .and.returnValue(of([]))
         .and.callThrough();
       component.getAllCategories();
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', categoryDetails[1].Category_Id);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', categoryDetails[1].Category_Id);
     });
   });
 
@@ -396,8 +391,7 @@ describe('CategoriesComponent', () => {
         coverImage: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
       };
       const { cid: CId, title: Category_Name, coverImage: Cover_Image } = data;
-      let response = { CId, Category_Name, Cover_Image };
-      response = { ...response, CId: 110 };
+      let response = { Category_Id: 110, Category_Name, Cover_Image };
       (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
         afterClosed$: of({ data }),
       });
@@ -425,21 +419,25 @@ describe('CategoriesComponent', () => {
       });
     });
 
-    it('should handle error while adding new category', () => {
+    it('should add new Category, if cover image is from S3 rename file to cover image id folder', () => {
       const data = {
         cid: null,
         title: 'TestCategory',
-        coverImage: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
+        coverImage: 'cover-image-from-s3.png',
       };
       const { cid: CId, title: Category_Name, coverImage: Cover_Image } = data;
+      let response = { Category_Id: 'qwhJdfg', Category_Name, Cover_Image };
       (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
         afterClosed$: of({ data }),
       });
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue([]);
       (instructionServiceSpy.addCategory as jasmine.Spy)
         .withArgs({ CId, Category_Name, Cover_Image })
-        .and.returnValue(throwError('Unable to create category'))
+        .and.returnValue(of(response))
         .and.callThrough();
+      (instructionServiceSpy.renameFile as jasmine.Spy)
+        .withArgs({ filePath: `category/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`})
+        .and.returnValue(of({ filePath: `category/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`}));
       const addCategryButton = categoriesEl.querySelector('button');
       addCategryButton.click();
       expect(instructionServiceSpy.addCategory).toHaveBeenCalledWith({
@@ -448,6 +446,15 @@ describe('CategoriesComponent', () => {
         Cover_Image,
       });
       expect(instructionServiceSpy.addCategory).toHaveBeenCalledTimes(1);
+      expect(component.CatName).toBe(Category_Name);
+      expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
+        Cover_Image
+      );
+      expect(component.getAllCategories).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: `Category ${Category_Name} has been added successfully`,
+        type: 'success'
+      });
     });
 
     it('should edit existing category', () => {
@@ -562,10 +569,10 @@ describe('CategoriesComponent', () => {
         afterClosed$: of({ data: null }),
       });
       const files = ['coverimage-from-s3.jpg'];
-      const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
+      const s3DeleteResponse = { file: files[0] };
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteFiles as jasmine.Spy)
-        .withArgs({ files })
+      (instructionServiceSpy.deleteFile as jasmine.Spy)
+        .withArgs(`category/${files[0]}`)
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();
       const addCategryButton = categoriesEl.querySelector('button');
@@ -578,33 +585,8 @@ describe('CategoriesComponent', () => {
         files[0]
       );
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledTimes(2);
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
-        files,
-      });
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
-    });
-
-    it('should handle s3 bucket delete file error in case of add category modal closed without saving', () => {
-      (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
-        afterClosed$: of({ data: null }),
-      });
-      const files = ['coverimage-from-s3.jpg'];
-      (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteFiles as jasmine.Spy)
-        .withArgs({ files })
-        .and.returnValue(throwError('Unable to delete file'))
-        .and.callThrough();
-      const addCategryButton = categoriesEl.querySelector('button');
-      addCategryButton.click();
-      expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
-        undefined
-      );
-      expect(categoryServiceSpy.getDeleteFiles).toHaveBeenCalledWith();
-      expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
-        files,
-      });
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledWith(`category/${files[0]}`);
+      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledTimes(1);
     });
 
     it('should delete files from category service & s3 bucket in case of edit category modal closed without saving', () => {
@@ -620,10 +602,10 @@ describe('CategoriesComponent', () => {
       component.categoriesList = categoriesList;
       fixture.detectChanges();
       const files = ['coverimage-from-s3.jpg'];
-      const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
+      const s3DeleteResponse = { file: files[0] };
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
-      (instructionServiceSpy.deleteFiles as jasmine.Spy)
-        .withArgs({ files })
+      (instructionServiceSpy.deleteFile as jasmine.Spy)
+        .withArgs(`${CId1}/${files[0]}`)
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();
       const menuTigger: MatMenuTrigger = fixture.debugElement
@@ -640,10 +622,8 @@ describe('CategoriesComponent', () => {
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
         files[0]
       );
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledWith({
-        files,
-      });
-      expect(instructionServiceSpy.deleteFiles).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledWith(`${CId1}/${files[0]}`);
+      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledTimes(1);
     });
 
     it('should not delete category if selectedButton is "no"', () => {
@@ -746,74 +726,6 @@ describe('CategoriesComponent', () => {
       });
     });
 
-    it(`should delete cover image while deleting category if cover image from s3`, () => {
-      const categoryDetails1 = {
-        ...categoryDetails[1],
-        Cover_Image: 'coverimage-from-s3.jpg',
-      };
-      const { Category_Id: CId, Category_Name, Cover_Image } = categoryDetails1;
-      const data = {
-        CId,
-        Category_Name,
-        Cover_Image,
-        Drafts_Count: 0,
-        Published_Count: 0,
-        selectedButton: 'yes',
-      };
-      const s3DeleteResponse = {"Deleted": [{"Key": "coverimage-from-s3.jpg"}], "Errors": []};
-      (instructionServiceSpy.deleteFiles as jasmine.Spy)
-        .withArgs({ files: [Cover_Image] })
-        .and.returnValue(of(s3DeleteResponse))
-        .and.callThrough();
-      (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
-        afterClosed$: of({ data }),
-        data,
-      });
-      (instructionServiceSpy.deleteCategory$ as jasmine.Spy)
-        .withArgs({
-          Category_Name,
-          Category_Id: CId,
-          Cover_Image,
-        }, info)
-        .and.returnValue(of({
-          Category_Name,
-          Category_Id: CId,
-          Cover_Image,
-        }))
-        .and.callThrough();
-      const { Category_Id: CId0, ...rest } = categoryDetails[0];
-      const { Category_Id: CId1, ...rest1 } = categoryDetails1;
-      const categoriesList = [
-        { CId: CId0, ...rest, Drafts_Count: 1, Published_Count: 1 },
-        { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 },
-      ];
-      component.categoriesList = categoriesList;
-      fixture.detectChanges();
-      const menuTigger: MatMenuTrigger = fixture.debugElement
-        .query(By.directive(MatMenuTrigger))
-        .injector.get(MatMenuTrigger);
-      menuTigger.openMenu();
-      const deleteCategoryButton = categoriesDe.query(By.css('#deleteCategory'))
-        .nativeElement as HTMLElement;
-      deleteCategoryButton.click();
-      expect(spinnerSpy.show).toHaveBeenCalled();
-      expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledWith(
-        {
-          Category_Name,
-          Category_Id: CId,
-          Cover_Image,
-        },
-        info
-      );
-      expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
-      expect(spinnerSpy.hide).toHaveBeenCalled();
-      expect(component.getAllCategories).toHaveBeenCalled();
-      expect(toastServiceSpy.show).toHaveBeenCalledWith({
-        text: `Category ${Category_Name} has been deleted successfully`,
-        type: 'success'
-      });
-    });
-
     it('should handle error while deleting category', () => {
       const {
         Category_Id: CId,
@@ -878,13 +790,15 @@ describe('CategoriesComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 

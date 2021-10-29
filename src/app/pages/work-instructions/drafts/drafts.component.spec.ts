@@ -18,13 +18,14 @@ import { InstructionService } from '../services/instruction.service';
 import { DraftsComponent } from './drafts.component';
 import Swal from 'sweetalert2';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ErrorInfo } from '../../../interfaces';
+import { ErrorInfo, User } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { HeaderService } from '../../../shared/services/header.service';
-import { logonUserDetails } from '../../../shared/services/header.service.mock';
+import { CommonService } from '../../../shared/services/common.service';
+import { routingUrls } from '../../../app.constants';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
 const categoryDetails = [
   {
@@ -104,9 +105,9 @@ const drafts = [
   },
 ];
 
-const users = [
+const users: User[] = [
   {
-    id: 1,
+    id: '1',
     first_name: 'Tester',
     last_name: 'One',
     email: 'tester.one@innovapptive.com',
@@ -115,7 +116,7 @@ const users = [
     empId: '5000353',
   },
   {
-    id: 2,
+    id: '2',
     first_name: 'Tester',
     last_name: 'Two',
     email: 'tester.two@innovapptive.com',
@@ -135,7 +136,8 @@ describe('DraftsComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
-  let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
+  let activatedRouteSpy: ActivatedRoute;
   let draftsDe: DebugElement;
   let draftsEl: HTMLElement;
 
@@ -146,13 +148,19 @@ describe('DraftsComponent', () => {
       'setFavoriteInstructions',
       'getUsers',
       'deleteWorkInstruction$',
+      'copyWorkInstruction'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
       'handleError'
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
+      currentRouteUrlAction$: of('/work-instructions/drafts')
+    });
+    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      queryParamMap: of(convertToParamMap({ }))
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -177,7 +185,8 @@ describe('DraftsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
       ]
     }).compileComponents();
   }));
@@ -195,10 +204,7 @@ describe('DraftsComponent', () => {
       .withArgs()
       .and.returnValue(of(users))
       .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
+    localStorage.setItem('loggedInUser', JSON.stringify(users[0]));
     fixture.detectChanges();
   });
 
@@ -211,7 +217,6 @@ describe('DraftsComponent', () => {
   });
 
   it('should define varibales & set defaults', () => {
-    expect(component.wiList).toBeDefined();
     expect(component.config).toBeDefined();
     expect(component.config).toEqual({
       id: 'drafts',
@@ -219,15 +224,23 @@ describe('DraftsComponent', () => {
       itemsPerPage: 6,
       directionLinks: false,
     });
+    expect(component.search).toBeDefined();
     expect(component.order).toBeDefined();
     expect(component.order).toBe('updated_at');
     expect(component.reverse).toBeDefined();
     expect(component.reverse).toBeTrue();
     expect(component.reverseObj).toBeDefined();
     expect(component.reverseObj).toEqual({ updated_at: true });
-    expect(component.authors).toBeDefined();
     expect(component.CreatedBy).toBeDefined();
     expect(component.CreatedBy).toBe('');
+    expect(component.EditedBy).toBeDefined();
+    expect(component.EditedBy).toBe('');
+    expect(component.currentRouteUrl$).toBeDefined();
+    expect(component.drafts$).toBeDefined();
+    expect(component.authors$).toBeDefined();
+    expect(component.routingUrls).toBeDefined();
+    expect(component.routingUrls).toEqual(routingUrls);
+    expect(component.routeWithSearch).toBeDefined();
   });
 
   describe('template', () => {
@@ -245,7 +258,7 @@ describe('DraftsComponent', () => {
       expect(draftsEl.querySelectorAll('input').length).toBe(1);
       expect(draftsEl.querySelectorAll('select').length).toBe(1);
       expect(draftsEl.querySelectorAll('option').length).toBe(3);
-      expect(draftsEl.querySelector('ion-content img').getAttribute('src')).toContain(
+      expect(draftsEl.querySelector('img').getAttribute('src')).toContain(
         'search.svg'
       );
       expect(
@@ -309,7 +322,9 @@ describe('DraftsComponent', () => {
         (draftsDe.query(By.css('#editWorkInstruction'))
           .nativeElement as HTMLElement).getAttribute('ng-reflect-router-link')
       ).toBe(`/work-instructions/drafts,${draft1.Id}`);
-
+      const copyWIButton = draftsDe.query(By.css('#copyWorkInstruction'))
+        .nativeElement as HTMLElement;
+      expect(copyWIButton.textContent).toContain('Copy Work Instruction');
       expect(draftsEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(
         draftsEl.querySelectorAll('app-custom-pagination-controls').length
@@ -317,7 +332,7 @@ describe('DraftsComponent', () => {
       expect(
         draftsEl.querySelectorAll('app-dummy').length
       ).toBe(1);
-      expect(draftsEl.querySelectorAll('app-header').length).toBe(1);
+      expect(draftsEl.querySelectorAll('router-outlet').length).toBe(1);
     });
 
     it('should display No Results Found if search item not present in work instructions', () => {
@@ -435,8 +450,33 @@ describe('DraftsComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg');
-      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg');
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
+      expect(base64HelperServiceSpy.getBase64Image).toHaveBeenCalledWith('Thumbnail.jpg', draftedCopy.Id);
+    });
+
+    it('should display drafts template if current route url is drafts or drafts search', () => {
+      expect(draftsEl.querySelector('.drafts-main').childNodes.length).not.toBe(0);
+
+      (Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParamMap')
+        .get as jasmine.Spy).and.returnValue(of(convertToParamMap({ search: 'test' })));
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/drafts?search=test'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(component.search).toBe('test');
+      expect(draftsEl.querySelector('.drafts-main').childNodes.length).not.toBe(0);
+    });
+
+    it('should not display drafts template if current route url is not drafts or drafts search', () => {
+      (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
+        .get as jasmine.Spy).and.returnValue(of('/work-instructions/drafts/hxhgyHj'));  
+
+      component.ngOnInit();  
+      fixture.detectChanges();
+
+      expect(draftsEl.querySelector('.drafts-main')).toBeNull();
     });
   });
 
@@ -451,6 +491,18 @@ describe('DraftsComponent', () => {
       component.ngOnInit();
       expect(component.getAllDraftedInstructions).toHaveBeenCalledWith();
       expect(component.AuthorDropDown).toHaveBeenCalledWith();
+      expect(component.search).toBeNull();
+    });
+
+    it('should set header title', () => {
+      expect(spinnerSpy.hide).toHaveBeenCalled();
+      expect(component.routeWithSearch).toBe(`${routingUrls.drafts.url}?search=`);
+      component.currentRouteUrl$.subscribe(
+        data => {
+          expect(data).toBe(routingUrls.drafts.url);
+          expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(routingUrls.drafts.title);
+        }
+      )
     });
   });
 
@@ -459,13 +511,15 @@ describe('DraftsComponent', () => {
       expect(component.AuthorDropDown).toBeDefined();
     });
 
-    it('should set author details', () => {
+    it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
       component.AuthorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
-      expect(component.authors).toEqual(authors);
+      component.authors$.subscribe(
+        data => expect(data).toEqual(authors)
+      );
     });
   });
 
@@ -517,7 +571,6 @@ describe('DraftsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${drafted.WI_Name}' ?`
@@ -553,7 +606,6 @@ describe('DraftsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${drafted.WI_Name}' ?`
@@ -579,7 +631,6 @@ describe('DraftsComponent', () => {
         By.css('#deleteWorkInstruction')
       ).nativeElement as HTMLElement;
       deleteWorkInstructionButton.click();
-      expect(Swal.isVisible()).toBeTruthy();
       expect(Swal.getTitle().textContent).toEqual('Are you sure?');
       expect(Swal.getHtmlContainer().textContent).toEqual(
         `Do you want to delete the work instruction '${drafted.WI_Name}' ?`
@@ -622,7 +673,7 @@ describe('DraftsComponent', () => {
       (anchors[3] as HTMLElement).click();
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-      expect(component.wiList[0].IsFavorite).toBe(true);
+      component.drafts$.subscribe(data => expect(data[0].IsFavorite).toBe(true));
     });
 
     it('should set work instruction as unfavorite', () => {
@@ -642,7 +693,7 @@ describe('DraftsComponent', () => {
       (anchors[3] as HTMLElement).click();
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledWith(drafted.Id, info);
       expect(instructionServiceSpy.setFavoriteInstructions).toHaveBeenCalledTimes(1);
-      expect(component.wiList[0].IsFavorite).toBe(false);
+      component.drafts$.subscribe(data => expect(data[0].IsFavorite).toBe(false));
     });
 
     it('should handle error while setting work instruction as favorite', () => {
@@ -670,17 +721,80 @@ describe('DraftsComponent', () => {
       expect(component.getAllDraftedInstructions).toBeDefined();
     });
 
-    it('should set drafted work instructions list', () => {
+    it('should set drafts observable', () => {
       component.getAllDraftedInstructions();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getDraftedInstructions
       ).toHaveBeenCalledWith();
-      expect(component.wiList).toEqual(drafts);
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      component.drafts$.subscribe(
+        data => expect(data).toEqual(drafts)
+      );
     });
   });
 
+  describe('copyWI', () => {
+    const [drafted] = drafts;
+    beforeEach(() => {
+      (instructionServiceSpy.getDraftedInstructions as jasmine.Spy)
+        .withArgs()
+        .and.returnValue(of([drafted]))
+        .and.callThrough();
+      component.ngOnInit();
+      fixture.detectChanges();
+    });
+
+    it('should define function', () => {
+      expect(component.copyWI).toBeDefined();
+    });
+
+    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(drafted.WI_Name, users[0], info)
+        .and.returnValue(of({ instruction: { ...drafted, WI_Name: 'Name of Copy Inst'}, steps: [] }));
+      spyOn(component, 'getAllDraftedInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = draftsDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(drafted.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(toastServiceSpy.show).toHaveBeenCalledWith({
+        text: "Selected work instruction has been successfully copied",
+        type: 'success',
+      });
+      expect(component.getAllDraftedInstructions).toHaveBeenCalledWith();
+    });
+
+    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+      (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
+        .withArgs(drafted.WI_Name, users[0], info)
+        .and.returnValue(throwError({ message: 'Unable to copy WI' }));
+      spyOn(component, 'getAllDraftedInstructions');
+      const menuTigger: MatMenuTrigger = fixture.debugElement
+        .query(By.directive(MatMenuTrigger))
+        .injector.get(MatMenuTrigger);
+      menuTigger.openMenu();
+      const copyWorkInstructionButton = draftsDe.query(
+        By.css('#copyWorkInstruction')
+      ).nativeElement as HTMLElement;
+      copyWorkInstructionButton.click();
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledWith(drafted.WI_Name, users[0], info);
+      expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(1);
+      expect(spinnerSpy.show).toHaveBeenCalledWith();
+      expect(spinnerSpy.hide).toHaveBeenCalledWith();
+      expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to copy WI' } as HttpErrorResponse);
+      expect(component.getAllDraftedInstructions).not.toHaveBeenCalled();
+    });
+  });
+  
   describe('getImageSrc', () => {
     it('should define function', () => {
       expect(component.getImageSrc).toBeDefined();
@@ -688,13 +802,15 @@ describe('DraftsComponent', () => {
 
     it('should return given source if source is from assets', () => {
       const src = 'assets/work-instructions-icons/image.jpg';
-      expect(component.getImageSrc(src)).toBe(src);
+      const path = 'path';
+      expect(component.getImageSrc(src, path)).toBe(src);
     });
 
     it('should call getBase64ImageData if source is not from assets', () => {
       const src = 'image.jpg';
-      component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src);
+      const path = 'path';
+      component.getImageSrc(src, path);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, path);
     });
   });
 });

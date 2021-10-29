@@ -3,11 +3,11 @@ import {Component, ChangeDetectionStrategy, OnInit, ViewChild, ChangeDetectorRef
 import {InstructionService} from '../services/instruction.service';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {ToastService} from '../../../shared/toast';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 
 import Swal from 'sweetalert2';
 import {NgxSpinnerService} from 'ngx-spinner';
-import { map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
@@ -129,14 +129,13 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
 
 
   copyWI(ins) {
-    const id = this.route.snapshot.paramMap.get('id');
     this.spinner.show();
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
     const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
     this._instructionSvc.copyWorkInstruction(ins.WI_Name, userName, info).subscribe(
       () => {
         this.spinner.hide();
-        this.getInstructionsWithCategoryName(this.categoryId);
+        this.getInstructionsByCategoryId(this.categoryId);
         this.cdrf.markForCheck();
         this._toastService.show({
           text: "Selected work instruction has been successfully copied",
@@ -168,7 +167,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
           .subscribe(
             data => {
               this.spinner.hide();
-              this.getInstructionsWithCategoryName(this.categoryId);
+              this.getInstructionsByCategoryId(this.categoryId);
               this.cdrf.markForCheck();
               this._toastService.show({
                 text: "Work instuction '"+ el.WI_Name +"' has been deleted",
@@ -185,7 +184,7 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
   }
 
 
-  getInstructionsWithCategoryName = (categoryId: string) => {
+  getInstructionsByCategoryId = (categoryId: string) => {
     this.spinner.show();
     this.workInstructions$ = this._instructionSvc.getInstructionsByCategoryId(categoryId)
     .pipe(
@@ -210,22 +209,21 @@ export class CategoryWiseInstructionsComponent implements OnInit, AfterContentCh
     const cid = this.route.snapshot.paramMap.get('cid');
     this.categoryId = cid;
     this.routeUrl = `${workInstructionsInfo.url}/category/${cid}`;
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$
-      .pipe(
-        mergeMap(currentRouteUrl => 
-          this._instructionSvc.getSelectedCategory(cid)
-            .pipe(
-              map(category => {
-                const { Category_Name } = category;
-                this.selectedCategory = Category_Name;
-                this.commonService.updateHeaderTitle(this.selectedCategory);
-                this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
-                return currentRouteUrl;
-              })
-            )
-        )
-      );
-    this.getInstructionsWithCategoryName(cid);
+
+    this.currentRouteUrl$ = combineLatest([
+      this.commonService.currentRouteUrlAction$,
+      this._instructionSvc.getSelectedCategory(cid)
+    ]).pipe(
+      map(([currentRouteUrl, category]) => {
+        const { Category_Name } = category;
+        this.selectedCategory = Category_Name;
+        this.commonService.setHeaderTitle(this.selectedCategory);
+        this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+        return currentRouteUrl;
+      })
+    );
+
+    this.getInstructionsByCategoryId(cid);
     this.getAuthors();
   }
 
