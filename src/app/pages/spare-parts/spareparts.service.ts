@@ -18,7 +18,7 @@ export class SparepartsService {
     "2": "Assigned for Picking",
     "3": "Kitting in Progress",
     "4": "Kits Complete",
-    "5": "Kits Picked Up",
+    "5": "Kits Issued",
   }
 
 
