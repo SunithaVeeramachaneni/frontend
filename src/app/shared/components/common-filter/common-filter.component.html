@@ -37,7 +37,7 @@
 
     <mat-form-field *ngIf="kitStatusList" appearance="outline" class="mat-field">
       <mat-label>Kitting Status</mat-label>
-      <mat-select disabled name="kitStatus" multiple [(ngModel)]="kitStatus">
+      <mat-select name="kitStatus" multiple [(ngModel)]="kitStatus">
         <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{kit}}</mat-option>
       </mat-select>
     </mat-form-field>
