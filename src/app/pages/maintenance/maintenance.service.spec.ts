@@ -1,32 +1,85 @@
 import { TestBed } from "@angular/core/testing";
-import { rawWorkOrders$, expectedWorkOrders$ } from "./maintenance.mock"
+import { rawWorkOrders$, expectedWorkOrders$, expectedARBPLs$, rawARBPLs$, rawTechniciansELEKTRIK$, rawTechniciansMECHANIK$, rawTechnicians$ARBITRARY } from "./maintenance.mock"
 import { MaintenanceService } from "./maintenance.service";
 import { AppService } from "../../shared/services/app.services"
 import { WorkOrders } from "../../interfaces/work-order";
 import { isEqual, isObject } from "lodash";
 import * as _ from "lodash";
 import { HttpClientModule } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
 
 describe('Maintenance service', () => {
   let service: MaintenanceService;
-  let appService: AppService;
+  let appServiceSpy: AppService;
+  let maintenanceServiceSpy: MaintenanceService
 
   beforeEach(() => {
+    // maintenanceServiceSpy = jasmine.createSpyObj('MaintenanceService', [
+    //   'getTechnicians',
+    //   'getAllWorkCenters',
+    //   'getAllWorkOrders',
+    //   'parseJsonDate',
+    //   'formatTime',
+    //   'cleanTechnicians',
+    //   'getEstimatedTime',
+    //   'getActualTime',
+    //   'getOperationProgress',
+    //   'getTimeProgress',
+    //   'getStatus'], {
+    //   workCenters$: expectedARBPLs$
+    // });
+    appServiceSpy = jasmine.createSpyObj('AppService', [
+      '_getRespFromGateway'], {}
+    );
+
+
     TestBed.configureTestingModule({
-      providers: [MaintenanceService, AppService],
-      imports: [HttpClientModule]
+      providers: [MaintenanceService,
+        { provide: AppService, useValue: appServiceSpy }],
+      imports: []
     });
     service = TestBed.inject(MaintenanceService);
-    appService = TestBed.inject(AppService);
   });
 
   it('needs to exist', () => {
     expect(service).toBeTruthy();
   })
 
-  it('needs to process raw data and return Work Orders', () => {
+  it('needs to process raw list of work centers and return them', () => {
+    let workCenters;
+    let gateWayParams = `workCenters/${1000}`;
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, gateWayParams)
+      .and.returnValue(rawARBPLs$);
+    let workCenters$ = service.getAllWorkCenters()
+    let expectedWorkCenters;
+    expectedARBPLs$.subscribe(resp => workCenters = resp);
+    workCenters$.subscribe(resp => expectedWorkCenters = resp);
+    expect(isEqual(workCenters, expectedWorkCenters)).toBeTrue();
+  })
 
-    spyOn(appService, '_getRespFromGateway').and.returnValue(rawWorkOrders$);
+  fit('needs to process raw technicians and return them', () => {
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
+    .and.returnValue(rawTechniciansELEKTRIK$);
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
+    .and.returnValue(rawTechniciansMECHANIK$);
+
+
+    let technicians$ = service.getTechnicians();
+    // technicians$.subscribe(resp => console.log(resp));
+    // let technicians
+    // let expectedTechnicians;
+    // expectedTechnicians$.subscribe(resp => expectedTechnicians = resp);
+    // technicians$.subscribe(resp => technicians = resp);
+    // expect(isEqual(expectedTechnicians, technicians)).toBeTrue();
+
+  })
+
+  xit('needs to process raw data and return Work Orders', () => {
+
+    // spyOn(appService, '_getRespFromGateway').and.returnValue(rawWorkOrders$);
     let workOrders$ = service.getAllWorkOrders()
     let workOrders: WorkOrders;
     let expectedWorkOrders: WorkOrders;
@@ -36,7 +89,7 @@ describe('Maintenance service', () => {
   })
 
 
-  it('parseJsonData should take string date and convert to a date object', () => {
+  fit('parseJsonData should take string date and convert to a date object', () => {
     let stringDate: string = '/Date(1629331200000)/';
     let expectedDate: Date = new Date(1629331200000);
     let convertedDate: Date = service.parseJsonDate(stringDate);

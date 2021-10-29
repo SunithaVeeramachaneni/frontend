@@ -285,6 +285,34 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   color: #FFFFFF;
   float: right;
 }
+.waiting-on-parts {
+  background-color: #FF3B30;
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  float: right;
+}
+.parts-available {
+  background-color: #FF9800;
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #FFFFFF;
+  float: right;
+}
 .show-operations-btn {
   padding-top: 10px;
   text-transform: initial;

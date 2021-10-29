@@ -51,6 +51,7 @@ export class MaintenanceService {
   }
 
   getAllWorkCenters = () => {
+    console.log("Can i see the environment variable", environment.mccAbapApiUrl)
     let rawObservable$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workCenters/${1000}`);
     this.workCenters$ = rawObservable$.pipe(map(rawWorkCenters => {
       let workCenters: WorkCenter[] = [];
@@ -202,7 +203,7 @@ export class MaintenanceService {
       workOrderDesc: rawWorkOrder['AUFTEXT'],
       workCenter: rawWorkOrder['ARBPL'],
       equipmentName: rawWorkOrder['KTEXT'],
-      kitStatus: rawWorkOrder['TXT04'],
+      kitStatus: this.getKitStatus(rawWorkOrder),
       dueDate: this.parseJsonDate(rawWorkOrder['GLTRP']),
       estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
       actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
@@ -211,6 +212,17 @@ export class MaintenanceService {
       timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
       technician: assignedTechnician
     })
+  }
+
+  getKitStatus = (rawWorkOrder) =>{
+    let id = parseInt(rawWorkOrder.AUFNR)
+    let status = this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS'])
+    if (status !== 'unassigned' && status !== 'assigned') return null;
+    let kitStatus = null;
+    if(rawWorkOrder['TXT04'] === 'KITD:INIT')
+          kitStatus = 'Kit Ready'
+    return kitStatus
+
   }
 
   setAssigneeAndWorkCenter = async (params) => {

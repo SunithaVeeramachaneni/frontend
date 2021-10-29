@@ -60,7 +60,7 @@ export class MaintenanceComponent {
   public priorityList: string[] = ['Very High', 'High', 'Medium', 'Low'];
 
   public kitStatus: string[] = [];
-  public kitStatusList: string[] = ['Kit Ready', 'Parts Available', 'Waiting On Parts'];
+  public kitStatusList: string[] = ['Kit Ready']//, 'Parts Available', 'Waiting On Parts'];
 
   public workCenter: string[] = [];
 
@@ -125,7 +125,8 @@ export class MaintenanceComponent {
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
               this.filterPriority(workOrder.priorityStatus,filterObj.priority) &&
               this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter) &&
-              this.filterAssignee(workOrder.technician[0],filterObj.assign);
+              this.filterAssignee(workOrder.technician[0],filterObj.assign)&&
+              this.filterKitStatus(workOrder.kitStatus, filterObj.kitStatus)
           }
           )
 
@@ -165,6 +166,19 @@ export class MaintenanceComponent {
     else {
       for (let i = 0; i < priority.length; i++) {
         if (priority[i] === status)
+          return true;
+      }
+      return false;
+    }
+  }
+
+  public filterKitStatus = (workOrderKitStatus, kitStatus) => {
+    if (kitStatus === null || kitStatus.length == 0) {
+      return true;
+    }
+    else {
+      for (let i = 0; i < kitStatus.length; i++) {
+        if (kitStatus[i] === workOrderKitStatus)
           return true;
       }
       return false;
