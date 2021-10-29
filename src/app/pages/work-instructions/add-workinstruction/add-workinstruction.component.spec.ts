@@ -1004,7 +1004,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.copyWI).toBeDefined();
     });
 
-    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+    it('should copy work instruction while clicking on copy work instruction from mat menu', () => {
       (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
         .withArgs(editWI.WI_Name, loggedInUser, info)
         .and.returnValue(of({ instruction: { ...editWI, WI_Name: 'Name of Copy Inst'}, steps: [] }));
@@ -1027,7 +1027,7 @@ describe('AddWorkinstructionComponent', () => {
       expect(locationSpy.back).toHaveBeenCalledWith();
     });
 
-    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+    it('should handle copy work instruction error while clicking on copy work instruction from mat menu', () => {
       (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
         .withArgs(editWI.WI_Name, loggedInUser, info)
         .and.returnValue(throwError({ message: 'Unable to copy WI' }));
