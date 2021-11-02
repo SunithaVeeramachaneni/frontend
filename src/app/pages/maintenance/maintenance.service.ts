@@ -193,7 +193,7 @@ export class MaintenanceService {
       priorityNumber: rawWorkOrder['PRIOK'],
       priorityStatus: rawWorkOrder['PRIOKX'],
       colour: rawWorkOrder['COLOUR'],
-      workOrderID: parseInt(rawWorkOrder['AUFNR']),
+      workOrderID: rawWorkOrder['AUFNR'],
       workOrderDesc: rawWorkOrder['AUFTEXT'],
       workCenter: rawWorkOrder['ARBPL'],
       equipmentName: rawWorkOrder['KTEXT'],
