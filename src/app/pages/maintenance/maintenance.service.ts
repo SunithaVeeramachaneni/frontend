@@ -51,7 +51,6 @@ export class MaintenanceService {
   }
 
   getAllWorkCenters = () => {
-    console.log("Can i see the environment variable", environment.mccAbapApiUrl)
     let rawObservable$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, `workCenters/${1000}`);
     this.workCenters$ = rawObservable$.pipe(map(rawWorkCenters => {
       let workCenters: WorkCenter[] = [];
@@ -75,14 +74,11 @@ export class MaintenanceService {
       let assignedTechnician = [{}];
       rawWorkOrders.forEach(rawWorkOrder => {
         assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
-        // console.log(rawWorkOrder.AUFNR, " The raw work order before cleaning is", rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
-        // console.log(workOrder.workOrderID, " The work order after cleaning is", workOrder)
         workOrders[`${workOrder.status}`].push(workOrder)
       });
       return workOrders;
     }))
-    this.workOrders$.subscribe(this.workOrderBSubject)
     return this.workOrders$
   }
 
@@ -167,7 +163,6 @@ export class MaintenanceService {
   }
 
   getTimeProgress = (estimatedTime, actualTime) => {
-    // console.log("estimated time", estimatedTime, "actual time",actualTime);
     let timeProgress = actualTime / estimatedTime
     return timeProgress;
   }
@@ -187,7 +182,6 @@ export class MaintenanceService {
         "operationName": operation.LTXA1
       })
     })
-    // console.log("Operation Details", cleaned)
     return cleaned
 
   }
@@ -215,14 +209,17 @@ export class MaintenanceService {
   }
 
   getKitStatus = (rawWorkOrder) =>{
-    let id = parseInt(rawWorkOrder.AUFNR)
     let status = this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS'])
     if (status !== 'unassigned' && status !== 'assigned') return null;
     let kitStatus = null;
-    if(rawWorkOrder['TXT04'] === 'KITD:INIT')
+    if(rawWorkOrder['TXT04'].includes('KITD'))
           kitStatus = 'Kit Ready'
+    else
+      if(rawWorkOrder['PARTS_AVAIL'])
+        kitStatus = 'Parts Available'
+      else
+        kitStatus = 'Waiting On Parts'
     return kitStatus
-
   }
 
   setAssigneeAndWorkCenter = async (params) => {
@@ -263,7 +260,6 @@ export class MaintenanceService {
       return workOrders;
     }))
 
-    workOrder$.subscribe(resp => console.log("cleaned", resp))
     return workOrder$
   }
 }
