@@ -19,8 +19,8 @@ export const httpLoaderFactory = (httpClient: HttpClient) => {
         return  ({
             authority:tenatConfig.authority ,
             authWellknownEndpointUrl: tenatConfig.authority,
-            redirectUrl: tenatConfig.redirectUri,
-            postLogoutRedirectUri:tenatConfig.redirectUri,
+            redirectUrl: window.location.origin,
+            postLogoutRedirectUri: window.location.origin,
             clientId: tenatConfig.clientId,
             scope: "openid profile offline_access email api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access",
             responseType: "code",
