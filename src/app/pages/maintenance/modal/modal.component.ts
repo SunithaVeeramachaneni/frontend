@@ -17,6 +17,8 @@ export class ModalComponent implements OnInit {
 
    private workOrderID;
    private defaultWorkCenter;
+   private priorityNumber;
+   private priorityStatus;
    public saveDisabled= true;
 
    public workCenter: string;
@@ -38,6 +40,8 @@ export class ModalComponent implements OnInit {
     this.workCenterList = this.navParams.get('workCenterList')
     this.defaultWorkCenter = this.navParams.get('defaultWorkCenter');
     this.workOrderID = this.navParams.get('workOrderID');
+    this.priorityNumber = this.navParams.get('priorityNumber');
+    this.priorityStatus = this.navParams.get('priorityStatus');
     this.workCenter = this.defaultWorkCenter;
 
     // console.log("Technicians list is", this.assigneeList);
@@ -68,7 +72,9 @@ dismiss() {
     let resp = {
       assignee: this.assignee,
       workCenter: this.workCenter,
-      workOrderID: this.workOrderID
+      workOrderID: this.workOrderID,
+      priorityStatus: this.priorityStatus,
+      priorityNumber: this.priorityNumber
     }
     console.log(resp)
     this.modalCtrl.dismiss(resp);

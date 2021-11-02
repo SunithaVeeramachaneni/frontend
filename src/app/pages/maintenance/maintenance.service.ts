@@ -232,6 +232,8 @@ export class MaintenanceService {
         ARBPL: params.workCenter.workCenterKey,
         ENAME: params.assignee.personName,
         PARNR: params.assignee.personKey,
+        PRIOK: params.priorityNumber,
+        PRIOKX: params.priorityStatus
       }
     }
     let res = await this._appService._putDataToGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations', req);

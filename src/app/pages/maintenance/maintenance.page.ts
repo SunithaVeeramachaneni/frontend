@@ -254,7 +254,9 @@ export class MaintenanceComponent {
         techniciansList: this.technicians,
         workCenterList: this.workCenterList,
         defaultWorkCenter: workOrder.workCenter,
-        workOrderID: workOrder.workOrderID
+        workOrderID: workOrder.workOrderID,
+        priorityNumber: workOrder.priorityNumber,
+        priorityStatus: workOrder.priorityStatus
       }
     });
 
