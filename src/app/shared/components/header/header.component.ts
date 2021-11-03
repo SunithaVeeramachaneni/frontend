@@ -64,7 +64,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout(){
-    this.oidcSecurityService.logoff();
+    this.oidcSecurityService.logoffAndRevokeTokens();
   }
 
 }
