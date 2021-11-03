@@ -13,9 +13,9 @@ import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
 import { base64String } from './image'
-import { CommonService } from '../../shared/services/common.service';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
 import * as moment from 'moment';
+import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
@@ -79,7 +79,7 @@ export class MaintenanceComponent {
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
-    private _commonService: CommonService,
+    private _commonFilterService: CommonFilterService,
     private _dateSegmentService: DateSegmentService
   ) { }
 
@@ -93,7 +93,7 @@ export class MaintenanceComponent {
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
-    this.filterObj$ = this._commonService.commonFilterAction$
+    this.filterObj$ = this._commonFilterService.commonFilterAction$
     this.getWorkOrders();
 
   }

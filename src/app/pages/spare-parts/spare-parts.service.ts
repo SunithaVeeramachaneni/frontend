@@ -43,7 +43,9 @@ export class SparepartsService {
         technicians.push(technician)
       });
       return technicians;
-    }))
+    }),
+     share()
+     )
     return transformedObservable$;
   }
   assignTechnicianToWorkorder(data,info: ErrorInfo = {} as ErrorInfo):Observable<any>{
