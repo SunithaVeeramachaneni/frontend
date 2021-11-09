@@ -50,9 +50,9 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         Validators.required, Validators.minLength(3), Validators.maxLength(48)], this.validateCategoryName.bind(this)),
       coverImage: new FormControl(this.coverImages[0])
     });
-    const {CId: cid, Category_Name: title, Cover_Image: coverImage} = this.ref.data;
+    const {CId: cid, Category_Name: title, Cover_Image: coverImage, path } = this.ref.data;
     this.categoryValidatedMsg = '';
-    this.path = cid ? `${cid}` : 'category';
+    this.path = path;
 
     if (cid) {
       this.title = 'Edit Category';

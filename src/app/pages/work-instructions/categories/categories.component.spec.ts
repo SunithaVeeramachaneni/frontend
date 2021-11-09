@@ -111,6 +111,8 @@ describe('CategoriesComponent', () => {
   let cdrfSpy: ChangeDetectorRef;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
+  let catSubscribeComponent = CategoryComponent;
+  let delCatSubscribeComponent = DeleteCategoryComponent;
 
   beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
@@ -385,6 +387,9 @@ describe('CategoriesComponent', () => {
     });
 
     it('should add new Category', () => {
+      const time = new Date().getTime();
+      const path = `category/${time}`;
+      spyOn(component, 'getS3Folder').and.returnValue(path);
       const data = {
         cid: null,
         title: 'TestCategory',
@@ -402,6 +407,8 @@ describe('CategoriesComponent', () => {
         .and.callThrough();
       const addCategryButton = categoriesEl.querySelector('button');
       addCategryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { path });
       expect(instructionServiceSpy.addCategory).toHaveBeenCalledWith({
         CId,
         Category_Name,
@@ -420,6 +427,9 @@ describe('CategoriesComponent', () => {
     });
 
     it('should add new Category, if cover image is from S3 rename file to cover image id folder', () => {
+      const time = new Date().getTime();
+      const path = `category/${time}`;
+      spyOn(component, 'getS3Folder').and.returnValue(path);
       const data = {
         cid: null,
         title: 'TestCategory',
@@ -436,10 +446,12 @@ describe('CategoriesComponent', () => {
         .and.returnValue(of(response))
         .and.callThrough();
       (instructionServiceSpy.renameFile as jasmine.Spy)
-        .withArgs({ filePath: `category/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`})
-        .and.returnValue(of({ filePath: `category/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`}));
+        .withArgs({ filePath: `${path}/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`})
+        .and.returnValue(of({ filePath: `${path}/cover-image-from-s3.png`, newFilePath: `${response.Category_Id}/cover-image-from-s3.png`}));
       const addCategryButton = categoriesEl.querySelector('button');
       addCategryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { path });
       expect(instructionServiceSpy.addCategory).toHaveBeenCalledWith({
         CId,
         Category_Name,
@@ -495,6 +507,8 @@ describe('CategoriesComponent', () => {
       const editCategoryButton = categoriesDe.query(By.css('#editCategory'))
         .nativeElement as HTMLElement;
       editCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(instructionServiceSpy.updateCategory).toHaveBeenCalledWith(
         {
           Category_Id: cid,
@@ -551,6 +565,8 @@ describe('CategoriesComponent', () => {
       const editCategoryButton = categoriesDe.query(By.css('#editCategory'))
         .nativeElement as HTMLElement;
       editCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(instructionServiceSpy.updateCategory).toHaveBeenCalledWith(
         {
           Category_Id: cid,
@@ -564,7 +580,10 @@ describe('CategoriesComponent', () => {
       );
     });
 
-    it('should delete files from category service & s3 bucket in case of add category modal closed without saving', () => {
+    it('should delete files from category service & s3 bucket in case of uploaded file to S3 and add category modal closed without saving', () => {
+      const time = new Date().getTime();
+      const path = `category/${time}`;
+      spyOn(component, 'getS3Folder').and.returnValue(path);
       (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
         afterClosed$: of({ data: null }),
       });
@@ -572,7 +591,7 @@ describe('CategoriesComponent', () => {
       const s3DeleteResponse = { file: files[0] };
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue(files);
       (instructionServiceSpy.deleteFile as jasmine.Spy)
-        .withArgs(`category/${files[0]}`)
+        .withArgs(`${path}/${files[0]}`)
         .and.returnValue(of(s3DeleteResponse))
         .and.callThrough();
       const addCategryButton = categoriesEl.querySelector('button');
@@ -585,11 +604,11 @@ describe('CategoriesComponent', () => {
         files[0]
       );
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledTimes(2);
-      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledWith(`category/${files[0]}`);
+      expect(instructionServiceSpy.deleteFile).toHaveBeenCalledWith(`${path}/${files[0]}`);
       expect(instructionServiceSpy.deleteFile).toHaveBeenCalledTimes(1);
     });
 
-    it('should delete files from category service & s3 bucket in case of edit category modal closed without saving', () => {
+    it('should delete files from category service & s3 bucket in case of uploaded file to S3 and edit category modal closed without saving', () => {
       (overlayServiceSpy.open as jasmine.Spy).and.returnValue({
         afterClosed$: of({ data: null }),
       });
@@ -615,6 +634,8 @@ describe('CategoriesComponent', () => {
       const editCategoryButton = categoriesDe.query(By.css('#editCategory'))
         .nativeElement as HTMLElement;
       editCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
         categoryDetails[1].Cover_Image
       );
@@ -659,6 +680,8 @@ describe('CategoriesComponent', () => {
       const deleteCategoryButton = categoriesDe.query(By.css('#deleteCategory'))
         .nativeElement as HTMLElement;
       deleteCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(delCatSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(instructionServiceSpy.deleteCategory$).not.toHaveBeenCalled();
     });
 
@@ -708,6 +731,8 @@ describe('CategoriesComponent', () => {
       const deleteCategoryButton = categoriesDe.query(By.css('#deleteCategory'))
         .nativeElement as HTMLElement;
       deleteCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(delCatSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(spinnerSpy.show).toHaveBeenCalled();
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledWith(
         {
@@ -767,6 +792,8 @@ describe('CategoriesComponent', () => {
       const deleteCategoryButton = categoriesDe.query(By.css('#deleteCategory'))
         .nativeElement as HTMLElement;
       deleteCategoryButton.click();
+
+      expect(overlayServiceSpy.open).toHaveBeenCalledWith(delCatSubscribeComponent, { ...categoriesList[1], path: CId1 });
       expect(spinnerSpy.show).toHaveBeenCalled();
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledWith(
         {
@@ -830,6 +857,17 @@ describe('CategoriesComponent', () => {
     it('should return empty styles if cover image is from assets', () => {
       const result = component.getS3CoverImageStyles('assets/work-instructions-icons/coverimage.jpg');
       expect(result).toEqual({});
+    });
+  });
+
+  describe('getS3Folder', () => {
+    it('should define function', () => {
+      expect(component.getS3Folder).toBeDefined();
+    });
+
+    it('should return S3 folder path', () => {
+      const time = new Date().getTime();
+      expect(component.getS3Folder(time)).toBe(`category/${time}`);
     });
   });
 });
