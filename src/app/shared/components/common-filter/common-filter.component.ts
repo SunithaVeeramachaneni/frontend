@@ -1,6 +1,6 @@
 import { Component, OnInit ,Input} from '@angular/core';
 import { uniqBy } from 'lodash';
-import {CommonService}   from '../../services/common.service';
+import {CommonFilterService}  from './common-filter.service'
 import { DomSanitizer } from '@angular/platform-browser';
 import { MaintenanceService } from '../../../pages/maintenance/maintenance.service';
 
@@ -30,7 +30,7 @@ export class CommonFilterComponent implements OnInit {
 
 
 
-  constructor(private _commonService:CommonService,
+  constructor(private _commonFilterService:CommonFilterService,
               private _maintenanceSvc: MaintenanceService, 
               private sanitizer:DomSanitizer) { }
 
@@ -50,7 +50,7 @@ export class CommonFilterComponent implements OnInit {
   }
 
   searchFilter() {
-    this._commonService.searchFilter({
+    this._commonFilterService.searchFilter({
       search:this.searchValue,
       priority:this.priority,
       showOverdue:this.showOverdue,
@@ -61,7 +61,7 @@ export class CommonFilterComponent implements OnInit {
   }
 
   searchOrder(newValue){
-    this._commonService.searchFilter({
+    this._commonFilterService.searchFilter({
       search:newValue,
       priority:this.priority,
       showOverdue:this.showOverdue,

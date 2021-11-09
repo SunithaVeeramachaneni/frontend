@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from "@angular/core"
 import { BehaviorSubject, combineLatest, from, Observable, of, Subject } from "rxjs";
-import { map, mergeAll, mergeMap, reduce, scan, switchMap, tap } from "rxjs/operators";
+import { map, mergeAll, mergeMap, reduce, scan, share, switchMap, tap } from "rxjs/operators";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
 import { AppService } from "../../shared/services/app.services"
@@ -62,7 +62,9 @@ export class MaintenanceService {
         workCenters.push(workCenter)
       });
       return workCenters
-    }))
+    }),
+      share()
+    )
     return this.workCenters$;
   }
 
@@ -115,10 +117,11 @@ export class MaintenanceService {
             }
 
             ))),
-      )),
+      ),),
       reduce((acc: any, cur) => {
         return acc = { ...acc, ...cur }
-      }, {})
+      }, {}),
+      share()
     )
     return this.technicians$
   }

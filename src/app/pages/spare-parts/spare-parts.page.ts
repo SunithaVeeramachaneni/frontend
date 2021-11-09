@@ -1,5 +1,5 @@
 import { Component, QueryList, ViewChild, ViewChildren} from '@angular/core';
-import { SparepartsService } from './spareparts.service';
+import { SparepartsService } from './spare-parts.service';
 import { IonSelect } from '@ionic/angular';
 import { data_test } from './spare-parts-data';
 import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import {CommonService}   from '../../shared/services/common.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
+import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
 @Component({
   selector: 'app-spare-parts',
   templateUrl: './spare-parts.page.html',
@@ -76,12 +77,12 @@ export class SparePartsComponent{
 
   constructor(private _sparepartsSvc: SparepartsService, 
               private sanitizer:DomSanitizer,
-              private _commonService:CommonService,
+              private _commonFilterService:CommonFilterService,
               private spinner: NgxSpinnerService,
               private _dateSegmentService: DateSegmentService) {}
 
   ngOnInit() {
-    this.filterObj$= this._commonService.commonFilterAction$;
+    this.filterObj$= this._commonFilterService.commonFilterAction$;
     this.dateRange$= new BehaviorSubject(this._dateSegmentService.getStartAndEndDate("month"));
     this.getWorkOrders();
     this.getTechnicians();
