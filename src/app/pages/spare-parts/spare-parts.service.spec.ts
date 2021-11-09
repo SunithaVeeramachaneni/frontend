@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
-import { SparepartsService } from "./spareparts.service";
-import { AppService } from "../../services/app.service"
+import { SparepartsService } from "./spare-parts.service";
+import { AppService } from "../../shared/services/app.services"
 import { WorkOrders } from "../../interfaces/work-order";
 import { isEqual, isObject } from "lodash";
 import * as _ from "lodash";
