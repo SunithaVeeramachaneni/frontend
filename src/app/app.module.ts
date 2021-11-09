@@ -26,6 +26,7 @@ import { ErrorHandlerModule } from './shared/error-handler/error-handler.module'
 
 import { AuthConfigModule } from './auth-config.module';
 import { AuthInterceptor } from 'angular-auth-oidc-client';
+import { HttpRequestInterceptor } from './shared/interceptor/http-request.interceptor';
 
 @NgModule({
   imports: [
@@ -57,7 +58,9 @@ import { AuthInterceptor } from 'angular-auth-oidc-client';
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    }
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }
+
   ],
   bootstrap: [AppComponent]
 })

@@ -764,7 +764,7 @@ describe('FavoritesComponent', () => {
       expect(component.copyWI).toBeDefined();
     });
 
-    it('should copy work instruction while clicking copy work instruction from mat menu', () => {
+    it('should copy work instruction while clicking on copy work instruction from mat menu', () => {
       (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
         .withArgs(favorite.WI_Name, users[0], info)
         .and.returnValue(of({ instruction: { ...favorite, WI_Name: 'Name of Copy Inst'}, steps: [] }));
@@ -788,7 +788,7 @@ describe('FavoritesComponent', () => {
       expect(component.getAllWorkInstructionsByFav).toHaveBeenCalledWith();
     });
 
-    it('should handle copy work instruction error while clicking copy work instruction from mat menu', () => {
+    it('should handle copy work instruction error while clicking on copy work instruction from mat menu', () => {
       (instructionServiceSpy.copyWorkInstruction as jasmine.Spy)
         .withArgs(favorite.WI_Name, users[0], info)
         .and.returnValue(throwError({ message: 'Unable to copy WI' }));

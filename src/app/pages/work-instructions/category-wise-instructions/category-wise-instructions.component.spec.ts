@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed, ComponentFixtureAutoDetect } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
@@ -636,7 +636,7 @@ describe('CategoryWiseInstructionsComponent', () => {
       expect(wiComponentEl.querySelector('.work-instructions').childNodes.length).not.toBe(0);
     });
 
-    it('should not display drafts template if current route url is not drafts or drafts search', () => {
+    it('should not display category wise template if current route url is not category', () => {
       (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
         .get as jasmine.Spy).and.returnValue(of('/work-instructions/category/_UnassignedCategory_/hxhgyHj'));  
 
@@ -903,6 +903,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         .withArgs(published.Id, info)
         .and.returnValue(of([published]))
         .and.callThrough();
+      spyOn(component, 'getInstructionsByCategoryId');
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
@@ -934,6 +935,7 @@ describe('CategoryWiseInstructionsComponent', () => {
             text: "Work instuction '" + published.WI_Name + "' has been deleted",
             type: 'success'
           });
+          expect(component.getInstructionsByCategoryId).toHaveBeenCalledWith(categoryId);
           done();
         });
       })
@@ -945,6 +947,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         .withArgs(published.Id, info)
         .and.returnValue(of([published]))
         .and.callThrough();
+      spyOn(component, 'getInstructionsByCategoryId');
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
@@ -966,6 +969,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         Swal.clickCancel();
         setTimeout(() => {
           expect(instructionServiceSpy.deleteWorkInstruction$).not.toHaveBeenCalled();
+          expect(component.getInstructionsByCategoryId).not.toHaveBeenCalled();
           done();
         });
       });
@@ -977,6 +981,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         .withArgs(drafted.Id, info)
         .and.returnValue(of([drafted]))
         .and.callThrough();
+      spyOn(component, 'getInstructionsByCategoryId');
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
@@ -1007,8 +1012,9 @@ describe('CategoryWiseInstructionsComponent', () => {
             text: "Work instuction '"+ drafted.WI_Name +"' has been deleted",
             type: 'success'
           });
+          expect(component.getInstructionsByCategoryId).toHaveBeenCalledWith(categoryId);
+          done();
         });
-        done();
       });
     });
 
@@ -1018,6 +1024,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         .withArgs(drafted.Id, info)
         .and.returnValue(of([drafted]))
         .and.callThrough();
+      spyOn(component, 'getInstructionsByCategoryId');
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[0] as HTMLElement).click();
       fixture.detectChanges();
@@ -1038,6 +1045,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         Swal.clickCancel();
         setTimeout(() => {
           expect(instructionServiceSpy.deleteWorkInstruction$).not.toHaveBeenCalled();
+          expect(component.getInstructionsByCategoryId).not.toHaveBeenCalled();
           done();
         });
       });
@@ -1049,6 +1057,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         .withArgs(published.Id, info)
         .and.returnValue(throwError({ message: 'Unable to delete WI' }))
         .and.callThrough();
+      spyOn(component, 'getInstructionsByCategoryId');
       const tabs = wiComponentEl.querySelectorAll('.mat-tab-label');
       (tabs[1] as HTMLElement).click();
       fixture.detectChanges();
@@ -1075,6 +1084,7 @@ describe('CategoryWiseInstructionsComponent', () => {
           );
           expect(instructionServiceSpy.deleteWorkInstruction$).toHaveBeenCalledTimes(1);
           expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({ message: 'Unable to delete WI' } as HttpErrorResponse);
+          expect(component.getInstructionsByCategoryId).not.toHaveBeenCalled();
           done();
         });
       });

@@ -25,8 +25,9 @@ export const httpLoaderFactory = (httpClient: HttpClient) => {
             scope: "openid profile offline_access email api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access",
             responseType: "code",
             silentRenew: true,
+            ignoreNonceAfterRefresh: true,
             maxIdTokenIatOffsetAllowedInSeconds: 600,
-            issValidationOff: true,
+            issValidationOff: false, // this needs to be true if using a common endpoint in Azure
             autoUserInfo: false,
             useRefreshToken: true,
             logLevel:1,
