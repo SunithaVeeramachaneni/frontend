@@ -3,6 +3,10 @@
   min-height: 100%;
 }
 
+ion-content {
+  --offset-top: 0px !important;
+}
+
 .main-heading {
     font-family: "Ubuntu", sans-serif;
     font-style: normal;
@@ -56,7 +60,7 @@
   top: 10px;
 }
 .recents-favorites-row {
-  padding: 20px 20px 0px 20px;
+  padding: 20px 10px 0px 10px;
   font-family: "Ubuntu", sans-serif;
   font-style: normal;
   font-weight: 600;
@@ -271,4 +275,11 @@
     margin-bottom: 0.5px;
     border: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width:1024px){
+  .maximize-col {    
+    margin-bottom: 10px;
+    min-width: 730px;
+  }
 }

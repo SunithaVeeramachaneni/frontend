@@ -64,6 +64,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   headerTitle$: Observable<string>;
   workInstructions$: Observable<{favorites: Instruction[], drafts: Instruction[], recents: Instruction[]}>;
   readonly routingUrls = routingUrls;
+  public sidebarMinimize:boolean;
 
   @ViewChild('recentDrafts', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
@@ -103,6 +104,9 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
       );
     this.headerTitle$ = this.commonService.headerTitleAction$;
     this.getAllFavsDraftsAndRecentIns();
+    this.commonService.minimizeSidebarAction$.subscribe(data => {
+      this.sidebarMinimize = data;
+    });
   }
 
   ngAfterViewChecked(): void {
