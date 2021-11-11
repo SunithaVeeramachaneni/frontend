@@ -76,19 +76,6 @@ export class MediaFilesComponent implements OnInit {
     return str.split("/");
   }
 
-  convertDateAndTime(file) {
-    let dateAndTime = file.LastModified;
-
-    let getDate = new Date(dateAndTime).toDateString();
-    let dateString = getDate.split(" ");
-  
-    let getTime = new Date(dateAndTime).toTimeString();
-    var timeString = getTime.substring(0,9);
-
-    var res = dateString[2] + " " + dateString[1] + " " + dateString[3] + " | " + timeString;
-    return res;  
-  }
-
   getAllMediaFiles() {
     this.spinner.show();
     this.mediaFiles$ = this._instructionSvc.getFiles('media', true)
@@ -101,7 +88,7 @@ export class MediaFilesComponent implements OnInit {
             const fileName = splitFile[2].split('.').slice(0, -1).join('.');
             const fullFilePath = file.Key;
             const originalFileName = splitFile[2].split('.').slice(0, -1).join('.');
-            const updated_at = this.convertDateAndTime(file);
+            const updated_at = file.LastModified;
             const fileType = file.MimeType.split('/')[0];
             return { fileNameWithExtension, fileName, fullFilePath, originalFileName, updated_at, fileType };
           });

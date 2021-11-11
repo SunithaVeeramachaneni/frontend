@@ -6,7 +6,7 @@ import { environment } from '../environments/environment'
 
 let hostname = window && window.location && window.location.hostname;
 if (hostname) {
-  hostname = hostname.split('.')[1]; // must be made generic
+  hostname = hostname.split('.')[1] || 'localhost'; // must be made generic
 }
 console.log(hostname);
 

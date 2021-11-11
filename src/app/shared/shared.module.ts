@@ -12,6 +12,7 @@ import { IonicModule } from '@ionic/angular';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { DateTimePipe } from './pipes/date-time.pipe';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     DropDownFilterPipe,
     HeaderComponent,
     CommonFilterComponent,
-    DateSegmentComponent
+    DateSegmentComponent,
+    DateTimePipe
   ],
   imports: [
     FormsModule,
@@ -39,7 +41,8 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     TimeAgoPipe,
     DropDownFilterPipe,
     CommonFilterComponent,
-    DateSegmentComponent
+    DateSegmentComponent,
+    DateTimePipe
   ]
 })
 export class SharedModule { }
