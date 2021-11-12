@@ -44,10 +44,8 @@ export class SparePartsComponent{
   public partsIcon = "../../../assets/spare-parts-icons/parts.svg";
   public priorityIcon = "../../../assets/spare-parts-icons/priority.svg";
   public assignIcon = "../../../assets/spare-parts-icons/assign.svg";
-  public profile1 = "../../../assets/spare-parts-icons/profilePicture1.svg";
-  public profile2 = "../../../assets/spare-parts-icons/profilePicture2.svg";
-  public profile3 = "../../../assets/spare-parts-icons/profilePicture3.svg";
   public pickedUpIcon = "../../../assets/spare-parts-icons/pickedup.svg";
+  public technicianProfile = "../../../assets/spare-parts-icons/technicianProfile.svg";
 
   public filterIcon = "../../../assets/maintenance-icons/filterIcon.svg";
   public filterArrowIcon = "../../../assets/maintenance-icons/filter-arrow-icon.svg";
@@ -131,7 +129,7 @@ openSelect(i){
 }
 
 assignTech(event,workorderid) {
- let technician= this.technicians$.pipe(map(epics => epics.filter(epic => epic.fName ===event.target.value)));
+ let technician= this.technicians$.pipe(map(epics => epics.filter(epic => epic.fName === event)));
  technician.subscribe(technician=>{
   let data = {
     USNAM:technician[0].userId ,

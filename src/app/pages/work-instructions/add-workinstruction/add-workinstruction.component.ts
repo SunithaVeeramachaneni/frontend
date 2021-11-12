@@ -178,46 +178,33 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
     const favFlag = this.selectedInstruction?.IsFavorite;
     const { first_name, last_name } = JSON.parse(localStorage.getItem('loggedInUser'));
     const editedBy = `${first_name} ${last_name}`;
-    Swal.fire({
-      title: 'Are you sure?',
-      html: `Do you want to publish work instruction '${el.WI_Name}' ?`,
-      icon: 'warning',
-      showCancelButton: true,
-      cancelButtonColor: '#888888',
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'Publish',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.spinner.show();
-        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        this.publishInstructionSubscription = this._instructionsvc.publishInstruction({
-          wiToBePublsihed,
-          steps,
-          wid,
-          editedBy
-        }, info).subscribe(
-          () => {
-            this.spinner.hide();
-            this._toastService.show({
-              text: `Work instruction '${el.WI_Name}' has been published successfully`,
-              type: 'success'
-            });
-            if (favFlag) {
-              this.updateFavFlag(wiToBePublsihed);
-            }
-            this.publisheddata = true;
-            this.receivedInstruction = false;
-            this.isWIPublished = true;
-            this.updatePublishedTillSaveWI(true);
-          },
-          error => {
-            this.spinner.hide();
-            this.errorHandlerService.handleError(error);
-          }
-        );
+    this.spinner.show();
+    const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
+    this.publishInstructionSubscription = this._instructionsvc.publishInstruction({
+      wiToBePublsihed,
+      steps,
+      wid,
+      editedBy
+    }, info).subscribe(
+      () => {
+        this.spinner.hide();
+        this._toastService.show({
+          text: `Work instruction '${el.WI_Name}' has been published successfully`,
+          type: 'success'
+        });
+        if (favFlag) {
+          this.updateFavFlag(wiToBePublsihed);
+        }
+        this.publisheddata = true;
+        this.receivedInstruction = false;
+        this.isWIPublished = true;
+        this.updatePublishedTillSaveWI(true);
+      },
+      error => {
+        this.spinner.hide();
+        this.errorHandlerService.handleError(error);
       }
-    });
+    );
   }
 
   updateFavFlag(wiToBePublsihed) {

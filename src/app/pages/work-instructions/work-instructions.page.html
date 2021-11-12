@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="row recents-favorites-row" *ngIf="workInstructions$ | async as workInstructions">
-      <div class="col-xs-12 col-sm-12 col-md-6 p-r-7 p-l-8">
+      <div class="col-lg-6 col-md-6" [ngClass]="{'maximize-col': this.sidebarMinimize === false}">
         <div class="bg-white drafts-favorites-div">
           <div class="recents-favorites-lst-header">
             <i class="fa fa-file-o draft-icon" aria-hidden="true"></i>
@@ -70,7 +70,7 @@
           </ng-container>
         </div>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-6 p-l-7 p-r-8">
+      <div class="col-lg-6 col-md-6" [ngClass]="{'maximize-col': this.sidebarMinimize === false}">
         <div class="bg-white drafts-favorites-div">
             <div class="recents-favorites-lst-header">
               <i class="fa fa-star-o favorite-icon" aria-hidden="true"></i>
