@@ -60,7 +60,7 @@ describe('CategoryComponent', () => {
 
   beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
-      data: {},
+      data: { path: 'category' },
     });
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
@@ -198,7 +198,7 @@ describe('CategoryComponent', () => {
     });
 
     it('should set form values for edit category', () => {
-      const CId = 123;
+      const CId = '123';
       const Category_Name = 'Test Category';
       const Cover_Image = component.coverImages[2];
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
@@ -206,6 +206,7 @@ describe('CategoryComponent', () => {
         CId,
         Category_Name,
         Cover_Image,
+        path: CId
       });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs(Category_Name)
@@ -216,14 +217,14 @@ describe('CategoryComponent', () => {
       expect(component.f.coverImage.value).toBe(Cover_Image);
       expect(component.files).toEqual([]);
       expect(component.title).toBe('Edit Category');
-      expect(component.path).toBe(`${CId}`);
+      expect(component.path).toBe(CId);
       expect(instructionServiceSpy.getCategoriesByName).toHaveBeenCalledWith(
         Category_Name
       );
     });
 
     it('should set form values & files for edit category', () => {
-      const CId = 123;
+      const CId = '123';
       const Category_Name = 'Test Category';
       const Cover_Image = 's3-coverimage.jpg';
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
@@ -231,6 +232,7 @@ describe('CategoryComponent', () => {
         CId,
         Category_Name,
         Cover_Image,
+        path: CId
       });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs(Category_Name)
@@ -247,7 +249,7 @@ describe('CategoryComponent', () => {
     });
 
     it('should handle coverImage value changes', () => {
-      const CId = 123;
+      const CId = '123';
       const Category_Name = 'Test Category';
       const Cover_Image = 's3-coverimage.jpg';
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
@@ -255,6 +257,7 @@ describe('CategoryComponent', () => {
         CId,
         Category_Name,
         Cover_Image,
+        path: CId
       });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs(Category_Name)
@@ -265,7 +268,7 @@ describe('CategoryComponent', () => {
     });
 
     it('should handle coverImage value changes in case of existing cover image from assets', () => {
-      const CId = 123;
+      const CId = '123';
       const Category_Name = 'Test Category';
       const Cover_Image = component.coverImages[2];
       (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
@@ -273,6 +276,7 @@ describe('CategoryComponent', () => {
         CId,
         Category_Name,
         Cover_Image,
+        path: CId
       });
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
         .withArgs(Category_Name)

@@ -35,7 +35,7 @@
                 </span>
               </th>
   
-              <td class="width-20"><span class="files-data">{{obj.updated_at}}</span></td>
+              <td class="width-20"><span class="files-data">{{obj.updated_at | dateTime:'dd mmm yyyy | hh:mm:ss'}}</span></td>
               <td class="width-50">
                 <span class="files-icons-list">
                   <app-player [fileInfo]="{filePath: obj.fullFilePath, fileType: obj.fileType}" *ngIf="this.editRows[i] === false"></app-player>

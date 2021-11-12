@@ -154,7 +154,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   open(content: TemplateRef<any> | ComponentType<any> | string, obj) {
-    const ref = this.overlayService.open(content, obj);
+    const path =  obj.CId ? obj.CId : this.getS3Folder(new Date().getTime());
+    const ref = this.overlayService.open(content, { ...obj, path });
     ref.afterClosed$.subscribe(res => {
       if (content === this.catSubscribeComponent) {
         this.categoryDetailObject = res.data;
@@ -181,7 +182,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               .pipe(
                 mergeMap(category => {
                   if (Object.keys(category).length && category.Cover_Image.indexOf('assets/') === -1){
-                    return this._instructionSvc.renameFile({ filePath: `category/${Cover_Image}` , newFilePath: `${category.Category_Id}/${Cover_Image}`})
+                    return this._instructionSvc.renameFile({ filePath: `${path}/${Cover_Image}` , newFilePath: `${category.Category_Id}/${Cover_Image}`})
                       .pipe(map(() => category));
                   } else {
                     return of(category);
@@ -206,10 +207,9 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
         }
 
         const files = this.categoryService.getDeleteFiles();
-        const cid = obj.CId ? obj.CId : 'category';
         from(files)
           .pipe(
-            mergeMap(file => this._instructionSvc.deleteFile(`${cid}/${file}`)),
+            mergeMap(file => this._instructionSvc.deleteFile(`${path}/${file}`)),
             toArray()
           ).subscribe(
               files => {
@@ -262,4 +262,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
       return {'object-fit': 'cover', 'border-radius': '3px', height: this.imageHeight ? this.imageHeight : '100%'};
     }
   }
+
+  getS3Folder = (time: number) => {
+    return `category/${time}`;
+  };
 }
