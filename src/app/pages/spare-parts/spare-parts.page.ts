@@ -80,6 +80,7 @@ export class SparePartsComponent{
               private _dateSegmentService: DateSegmentService) {}
 
   ngOnInit() {
+    this._commonFilterService.clearFilter();
     this.filterObj$= this._commonFilterService.commonFilterAction$;
     this.dateRange$= new BehaviorSubject(this._dateSegmentService.getStartAndEndDate("month"));
     this.getWorkOrders();

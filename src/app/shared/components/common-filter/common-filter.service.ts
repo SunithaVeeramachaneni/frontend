@@ -23,5 +23,19 @@ export class CommonFilterService {
     this.commonFilterSubject.next(filterObj);
   }
 
+  clearFilter() {
+    let emptyObject = {
+      "priority": [],
+      "kitStatus": [],
+      "workCenter": [],
+      "assign": [],
+      "search":"",
+      "showOverdue": "",
+    }
+
+    this.commonFilterSubject.next(emptyObject)
+
+  }
+
 
 }
