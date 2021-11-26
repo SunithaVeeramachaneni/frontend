@@ -33,7 +33,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       icon: 'home',
       showSubMenu: false,
       subPages: null,
-      disable: true
+      disable: false
     },
     {
       title: maintenance.title,

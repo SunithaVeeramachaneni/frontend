@@ -2,3 +2,152 @@ ion-content {
   --ion-background-color: #f2f2f2;
   --offset-top: 0px !important;
 }
+
+:host /deep/ .mat-form-field-flex > .mat-form-field-infix { 
+  padding: 0.4em 0px !important;
+}
+
+:host /deep/ .mat-form-field-label-wrapper { 
+  top: -1.5em; 
+}
+
+:host /deep/ .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
+:host /deep/ .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: #f2f2f2;
+    border-radius: 4px;
+}
+
+:host /deep/ .mat-button-toggle-group {
+  border: none;
+}
+
+:host /deep/ .butoon-segment  .mat-button-toggle {
+  background-color: #F2F2F2;
+  color: black;
+}
+
+:host /deep/ .butoon-segment .mat-button-toggle-checked {
+  background-color: #F2F2F2;
+  color: black;
+  font-weight: 600;
+}
+
+:host /deep/ .filtering .mat-button-toggle {
+  background-color: #FFFFFF;
+  font-family: Roboto;
+  font-size: 16px;
+  color: #757575;
+  border:none;
+  border-bottom: 2px solid #EEEEEE !important;
+  padding: 0px 7px;
+}
+
+:host /deep/ .filtering .mat-button-toggle-checked {
+  background-color: #FFFFFF;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 500;
+  color: #3D5AFE;
+  border-bottom: 2px solid #3D5AFE !important;
+  font-weight: 600;
+}
+
+.customer-row {
+  background: #FFFFFF; 
+  margin: 20px 20px 0px 20px; 
+  padding: 10px; 
+  border-bottom: 1px solid #F2F2F2;
+}
+
+.customerlogo {
+  width: 22px;
+  top: -3px;
+  position: relative;
+}
+
+.customerName {
+  font-family: Roboto; 
+  font-weight: 500; 
+  font-size: 20px; 
+  color: #9E9E9E;
+  line-height: 60px; 
+  margin-left: 10px;
+}
+
+.customerId {
+  font-family: Roboto;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #25282B;
+}
+
+.customer-headings {
+  font-family: Roboto;
+  font-size: 14px;
+  letter-spacing: 0.15px;
+  color: #757575;
+  margin-bottom: 5px;
+}
+
+.startDate {
+  font-family: Roboto;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #757575;
+}
+
+.endDate {
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #25282B;
+}
+
+.divider {
+  margin: 0px 5px;
+}
+
+.redDays {
+  font-family: Roboto;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color:#F44336;
+}
+
+.yellowDays {
+  font-family: Roboto;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color:#FF7A00;
+}
+
+.greenDays {
+  font-family: Roboto;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #4CAF50;
+}
+
+.text-align{
+  text-align: right;
+}
+
+.accountManager-name {
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #25282B;
+}
+
+.segmented-button-div {
+  background: #FFFFFF; 
+  margin: 0px 20px; 
+  padding: 10px; 
+  border-bottom: 1px solid #F2F2F2;
+}

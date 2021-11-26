@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.page';
+import { AppMaterialModules } from '../../material.module';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import { DashboardComponent } from './dashboard.page';
     IonicModule,
     ReactiveFormsModule,
     DashboardRoutingModule,
-    SharedModule
+    SharedModule,
+    AppMaterialModules
   ],
   declarations: [
     DashboardComponent,

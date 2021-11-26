@@ -5,7 +5,52 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div>
-      Dashboard
+  <div class="row customer-row">
+    <div class="col-md-7">
+      <img src="assets/invam-icons/preview-image.svg" class="customerlogo"/>
+      <span class="customerName">Domain Energy (USA) </span>
+      <span class="customerId">CUSMAR005</span>
+    </div>
+    <div class="col-md-3 p-0">
+      <p class="customer-headings">Agreement</p>
+      <span class="startDate">15 Aug 2020 - </span>
+      <span class="endDate">29 Oct 2021</span>
+      <img src="assets/invam-icons/divider.svg" class="divider"/>
+      <span *ngIf="noOfDays < 90 || noOfDays == 90" class="redDays">{{noOfDays}} Days left</span>
+      <span *ngIf="noOfDays > 90 && (noOfDays < 150 || noOfDays == 150)" class="yellowDays">{{noOfDays}} Days left</span>
+      <span *ngIf="noOfDays > 150" class="greenDays">{{noOfDays}} Days left</span>
+    </div>
+    <div class="col-md-2 text-align">
+      <p class="customer-headings">Account Manager</p>
+      <span class="accountManager-name">Ryan Landes</span>
+    </div>
+  </div>
+  <div class="row segmented-button-div">
+     <div class="col-md-12 m-t-10">
+        <mat-button-toggle-group value="usageReport" class="butoon-segment">
+            <mat-button-toggle value="usageReport">Usage Report</mat-button-toggle>
+            <mat-button-toggle value="productivityReport">Productivity Report</mat-button-toggle>
+            <mat-button-toggle value="roiReport">ROI Report</mat-button-toggle>
+        </mat-button-toggle-group>
+     </div>
+     <div class="col-md-9 m-t-20">
+      <mat-form-field appearance="outline">
+        <mat-label>Report Period</mat-label>
+        <mat-select value="prev_year">
+          <mat-option value="curr_year">Current Year</mat-option>
+          <mat-option value="curr_mon">Current Month</mat-option>
+          <mat-option value="prev_year">Previous Year</mat-option>
+          <mat-option value="cust_per">Custom Period</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-3 m-t-20 text-align">
+      <mat-button-toggle-group value="date" class="filtering">
+        <mat-button-toggle value="date">D</mat-button-toggle>
+        <mat-button-toggle value="week">W</mat-button-toggle>
+        <mat-button-toggle value="month">M</mat-button-toggle>
+        <mat-button-toggle value="year">Y</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
   </div>
 </ion-content>

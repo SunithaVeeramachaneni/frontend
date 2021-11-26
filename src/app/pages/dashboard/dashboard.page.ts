@@ -8,12 +8,13 @@ import { Component} from '@angular/core';
 })
 export class DashboardComponent{
   headerTitle = "Dashboard";
+  noOfDays;
 
   constructor() { }
 
 
   ngOnInit() {
-
+    this.noOfDays = 37;
   }
 
 
