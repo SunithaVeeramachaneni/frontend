@@ -2,13 +2,14 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { InstructionService } from './services/instruction.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ExcelService } from './services/excel.service';
 import * as ExcelJs from 'exceljs/dist/exceljs.min.js';
@@ -32,7 +33,7 @@ import { routingUrls } from '../../app.constants';
   templateUrl: './work-instructions.page.html',
   styleUrls: ['./work-instructions.page.scss'],
 })
-export class WorkInstructionsPage implements OnInit, AfterViewChecked {
+export class WorkInstructionsPage implements OnInit, AfterViewChecked, OnDestroy {
   public copyInstructionComponent = CopyInstructionComponent;
   public bulkUploadComponent = BulkUploadComponent;
   public myObject: object;
@@ -65,6 +66,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   workInstructions$: Observable<{favorites: Instruction[], drafts: Instruction[], recents: Instruction[]}>;
   readonly routingUrls = routingUrls;
   public sidebarMinimize:boolean;
+  private fetchWISubscription: Subscription;
 
   @ViewChild('recentDrafts', { static: false }) set drafts(drafts: DummyComponent) {
     if (drafts) {
@@ -103,7 +105,9 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
         })
       );
     this.headerTitle$ = this.commonService.headerTitleAction$;
-    this.getAllFavsDraftsAndRecentIns();
+    this.fetchWISubscription = this.wiCommonService.fetchWIAction$.subscribe(
+      () => this.getAllFavsDraftsAndRecentIns()
+    );
     this.commonService.minimizeSidebarAction$.subscribe(data => {
       this.sidebarMinimize = data;
     });
@@ -242,4 +246,10 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked {
   getS3Folder = (time: number) => {
     return `bulkupload/${time}`;
   };
+
+  ngOnDestroy(): void {
+    if (this.fetchWISubscription) {
+      this.fetchWISubscription.unsubscribe();
+    }
+  }
 }

@@ -20,6 +20,7 @@ export class WiCommonService {
   private stepDetailsSaveSubject = new Subject<string>();
   private previewStatus = new Subject<boolean>();
   private uploadInfoSubject = new Subject<ImportFileEventData>();
+  private fetchWISubject = new BehaviorSubject<boolean>(true);
 
   currentImgFromPreviewSection = this.imgSourceFromUploadedSection.asObservable();
   currentStepTitle = this.stepTitle.asObservable();
@@ -29,6 +30,7 @@ export class WiCommonService {
   stepDetailsSaveAction$ = this.stepDetailsSaveSubject.asObservable();
   currentPreviewStatus = this.previewStatus.asObservable();
   uploadInfoAction$ = this.uploadInfoSubject.asObservable();
+  fetchWIAction$ = this.fetchWISubject.asObservable();
 
   uploadImgToPreview(imageDetails: IUploadedImageDetails) {
     this.imgSourceFromUploadedSection.next(imageDetails);
@@ -60,5 +62,9 @@ export class WiCommonService {
 
   updateUploadInfo(info: ImportFileEventData) {
     this.uploadInfoSubject.next(info);
+  }
+
+  fetchWorkInstructions() {
+    this.fetchWISubject.next(true);
   }
 }

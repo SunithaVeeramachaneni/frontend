@@ -91,17 +91,6 @@ export class AppComponent implements OnInit, AfterViewChecked {
         this.commonService.setCurrentRouteUrl(this.currentRouteUrl);
         this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
     });
-
-    // const userDetails = {
-    //   id: '1',
-    //   first_name: 'Sunitha',
-    //   last_name: 'Veeramachaneni',
-    //   email: 'sunitha.veermchanneu@innovapptve.com',
-    //   password: 'x123',
-    //   role: 'admin',
-    //   empId: '5000343'
-    // };
-    // localStorage.setItem('loggedInUser', JSON.stringify(userDetails));
   }
 
   ngAfterViewChecked(): void {

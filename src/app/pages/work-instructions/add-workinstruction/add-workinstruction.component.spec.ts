@@ -591,33 +591,25 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.getTitle().textContent).toEqual('Are you sure?');
-        expect(Swal.getHtmlContainer().textContent).toEqual(
-          `Do you want to publish work instruction '${editWI.WI_Name}' ?`
-        );
-        expect(Swal.getConfirmButton().textContent).toEqual('Publish');
-        Swal.clickConfirm();
-        setTimeout(() => {
-          expect(component.insToBePublished).toEqual([{ ...insToBePublished[0], PUBLISHED: true }]);
-          expect(spinnerSpy.show).toHaveBeenCalledWith();
-          expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
-            wiToBePublsihed: [{ ...insToBePublished[0], PUBLISHED: true }],
-            steps: [],
-            wid: editWI.Id,
-            editedBy: 'Tester One',
-          }, info);
-          expect(component.updateFavFlag).not.toHaveBeenCalled();
-          expect(component.publisheddata).toBeTrue();
-          expect(component.receivedInstruction).toBeFalse();
-          expect(component.isWIPublished).toBeTrue();
-          expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(true);
-          expect(toastServiceSpy.show).toHaveBeenCalledWith({
-            text: "Work instruction '"+ editWI.WI_Name + "' has been published successfully",
-            type: 'success',
-          });
-          expect(spinnerSpy.hide).toHaveBeenCalledWith();
-          done();
+        expect(component.insToBePublished).toEqual([{ ...insToBePublished[0], PUBLISHED: true }]);
+        expect(spinnerSpy.show).toHaveBeenCalledWith();
+        expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
+          wiToBePublsihed: [{ ...insToBePublished[0], PUBLISHED: true }],
+          steps: [],
+          wid: editWI.Id,
+          editedBy: 'Tester One',
+        }, info);
+        expect(component.updateFavFlag).not.toHaveBeenCalled();
+        expect(component.publisheddata).toBeTrue();
+        expect(component.receivedInstruction).toBeFalse();
+        expect(component.isWIPublished).toBeTrue();
+        expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(true);
+        expect(toastServiceSpy.show).toHaveBeenCalledWith({
+          text: "Work instruction '"+ editWI.WI_Name + "' has been published successfully",
+          type: 'success',
         });
+        expect(spinnerSpy.hide).toHaveBeenCalledWith();
+        done();
       });
     });
 
@@ -689,33 +681,25 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.getTitle().textContent).toEqual('Are you sure?');
-        expect(Swal.getHtmlContainer().textContent).toEqual(
-          `Do you want to publish work instruction '${addWI[0].WI_Name}' ?`
-        );
-        expect(Swal.getConfirmButton().textContent).toEqual('Publish');
-        Swal.clickConfirm();
-        setTimeout(() => {
-          expect(component.insToBePublished).toEqual([{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}]);
-          expect(spinnerSpy.show).toHaveBeenCalledWith();
-          expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
-            wiToBePublsihed: [{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}],
-            steps: [],
-            wid: addWI[0].Id,
-            editedBy: 'Tester One',
-          }, info);
-          expect(component.updateFavFlag).toHaveBeenCalledWith([{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}]);
-          expect(component.publisheddata).toBeTrue();
-          expect(component.receivedInstruction).toBeFalse();
-          expect(component.isWIPublished).toBeTrue();
-          expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(true);
-          expect(toastServiceSpy.show).toHaveBeenCalledWith({
-            text: "Work instruction '"+ addWI[0].WI_Name +"' has been published successfully",
-            type: 'success',
-          });
-          expect(spinnerSpy.hide).toHaveBeenCalledWith();
-          done();
+        expect(component.insToBePublished).toEqual([{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}]);
+        expect(spinnerSpy.show).toHaveBeenCalledWith();
+        expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
+          wiToBePublsihed: [{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}],
+          steps: [],
+          wid: addWI[0].Id,
+          editedBy: 'Tester One',
+        }, info);
+        expect(component.updateFavFlag).toHaveBeenCalledWith([{...insToBePublished[0], FORMTITLE: addWI[0].WI_Name}]);
+        expect(component.publisheddata).toBeTrue();
+        expect(component.receivedInstruction).toBeFalse();
+        expect(component.isWIPublished).toBeTrue();
+        expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(true);
+        expect(toastServiceSpy.show).toHaveBeenCalledWith({
+          text: "Work instruction '"+ addWI[0].WI_Name +"' has been published successfully",
+          type: 'success',
         });
+        expect(spinnerSpy.hide).toHaveBeenCalledWith();
+        done();
       });
     });
 
@@ -746,54 +730,21 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       fixture.whenStable().then(() => {
         expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.getTitle().textContent).toEqual('Are you sure?');
-        expect(Swal.getHtmlContainer().textContent).toEqual(
-          `Do you want to publish work instruction '${editWI.WI_Name}' ?`
+        expect(component.insToBePublished).toEqual([{ ...insToBePublished[0], PUBLISHED: true }]);
+        expect(spinnerSpy.show).toHaveBeenCalledWith();
+        expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
+          wiToBePublsihed: [{ ...insToBePublished[0], PUBLISHED: true }],
+          steps: [],
+          wid: editWI.Id,
+          editedBy: 'Tester One',
+        }, info);
+        expect(component.updateFavFlag).not.toHaveBeenCalled();
+        expect(component.updatePublishedTillSaveWI).not.toHaveBeenCalled();
+        expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith(
+          { message: 'Unable to publish work instruction' } as HttpErrorResponse
         );
-        expect(Swal.getConfirmButton().textContent).toEqual('Publish');
-        Swal.clickConfirm();
-        setTimeout(() => {
-          expect(component.insToBePublished).toEqual([{ ...insToBePublished[0], PUBLISHED: true }]);
-          expect(spinnerSpy.show).toHaveBeenCalledWith();
-          expect(instructionServiceSpy.publishInstruction).toHaveBeenCalledWith({
-            wiToBePublsihed: [{ ...insToBePublished[0], PUBLISHED: true }],
-            steps: [],
-            wid: editWI.Id,
-            editedBy: 'Tester One',
-          }, info);
-          expect(component.updateFavFlag).not.toHaveBeenCalled();
-          expect(component.updatePublishedTillSaveWI).not.toHaveBeenCalled();
-          expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith(
-            { message: 'Unable to publish work instruction' } as HttpErrorResponse
-          );
-          expect(spinnerSpy.hide).toHaveBeenCalledWith();
-          done();
-        });
-      });
-    });
-
-    it('should not publish work instruction when user click on cancel', (done) => {
-      (instructionServiceSpy.getInstructionsById as jasmine.Spy)
-        .withArgs(editWI.Id)
-        .and.returnValue(of({ ...editWI, Published: true }))
-        .and.callThrough();
-      component.ngOnInit();
-      fixture.detectChanges();
-      const buttons = addWIEl.querySelectorAll('button');
-      buttons[1].click();
-      fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.setInsToBePublished());
-        expect(Swal.getTitle().textContent).toEqual('Are you sure?');
-        expect(Swal.getHtmlContainer().textContent).toEqual(
-          `Do you want to publish work instruction '${editWI.WI_Name}' ?`
-        );
-        expect(Swal.getConfirmButton().textContent).toEqual('Publish');
-        Swal.clickCancel();
-        setTimeout(() => {
-          expect(instructionServiceSpy.publishInstruction).not.toHaveBeenCalled();
-          done();
-        });
+        expect(spinnerSpy.hide).toHaveBeenCalledWith();
+        done();
       });
     });
   });
