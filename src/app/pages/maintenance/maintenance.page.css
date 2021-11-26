@@ -286,7 +286,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   float: right;
 }
 .waiting-on-parts {
-  background-color: #FF3B30;
+  background-color: #FF9500;
   font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
@@ -300,7 +300,7 @@ select#gender option[value="others"] { background-image:url('../../../assets/spa
   float: right;
 }
 .parts-available {
-  background-color: #FF9800;
+  background-color: #5AC8FA;
   font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;

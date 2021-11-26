@@ -21,7 +21,7 @@
                  </mat-form-field>
                  <mat-select-trigger>
                    <mat-chip-list>
-                     <mat-chip *ngFor="let obj of categoriesSelected"
+                     <mat-chip id="categoriesChips" *ngFor="let obj of categoriesSelected"
                                [removable]="true" (removed)="OnCategoryObjectsList(obj)" class="margin-bottom">
                        {{ obj }}
                        <mat-icon matChipRemove>cancel</mat-icon>
@@ -38,7 +38,7 @@
                  </mat-form-field>
                  <mat-select-trigger>
                    <mat-chip-list>
-                     <mat-chip *ngFor="let obj of assignedObjectsSelected"
+                     <mat-chip id="assignedobjectsChips" *ngFor="let obj of assignedObjectsSelected"
                                [removable]="true" (removed)="OnassignedObjectsList(obj)">
                        {{ obj.FIELDDESCRIPTION }}
                        <mat-icon matChipRemove>cancel</mat-icon>
@@ -74,7 +74,7 @@
                 </mat-form-field>
                 <mat-select-trigger>
                   <mat-chip-list>
-                    <mat-chip *ngFor="let tool of selectedTools"
+                    <mat-chip id="toolsChips" *ngFor="let tool of selectedTools"
                               [removable]="true" (removed)="removePrequisite({ type: 'Tools', value: tool })" class="margin-bottom">
                       {{ tool }}
                       <mat-icon matChipRemove>cancel</mat-icon>
@@ -91,7 +91,7 @@
                 </mat-form-field>
                 <mat-select-trigger>
                   <mat-chip-list>
-                    <mat-chip *ngFor="let safetyKit of selectedSafetyKits"
+                    <mat-chip id="safetyChips" *ngFor="let safetyKit of selectedSafetyKits"
                               [removable]="true" (removed)="removePrequisite({ type: 'SafetyKit', value: safetyKit })" class="margin-bottom">
                       {{ safetyKit }}
                       <mat-icon matChipRemove>cancel</mat-icon>
@@ -108,7 +108,7 @@
                 </mat-form-field>
                 <mat-select-trigger>
                   <mat-chip-list>
-                    <mat-chip *ngFor="let sparePart of selectedSpareParts"
+                    <mat-chip id="sparepartsChips" *ngFor="let sparePart of selectedSpareParts"
                               [removable]="true" (removed)="removePrequisite({ type: 'SpareParts', value: sparePart })" class="margin-bottom">
                       {{ sparePart }}
                       <mat-icon matChipRemove>cancel</mat-icon>
@@ -136,7 +136,7 @@
               </mat-form-field>
               <mat-select-trigger>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let obj of categoriesSelected"
+                  <mat-chip id="categoriesChips" *ngFor="let obj of categoriesSelected"
                             [removable]="true" (removed)="OnCategoryObjectsList(obj)" class="margin-bottom">
                     {{ obj }}
                     <mat-icon matChipRemove>cancel</mat-icon>
@@ -153,7 +153,7 @@
               </mat-form-field>
               <mat-select-trigger>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let obj of assignedObjectsSelected"
+                  <mat-chip id="assignedobjectsChips" *ngFor="let obj of assignedObjectsSelected"
                             [removable]="true" (removed)="OnassignedObjectsList(obj)">
                     {{ obj.FIELDDESCRIPTION }}
                     <mat-icon matChipRemove>cancel</mat-icon>
@@ -187,7 +187,7 @@
               </mat-form-field>
               <mat-select-trigger>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let tool of selectedTools"
+                  <mat-chip id="toolsChips" *ngFor="let tool of selectedTools"
                             [removable]="true" (removed)="removePrequisite({ type: 'Tools', value: tool })" class="margin-bottom">
                     {{ tool }}
                     <mat-icon matChipRemove>cancel</mat-icon>
@@ -204,7 +204,7 @@
               </mat-form-field>
               <mat-select-trigger>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let safetyKit of selectedSafetyKits"
+                  <mat-chip id="safetyChips" *ngFor="let safetyKit of selectedSafetyKits"
                             [removable]="true" (removed)="removePrequisite({ type: 'SafetyKit', value: safetyKit })" class="margin-bottom">
                     {{ safetyKit }}
                     <mat-icon matChipRemove>cancel</mat-icon>
@@ -221,7 +221,7 @@
               </mat-form-field>
               <mat-select-trigger>
                 <mat-chip-list>
-                  <mat-chip *ngFor="let sparePart of selectedSpareParts"
+                  <mat-chip id="sparepartsChips" *ngFor="let sparePart of selectedSpareParts"
                             [removable]="true" (removed)="removePrequisite({ type: 'SpareParts', value: sparePart })" class="margin-bottom">
                     {{ sparePart }}
                     <mat-icon matChipRemove>cancel</mat-icon>
