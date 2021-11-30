@@ -1,0 +1,41 @@
+:host /deep/ .mat-slide-toggle-thumb {
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    background-color: black;
+}
+
+.users-trans-div {
+    background: rgba(238, 238, 238, 0.5);
+    border-radius: 4px;
+}
+
+.users-trans-title {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    color: #000000;
+}
+
+.users-trans-icons {
+    float: right;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0px 20px;
+}
+
+.data-labels-text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    letter-spacing: 0.15px;
+    color: #757575;
+    padding-right: 5px;
+}
+
+.p-15 {
+    padding: 15px;
+}
+
+.float-right {
+    float: right;
+}

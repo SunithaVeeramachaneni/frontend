@@ -7,8 +7,9 @@ import { Component} from '@angular/core';
   styleUrls: ['./dashboard.page.css'],
 })
 export class DashboardComponent{
-  headerTitle = "Dashboard";
+  headerTitle = "Dominion Energy";
   noOfDays;
+  buttonSegment = 'usageReport';
 
   constructor() { }
 

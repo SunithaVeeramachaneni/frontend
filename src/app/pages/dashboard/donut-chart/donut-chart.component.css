@@ -1,0 +1,70 @@
+.donut-div {
+    width: 434px;
+    height: 261px;
+    background: rgba(238, 238, 238, 0.5);
+    border-radius: 4px;
+}
+
+.donut-title {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    color: #000000;
+}
+
+.donut-icons {
+    float: right;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0px 20px;
+}
+
+.users_count {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 27px;
+    color: #000000;
+}
+
+.users_text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 0.15px;
+    color: #212121;
+}
+
+.prev_percentage {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.15px;
+    color: #212121;
+    margin-bottom: 0px;
+    display: flex;
+}
+
+.prev_text {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.4px;
+    color: #9E9E9E;
+    margin-bottom: 0px;
+}
+
+.display_flex {
+    display: flex;
+}
+
+.p-15 {
+    padding: 15px;
+}
+
+.p-l-40 {
+    padding-left: 40px;
+}

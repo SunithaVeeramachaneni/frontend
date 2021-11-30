@@ -1,6 +1,21 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <app-header [title]="headerTitle"></app-header>
+    <div>
+      <mat-form-field appearance="outline" class="plant-dropdown">
+        <mat-label>Plant</mat-label>
+        <mat-select value="domain_energy">
+          <mat-option value="domain_energy">Domain Energy USA</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="product-dropdown">
+        <mat-label>Product</mat-label>
+        <mat-select value="mworkorder">
+          <mat-option value="mworkorder">mWorkOrder</mat-option>
+          <mat-option value="minventory">mInventory</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -27,7 +42,7 @@
   </div>
   <div class="row segmented-button-div">
      <div class="col-md-12 m-t-10">
-        <mat-button-toggle-group value="usageReport" class="butoon-segment">
+        <mat-button-toggle-group value="usageReport" class="butoon-segment" [(ngModel)]="buttonSegment">
             <mat-button-toggle value="usageReport">Usage Report</mat-button-toggle>
             <mat-button-toggle value="productivityReport">Productivity Report</mat-button-toggle>
             <mat-button-toggle value="roiReport">ROI Report</mat-button-toggle>
@@ -36,7 +51,7 @@
      <div class="col-md-9 m-t-20">
       <mat-form-field appearance="outline">
         <mat-label>Report Period</mat-label>
-        <mat-select value="prev_year">
+        <mat-select value="prev_year" [(ngModel)]="customPeriod">
           <mat-option value="curr_year">Current Year</mat-option>
           <mat-option value="curr_mon">Current Month</mat-option>
           <mat-option value="prev_year">Previous Year</mat-option>
@@ -51,6 +66,17 @@
         <mat-button-toggle value="month">M</mat-button-toggle>
         <mat-button-toggle value="year">Y</mat-button-toggle>
       </mat-button-toggle-group>
+    </div>
+    <div class="col-md-12 m-t-20" *ngIf="buttonSegment == 'usageReport'">
+      <donut-chart></donut-chart>
+      <br/>
+      <users-transactions-graph></users-transactions-graph>
+      <br/>
+      <usage-by-module-graph></usage-by-module-graph>
+      <br/>
+    </div>
+    <div class="col-md-12 m-t-20" *ngIf="buttonSegment !== 'usageReport'">
+        No Data is present yet
     </div>
   </div>
 </ion-content>
