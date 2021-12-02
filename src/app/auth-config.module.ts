@@ -4,10 +4,7 @@ import { AuthModule, LogLevel, StsConfigHttpLoader, StsConfigLoader } from 'angu
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment'
 
-let hostname = window && window.location && window.location.hostname;
-if (hostname) {
-  hostname = hostname.split('.')[1] || 'localhost'; // must be made generic
-}
+const hostname = window && window.location && window.location.hostname || 'localhost';
 console.log(hostname);
 
 export const httpLoaderFactory = (httpClient: HttpClient) => {

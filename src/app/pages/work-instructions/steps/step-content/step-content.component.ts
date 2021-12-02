@@ -175,7 +175,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
     const FILE = event.addedFiles[0];
     let uploadToS3 = true;
     const fileExists = this.files.find(file => file === FILE.name);
-    if (index !== undefined && fileExists !== this.files[index]) {
+    if (index !== undefined && fileExists && fileExists !== this.files[index]) {
       uploadToS3 = false;
     }
     

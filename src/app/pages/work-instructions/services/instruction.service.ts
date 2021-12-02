@@ -482,13 +482,6 @@ export class InstructionService {
         const VERSION = '001';
         const WINSTRIND = 'X';
         const DELIND = 'X';
-        deleteStepsPayload = {
-          ...deleteStepsPayload,
-          APPNAME,
-          FORMNAME,
-          WINSTRIND,
-          DELIND
-        };
         deleteInstructionPayload = {
           ...deleteInstructionPayload,
           APPNAME,
@@ -501,19 +494,7 @@ export class InstructionService {
         if (steps.length) {
           return from(steps)
             .pipe(
-              mergeMap((step: Step) => {
-                deleteStepsPayload = {
-                  ...deleteStepsPayload,
-                  UNIQUEKEY: step.StepId.toString()
-                };
-                const deleteStep = this.removeStep(step, info);
-                const deleteStepFromGateway = this.removeStepFromGateway(deleteStepsPayload, info);
-                if (step.Published) {
-                  return forkJoin({deleteStep, deleteStepFromGateway});
-                } else {
-                  return deleteStep;
-                }
-              }),
+              mergeMap(step => this.removeStep(step, info)),
               toArray(),
               switchMap(() => {
                 const deleteInstruction = this.removeWorkInstruction(workInstruction, info);
@@ -787,7 +768,6 @@ export class InstructionService {
                   Categories: categories.length ? JSON.stringify(categories) : JSON.stringify([...categories,
                     { Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/work-instructions-icons/img/brand/category-placeholder.png" }
                   ]),
-                  categories: categories.length ? categories : [' Unassigned'],
                   IsFavorite: categories.length ? workInstruction.IsFavorite : false,
                   Published: categories.length ? workInstruction.Published : false,
                 }, info);
@@ -825,6 +805,79 @@ export class InstructionService {
             return of(category);
           }
         })
+      );
+  }
+
+  updateCategory$ = (category: Category, info: ErrorInfo): Observable<Category> => {
+    return this.updateCategory(category, info)
+      .pipe(
+        mergeMap(() => this.getInstructionsByCategoryId(category.Category_Id, info)),
+        mergeMap(workInstructions =>
+          from(workInstructions)
+            .pipe(
+              mergeMap((workInstruction: any) => {
+                const categories = JSON.parse(workInstruction.Categories)
+                  .map((catgry: Category) => {
+                    if (catgry.Category_Id !== category.Category_Id ) {
+                      return catgry;
+                    } else {
+                      return category;
+                    }
+                  });
+
+                const payload = {
+                  APPNAME: 'MWORKORDER',
+                  FORMNAME: `WI_${workInstruction.Id}`,
+                  UNIQUEKEY: 'STEP0',
+                  STEPS: '0',
+                  WINSTRIND: "X",
+                  VERSION: '001'
+                };
+
+                const updateSteps = this.getStepsByWID(workInstruction.Id, info)
+                  .pipe(
+                    mergeMap(steps =>
+                      from(steps)
+                        .pipe(
+                          map((step: any, index: number) => [step, index]),
+                          mergeMap(([step, index]) => {
+                            if (step.Published) {
+                              const updateInstructionPayload = {
+                                ...payload,
+                                UNIQUEKEY: step.StepId.toString(),
+                                STEPS: `${index + 1}`,
+                                CATEGORY: JSON.stringify(categories)
+                              };
+                              return this.updateGatewayWorkInstruction(updateInstructionPayload, undefined, info);
+                            } else {
+                              return of({ ...step });
+                            }
+                          })
+                        )
+                    ),
+                    toArray()
+                  );
+
+                const updateInstruction = this.updateWorkInstruction({
+                  ...workInstruction,
+                  Categories: JSON.stringify(categories),
+                }, info);
+
+                if (workInstruction.Published) {
+                  const updateInstructionPayload = {
+                    ...payload,
+                    CATEGORY: JSON.stringify(categories)
+                  };
+                  const updatedGatewayInstruction = this.updateGatewayWorkInstruction(updateInstructionPayload, undefined, info);
+                  return forkJoin({ updatedGatewayInstruction, updateInstruction, updateSteps });
+                } else {
+                  return updateInstruction;
+                }
+              }),
+              toArray()
+            )
+        ),
+        mergeMap(() => of(category))
       );
   }
 

@@ -197,7 +197,9 @@ describe('WorkInstructionsPage', () => {
     ]);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
-    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['updateCategoriesComponent']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
+      fetchWIAction$: of(true)
+    });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
@@ -553,6 +555,7 @@ describe('WorkInstructionsPage', () => {
       expect(
         instructionServiceSpy.getDraftedInstructions
       ).toHaveBeenCalledWith();
+      expect(instructionServiceSpy.getRecentInstructions).toHaveBeenCalledWith();
       expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.workInstructions$.subscribe(
@@ -720,6 +723,18 @@ describe('WorkInstructionsPage', () => {
     it('should return S3 folder path', () => {
       const time = new Date().getTime();
       expect(component.getS3Folder(time)).toBe(`bulkupload/${time}`);
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('should define function', () => {
+      expect(component.ngOnDestroy).toBeDefined();
+    });
+
+    it('should unsubscribe subscription', () => {
+      spyOn(<any>component['fetchWISubscription'], 'unsubscribe');
+      component.ngOnDestroy();
+      expect(component['fetchWISubscription'].unsubscribe).toHaveBeenCalledWith();
     });
   });
   

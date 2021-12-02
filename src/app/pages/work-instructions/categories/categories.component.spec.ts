@@ -28,6 +28,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { OrderModule } from 'ngx-order-pipe';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
+import { WiCommonService } from '../services/wi-common.services';
 
 const categoryDetails = [
   {
@@ -109,6 +110,7 @@ describe('CategoriesComponent', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let cdrfSpy: ChangeDetectorRef;
+  let wiCommonServiceSpy: WiCommonService;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
   let catSubscribeComponent = CategoryComponent;
@@ -127,7 +129,7 @@ describe('CategoriesComponent', () => {
       'getInstructionsByCategoryId',
       'deleteCategory$',
       'addCategory',
-      'updateCategory',
+      'updateCategory$',
       'renameFile'
     ]);
     errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
@@ -136,6 +138,7 @@ describe('CategoriesComponent', () => {
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['fetchWorkInstructions']);
 
     TestBed.configureTestingModule({
       declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
@@ -157,6 +160,7 @@ describe('CategoriesComponent', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
       ],
     }).compileComponents();
   }));
@@ -484,12 +488,12 @@ describe('CategoriesComponent', () => {
         afterClosed$: of({ data }),
       });
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue([]);
-      (instructionServiceSpy.updateCategory as jasmine.Spy)
+      (instructionServiceSpy.updateCategory$ as jasmine.Spy)
         .withArgs({
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        })
+        }, { ...info, displayToast: true })
         .and.returnValue(of(data))
         .and.callThrough();
       const { Category_Id: CId, ...rest } = categoryDetails[0];
@@ -509,18 +513,19 @@ describe('CategoriesComponent', () => {
       editCategoryButton.click();
 
       expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { ...categoriesList[1], path: CId1 });
-      expect(instructionServiceSpy.updateCategory).toHaveBeenCalledWith(
+      expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledWith(
         {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }
+        }, { ...info, displayToast: true }
       );
-      expect(instructionServiceSpy.updateCategory).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledTimes(1);
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
         coverImage
       );
       expect(component.getAllCategories).toHaveBeenCalledWith();
+      expect(wiCommonServiceSpy.fetchWorkInstructions).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
         text: `Category ${data.title} has been updated successfully`,
         type: 'success'
@@ -542,12 +547,12 @@ describe('CategoriesComponent', () => {
         afterClosed$: of({ data }),
       });
       (categoryServiceSpy.getDeleteFiles as jasmine.Spy).and.returnValue([]);
-      (instructionServiceSpy.updateCategory as jasmine.Spy)
+      (instructionServiceSpy.updateCategory$ as jasmine.Spy)
         .withArgs({
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        })
+        }, { ...info, displayToast: true })
         .and.returnValue(throwError('Unable to update Category'))
         .and.callThrough();
       const { Category_Id: CId, ...rest } = categoryDetails[0];
@@ -567,14 +572,14 @@ describe('CategoriesComponent', () => {
       editCategoryButton.click();
 
       expect(overlayServiceSpy.open).toHaveBeenCalledWith(catSubscribeComponent, { ...categoriesList[1], path: CId1 });
-      expect(instructionServiceSpy.updateCategory).toHaveBeenCalledWith(
+      expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledWith(
         {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }
+        }, { ...info, displayToast: true }
       );
-      expect(instructionServiceSpy.updateCategory).toHaveBeenCalledTimes(1);
+      expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledTimes(1);
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
         coverImage
       );
@@ -745,6 +750,7 @@ describe('CategoriesComponent', () => {
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
       expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.getAllCategories).toHaveBeenCalled();
+      expect(wiCommonServiceSpy.fetchWorkInstructions).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
         text: `Category ${Category_Name} has been deleted successfully`,
         type: 'success'

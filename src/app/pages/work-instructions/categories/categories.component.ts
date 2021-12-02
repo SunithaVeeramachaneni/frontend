@@ -12,6 +12,7 @@ import { Base64HelperService } from '../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { from, of } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
+import { WiCommonService } from '../services/wi-common.services';
 
 @Component({
   selector: 'app-categories',
@@ -81,7 +82,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               private _toastService: ToastService,
               private cdrf: ChangeDetectorRef,
               private base64HelperService: Base64HelperService,
-              private errorHandlerService: ErrorHandlerService) {}
+              private errorHandlerService: ErrorHandlerService,
+              private wiCommonService: WiCommonService) {}
 
   getAllCategories() {
     this._instructionSvc.getAllCategories().subscribe(categories => {
@@ -163,19 +165,23 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           const { cid: CId, title: Category_Name, coverImage: Cover_Image } = this.categoryDetailObject || {};
           this.categoryService.removeDeleteFiles(Cover_Image);
           if (CId) {
-            this._instructionSvc.updateCategory({ Category_Id: CId, Category_Name, Cover_Image }).subscribe(
+            this.spinner.show();
+            const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
+            this._instructionSvc.updateCategory$({ Category_Id: CId, Category_Name, Cover_Image }, info).subscribe(
               response => {
+                this.spinner.hide();
                 this.categoriesList = [];
                 this.getAllCategories();
+                this.wiCommonService.fetchWorkInstructions();
                 if (Object.keys(response).length) {
                   this._toastService.show({
                     text: 'Category ' + Category_Name + ' has been updated successfully',
                     type: 'success',
                   });
                 }
-             },
+              },
               error => {
-                console.log(error);
+                this.spinner.hide();
               });
           } else {
             this._instructionSvc.addCategory({CId, Category_Name, Cover_Image})
@@ -237,6 +243,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               this.spinner.hide();
               this.categoriesList = [];
               this.getAllCategories();
+              this.wiCommonService.fetchWorkInstructions();
               this._toastService.show({
                 text:  'Category ' + category.Category_Name + ' has been deleted successfully',
                 type: 'success',
