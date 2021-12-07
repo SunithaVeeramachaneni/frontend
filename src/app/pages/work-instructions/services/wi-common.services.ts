@@ -14,13 +14,14 @@ export class WiCommonService {
 
   private imgSourceFromUploadedSection = new Subject<IUploadedImageDetails>();
   private stepTitle = new Subject<string>();
-  private allSteps = new Subject<any>();
+  private allSteps = new Subject<{ steps: Step[], removedStep: Step}>();
   private stepDetails = new Subject<any>();
   private imgArray = new Subject<[]>();
   private stepDetailsSaveSubject = new Subject<string>();
   private previewStatus = new Subject<boolean>();
   private uploadInfoSubject = new Subject<ImportFileEventData>();
   private fetchWISubject = new BehaviorSubject<boolean>(true);
+  private fetchCategoriesSubject = new BehaviorSubject<boolean>(true);
 
   currentImgFromPreviewSection = this.imgSourceFromUploadedSection.asObservable();
   currentStepTitle = this.stepTitle.asObservable();
@@ -31,6 +32,7 @@ export class WiCommonService {
   currentPreviewStatus = this.previewStatus.asObservable();
   uploadInfoAction$ = this.uploadInfoSubject.asObservable();
   fetchWIAction$ = this.fetchWISubject.asObservable();
+  fetchCategoriesAction$ = this.fetchCategoriesSubject.asObservable();
 
   uploadImgToPreview(imageDetails: IUploadedImageDetails) {
     this.imgSourceFromUploadedSection.next(imageDetails);
@@ -52,8 +54,8 @@ export class WiCommonService {
     this.stepDetails.next(source);
   }
 
-  setUpdatedSteps(source: Step[]) {
-    this.allSteps.next(source);
+  setUpdatedSteps(steps: Step[], removedStep: Step = {} as Step) {
+    this.allSteps.next({ steps, removedStep });
   }
 
   stepDetailsSave(value: string) {
@@ -66,5 +68,9 @@ export class WiCommonService {
 
   fetchWorkInstructions() {
     this.fetchWISubject.next(true);
+  }
+
+  fetchCategories() {
+    this.fetchCategoriesSubject.next(true);
   }
 }

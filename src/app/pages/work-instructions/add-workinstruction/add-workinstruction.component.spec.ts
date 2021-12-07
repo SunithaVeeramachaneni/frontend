@@ -28,11 +28,12 @@ import { SharedModule } from '../../../shared/shared.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
+import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
@@ -1429,7 +1430,6 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.receivedInstruction).toBeTrue();
       expect(component.beforeSaveMessage).toBeTrue();
       expect(component.afterSaveMessage).toBeFalse();
-      expect(component.setCategory).toBeTrue();
       expect(component.updatePublishedTillSaveWI).toHaveBeenCalledWith(false);
       expect(wiCommonServiceSpy.stepDetailsSave).toHaveBeenCalledWith(
         'All Changes Saved'
@@ -1455,7 +1455,6 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.receivedInstruction).toBeFalse();
       expect(component.beforeSaveMessage).toBeFalse();
       expect(component.afterSaveMessage).toBeTrue();
-      expect(component.setCategory).toBeFalse();
     });
 
     it('should edit existing work instruction title', () => {

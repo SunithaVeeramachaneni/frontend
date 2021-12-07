@@ -16,11 +16,12 @@ import { FormsModule } from '@angular/forms';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { DummyComponent } from '../../../../../shared/components/dummy/dummy.component';
 import { DropDownFilterPipe } from '../../../../../shared/pipes/dropdown-filter.pipe';
+import { defaultCategoryId, defaultCategoryName } from '../../../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {

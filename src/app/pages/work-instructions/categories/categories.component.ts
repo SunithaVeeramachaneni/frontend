@@ -7,19 +7,23 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CategoryService } from '../services/category.service';
 import { InstructionService } from '../services/instruction.service';
 import {ToastService} from '../../../shared/toast';
-import { ErrorInfo } from '../../../interfaces';
+import { Category, ErrorInfo } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
-import { from, of } from 'rxjs';
+import { from, of, Subscription } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { WiCommonService } from '../services/wi-common.services';
+import { defaultCategoryId } from '../../../app.constants';
+import * as InstructionActions from '../state/intruction.actions';
+import { Store } from '@ngrx/store';
+import { State } from '../../../state/app.state';
 
 @Component({
   selector: 'app-categories',
   templateUrl: 'categories.component.html',
   styleUrls: ['./categories.component.css']
 })
-export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   p = 1;
   count = 4;
   config: any = {
@@ -37,6 +41,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   get searchCriteria(): string {
     return this._searchCriteria;
   }
+  categories: Category[];
+  readonly defaultCategoryId = defaultCategoryId;
   public categoriesList = [];
   public wiList = [];
   public CatName = '';
@@ -62,6 +68,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   public workInstructionsDetailObject = null;
   public imageHeight = '';
   private image: ElementRef;
+  private fetchCategoriesSubscription: Subscription;
   @ViewChild('image', { static: false }) set content(content: ElementRef) {
     this.image = content;
     if (this.image) {
@@ -83,7 +90,8 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
               private cdrf: ChangeDetectorRef,
               private base64HelperService: Base64HelperService,
               private errorHandlerService: ErrorHandlerService,
-              private wiCommonService: WiCommonService) {}
+              private wiCommonService: WiCommonService,
+              private store: Store<State>) {}
 
   getAllCategories() {
     this._instructionSvc.getAllCategories().subscribe(categories => {
@@ -104,18 +112,20 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           this.categoryDetail.Category_Name = categories[catCnt].Category_Name;
           this.categoryDetail.CId = categories[catCnt].Category_Id;
           this.categoryDetail.Cover_Image = categories[catCnt].Cover_Image;
-          this.categoryDetail.Created_At = categories[catCnt].Category_Id === '_UnassignedCategory_'
+          this.categoryDetail.Created_At = categories[catCnt].Category_Id === defaultCategoryId
             ? new Date('2050-01-01').toISOString() : categories[catCnt].Created_At;
           this.categoriesList.push(this.categoryDetail);
         }
       }
 
       const index =
-        this.categoriesList.findIndex(category => category.CId === '_UnassignedCategory_' && category.Category_Name === 'Dummy');
+        this.categoriesList.findIndex(category => category.CId === defaultCategoryId && category.Category_Name === 'Dummy');
       if (index !== -1) {
         this.categoriesList.splice(index, 1);
       }
       if (this.categoriesList && this.categoriesList.length > 0) {
+        this.categories = categories;
+        this.store.dispatch(InstructionActions.updateCategories({ categories }));
         for (let catObj = 0; catObj <= this.categoriesList.length; catObj++) {
           if (this.categoriesList[catObj]) {
             this._instructionSvc.getInstructionsByCategoryId(this.categoriesList[catObj].CId).subscribe((wi_resp) => {
@@ -134,12 +144,16 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   }
 
   ngOnInit(): void {
-    this.getAllCategories();
+    this.fetchCategoriesSubscription = this.wiCommonService.fetchCategoriesAction$
+      .subscribe(() => {
+        this.categoriesList = [];
+        this.getAllCategories();
+      });
   }
 
   ngAfterViewInit(): void {
     this.categoriesList = [...this.categoriesList, {
-      CId: '_UnassignedCategory_',
+      CId: defaultCategoryId,
       Category_Name: 'Dummy',
       Drafts_Count: 0,
       Published_Count: 0,
@@ -167,7 +181,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
           if (CId) {
             this.spinner.show();
             const info: ErrorInfo = { displayToast: true, failureResponse: 'throwError' };
-            this._instructionSvc.updateCategory$({ Category_Id: CId, Category_Name, Cover_Image }, info).subscribe(
+            this._instructionSvc.updateCategory$({ Category_Id: CId, Category_Name, Cover_Image }, this.categories, info).subscribe(
               response => {
                 this.spinner.hide();
                 this.categoriesList = [];
@@ -237,7 +251,7 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
 
         this.spinner.show();
         const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        this._instructionSvc.deleteCategory$(category, info)
+        this._instructionSvc.deleteCategory$(category, this.categories, info)
           .subscribe(
             data => {
               this.spinner.hide();
@@ -273,4 +287,10 @@ export class CategoriesComponent implements OnInit, AfterViewInit, AfterViewChec
   getS3Folder = (time: number) => {
     return `category/${time}`;
   };
+
+  ngOnDestroy(): void {
+    if (this.fetchCategoriesSubscription) {
+      this.fetchCategoriesSubscription.unsubscribe();
+    }
+  }
 }

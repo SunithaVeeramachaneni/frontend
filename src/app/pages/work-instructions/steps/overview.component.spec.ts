@@ -18,22 +18,21 @@ import {
   CustomStepperComponent,
   OverviewComponent,
 } from './overview.component';
-
-const wid = '3707';
+import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/img/brand/category-placeholder.png',
   },
   {
-    Category_Id: '_UnassignedCategory_',
+    Category_Id: 'xyzkddaz_',
     Category_Name: 'Health-Precautions',
     Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
   },
   {
-    Category_Id: '_UnassignedCategory_',
+    Category_Id: '_aswehdjf',
     Category_Name: 'Sample Category',
     Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
   }
@@ -77,7 +76,7 @@ const workInstruction = [
   {
     Id: '3707',
     WI_Id: 30,
-    Categories: JSON.stringify([category1]),
+    Categories: JSON.stringify([category1.Category_Id]),
     WI_Name: 'TestingInsFour',
     WI_Desc: null,
     Tools:
@@ -156,6 +155,8 @@ const IMAGECONTENT = [
   },
 ];
 
+const wid = workInstruction[0].Id;
+
 describe('OverviewComponent', () => {
   let component: OverviewComponent;
   let fixture: ComponentFixture<OverviewComponent>;
@@ -231,9 +232,7 @@ describe('OverviewComponent', () => {
       .and.callThrough();
     spyOn(component, 'updateAssignedObjects');
     spyOn(component, 'updatePrequisite');
-    component.setCategory = false;
     component.titleProvided = false;
-    component.selectedInstruction = { ...workInstruction[0] };
     fixture.detectChanges();
     component.titleProvided = true;
     fixture.detectChanges();
@@ -260,24 +259,8 @@ describe('OverviewComponent', () => {
     expect(component.selectedInstructionData).toBeDefined();
     expect(component.coverImageFiles).toBeDefined();
     expect(component.imageDataCalls).toBeDefined();
-  });
-
-  describe('updateCategoryOnSetCategoryChange', () => {
-    it('should define function', () => {
-      expect(component.updateCategoryOnSetCategoryChange).toBeDefined();
-    });
-
-    it('should set categories value in form', () => {
-      spyOn(component, 'updateCategoryOnSetCategoryChange').and.callThrough();
-      component.setCategory = true;
-      fixture.detectChanges();
-      expect(
-        component.updateCategoryOnSetCategoryChange
-      ).toHaveBeenCalledWith();
-      expect(component.categoriesSelected).toEqual([
-        categoryDetails[0].Category_Name,
-      ]);
-    });
+    expect(component['updateOverviewDetailsCalled']).toBeDefined();
+    expect(component.titleProvided).toBeDefined();
   });
 
   describe('triggerResize', () => {
@@ -312,7 +295,7 @@ describe('OverviewComponent', () => {
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[1]]),
+          Categories: JSON.stringify([categoryDetails[1].Category_Id]),
         },
         update: true,
       });
@@ -332,7 +315,7 @@ describe('OverviewComponent', () => {
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[0]]),
+          Categories: JSON.stringify([categoryDetails[0].Category_Id]),
         },
         update: true,
       });
@@ -462,18 +445,6 @@ describe('OverviewComponent', () => {
     });
   });
 
-  describe('getAllCategories', () => {
-    it('should define function', () => {
-      expect(component.getAllCategories).toBeDefined();
-    });
-
-    it('should set categoriesList', () => {
-      component.getAllCategories();
-      expect(instructionServiceSpy.getAllCategories).toHaveBeenCalledWith();
-      expect(component.categoriesList).toEqual(categoryDetails);
-    });
-  });
-
   describe('reactiveForm', () => {
     it('should define function', () => {
       expect(component.reactiveForm).toBeDefined();
@@ -494,10 +465,9 @@ describe('OverviewComponent', () => {
       expect(component.enableReactiveFormFields).toBeDefined();
     });
 
-    it('should call enableReactiveFormFields when titleProvided is true', () => {
+    it('should enable create work instruction form fields', () => {
       spyOn(component, 'enableReactiveFormFields').and.callThrough();
-      component.titleProvided = true;
-      fixture.detectChanges();
+      component.enableReactiveFormFields();
       expect(component.enableReactiveFormFields).toHaveBeenCalled();
       expect(component.formControls.categories.enabled).toBeTrue();
       expect(component.formControls.assignedObjects.enabled).toBeTrue();
@@ -533,7 +503,7 @@ describe('OverviewComponent', () => {
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[1]]),
+          Categories: JSON.stringify([categoryDetails[1].Category_Id]),
         },
         update: true,
       });
@@ -550,6 +520,7 @@ describe('OverviewComponent', () => {
       spyOn(component, 'updateBusinessObject');
       (component.updateAssignedObjects as jasmine.Spy).and.callThrough();
       const Value = JSON.parse(workInstruction[0].AssignedObjects)[0].Value;
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       expect(component.updateAssignedObjects).toHaveBeenCalledWith();
       expect(component.assignedObjectsList).toEqual([
@@ -565,20 +536,15 @@ describe('OverviewComponent', () => {
     });
 
     it('should update assignedObjectsList and call removeFirst method', () => {
+      mockInstructionSelector.setResult({
+        ...workInstruction[0],
+        AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]'
+      });
+      store.refreshState();
       (component.updateAssignedObjects as jasmine.Spy).and.callThrough();
-      (instructionServiceSpy.getInstructionsById as jasmine.Spy)
-        .withArgs(wid)
-        .and.returnValue(
-          of({
-              ...workInstruction[0],
-              AssignedObjects:
-                '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]',
-            },
-          )
-        )
-        .and.callThrough();
       spyOn<any>(component, 'removeFirst');
       const Value = JSON.parse(workInstruction[0].AssignedObjects)[0].Value;
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       component.updateAssignedObjects([businessObjects[1]]);
       expect(component.assignedObjectsList).toEqual([
@@ -608,6 +574,7 @@ describe('OverviewComponent', () => {
       });
       store.refreshState();
       spyOn(component.instructionDataEntry, 'emit');
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       component.updateBusinessObject(
         businessObjects[0],
@@ -754,6 +721,7 @@ describe('OverviewComponent', () => {
     });
 
     it('should update prerequisite with existing Tools data', () => {
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       const enteredVal = 'Test Tools Three';
       const prerequisite = 'Tools';
@@ -850,21 +818,37 @@ describe('OverviewComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    it('should set recentInstruction class members from selector', () => {
-      expect(component.recentWorkInstruction).toEqual(workInstruction[0]);
-    });
-
-    it('should set initilization data for component', () => {
+    it('should set initilization data for component & call other initilization functions', () => {
       spyOn(component, 'reactiveForm');
-      spyOn(component, 'getAllCategories');
       spyOn(component, 'getBusinessObjects');
+      spyOn(component, 'enableReactiveFormFields');
+      spyOn(component, 'updateOverviewDetails');
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       expect(component.reactiveForm).toHaveBeenCalledWith();
-      expect(component.getAllCategories).toHaveBeenCalledWith();
       expect(component.getBusinessObjects).toHaveBeenCalledWith();
-      expect(instructionServiceSpy.getInstructionsById).toHaveBeenCalledWith(
-        wid
-      );
+      expect(component.recentWorkInstruction).toEqual(workInstruction[0]);
+      expect(component['updateOverviewDetailsCalled']).toBeTrue();
+      expect(component.categoriesList).toEqual(categoryDetails);
+      expect(component.titleProvided).toBeTrue();
+      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateCategories({ categories: categoryDetails }));
+      expect(component.enableReactiveFormFields).toHaveBeenCalledWith();
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
+    });
+  });
+  
+  describe('updateOverviewDetails', () => {
+    it('should define function', () => {
+      expect(component.updateOverviewDetails).toBeDefined();
+    });
+
+    it('should update overview details & fetch steps', () => {
+      spyOn(component, 'updateOverviewDetails').and.callThrough();
+
+      component['updateOverviewDetailsCalled'] = false;
+      component.ngOnInit();
+
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
       expect(instructionServiceSpy.getStepsByWID).toHaveBeenCalledWith(wid);
       expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateSteps( { steps }));
       expect(component.assignedObjectsSelected).toEqual(
@@ -891,7 +875,7 @@ describe('OverviewComponent', () => {
       );
     });
 
-    it('should set initilization data for component with attachments', () => {
+    it('should update overview details, fetch steps & step images', () => {
       const imageName = 'Thumbnail.jpg';
       (instructionServiceSpy.getStepsByWID as jasmine.Spy)
         .withArgs(wid)
@@ -901,16 +885,12 @@ describe('OverviewComponent', () => {
         .withArgs([imageName], `${wid}/${steps[0].StepId}`)
         .and.returnValue(of(IMAGECONTENT))
         .and.callThrough();
-      spyOn(component, 'reactiveForm');
-      spyOn(component, 'getAllCategories');
-      spyOn(component, 'getBusinessObjects');
+      spyOn(component, 'updateOverviewDetails').and.callThrough();
+
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
-      expect(component.reactiveForm).toHaveBeenCalledWith();
-      expect(component.getAllCategories).toHaveBeenCalledWith();
-      expect(component.getBusinessObjects).toHaveBeenCalledWith();
-      expect(instructionServiceSpy.getInstructionsById).toHaveBeenCalledWith(
-        wid
-      );
+
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
       expect(instructionServiceSpy.getStepsByWID).toHaveBeenCalledWith(wid);
       expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateSteps( { steps }));
       expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateStepImages({ stepImages: {
@@ -942,21 +922,17 @@ describe('OverviewComponent', () => {
       );
     });
   });
-
+  
   describe('ngOnDestroy', () => {
     it('should define function', () => {
       expect(component.ngOnDestroy).toBeDefined();
     });
 
     it('should unsubscribe subscription', () => {
-      spyOn(<any>component['insByIdSubscription'], 'unsubscribe');
       spyOn(<any>component['currentPreviousStatusSubscription'], 'unsubscribe');
       spyOn(<any>component['instructionSubscription'], 'unsubscribe');
       component.ngOnDestroy();
       expect(base64HelperServiceSpy.resetBase64ImageDetails).toHaveBeenCalledWith();
-      expect(
-        component['insByIdSubscription'].unsubscribe
-      ).toHaveBeenCalledWith();
       expect(
         component['currentPreviousStatusSubscription'].unsubscribe
       ).toHaveBeenCalledWith();
@@ -975,6 +951,7 @@ describe('OverviewComponent', () => {
         .withArgs([imageName], `${wid}/${steps[0].StepId}`)
         .and.returnValue(of(IMAGECONTENT))
         .and.callThrough();
+      component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
       spyOn(<any>component['imageContentsSubscription'], 'unsubscribe');
       component.ngOnDestroy();

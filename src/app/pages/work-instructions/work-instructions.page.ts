@@ -183,6 +183,7 @@ export class WorkInstructionsPage implements OnInit, AfterViewChecked, OnDestroy
     const ref = this.overlayService.open(content, obj);
     ref.afterClosed$.subscribe(res => {
       this.getAllFavsDraftsAndRecentIns();
+      this.wiCommonService.fetchCategories();
       this.searchCriteria = '';
     });
   }

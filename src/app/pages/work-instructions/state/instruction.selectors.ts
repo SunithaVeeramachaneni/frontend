@@ -54,3 +54,8 @@ export const getCurrentStep = createSelector(
   }
 );
 
+export const getCategories = createSelector(
+  getInstructionFeatureState,
+  state => state.categories
+);
+
