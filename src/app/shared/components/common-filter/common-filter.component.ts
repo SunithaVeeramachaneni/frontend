@@ -76,4 +76,8 @@ export class CommonFilterComponent implements OnInit {
     return uniqBy(array, identifier)
    }
 
+   clearFilter = () => {
+     this.workCenter = [];
+   }
+
 }
