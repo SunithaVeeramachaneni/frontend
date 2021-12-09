@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Instruction, Step } from "../../../interfaces";
+import { Category, Instruction, Step } from "../../../interfaces";
 import { StepImages } from "./instruction.reducer";
 
 export const addInstruction = createAction(
@@ -63,4 +63,9 @@ export const setUploadedFile = createAction(
 
 export const setInsToBePublished = createAction(
   '[Instruction] setInsToBePublished'
+);
+
+export const updateCategories = createAction(
+  '[Instruction] updateCategories',
+  props<{ categories: Category[] }>()
 );

@@ -1,4 +1,4 @@
-<app-custom-stepper [titleProvided]="titleProvided" [selectedInstruction] = "selectedInstruction" [selectedInstructionData]="selectedInstructionData" (allStepData) = getAllStepData($event) (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler($event)" >
+<app-custom-stepper [selectedInstructionData]="selectedInstructionData" (allStepData) = getAllStepData($event) (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler($event)" >
   <!-- <cdk-step [stepControl]="createWIForm"> -->
   <cdk-step>
     <button (click)="updatePreviewStatus(previewDisplay)" class="align-icon fa-pull-right p-t-2 btn btn-hide-show-preview" *ngIf="previewDisplay === false">SHOW PREVIEW</button>

@@ -29,11 +29,15 @@ import { Base64HelperService } from '../services/base64-helper.service';
 import { OrderModule } from 'ngx-order-pipe';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { WiCommonService } from '../services/wi-common.services';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { State } from '../../../state/app.state';
+import * as InstructionActions from '../state/intruction.actions';
+import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: COVER_IMAGES[0],
     Created_At: new Date('2050-01-01').toISOString(),
     Updated_At: '2050-10-29T15:38:32.000Z'
@@ -115,6 +119,7 @@ describe('CategoriesComponent', () => {
   let categoriesEl: HTMLElement;
   let catSubscribeComponent = CategoryComponent;
   let delCatSubscribeComponent = DeleteCategoryComponent;
+  let store: MockStore<State>;
 
   beforeEach(waitForAsync(() => {
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
@@ -138,7 +143,9 @@ describe('CategoriesComponent', () => {
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
-    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['fetchWorkInstructions']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['fetchWorkInstructions'], {
+      fetchCategoriesAction$: of(true)
+    });
 
     TestBed.configureTestingModule({
       declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
@@ -161,11 +168,14 @@ describe('CategoriesComponent', () => {
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        provideMockStore()
       ],
     }).compileComponents();
   }));
 
   beforeEach(() => {
+    store = TestBed.inject(MockStore);
+    spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(CategoriesComponent);
     component = fixture.componentInstance;
     categoriesDe = fixture.debugElement;
@@ -193,7 +203,7 @@ describe('CategoriesComponent', () => {
     expect(component.categoriesList).toBeDefined();
     expect(component.categoriesList).toEqual([
       {
-        CId: '_UnassignedCategory_',
+        CId: defaultCategoryId,
         Category_Name: 'Dummy',
         Drafts_Count: 0,
         Published_Count: 0,
@@ -289,7 +299,7 @@ describe('CategoriesComponent', () => {
       const href = fixture.debugElement
         .query(By.css('.categories-details-card>a'))
         .nativeElement.getAttribute('href');
-      expect(href).toEqual('/work-instructions/category/_UnassignedCategory_');
+      expect(href).toEqual(`/work-instructions/category/${defaultCategoryId}`);
       expect(categoriesEl.querySelectorAll('pagination-template').length).toBe(1);
       expect(categoriesEl.querySelectorAll('app-custom-pagination-controls').length).toBe(1);
     });
@@ -313,7 +323,7 @@ describe('CategoriesComponent', () => {
         .and.returnValue(of(categoryDetails))
         .and.callThrough();
       (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-        .withArgs('_UnassignedCategory_')
+        .withArgs(defaultCategoryId)
         .and.returnValue(of(instructions))
         .and.callThrough();
       (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
@@ -323,14 +333,14 @@ describe('CategoriesComponent', () => {
       component.getAllCategories();
       expect(instructionServiceSpy.getAllCategories).toHaveBeenCalledWith();
       expect(instructionServiceSpy.getAllCategories).toHaveBeenCalledTimes(1);
-      expect(instructionServiceSpy.getInstructionsByCategoryId).toHaveBeenCalledWith(
-        '_UnassignedCategory_'
-      );
+      expect(instructionServiceSpy.getInstructionsByCategoryId).toHaveBeenCalledWith(defaultCategoryId);
       expect(instructionServiceSpy.getInstructionsByCategoryId).toHaveBeenCalledWith(
         '177'
       );
       expect(instructionServiceSpy.getInstructionsByCategoryId).toHaveBeenCalledTimes(2);
       expect(component.categoriesList).toEqual(categoriesList);
+      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateCategories({ categories: categoryDetails }));
+      expect(component.categories).toEqual(categoryDetails);
     });
 
     it('should call getBase64Image if Cover_Image is not from assets', () => {
@@ -340,7 +350,7 @@ describe('CategoriesComponent', () => {
         .and.returnValue(of([categoryDetails[0], { ...categoryDetails[1], Cover_Image: 'Thumbnail.jpg' }]))
         .and.callThrough();
       (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
-        .withArgs('_UnassignedCategory_')
+        .withArgs(defaultCategoryId)
         .and.returnValue(of(instructions))
         .and.callThrough();
       (instructionServiceSpy.getInstructionsByCategoryId as jasmine.Spy)
@@ -360,6 +370,7 @@ describe('CategoriesComponent', () => {
 
     it('should call getAllCategories', () => {
       component.ngOnInit();
+      expect(component.categoriesList).toEqual([]);
       expect(component.getAllCategories).toHaveBeenCalledWith();
     });
   });
@@ -371,7 +382,7 @@ describe('CategoriesComponent', () => {
 
     it('should set dummy category for cover image height and call detectChanges ', () => {
       const categoriesList = {
-        CId: '_UnassignedCategory_',
+        CId: defaultCategoryId,
         Category_Name: 'Dummy',
         Drafts_Count: 0,
         Published_Count: 0,
@@ -493,7 +504,7 @@ describe('CategoriesComponent', () => {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }, { ...info, displayToast: true })
+        }, categoryDetails, { ...info, displayToast: true })
         .and.returnValue(of(data))
         .and.callThrough();
       const { Category_Id: CId, ...rest } = categoryDetails[0];
@@ -503,6 +514,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 },
       ];
       component.categoriesList = categoriesList;
+      component.categories = categoryDetails;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -518,7 +530,7 @@ describe('CategoriesComponent', () => {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }, { ...info, displayToast: true }
+        }, categoryDetails, { ...info, displayToast: true }
       );
       expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledTimes(1);
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
@@ -532,7 +544,7 @@ describe('CategoriesComponent', () => {
       });
     });
 
-    it('should handle error while edit existing category', () => {
+    it('should handle error while editing existing category', () => {
       const {
         Category_Id: cid,
         Category_Name: title,
@@ -552,7 +564,7 @@ describe('CategoriesComponent', () => {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }, { ...info, displayToast: true })
+        }, categoryDetails, { ...info, displayToast: true })
         .and.returnValue(throwError('Unable to update Category'))
         .and.callThrough();
       const { Category_Id: CId, ...rest } = categoryDetails[0];
@@ -562,6 +574,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 },
       ];
       component.categoriesList = categoriesList;
+      component.categories = categoryDetails;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -577,7 +590,7 @@ describe('CategoriesComponent', () => {
           Category_Id: cid,
           Category_Name: data.title,
           Cover_Image: coverImage,
-        }, { ...info, displayToast: true }
+        }, categoryDetails, { ...info, displayToast: true }
       );
       expect(instructionServiceSpy.updateCategory$).toHaveBeenCalledTimes(1);
       expect(categoryServiceSpy.removeDeleteFiles).toHaveBeenCalledWith(
@@ -714,7 +727,7 @@ describe('CategoriesComponent', () => {
           Category_Name,
           Category_Id: CId,
           Cover_Image,
-        }, info)
+        }, categoryDetails, info)
         .and.returnValue(of({
           Category_Name,
           Category_Id: CId,
@@ -728,6 +741,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 },
       ];
       component.categoriesList = categoriesList;
+      component.categories = categoryDetails;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -745,6 +759,7 @@ describe('CategoriesComponent', () => {
           Category_Id: CId,
           Cover_Image,
         },
+        categoryDetails,
         info
       );
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
@@ -780,7 +795,7 @@ describe('CategoriesComponent', () => {
           Category_Name,
           Category_Id: CId,
           Cover_Image,
-        }, info)
+        }, categoryDetails, info)
         .and.returnValue(throwError({ message: 'Unable to delete Category' }))
         .and.callThrough();
       const { Category_Id: CId0, ...rest } = categoryDetails[0];
@@ -790,6 +805,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 },
       ];
       component.categoriesList = categoriesList;
+      component.categories = categoryDetails;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -807,6 +823,7 @@ describe('CategoriesComponent', () => {
           Category_Id: CId,
           Cover_Image,
         },
+        categoryDetails,
         info
       );
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
@@ -874,6 +891,18 @@ describe('CategoriesComponent', () => {
     it('should return S3 folder path', () => {
       const time = new Date().getTime();
       expect(component.getS3Folder(time)).toBe(`category/${time}`);
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('should define function', () => {
+      expect(component.ngOnDestroy).toBeDefined();
+    });
+
+    it('should unsubscribe subscription', () => {
+      spyOn(<any>component['fetchCategoriesSubscription'], 'unsubscribe');
+      component.ngOnDestroy();
+      expect(component['fetchCategoriesSubscription'].unsubscribe).toHaveBeenCalledWith();
     });
   });
 });

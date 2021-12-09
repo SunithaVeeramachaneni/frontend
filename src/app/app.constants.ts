@@ -9,3 +9,6 @@ export const routingUrls = {
   recents: { url: '/work-instructions/recents', title: 'Recents' },
   files: { url: '/work-instructions/files', title: 'Files' },
 }
+
+export const defaultCategoryId = '_UnassignedCategory_';
+export const defaultCategoryName = 'Unassigned';

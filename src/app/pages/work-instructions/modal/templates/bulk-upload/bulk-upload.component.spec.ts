@@ -56,7 +56,7 @@ describe('BulkUploadComponent', () => {
       'copyFiles'
     ]);
 
-    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', ['fetchCategories'], {
       uploadInfoAction$: of({})
     })
 
@@ -416,6 +416,7 @@ describe('BulkUploadComponent', () => {
 
       const buttons = bulkUploadEl.querySelectorAll('.modal-footer button');
       (buttons[1] as HTMLElement).click();
+      expect(wiCommonServiceSpy.fetchCategories).toHaveBeenCalledWith();
       expect(router.navigate).toHaveBeenCalledWith(['/work-instructions']);
     });
   });

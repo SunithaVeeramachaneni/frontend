@@ -24,12 +24,12 @@ import { Base64HelperService } from '../services/base64-helper.service';
 import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { CommonService } from '../../../shared/services/common.service';
-import { routingUrls } from '../../../app.constants';
+import { defaultCategoryId, defaultCategoryName, routingUrls } from '../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
@@ -53,7 +53,7 @@ const recents = [
   {
     Id: '2836',
     WI_Id: 2,
-    Categories: JSON.stringify([category1]),
+    Categories: JSON.stringify([category1.Category_Id]),
     WI_Name: 'Post Job Sanitisation procedure',
     WI_Desc: null,
     Tools: null,
@@ -79,7 +79,7 @@ const recents = [
   {
     Id: '2845',
     WI_Id: 3,
-    Categories: JSON.stringify([category2, category3]),
+    Categories: JSON.stringify([category2.Category_Id, category3.Category_Id]),
     WI_Name: 'InstToBePublish',
     WI_Desc: null,
     Tools: null,

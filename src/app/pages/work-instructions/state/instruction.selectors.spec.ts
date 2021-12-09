@@ -1,5 +1,6 @@
 import { InstructionState } from './instruction.reducer';
 import {
+  getCategories,
   getCurrentStep,
   getCurrentStepId,
   getCurrentStepImages,
@@ -16,8 +17,7 @@ describe('Instruction Selectors', () => {
     instruction: {
       Id: '129',
       WI_Id: 2,
-      Categories:
-        '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+      Categories: '["35"]',
       WI_Name: 'TestingNgRxChanges',
       WI_Desc: null,
       Tools:
@@ -98,7 +98,7 @@ describe('Instruction Selectors', () => {
     insToBePublished: [
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -116,7 +116,7 @@ describe('Instruction Selectors', () => {
       },
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -133,7 +133,7 @@ describe('Instruction Selectors', () => {
       },
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -150,6 +150,7 @@ describe('Instruction Selectors', () => {
         PUBLISHED: true,
       },
     ],
+    categories: [{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]
   };
 
   it('Test', () => {
@@ -207,5 +208,10 @@ describe('Instruction Selectors', () => {
       (stp) => stp.StepId === instructionState.currentStepId
     );
     expect(step).toEqual(currentStep);
+  });
+
+  it('should select categories', () => {
+    const categories = getCategories.projector(instructionState);
+    expect(categories).toEqual(instructionState.categories);
   });
 });

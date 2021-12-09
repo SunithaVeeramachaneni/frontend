@@ -14,12 +14,12 @@
       <mat-tab-group [selectedIndex]="selectedID.value"
                      (selectedIndexChange)="selectedID.setValue($event)" (selectedTabChange)="onTabChange(selectedID.value, tabs.length)">
         <mat-tab
-          *ngFor="let tab of tabs; let index = index"
-          [label]="index > 0? index + '. ' + tab.toUpperCase(): tab.toUpperCase()">
+          *ngFor="let tab of tabsObject | keyvalue; let index = index"
+          [label]="index > 0? index + '. ' + tabs[index].toUpperCase(): tabs[index].toUpperCase()">
           <ng-template mat-tab-label>
             <label  class="labelHeading"
-              [matTooltip]="index > 0? index + '. ' + tab.toUpperCase(): tab.toUpperCase()" matTooltipClass="">
-              {{index > 0? index + '. ' + tab.toUpperCase(): tab.toUpperCase()}}
+              [matTooltip]="index > 0? index + '. ' + tabs[index].toUpperCase(): tabs[index].toUpperCase()" matTooltipClass="">
+              {{index > 0? index + '. ' + tabs[index].toUpperCase(): tabs[index].toUpperCase()}}
             </label>
           </ng-template>
         </mat-tab>
@@ -434,7 +434,7 @@
         <div *ngIf="selectedFormFactor.name === 'iPad'" class="section-block">
           <app-ipad-preview [selectedID]="selectedID.value" [titleProvided]="titleProvided"
                             [tabs]= "tabs" [selectedInstructionData]="selectedInstructionData"
-                            [selectedInstruction]="selectedInstruction" [loadedImages]="loadedImages"
+                            [selectedInstruction]="instruction" [loadedImages]="loadedImages"
                             [currentStepTitle]="currentStepTitle"
                             [instructions]="instructions" [warnings]="warnings"
                             [hints]="hints" [reactionPlan]="reactionPlan">
@@ -443,7 +443,7 @@
         <div *ngIf="selectedFormFactor.name === 'iPhone'" class="section-block">
         <app-iphone-preview [selectedID]="selectedID.value" [titleProvided]="titleProvided"
                           [tabs]= "tabs" [selectedInstructionData]="selectedInstructionData"
-                          [selectedInstruction]="selectedInstruction" [loadedImages]="loadedImages"
+                          [selectedInstruction]="instruction" [loadedImages]="loadedImages"
                           [currentStepTitle]="currentStepTitle"
                           [instructions]="instructions" [warnings]="warnings"
                           [hints]="hints" [reactionPlan]="reactionPlan">

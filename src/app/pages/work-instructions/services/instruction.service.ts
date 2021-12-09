@@ -18,13 +18,15 @@ import {
   UploadS3FileResponse,
   Files,
   RenameFileInfo,
-  CopyFilesPathInfo
+  CopyFilesPathInfo,
+  CategoryObject
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { environment } from '../../../../environments/environment';
+import { defaultCategoryId } from '../../../app.constants';
 
 export interface InstructionQuery {
   search: string;
@@ -35,6 +37,12 @@ export class InstructionService {
 
   constructor(private _appService: AppService,
               private store: Store<State>) {}
+
+  getCategoriesObject = (categories: Category[]): CategoryObject => categories.reduce((acc, val) => {
+    const { Category_Id, Category_Name, Cover_Image } = val;
+    acc = { ...acc, [Category_Id]: { Category_Id, Category_Name, Cover_Image } }
+    return acc;
+  }, {});
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
     return this._appService._getResp(environment.wiApiUrl, 'wiusers', info);
@@ -196,6 +204,13 @@ export class InstructionService {
 
   removeWorkInstruction(instruction: Instruction, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
     return this._appService._removeData(environment.wiApiUrl, 'deleteInstruction/' + instruction.Id, info)
+      .pipe(
+        map(resp => resp === null ? instruction : resp)
+      );
+  }
+
+  removeWorkInstructionAndSteps(instruction: Instruction, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction> {
+    return this._appService._removeData(environment.wiApiUrl, 'deleteInstructionAndSteps/' + instruction.Id, info)
       .pipe(
         map(resp => resp === null ? instruction : resp)
       );
@@ -454,7 +469,7 @@ export class InstructionService {
               };
               return this.updateGatewayFavWorkInstruction(updateInstructionPayload, undefined, info);
             }));
-          if (workInstruction.Published || workInstruction.Published === true) {
+          if (workInstruction.Published) {
             return forkJoin({updateIns, updateInsInABAP}).pipe(
               map((res: {updateIns: Instruction, updateInsInABAP: any}) => {
                 return res.updateIns;
@@ -468,63 +483,29 @@ export class InstructionService {
   }
 
   deleteWorkInstruction$ = (workInstructionId: string, info: ErrorInfo): Observable<Instruction> => {
-    let deleteStepsPayload = {};
     let deleteInstructionPayload = {};
-    return combineLatest([
-      this.getInstructionsById(workInstructionId, info),
-      this.getStepsByWID(workInstructionId, info)
-    ])
-    .pipe(
-      switchMap(([workInstruction, steps]) => {
-        const { Id } = workInstruction;
-        const FORMNAME = 'WI_' + `${Id}`;
-        const APPNAME = "MWORKORDER";
-        const VERSION = '001';
-        const WINSTRIND = 'X';
-        const DELIND = 'X';
-        deleteInstructionPayload = {
-          ...deleteInstructionPayload,
-          APPNAME,
-          FORMNAME,
-          WINSTRIND,
-          DELIND,
-          VERSION
-        };
+    return this.getInstructionsById(workInstructionId, info)
+      .pipe(
+        switchMap(workInstruction => {
+          const { Id } = workInstruction;
+          const FORMNAME = 'WI_' + `${Id}`;
+          const APPNAME = "MWORKORDER";
+          const VERSION = '001';
+          const WINSTRIND = 'X';
+          const DELIND = 'X';
+          deleteInstructionPayload = {
+            ...deleteInstructionPayload,
+            APPNAME,
+            FORMNAME,
+            WINSTRIND,
+            DELIND,
+            VERSION
+          };
 
-        if (steps.length) {
-          return from(steps)
-            .pipe(
-              mergeMap(step => this.removeStep(step, info)),
-              toArray(),
-              switchMap(() => {
-                const deleteInstruction = this.removeWorkInstruction(workInstruction, info);
-                const deleteInstructionFromGateway = this.removeWorkInstructionFromGateway(deleteInstructionPayload, info);
-                if (workInstruction.Published) {
-                  return forkJoin({ deleteInstruction, deleteInstructionFromGateway })
-                    .pipe(
-                      map((res: { deleteInstruction: Instruction, deleteInstructionFromGateway: any }) => {
-                        return res.deleteInstruction;
-                      })
-                    );
-                } else {
-                  return deleteInstruction;
-                }
-              }),
-              mergeMap(deleteInstruction => {
-                if (Object.keys(deleteInstruction).length) {
-                  return this.deleteFiles(`${deleteInstruction.Id}`, true, info)
-                    .pipe(map(() => deleteInstruction))
-                } else {
-                  return of(deleteInstruction)
-                }
-              })
-            );
-        } else {
           return of(workInstruction)
             .pipe(
               mergeMap((workInstructionDetails: Instruction) => {
-                const deleteInstruction =
-                  this.removeWorkInstruction(workInstructionDetails, info);
+                const deleteInstruction = this.removeWorkInstructionAndSteps(workInstructionDetails, info);
                 const deleteInstructionFromGateway = this.removeWorkInstructionFromGateway(deleteInstructionPayload, info);
                 if (workInstructionDetails.Published) {
                   return forkJoin({ deleteInstruction, deleteInstructionFromGateway })
@@ -546,17 +527,14 @@ export class InstructionService {
                 }
               })
             );
-        }
-      })
-    );
+        })
+      );
   }
 
   addInstructionTitle$ = (user: User, ins: Instruction | InstructionOptional, info: ErrorInfo): Observable<Instruction> => {
     const wiDetail = {
       WI_Id: null,
-      Categories: JSON.stringify([
-        {Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/work-instructions-icons/img/brand/category-placeholder.png"}
-      ]),
+      Categories: JSON.stringify([defaultCategoryId]),
       WI_Name: ins.WI_Name,
       IsFavorite: false,
       CreatedBy: user.first_name + " " + user.last_name,
@@ -587,20 +565,23 @@ export class InstructionService {
   }
 
   workInstructionsWithCategories$ = (requestType: string, info: ErrorInfo = {} as ErrorInfo): Observable<Instruction[]> =>
-    this._appService._getResp(environment.wiApiUrl, requestType, info)
-      .pipe(
-        map((workInstructions: Instruction[]) => {
-          return workInstructions.map((workInstruction: Instruction) => {
-            const categories = workInstruction.Categories ?
-              JSON.parse(workInstruction.Categories).map((category: Category) => ` ${category.Category_Name}`)
-              : null;
-            return {
-              ...workInstruction,
-              categories,
-            } as Instruction;
-          });
-        })
-      )
+    combineLatest([
+      this._appService._getResp(environment.wiApiUrl, requestType, info),
+      this.getAllCategories(info)
+    ]).pipe(
+      map(([workInstructions, categories]: [Instruction[], Category[]]) => {
+        const categoriesObj = this.getCategoriesObject(categories);
+        return workInstructions.map((workInstruction: Instruction) => {
+          const categories = workInstruction.Categories ?
+            JSON.parse(workInstruction.Categories).map((categoryId: string) => categoriesObj[categoryId].Category_Name)
+            : null;
+          return {
+            ...workInstruction,
+            categories,
+          } as Instruction;
+        });
+      })
+    )
 
   publishInstruction$ = ({ wiToBePublsihed, steps, wid, editedBy }: PublishInstruction, info: ErrorInfo):
   Observable<(Instruction| Step)[]> => {
@@ -712,7 +693,9 @@ export class InstructionService {
       );
   }
 
-  deleteCategory$ = (category: Category, info: ErrorInfo): Observable<Category> => {
+  deleteCategory$ = (category: Category, categories: Category[], info: ErrorInfo): Observable<Category> => {
+    const categoriesUpdated = categories.filter(catgry => catgry.Category_Id !== category.Category_Id);
+    const categoriesObject = this.getCategoriesObject(categoriesUpdated);
     return this.getSelectedCategory(category.Category_Id, info)
       .pipe(
         mergeMap(() => this.getInstructionsByCategoryId(category.Category_Id, info)),
@@ -721,7 +704,9 @@ export class InstructionService {
             .pipe(
               mergeMap((workInstruction: any) => {
                 const categories = JSON.parse(workInstruction.Categories)
-                  .filter((catgry: Category) => catgry.Category_Id !== category.Category_Id);
+                  .filter((catgryId: string) => catgryId !== category.Category_Id);
+                let CATEGORY = categories.map((categoryId: string) => categoriesObject[categoryId]);
+                CATEGORY = JSON.stringify(CATEGORY);
 
                 const payload = {
                   APPNAME: 'MWORKORDER',
@@ -744,7 +729,7 @@ export class InstructionService {
                                 ...payload,
                                 UNIQUEKEY: step.StepId.toString(),
                                 STEPS: `${index + 1}`,
-                                CATEGORY: JSON.stringify(categories)
+                                CATEGORY
                               };
                               const updatedGatewayInstruction =
                                 this.updateGatewayWorkInstruction(updateInstructionPayload, undefined, info);
@@ -765,9 +750,7 @@ export class InstructionService {
 
                 const updateInstruction = this.updateWorkInstruction({
                   ...workInstruction,
-                  Categories: categories.length ? JSON.stringify(categories) : JSON.stringify([...categories,
-                    { Category_Id: '_UnassignedCategory_', Category_Name: 'Unassigned', Cover_Image: "assets/work-instructions-icons/img/brand/category-placeholder.png" }
-                  ]),
+                  Categories: categories.length ? JSON.stringify(categories) : JSON.stringify([...categories, defaultCategoryId]),
                   IsFavorite: categories.length ? workInstruction.IsFavorite : false,
                   Published: categories.length ? workInstruction.Published : false,
                 }, info);
@@ -776,7 +759,7 @@ export class InstructionService {
                   if (categories.length) {
                     const updateInstructionPayload = {
                       ...payload,
-                      CATEGORY: JSON.stringify(categories)
+                      CATEGORY
                     };
                     const updatedGatewayInstruction = this.updateGatewayWorkInstruction(updateInstructionPayload, undefined, info);
                     return forkJoin({ updatedGatewayInstruction, updateInstruction, updateSteps });
@@ -808,7 +791,15 @@ export class InstructionService {
       );
   }
 
-  updateCategory$ = (category: Category, info: ErrorInfo): Observable<Category> => {
+  updateCategory$ = (category: Category, categories: Category[], info: ErrorInfo): Observable<Category> => {
+    const categoriesUpdated = categories.map(catgry => {
+      if (catgry.Category_Id === category.Category_Id) {
+        return category;
+      } else {
+        return catgry;
+      }
+    });
+    const categoriesObject = this.getCategoriesObject(categoriesUpdated);
     return this.updateCategory(category, info)
       .pipe(
         mergeMap(() => this.getInstructionsByCategoryId(category.Category_Id, info)),
@@ -816,15 +807,7 @@ export class InstructionService {
           from(workInstructions)
             .pipe(
               mergeMap((workInstruction: any) => {
-                const categories = JSON.parse(workInstruction.Categories)
-                  .map((catgry: Category) => {
-                    if (catgry.Category_Id !== category.Category_Id ) {
-                      return catgry;
-                    } else {
-                      return category;
-                    }
-                  });
-
+                const categories = JSON.parse(workInstruction.Categories).map((catgryId: string) => categoriesObject[catgryId]);
                 const payload = {
                   APPNAME: 'MWORKORDER',
                   FORMNAME: `WI_${workInstruction.Id}`,
@@ -858,20 +841,15 @@ export class InstructionService {
                     toArray()
                   );
 
-                const updateInstruction = this.updateWorkInstruction({
-                  ...workInstruction,
-                  Categories: JSON.stringify(categories),
-                }, info);
-
                 if (workInstruction.Published) {
                   const updateInstructionPayload = {
                     ...payload,
                     CATEGORY: JSON.stringify(categories)
                   };
                   const updatedGatewayInstruction = this.updateGatewayWorkInstruction(updateInstructionPayload, undefined, info);
-                  return forkJoin({ updatedGatewayInstruction, updateInstruction, updateSteps });
+                  return forkJoin({ updatedGatewayInstruction, updateSteps });
                 } else {
-                  return updateInstruction;
+                  return of({ ...workInstruction });
                 }
               }),
               toArray()

@@ -77,8 +77,7 @@ export const userDetails = {
 export const inst1Details = {
   AssignedObjects:
     '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"EQUNR","FIELDDESCRIPTION":"EQUIPMENT NUMBER","Value":"12345"}]',
-  Categories:
-    '[{"Category_Id":"ighqwdf","Category_Name":"Sample Category1","Cover_Image":"assets/work-instructions-icons/img/brand/category-placeholder.png"}]',
+  Categories: '["ighqwdf"]',
   CreatedBy: "Test User",
   created_at: "",
   EditedBy: "Test User",
@@ -107,8 +106,7 @@ export const inst1Details = {
 
 export const inst2Details = {
   AssignedObjects: null,
-  Categories:
-    '[{"Category_Id":"dggqwgh","Category_Name":"Sample Category2","Cover_Image":"assets/work-instructions-icons/img/brand/category-placeholder.png"}]',
+  Categories: '["dggqwgh"]',
   CreatedBy: "Test User",
   created_at: "",
   EditedBy: "Test User",
@@ -137,8 +135,7 @@ export const inst2Details = {
 
 export const inst3Details = {
   AssignedObjects: null,
-  Categories:
-    '[{"Category_Id":"rtyjukl","Category_Name":"Sample Category3","Cover_Image":"assets/work-instructions-icons/img/brand/category-placeholder.png"}]',
+  Categories: '["rtyjukl"]',
   CreatedBy: "Test User",
   created_at: "",
   EditedBy: "Test User",

@@ -29,13 +29,13 @@ import { OverlayService } from './modal/overlay.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { userData$ } from '../../shared/components/header/header.component.mock';
 import { CommonService } from '../../shared/services/common.service';
-import { routingUrls } from '../../app.constants';
+import { defaultCategoryId, defaultCategoryName, routingUrls } from '../../app.constants';
 import { BreadcrumbService } from 'xng-breadcrumb';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
@@ -59,7 +59,7 @@ const favorites = [
   {
     Id: '2947',
     WI_Id: 9,
-    Categories: JSON.stringify([category1]),
+    Categories: JSON.stringify([category1.Category_Id]),
     WI_Name: 'Pole Inspection measure',
     WI_Desc: null,
     Tools: null,
@@ -85,7 +85,7 @@ const favorites = [
   {
     Id: '2948',
     WI_Id: 10,
-    Categories: JSON.stringify([category2, category3]),
+    Categories: JSON.stringify([category2.Category_Id, category3.Category_Id]),
     WI_Name: 'Sample Instruc',
     WI_Desc: null,
     Tools: null,
@@ -114,7 +114,7 @@ const drafts = [
   {
     Id: '2840',
     WI_Id: 3,
-    Categories: JSON.stringify([category2, category3]),
+    Categories: JSON.stringify([category2.Category_Id, category3.Category_Id]),
     WI_Name: 'Gas Meter Installation And Activationzz',
     WI_Desc: null,
     Tools: null,
@@ -140,7 +140,7 @@ const drafts = [
   {
     Id: '2947',
     WI_Id: 9,
-    Categories: JSON.stringify([category1]),
+    Categories: JSON.stringify([category1.Category_Id]),
     WI_Name: 'Pole Inspection measure',
     WI_Desc: null,
     Tools: null,
