@@ -133,6 +133,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       const indexAssObj = assignedObjects.findIndex(data => data.FILEDNAME === toRemove.FILEDNAME);
       if (indexAssObj !== -1) {
         assignedObjects.splice(indexAssObj, 1);
+        this.WI_Details_Drafting.splice(indexAssObj, 1);
       }
       assignedObjects = assignedObjects.length ? JSON.stringify(assignedObjects) : null;
       this.recentWorkInstruction.AssignedObjects = assignedObjects;
