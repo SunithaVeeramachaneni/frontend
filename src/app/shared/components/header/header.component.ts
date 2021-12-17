@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewEncapsulation, Input, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { from, Observable, Subscription } from 'rxjs';
 import { LogonUserDetails } from '../../../interfaces';
 import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { tap } from 'rxjs/operators';
+import * as hash from 'object-hash';
 
 @Component({
   selector: 'app-header',
@@ -63,7 +64,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }    
   }
 
-  signout(){
+  signout() {
+    const protectedResources = this.commonService.getProtectedResources();
+    from(protectedResources).subscribe(
+      protectedResource => {
+        const [urls] = protectedResource;
+        sessionStorage.removeItem(hash(urls));
+      }
+    );
     this.oidcSecurityService.logoffAndRevokeTokens();
   }
 

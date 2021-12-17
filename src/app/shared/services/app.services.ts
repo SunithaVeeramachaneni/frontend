@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   ErrorInfo,
@@ -28,18 +28,25 @@ export class AppService {
    *
    * @param  {boolean} {displayToast
    * @param  {string | {} | []} failureResponse}
+   * @param  {string} contentType}
    *
    * @returns { headers: HttpHeaders }
    */
-  private getHttpOptions = ({ displayToast, failureResponse }: ErrorInfo): {headers: HttpHeaders} => {
-    return {
-      headers: new HttpHeaders({
-        info: JSON.stringify({
-          displayToast,
-          failureResponse
+  private getHttpOptions = ({ displayToast, failureResponse, contentType = '' }: any): {headers: HttpHeaders} => {
+    if (contentType) {
+      return {
+        headers: new HttpHeaders({
+          info: JSON.stringify({ displayToast, failureResponse }),
+          'Content-Type': contentType
         })
-      })
-    };
+      };
+    } else {
+      return {
+        headers: new HttpHeaders({
+          info: JSON.stringify({ displayToast, failureResponse })
+        })
+      };
+    }
   }
 
   /**
@@ -178,5 +185,16 @@ export class AppService {
     });
     const httpOptions = { ...headers, params };
     return this.http.get<any>(url, httpOptions);
+  }
+
+  postRefreshToken(tokenEndPoint: string, data: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+    const body = new HttpParams({ fromObject: data });
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse,
+      contentType : 'application/x-www-form-urlencoded'
+    });
+    return this.http.post<any>(tokenEndPoint, body, httpOptions);
   }
 }
