@@ -33,9 +33,6 @@ export const httpLoaderFactory = (httpClient: HttpClient, commonService: CommonS
           useRefreshToken: true,
           logLevel: environment.production ? LogLevel.Error : LogLevel.Debug,
           secureRoutes: urls,
-          customParamsAuthRequest:{
-              prompt:"select_account"
-          },
           customParamsRefreshTokenRequest: {
             scope
           }
