@@ -93,11 +93,13 @@ export class AppModule {
                 return this.appService.postRefreshToken(tokenEndpoint, data)
                   .pipe(
                     tap(response => {
-                      const { exp } = JSON.parse(Buffer.from(response['access_token'].split('.')[1], 'base64').toString());
-                      response = { ...response, access_token_expires_at: exp * 1000 };
-                      delete response.id_token;
-                      delete response.refresh_token;
-                      sessionStorage.setItem(hash(urls), JSON.stringify(response));
+                      if (Object.keys(response).length) {
+                        const { exp } = JSON.parse(Buffer.from(response['access_token'].split('.')[1], 'base64').toString());
+                        response = { ...response, access_token_expires_at: exp * 1000 };
+                        delete response.id_token;
+                        delete response.refresh_token;
+                        sessionStorage.setItem(hash(urls), JSON.stringify(response));
+                      }
                     })
                   )
               }) 
