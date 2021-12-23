@@ -43,15 +43,19 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           return this.appService.postRefreshToken(tokenEndpoint, data)
             .pipe(
               switchMap(response => {
-                const { exp } = JSON.parse(Buffer.from(response['access_token'].split('.')[1], 'base64').toString());
-                response = { ...response, access_token_expires_at: exp * 1000 };
-                delete response.id_token;
-                delete response.refresh_token;
-                sessionStorage.setItem(hash(urls), JSON.stringify(response));
-                const cloneRequest = request.clone({
-                  headers: request.headers.set('authorization', `${response['token_type']} ${response['access_token']}`)
-                });
-                return next.handle(cloneRequest);
+                if (Object.keys(response).length) {
+                  const { exp } = JSON.parse(Buffer.from(response['access_token'].split('.')[1], 'base64').toString());
+                  response = { ...response, access_token_expires_at: exp * 1000 };
+                  delete response.id_token;
+                  delete response.refresh_token;
+                  sessionStorage.setItem(hash(urls), JSON.stringify(response));
+                  const cloneRequest = request.clone({
+                    headers: request.headers.set('authorization', `${response['token_type']} ${response['access_token']}`)
+                  });
+                  return next.handle(cloneRequest);
+                } else {
+                  return next.handle(request);
+                }
               })
             );
         }

@@ -137,20 +137,24 @@ assignTech(event,workorderid) {
     ASSIGNEE: technician[0].fName,
     AUFNR:workorderid,
     }
-    this._sparepartsSvc.assignTechnicianToWorkorder(data).subscribe(res=>{
-      this.getWorkOrders();
-      // this.filteredWorkOrderList$= this.filteredWorkOrderList$.pipe(map(obj=>{
-      //    console.log('obj1',obj)
-      //    let kitsFiltered=  obj['1'].filter(orders=>orders.workOrderID===workorderid)
-      //    let kitsFilteredExclude = obj['1'].filter(orders=>orders.workOrderID!==workorderid)
-      //    kitsFiltered[0].assignee=data.ASSIGNEE;
-      //    kitsFiltered[0].assigneeId=data.USNAM;
-      //    obj['2'].unshift(kitsFiltered[0]);
-      //    obj['1']=kitsFilteredExclude;
-      //    console.log('obj2',obj)
-      //    return obj;
-      //   }));
-    })
+    this._sparepartsSvc.assignTechnicianToWorkorder(data).subscribe(
+      res=>{
+        if (Object.keys(res).length) {
+          this.getWorkOrders();
+        }
+        // this.filteredWorkOrderList$= this.filteredWorkOrderList$.pipe(map(obj=>{
+        //    console.log('obj1',obj)
+        //    let kitsFiltered=  obj['1'].filter(orders=>orders.workOrderID===workorderid)
+        //    let kitsFilteredExclude = obj['1'].filter(orders=>orders.workOrderID!==workorderid)
+        //    kitsFiltered[0].assignee=data.ASSIGNEE;
+        //    kitsFiltered[0].assigneeId=data.USNAM;
+        //    obj['2'].unshift(kitsFiltered[0]);
+        //    obj['1']=kitsFilteredExclude;
+        //    console.log('obj2',obj)
+        //    return obj;
+        //   }));
+      }
+    )
  })
 }
 
