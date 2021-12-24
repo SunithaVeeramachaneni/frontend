@@ -282,6 +282,8 @@ export class MaintenanceComponent {
               let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(workOrderID);
               workOrder$.subscribe(workOrder => this.putWorkOrder$.next(workOrder))
               // this.spinner.hide();
+            } else if (Object.keys(response).length === 0) {
+              this.spinner.hide();
             }
 
           })
