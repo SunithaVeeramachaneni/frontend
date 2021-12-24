@@ -14,6 +14,7 @@ export class MaintenanceService {
 
   private transformedObservable$;
   private technicians$: Observable<any>;
+  private eventSource: EventSource;
   public workOrderBSubject: BehaviorSubject<any>;
   public workCenters$: Observable<WorkCenter[]>
   public workOrders$: Observable<WorkOrders>
@@ -26,10 +27,13 @@ export class MaintenanceService {
     "TECO": "completed"
   }
 
+  closeEventSource(): void {
+      this.eventSource.close()
+  }
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable(observer => {
-      const eventSource = new EventSource(this._appService.prepareUrl(environment.mccAbapApiUrl, 'updateWorkOrders'))
-      eventSource.onmessage = event => {
+      this.eventSource = new EventSource(this._appService.prepareUrl(environment.mccAbapApiUrl, 'updateWorkOrders'))
+      this.eventSource.onmessage = event => {
         let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
         let workOrder: WorkOrder;
         let technicians

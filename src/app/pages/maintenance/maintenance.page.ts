@@ -104,6 +104,7 @@ export class MaintenanceComponent {
   ngOnDestroy(){
     this.technicianSubscription.unsubscribe()
     this.workCenterSubscription.unsubscribe()
+    this._maintenanceSvc.closeEventSource();
   }
 
   getImageSrc = (source: string) => {
