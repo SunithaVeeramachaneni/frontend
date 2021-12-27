@@ -1,4 +1,4 @@
-# Ionic Angular Conference Application Test
+# Ionic Angular Conference Application
 
 This application is purely a kitchen-sink demo of the Ionic Framework and Angular.
 
