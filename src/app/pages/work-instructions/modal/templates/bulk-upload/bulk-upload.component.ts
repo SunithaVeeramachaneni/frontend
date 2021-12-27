@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import * as BulkUploadActions from '../../state/bulkupload.actions';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 import { WiCommonService } from '../../../services/wi-common.services';
+import { defaultCategoryName } from '../../../../../app.constants';
 
 
 @Component({
@@ -205,9 +206,11 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
       if (this.getDraftedInstructionsCount() && this.isUploadSuccess()) {
         this.router.navigate([this.successUrl]);
       } else {
+        this.wiCommonService.fetchCategories();
         this.router.navigate([this.failureUrl]);
       }
     } else if (this.loadResults === false) {
+      this.wiCommonService.fetchCategories();
       this.router.navigate([this.failureUrl]);
     }
   }
@@ -497,8 +500,12 @@ export class BulkUploadComponent implements OnInit, OnDestroy {
                       toArray()
                     ).subscribe(
                       categories => {
-                        categories = categories.filter(category => category.Category_Name?.toLowerCase() !== 'unassigned');
-                        instructionHeaderPayload.Categories = JSON.stringify(categories);
+                        const catIds = categories.map(category => {
+                          if (category.Category_Name?.toLowerCase() !== defaultCategoryName.toLowerCase()) {
+                            return category.Category_Id
+                          }
+                        }).filter(categoryId => categoryId);
+                        instructionHeaderPayload.Categories = JSON.stringify(catIds);
                         if (steps.length === 1) {
                           this.addIns(instructionHeaderPayload, [], allKeys, fieldKey, insResultedObject, this.s3Folder);
                         } else {

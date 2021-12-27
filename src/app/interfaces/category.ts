@@ -13,3 +13,7 @@ export interface CategoryOptional {
   Created_At?: string;
   Updated_At?: string;
 }
+
+export interface CategoryObject {
+  [key: string]: Category;
+}

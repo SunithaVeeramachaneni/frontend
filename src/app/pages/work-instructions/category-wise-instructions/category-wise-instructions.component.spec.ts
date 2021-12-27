@@ -26,12 +26,12 @@ import { IonicModule } from '@ionic/angular';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { CommonService } from '../../../shared/services/common.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { routingUrls } from '../../../app.constants';
+import { defaultCategoryId, defaultCategoryName, routingUrls } from '../../../app.constants';
 
 const categoryDetails = [
   {
-    Category_Id: '_UnassignedCategory_',
-    Category_Name: 'Unassigned',
+    Category_Id: defaultCategoryId,
+    Category_Name: defaultCategoryName,
     Cover_Image: 'assets/work-instructions-icons/svg/Categories/default-category.png',
   },
   {
@@ -55,7 +55,7 @@ const instructions = [
   {
     Id: '2057',
     WI_Id: 6,
-    Categories: JSON.stringify([category1, category2]),
+    Categories: JSON.stringify([category1.Category_Id, category2.Category_Id]),
     WI_Name: 'Commercial Gas Meter Installation',
     WI_Desc: null,
     Tools: null,
@@ -81,7 +81,7 @@ const instructions = [
   {
     Id: '2639',
     WI_Id: 9,
-    Categories: JSON.stringify([category1, category3]),
+    Categories: JSON.stringify([category1.Category_Id, category3.Category_Id]),
     WI_Name: 'TestIns',
     WI_Desc: null,
     Tools: null,
@@ -105,7 +105,7 @@ const instructions = [
     FileType: null
   },
 ];
-const categoryId = '_UnassignedCategory_';
+const categoryId = defaultCategoryId;
 const users: User[] = [
   {
     id: '1',
@@ -158,7 +158,7 @@ describe('CategoryWiseInstructionsComponent', () => {
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', ['getBase64ImageData', 'getBase64Image']);
     commonServiceSpy = jasmine.createSpyObj('CommonService', ['setHeaderTitle'], {
-      currentRouteUrlAction$: of('/work-instructions/category/_UnassignedCategory_')
+      currentRouteUrlAction$: of(`/work-instructions/category/${defaultCategoryId}`)
     });
     breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
 
@@ -638,7 +638,7 @@ describe('CategoryWiseInstructionsComponent', () => {
 
     it('should not display category wise template if current route url is not category', () => {
       (Object.getOwnPropertyDescriptor(commonServiceSpy, 'currentRouteUrlAction$')
-        .get as jasmine.Spy).and.returnValue(of('/work-instructions/category/_UnassignedCategory_/hxhgyHj'));  
+        .get as jasmine.Spy).and.returnValue(of(`/work-instructions/category/${defaultCategoryId}/hxhgyHj`));  
 
       component.ngOnInit();  
       fixture.detectChanges();

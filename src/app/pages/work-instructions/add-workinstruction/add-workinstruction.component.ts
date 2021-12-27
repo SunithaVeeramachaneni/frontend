@@ -63,7 +63,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
   public afterSaveMessage = true;
   public saveddata = false;
   public publisheddata = false;
-  public setCategory = false;
   isWIPublished = false;
   titleTextChanged = new Subject<string>();
   titleErrors: any = {exists: false, required: false};
@@ -396,7 +395,6 @@ export class AddWorkinstructionComponent implements OnInit, AfterViewInit, OnDes
           this.receivedInstruction = true;
           this.beforeSaveMessage = !this.beforeSaveMessage;
           this.afterSaveMessage = !this.afterSaveMessage;
-          this.setCategory = true;
           this.updatePublishedTillSaveWI(false);
           // document.getElementById('wi_title').blur();
           this.wiCommonSvc.stepDetailsSave('All Changes Saved');

@@ -5,16 +5,16 @@ import Swal from "sweetalert2";
 import { WiCommonService } from '../../services/wi-common.services';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { debounceTime, distinctUntilChanged, map, mergeMap, skip, startWith } from 'rxjs/operators';
-import { combineLatest, of, Subscription } from 'rxjs';
+import { combineLatest, of, Subscription, timer } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {ToastService} from '../../../../shared/toast';
 import { Base64HelperService } from '../../services/base64-helper.service';
 import {Subject} from 'rxjs';
-import { Step, ErrorInfo } from '../../../../interfaces';
+import { Step, ErrorInfo, Instruction } from '../../../../interfaces';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../state/app.state';
 import * as InstructionActions from '../../state/intruction.actions';
-import { getCurrentStep, getCurrentStepImages, getInstructionId, getSteps, getUploadedFile } from '../../state/instruction.selectors';
+import { getCurrentStep, getCurrentStepImages, getInstruction, getInstructionId, getSteps, getUploadedFile } from '../../state/instruction.selectors';
 import { ErrorHandlerService } from '../../../../shared/error-handler/error-handler.service';
 
 @Component({
@@ -57,6 +57,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
   };
   stepImages = {};
   instructionId: string;
+  instruction: Instruction;
   public showMsg = false;
   public selectedStep = {
     Id: '',
@@ -111,8 +112,9 @@ export class StepContentComponent implements OnInit, OnDestroy {
   private uploadedFileSubscription: Subscription;
   private stepsSubscription: Subscription;
   private currentStepSubscription: Subscription;
-  private instructionIdSubscription: Subscription;
+  private instructionSubscription: Subscription;
   private currentStepImagesSubscription: Subscription;
+  private updateStepDetailsCalled = false;
 
   constructor(private spinner: NgxSpinnerService,
               private route: ActivatedRoute,
@@ -158,24 +160,19 @@ export class StepContentComponent implements OnInit, OnDestroy {
 
   editByUser() {
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
-    const sid = this.instructionId;
-    this._instructionSvc.getInstructionsById(sid).subscribe((instruction) => {
-      if (Object.keys(instruction).length) {
-        instruction.EditedBy =  userName.first_name + " " + userName.last_name;
-        instruction.IsPublishedTillSave =  false;
-        this._instructionSvc.updateWorkInstruction(instruction).subscribe(
-          () => {
-            this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
-          });
-      }
-    });
+    const EditedBy = userName.first_name + " " + userName.last_name;
+    const instruction = { ...this.instruction, IsPublishedTillSave: false, EditedBy };
+    this._instructionSvc.updateWorkInstruction(instruction).subscribe(
+      () => {
+        this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+      });
   }
 
   uploadFile(event, index?: number): void {
     const FILE = event.addedFiles[0];
     let uploadToS3 = true;
     const fileExists = this.files.find(file => file === FILE.name);
-    if (index !== undefined && fileExists !== this.files[index]) {
+    if (index !== undefined && fileExists && fileExists !== this.files[index]) {
       uploadToS3 = false;
     }
     
@@ -199,32 +196,28 @@ export class StepContentComponent implements OnInit, OnDestroy {
           this.handleInputChange(FILE, uploadedImg);
   
           if (fileExists === undefined) {
-            this._instructionSvc.getStepById(this.step.StepId).subscribe((step_resp) => {
-              if (Object.keys(step_resp).length) {
-                step_resp.Attachment = JSON.stringify(this.files);
-                this.selectedStep.Fields[0].FieldValue = this.files;
-                this.onStepDataEntry.emit({});
-                step_resp.Fields = JSON.stringify(this.selectedStep.Fields);
-                this._instructionSvc.updateStep(step_resp).pipe(
-                  mergeMap(resp => {
-                    if (Object.keys(resp).length && removedFile.length && removedFile[0] !== uploadedImg.image) {
-                      return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${removedFile[0]}`)
-                        .pipe(map(() => resp))
-                    } else {
-                      return of(resp);
-                    }
-                  })
-                ).subscribe((step) => {
-                  if (Object.keys(step).length) {
-                    this.store.dispatch(InstructionActions.updateStep({ step: step_resp }));
-                    this._commonSvc.setUpdatedSteps(this.steps);
-                    if (uploadedImg && uploadedImg.image) {
-                      this._commonSvc.uploadImgToPreview({ image: uploadedImg.image, index });
-                    }
-                    this.editByUser();
-                    this._commonSvc.stepDetailsSave('All Changes Saved');
-                  }
-                });
+            const step = { ...this.step };
+            step.Attachment = JSON.stringify(this.files);
+            this.selectedStep.Fields[0].FieldValue = this.files;
+            this.onStepDataEntry.emit({});
+            step.Fields = JSON.stringify(this.selectedStep.Fields);
+            this._instructionSvc.updateStep(step).pipe(
+              mergeMap(resp => {
+                if (Object.keys(resp).length && removedFile.length && removedFile[0] !== uploadedImg.image) {
+                  return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${removedFile[0]}`)
+                    .pipe(map(() => resp))
+                } else {
+                  return of(resp);
+                }
+              })
+            ).subscribe((step) => {
+              if (Object.keys(step).length) {
+                this.store.dispatch(InstructionActions.updateStep({ step }));
+                if (uploadedImg && uploadedImg.image) {
+                  this._commonSvc.uploadImgToPreview({ image: uploadedImg.image, index });
+                }
+                this.editByUser();
+                this._commonSvc.stepDetailsSave('All Changes Saved');
               }
             });
           } else {
@@ -268,7 +261,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
     } else {
       const stepParam = {
         "APPNAME": "MWORKORDER",
-        "FORMNAME": 'WI_' + this.instructionId,
+        "FORMNAME": 'WI_' + this.instruction.Id,
         "UNIQUEKEY": currentStep.StepId.toString()
       };
       this._instructionSvc.getStepFromGateway(stepParam).subscribe((stepRespFromAbap) => {
@@ -314,39 +307,35 @@ export class StepContentComponent implements OnInit, OnDestroy {
         this.store.dispatch(InstructionActions.removeStep({ step }));
         this.store.dispatch(InstructionActions.removeStepImages({ stepId: step.StepId }));
         this.onStepDataEntry.emit({});
-        this._instructionSvc.getStepsByWID(step.WI_Id).subscribe((steps) => {
-          this._commonSvc.setUpdatedSteps(steps);
-          this._commonSvc.unloadImages([]);
-          if (steps.length) {
-            this.files = [];
-            const Fields = this.selectedStep.Fields.map(field => ({...field, FieldValue: ''}));
-            this.selectedStep = {...this.selectedStep, Fields};
-            const selectedStep = steps[this.selectedTabIndex - 1];
-            /* While deleting steps from last index will get selectedStep as undefined because of selectedTabIndex change detection.
-            If we are deleting steps from start or middle selectedTabIndex change detection won't happen we are setting the data
-            manually to update the current step*/
-            if (selectedStep) {
-              this.selectedStep.Title = selectedStep ? selectedStep.Title : this.selectedStep.Title;
-              this.selectedStep.Fields = selectedStep?.Fields ? JSON.parse(selectedStep.Fields) : this.selectedStep.Fields;
-              this._commonSvc.updateStepTitle(this.selectedStep.Title);
-              this.store.dispatch(InstructionActions.updateStep({ step: selectedStep }));
-              this.step = selectedStep;
-              const { Attachment, Instructions, Warnings, Hints, Reaction_Plan } = this.step;
-              const [, instructions, warnings, hints, reaction_plan] = this.selectedStep.Fields;
-              this._commonSvc.updateStepDetails(Instructions ? JSON.parse(Instructions) : instructions);
-              this._commonSvc.updateStepDetails(Warnings ? JSON.parse(Warnings) : warnings);
-              this._commonSvc.updateStepDetails(Hints ? JSON.parse(Hints) : hints);
-              this._commonSvc.updateStepDetails(Reaction_Plan ? JSON.parse(Reaction_Plan) : reaction_plan);
+        this._commonSvc.setUpdatedSteps(this.steps, step);
+        this._commonSvc.unloadImages([]);
+        this.files = [];
+        const Fields = this.selectedStep.Fields.map(field => ({...field, FieldValue: '\n'}));
+        this.selectedStep = {...this.selectedStep, Fields};
+        const selectedStep = this.steps[this.selectedTabIndex - 1];
+        /* While deleting steps from last index will get selectedStep as undefined because of selectedTabIndex change detection.
+        If we are deleting steps from start or middle selectedTabIndex change detection won't happen we are setting the data
+        manually to update the current step*/
+        if (selectedStep) {
+          this.selectedStep.Title = selectedStep.Title;
+          this.selectedStep.Fields = 
+            selectedStep.Fields ? JSON.parse(selectedStep.Fields).map(field => field.FieldValue ? field : { ...field, FieldValue: '\n' } ) : this.selectedStep.Fields;
+          this._commonSvc.updateStepTitle(this.selectedStep.Title);
+          this.store.dispatch(InstructionActions.updateStep({ step: selectedStep }));
+          const { Attachment, Instructions, Warnings, Hints, Reaction_Plan } = selectedStep;
+          const [, instructions, warnings, hints, reaction_plan] = this.selectedStep.Fields;
+          this._commonSvc.updateStepDetails(Instructions ? JSON.parse(Instructions) : instructions);
+          this._commonSvc.updateStepDetails(Warnings ? JSON.parse(Warnings) : warnings);
+          this._commonSvc.updateStepDetails(Hints ? JSON.parse(Hints) : hints);
+          this._commonSvc.updateStepDetails(Reaction_Plan ? JSON.parse(Reaction_Plan) : reaction_plan);
 
-              if (JSON.parse(Attachment) && JSON.parse(Attachment).length) {
-                this.files = JSON.parse(Attachment) ;
-                for (let imgCnt = 0; imgCnt < this.files.length; imgCnt++) {
-                  this._commonSvc.uploadImgToPreview({ image: this.files[imgCnt] });
-                }
-              }
+          if (JSON.parse(Attachment) && JSON.parse(Attachment).length) {
+            this.files = JSON.parse(Attachment) ;
+            for (let imgCnt = 0; imgCnt < this.files.length; imgCnt++) {
+              this._commonSvc.uploadImgToPreview({ image: this.files[imgCnt] });
             }
           }
-        });
+        }
       }
     },
     error => {
@@ -375,99 +364,59 @@ export class StepContentComponent implements OnInit, OnDestroy {
     this._commonSvc.stepDetailsSave('Saving..');
     const attachment = this.files.splice(index, 1);
     this.uploadedBase64Images.splice(index, 1);
-    this._instructionSvc.getStepById(this.step.StepId).subscribe((step_resp) => {
-      if (Object.keys(step_resp).length) {
-        step_resp.Attachment = JSON.stringify(this.files);
-        this.selectedStep.Fields[0].FieldValue = this.files;
-        step_resp.Fields = JSON.stringify(this.selectedStep.Fields);
-        this._instructionSvc.updateStep(step_resp).pipe(
-          mergeMap(resp => {
-            if (Object.keys(resp).length) {
-              return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${attachment}`)
-                .pipe(map(() => resp))
-            } else {
-              return of(resp);
-            }
-          })
-        ).subscribe((step) => {
-          if (Object.keys(step).length) {
-            this.store.dispatch(InstructionActions.removeStepImagesContent({ attachment: attachment[0] }));
-            this.onStepDataEntry.emit({});
-            this.store.dispatch(InstructionActions.updateStep({ step: step_resp }));
-            this._commonSvc.setUpdatedSteps(this.steps);
-            this._commonSvc.unloadImages([]);
-            if (this.files) {
-              for (let i = 0; i < this.files.length; i++) {
-                this._commonSvc.uploadImgToPreview({ image: this.files[i] });
-              }
-            }
-            this._toastService.show({
-              text: "Attachment has been deleted successfully",
-              type: 'success',
-            });
-            this.editByUser();
-            this._commonSvc.stepDetailsSave('All Changes Saved');
+    const step = { ...this.step };
+    step.Attachment = JSON.stringify(this.files);
+    this.selectedStep.Fields[0].FieldValue = this.files;
+    step.Fields = JSON.stringify(this.selectedStep.Fields);
+    this._instructionSvc.updateStep(step).pipe(
+      mergeMap(resp => {
+        if (Object.keys(resp).length) {
+          return this._instructionSvc.deleteFile(`${resp.WI_Id}/${resp.StepId}/${attachment}`)
+            .pipe(map(() => resp))
+        } else {
+          return of(resp);
+        }
+      })
+    ).subscribe((step) => {
+      if (Object.keys(step).length) {
+        this.store.dispatch(InstructionActions.removeStepImagesContent({ attachment: attachment[0] }));
+        this.onStepDataEntry.emit({});
+        this.store.dispatch(InstructionActions.updateStep({ step }));
+        this._commonSvc.unloadImages([]);
+        if (this.files) {
+          for (let i = 0; i < this.files.length; i++) {
+            this._commonSvc.uploadImgToPreview({ image: this.files[i] });
           }
+        }
+        this._toastService.show({
+          text: "Attachment has been deleted successfully",
+          type: 'success',
         });
+        this.editByUser();
+        this._commonSvc.stepDetailsSave('All Changes Saved');
       }
     });
   }
 
   stepTitle () {
     this._commonSvc.stepDetailsSave('Saving..');
-    const sid = this.instructionId || this.route.snapshot.paramMap.get('id');
-    const step = {
-      WI_Id: sid,
-      Title: this.selectedStep.Title,
-      Fields: '',
-      isCloned: false
-    };
-    if (sid) {
-      const steps = this.steps;
-      if (this.selectedTabIndex) {
-        const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
-        const stepId = steps[this.selectedTabIndex - 1] ? steps[this.selectedTabIndex - 1].StepId : this.selectedStep.Id;
-        this._instructionSvc.getStepById(stepId, info).subscribe(
-          (stepResp: Step) => {
-            if (stepResp &&  Object.keys(stepResp).length > 0) {
-              stepResp.Title = this.selectedStep.Title;
-              this._instructionSvc.updateStep(stepResp).subscribe((resp) => {
-                if (Object.keys(resp).length) {
-                  this.store.dispatch(InstructionActions.updateStep({ step: stepResp }));
-                  this._commonSvc.setUpdatedSteps(this.steps);
-                  this._toastService.show({
-                    text: "Step title has been updated",
-                    type: 'success',
-                  });
-                  document.getElementById("step_title").blur();
-                  this._commonSvc.updateStepTitle(this.selectedStep.Title);
-                  this.onStepDataEntry.emit({});
-                  this.editByUser();
-                  this._commonSvc.stepDetailsSave('All Changes Saved');
-                }
-              });
-            } else {
-              this._instructionSvc.addStep(step).subscribe((resp) => {
-                if (Object.keys(step).length) {
-                  this.selectedStep.Id = resp.StepId;
-                  this.store.dispatch(InstructionActions.addStep({ step: resp }));
-                  this._commonSvc.setUpdatedSteps(this.steps);
-                  this._toastService.show({
-                    text: "Step title has been created",
-                    type: 'success',
-                  });
-                  document.getElementById("step_title").blur();
-                  this._commonSvc.updateStepTitle(step.Title);
-                  this.onStepDataEntry.emit({});
-                  this._commonSvc.stepDetailsSave('All Changes Saved');
-                }
-              });
-            }
-          },
-          error => this.errorHandlerService.handleError(error)
-        );
+    const step = { ...this.step };
+    step.Title = this.selectedStep.Title;
+    this._instructionSvc.updateStep(step).subscribe((resp) => {
+      if (Object.keys(resp).length) {
+        this.store.dispatch(InstructionActions.updateStep({ step }));
+        this._commonSvc.setUpdatedSteps(this.steps);
+        this._toastService.show({
+          text: "Step title has been updated",
+          type: 'success',
+        });
+        document.getElementById("step_title").blur();
+        this._commonSvc.updateStepTitle(this.selectedStep.Title);
+        this.onStepDataEntry.emit({});
+        this.editByUser();
+        this._commonSvc.stepDetailsSave('All Changes Saved');
       }
-    }
+    });
   }
 
   handleEditorChange(field: any) {
@@ -502,7 +451,6 @@ export class StepContentComponent implements OnInit, OnDestroy {
               if (Object.keys(resp).length) {
                 this.store.dispatch(InstructionActions.updateStep({ step: stepResp }));
                 this.onStepDataEntry.emit({});
-                this._commonSvc.setUpdatedSteps(this.steps);
                 this.editByUser();
                 this._commonSvc.stepDetailsSave('All Changes Saved');
               }
@@ -517,67 +465,70 @@ export class StepContentComponent implements OnInit, OnDestroy {
     this.cloneStep.emit(this.step);
   }
 
-  getStepsByWId(index: number) {
-    const wid = this.instructionId;
-    if (wid) {
-      this.instSrvSubscription = this._instructionSvc.getStepsByWID(wid).subscribe((steps) => {
-        this.store.dispatch(InstructionActions.updateSteps({ steps }));
-        if (steps.length) {
-          const selectedStep = steps[index];
-          this.selectedStep.Title = selectedStep ? selectedStep.Title : this.selectedStep.Title;
-          this.selectedStep.Fields = selectedStep?.Fields ? JSON.parse(selectedStep.Fields) : this.selectedStep.Fields;
-          this._commonSvc.updateStepTitle(this.selectedStep.Title);
-          this.store.dispatch(InstructionActions.updateStep({ step: selectedStep }));
-          this.step = selectedStep;
-          if (this.step) {
-            const { Attachment, Instructions, Warnings, Hints, Reaction_Plan, StepId, WI_Id } = this.step;
-            const [, instructions, warnings, hints, reaction_plan] = this.selectedStep.Fields;
+  updateStepDetails(index: number) {
+    const selectedStep = this.steps[index];
+    if (!selectedStep) return;
+    this.selectedStep.Title = selectedStep.Title;
+    this.selectedStep.Fields = selectedStep.Fields ? JSON.parse(selectedStep.Fields) : this.selectedStep.Fields;
+    this._commonSvc.updateStepTitle(this.selectedStep.Title);
+    this.store.dispatch(InstructionActions.updateStep({ step: selectedStep }));
+      const { Attachment, Instructions, Warnings, Hints, Reaction_Plan, StepId, WI_Id } = selectedStep;
+      const [, instructions, warnings, hints, reaction_plan] = this.selectedStep.Fields;
 
-            this._commonSvc.updateStepDetails(Instructions ? JSON.parse(Instructions) : instructions);
-            this._commonSvc.updateStepDetails(Warnings ? JSON.parse(Warnings) : warnings);
-            this._commonSvc.updateStepDetails(Hints ? JSON.parse(Hints) : hints);
-            this._commonSvc.updateStepDetails(Reaction_Plan ? JSON.parse(Reaction_Plan) : reaction_plan);
+      this._commonSvc.updateStepDetails(Instructions ? JSON.parse(Instructions) : instructions);
+      this._commonSvc.updateStepDetails(Warnings ? JSON.parse(Warnings) : warnings);
+      this._commonSvc.updateStepDetails(Hints ? JSON.parse(Hints) : hints);
+      this._commonSvc.updateStepDetails(Reaction_Plan ? JSON.parse(Reaction_Plan) : reaction_plan);
 
-            if (JSON.parse(Attachment) && JSON.parse(Attachment).length) {
-              this.files = [];
-              this.files = JSON.parse(Attachment) ;
-              this.imageContentsSubscription = this.base64HelperService.getImageContents(this.files, `${WI_Id}/${StepId}`).subscribe(
-                imageContents => {
-                  this.files.forEach((file: string) => this._commonSvc.uploadImgToPreview({ image: file }));
-                  this.uploadedBase64Images = [...this.uploadedBase64Images, ...imageContents];
-                  this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
-                    stepId: StepId,
-                    attachments: Attachment,
-                    imageContents: this.uploadedBase64Images.length ? JSON.stringify(this.uploadedBase64Images) : ''
-                  }}));
-                  this.onStepDataEntry.emit({ update: false });
-                }
-              );
-            } else {
-              this.onStepDataEntry.emit({ update: false });
-            }
+      if (JSON.parse(Attachment) && JSON.parse(Attachment).length) {
+        this.files = [];
+        this.files = JSON.parse(Attachment) ;
+        this.imageContentsSubscription = this.base64HelperService.getImageContents(this.files, `${WI_Id}/${StepId}`).subscribe(
+          imageContents => {
+            this.files.forEach((file: string) => this._commonSvc.uploadImgToPreview({ image: file }));
+            this.uploadedBase64Images = [...this.uploadedBase64Images, ...imageContents];
+            this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
+              stepId: StepId,
+              attachments: Attachment,
+              imageContents: this.uploadedBase64Images.length ? JSON.stringify(this.uploadedBase64Images) : ''
+            }}));
+            this.onStepDataEntry.emit({ update: false });
           }
-        }
-      });
-    }
+        );
+      } else {
+        this.onStepDataEntry.emit({ update: false });
+      }
   }
 
   getStepImage = (file: string) => this.stepImages[`${this.step.WI_Id}/${this.step.StepId}/${file}`];
 
   ngOnInit(): void {
-    this.uploadedFileSubscription = this.store.select(getUploadedFile).subscribe(
-      uploadedFile => this.uploadedFile = uploadedFile
+    this.instructionSubscription = this.store.select(getInstruction).subscribe(
+      instruction => {
+        this.instruction = instruction;
+      }
     );
     this.stepsSubscription = this.store.select(getSteps).subscribe(
-      steps => this.steps = steps
+      steps => {
+        this.steps = steps;
+        if (!this.updateStepDetailsCalled && this.steps.length && this.selectedTabIndex) {
+          this.updateStepDetailsCalled = true;
+          this.files = [];
+          this._commonSvc.unloadImages(this.files);
+          const index = this.selectedTabIndex - 1;
+          this.updateStepDetails(index);
+          if (this.instruction.Id) {
+            this.titleProvided = !this.titleProvided;
+          }
+        }
+      }
     );
     this.currentStepSubscription = this.store.select(getCurrentStep).subscribe(
       currentStep => this.step = { ...currentStep }
     );
-    this.instructionIdSubscription = this.store.select(getInstructionId).subscribe(
-      instructionId => this.instructionId = instructionId
+    this.uploadedFileSubscription = this.store.select(getUploadedFile).subscribe(
+      uploadedFile => this.uploadedFile = uploadedFile
     );
-
     this.currentStepImagesSubscription = this.store.select(getCurrentStepImages).subscribe(
       () => this.stepImages = this.base64HelperService.getBase64ImageDetails()
     );
@@ -609,16 +560,6 @@ export class StepContentComponent implements OnInit, OnDestroy {
         this.updateFields();
       }
     );
-
-    if (this.selectedTabIndex) {
-      this.files = [];
-      this._commonSvc.unloadImages(this.files);
-      const index = this.selectedTabIndex - 1;
-      this.getStepsByWId(index);
-      if (this.instructionId) {
-        this.titleProvided = !this.titleProvided;
-      }
-    }
   }
 
   ngOnDestroy(): void {
@@ -645,8 +586,8 @@ export class StepContentComponent implements OnInit, OnDestroy {
     if (this.currentStepSubscription) {
       this.currentStepSubscription.unsubscribe();
     }
-    if (this.instructionIdSubscription) {
-      this.instructionIdSubscription.unsubscribe();
+    if (this.instructionSubscription) {
+      this.instructionSubscription.unsubscribe();
     }
     if (this.currentStepImagesSubscription) {
       this.currentStepImagesSubscription.unsubscribe();

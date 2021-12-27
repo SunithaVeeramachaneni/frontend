@@ -3,7 +3,7 @@ import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
-import { BehaviorSubject, combineLatest, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, Observable, of, Subscription } from 'rxjs';
 import { FormControl, FormGroupDirective } from '@angular/forms';
 import { map, startWith, filter, tap, mergeMap, toArray, flatMap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -69,6 +69,8 @@ export class MaintenanceComponent {
 
   public showOperationsList = {};
   public base64Code: any;
+  private workCenterSubscription: Subscription
+  private technicianSubscription: Subscription
   hideList = true;
   showFilters = false;
 
@@ -84,9 +86,10 @@ export class MaintenanceComponent {
   ) { }
 
   ngOnInit() {
+    this._commonFilterService.clearFilter();
     this.dateRange$= new BehaviorSubject(this._dateSegmentService.getStartAndEndDate("month"));
-    this._maintenanceSvc.getAllWorkCenters().subscribe(resp => this.workCenterList = resp);
-    this._maintenanceSvc.getTechnicians().subscribe(resp => {
+    this.workCenterSubscription = this._maintenanceSvc.getAllWorkCenters().subscribe(resp => this.workCenterList = resp);
+    this.technicianSubscription = this._maintenanceSvc.getTechnicians().subscribe(resp => {
       this.technicians = resp;
     })
     this.filter = new FormControl('');
@@ -96,6 +99,12 @@ export class MaintenanceComponent {
     this.filterObj$ = this._commonFilterService.commonFilterAction$
     this.getWorkOrders();
 
+  }
+
+  ngOnDestroy(){
+    this.technicianSubscription.unsubscribe()
+    this.workCenterSubscription.unsubscribe()
+    this._maintenanceSvc.closeEventSource();
   }
 
   getImageSrc = (source: string) => {
@@ -273,6 +282,8 @@ export class MaintenanceComponent {
               let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(workOrderID);
               workOrder$.subscribe(workOrder => this.putWorkOrder$.next(workOrder))
               // this.spinner.hide();
+            } else if (Object.keys(response).length === 0) {
+              this.spinner.hide();
             }
 
           })

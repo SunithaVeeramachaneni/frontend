@@ -8,8 +8,7 @@ describe('Instruction Reducer', () => {
     instruction: {
       Id: '129',
       WI_Id: 2,
-      Categories:
-        '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+      Categories: '["35"]',
       WI_Name: 'TestingNgRxChanges',
       WI_Desc: null,
       Tools:
@@ -90,7 +89,7 @@ describe('Instruction Reducer', () => {
     insToBePublished: [
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -108,7 +107,7 @@ describe('Instruction Reducer', () => {
       },
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -125,7 +124,7 @@ describe('Instruction Reducer', () => {
       },
       {
         CATEGORY:
-          '[{"Category_Id":35,"Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
+          '[{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]',
         APPNAME: 'MWORKORDER',
         VERSION: '001',
         FORMTITLE: 'TestingNgRxChanges',
@@ -142,6 +141,7 @@ describe('Instruction Reducer', () => {
         PUBLISHED: true,
       },
     ],
+    categories: [{"Category_Id":"35","Category_Name":"Test Category","Cover_Image":"Clear_sky.jpg"}]
   };
 
   it('should return initial state for unknown action', () => {
@@ -269,9 +269,16 @@ describe('Instruction Reducer', () => {
   });
 
   it('should set insToBePublished in the state', () => {
-    const { stepImages, steps, instruction, insToBePublished } = instructionState;
+    const { stepImages, steps, instruction, insToBePublished, categories } = instructionState;
     const action = InstructionActions.setInsToBePublished();
-    const state = instructionReducer({ ...initialState, steps, instruction, stepImages }, action);
-    expect(state).toEqual({ ...initialState, instruction, steps, stepImages, insToBePublished });
+    const state = instructionReducer({ ...initialState, steps, instruction, stepImages, categories }, action);
+    expect(state).toEqual({ ...initialState, instruction, steps, stepImages, categories, insToBePublished });
+  });
+
+  it('should add categories to the state', () => {
+    const { categories } = instructionState;
+    const action = InstructionActions.updateCategories({ categories });
+    const state = instructionReducer(initialState, action);
+    expect(state).toEqual({ ...initialState, categories });
   });
 });

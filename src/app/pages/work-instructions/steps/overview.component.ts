@@ -7,14 +7,14 @@ import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import {NgZone, ViewChild} from '@angular/core';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {WiCommonService} from '../services/wi-common.services';
-import {of, Subscription} from 'rxjs';
-import {NgxSpinnerService} from 'ngx-spinner';
+import {combineLatest, of, Subscription} from 'rxjs';
 import { Base64HelperService } from '../services/base64-helper.service';
 import { Instruction, Step } from '../../../interfaces';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
-import { getInstruction, getInstructionId, getSteps } from '../state/instruction.selectors';
+import { getInstruction, getSteps } from '../state/instruction.selectors';
+import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 
 interface Category {
   Category_Id: string;
@@ -30,22 +30,6 @@ interface Category {
 
 
 export class OverviewComponent implements OnInit, OnDestroy {
-  @Input() set setCategory(value: boolean) {
-    if (value) {
-      this.updateCategoryOnSetCategoryChange();
-    }
-  }
-  private _titleProvided: boolean;
-  get titleProvided(): boolean {
-    return this._titleProvided;
-  }
-  @Input() set titleProvided(value: boolean) {
-    this._titleProvided = value;
-    if (value) {
-      this.enableReactiveFormFields();
-    }
-  }
-  @Input() selectedInstruction: Instruction;
   @Output() instructionDataEntry: EventEmitter<any> = new EventEmitter<any>();
   @Output() stepsDataEntry: EventEmitter<any> = new EventEmitter<any>();
   @Output() publishOnAddCloneSteps = new EventEmitter<boolean>();
@@ -71,23 +55,16 @@ export class OverviewComponent implements OnInit, OnDestroy {
   };
   public coverImageFiles = [];
   public attachedStepImageFiles = [];
-  private insByIdSubscription: Subscription;
   private currentPreviousStatusSubscription: Subscription;
   private instructionSubscription: Subscription;
   private imageContentsSubscription: Subscription;
   private assignedObjcetsTmp: any[];
   frmSubscribe: FormGroup;
   imageDataCalls: any = {};
+  private updateOverviewDetailsCalled = false;
+  titleProvided = false;
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
-
-  updateCategoryOnSetCategoryChange = () => {
-    const WI = this.recentWorkInstruction;
-    const {Categories} = WI;
-    const CategoriesArrayObject = JSON.parse(Categories);
-    const category = this.categoriesList.find(cat => cat.Category_Id === CategoriesArrayObject[0].Category_Id);
-    this.categoriesSelected = [category.Category_Name];
-  }
 
   triggerResize() {
     this._ngZone.onStable.pipe(take(1))
@@ -110,18 +87,15 @@ export class OverviewComponent implements OnInit, OnDestroy {
     if (this.categoriesSelected.length !== 0) {
       const selectedCategories = this.categoriesList.map(category => {
         if (updatedCategoryObjects.indexOf(category.Category_Name) > -1 ) {
-          return category;
+          return category.Category_Id;
         }
-      }).filter(category => category);
+      }).filter(categoryId => categoryId);
       this.recentWorkInstruction.Categories = JSON.stringify(selectedCategories);
     } else {
       let category_names = [];
-      category_names = [...category_names, 'Unassigned'];
+      category_names = [...category_names, defaultCategoryName];
       this.categoriesSelected = category_names;
-      const defaultCategory = [
-        {'Category_Id': "_UnassignedCategory_", 'Category_Name': "Unassigned", 'Cover_Image': "assets/work-instructions-icons/img/brand/category-placeholder.png"}
-      ];
-      this.recentWorkInstruction.Categories = JSON.stringify(defaultCategory);
+      this.recentWorkInstruction.Categories = JSON.stringify([defaultCategoryId]);
     }
     this.instructionDataEntry.emit({insObj: this.recentWorkInstruction, update: true});
   }
@@ -159,18 +133,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
       const indexAssObj = assignedObjects.findIndex(data => data.FILEDNAME === toRemove.FILEDNAME);
       if (indexAssObj !== -1) {
         assignedObjects.splice(indexAssObj, 1);
+        this.WI_Details_Drafting.splice(indexAssObj, 1);
       }
       assignedObjects = assignedObjects.length ? JSON.stringify(assignedObjects) : null;
       this.recentWorkInstruction.AssignedObjects = assignedObjects;
     }
     this.instructionDataEntry.emit({insObj: this.recentWorkInstruction, update: true});
     return array;
-  }
-
-  getAllCategories() {
-    this._instructionSvc.getAllCategories().subscribe((resp) => {
-      this.categoriesList = resp;
-    });
   }
 
   reactiveForm() {
@@ -205,13 +174,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
   updateCategory(selectedValues) {
     let category_names = [];
     if (selectedValues && selectedValues.length === 0) {
-      category_names = [...category_names, 'Unassigned'];
+      category_names = [...category_names, defaultCategoryName];
       this.formControls.categories.setValue(category_names);
       this.categoriesSelected = [...category_names];
-      const defaultCategory = [
-        {'Category_Id': "_UnassignedCategory_ ", 'Category_Name': "Unassigned", 'Cover_Image': "assets/work-instructions-icons/img/brand/category-placeholder.png"}
-      ];
-      this.recentWorkInstruction.Categories = JSON.stringify(defaultCategory);
+      this.recentWorkInstruction.Categories = JSON.stringify([defaultCategoryId]);
       this.instructionDataEntry.emit({insObj: this.recentWorkInstruction, update: true});
     }
     if (selectedValues && selectedValues.length !== 0) {
@@ -220,10 +186,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
           if (selectedValues.indexOf(category.Category_Name) > -1) {
             if ((selectedValues.length === 1) || (selectedValues.length > 1 && category.Category_Name !== 'Unassigned')) {
               category_names = [...category_names, category.Category_Name];
-              return category;
+              return category.Category_Id;
             }
           }
-        }).filter(category => category);
+        }).filter(categoryId => categoryId);
         this.formControls.categories.setValue(category_names);
         this.categoriesSelected = [...category_names];
         this.recentWorkInstruction.Categories = JSON.stringify(selectedCategories);
@@ -310,7 +276,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   uploadCoverImageFile(files: FileList) {
-    const wid = this.route.snapshot.paramMap.get('id') || this.recentWorkInstruction?.Id;
+    const wid = this.recentWorkInstruction.Id;
     const file = files[0];
     const imageForm = new FormData();
     imageForm.append('path', wid);
@@ -321,26 +287,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
           const {image: uploadedImage} = attachmentsResp;
           this.coverImageFiles = [uploadedImage];
           this.base64HelperService.getBase64Image(uploadedImage, wid);
-          this._instructionSvc.getInstructionsById(wid).subscribe((instruction) => {
-            if (Object.keys(instruction).length) {
-              const coverImage = instruction.Cover_Image;
-              instruction.Cover_Image = this.coverImageFiles[0];
-              this._instructionSvc.updateWorkInstruction(instruction)
-                .pipe(
-                  mergeMap(resp => {
-                    if (Object.keys(resp).length && coverImage.indexOf('assets/') === -1 && coverImage !== resp.Cover_Image) {
-                      return this._instructionSvc.deleteFile(`${resp.Id}/${coverImage}`)
-                        .pipe(map(() => resp))
-                    } else {
-                      return of(resp);
-                    }
-                  })
-                ).subscribe(
-                  () => {
-                    this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
-                  });
-            }
-          });
+          const coverImage = this.recentWorkInstruction.Cover_Image;
+          const instruction = { ...this.recentWorkInstruction, Cover_Image: this.coverImageFiles[0] }
+          this._instructionSvc.updateWorkInstruction(instruction)
+            .pipe(
+              mergeMap(resp => {
+                if (Object.keys(resp).length && coverImage.indexOf('assets/') === -1 && coverImage !== resp.Cover_Image) {
+                  return this._instructionSvc.deleteFile(`${resp.Id}/${coverImage}`)
+                    .pipe(map(() => resp))
+                } else {
+                  return of(resp);
+                }
+              })
+            ).subscribe(
+              () => {
+                this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+              });
         }
       }
     );
@@ -448,85 +410,88 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.instructionSubscription = this.store.select(getInstruction).subscribe(
-      instruction => this.recentWorkInstruction = { ...instruction }
-    );
-
-    const wid = this.route.snapshot.paramMap.get('id') || this.recentWorkInstruction?.Id;
     this.reactiveForm();
-    this.getAllCategories();
     this.getBusinessObjects();
-    if (wid) {
-      this.insByIdSubscription = this._instructionSvc.getInstructionsById(wid).subscribe((insdata) => {
-        if (Object.keys(insdata).length) {
-          const {Cover_Image: coverImage} = insdata;
-          this.coverImageFiles = coverImage && coverImage.indexOf('assets/') > -1 ? this.coverImageFiles : [coverImage];
-          this.formControls.coverImage.setValue({coverImage});
-          this.formControls.coverImage.valueChanges.subscribe(val => {
-            const [coverImg] = this.coverImageFiles;
-            if (coverImg && val !== coverImg) {
-              this.createWIForm.patchValue({coverImage: coverImg});
-            }
-          });
-          this._instructionSvc.getStepsByWID(insdata.Id).subscribe((stepsResp) => {
-            if (stepsResp && stepsResp.length > 0) {
-              this.store.dispatch(InstructionActions.updateSteps( { steps: stepsResp }));
-              if (stepsResp) {
-                const steps = stepsResp;
-                for (let stepCnt = 0; stepCnt < steps.length; stepCnt++) {
-                  const {Attachment, StepId, WI_Id} = steps[stepCnt];
-                  if (Attachment && JSON.parse(Attachment).length > 0) {
-                    this.attachedStepImageFiles = JSON.parse(Attachment);
-                    this.imageContentsSubscription = this.base64HelperService.getImageContents(this.attachedStepImageFiles, `${WI_Id}/${StepId}`).subscribe(
-                      imageContents => {
-                        this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
-                          stepId: StepId,
-                          attachments: Attachment,
-                          imageContents: imageContents.length ? JSON.stringify(imageContents) : ''
-                        }}));
-                      }
-                    );
-                  }
-                }
-              }
-            }
-          });
-
-          const selectedCategories = JSON.parse(insdata.Categories);
-          let catNames = [];
-          for (let catCnt = 0; catCnt < selectedCategories.length; catCnt++) {
-            catNames = [...catNames, selectedCategories[catCnt].Category_Name];
-          }
-          this.categoriesSelected = catNames;
-          this.assignedObjcetsTmp = JSON.parse(insdata.AssignedObjects);
-          this.assignedObjectsSelected = JSON.parse(insdata.AssignedObjects);
-          if (this.assignedObjectsSelected?.length) {
-            this.updateAssignedObjects();
-          }
-          if (insdata.Tools) {
-            this.updatePrequisite(JSON.parse(insdata.Tools).FieldValue, 'Tools', false);
-          }
-          if (insdata.SpareParts) {
-            this.updatePrequisite(JSON.parse(insdata.SpareParts).FieldValue, 'SpareParts', false);
-          }
-          if (insdata.SafetyKit) {
-            this.updatePrequisite(JSON.parse(insdata.SafetyKit).FieldValue, 'SafetyKit', false);
-          }
-        }
-      });
-    }
-
+    this.instructionSubscription = combineLatest([
+      this.store.select(getInstruction),
+      this._instructionSvc.getAllCategories()
+    ])
+    .subscribe(([instruction, categories]) => {
+      this.recentWorkInstruction = { ...instruction };
+      if (!this.updateOverviewDetailsCalled && Object.keys(instruction).length) {
+        this.updateOverviewDetailsCalled = true;
+        this.categoriesList = categories;
+        this.titleProvided = true;
+        this.store.dispatch(InstructionActions.updateCategories({ categories }));
+        this.enableReactiveFormFields();
+        this.updateOverviewDetails(instruction);
+      }
+    });
+    
     this.currentPreviousStatusSubscription = this._commonSvc.currentPreviewStatus.subscribe(status => {
       this.previewDisplay = status;
     });
   }
 
+  updateOverviewDetails = (insdata: Instruction) => {
+    const {Cover_Image: coverImage} = insdata;
+    this.coverImageFiles = coverImage && coverImage.indexOf('assets/') > -1 ? this.coverImageFiles : [coverImage];
+    this.formControls.coverImage.setValue({coverImage});
+    this.formControls.coverImage.valueChanges.subscribe(val => {
+      const [coverImg] = this.coverImageFiles;
+      if (coverImg && val !== coverImg) {
+        this.createWIForm.patchValue({coverImage: coverImg});
+      }
+    });
+    this._instructionSvc.getStepsByWID(insdata.Id).subscribe((stepsResp) => {
+      if (stepsResp && stepsResp.length > 0) {
+        this.store.dispatch(InstructionActions.updateSteps( { steps: stepsResp }));
+        if (stepsResp) {
+          const steps = stepsResp;
+          for (let stepCnt = 0; stepCnt < steps.length; stepCnt++) {
+            const {Attachment, StepId, WI_Id} = steps[stepCnt];
+            if (Attachment && JSON.parse(Attachment).length > 0) {
+              this.attachedStepImageFiles = JSON.parse(Attachment);
+              this.imageContentsSubscription = this.base64HelperService.getImageContents(this.attachedStepImageFiles, `${WI_Id}/${StepId}`).subscribe(
+                imageContents => {
+                  this.store.dispatch(InstructionActions.updateStepImages({ stepImages: {
+                    stepId: StepId,
+                    attachments: Attachment,
+                    imageContents: imageContents.length ? JSON.stringify(imageContents) : ''
+                  }}));
+                }
+              );
+            }
+          }
+        }
+      }
+    });
+
+    const selectedCategories = JSON.parse(insdata.Categories);
+    let catNames = [];
+    for (let catCnt = 0; catCnt < selectedCategories?.length; catCnt++) {
+      catNames = [...catNames, this.categoriesList.find(category => category.Category_Id === selectedCategories[catCnt]).Category_Name];
+    }
+    this.categoriesSelected = catNames;
+    this.assignedObjcetsTmp = JSON.parse(insdata.AssignedObjects);
+    this.assignedObjectsSelected = JSON.parse(insdata.AssignedObjects);
+    if (this.assignedObjectsSelected?.length) {
+      this.updateAssignedObjects();
+    }
+    if (insdata.Tools) {
+      this.updatePrequisite(JSON.parse(insdata.Tools).FieldValue, 'Tools', false);
+    }
+    if (insdata.SpareParts) {
+      this.updatePrequisite(JSON.parse(insdata.SpareParts).FieldValue, 'SpareParts', false);
+    }
+    if (insdata.SafetyKit) {
+      this.updatePrequisite(JSON.parse(insdata.SafetyKit).FieldValue, 'SafetyKit', false);
+    }
+  }
+
 
   ngOnDestroy() {
     this.base64HelperService.resetBase64ImageDetails();
-    if (this.insByIdSubscription) {
-      this.insByIdSubscription.unsubscribe();
-    }
     if (this.currentPreviousStatusSubscription) {
       this.currentPreviousStatusSubscription.unsubscribe();
     }
@@ -558,12 +523,12 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
   public reactionPlan: any = [];
   public firstButton = true;
   public lastButton = false;
-  @Input() titleProvided;
-  @Input() selectedInstruction: Instruction;
+  titleProvided = false;
   @Output() allStepData: EventEmitter<any> = new EventEmitter<any>();
   @Output() publishOnAddCloneSteps = new EventEmitter<boolean>();
   public currentStepTitle = '';
   public tabs = ['HEADER'];
+  public tabsObject = { 'HEADER': 'HEADER' };
   public devices = [{id: 1, name: 'iPad'}, {id: 2, name: 'iPhone'}];
   public formFactors: FormGroup;
   public shownPreview = true;
@@ -576,13 +541,12 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
   private currentStepDetailsSectionSubscription: Subscription;
   @Input() selectedInstructionData;
   allSteps: Step[];
-  instructionId: string;
+  instruction: Instruction;
   private stepsSubscription: Subscription;
-  private instructionIdSubscription: Subscription;
+  private instructionSubscription: Subscription;
+  private setUpdatedStepsCalled = false;
 
-  constructor(private spinner: NgxSpinnerService,
-              private _instructionSvc: InstructionService,
-              private route: ActivatedRoute,
+  constructor(private _instructionSvc: InstructionService,
               private fb: FormBuilder,
               private _commonSvc: WiCommonService,
               private cdrf: ChangeDetectorRef,
@@ -665,31 +629,25 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
 
   editByUser() {
     const userName = JSON.parse(localStorage.getItem("loggedInUser"));
-    this._instructionSvc.getInstructionsById(this.instructionId).subscribe((instruction) => {
-      if (Object.keys(instruction).length) {
-        instruction.EditedBy = userName.first_name + " " + userName.last_name;
-        instruction.IsPublishedTillSave = false;
-        this._instructionSvc.updateWorkInstruction(instruction).subscribe(
-          () => {
-            this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
-          });
-      }
-    });
+    const EditedBy = userName.first_name + " " + userName.last_name;
+    const instruction = { ...this.instruction, IsPublishedTillSave: false, EditedBy };
+    this._instructionSvc.updateWorkInstruction(instruction).subscribe(
+      () => {
+        this.store.dispatch(InstructionActions.updateInstruction({ instruction }));
+      });
   }
 
   addTab() {
     this._commonSvc.stepDetailsSave('Saving..');
-    // this.spinner.show();
-    this.tabs.push('Step' + (this.tabs.length));
     const step = {
-      Title: 'STEP' + (this.tabs.length - 1),
-      WI_Id: this.instructionId
+      Title: 'STEP' + this.tabs.length,
+      WI_Id: this.instruction.Id
     };
     this._instructionSvc.addStep(step).subscribe((resp) => {
       if (Object.keys(resp).length) {
         this.store.dispatch(InstructionActions.addStep({ step: resp }));
-        this.selectedID.setValue(this.tabs.length);
         this._commonSvc.setUpdatedSteps(this.allSteps);
+        this.selectedID.setValue(this.tabs.length);
         this.publishOnAddCloneSteps.emit(true);
         this.editByUser();
         this._commonSvc.stepDetailsSave('All Changes Saved');
@@ -699,9 +657,7 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
 
   cloneTab(step: Step) {
     this._commonSvc.stepDetailsSave('Saving..');
-    this.tabs.push('Step' + (this.tabs.length));
     step = {...step, isCloned: true};
-
     this._instructionSvc.addStep(step)
       .pipe(
         mergeMap(resp => {
@@ -717,36 +673,12 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
         if (Object.keys(resp).length) {
           this.editByUser();
           this.store.dispatch(InstructionActions.addStep({ step: resp }));
-          this.selectedID.setValue(this.tabs.length);
           this._commonSvc.setUpdatedSteps(this.allSteps);
+          this.selectedID.setValue(this.tabs.length);
           this.publishOnAddCloneSteps.emit(true);
           this._commonSvc.stepDetailsSave('All Changes Saved');
         }
       });
-  }
-
-  getStepsByWId() {
-    const insId = this.route.snapshot.paramMap.get('id');
-   if(insId){
-    this._instructionSvc.getInstructionsById(insId).subscribe((instruction) => {
-      if (Object.keys(instruction).length) {
-        const { Id } = instruction;
-        if (Id) {
-          this._instructionSvc.getStepsByWID(Id).subscribe((resp) => {
-            this.store.dispatch(InstructionActions.updateSteps({ steps: resp }));
-            this._commonSvc.setUpdatedSteps(resp);
-            this.tabs = ['HEADER'];
-            for (let cnt = 1; cnt <= resp.length; cnt++) {
-              const stepVal = cnt - 1;
-              if (resp[stepVal]) {
-                this.tabs.push(resp[stepVal].Title);
-              }
-            }
-          });
-        }
-      }
-    });
-  }
   }
 
   prepareHeaderTitle = () => `Header`.toUpperCase();
@@ -764,25 +696,37 @@ export class CustomStepperComponent extends CdkStepper implements OnInit, OnDest
 
 
 ngOnInit() {
+    this.instructionSubscription = this.store.select(getInstruction).subscribe(
+      instruction => {
+        this.instruction = instruction;
+        if (Object.keys(instruction).length) {
+          this.titleProvided = true;
+        }
+      }
+    );
     this.stepsSubscription = this.store.select(getSteps).subscribe(
-      steps => this.allSteps = steps
+      steps => {
+        this.allSteps = steps;
+        if (!this.setUpdatedStepsCalled && this.allSteps.length) {
+          this.setUpdatedStepsCalled = true;
+          this._commonSvc.setUpdatedSteps(steps);
+        }
+      }
     );
-    this.instructionIdSubscription = this.store.select(getInstructionId).subscribe(
-      id => this.instructionId = id
-    );
-
-    this.getStepsByWId();
     this.currentStepTitleSubscription = this._commonSvc.currentStepTitle.subscribe(title => {
       this.currentStepTitle = title;
     });
     this.currentPreviousStatusSubscription = this._commonSvc.currentPreviewStatus.subscribe(status => {
       this.shownPreview = status;
     });
-    this.currentTabsSubscription = this._commonSvc.currentTabs.subscribe(allsteps => {
-      this.tabs = ['HEADER'];
-      for (let stepCnt = 0; stepCnt < allsteps.length; stepCnt++) {
-        this.tabs.push(allsteps[stepCnt].Title);
+    this.currentTabsSubscription = this._commonSvc.currentTabs.subscribe(({steps, removedStep}) => {
+      for (let step of steps) {
+        this.tabsObject = { ...this.tabsObject, [step.StepId]: step.Title };
       }
+      if (Object.keys(removedStep)) {
+        delete this.tabsObject[removedStep.StepId];
+      }
+      this.tabs = Object.values(this.tabsObject);
     });
 
     this.formFactors = this.fb.group({
@@ -808,7 +752,7 @@ ngOnInit() {
     this.currentStepDetailsSectionSubscription = this._commonSvc.currentStepDetails.subscribe(field => {
       if (field && Object.keys(field).length) {
         let content = "";
-        if (field.FieldValue) {
+        if (field.FieldValue !== '\n' && field.FieldValue) {
           content = field.FieldValue.replace(/<li>/g, '<li class="editor-listvalues">')
             .replace(/<ol>/g, '<ol class="editor-ol">')
             .replace(/<ul>/g, '<ul class="editor-ul">')
@@ -862,8 +806,8 @@ ngOnInit() {
     if (this.stepsSubscription) {
       this.stepsSubscription.unsubscribe();
     }
-    if (this.instructionIdSubscription) {
-      this.instructionIdSubscription.unsubscribe();
+    if (this.instructionSubscription) {
+      this.instructionSubscription.unsubscribe();
     }
   }
 }

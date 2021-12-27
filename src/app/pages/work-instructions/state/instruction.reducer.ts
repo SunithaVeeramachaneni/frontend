@@ -1,5 +1,5 @@
 import { createReducer, on } from "@ngrx/store";
-import { InsToBePublished, Instruction, Step } from "../../../interfaces";
+import { Category, InsToBePublished, Instruction, Step } from "../../../interfaces";
 import * as AppState from "../../../state/app.state";
 import * as InstructionActions from "./intruction.actions";
 
@@ -20,6 +20,7 @@ export interface InstructionState {
   uploadedFile: string;
   currentStepId: string | null;
   insToBePublished: InsToBePublished[];
+  categories: Category[];
 }
 
 export const initialState: InstructionState = {
@@ -28,7 +29,8 @@ export const initialState: InstructionState = {
   stepImages: [],
   uploadedFile: '',
   currentStepId: null,
-  insToBePublished: []
+  insToBePublished: [],
+  categories: []
 };
 
 const _instructionReducer = createReducer<InstructionState>(
@@ -153,7 +155,7 @@ const _instructionReducer = createReducer<InstructionState>(
   on(InstructionActions.setInsToBePublished, (state): InstructionState => {
     let insToBePublished: InsToBePublished[];
     const APPNAME = 'MWORKORDER';
-    const { Categories: CATEGORY = '', WI_Name: FORMTITLE, Id, Published: PUBLISHED, Tools, SpareParts, SafetyKit, AssignedObjects }
+    const { Categories, WI_Name: FORMTITLE, Id, Published: PUBLISHED, Tools, SpareParts, SafetyKit, AssignedObjects }
       = state.instruction;
     const FORMNAME = `WI_${Id}`;
 
@@ -169,6 +171,15 @@ const _instructionReducer = createReducer<InstructionState>(
     TOOLS = SafetyKit ? [...TOOLS, JSON.parse(SafetyKit)] : TOOLS;
     TOOLS = SpareParts ? [...TOOLS, JSON.parse(SpareParts)] : TOOLS;
     TOOLS = TOOLS.length ? JSON.stringify(TOOLS) : '';
+
+    const categoriesObj = state.categories.reduce((acc, val) => {
+      const { Category_Id, Category_Name, Cover_Image } = val;
+      acc = { ...acc, [Category_Id]: { Category_Id, Category_Name, Cover_Image } }
+      return acc;
+    }, {}); 
+
+    let CATEGORY = JSON.parse(Categories).map((categoryId: string) => categoriesObj[categoryId]);
+    CATEGORY = CATEGORY.length ? JSON.stringify(CATEGORY) : '';
 
     insToBePublished = [
       {
@@ -222,6 +233,12 @@ const _instructionReducer = createReducer<InstructionState>(
     return {
       ...state,
       insToBePublished
+    };
+  }),
+  on(InstructionActions.updateCategories, (state, action): InstructionState => {
+    return {
+      ...state,
+      categories: action.categories
     };
   })
 );

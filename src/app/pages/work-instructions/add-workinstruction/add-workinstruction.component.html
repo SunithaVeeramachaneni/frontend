@@ -82,7 +82,7 @@
   <div class="clearfix"></div>
   <div class="paginate-steps-container">
     <div class="paginate-steps">
-      <app-overview [titleProvided] = "titleProvided" [selectedInstruction] = "selectedInstruction" [setCategory]="setCategory" (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler()" (stepsDataEntry)="getStepsData($event)" (instructionDataEntry)="getWorkInstruction($event)"></app-overview>
+      <app-overview (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler()" (stepsDataEntry)="getStepsData($event)" (instructionDataEntry)="getWorkInstruction($event)"></app-overview>
     </div>
   </div>
 </div>
