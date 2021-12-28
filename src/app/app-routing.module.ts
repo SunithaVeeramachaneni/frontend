@@ -2,20 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 const routes: Routes = [
-  // {
-  //   path: '',
-  //   redirectTo: '/login',
-  //   pathMatch: 'full'
-  // },
   {
     path: '',
     redirectTo: '/maintenance',
     pathMatch: 'full'
   },
-  // {
-  //   path: 'login',
-  //   loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
-  // },
   {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
@@ -35,7 +26,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/work-instructions/work-instructions.module').then( m => m.WorkInstructionsPageModule),
     canActivate: [AutoLoginAllRoutesGuard]
   }
-
 ];
 
 @NgModule({
