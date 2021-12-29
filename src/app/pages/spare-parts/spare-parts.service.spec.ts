@@ -5,121 +5,123 @@ import { WorkOrders } from "../../interfaces/work-order";
 import { isEqual, isObject } from "lodash";
 import * as _ from "lodash";
 import { HttpClientModule } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
+import { rawTechniciansSPCC$, expectedTechniciansSPCC, expectedWorkOrdersSPCC, rawWorkOrdersSPCC } from "./spare-parts.mock";
 
-describe('Spareparts service', () => {
+
+
+
+fdescribe('Spare parts service', () => {
   let service: SparepartsService;
-  let appService: AppService;
+  let appServiceSpy: AppService;
+
+  const mockPutData = {
+    USNAM: '123' ,
+    ASSIGNEE: 'name',
+    AUFNR: '9875',
+    }
 
   beforeEach(() => {
+      appServiceSpy = jasmine.createSpyObj('AppService', [
+      '_getRespFromGateway', '_putDataToGateway'], {}
+      );
+
+      (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.spccAbapApiUrl,'pickerlist')
+      .and.returnValue(rawTechniciansSPCC$).and.callThrough();
+
+      (appServiceSpy._putDataToGateway as jasmine.Spy)
+      .withArgs(environment.spccAbapApiUrl, `workorderspcc/9875`, mockPutData)
+      .and.returnValue(true).and.callThrough();
+
+      (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.spccAbapApiUrl,'workorderspcc?startdate=2021-11-30T00:00:00&enddate=2021-12-31T23:59:59')
+      .and.returnValue(rawWorkOrdersSPCC).and.callThrough();
+    
+
+
     TestBed.configureTestingModule({
-      providers: [SparepartsService, AppService],
-      imports: [HttpClientModule]
+      providers: [SparepartsService,
+        { provide: AppService, useValue: appServiceSpy }],
+      imports: []
     });
     service = TestBed.inject(SparepartsService);
-    appService = TestBed.inject(AppService);
   });
 
   it('needs to exist', () => {
     expect(service).toBeTruthy();
   })
 
-//   it('needs to process raw data and return Work Orders', () => {
-//     spyOn(appService, '_getRespFromGateway').and.returnValue(rawWorkOrders$);
-//     let workOrders$ = service.getAllWorkOrders()
-//     let workOrders: WorkOrders;
-//     let expectedWorkOrders: WorkOrders;
-//     workOrders$.subscribe((resp) => workOrders = resp);
-//     expectedWorkOrders$.subscribe((resp) => expectedWorkOrders = resp);
-//     expect(isEqual(workOrders, expectedWorkOrders)).toBeTrue();
-//   })
-
-
-//   it('parseJsonData should take string date and convert to a date object', () => {
-//     let stringDate: string = '/Date(1629331200000)/';
-//     let expectedDate: Date = new Date(1629331200000);
-//     let convertedDate: Date = service.parseJsonDate(stringDate);
-//     expect(isEqual(convertedDate, expectedDate)).toBeTrue();
-//   })
-
-//   it('formatTime should convert an integer amount of hours into a string', () => {
-//     let timeInHours: number;
-//     let formattedTime: string;
-//     let expectedTime: string;
-
-//     timeInHours = 5;
-//     formattedTime = service.formatTime(timeInHours);
-//     expectedTime = '5 hrs';
-
-//     expect(isEqual(formattedTime, expectedTime)).toBeTrue();
-
-//     timeInHours = 5.5;
-//     formattedTime = service.formatTime(timeInHours);
-//     expectedTime = '5 hrs 30 min'
-
-//     expect(isEqual(formattedTime, expectedTime)).toBeTrue();
-//   })
-
-//   it('getEstimatedTime should add up the estimated time of all work operations and return it', () => {
-//     let operations: any[] = [{ ARBEI: 5 }, { ARBEI: 10 }, { ARBEI: 3 }]
-//     let expectedTime: number = 18;
-//     let time: number = service.getEstimatedTime(operations);
-
-//     expect(isEqual(expectedTime, time)).toBeTrue();
-//   })
-
-//   it('getActualTime should add up the actual time of all work operations and return it', () => {
-//     let operations: any[] = [{ ISMNW: 3 }, { ISMNW: 4 }, { ISMNW: 3 }]
-//     let expectedTime: number = 10;
-//     let time: number = service.getActualTime(operations);
-
-//     expect(isEqual(expectedTime, time)).toBeTrue();
-//   })
-
-//   it('getProgress should return an array depicting the progress of a workOrder', () => {
-//     let operations: any[];
-//     let expectedProgress: any[];
-//     let progress: number[];
-
-//     operations = [{ STATUS: 'CRTD' }, { STATUS: 'REL' }, { STATUS: 'PCNF' }, { STATUS: 'CNF' }];
-//     expectedProgress = [1, 4];
-//     progress = service.getProgress(operations);
-
-//     expect(isEqual(progress, expectedProgress)).toBeTrue();
-
-//     operations = [{ STATUS: 'CNF' }, { STATUS: 'CNF' }, { STATUS: 'CNF' }];
-//     expectedProgress = [3, 3];
-//     progress = service.getProgress(operations);
-
-//     expect(isEqual(progress, expectedProgress)).toBeTrue();
-
-
-//   })
-
   it('getStatus should return the corresponding status of the workOrder', () => {
     let personDetails = '';
-    let rawStatus = 'CRTD'
+    let rawStatus = '1';
 
-    status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'unassigned')).toBeTrue()
-
-    personDetails = '001';
-    rawStatus = 'CRTD'
-
-    status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'assingedforpicking')).toBeTrue()
+    let status = service.getStatus(personDetails, rawStatus);
+    expect(isEqual(status, 'Unassigned')).toBeTrue()
 
     personDetails = '001';
-    rawStatus = 'REL'
+    rawStatus = '2'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'kittinginprogress')).toBeTrue()
+    expect(isEqual(status, 'Assigned for Picking')).toBeTrue()
 
     personDetails = '001';
-    rawStatus = 'TECO'
+    rawStatus = '3'
 
     status = service.getStatus(personDetails, rawStatus);
-    expect(isEqual(status, 'kitscomplete')).toBeTrue()
+    expect(isEqual(status, 'Kitting in Progress')).toBeTrue()
+
+    personDetails = '001';
+    rawStatus = '4'
+
+    status = service.getStatus(personDetails, rawStatus);
+    expect(isEqual(status, 'Kits Complete')).toBeTrue()
+
+    personDetails = '001';
+    rawStatus = '5'
+
+    status = service.getStatus(personDetails, rawStatus);
+    expect(isEqual(status, 'Kits Issued')).toBeTrue()
 
   })
 
+  it('should get and transform the picker list', () => {
+    let workOrders$ = service.getPickerList();
+    let workOrders;
+    workOrders$.subscribe(resp => workOrders = resp);
+    expect(isEqual(workOrders, expectedTechniciansSPCC)).toBeTrue();
+  })
+
+  it('should succesfully assign a technician', () => {
+    let result  = service.assignTechnicianToWorkorder(mockPutData);
+    expect(result).toBeTrue()
+  })
+  
+  function difference(object, base) {
+    function changes(object, base) {
+        return _.transform(object, function(result, value, key) {
+            if (!_.isEqual(value, base[key])) {
+                result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
+            }
+        });
+    }
+    return changes(object, base);
+}
+
+it('gets and displays the work orders', () =>{
+  let workorders$ = service.getAllWorkOrders({
+    "startDate": "2021-11-30T00:00:00",
+    "endDate": "2021-12-31T23:59:59"
 })
+let workorders;
+workorders$.subscribe(resp => workorders = resp)
+console.log("actual are", JSON.stringify(workorders))
+console.log("expected are", JSON.stringify(expectedWorkOrdersSPCC))
+expect(isEqual(workorders,expectedWorkOrdersSPCC)).toBeTrue()
+})
+
+
+})
+
+
+

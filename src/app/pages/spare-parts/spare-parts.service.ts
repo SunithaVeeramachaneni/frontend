@@ -28,8 +28,8 @@ export class SparepartsService {
   ngOnDestroy = () =>{
     this.stopPolling.next();
   }
-  getPickerList(info: ErrorInfo = {} as ErrorInfo):Observable<Technician[]>{
-    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist', info);
+  getPickerList():Observable<Technician[]>{
+    let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist');
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
       let technicians: Technician[] =[]
       let technician: Technician;
@@ -55,11 +55,13 @@ export class SparepartsService {
 
   getAllWorkOrders(dateRange,pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
     let workOrders$ = timer(1, 1000 * 60 * 2).pipe(
-      switchMap(() => this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${dateRange['startDate']}&enddate=${dateRange['endDate']}`, info)),
+      switchMap(() => this._appService._getRespFromGateway(environment.spccAbapApiUrl,`workorderspcc?startdate=${dateRange['startDate']}&enddate=${dateRange['endDate']}`)),
       retry(3),
       share(),
       takeUntil(this.stopPolling)
     );
+    
+    workOrders$.subscribe(resp => console.log("work orders in here are", JSON.stringify(resp)))
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { "1": [], "2": [], "3": [], "4": [],"5":[] };
       let workOrder: WorkOrder;
@@ -94,6 +96,7 @@ export class SparepartsService {
         })
         workOrders[`${workOrder.statusCode}`].push(workOrder)
       });
+      // console.log("Work orders all the way here are", workOrders)
       return workOrders;
     }))
     console.log(transformedObservable$)
@@ -102,42 +105,6 @@ export class SparepartsService {
 
   parseJsonDate(jsonDateString) {
     return new Date(parseInt(jsonDateString.replace('/Date(', '')));
-  }
-
-  formatTime = (inputHours) => { //move to utils directory
-    const minutes = Math.floor(inputHours % 1 * 60);
-    const hours = Math.floor(inputHours);
-    if (minutes !== 0)
-      return `${hours} hrs ${minutes} min`
-    else
-      return `${hours} hrs`
-  }
-
-  getEstimatedTime = (operations) => {
-    let time = 0
-    operations.forEach(operation => {
-      time += operation.ARBEI
-    });
-    return time;
-  }
-
-  getActualTime = (operations) => {
-    let time = 0
-    operations.forEach(operation => {
-      time += operation.ISMNW
-    });
-    return time;
-  }
-
-  getProgress = (operations) => {
-    let totalNoOfOperations = 0;
-    let noOfCompletedOperations = 0;
-    operations.forEach(operation => {
-      totalNoOfOperations += 1;
-      if (operation.STATUS === 'CNF')
-        noOfCompletedOperations += 1;
-    });
-    return [noOfCompletedOperations, totalNoOfOperations]
   }
 
   getStatus(personDetails, status) {

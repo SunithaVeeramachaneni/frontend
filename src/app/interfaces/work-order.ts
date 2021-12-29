@@ -17,7 +17,7 @@ export interface WorkOrder {
     operationProgress: number[],
     timeProgress: number,
     operations: any,
-    technician?: Technician
+    technician?: any
 }
 
 export interface WorkOrders {

@@ -73,12 +73,14 @@ export class MaintenanceService {
   }
 
   getAllWorkOrders(pagination: boolean = true, info: ErrorInfo = {} as ErrorInfo): Observable<WorkOrders> {
-    let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet', info);
+    let workOrders$ = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet');
     this.workOrders$ = combineLatest([workOrders$, this.technicians$]).pipe(map(([rawWorkOrders, technicians]) => {
       let workOrders: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
       let workOrder: WorkOrder;
       let assignedTechnician = [{}];
+      let i =0
       rawWorkOrders.forEach(rawWorkOrder => {
+        i = i+1;
         assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
         workOrders[`${workOrder.status}`].push(workOrder)

@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { rawWorkOrders$, expectedWorkOrders$, expectedARBPLs$, rawARBPLs$, rawTechniciansELEKTRIK$, rawTechniciansMECHANIK$, rawTechnicians$ARBITRARY } from "./maintenance.mock"
+import { rawWorkOrders$, expectedWorkOrders$, expectedARBPLs$, rawARBPLs$, rawTechniciansELEKTRIK$, rawTechniciansMECHANIK$, rawTechniciansARBITRARY$, expectedTechnicians$, unassignedWorkOrder1 } from "./maintenance.mock"
 import { MaintenanceService } from "./maintenance.service";
 import { AppService } from "../../shared/services/app.services"
 import { WorkOrders } from "../../interfaces/work-order";
@@ -7,6 +7,9 @@ import { isEqual, isObject } from "lodash";
 import * as _ from "lodash";
 import { HttpClientModule } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
+import { of } from "rxjs";
+import { worker } from "cluster";
+// import { first } from "rxjs/operators";
 
 describe('Maintenance service', () => {
   let service: MaintenanceService;
@@ -29,7 +32,7 @@ describe('Maintenance service', () => {
     //   workCenters$: expectedARBPLs$
     // });
     appServiceSpy = jasmine.createSpyObj('AppService', [
-      '_getRespFromGateway'], {}
+      '_getRespFromGateway', 'prepareUrl'], {}
     );
 
 
@@ -58,28 +61,58 @@ describe('Maintenance service', () => {
     expect(isEqual(workCenters, expectedWorkCenters)).toBeTrue();
   })
 
-  fit('needs to process raw technicians and return them', () => {
+  it('needs to process raw technicians and return them', () => {
+    let gateWayParams = `workCenters/${1000}`;
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, gateWayParams)
+      .and.returnValue(rawARBPLs$).and.callThrough();
+
+
+
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
     .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
-    .and.returnValue(rawTechniciansELEKTRIK$);
+    .and.returnValue(rawTechniciansELEKTRIK$).and.callThrough();
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
     .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
-    .and.returnValue(rawTechniciansMECHANIK$);
+    .and.returnValue(rawTechniciansMECHANIK$).and.callThrough();
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'ARBITRARY'`)
+    .and.returnValue(rawTechniciansARBITRARY$).and.callThrough();
+    service.getAllWorkCenters()
 
 
     let technicians$ = service.getTechnicians();
-    // technicians$.subscribe(resp => console.log(resp));
-    // let technicians
-    // let expectedTechnicians;
-    // expectedTechnicians$.subscribe(resp => expectedTechnicians = resp);
-    // technicians$.subscribe(resp => technicians = resp);
-    // expect(isEqual(expectedTechnicians, technicians)).toBeTrue();
+    let technicians
+    let expectedTechnicians;
+    expectedTechnicians$.subscribe(resp => expectedTechnicians = resp);
+    technicians$.subscribe(resp => technicians = resp);
+    expect(isEqual(expectedTechnicians, technicians)).toBeTrue();
 
   })
 
-  xit('needs to process raw data and return Work Orders', () => {
+  it('needs to process raw data and return Work Orders', () => {
+        let gateWayParams = `workCenters/${1000}`;
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, gateWayParams)
+      .and.returnValue(rawARBPLs$).and.callThrough();
+      service.getAllWorkCenters();
 
-    // spyOn(appService, '_getRespFromGateway').and.returnValue(rawWorkOrders$);
+
+      (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
+      .and.returnValue(rawTechniciansELEKTRIK$).and.callThrough();
+      (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
+      .and.returnValue(rawTechniciansMECHANIK$).and.callThrough();
+      (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, `technicians/'ARBITRARY'`)
+      .and.returnValue(rawTechniciansARBITRARY$).and.callThrough();
+      service.getTechnicians();
+
+      (appServiceSpy._getRespFromGateway as jasmine.Spy).withArgs(environment.mccAbapApiUrl, 'workOrdersAndOperations/WorkOrderOperationSet')
+      .and.returnValue(rawWorkOrders$).and.callThrough();
+      
+
     let workOrders$ = service.getAllWorkOrders()
     let workOrders: WorkOrders;
     let expectedWorkOrders: WorkOrders;
@@ -89,7 +122,7 @@ describe('Maintenance service', () => {
   })
 
 
-  fit('parseJsonData should take string date and convert to a date object', () => {
+  it('parseJsonData should take string date and convert to a date object', () => {
     let stringDate: string = '/Date(1629331200000)/';
     let expectedDate: Date = new Date(1629331200000);
     let convertedDate: Date = service.parseJsonDate(stringDate);
@@ -136,14 +169,14 @@ describe('Maintenance service', () => {
     let progress: number[];
 
     operations = [{ STATUS: 'CRTD' }, { STATUS: 'REL' }, { STATUS: 'PCNF' }, { STATUS: 'CNF' }];
-    expectedProgress = [1, 4];
-    progress = service.getProgress(operations);
+    expectedProgress = [1, 4, 1/4];
+    progress = service.getOperationProgress(operations);
 
     expect(isEqual(progress, expectedProgress)).toBeTrue();
 
     operations = [{ STATUS: 'CNF' }, { STATUS: 'CNF' }, { STATUS: 'CNF' }];
-    expectedProgress = [3, 3];
-    progress = service.getProgress(operations);
+    expectedProgress = [3, 3, 1];
+    progress = service.getOperationProgress(operations);
 
     expect(isEqual(progress, expectedProgress)).toBeTrue();
 
@@ -154,7 +187,7 @@ describe('Maintenance service', () => {
     let personDetails = '';
     let rawStatus = 'CRTD'
 
-    status = service.getStatus(personDetails, rawStatus);
+    let status = service.getStatus(personDetails, rawStatus);
     expect(isEqual(status, 'unassigned')).toBeTrue()
 
     personDetails = '001';
@@ -176,5 +209,49 @@ describe('Maintenance service', () => {
     expect(isEqual(status, 'completed')).toBeTrue()
 
   })
+
+
+  it('should get server sent event and add to existing work orders', () => {
+    (appServiceSpy.prepareUrl as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, 'updateWorkOrders')
+    .and.returnValue(new Event('[]')).and.callThrough();
+    expect(service.getServerSentEvent('123')).toBeDefined();
+  })
+
+  it('should get work order by id', async () =>{
+
+    let gateWayParams = `workCenters/${1000}`;
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+      .withArgs(environment.mccAbapApiUrl, gateWayParams)
+      .and.returnValue(rawARBPLs$).and.callThrough();
+
+
+
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
+    .and.returnValue(rawTechniciansELEKTRIK$).and.callThrough();
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
+    .and.returnValue(rawTechniciansMECHANIK$).and.callThrough();
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, `technicians/'ARBITRARY'`)
+    .and.returnValue(rawTechniciansARBITRARY$).and.callThrough();
+    service.getAllWorkCenters()
+
+
+    service.getTechnicians();
+    let rawWorkOrders;
+    rawWorkOrders$.subscribe(resp => rawWorkOrders = resp);
+    let firstRawWorkOrder$ = of(rawWorkOrders[0]);
+    (appServiceSpy._getRespFromGateway as jasmine.Spy)
+    .withArgs(environment.mccAbapApiUrl, 'workOrder/24')
+    .and.returnValue(firstRawWorkOrder$).and.callThrough();
+    let workorder$ = await service.getWorkOrderByID(24);
+    let workorder;
+    let workorders = {'unassigned': [unassignedWorkOrder1], 'assigned': [], 'inProgress':[], 'completed': []}
+    workorder$.subscribe(resp => workorder = resp);  
+    expect(isEqual(workorders, workorder)).toBeTrue()
+  })
+
 
 })

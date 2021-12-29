@@ -42,7 +42,7 @@ describe('Maintenance Page', () => {
 
     component = fixture.componentInstance;
     spyOn(service, 'getAllWorkOrders').and.returnValue(expectedWorkOrders$);
-    spyOn(component, 'getToday').and.returnValue(today);
+    // spyOn(component, 'getToday').and.returnValue(today);
     // spyOn(component, 'filterDate');
     // spyOn(component, 'getWorkOrders');
 
@@ -79,11 +79,11 @@ describe('Maintenance Page', () => {
 
 
 
-    expect(component.selectDate.value).toEqual('today')
-    console.log("This log:",component.selectDate.value);
+    // expect(component.selectDate.value).toEqual('today')
+    // console.log("This log:",component.selectDate.value);
 
     setTimeout(() => {
-      console.log(component.selectDate.value)   //shows the latest first name
+      // console.log(component.selectDate.value)   //shows the latest first name
     })
 
     expectedWorkOrders$.subscribe((resp) => expectedWorkOrders = {
