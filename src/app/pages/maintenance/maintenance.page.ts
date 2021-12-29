@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
@@ -20,6 +20,7 @@ import { CommonFilterService } from '../../shared/components/common-filter/commo
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
   styleUrls: ['./maintenance.page.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MaintenanceComponent {
 
@@ -28,6 +29,7 @@ export class MaintenanceComponent {
   public combinedWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList1$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
+  public allWorkOrders: WorkOrders;
   public filter: FormControl;
   public filter$: Observable<string>;
   public selectDate$: Observable<string>;
@@ -82,7 +84,8 @@ export class MaintenanceComponent {
     private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,
-    private _dateSegmentService: DateSegmentService
+    private _dateSegmentService: DateSegmentService,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -96,7 +99,7 @@ export class MaintenanceComponent {
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
-    this.filterObj$ = this._commonFilterService.commonFilterAction$
+    this.filterObj$ = this._commonFilterService.commonFilterAction$;
     this.getWorkOrders();
 
   }
@@ -116,35 +119,39 @@ export class MaintenanceComponent {
     this.dateRange$.next($event);
   }
 
-  getWorkOrders() {
-    this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    this.updateWorkOrderList$ = this._maintenanceSvc.getServerSentEvent('/updateWorkOrders').pipe(startWith({ unassigned: [], assigned: [], inProgress: [], completed: [] }));
-    this.combinedWorkOrderList1$ = this.combineWorkOrders(this.workOrderList$, this.updateWorkOrderList$)
-    this.combinedWorkOrderList$ = this.combineWorkOrders(this.combinedWorkOrderList1$, this.putWorkOrder$)
-    this.spinner.show();
-    this.filteredWorkOrderList$ = combineLatest([this.combinedWorkOrderList$, this.dateRange$, this.filterObj$]).pipe(
-      map(([workOrders, filterDate, filterObj]) => {
-        let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
-        for (let key in workOrders) {
-          filtered[key] = workOrders[key].filter(workOrder => {
-            return (
-              workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1 ||
-              workOrder.workOrderID.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1) &&
-              this.filterDate(workOrder.dueDate, filterDate) &&
-              this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
-              this.filterPriority(workOrder.priorityStatus,filterObj.priority) &&
-              this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter) &&
-              this.filterAssignee(workOrder.technician[0],filterObj.assign)&&
-              this.filterKitStatus(workOrder.kitStatus, filterObj.kitStatus)
-          }
-          )
+  applyFilters(workOrders){
+    console.time('filter');
+    let _workOrders = {...workOrders};
+    _workOrders = [..._workOrders.unassigned, ..._workOrders.assigned, ..._workOrders.inProgress, ..._workOrders.completed];
+    
+    let filtered: WorkOrders = { unassigned: [], assigned: [], inProgress: [], completed: [] };
+    let filterObj:any; 
+    let filterDate:any;
+    this.filterObj$.subscribe(val=> filterObj = val);
+    this.dateRange$.subscribe(val=> filterDate = val);
 
-        }
-        this.spinner.hide();
-        this.showOperationsList = { 'unassigned': new Array(filtered['unassigned'].length).fill(false), 'assigned': new Array(filtered['assigned'].length).fill(false), 'inProgress': new Array(filtered['inProgress'].length).fill(false), 'completed': new Array(filtered['completed'].length).fill(false) }
-        return filtered;
-      })
-    );
+    _workOrders.forEach(workOrder=>{
+      if((workOrder.workOrderDesc.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1 ||
+      workOrder.workOrderID.toLowerCase().indexOf(filterObj['search'] ? filterObj['search'].toLowerCase() : "") !== -1) &&
+      this.filterDate(workOrder.dueDate, filterDate) &&
+      this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
+      this.filterPriority(workOrder.priorityStatus,filterObj.priority) &&
+      this.filterWorkCenter(workOrder.workCenter,filterObj.workCenter) &&
+      this.filterAssignee(workOrder.technician[0],filterObj.assign)&&
+      this.filterKitStatus(workOrder.kitStatus, filterObj.kitStatus)){
+        filtered[workOrder.status].push(workOrder);
+      }
+    });
+    return filtered;
+  }
+
+  getWorkOrders() {
+    this.spinner.show();
+    this._maintenanceSvc.getAllWorkOrders().subscribe(res => {
+      this.allWorkOrders = this.applyFilters(res);
+      this.cd.markForCheck();
+      this.spinner.hide();
+    });
   }
 
   combineWorkOrders = (oldWorkOrders$: Observable<WorkOrders>, newWorkOrders$: Observable<WorkOrders>): Observable<WorkOrders> =>{
@@ -252,8 +259,8 @@ export class MaintenanceComponent {
     }
   }
 
-  public showOperations(status, index) {
-    this.showOperationsList[`${status}`][index] = !this.showOperationsList[`${status}`][index];
+  public showOperations(woID) {
+    this.showOperationsList[`${woID}`] = !this.showOperationsList[`${woID}`];
   }
 
   async onAssignPress(workOrder: WorkOrder) {

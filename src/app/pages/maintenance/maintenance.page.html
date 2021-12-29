@@ -17,9 +17,8 @@
 </ion-header>
 
 
-<ion-content [fullscreen]="true">
-
-  <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders" class="maintenance-page">
+<div>
+  <ion-row *ngIf="this.allWorkOrders as workOrders" class="maintenance-page">
     <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
         <ion-item>
@@ -62,10 +61,10 @@
               </ion-button>
               </div>
 
-              <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === false">
+              <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="!this.showOperationsList[workOrder.workOrderID]">
                 <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
               </ion-button>
-              <ion-button expand="full" fill="clear" (click)="showOperations('unassigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.unassigned[i] === true">
+              <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="this.showOperationsList[workOrder.workOrderID]">
                 <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
               </ion-button>
               <hr *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-line"/>
@@ -90,7 +89,6 @@
                   </ion-item>
                 </div>
               </span>
-
             </ion-label>           
           </ion-item>
         </div>
@@ -137,15 +135,15 @@
                   </div>  
                 </div>
 
-                <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === false">
+                <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="!this.showOperationsList[workOrder.workOrderID]">
                   <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
                 </ion-button>
-                <ion-button expand="full" fill="clear" (click)="showOperations('assigned', i)" class="show-operations-btn" *ngIf="this.showOperationsList.assigned[i] === true">
+                <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="this.showOperationsList[workOrder.workOrderID]">
                   <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
                 </ion-button>
-                <hr *ngIf="this.showOperationsList.assigned[i] === true" class="operations-line"/>
+                <hr *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-line"/>
                 <span>
-                  <div *ngIf="this.showOperationsList.assigned[i] === true" class="operations-div">
+                  <div *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-div">
                     <ion-item class="operations-list" *ngFor="let operation of workOrders.assigned[i].operations; let j = index;">
                       <ion-label>
                         <span class="kit-number">{{operation.operationName}}</span>
@@ -216,16 +214,15 @@
                     <span class="inprogress-user-name m-l-7">{{workOrder.technician[0].personName}}</span>
                   </div>
                 </div>
-              
-                <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === false">
+                <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="!this.showOperationsList[workOrder.workOrderID]">
                   <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
                 </ion-button>
-                <ion-button expand="full" fill="clear" (click)="showOperations('inProgress', i)" class="show-operations-btn" *ngIf="this.showOperationsList.inProgress[i] === true">
+                <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="this.showOperationsList[workOrder.workOrderID]">
                   <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
                 </ion-button>
-                <hr *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-line"/>
+                <hr *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-line"/>
                 <span>
-                  <div *ngIf="this.showOperationsList.inProgress[i] === true" class="operations-div">
+                  <div *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-div">
                     <ion-item class="operations-list" *ngFor="let operation of workOrders.inProgress[i].operations; let j = index;">
                       <ion-label>
                         <span class="kit-number">{{operation.operationName}}</span>
@@ -290,15 +287,15 @@
                   </div>
               </div>
 
-              <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === false">
+              <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="!this.showOperationsList[workOrder.workOrderID]">
                 <ion-icon name="chevron-down-outline" class="down-up-arrow"></ion-icon> Show {{workOrder.operations.length}} Operations
               </ion-button>
-              <ion-button expand="full" fill="clear" (click)="showOperations('completed', i)" class="show-operations-btn" *ngIf="this.showOperationsList.completed[i] === true">
+              <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="this.showOperationsList[workOrder.workOrderID]">
                 <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
               </ion-button>
-              <hr *ngIf="this.showOperationsList.completed[i] === true" class="operations-line"/>
+              <hr *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-line"/>
               <span>
-                <div *ngIf="this.showOperationsList.completed[i] === true" class="operations-div">
+                <div *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-div">
                   <ion-item class="operations-list" *ngFor="let operation of workOrders.completed[i].operations; let j = index;">
                     <ion-label>
                       <span class="kit-number">{{operation.operationName}}</span>
@@ -324,4 +321,4 @@
        </ion-list>
       </ion-col>
   </ion-row> 
-</ion-content>
+</div>
