@@ -2,7 +2,6 @@ import { Component, OnInit ,Input} from '@angular/core';
 import { uniqBy } from 'lodash';
 import {CommonFilterService}  from './common-filter.service'
 import { DomSanitizer } from '@angular/platform-browser';
-import { MaintenanceService } from '../../../pages/maintenance/maintenance.service';
 
 @Component({
   selector: 'app-common-filter',
@@ -31,7 +30,6 @@ export class CommonFilterComponent implements OnInit {
 
 
   constructor(private _commonFilterService:CommonFilterService,
-              private _maintenanceSvc: MaintenanceService, 
               private sanitizer:DomSanitizer) { }
 
   ngOnInit() {}

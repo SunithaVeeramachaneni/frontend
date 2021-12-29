@@ -52,7 +52,8 @@
             "optimization": false,
             "namedChunks": true,
             "allowedCommonJsDependencies": [
-              "quill-delta-to-html"
+              "quill-delta-to-html",
+              "buffer"
             ]
           },
           "configurations": {
@@ -69,10 +70,7 @@
               "buildOptimizer": false,
               "sourceMap": true,
               "optimization": false,
-              "namedChunks": true,
-              "allowedCommonJsDependencies": [
-                "quill-delta-to-html"
-              ]
+              "namedChunks": true
             },
             "production": {
               "fileReplacements": [
