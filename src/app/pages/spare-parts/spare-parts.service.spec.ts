@@ -11,7 +11,7 @@ import { rawTechniciansSPCC$, expectedTechniciansSPCC, expectedWorkOrdersSPCC, r
 
 
 
-fdescribe('Spare parts service', () => {
+describe('Spare parts service', () => {
   let service: SparepartsService;
   let appServiceSpy: AppService;
 
@@ -97,27 +97,14 @@ fdescribe('Spare parts service', () => {
     expect(result).toBeTrue()
   })
   
-  function difference(object, base) {
-    function changes(object, base) {
-        return _.transform(object, function(result, value, key) {
-            if (!_.isEqual(value, base[key])) {
-                result[key] = (_.isObject(value) && _.isObject(base[key])) ? changes(value, base[key]) : value;
-            }
-        });
-    }
-    return changes(object, base);
-}
-
 it('gets and displays the work orders', () =>{
   let workorders$ = service.getAllWorkOrders({
     "startDate": "2021-11-30T00:00:00",
     "endDate": "2021-12-31T23:59:59"
 })
-let workorders;
-workorders$.subscribe(resp => workorders = resp)
-console.log("actual are", JSON.stringify(workorders))
-console.log("expected are", JSON.stringify(expectedWorkOrdersSPCC))
-expect(isEqual(workorders,expectedWorkOrdersSPCC)).toBeTrue()
+workorders$.subscribe(resp => {
+  expect(isEqual(JSON.stringify(resp),JSON.stringify(expectedWorkOrdersSPCC))).toBeTrue()
+})
 })
 
 

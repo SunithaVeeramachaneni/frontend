@@ -61,7 +61,6 @@ export class SparepartsService {
       takeUntil(this.stopPolling)
     );
     
-    workOrders$.subscribe(resp => console.log("work orders in here are", JSON.stringify(resp)))
     let transformedObservable$ = workOrders$.pipe(map(rawWorkOrders => {
       let workOrders: WorkOrders = { "1": [], "2": [], "3": [], "4": [],"5":[] };
       let workOrder: WorkOrder;
@@ -96,10 +95,8 @@ export class SparepartsService {
         })
         workOrders[`${workOrder.statusCode}`].push(workOrder)
       });
-      // console.log("Work orders all the way here are", workOrders)
       return workOrders;
     }))
-    console.log(transformedObservable$)
     return transformedObservable$
   }
 
