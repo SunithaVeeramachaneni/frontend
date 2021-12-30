@@ -18,7 +18,7 @@
 
 
 <div>
-  <ion-row *ngIf="this.allWorkOrders as workOrders" class="maintenance-page">
+  <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders" class="maintenance-page">
     <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
         <ion-item>
