@@ -4,7 +4,7 @@ import { catchError, map, retry, share, switchMap, takeUntil, tap } from "rxjs/o
 import { environment } from "../../../environments/environment";
 import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/scc-work-order";
-import { Technician, Technicians } from "../../interfaces/technicians";
+import { WarehouseTechnician, WarehouseTechnicians } from "../../interfaces/warehouse_technicians";
 import { AppService } from "../../shared/services/app.services";
 import * as moment from 'moment';
 
@@ -28,11 +28,11 @@ export class SparepartsService {
   ngOnDestroy = () =>{
     this.stopPolling.next();
   }
-  getPickerList():Observable<Technician[]>{
+  getPickerList():Observable<WarehouseTechnician[]>{
     let technicians$ = this._appService._getRespFromGateway(environment.spccAbapApiUrl,'pickerlist');
     let transformedObservable$ = technicians$.pipe(map(rawTechnicians => {
-      let technicians: Technician[] =[]
-      let technician: Technician;
+      let technicians: WarehouseTechnician[] =[]
+      let technician: WarehouseTechnician;
       rawTechnicians.forEach(rawTechnician => {
         technician = ({
           userName: rawTechnician['UserName'],

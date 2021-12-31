@@ -6,7 +6,7 @@ import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
 import { BehaviorSubject, combineLatest, Observable,Subscription} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith, filter, tap,mergeMap,switchMap } from 'rxjs/operators';
-import { Technician } from '../../interfaces/technicians';
+import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { DomSanitizer } from '@angular/platform-browser';
 import {CommonService}   from '../../shared/services/common.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -33,7 +33,7 @@ export class SparePartsComponent{
   public dateRange$: BehaviorSubject<any>;
 
   public workOrders: Observable<WorkOrder[]>
-  public technicians$: Observable<Technician[]>
+  public technicians$: Observable<WarehouseTechnician[]>
   public filterObj$: Observable<any>
 
   public baseCode:any;

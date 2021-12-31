@@ -5,7 +5,7 @@ import { ErrorInfo } from "../../interfaces/error-info";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
 import { AppService } from "../../shared/services/app.services"
 import { environment } from '../../../environments/environment';
-import { Technician, Technicians } from "../../interfaces/technicians";
+import { WarehouseTechnician, WarehouseTechnicians } from "../../interfaces/warehouse_technicians";
 import { WorkCenter } from "../../interfaces/work-center";
 
 @Injectable({ providedIn: "root" })
@@ -132,7 +132,7 @@ export class MaintenanceService {
     return this.technicians$
   }
 
-  cleanTechnicians = (rawTechnicians): Technician[] => {
+  cleanTechnicians = (rawTechnicians): WarehouseTechnician[] => {
     let technicians = rawTechnicians.map(rawTechnician => {
       return ({
         personName: rawTechnician.PERNRDesc,

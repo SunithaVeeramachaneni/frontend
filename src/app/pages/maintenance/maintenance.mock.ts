@@ -1,5 +1,5 @@
 import { Observable, of } from "rxjs";
-import { Technician } from "../../interfaces/technicians";
+import { WarehouseTechnician } from "../../interfaces/warehouse_technicians";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
 
 
