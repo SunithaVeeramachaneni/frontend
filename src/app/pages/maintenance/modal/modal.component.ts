@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { flatMap, toArray } from 'rxjs/operators';
-import { Technician, Technicians } from '../../../interfaces/technicians';
+import { WarehouseTechnician, WarehouseTechnicians } from '../../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../../interfaces/work-center';
 
 import { DomSanitizer } from '@angular/platform-browser';
@@ -26,7 +26,7 @@ export class ModalComponent implements OnInit {
 
    public assignee: string = '';
    public assigneeList: any;
-   public displayedAssigneeList: Observable<Technician>;
+   public displayedAssigneeList: Observable<WarehouseTechnician>;
 
    public base64Code;
 

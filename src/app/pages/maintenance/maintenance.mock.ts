@@ -1,5 +1,5 @@
 import { Observable, of } from "rxjs";
-import { Technician } from "../../interfaces/technicians";
+import { WarehouseTechnician } from "../../interfaces/warehouse_technicians";
 import { WorkOrder, WorkOrders } from "../../interfaces/work-order";
 
 
@@ -17,17 +17,17 @@ const date5 = new Date(parseInt(dateString5)); //2021-09-11
 
 export const rawWorkOrders$ = of([
   {
-    PARNR: '',
+    PARNR: null,
     IPHAS: 'CRTD',
     PRIOK: 5,
     PRIOKX: 'High',
     COLOUR: '1B6603',
     AUFNR: 58369,
     AUFTEXT: 'Mock Description',
-    ARBPL: '7397',
-    KTEXT: 'ELEKTRIK',
+    ARBPL: 'ELEKTRIK',
+    KTEXT: 'ELEKTRIK1',
     TXT04: 'INIT',
-    GSTRP: '/Date(' + dateString1 + ')/',
+    GLTRP: '/Date(' + dateString1 + ')/',
     WorkOrderOperationSet: {
       results: [
         {
@@ -48,17 +48,17 @@ export const rawWorkOrders$ = of([
 
   },
   {
-    PARNR: '001',
+    PARNR: 1,
     IPHAS: 'CRTD',
     PRIOK: 3,
     PRIOKX: 'Medium',
     COLOUR: 'B0D450',
     AUFNR: 58370,
     AUFTEXT: 'Mock Description 2',
-    ARBPL: '7398',
-    KTEXT: 'MEKHANIK',
+    ARBPL: 'MECHANIK',
+    KTEXT: 'MEKHANIK1',
     TXT04: 'KIT READY',
-    GSTRP: '/Date(' + dateString2 + ')/',
+    GLTRP: '/Date(' + dateString2 + ')/',
     WorkOrderOperationSet: {
       results: [
         {
@@ -79,17 +79,17 @@ export const rawWorkOrders$ = of([
 
   },
   {
-    PARNR: '002',
+    PARNR: 2,
     IPHAS: 'REL',
     PRIOK: 3,
     PRIOKX: 'Medium',
     COLOUR: 'B0D450',
     AUFNR: 58371,
     AUFTEXT: 'Mock Description 3',
-    ARBPL: '7399',
-    KTEXT: 'MEKHANIK',
+    ARBPL: 'MECHANIK',
+    KTEXT: 'MEKHANIK2',
     TXT04: 'KIT READY',
-    GSTRP: '/Date(' + dateString3 + ')/',
+    GLTRP: '/Date(' + dateString3 + ')/',
     WorkOrderOperationSet: {
       results: [
         {
@@ -110,17 +110,17 @@ export const rawWorkOrders$ = of([
 
   },
   {
-    PARNR: '003',
+    PARNR: 3,
     IPHAS: 'TECO',
     PRIOK: 3,
     PRIOKX: 'Medium',
     COLOUR: 'B0D450',
     AUFNR: 58373,
     AUFTEXT: 'Mock Description 4',
-    ARBPL: '7399',
-    KTEXT: 'MEKHANIK',
+    ARBPL: 'ELEKTRIK',
+    KTEXT: 'ELEKTRIK1',
     TXT04: 'KIT READY',
-    GSTRP: '/Date(' + dateString5 + ')/',
+    GLTRP: '/Date(' + dateString5 + ')/',
     WorkOrderOperationSet: {
       results: [
         {
@@ -139,17 +139,17 @@ export const rawWorkOrders$ = of([
     }
   },
   {
-    PARNR: '005',
+    PARNR: 5,
     IPHAS: 'REL',
     PRIOK: 3,
     PRIOKX: 'Medium',
     COLOUR: 'B0D450',
     AUFNR: 58372,
     AUFTEXT: 'Fake Description 5',
-    ARBPL: '7399',
-    KTEXT: 'MEKHANIK',
+    ARBPL: 'ARBITRARY',
+    KTEXT: 'ARBITRARY2',
     TXT04: 'KIT READY',
-    GSTRP: '/Date(' + dateString4 + ')/',
+    GLTRP: '/Date(' + dateString4 + ')/',
     WorkOrderOperationSet: {
       results: [
         {
@@ -172,7 +172,7 @@ export const rawWorkOrders$ = of([
 
 ]);
 
-const unassignedWorkOrder1: WorkOrder = {
+export const unassignedWorkOrder1: WorkOrder = {
   status: 'unassigned',
   personDetails: null,
   priorityNumber: 5,
@@ -180,28 +180,28 @@ const unassignedWorkOrder1: WorkOrder = {
   colour: '1B6603',
   workOrderID: 58369,
   workOrderDesc: 'Mock Description',
-  workCenter: '7397',
-  equipmentName: 'ELEKTRIK',
-  kitStatus: 'INIT',
+  workCenter: 'ELEKTRIK',
+  equipmentName: 'ELEKTRIK1',
+  kitStatus: 'Waiting On Parts',
   dueDate: date1,
   estimatedTime: '15 hrs',
   actualTime: '12 hrs',
-  operationProgress: [0, 2],
+  operationProgress: [0, 2, 0],
   timeProgress: 12/15,
   operations: [{
-    actualTime: 8,
-    estimatedTime: 10,
+    actualTime: '8 hrs',
+    estimatedTime: '10 hrs',
     operationName: 'Operation1',
     timeProgress: 8/10,
   },
   {
-    actualTime: 4,
-    estimatedTime: 5,
+    actualTime: '4 hrs',
+    estimatedTime: '5 hrs',
     operationName: 'Operation2',
     timeProgress: 4/5
   }
 ],
-  technician: null,
+  technician: [],
 
 } 
 
@@ -213,28 +213,28 @@ const assignedWorkOrder1: WorkOrder = {
   colour: 'B0D450',
   workOrderID: 58370,
   workOrderDesc: 'Mock Description 2',
-  workCenter: '7398',
-  equipmentName: 'MEKHANIK',
-  kitStatus: 'KIT READY',
+  workCenter: 'MECHANIK',
+  equipmentName: 'MEKHANIK1',
+  kitStatus: 'Waiting On Parts',
   dueDate: date2,
   estimatedTime: '15 hrs',
   actualTime: '12 hrs',
-  operationProgress: [0, 2],
+  operationProgress: [0, 2, 0],
   timeProgress: 12/15,
   operations: [{
-    actualTime: 8,
-    estimatedTime: 10,
+    actualTime: '8 hrs',
+    estimatedTime: '10 hrs',
     operationName: 'Operation3',
     timeProgress: 8/10,
   },
   {
-    actualTime: 4,
-    estimatedTime: 5,
+    actualTime: '4 hrs',
+    estimatedTime: '5 hrs',
     operationName: 'Operation4',
     timeProgress: 4/5
   }
 ],
-  technician: null,
+  technician: [{personName: 'Mr. A', personKey: '001', image: '1'}],
 }
 
 const inProgressWorkOrder1: WorkOrder = {
@@ -245,29 +245,29 @@ const inProgressWorkOrder1: WorkOrder = {
   colour: 'B0D450',
   workOrderID: 58371,
   workOrderDesc: 'Mock Description 3',
-  workCenter: '7399',
-  equipmentName: 'MEKHANIK',
-  kitStatus: 'KIT READY',
+  workCenter: 'MECHANIK',
+  equipmentName: 'MEKHANIK2',
+  kitStatus: null,
   dueDate: date3,
   estimatedTime: '15 hrs',
   actualTime: '12 hrs',
-  operationProgress: [0, 2],
+  operationProgress: [1, 2, 0.5],
   timeProgress: 12/15,
   operations: [{
-    actualTime: 8,
-    estimatedTime: 10,
+    actualTime: '8 hrs',
+    estimatedTime: '10 hrs',
     operationName: 'Operation5',
     timeProgress: 8/10,
   },
   {
-    actualTime: 4,
-    estimatedTime: 5,
+    actualTime: '4 hrs',
+    estimatedTime: '5 hrs',
     timeProgress: 4/5,
     operationName: 'Operation6'
 
   }
 ],
-  technician: null,
+  technician: [{personName: 'Ms. B', personKey: '002', image: '2'}],
 }
 
 const inProgressWorkOrder2: WorkOrder = {
@@ -278,28 +278,28 @@ const inProgressWorkOrder2: WorkOrder = {
   colour: 'B0D450',
   workOrderID: 58372,
   workOrderDesc: 'Fake Description 5',
-  workCenter: '7399',
-  equipmentName: 'MEKHANIK',
-  kitStatus: 'KIT READY',
+  workCenter: 'ARBITRARY',
+  equipmentName: 'ARBITRARY2',
+  kitStatus: null,
   dueDate: date4,
   estimatedTime: '6 hrs',
   actualTime: '5 hrs',
-  operationProgress: [0, 2],
+  operationProgress: [2, 2, 1],
   timeProgress: 5/6,
   operations: [{
-    actualTime: 1,
-    estimatedTime: 3,
+    actualTime: '1 hr',
+    estimatedTime: '3 hrs',
     operationName: 'Operation9',
     timeProgress: 1/3,
   },
 {
-  actualTime: 4,
-  estimatedTime: 3,
+  actualTime: '4 hrs',
+  estimatedTime: '3 hrs',
   operationName: 'Operation10',
   timeProgress: 4/3
 },
 ],
-technician: null,
+technician: [{personName: 'Ms. E', personKey: '005', image: '5'}]
 }
 
 const completedWorkOrder1: WorkOrder = {
@@ -310,28 +310,28 @@ const completedWorkOrder1: WorkOrder = {
   colour: 'B0D450',
   workOrderID: 58373,
   workOrderDesc: 'Mock Description 4',
-  workCenter: '7399',
-  equipmentName: 'MEKHANIK',
-  kitStatus: 'KIT READY',
+  workCenter: 'ELEKTRIK',
+  equipmentName: 'ELEKTRIK1',
+  kitStatus: null,
   dueDate: date5,
   estimatedTime: '15 hrs',
   actualTime: '7 hrs',
-  operationProgress: [2, 2],
-  timeProgress: 5/10,
+  operationProgress: [2, 2, 1],
+  timeProgress: 7/15,
   operations: [{
-    actualTime: 1,
-    estimatedTime: 3,
+    actualTime: '3 hrs',
+    estimatedTime: '8 hrs',
     operationName: 'Operation7' ,
-    timeProgress: 1/3,
+    timeProgress: 3/8,
   },
   {
-    actualTime: 4,
-    estimatedTime: 7,
+    actualTime: '4 hrs',
+    estimatedTime: '7 hrs',
     operationName: 'Operation8',
     timeProgress: 4/7
   }
 ],
-  technician: null,
+  technician: [{personName: 'Ms. C', personKey: '003', image: '3'}]
 }
 
 export const expectedWorkOrders$ = of(
@@ -380,45 +380,65 @@ export const rawTechniciansMECHANIK$ = of([
   {
   PERNRDesc: 'Mr. A',
   PERNRKey: '001',
-  FileContent: '1'
+  FILECONTENT: '1'
 },
 {
   PERNRDesc: 'Ms. B',
   PERNRKey: '002',
-  FileContent: '2'
+  FILECONTENT: '2'
 }])
 
 export const rawTechniciansELEKTRIK$ = of([
 {
   PERNRDesc: 'Ms. C',
   PERNRKey: '003',
-  FileContent: '3'
+  FILECONTENT: '3'
 },
 {
   PERNRDesc: 'Mr. D',
   PERNRKey: '004',
-  FileContent: '4'
+  FILECONTENT: '4'
 }])
 
-export const rawTechnicians$ARBITRARY = of([
+export const rawTechniciansARBITRARY$ = of([
 {
   PERNRDesc: 'Ms. E',
   PERNRKey: '005',
-  FileContent: '5'
+  FILECONTENT: '5'
 }
 ])
 
-export const expectedTechniciansMECHANIK$ = of([
+export const expectedTechnicians$ = of({
+  'ELEKTRIK':[
   {
-    personName: 'Mr. A',
-    personKey: 1,
-    image: '1'
+    personName: 'Ms. C',
+    personKey: '003',
+    image: '3'
   },
   {
-    personName: 'Ms. B',
-    personKey: 2,
-    image: '2'
-  }])
+    personName: 'Mr. D',
+    personKey: '004',
+    image: '4'
+  }],
+  'MECHANIK':[
+    {
+      personName: 'Mr. A',
+      personKey: '001',
+      image: '1'
+    },
+    {
+      personName: 'Ms. B',
+      personKey: '002',
+      image: '2'
+    }],
+  'ARBITRARY':[
+  {
+    personName: 'Ms. E',
+    personKey: '005',
+    image: '5'
+  }
+]
+})
 
 export const expectedTechniciansELEKTRIK$ = of([
   {
