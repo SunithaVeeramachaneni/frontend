@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 
 import { IonSelect } from '@ionic/angular';
@@ -20,6 +20,7 @@ import { CommonFilterService } from '../../shared/components/common-filter/commo
   selector: 'app-maintenance',
   templateUrl: './maintenance.page.html',
   styleUrls: ['./maintenance.page.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MaintenanceComponent {
 
@@ -28,6 +29,7 @@ export class MaintenanceComponent {
   public combinedWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList1$: Observable<WorkOrders>;
   public filteredWorkOrderList$: Observable<WorkOrders>;
+  public allWorkOrders: WorkOrders;
   public filter: FormControl;
   public filter$: Observable<string>;
   public selectDate$: Observable<string>;
@@ -82,7 +84,8 @@ export class MaintenanceComponent {
     private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,
-    private _dateSegmentService: DateSegmentService
+    private _dateSegmentService: DateSegmentService,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -96,7 +99,7 @@ export class MaintenanceComponent {
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.overdueFilter = new FormControl('');
     this.overdueFilter$ = this.overdueFilter.valueChanges.pipe(startWith(''));
-    this.filterObj$ = this._commonFilterService.commonFilterAction$
+    this.filterObj$ = this._commonFilterService.commonFilterAction$;
     this.getWorkOrders();
 
   }
@@ -141,7 +144,6 @@ export class MaintenanceComponent {
 
         }
         this.spinner.hide();
-        this.showOperationsList = { 'unassigned': new Array(filtered['unassigned'].length).fill(false), 'assigned': new Array(filtered['assigned'].length).fill(false), 'inProgress': new Array(filtered['inProgress'].length).fill(false), 'completed': new Array(filtered['completed'].length).fill(false) }
         return filtered;
       })
     );
@@ -252,8 +254,8 @@ export class MaintenanceComponent {
     }
   }
 
-  public showOperations(status, index) {
-    this.showOperationsList[`${status}`][index] = !this.showOperationsList[`${status}`][index];
+  public showOperations(woID) {
+    this.showOperationsList[`${woID}`] = !this.showOperationsList[`${woID}`];
   }
 
   async onAssignPress(workOrder: WorkOrder) {
