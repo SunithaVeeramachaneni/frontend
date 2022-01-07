@@ -39,6 +39,7 @@ import { CategoryWiseInstructionsComponent } from './category-wise-instructions/
 import { PlyrModule } from 'ngx-plyr';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { PlayerComponent } from './player/player.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { PlayerComponent } from './player/player.component';
     CdkStepperModule,
     NgxDropzoneModule,
     BsDropdownModule,
+    NgxSpinnerModule,
     ButtonsModule.forRoot(),
     PopoverModule.forRoot(),
     PlyrModule,
