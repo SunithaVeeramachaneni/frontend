@@ -5,5 +5,5 @@ export const environment = {
   spccAbapApiUrl: 'https://cwpqa.innovapptive.com/mccspccabapapi/',
   mccAbapApiUrl: 'https://cwpqa.innovapptive.com/mccspccabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
-  requestTimeout: 60000
+  requestTimeout: 60000 * 3
 };

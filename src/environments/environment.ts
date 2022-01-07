@@ -9,7 +9,7 @@ export const environment = {
   spccAbapApiUrl: 'http://localhost:8002/mccspccabapapi/',
   mccAbapApiUrl: 'http://localhost:8002/mccspccabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
-  requestTimeout: 60000
+  requestTimeout: 60000 * 3
 };
 
 /*
