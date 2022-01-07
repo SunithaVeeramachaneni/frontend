@@ -17,7 +17,7 @@
 </ion-header>
 
 
-<div>
+<ion-content [fullscreen]="true">
   <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders" class="maintenance-page">
     <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
@@ -67,9 +67,9 @@
               <ion-button expand="full" fill="clear" (click)="showOperations(workOrder.workOrderID)" class="show-operations-btn" *ngIf="this.showOperationsList[workOrder.workOrderID]">
                 <ion-icon name="chevron-up-outline" class="down-up-arrow"></ion-icon> Hide {{workOrder.operations.length}} Operations
               </ion-button>
-              <hr *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-line"/>
+              <hr *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-line"/>
               <span>
-                <div *ngIf="this.showOperationsList.unassigned[i] === true" class="operations-div">
+                <div *ngIf="this.showOperationsList[workOrder.workOrderID] === true" class="operations-div">
                   <ion-item class="operations-list" *ngFor="let operation of workOrders.unassigned[i].operations; let j = index;">
                     <ion-label>
                       <span class="kit-number">{{operation.operationName}}</span>
@@ -321,4 +321,4 @@
        </ion-list>
       </ion-col>
   </ion-row> 
-</div>
+</ion-content>
