@@ -8,6 +8,7 @@ import { SparePartsComponent } from './spare-parts.page';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
 import { PopoverModule } from 'ngx-bootstrap/popover';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
     CommonModule,
     SharedModule,
     AppMaterialModules,
-    PopoverModule.forRoot() 
+    PopoverModule.forRoot(),
+    NgxSpinnerModule
   ],
   declarations: [
     SparePartsComponent

@@ -18,6 +18,7 @@
 
 
 <ion-content [fullscreen]="true">
+  <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
   <ion-row *ngIf="this.filteredWorkOrderList$ | async as workOrders" class="maintenance-page">
     <ion-col size-lg="3" size-md="3" size-sm="3">
       <ion-list class="unassigned-workorder-list">
