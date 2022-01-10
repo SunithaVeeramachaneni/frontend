@@ -10,7 +10,7 @@
     "development": "ng build --configuration development",
     "production": "ng build --configuration production",
     "qa": "ng build --configuration qa",
-    "test": "ng test",
+    "test": "ng test --watch false",
     "coverage": "ng test --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
