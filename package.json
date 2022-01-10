@@ -11,6 +11,7 @@
     "production": "ng build --configuration production",
     "qa": "ng build --configuration qa",
     "test": "ng test --watch false",
+    "test-headless": "ng test --watch false --browsers ChromeHeadless",
     "coverage": "ng test --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
