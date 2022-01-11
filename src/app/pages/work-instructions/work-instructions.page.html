@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true" *ngIf="(currentRouteUrl$ | async) as currentRouteUrl">
-  <ngx-spinner size="large" color = "grey" type = "ball-clip-rotate-pulse"></ngx-spinner>
+  <ngx-spinner size="medium" bdColor="#C0C0C0" type="ball-clip-rotate-pulse" [fullScreen]="false"></ngx-spinner>
   <div class="animated fadeIn content" *ngIf="currentRouteUrl === routingUrls.workInstructions.url">
     <div class="row p-t-5 bg-white">
       <div class="col col-md-6">
