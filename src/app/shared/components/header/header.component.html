@@ -5,7 +5,7 @@
         <ion-menu-button slot="start" (click)="minimize(false)"></ion-menu-button>
         <ion-img [src]="sideBarClosed" (click)="minimize(true)" *ngIf="this.sidebarMinimize === false" class="sidebar-close"></ion-img>   
         <ion-img [src]="sideBarOpen" (click)="minimize(false)" *ngIf="this.sidebarMinimize === true" class="sidebar-open"></ion-img>  
-        <ion-title class="header-title">{{title}}</ion-title>
+        <ion-title class="header-title" style="color: pink;">{{title}}</ion-title>
       </div>
       <div style="display: flex">
         <xng-breadcrumb separator=">"></xng-breadcrumb>
