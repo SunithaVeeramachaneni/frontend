@@ -104,6 +104,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.7.0",
+    "karma-junit-reporter": "2.0.1",
     "ng-mocks": "^12.4.0",
     "protractor": "~7.0.0",
     "puppeteer": "^13.0.1",
