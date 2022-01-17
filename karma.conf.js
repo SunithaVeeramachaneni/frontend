@@ -11,8 +11,10 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
+      require('karma-remap-istanbul'),
       require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require('@angular-devkit/build-angular/plugins/karma'),
+      require('karma-junit-reporter')
     ],
     client: {
       jasmine: {
@@ -45,5 +47,20 @@ module.exports = function (config) {
     junitReporter: {
   outputFile: 'test-results.xml'
      },
+     junitReporter: {
+            outputDir: './report', // results will be saved as $outputDir/$browserName.xml
+            outputFile: 'report.xml', // if included, results will be saved as $outputDir/$browserName/$outputFile
+            suite: '', // suite will become the package name attribute in xml testsuite element
+            useBrowserName: false, // add browser name to report and classes names
+            nameFormatter: undefined, // function (browser, result) to customize the name attribute in xml testcase element
+            classNameFormatter: undefined, // function (browser, result) to customize the classname attribute in xml testcase element
+            properties: {} // key value pair of properties to add to the <properties> section of the report
+        },
+        reporters: config.angularCli && config.angularCli.codeCoverage
+            ? ['progress', 'karma-remap-istanbul', 'junit']
+            : ['progress', 'junit'],
+        captureTimeout: 60000,
+        singleRun: true
+   
   });
 };
