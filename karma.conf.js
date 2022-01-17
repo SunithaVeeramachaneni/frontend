@@ -11,7 +11,7 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
-      require('karma-remap-istanbul'),
+     // require('karma-remap-istanbul'),
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma'),
       require('karma-junit-reporter')
@@ -57,7 +57,7 @@ module.exports = function (config) {
             properties: {} // key value pair of properties to add to the <properties> section of the report
         },
         reporters: config.angularCli && config.angularCli.codeCoverage
-            ? ['progress', 'karma-remap-istanbul', 'junit']
+            ? ['progress', 'junit']
             : ['progress', 'junit'],
         captureTimeout: 60000,
         singleRun: true
