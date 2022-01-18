@@ -13,6 +13,7 @@
     "qaauto": "ng build --configuration qaauto",
     "test": "ng test --watch false",
     "test-headless": "ng test --watch false --browsers ChromeHeadless",
+    "test-headless-cc": "ng test --watch false --browsers ChromeHeadless --code-coverage",
     "coverage": "ng test --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
