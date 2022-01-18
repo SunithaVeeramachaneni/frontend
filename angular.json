@@ -118,6 +118,30 @@
                 }
               ]
             },
+
+            "qaauto": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.qaauto.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            },
             "ci": {
               "progress": false
             }
@@ -129,8 +153,17 @@
             "browserTarget": "app:build"
           },
           "configurations": {
+            "development": {
+              "browserTarget": "app:build:development"
+            },
             "production": {
               "browserTarget": "app:build:production"
+            },
+            "qa": {
+              "browserTarget": "app:build:qa"
+            },
+            "qaauto": {
+              "browserTarget": "app:build:qaauto"
             },
             "ci": {
               "progress": false
