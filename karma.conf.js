@@ -37,21 +37,20 @@ module.exports = function (config) {
     },
     reporters: ['progress', 'kjhtml', 'junit'],
     junitReporter: {
-      outputDir: 'junitreport',
+      outputDir: 'report',
       outputFile: 'report.xml',
       suite: '',
-      useBrowserName: true,
+      useBrowserName: false,
       nameFormatter: undefined,
       classNameFormatter: undefined,
-      properties: {},
-      xmlVersion: null
+      properties: {}
     },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
-    singleRun: false,
+    singleRun: true,
     restartOnFileChange: true
   });
 };
