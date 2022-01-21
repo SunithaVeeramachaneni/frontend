@@ -219,7 +219,7 @@ describe('DraftsComponent', () => {
   it('should define varibales & set defaults', () => {
     expect(component.config).toBeDefined();
     expect(component.config).toEqual({
-      id: 'draftsss',
+      id: 'drafts',
       currentPage: 1,
       itemsPerPage: 6,
       directionLinks: false,
