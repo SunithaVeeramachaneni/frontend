@@ -16,6 +16,7 @@
     "test-headless": "ng test --watch false --browsers ChromeHeadless --code-coverage",
     "coverage": "ng test --code-coverage",
     "lint": "ng lint",
+    "tlint": "ng lint --silent > report/tslint.xml"
     "e2e": "ng e2e",
     "postinstall": "webdriver-manager update --standalone false --gecko false"
   },
