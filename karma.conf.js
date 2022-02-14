@@ -1,5 +1,5 @@
-// Karma configuration file, see link for more information
-// https://karma-runner.github.io/1.0/config/configuration-file.html
+// Karma configuration file, see link for more information //
+// https://karma-runner.github.io/1.0/config/configuration-file.html ///
 
 process.env.CHROME_BIN = require('puppeteer').executablePath()
 
@@ -11,6 +11,7 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
+      require('karma-junit-reporter'),
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
@@ -31,16 +32,26 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [
         { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'text-summary' },
+        { type: 'cobertura' }
       ]
     },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'junit'],
+    junitReporter: {
+      outputDir: 'report',
+      outputFile: 'report.xml',
+      suite: '',
+      useBrowserName: false,
+      nameFormatter: undefined,
+      classNameFormatter: undefined,
+      properties: {}
+    },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['ChromeHeadless'],
-    singleRun: false,
+    browsers: ['Chrome'],
+    singleRun: true,
     restartOnFileChange: true
   });
 };

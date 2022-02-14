@@ -83,7 +83,8 @@ export class MaintenanceService {
         i = i+1;
         assignedTechnician = this.getAssignedTechnician(technicians, rawWorkOrder)
         workOrder = this.cleanWorkOrder(rawWorkOrder, assignedTechnician)
-        workOrders[`${workOrder.status}`].push(workOrder)
+        if(workOrder.status)
+          workOrders[`${workOrder.status}`].push(workOrder)
       });
       return workOrders;
     }))
