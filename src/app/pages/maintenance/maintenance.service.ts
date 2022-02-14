@@ -91,6 +91,7 @@ export class MaintenanceService {
   }
 
   parseJsonDate(jsonDateString) {
+    if(!jsonDateString) return null;	  
     return new Date(parseInt(jsonDateString.replace('/Date(', '')));
   }
 
@@ -177,6 +178,8 @@ export class MaintenanceService {
   }
 
   getStatus(personDetails, rawStatus) {
+    if(!rawStatus)
+	  return 'unassigned'  
     let status = rawStatus.split(',')[0]
     if (!personDetails) return 'unassigned'
     else return this.statusMap[`${status}`]
@@ -197,22 +200,22 @@ export class MaintenanceService {
 
   cleanWorkOrder(rawWorkOrder, assignedTechnician) {
     return ({
-      status: this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS']),
-      personDetails: rawWorkOrder['PARNR'],
-      priorityNumber: rawWorkOrder['PRIOK'],
-      priorityStatus: rawWorkOrder['PRIOKX'],
-      colour: rawWorkOrder['COLOUR'],
-      workOrderID: rawWorkOrder['AUFNR'],
-      workOrderDesc: rawWorkOrder['AUFTEXT'],
-      workCenter: rawWorkOrder['ARBPL'],
-      equipmentName: rawWorkOrder['KTEXT'],
-      kitStatus: this.getKitStatus(rawWorkOrder),
-      dueDate: this.parseJsonDate(rawWorkOrder['GLTRP']),
-      estimatedTime: this.formatTime(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results)),
-      actualTime: this.formatTime(this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
-      operationProgress: this.getOperationProgress(rawWorkOrder.WorkOrderOperationSet.results),
-      operations: this.cleanOperation(rawWorkOrder.WorkOrderOperationSet.results),
-      timeProgress: this.getTimeProgress(this.getEstimatedTime(rawWorkOrder.WorkOrderOperationSet.results), this.getActualTime(rawWorkOrder.WorkOrderOperationSet.results)),
+      status: rawWorkOrder.status,
+      personDetails: rawWorkOrder.personDetails,
+      priorityNumber: rawWorkOrder.priorityNumber,
+      priorityStatus: rawWorkOrder.priorityStatus,
+      colour: rawWorkOrder.colour,
+      workOrderID: rawWorkOrder.workOrderID,
+      workOrderDesc:rawWorkOrder.workOrderDesc,
+      workCenter: rawWorkOrder.workCenter,
+      equipmentName: rawWorkOrder.equipmentName,
+      kitStatus: rawWorkOrder.kitStatus,
+      dueDate: rawWorkOrder.dueDate,
+      estimatedTime: rawWorkOrder.estimatedTime,
+      actualTime: rawWorkOrder.actualTime,
+      operationProgress: rawWorkOrder.operationProgress,
+      operations: rawWorkOrder.operations,
+      timeProgress: rawWorkOrder.timeProgress,
       technician: assignedTechnician
     })
   }
@@ -220,6 +223,7 @@ export class MaintenanceService {
   getKitStatus = (rawWorkOrder) =>{
     let status = this.getStatus(rawWorkOrder['PARNR'], rawWorkOrder['IPHAS'])
     if (status !== 'unassigned' && status !== 'assigned') return null;
+    if (!rawWorkOrder['TXT04'] ) return null;
     let kitStatus = null;
     if(rawWorkOrder['TXT04'].includes('KITD'))
           kitStatus = 'Kit Ready'
@@ -248,9 +252,9 @@ export class MaintenanceService {
 
   getAssignedTechnician = (technicians, rawWorkOrder) =>{
     let assignedTechnician = [{}];
-    if (technicians[`${rawWorkOrder.ARBPL}`]) {
-      assignedTechnician = technicians[rawWorkOrder.ARBPL].filter(technician => {
-        let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.PARNR)
+    if (technicians[`${rawWorkOrder.workCenter}`]) {
+      assignedTechnician = technicians[rawWorkOrder.workCenter].filter(technician => {
+        let condition = parseInt(technician.personKey) === parseInt(rawWorkOrder.personDetails)
         return condition
       })
     }
