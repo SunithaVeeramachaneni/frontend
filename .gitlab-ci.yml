@@ -5,7 +5,7 @@ sonar_scan:
     - CWP-CodeBase
     - master
   script: 
-    - "/usr/local/bin/sonar-scanner -Dsonar.projectKey=CWP_FrontEnd -Dsonar.sources=. -Dsonar.login=c9bd7998c6f6313391a57c41031fae20d5b5c070 -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA -Dsonar.qualitygate.wait=true"
+    - "/opt/sonar-scanner -Dsonar.projectKey=CWP_FrontEnd -Dsonar.sources=. -Dsonar.login=c9bd7998c6f6313391a57c41031fae20d5b5c070 -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA -Dsonar.qualitygate.wait=true"
   stage: sonar
   tags: 
     - build
