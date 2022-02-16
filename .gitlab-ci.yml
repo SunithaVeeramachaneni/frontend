@@ -1,31 +1,30 @@
-image: node:latest
+#image: node:latest
 #image: ubuntu:latest
-variables:
-  GIT_DEPTH: 10
-  GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
-cache:
-  key: ${CI_PROJECT_ID}
-
 stages:
-  - stage_build
-  - stage_test
+  - build
+  - test
+#variables:
+ # GIT_DEPTH: 10
+ # GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
+#cache:
+ # key: ${CI_PROJECT_ID}
 
-build:
-  stage: stage_build
+build_job:
+  stage: build
   script:
     - ls la
-    - npm update
+    - npm install
   tags:
     - build
   only:
     - CWP-CodeBase
 
 
-test:
-  stage: stage_test
+test_job:
+  stage: test
   script:
     - npm run test-headless
   tags:
-    - build
+    - test
   only:
     - CWP-CodeBase
