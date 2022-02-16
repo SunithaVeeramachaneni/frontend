@@ -1,21 +1,24 @@
 --- 
-cache: 
-  paths: 
-    - node_modules/
 image: "node:latest"
-install_dependencies: 
-  artifacts: 
-    paths: 
-      - node_modules/
-  script: 
-    - "npm install"
-  stage: build
 stages: 
   - build
   - test
-tags: "-test"
+cache: 
+  paths: 
+    - node_modules/
+
+install_dependencies: 
+  script: 
+    - "npm install"
+  stage: build
+  artifacts: 
+    paths: 
+      - node_modules/
 testing_testing: 
   script: "npm run test-headless"
   stage: test
+tags: 
+  - test
+
 
 
