@@ -1,30 +1,9 @@
-#image: node:latest
-#image: ubuntu:latest
-stages:
-  - build
-  - test
-#variables:
- # GIT_DEPTH: 10
- # GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
-#cache:
- # key: ${CI_PROJECT_ID}
-
-build_job:
+build-job:
   stage: build
   script:
-    - ls la
-    - npm install
-  tags:
-    - build
-  only:
-    - CWP-CodeBase
+    - echo "Hello, $GITLAB_USER_LOGIN!"
 
-
-test_job:
+test-job1:
   stage: test
   script:
-    - npm run test-headless
-  tags:
-    - test
-  only:
-    - CWP-CodeBase
+    - echo "This job tests something"
