@@ -14,7 +14,7 @@ build:
   stage: stage_build
   script:
     - ls la
-    - npm install
+    - npm update
   tags:
     - build
   only:
