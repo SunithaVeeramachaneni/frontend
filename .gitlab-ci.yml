@@ -17,8 +17,8 @@ install_dependencies:
 testing_testing: 
   script: "npm run test-headless"
   stage: test
-tags: 
-  - test
+tags:
+    - build
 
 
 
