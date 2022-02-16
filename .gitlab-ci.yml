@@ -1,4 +1,10 @@
 image: node:latest
+variables:
+  GIT_DEPTH: 10
+  GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
+cache:
+  key: ${CI_PROJECT_ID}
+
 stages:
   - stage_build
   - stage_test
@@ -6,6 +12,7 @@ stages:
 build:
   stage: stage_build
   script:
+    - ls la
     - npm install
   tags:
     - build
