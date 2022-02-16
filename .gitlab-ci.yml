@@ -6,8 +6,17 @@ build:
   stage: stage_build
   script:
     - npm install
+  tags:
+    - build
+  only:
+    - CWP-CodeBase
+
 
 test:
   stage: stage_test
   script:
     - npm run test-headless
+  tags:
+    - build
+  only:
+    - CWP-CodeBase
