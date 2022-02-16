@@ -1,5 +1,5 @@
-#image: node:latest
-image: ubuntu:latest
+image: node:latest
+#image: ubuntu:latest
 variables:
   GIT_DEPTH: 10
   GIT_CLONE_PATH: $CI_BUILDS_DIR/$CI_CONCURRENT_ID/$CI_PROJECT_NAME
