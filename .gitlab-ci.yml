@@ -9,7 +9,7 @@ build-job:
     - cwpunittests
   script:
     - echo "Hello, $GITLAB_USER_LOGIN!"
-    - npm install
+    - sudo npm install
   only:
     - CWP-CodeBase
 
@@ -19,7 +19,7 @@ test-job1:
     - cwpunittests
   script:
     - echo "This job tests something"
-    #- sudo npm run test-headless
+    - sudo npm run test-headless
   only:
     - CWP-CodeBase
   
