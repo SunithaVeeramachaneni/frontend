@@ -16,5 +16,10 @@ test-job1:
   script:
     - echo "This job tests something"
     - npm run test-headless
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - junit.xml
   only:
     - CWP-CodeBase
