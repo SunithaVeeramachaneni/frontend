@@ -15,11 +15,11 @@ test-job1:
   stage: test
   script:
     - echo "This job tests something"
-    - npm run test-headless
+    - sudo npm run test-headless
   artifacts:
     when: always
     reports:
       junit:
-        - junit.xml
+        - report.xml
   only:
     - CWP-CodeBase
