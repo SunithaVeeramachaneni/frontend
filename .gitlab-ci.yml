@@ -7,6 +7,9 @@ build-job:
   stage: build
   tags:
     - cwpunittests
+  before_script:
+    - git clean -fd
+
   script:
     - echo "Hello, $GITLAB_USER_LOGIN!"
     - sudo npm install
