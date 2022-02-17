@@ -5,6 +5,8 @@ stages:
 
 build-job:
   stage: build
+  tags:
+    - cwpunittests
   script:
     - echo "Hello, $GITLAB_USER_LOGIN!"
     - npm install
@@ -13,8 +15,11 @@ build-job:
 
 test-job1:
   stage: test
+  tags:
+    - cwpunittests
   script:
     - echo "This job tests something"
     - sudo npm run test-headless
   only:
     - CWP-CodeBase
+  
