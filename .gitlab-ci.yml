@@ -1,20 +1,19 @@
 stages:
-  - test
   - build
+  - test
+
 cache:
   paths:
-  - node_modules/
+    - node_modules/
 
-test-job1:
-  stage: test
-  image: ubuntu:cwpnode
-  tags:
-    - cwpunittests
-  before_script:
-    - sudo npm install
-  
+install_dependencies:
+  stage: build
   script:
-    - echo "This job tests something"
-    - sudo npm run test-headless
-  only:
-    - CWP-CodeBase
+    - npm install >> /home/gitlab-runner/log/$CI_PIPELINE_IID.txt
+  artifacts:
+    paths:
+      - node_modules/
+
+testing_testing:
+  stage: test
+  script: npm run test-headless >> /home/gitlab-runner/log/$CI_PIPELINE_IID.txt
