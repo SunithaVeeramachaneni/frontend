@@ -9,9 +9,11 @@ test-job1:
   image: ubuntu:cwpnode
   tags:
     - cwpunittests
+  before_script:
+    - sudo npm install
+  
   script:
     - echo "This job tests something"
-    - sudo npm install
     - sudo npm run test-headless
   only:
     - CWP-CodeBase
