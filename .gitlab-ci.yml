@@ -1,26 +1,14 @@
-##
-stages:
-  - build
-  - test
+image: ubuntu:cwpnode
 
-build-job:
-  stage: build
-  image: ubuntu:cwpnode
-  tags:
-    - cwpunittests
-  script:
-    - echo "Hello, $GITLAB_USER_LOGIN!"
-    - sudo npm install
-  only:
-    - CWP-CodeBase
+cache:
+  paths:
+  - node_modules/
 
-test-job1:
-  stage: test
-  image: ubuntu:cwpnode
-  tags:
-    - cwpunittests
+test:
   script:
-    - echo "This job tests something"
-    - sudo npm run test-headless
-  only:
-    - CWP-CodeBase
+   - npm install
+   - npm run test
+tags:
+   - cwpunittests
+only:
+   - CWP-CodeBase
