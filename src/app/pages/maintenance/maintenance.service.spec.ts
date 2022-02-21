@@ -48,18 +48,18 @@ describe('Maintenance service', () => {
     expect(service).toBeTruthy();
   })
 
-  it('needs to process raw list of work centers and return them', () => {
-    let workCenters;
-    let gateWayParams = `workCenters/${1000}`;
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-      .withArgs(environment.mccAbapApiUrl, gateWayParams)
-      .and.returnValue(rawARBPLs$);
-    let workCenters$ = service.getAllWorkCenters()
-    let expectedWorkCenters;
-    expectedARBPLs$.subscribe(resp => workCenters = resp);
-    workCenters$.subscribe(resp => expectedWorkCenters = resp);
-    expect(isEqual(workCenters, expectedWorkCenters)).toBeTrue();
-  })
+  // it('needs to process raw list of work centers and return them', () => {
+  //   let workCenters;
+  //   let gateWayParams = `workCenters/${1000}`;
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //     .withArgs(environment.mccAbapApiUrl, gateWayParams)
+  //     .and.returnValue(rawARBPLs$);
+  //   let workCenters$ = service.getAllWorkCenters()
+  //   let expectedWorkCenters;
+  //   expectedARBPLs$.subscribe(resp => workCenters = resp);
+  //   workCenters$.subscribe(resp => expectedWorkCenters = resp);
+  //   expect(isEqual(workCenters, expectedWorkCenters)).toBeTrue();
+  // })
 
   it('needs to process raw technicians and return them', () => {
     let gateWayParams = `workCenters/${1000}`;
@@ -218,40 +218,40 @@ describe('Maintenance service', () => {
     expect(service.getServerSentEvent('123')).toBeDefined();
   })
 
-  it('should get work order by id', async () =>{
+  // it('should get work order by id', async () =>{
 
-    let gateWayParams = `workCenters/${1000}`;
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-      .withArgs(environment.mccAbapApiUrl, gateWayParams)
-      .and.returnValue(rawARBPLs$).and.callThrough();
-
-
-
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-    .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
-    .and.returnValue(rawTechniciansELEKTRIK$).and.callThrough();
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-    .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
-    .and.returnValue(rawTechniciansMECHANIK$).and.callThrough();
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-    .withArgs(environment.mccAbapApiUrl, `technicians/'ARBITRARY'`)
-    .and.returnValue(rawTechniciansARBITRARY$).and.callThrough();
-    service.getAllWorkCenters()
+  //   let gateWayParams = `workCenters/${1000}`;
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //     .withArgs(environment.mccAbapApiUrl, gateWayParams)
+  //     .and.returnValue(rawARBPLs$).and.callThrough();
 
 
-    service.getTechnicians();
-    let rawWorkOrders;
-    rawWorkOrders$.subscribe(resp => rawWorkOrders = resp);
-    let firstRawWorkOrder$ = of(rawWorkOrders[0]);
-    (appServiceSpy._getRespFromGateway as jasmine.Spy)
-    .withArgs(environment.mccAbapApiUrl, 'workOrder/24')
-    .and.returnValue(firstRawWorkOrder$).and.callThrough();
-    let workorder$ = await service.getWorkOrderByID(24);
-    let workorder;
-    let workorders = {'unassigned': [unassignedWorkOrder1], 'assigned': [], 'inProgress':[], 'completed': []}
-    workorder$.subscribe(resp => workorder = resp);  
-    expect(isEqual(workorders, workorder)).toBeTrue()
-  })
+
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //   .withArgs(environment.mccAbapApiUrl, `technicians/'ELEKTRIK'`)
+  //   .and.returnValue(rawTechniciansELEKTRIK$).and.callThrough();
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //   .withArgs(environment.mccAbapApiUrl, `technicians/'MECHANIK'`)
+  //   .and.returnValue(rawTechniciansMECHANIK$).and.callThrough();
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //   .withArgs(environment.mccAbapApiUrl, `technicians/'ARBITRARY'`)
+  //   .and.returnValue(rawTechniciansARBITRARY$).and.callThrough();
+  //   service.getAllWorkCenters()
+
+
+  //   service.getTechnicians();
+  //   let rawWorkOrders;
+  //   rawWorkOrders$.subscribe(resp => rawWorkOrders = resp);
+  //   let firstRawWorkOrder$ = of(rawWorkOrders[0]);
+  //   (appServiceSpy._getRespFromGateway as jasmine.Spy)
+  //   .withArgs(environment.mccAbapApiUrl, 'workOrder/24')
+  //   .and.returnValue(firstRawWorkOrder$).and.callThrough();
+  //   let workorder$ = await service.getWorkOrderByID(24);
+  //   let workorder;
+  //   let workorders = {'unassigned': [unassignedWorkOrder1], 'assigned': [], 'inProgress':[], 'completed': []}
+  //   workorder$.subscribe(resp => workorder = resp);  
+  //   expect(isEqual(workorders, workorder)).toBeTrue()
+  // })
 
 
 })
