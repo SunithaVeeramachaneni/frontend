@@ -103,6 +103,7 @@
               : selectedGlobalDashboard
           "
           [dashboardDisplayMode]="dashboardMode"
+          (dashboardActionHandler)="handleDashboardActions($event)"
         ></app-dashboard-configuration>
       </div>
     </div>

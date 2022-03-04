@@ -255,4 +255,19 @@ export class DashboardsComponent implements OnInit {
       isDefault: true,
       createdBy: this.commonService.getUserName()
     });
+
+  handleDashboardActions(event) {
+    if (!event) return;
+    const { type, data } = event;
+    switch (type) {
+      case 'EDIT':
+        this.openCreateDashboardDialog('EDIT', data);
+        break;
+      case 'DELETE':
+        this.deleteDashboard(data);
+      case 'MARK_DEFAULT':
+        this.markDashboardDefault(data)
+    }
+  }
+
 }

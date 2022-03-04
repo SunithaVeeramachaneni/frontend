@@ -31,14 +31,27 @@
     <button
       [matMenuTriggerFor]="menu"
       class="more-icon"
+      *ngIf="dashboardDisplayMode !== 'ALL'"
       [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
     >
       <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item>Edit</button>
-      <button mat-menu-item>Mark default</button>
-      <button mat-menu-item class="delete-menu-item">Delete</button>
+      <button mat-menu-item (click)="editDashboard(dashboard)">Edit</button>
+      <button
+        mat-menu-item
+        (click)="markDashboardDefault(dashboard)"
+        *ngIf="!dashboard.isDefault"
+      >
+        Mark default
+      </button>
+      <button
+        mat-menu-item
+        class="delete-menu-item"
+        (click)="deleteDashboard(dashboard)"
+      >
+        Delete
+      </button>
     </mat-menu>
   </div>
 
