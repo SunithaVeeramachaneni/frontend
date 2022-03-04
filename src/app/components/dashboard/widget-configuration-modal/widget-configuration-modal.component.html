@@ -107,7 +107,33 @@
     </button>
   </mat-dialog-actions>
 </div>
-<ng-template #loadingReports>Loading Reports...</ng-template>
-<ng-template #loadingChartData>Loading Chart Data...</ng-template>
-<ng-template #loadingReportDetails>Loading Report Data...</ng-template>
+<ng-template #loadingReports>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'30px'"></ngx-shimmer-loading>
+</ng-template>
+<ng-template #loadingChartData>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+</ng-template>
+<ng-template #loadingReportDetails>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+  <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+</ng-template>
 <ng-template #loadingFilterOptions>Loading Filter Options...</ng-template>

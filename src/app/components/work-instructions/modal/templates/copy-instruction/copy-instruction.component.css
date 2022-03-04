@@ -1,10 +1,15 @@
 .copy-ins {
-  height: 540px;
   background-color: white;
-  width: 550px;
+  width: 460px;
   padding: 10px;
   border-radius: 8px;
 }
+
+.copy-header {
+  margin: 5px;
+  font-size: 16px;
+}
+
 .main-heading {
   font-family: 'Roboto', sans-serif;
   font-style: normal;
