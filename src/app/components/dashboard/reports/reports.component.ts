@@ -250,7 +250,9 @@ export class ReportsComponent implements OnInit {
         this.reportConfigService
           .updateReport$({ id, isFavorite: !isFavorite } as ReportConfiguration)
           .subscribe();
-        this.removeRow(id);
+        if (this.selectedReportSegmentControl.value === 'favorite') {
+          this.removeRow(id);
+        }
         break;
       case 'export':
         const info: ErrorInfo = {
