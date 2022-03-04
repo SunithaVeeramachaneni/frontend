@@ -50,7 +50,7 @@
             (click)="setSelectedDashboard(dashboard)"
           >
             <div class="create-btn-row">
-              <span class="display-flex">
+              <span class="display-flex default-row">
                 {{ dashboard.name }}
                 <span *ngIf="dashboard.isDefault" class="default-chip"
                   >Default</span
@@ -103,6 +103,7 @@
               : selectedGlobalDashboard
           "
           [dashboardDisplayMode]="dashboardMode"
+          (dashboardActionHandler)="handleDashboardActions($event)"
         ></app-dashboard-configuration>
       </div>
     </div>
