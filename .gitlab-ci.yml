@@ -1,10 +1,11 @@
+############3
 stages:
   - build
   - test
 build-code-job:
   stage: build
   script:
-    - echo “vuild successful”
+    - echo “valid successful”
 test-code-job1:
   stage: test
   script:
