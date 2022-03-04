@@ -90,7 +90,7 @@
             <app-dummy #recentDrafts [value]="result"></app-dummy>
             <ul class="recents-favorites-list">
               <li class="list-data" *ngFor="let obj of result">
-                <div class="recent-wi-img p-0">
+                <div class="recent-wi-img p-0 width-10">
                   <img
                     class="coverImg"
                     [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
@@ -99,7 +99,7 @@
                   />
                 </div>
 
-                <div class="draft-title p-l-r-0 p-l-15">
+                <div class="p-l-r-0 width-60">
                   <div
                     class="ellipsis"
                     [routerLink]="['/work-instructions/edit', obj.Id]"
@@ -124,7 +124,10 @@
                   </div>
                 </div>
 
-                <div class="p-l-10" style="position: absolute; right: 0%">
+                <div
+                  class="p-l-10 width-30"
+                  style="position: absolute; right: 0%"
+                >
                   <span class="recent-edited">
                     Edited {{ obj.updated_at | timeAgo }}
                   </span>
@@ -185,7 +188,7 @@
             <app-dummy #recentFavourites [value]="result"></app-dummy>
             <ul class="recents-favorites-list">
               <li class="list-data" *ngFor="let obj of result">
-                <div class="recent-wi-img p-0">
+                <div class="recent-wi-img p-0 width-10">
                   <img
                     class="coverImg"
                     [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
@@ -194,7 +197,7 @@
                   />
                 </div>
 
-                <div class="draft-title p-l-r-0 p-l-15">
+                <div class="p-l-r-0 width-60">
                   <div
                     [routerLink]="['/work-instructions/edit', obj.Id]"
                     class="dis-flex"
@@ -228,7 +231,10 @@
                   </div>
                 </div>
 
-                <div class="p-l-10" style="position: absolute; right: 0%">
+                <div
+                  class="p-l-10 width-30"
+                  style="position: absolute; right: 0%"
+                >
                   <span class="recent-edited">
                     Edited {{ obj.updated_at | timeAgo }}
                   </span>

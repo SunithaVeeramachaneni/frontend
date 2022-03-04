@@ -1,8 +1,20 @@
 .modal-card {
-  width: 555px;
-  max-height: 660px;
+  width: 460px;
   background-color: #ffffff;
-  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+.category-header {
+  border-bottom: 1px solid lightgray;
+  margin: 0;
+  padding: 15px 5px 10px 15px;
+  font-size: 16px;
+}
+
+.category-body {
+  padding: 0px 15px;
+  overflow-y: scroll;
+  height: 350px;
 }
 
 .title-field {
@@ -142,6 +154,7 @@ label {
   float: right;
   cursor: pointer;
   border: none;
+  margin: 10px 25px;
 }
 
 .save-btn:hover {
@@ -160,6 +173,7 @@ label {
   line-height: 20px;
   letter-spacing: 1.25px;
   color: black;
+  margin: 10px 25px;
 }
 
 .char-count {
@@ -189,5 +203,5 @@ label {
   left: -7px;
 }
 .margin-bottom {
-  margin-bottom: -7px;
+  margin-bottom: -35px;
 }
