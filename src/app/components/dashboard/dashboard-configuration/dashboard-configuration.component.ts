@@ -5,7 +5,9 @@ import {
   ChangeDetectionStrategy,
   Input,
   ViewChild,
-  ElementRef
+  ElementRef,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -62,6 +64,8 @@ export class DashboardConfigurationComponent implements OnInit {
   gridsterContainer: ElementRef;
   dashboards$: Observable<Dashboard[]>;
   showAllDashboards = false;
+
+  @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter();
 
   @Input() set dashboard(dashboard: Dashboard) {
     this._dashboard = dashboard ? dashboard : ({} as Dashboard);
@@ -383,4 +387,47 @@ export class DashboardConfigurationComponent implements OnInit {
     this.options.fixedColWidth = fixedColWidth;
     this.options.api.optionsChanged();
   };
+
+
+  updateDashboard(name: string, isDefault: boolean = false, dashboard: Dashboard) {
+    dashboard = { ...dashboard, name, isDefault };
+    this.dashboardService
+      .updateDashboard$(dashboard.id, dashboard)
+      .subscribe((response) => {
+        this.dashboards$.pipe(take(1)).subscribe((data) => {
+          this.dashboards$ = of(data);
+        });
+        this.toast.show({
+          text: 'Dashboard updated successfully',
+          type: 'success'
+        });
+      }, (err) => {
+        this.toast.show({
+          text: 'Error occured while updating dashboard',
+          type: 'warning'
+        });
+      });
+  }
+
+  editDashboard(dashboard: Dashboard) {
+    this.dashboardActionHandler.emit({
+      type: 'EDIT',
+      data: dashboard
+    });
+  }
+
+  deleteDashboard(dashboard: Dashboard) {
+    this.dashboardActionHandler.emit({
+      type: 'DELETE',
+      data: dashboard
+    });
+  }
+
+  markDashboardDefault(dashboard: Dashboard) {
+    this.dashboardActionHandler.emit({
+      type: 'MARK_DEFAULT',
+      data: dashboard
+    });
+  }
+
 }
