@@ -1,1 +1,21 @@
+stages:
+  - build
+  - test
 
+cache:
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: build
+  script:
+    - #npm install >> /home/gitlab-runner/log/$CI_PIPELINE_IID.txt
+    - echo "build"
+  artifacts:
+    paths:
+      - node_modules/
+
+testing_testing:
+  stage: test
+  script: echo "test" 
+  # npm run test-headless >> /home/gitlab-runner/log/$CI_PIPELINE_IID.txt
