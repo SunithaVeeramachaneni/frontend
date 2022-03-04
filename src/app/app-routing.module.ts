@@ -4,7 +4,7 @@ import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'maintenance',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   {

@@ -8,7 +8,6 @@ import { MaintenanceComponent } from './maintenance.component';
 import { AppMaterialModules } from '../../material.module';
 import { SharedModule } from '../../shared/shared.module';
 import { ModalComponent } from './modal/modal.component';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import {
   TranslateCompiler,
   TranslateLoader,
@@ -21,6 +20,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { MCCCardComponent } from './mcc-card/mcc-card.component';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -33,7 +33,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CommonModule,
     AppMaterialModules,
     SharedModule,
-    NgxSpinnerModule,
+    NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

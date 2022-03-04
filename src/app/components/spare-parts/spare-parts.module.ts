@@ -19,7 +19,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { HttpClient } from '@angular/common/http';
 import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { SPCCCardComponent } from './spcc-card/spcc-card.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -33,7 +33,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CommonModule,
     SharedModule,
     AppMaterialModules,
-    NgxSpinnerModule,
+    NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

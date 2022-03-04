@@ -14,22 +14,26 @@
   overflow: hidden;
 }
 
-.max-drawer-content {
+::ng-deep .app-container .mat-drawer-inner-container {
+  overflow: hidden;
+}
+
+.app-container .max-drawer-content {
   margin-left: 260px !important;
 }
 
-.min-drawer-content {
-  margin-left: 80px !important;
+.app-container .min-drawer-content {
+  margin-left: 70px !important;
 }
 
-.maximized-sidebar-container {
-  max-width: 260px !important;
-  min-width: 260px !important;
+.app-container .maximized-sidebar-container {
+  max-width: 260px;
+  min-width: 260px;
 }
 
-.minimized-sidebar-container {
-  max-width: 80px !important;
-  min-width: 80px !important;
+.app-container .minimized-sidebar-container {
+  max-width: 70px;
+  min-width: 70px;
 }
 
 .sidebar-logo {
@@ -69,7 +73,7 @@ li:hover {
   font-size: 15px;
   color: #76767b;
   cursor: pointer;
-  padding: 5px 0;
+  padding: 3px 0 7px 0;
 }
 
 .menu-item li.selected {
