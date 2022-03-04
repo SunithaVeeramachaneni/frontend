@@ -32,7 +32,7 @@
   "save": "Save",
   "update": "Update",
   "reportPlural": "{count} of {totalCount} {totalCount, plural, =0{Report} one{Report} other{Reports}}",
-  "recordPlural": "{count} of {totalCount} {totalCount, plural, =0{} one{} other{}}",
+  "recordPlural": "{count} of {totalCount} {totalCount, plural, =0{Record} one{Record} other{Records}}",
   "editWidget": "Edit",
   "deleteWidget": "Delete",
   "deleteWidgetHeader": "Delete Widget?",

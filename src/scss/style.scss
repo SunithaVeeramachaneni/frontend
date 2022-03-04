@@ -648,7 +648,8 @@ button.mat-menu-item {
 }
 
 .tableColumnsScroll {
-  height: 90px !important;
+  height: auto !important;
+  max-height: calc(100vh - 465px);
   padding-right: 5px !important;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -656,8 +657,37 @@ button.mat-menu-item {
 }
 
 .groupBySectionScroll {
-  height: 85px !important;
+  height: auto !important;
   max-height: 85px !important;
   padding-right: 5px !important;
   margin-right: -10px !important;
+}
+
+.table-column {
+  min-width: 120px;
+  width: auto !important;
+}
+
+.ghost-loading-main-container {
+  padding: 0 10px;
+  display: flex;
+}
+
+.columns {
+  background: white;
+  margin: 10px 10px 0 0;
+  border-radius: 10px;
+}
+
+.column-header {
+  border-bottom: 1px solid #f2f2f2;
+  padding: 10px 10px 5px 10px;
+}
+
+.column-body {
+  padding: 10px 10px 10px 10px;
+}
+
+.right-alignment .ngx-shimmer {
+  float: right;
 }

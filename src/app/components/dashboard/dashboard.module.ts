@@ -31,6 +31,7 @@ import { WidgetConfigurationModalComponent } from './widget-configuration-modal/
 import { WidgetComponent } from './widget/widget.component';
 import { ChartVariantComponent } from './chart-variant/chart-variant.component';
 import { CreateUpdateDashboardDialogComponent } from './dashboard-create-update-dialog/dashboard-create-update-dialog.component';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog.component';
 import { WidgetDeleteModalComponent } from './widget-delete-modal/widget-delete-modal.component';
 
@@ -60,7 +61,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     }),
     DynamictableModule,
     NgChartsModule,
-    GridsterModule
+    GridsterModule,
+    NgxShimmerLoadingModule
   ],
   declarations: [
     ReportConfigurationListModalComponent,

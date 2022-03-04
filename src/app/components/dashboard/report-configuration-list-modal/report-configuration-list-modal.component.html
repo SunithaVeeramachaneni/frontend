@@ -34,7 +34,6 @@
             </li>
           </ul>
         </ng-container>
-        <ng-template #loadingObjects>Loading Objects...</ng-template>
       </div>
       <div class="content-right-div">
         <mat-form-field appearance="outline" class="search-fields">
@@ -69,8 +68,40 @@
             </ng-container>
           </ng-container>
         </ng-container>
-        <ng-template #loadingReports>Loading Reports...</ng-template>
       </div>
     </div>
   </mat-dialog-content>
 </div>
+<ng-template #loadingObjects>
+  <div style="padding: 0 20px">
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+  </div>
+</ng-template>
+
+<ng-template #loadingReports>
+  <div style="padding: 0 20px">
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+    <ngx-shimmer-loading
+      [width]="'80%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+  </div>
+</ng-template>

@@ -17,7 +17,10 @@
   </div>
   <mat-grid-list
     cols="5"
-    *ngIf="this.filteredWorkOrderList$ | async as workOrders"
+    *ngIf="
+      this.filteredWorkOrderList$ | async as workOrders;
+      else loadingRecords
+    "
     class="spareparts-page"
   >
     <mat-grid-tile>
@@ -125,3 +128,110 @@
     </mat-grid-tile>
   </mat-grid-list>
 </div>
+
+<ng-template #loadingRecords>
+  <div class="ghost-loading-main-container">
+    <div class="width-20 columns">
+      <div class="column-header">
+        <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading [width]="'50%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <br />
+      </div>
+      <div class="column-body">
+        <ngx-shimmer-loading [width]="'50%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+
+    <div class="width-20 columns">
+      <div class="column-header">
+        <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading [width]="'50%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <br />
+      </div>
+      <div class="column-body">
+        <ngx-shimmer-loading [width]="'50%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+      </div>
+    </div>
+
+    <div class="width-20 columns">
+      <div class="column-header">
+        <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading [width]="'50%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <br />
+      </div>
+      <div class="column-body">
+        <ngx-shimmer-loading [width]="'50%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'70%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'100%'" [height]="'10px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+      </div>
+    </div>
+
+    <div class="width-20 columns">
+      <div class="column-header">
+        <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading [width]="'50%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <br />
+      </div>
+      <div class="column-body">
+        <ngx-shimmer-loading [width]="'50%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'40%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+
+    <div class="width-20 columns">
+      <div class="column-header">
+        <ngx-shimmer-loading [width]="'10%'" [height]="'30px'">
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading [width]="'50%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+        <br />
+      </div>
+      <div class="column-body">
+        <ngx-shimmer-loading [width]="'50%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'60%'"></ngx-shimmer-loading><br />
+        <ngx-shimmer-loading [width]="'80%'" [height]="'15px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</ng-template>
