@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppMaterialModules } from 'src/app/material.module';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { ToastService } from 'src/app/shared/toast';
 import { DashboardConfigurationComponent } from '../dashboard-configuration/dashboard-configuration.component';
 import { DashboardService } from '../services/dashboard.service';
 
@@ -22,6 +23,7 @@ describe('DashboardsComponent', () => {
   let dialogSpy: MatDialog;
   let dashboardServiceSpy: DashboardService;
   let commonServiceSpy: CommonService;
+  let toastSpy: ToastService;
 
   beforeEach(async () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
@@ -33,6 +35,7 @@ describe('DashboardsComponent', () => {
       }
     );
     commonServiceSpy = jasmine.createSpyObj('CommonService', ['getUserName']);
+    toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -43,7 +46,8 @@ describe('DashboardsComponent', () => {
       providers: [
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ToastService, useValue: toastSpy }
       ]
     }).compileComponents();
   });
