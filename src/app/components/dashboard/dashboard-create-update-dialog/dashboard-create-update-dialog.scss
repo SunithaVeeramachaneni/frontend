@@ -1,0 +1,62 @@
+.fullWidth {
+  width: 100% !important;
+}
+.dialog-head {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin: 0px;
+  align-items: center;
+}
+.dialog-close {
+  margin-top: 5px;
+}
+.dialog-title {
+  font-size: 16px;
+}
+.dialog-content {
+  height: 95px;
+}
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.dialog-close-btn {
+  cursor: pointer;
+}
+.create-dashboard-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  border-radius: 4px;
+  background-color: #3d5afe;
+  float: right;
+  cursor: pointer;
+}
+
+::ng-deep .dashboardTitle-formfield {
+  .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.2em 0px 0.5em 0px !important;
+  }
+
+  .mat-form-field-label-wrapper {
+    margin-top: -0.25em;
+  }
+
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: #ffffff;
+    border-radius: 4px;
+  }
+}

@@ -1,0 +1,203 @@
+<div class="header">
+  <app-header [title]="headerTitle"></app-header>
+</div>
+<div class="report-configuration">
+  <div
+    class="content-div"
+    *ngIf="reportDetails$ | async as reportDetails; else loading"
+  >
+    <div class="column1">
+      <div class="report-name-col dis-flex">
+        <div class="width-95">
+          <p class="all-dropdown-headings" translate>reportName</p>
+          <mat-form-field appearance="outline" class="m-r-10 width-100">
+            <mat-icon
+              matSuffix
+              class="edit-icon"
+              *ngIf="disableReportName === true"
+              (click)="disableReportName = false"
+              >edit</mat-icon
+            >
+            <input
+              *ngIf="!reportDetails.report"
+              matInput
+              [(ngModel)]="dummy"
+              [disabled]="disableReportName"
+              (keyup.enter)="disableReportName = true"
+              (blur)="disableReportName = true"
+            />
+            <input
+              *ngIf="reportDetails.report"
+              matInput
+              [(ngModel)]="reportDetails.report.name"
+              [disabled]="disableReportName"
+              (keyup.enter)="
+                disableReportName = true;
+                reportTitleChanged(reportDetails.report.name)
+              "
+              (blur)="
+                disableReportName = true;
+                reportTitleChanged(reportDetails.report.name)
+              "
+            />
+          </mat-form-field>
+        </div>
+
+        <a (click)="favoriteToggle()" class="favorite-toggle">
+          <span
+            *ngIf="!reportDetails.report?.isFavorite"
+            matTooltip="Mark as Favorite"
+            matTooltipClass=""
+          >
+            <mat-icon class="mat-icon-star">star_border</mat-icon>
+          </span>
+          <span
+            *ngIf="reportDetails.report?.isFavorite"
+            matTooltip="Un-Favorite"
+            matTooltipClass=""
+          >
+            <mat-icon class="mat-icon-star is-fav-icon">star</mat-icon>
+          </span>
+        </a>
+      </div>
+      <div class="table-filter-panel">
+        <cwp-table-filter-panel [configOptions]="configOptions">
+        </cwp-table-filter-panel>
+      </div>
+    </div>
+    <div class="column2">
+      <div class="dis-flex" style="margin-bottom: 15px">
+        <div class="width-50">
+          <app-common-filter
+            [title]=""
+            [filtersApplied]="reportDetails.report?.filtersApplied"
+            [reportColumns]="this.reportColumns"
+            [filterOptions]="reportDetails.report?.filterOptions"
+            (appliedFilters)="applyFilter($event)"
+          >
+          </app-common-filter>
+
+          <div class="no-of-records">
+            <ng-template #loadingCount>
+              <mat-spinner [diameter]="20"></mat-spinner>
+            </ng-template>
+            <div *ngIf="dataCount$ | async as totalCount; else loadingCount">
+              <span>Records</span><br />
+              <span>
+                {{
+                  'recordPlural'
+                    | translate
+                      : {
+                          totalCount: totalCount.count
+                            ? (totalCount.count | numberToKM)
+                            : 0,
+                          count: reportDetails.reportData
+                            ? reportDetails.reportData.length
+                            : 0
+                        }
+                }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="width-50 text-align-right m-t-5 no-wrap">
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            (click)="undo($event)"
+            [disabled]="!undoRedoUtil.undoSize()"
+          >
+            <mat-icon>undo</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            (click)="redo($event)"
+            [disabled]="!undoRedoUtil.redoSize()"
+          >
+            <mat-icon>redo</mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            (click)="toggleChart()"
+            *ngIf="reportDetails.report?.showChart"
+          >
+            <img src="assets/dashboard-icons/show_chart.svg" />
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            (click)="toggleChart()"
+            *ngIf="!reportDetails.report?.showChart"
+            [disabled]="!reportDetails.report?.groupBy?.length"
+          >
+            <img src="assets/dashboard-icons/show_chart.svg" />
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            disabled
+          >
+            <img src="assets/dashboard-icons/preview.svg" />
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="report-button"
+            [disabled]="!reportDetails.report?.id || isExportInProgress"
+            (click)="downloadReport($event)"
+          >
+            <img src="assets/dashboard-icons/export.svg" />
+            <mat-icon class="export-btn-loader" *ngIf="isExportInProgress">
+              <mat-spinner strokeWidth="2" diameter="20"></mat-spinner>
+            </mat-icon>
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            class="cancel-button"
+            [routerLink]="['/dashboard/reports']"
+            routerLinkActive="router-link-active"
+            translate="cancel"
+          ></button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="save-button"
+            translate="save"
+            (click)="saveReport()"
+            [disabled]="!reportDetails.report"
+          ></button>
+        </div>
+      </div>
+
+      <div
+        class="chart-wrapper"
+        *ngIf="
+          reportDetails.report?.showChart &&
+          reportDetails.report?.groupBy?.length
+        "
+      >
+        <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+          <app-chart [chartConfig]="chartConfig" [chartData]="data"></app-chart>
+        </ng-container>
+      </div>
+      <div>
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="tableEventHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+  </div>
+  <ng-template #loading>Loading Report Configuration...</ng-template>
+  <ng-template #loadingChartData>Loading Chart Data...</ng-template>
+</div>

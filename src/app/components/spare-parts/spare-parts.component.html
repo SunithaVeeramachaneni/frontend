@@ -1,0 +1,127 @@
+<div class="header">
+  <app-header [title]="headerTitle"></app-header>
+</div>
+
+<div class="spare-parts-body">
+  <div class="header-filters">
+    <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
+    </app-date-segment>
+    <div style="position: absolute; right: 20px">
+      <app-common-filter
+        [title]="headerTitle"
+        [showOverdueList]="showOverdueList"
+        [priorityList]="priorityList"
+      >
+      </app-common-filter>
+    </div>
+  </div>
+  <mat-grid-list
+    cols="5"
+    *ngIf="this.filteredWorkOrderList$ | async as workOrders"
+    class="spareparts-page"
+  >
+    <mat-grid-tile>
+      <ul class="kits-required">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders['1'].length }}</span>
+            <br />
+            <span class="kit-heading">{{ 'kitsRequired' | translate }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            class="li-cols"
+            *ngFor="let workOrder of workOrders['1']; let i = index"
+          >
+            <app-spcc-card
+              [workOrder]="workOrder"
+              [technicians$]="this.technicians$"
+              (assign)="assignTech($event)"
+            ></app-spcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="assign-for-picking">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders['2'].length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'assignForPicking' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            class="li-cols"
+            *ngFor="let workOrder of workOrders['2']; let i = index"
+          >
+            <app-spcc-card [workOrder]="workOrder"></app-spcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="kitting-in-progress">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders['3'].length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'kittingInProgress' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            class="li-cols"
+            *ngFor="let workOrder of workOrders['3']; let i = index"
+          >
+            <app-spcc-card [workOrder]="workOrder"></app-spcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="kits-complete">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders['4'].length }}</span>
+            <br />
+            <span class="kit-heading">{{ 'kitsComplete' | translate }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            class="li-cols"
+            *ngFor="let workOrder of workOrders['4']; let i = index"
+          >
+            <app-spcc-card [workOrder]="workOrder"></app-spcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="kits-issued">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders['5'].length }}</span>
+            <br />
+            <span class="kit-heading">{{ 'kitsIssued' | translate }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            class="li-cols"
+            *ngFor="let workOrder of workOrders['5']; let i = index"
+          >
+            <app-spcc-card [workOrder]="workOrder"></app-spcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

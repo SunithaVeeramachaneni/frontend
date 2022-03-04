@@ -1,0 +1,183 @@
+.report-configuration {
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.content-div {
+  background-color: white;
+  margin: 20px 0 0 20px;
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.column1 {
+  padding: 10px;
+  width: 20%;
+  border-right: 1px solid #bdbdbd;
+}
+
+.column2 {
+  padding: 15px;
+  width: 75%;
+}
+
+.all-dropdown-headings {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  color: #757575;
+  margin-bottom: 0;
+}
+
+.add-filter {
+  width: 100%;
+}
+
+.edit-icon {
+  position: relative;
+  top: 1px;
+  color: #757575;
+  cursor: pointer;
+}
+
+.segment-group {
+  height: 42px;
+  margin-bottom: 10px;
+}
+
+.search-icon {
+  position: relative;
+  top: 1px;
+  margin-right: 5px;
+  color: #757575;
+}
+
+.group-by-div {
+  border: 1px solid #eeeeee;
+  padding: 15px;
+  height: 200px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}
+
+.group-rows-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  color: #757575;
+}
+
+.report-button {
+  background: rgba(61, 90, 254, 0.08);
+  min-width: auto;
+  margin: 0px 3px;
+  border: none;
+  padding: 0px 10px 5px 10px;
+  height: 36px;
+}
+
+.export-btn-loader {
+  margin-left: 5px;
+}
+
+.cancel-button {
+  background: #ffffff;
+  min-width: auto;
+  margin: 0px 3px;
+  color: #3d5afe;
+  border: 1px solid #3d5afe;
+  padding: 0px 10px 5px 10px;
+  height: 36px;
+}
+
+.save-button {
+  background: #3d5afe;
+  color: #ffffff;
+  min-width: auto;
+  margin: 0px 3px;
+  padding: 0px 10px 5px 10px;
+  height: 36px;
+}
+
+.no-of-records {
+  font-weight: 500;
+  display: inline-block;
+  margin-left: 12px;
+  font-size: 14px;
+  position: relative;
+  top: 7px;
+}
+
+.report-name-col {
+  margin-bottom: 10px;
+  width: 90%;
+}
+
+.filters-col {
+  padding: 10px;
+  width: 75%;
+  margin-top: 20px;
+}
+
+.common-filter-formfield {
+  width: 275px;
+  margin-right: 15px;
+}
+
+.common-filter-search {
+  padding: 0;
+}
+
+.common-filter-icon {
+  width: 18px;
+}
+
+.width-95 {
+  width: 95% !important;
+}
+
+.width-100 {
+  width: 100% !important;
+}
+
+.favorite-toggle {
+  margin-top: 40px;
+  margin-left: 15px;
+}
+
+.chart-wrapper {
+  height: 200px;
+  margin: 10px 0px;
+}
+
+::ng-deep .report-configuration .mat-elevation-z8 {
+  box-shadow: none;
+}
+
+::ng-deep cwp-table-filter-panel > div {
+  height: calc(100vh - 207px);
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: rgba(0, 0, 0, 0.54) !important;
+}
+
+::ng-deep .mat-checkbox-frame {
+  border-width: 2px !important;
+  border-color: #888 !important;
+}
+
+.m-t-5 {
+  margin-top: 5px;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}

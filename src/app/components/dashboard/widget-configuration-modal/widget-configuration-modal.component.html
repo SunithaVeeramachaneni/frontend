@@ -1,0 +1,113 @@
+<div class="widget-config-modal">
+  <h2 mat-dialog-title translate class="widget-config-title">
+    widgetConfiguration
+  </h2>
+  <mat-dialog-content class="dialog-content">
+    <div class="dis-flex">
+      <ng-container *ngIf="updateWidget$ | async"></ng-container>
+      <ng-container
+        *ngIf="filteredReports$ | async as reports; else loadingReports"
+      >
+        <div class="dashboard-formfield width-50">
+          <mat-form-field appearance="outline" style="width: 90%">
+            <mat-label translate>report</mat-label>
+            <input
+              type="text"
+              matInput
+              tabindex="-1"
+              [formControl]="searchReport"
+              [matAutocomplete]="auto"
+            />
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              [displayWith]="displayWith"
+              (optionSelected)="onReportSelection($event.option.value)"
+            >
+              <mat-option
+                *ngFor="let report of reports.data"
+                [value]="report"
+                style="height: 85px"
+              >
+                <div>
+                  <p class="report-name">{{ report.name }}</p>
+                  <p class="description-title">
+                    {{ report.description }}
+                  </p>
+                  <p class="created-time-by">
+                    Created {{ report.createdTime | timeAgo }} by
+                    {{ report.createdBy }}
+                  </p>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="selectedReport">
+        <ng-container *ngIf="filterOptions$ | async; else loadingFilterOptions">
+          <app-common-filter
+            style="margin-left: 15px; margin-top: 5px"
+            [title]=""
+            [filtersApplied]="selectedReport.filtersApplied"
+            [reportColumns]="reportColumns"
+            [filterOptions]="selectedReport.filterOptions"
+            (appliedFilters)="applyFilter($event)"
+          >
+          </app-common-filter>
+        </ng-container>
+      </ng-container>
+    </div>
+    <p *ngIf="!selectedReport" class="select-report-text">
+      Select a report to start adding a widget
+    </p>
+    <div class="dis-flex dashboard-formfield" *ngIf="selectedReport">
+      <div class="width-50">
+        <app-chart-variant
+          [report]="selectedReport"
+          [chartConfig]="chartConfig"
+          [configOptions]="configOptions"
+          [displayTableVarient]="true"
+          (chartVarientChanges)="onChartVarientChanges($event)"
+        ></app-chart-variant>
+      </div>
+      <div class="width-50">
+        <div class="chart-wrapper" *ngIf="chartVarient !== 'table'">
+          <h4 style="margin: 0 10px">Preview</h4>
+          <ng-container
+            *ngIf="chartData$ | async as data; else loadingChartData"
+          >
+            <app-chart [chartConfig]="chartConfig" [chartData]="data">
+            </app-chart>
+          </ng-container>
+        </div>
+        <div *ngIf="chartVarient === 'table'">
+          <ng-container
+            *ngIf="reportDetails$ | async; else loadingReportDetails"
+          >
+            <cwp-dynamictable
+              [dataSource]="dataSource"
+              [configOptions]="configOptions"
+              (fetchDataCallback)="tableEventHandler($event)"
+              (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+            ></cwp-dynamictable>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="saveWidget()"
+      [disabled]="!selectedReport"
+    >
+      Save
+    </button>
+  </mat-dialog-actions>
+</div>
+<ng-template #loadingReports>Loading Reports...</ng-template>
+<ng-template #loadingChartData>Loading Chart Data...</ng-template>
+<ng-template #loadingReportDetails>Loading Report Data...</ng-template>
+<ng-template #loadingFilterOptions>Loading Filter Options...</ng-template>

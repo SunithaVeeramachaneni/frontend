@@ -1,0 +1,121 @@
+<div class="configurations-div" [formGroup]="chartVarientForm">
+  <p class="variants-title" translate>variants</p>
+  <mat-button-toggle-group
+    [value]="f.chartVarient.value"
+    formControlName="chartVarient"
+    (change)="onChartVarientChange($event)"
+    style="margin: 0 0 15px 0"
+  >
+    <mat-button-toggle value="bar_y" [disabled]="report.groupBy?.length === 0">
+      <img
+        [src]="getImage('bar_chart', f.chartVarient.value === 'bar_y')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="bar_x" [disabled]="report.groupBy?.length === 0">
+      <img
+        [src]="getImage('column_chart', f.chartVarient.value === 'bar_x')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="stacked_bar_x" disabled>
+      <img
+        [src]="
+          getImage(
+            'stacked_bar_chart',
+            f.chartVarient.value === 'stacked_bar_x'
+          )
+        "
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="stacked_bar_y" disabled>
+      <img
+        [src]="
+          getImage(
+            'stacked_column_chart',
+            f.chartVarient.value === 'stacked_bar_y'
+          )
+        "
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="line_x" [disabled]="report.groupBy?.length === 0">
+      <img
+        [src]="getImage('line_chart', f.chartVarient.value === 'line_x')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0">
+      <img
+        [src]="getImage('pie_chart', f.chartVarient.value === 'pie')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle
+      value="doughnut"
+      [disabled]="report.groupBy?.length === 0"
+    >
+      <img
+        [src]="getImage('donut_chart', f.chartVarient.value === 'doughnut')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+    <mat-button-toggle value="table" *ngIf="displayTableVarient">
+      <img
+        [src]="getImage('table', f.chartVarient.value === 'table')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <ng-container *ngIf="f.chartVarient.value !== 'table'">
+    <div class="chart-settings">
+      <mat-form-field appearance="outline" class="width-90">
+        <mat-label>{{ xAxisName }}</mat-label>
+        <mat-select
+          [(value)]="chartConfig.datasetFieldName"
+          (selectionChange)="onDatasetFieldNameChange()"
+        >
+          <mat-option
+            [value]="field.name"
+            *ngFor="let field of chartConfig.datasetFields"
+          >
+            {{ field.displayName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-90">
+        <mat-label>{{ yAxisName }}</mat-label>
+        <mat-select
+          [(value)]="chartConfig.countFieldName"
+          (selectionChange)="onCountFieldNameChange()"
+        >
+          <mat-option
+            [value]="field.name"
+            *ngFor="let field of chartConfig.countFields"
+          >
+            {{ field.displayName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="width-90">
+        <mat-label>Title</mat-label>
+        <input matInput placeholder="Title" formControlName="chartTitle" />
+      </mat-form-field>
+      <mat-checkbox formControlName="showValues">{{
+        'showValues' | translate
+      }}</mat-checkbox>
+      <p>
+        <mat-checkbox formControlName="showLegends">{{
+          'showLegends' | translate
+        }}</mat-checkbox>
+      </p>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="displayTableVarient && f.chartVarient.value === 'table'">
+    <div class="table-filter-panel">
+      <cwp-table-filter-panel [configOptions]="configOptions">
+      </cwp-table-filter-panel>
+    </div>
+  </ng-container>
+</div>

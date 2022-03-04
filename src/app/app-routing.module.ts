@@ -1,29 +1,42 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/maintenance',
+    redirectTo: 'maintenance',
     pathMatch: 'full'
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule)
-  },
-  {
-    path: 'maintenance',
-    loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
-    canActivate: [AutoLoginAllRoutesGuard]
-  },
-  {
-    path: 'spare-parts',
-    loadChildren: () => import('./pages/spare-parts/spare-parts.module').then(m => m.SparePartsModule),
+    loadChildren: () =>
+      import('./components/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule
+      ),
     canActivate: [AutoLoginAllRoutesGuard]
   },
   {
     path: 'work-instructions',
-    loadChildren: () => import('./pages/work-instructions/work-instructions.module').then( m => m.WorkInstructionsPageModule),
+    loadChildren: () =>
+      import('./components/work-instructions/work-instructions.module').then(
+        (m) => m.WorkInstructionsPageModule
+      ),
+    canActivate: [AutoLoginAllRoutesGuard]
+  },
+  {
+    path: 'maintenance',
+    loadChildren: () =>
+      import('./components/maintenance/maintenance.module').then(
+        (m) => m.MaintenanceModule
+      ),
+    canActivate: [AutoLoginAllRoutesGuard]
+  },
+  {
+    path: 'spare-parts',
+    loadChildren: () =>
+      import('./components/spare-parts/spare-parts.module').then(
+        (m) => m.SparePartsModule
+      ),
     canActivate: [AutoLoginAllRoutesGuard]
   }
 ];

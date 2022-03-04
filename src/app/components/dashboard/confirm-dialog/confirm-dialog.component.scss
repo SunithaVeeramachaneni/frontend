@@ -1,0 +1,110 @@
+.report-delete-modal {
+  width: auto;
+  height: auto;
+  overflow: hidden;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+}
+
+.title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 19px;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.warning-body {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  margin-bottom: 10px;
+}
+
+.widgets-associated-text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  color: #3d5afe;
+  cursor: pointer;
+}
+
+.yes-no-btn {
+  float: right;
+  margin-top: 10px;
+}
+
+.widgets-modal {
+  margin: 10px 0px 15px 0px;
+  background: white;
+  border: 1px solid gray;
+  border-radius: 4px;
+  position: relative;
+  left: 95px;
+  top: -90px;
+  width: 290px;
+}
+
+.header {
+  padding: 15px 15px 0 15px;
+}
+
+.dashboard-widgets-list {
+  padding: 0 15px 15px 15px;
+  overflow-y: scroll;
+  height: auto;
+  max-height: 250px;
+}
+
+.widgets-heading {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 21px;
+  color: #212121;
+}
+
+.widgets-cancel {
+  background: white;
+  border: none;
+  float: right;
+}
+
+.dashboard-heading {
+  background: rgba(33, 150, 243, 0.08);
+  padding: 10px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: #757575;
+  margin-top: 5px;
+}
+
+.dashboard-titles {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #212121;
+  margin-left: 10px;
+}
+
+.search-icon {
+  position: relative;
+  top: 2px;
+  right: 5px;
+}

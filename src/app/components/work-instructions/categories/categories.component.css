@@ -1,0 +1,164 @@
+.categories-header {
+  padding: 25px 7px 10px 7px;
+  flex-wrap: nowrap;
+}
+
+.categories-div {
+  border-radius: 8px;
+  margin: 10px 22px;
+  padding-bottom: 1px;
+}
+
+.categories-row-heading {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 21px;
+  color: #25282b;
+  padding-left: 13px;
+}
+
+.categories-heading {
+  padding-left: 5px;
+  position: relative;
+  top: -5px;
+}
+.categories-button {
+  float: right;
+  background-color: white;
+  margin-top: -7px;
+  margin-right: 15px;
+  border: none;
+  padding: 7px;
+  cursor: pointer;
+}
+
+.categories-button:hover {
+  background-color: #dbe6ff;
+}
+
+.categories-img {
+  position: relative;
+  top: 2px;
+  right: 2px;
+}
+
+.addcategory {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  align-items: center;
+  letter-spacing: 0.25px;
+  text-transform: uppercase;
+  color: #1351d8;
+  padding-left: 5px;
+}
+
+.categories-details {
+  padding: 0px 15px 10px 10px;
+  margin: 0px 15px;
+}
+
+.categories-details-with-no-results {
+  padding: 0px 34px 10px 34px;
+}
+
+.categories-details-card {
+  border: none;
+  padding: 5px;
+}
+
+.categories-details-card-body {
+  padding: 10px 0px 10px 7px;
+}
+
+.categories-details-card-body p {
+  margin-bottom: 0.3rem;
+}
+
+.categories-details-card-hover {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.categories-Title {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 21px;
+  color: #25282b;
+  margin-bottom: 5px;
+  text-decoration: none;
+}
+
+.categories-Wicount {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: #76767b;
+  margin-bottom: 0px;
+}
+
+.no-categories {
+  text-align: center;
+  width: 100%;
+  background: #f2f2f2;
+  margin: 0 auto;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px dashed #666;
+  margin-bottom: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.hoverWrapper:hover #hoverShow1 {
+  display: block;
+}
+
+.hoverWrapper #hoverShow1 {
+  display: none;
+  position: absolute;
+  right: 50px;
+}
+
+.menu-text {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+  color: #000000;
+}
+.mat-menu-item:hover {
+  background-color: #dbe6ff;
+}
+
+button:focus {
+  outline: none;
+}
+.card {
+  margin-bottom: 0px;
+  opacity: 0.8;
+  width: 95%;
+}
+.card-img-top {
+  opacity: 0.9;
+  border-radius: 7px;
+}
+.card:hover {
+  background-color: #dbe6ff;
+  opacity: 1;
+}
+.custom-card a {
+  color: #25282b;
+}

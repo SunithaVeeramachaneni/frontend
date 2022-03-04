@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AppMaterialModules } from '../material.module';
 import { CustomPaginationControlsComponent } from './components/custom-pagination-controls/custom-pagination-controls.component';
 import { DummyComponent } from './components/dummy/dummy.component';
@@ -8,11 +8,11 @@ import { DropDownFilterPipe } from './pipes/dropdown-filter.pipe';
 import { HeaderComponent } from './components/header/header.component';
 import { CommonFilterComponent } from './components/common-filter/common-filter.component';
 import { DateSegmentComponent } from './components/date-segment/date-segment.component';
-import { IonicModule } from '@ionic/angular';
-import { PopoverModule } from 'ngx-bootstrap/popover';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbModule } from 'xng-breadcrumb';
 import { DateTimePipe } from './pipes/date-time.pipe';
+import { TranslateModule } from '@ngx-translate/core';
+import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
 
 @NgModule({
   declarations: [
@@ -20,29 +20,31 @@ import { DateTimePipe } from './pipes/date-time.pipe';
     DummyComponent,
     TimeAgoPipe,
     DropDownFilterPipe,
-    HeaderComponent,
-    CommonFilterComponent,
+    DateTimePipe,
     DateSegmentComponent,
-    DateTimePipe
+    CommonFilterComponent,
+    HeaderComponent,
+    NumberToKMPipe
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
     AppMaterialModules,
-    IonicModule,
-    PopoverModule.forRoot(),
-    BreadcrumbModule
+    BreadcrumbModule,
+    TranslateModule.forChild({})
   ],
   exports: [
     CustomPaginationControlsComponent,
     DummyComponent,
-    HeaderComponent,
     TimeAgoPipe,
     DropDownFilterPipe,
-    CommonFilterComponent,
+    DateTimePipe,
     DateSegmentComponent,
-    DateTimePipe
-  ]
+    CommonFilterComponent,
+    HeaderComponent,
+    NumberToKMPipe
+  ],
+  providers: [DatePipe]
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -1,0 +1,106 @@
+.mat-icon-play-circle {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.audio-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 143%;
+  align-items: center;
+  letter-spacing: 0.15px;
+  color: #000000;
+  margin-left: 20px;
+}
+
+.audio-card {
+  // width: 365px;
+  // height: 165px;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+  border: 1px solid lightgray;
+  min-width: 310px;
+}
+
+.backward-icon {
+  width: 25px;
+  margin-left: 80px;
+  cursor: pointer;
+}
+
+.play-icon {
+  margin-left: auto;
+  margin-right: auto;
+  width: 30px;
+  cursor: pointer;
+}
+
+.display {
+  display: flex;
+}
+
+.forward-icon {
+  width: 25px;
+  margin-right: 80px;
+  cursor: pointer;
+}
+
+.audio-header {
+  padding-bottom: 30px;
+}
+
+.play_audio_button {
+  background-color: white;
+  border: none;
+}
+
+.float-left {
+  float: left;
+  padding: 0 10px;
+}
+
+.float-right {
+  float: right;
+  padding: 0 10px;
+}
+
+.plyr--audio .plyr__controls {
+  padding-bottom: 0;
+}
+
+.plyr__control {
+  display: none;
+}
+
+/* .plyr__controls__item {
+    display: none;
+  } */
+
+.plyr__progress__buffer {
+  display: none;
+}
+
+.plyr__volume {
+  display: none;
+}
+
+.plyr__time {
+  display: none;
+}
+
+.plyr video {
+  width: 315px;
+}
+
+.plyr__tooltip {
+  display: none;
+}
+
+.plyr__progress input {
+  width: 320px;
+  height: 2px;
+  margin: 30px 30px;
+}

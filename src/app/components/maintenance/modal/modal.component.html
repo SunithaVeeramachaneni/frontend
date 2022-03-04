@@ -1,0 +1,75 @@
+<div class="assignee-modal">
+  <h1 mat-dialog-title>
+    <span class="assign-work-order-heading">{{
+      'assignWorkOrder' | translate
+    }}</span>
+    <button (click)="dismiss()" class="modal-dismiss-class">
+      <img src="assets/img/svg/cancel-icon.svg" />
+    </button>
+  </h1>
+  <div mat-dialog-content>
+    <mat-form-field
+      appearance="outline"
+      class="mat-field"
+      style="margin: 10px 20px 0px 20px"
+    >
+      <mat-label>{{ 'workCenter' | translate }}</mat-label>
+      <mat-select
+        [(ngModel)]="workCenter"
+        name="workCenter"
+        (selectionChange)="this.onCenterChange($event)"
+      >
+        <mat-option *ngFor="let work of workCenterList" [value]="work">{{
+          work.workCenterKey
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline"
+      class="mat-field"
+      style="margin: 0px 20px 0px 20px"
+    >
+      <mat-label>{{ 'assignee' | translate }}</mat-label>
+      <mat-select
+        [(ngModel)]="assignee"
+        name="assignee"
+        (selectionChange)="this.onAssigneeChange($event)"
+      >
+        <mat-option
+          *ngFor="let assign of displayedAssigneeList"
+          [value]="assign"
+        >
+          <img
+            [hidden]="!getImageSrc(assign.image)"
+            [attr.src]="getImageSrc(assign.image)"
+            alt=""
+            style="
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              margin-right: 5px;
+              position: relative;
+              top: 10px;
+            "
+          />
+          {{ assign.personName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions style="float: right">
+    <button mat-button class="cancel-btn" (click)="dismiss()">
+      {{ 'cancel' | translate | uppercase }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      (click)="onSave()"
+      class="save-btn"
+      [disabled]="saveDisabled"
+    >
+      {{ 'save' | translate | uppercase }}
+    </button>
+  </div>
+</div>

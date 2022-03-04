@@ -1,56 +1,44 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IonicModule } from '@ionic/angular';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { of } from 'rxjs';
+import { AppMaterialModules } from 'src/app/material.module';
 import { BreadcrumbModule } from 'xng-breadcrumb';
-import { AppMaterialModules } from '../../../material.module';
-import { CommonService } from '../../services/common.service';
 import { HeaderService } from '../../services/header.service';
 import { logonUserDetails } from '../../services/header.service.mock';
+
 import { HeaderComponent } from './header.component';
 import { userData$ } from './header.component.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
-  let commonServiceSpy: CommonService;
   let fixture: ComponentFixture<HeaderComponent>;
   let headerServiceSpy: HeaderService;
   let oidcSecurityServiceSpy: OidcSecurityService;
 
-  beforeEach(waitForAsync(() => {
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      minimizeSidebarAction$: of(false)
-    });
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', ['getLogonUserDetails']);
+  beforeEach(async () => {
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'getLogonUserDetails'
+    ]);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$: userData$
+      userData$
     });
 
-    TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ],
+    await TestBed.configureTestingModule({
+      declarations: [HeaderComponent],
+      imports: [AppMaterialModules, BreadcrumbModule, RouterTestingModule],
       providers: [
-        { provide: CommonService, useValue: commonServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-      ],
-      imports:[
-        IonicModule,
-        AppMaterialModules,
-        BreadcrumbModule,
-        RouterTestingModule
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy }
       ]
-    })
-    .compileComponents();
-  }));
+    }).compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
       .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
+      .and.returnValue(logonUserDetails);
     fixture.detectChanges();
   });
 

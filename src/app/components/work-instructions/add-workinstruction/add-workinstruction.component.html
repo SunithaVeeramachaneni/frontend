@@ -1,0 +1,157 @@
+<div class="add-instruction-main">
+  <div class="wi-status-container" style="display: flex">
+    <div class="p-0" style="width: 40%">
+      <ul class="wi-title width">
+        <li>
+          <h2>
+            <a
+              matTooltip="{{ selectedInstruction.WI_Name }}"
+              matTooltipClass=""
+              class="width"
+            >
+              <input
+                type="text"
+                id="wi_title"
+                [(ngModel)]="selectedInstruction.WI_Name"
+                [disabled]="selectedInstruction.Published === true"
+                class="wi_title_input"
+                placeholder="Untitled Work Instruction"
+                autofocus="true"
+                autocomplete="off"
+                value="{{ selectedInstruction.WI_Name }}"
+                (keyup)="titleChange(selectedInstruction.WI_Name, true)"
+                #workInstructionTitle
+              />
+            </a>
+            <!-- {{ workInstructionTitle.focus() }} -->
+            <span class="wi-title-info-position">
+              <span
+                class="f-left text-danger wi-title-info"
+                *ngIf="titleErrors?.required"
+              >
+                Title is required
+              </span>
+            </span>
+            <span class="wi-title-info-position">
+              <span
+                class="f-left text-danger wi-title-info"
+                *ngIf="titleErrors?.exists"
+              >
+                Title already exists!
+              </span>
+            </span>
+          </h2>
+        </li>
+      </ul>
+    </div>
+    <div class="alignment" style="width: 60%">
+      <ul class="wi-status display">
+        <li class="display">
+          <app-player
+            *ngIf="
+              selectedInstruction.IsFromAudioOrVideoFile &&
+              !selectedInstruction.IsAudioOrVideoFileDeleted
+            "
+            [fileInfo]="fileInfo"
+          ></app-player>
+          <a [class.disabled]="!titleProvided" (click)="setFav()">
+            <span
+              *ngIf="!selectedInstruction.IsFavorite"
+              matTooltip="Make it Favorite"
+              matTooltipClass=""
+            >
+              <mat-icon class="mat-icon-star">star_border</mat-icon>
+            </span>
+            <span
+              *ngIf="selectedInstruction.IsFavorite"
+              matTooltip="Make it UnFavorite"
+              matTooltipClass=""
+            >
+              <mat-icon class="mat-icon-star is-fav-icon">star</mat-icon>
+            </span>
+          </a>
+          <button
+            [class.disabled]="!titleProvided"
+            matTooltip="More"
+            matTooltipClass=""
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            aria-label="Example icon-button with a menu"
+            class="more_horiz_btn"
+          >
+            <mat-icon class="more_horiz-icon">more_horiz</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              (click)="copyWI(selectedInstruction)"
+              id="copyWorkInstruction"
+            >
+              <img
+                alt="Copy Work Instruction"
+                src="assets/work-instructions-icons/svg/copy.svg"
+              />
+              <span class="menu-text m-l-15">Copy Work Instruction</span>
+            </button>
+            <button
+              mat-menu-item
+              (click)="removeWI(selectedInstruction)"
+              id="deleteWorkInstruction"
+            >
+              <mat-icon class="text-red">close</mat-icon>
+              <span class="menu-text text-red">Delete Work Instruction</span>
+            </button>
+          </mat-menu>
+        </li>
+        <li>
+          <div class="message" *ngIf="this.saveStatus === 'Saving..'">
+            <mat-icon class="cached">cached</mat-icon>{{ saveStatus }}
+          </div>
+          <div class="message" *ngIf="this.saveStatus === 'All Changes Saved'">
+            {{ saveStatus }}
+          </div>
+        </li>
+        <li>
+          <button
+            [disabled]="!receivedInstruction"
+            [ngClass]="{
+              'fnt-white': receivedInstruction,
+              save: !isWIPublished
+            }"
+            (click)="publishInstruction(selectedInstruction)"
+            mat-raised-button
+            class="b-r-8 publish-btn"
+          >
+            <span *ngIf="!receivedInstruction">
+              <img
+                alt="upload"
+                src="assets/work-instructions-icons/svg/upload.svg"
+                class="publish-btn-icon"
+              />
+              <span class="dis-publish">Publish</span>
+            </span>
+            <span *ngIf="receivedInstruction">
+              <img
+                alt="upload"
+                src="assets/work-instructions-icons/svg/upload-white.png"
+                class="publish-btn-icon"
+              />
+              <span class="publish">Publish</span>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="paginate-steps-container">
+    <div class="paginate-steps">
+      <app-overview
+        (publishOnAddCloneSteps)="publishOnAddCloneStepsHandler()"
+        (stepsDataEntry)="getStepsData($event)"
+        (instructionDataEntry)="getWorkInstruction($event)"
+      ></app-overview>
+    </div>
+  </div>
+</div>

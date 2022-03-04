@@ -1,43 +1,22 @@
-.segment-group {
-    margin: 0 10px;
-    height: 42px;
+::ng-deep .date-segment .mat-button-toggle-group {
+  height: 34px;
+  align-items: center;
+  border: 1px solid #f2f2f2;
 }
-  
-.segmented-line {
-    border: 1px solid #CCCCCC;
-    height: 22px;
-    margin-top: 9px;
-}
-  
-  .segment-button {
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 16px;
-    align-items: center;
-    --color: #7D7D7D;
-    min-width: auto;
-  }
-  
-  .segment-button-checked {
-    background: transparent;
-    --indicator-height: 0;
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 16px;
-    align-items: center;
-    --color: #000000;
-  }
 
-  .custom-btn {
-    font-family: Roboto;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 14px;
-    line-height: 16px;
-    align-items: center;
-    color: #7D7D7D;
-  }
+.date-segment {
+  margin-left: 10px;
+  margin-top: -17px;
+}
+
+::ng-deep .mat-datepicker-content {
+  display: block;
+  border-radius: 4px;
+  position: relative;
+  left: -295px;
+}
+
+.toogle-btn-text {
+  font-family: Roboto;
+  font-size: 13px;
+}

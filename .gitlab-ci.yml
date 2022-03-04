@@ -2,15 +2,11 @@
 stages:
   - build
   - test
-
 build-code-job:
   stage: build
   script:
-    - echo "buld "
-
-
-test-code-job2:
+    - echo “valid successful”
+test-code-job1:
   stage: test
   script:
-    - echo "If the files are built successfully,"
-    
+    - echo “test successful”

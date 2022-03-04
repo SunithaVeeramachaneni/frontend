@@ -1,0 +1,46 @@
+::ng-deep .mat-dialog-container {
+  padding: 15px 0;
+  overflow: hidden;
+}
+
+.assign-work-order-heading {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 21px;
+  color: #000000;
+  margin-left: 20px;
+}
+
+.modal-dismiss-class {
+  background: none;
+  border: none;
+  float: right;
+  margin-right: 15px;
+}
+
+.cancel-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #76767b;
+  float: right;
+  --background-hover: none;
+}
+
+.save-btn {
+  margin-right: 20px;
+  background-color: #1351d8;
+  color: #ffffff;
+}
+
+.save-btn:disabled {
+  margin-right: 20px;
+  background-color: #e5e5e5;
+  color: #8a8a8c;
+}

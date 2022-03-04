@@ -1,0 +1,16 @@
+{
+  "searchWorkOrders": "Search Work Orders",
+  "filter": "Filter",
+  "showOverdue": "Show Overdue",
+  "priority": "Priority",
+  "kittingStatus": "Kitting Status",
+  "workCenter": "Work Center",
+  "assignee": "Assignee",
+  "apply": "Apply",
+  "reset": "Reset",
+  "cancel": "Cancel",
+  "dueToday": "Due Today",
+  "dueThisWeek": "Due This Week",
+  "dueThisMonth": "Due This Month",
+  "custom": "Custom"
+}

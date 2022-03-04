@@ -1,0 +1,181 @@
+<div class="modal-card p-10 copy-ins tables-data">
+  <h1 mat-dialog-title>
+    Copy Work Instructions
+    <button (click)="cancel()" class="cancel-icon">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h1>
+  <div class="dis-flex">
+    <mat-form-field appearance="outline" class="search-field width-60">
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input
+        matInput
+        [(ngModel)]="search"
+        placeholder="Search by title or author"
+      />
+    </mat-form-field>
+    <select [(ngModel)]="CreatedBy" class="filter-dropdowns minimal width-40">
+      <option value="">Authors</option>
+      <option *ngFor="let obj of this.authors" [value]="obj">{{ obj }}</option>
+    </select>
+  </div>
+  <div mat-dialog-content>
+    <mat-tab-group [(selectedIndex)]="recentsFavorites">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>history</mat-icon>
+          <span class="p-l-5">Recents</span>
+        </ng-template>
+        <table class="table">
+          <tbody>
+            <ng-container
+              *ngIf="
+                recentsAndFavsObject.recents
+                  | filter: search
+                  | dropdownFilter: CreatedBy
+                  | sortBy: 'desc':'updated_at'
+                  | paginate: recentsConfig as result
+              "
+            >
+              <app-dummy #recents [value]="result"></app-dummy>
+              <tr *ngFor="let obj of result">
+                <td class="width-10" class="copy-ins-coverimages">
+                  <img
+                    class="coverImg"
+                    [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
+                    [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
+                    alt=""
+                  />
+                </td>
+                <td class="width-70">
+                  <span class="tabs-recent-title">{{ obj.WI_Name }}</span
+                  ><span class="chip" *ngIf="obj.Published === false"
+                    >Draft</span
+                  ><br />
+                  <span class="tabs-recent-subtitle">{{ obj.categories }}</span>
+                </td>
+                <td class="width-20">
+                  <button
+                    class="tabs-recent-add"
+                    data-dismiss="modal"
+                    (click)="copyInstruction(obj.WI_Name)"
+                  >
+                    <span class="tab-recent-add-title">COPY</span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <div
+                  class="no-fav"
+                  *ngIf="
+                    result.length === 0 &&
+                    this.recentsAndFavsObject.recents.length > 0
+                  "
+                >
+                  No Result Found!
+                </div>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <div
+          *ngIf="
+            recentsAndFavsObject.recents &&
+            recentsAndFavsObject.recents.length === 0
+          "
+          class="no-fav"
+        >
+          No Recent Instructions found !!
+        </div>
+      </mat-tab>
+      <mat-tab label="Favorites">
+        <ng-template mat-tab-label>
+          <mat-icon>star</mat-icon>
+          <span class="p-l-5">Favorites</span>
+        </ng-template>
+        <table class="table">
+          <tbody>
+            <ng-container
+              *ngIf="
+                recentsAndFavsObject.favs
+                  | filter: search
+                  | dropdownFilter: CreatedBy
+                  | sortBy: 'desc':'updated_at'
+                  | paginate: favConfig as result
+              "
+            >
+              <app-dummy #favourites [value]="result"></app-dummy>
+              <tr *ngFor="let obj of result">
+                <td class="copy-ins-coverimages">
+                  <img
+                    class="coverImg"
+                    [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
+                    [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
+                    alt=""
+                  />
+                </td>
+                <td>
+                  <span class="tabs-recent-title">{{ obj.WI_Name }}</span
+                  ><br />
+                  <span class="tabs-recent-subtitle">{{ obj.categories }}</span>
+                </td>
+                <td>
+                  <button
+                    class="tabs-recent-add"
+                    data-dismiss="modal"
+                    (click)="copyInstruction(obj.WI_Name)"
+                  >
+                    <span class="tab-recent-add-title">COPY</span>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <div
+                  class="no-fav"
+                  *ngIf="
+                    result.length === 0 &&
+                    this.recentsAndFavsObject.favs.length > 0
+                  "
+                >
+                  No Result Found!
+                </div>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <div
+          *ngIf="
+            recentsAndFavsObject.favs && recentsAndFavsObject.favs.length === 0
+          "
+          class="no-fav"
+        >
+          No Favorite Instructions found !!
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div mat-dialog-actions>
+    <pagination-template
+      #p="paginationApi"
+      [id]="recentsConfig.id"
+      (pageChange)="recentsConfig.currentPage = $event"
+      *ngIf="recentsFavorites === 0"
+      (pageBoundsCorrection)="recentsConfig.currentPage = $event"
+    >
+      <app-custom-pagination-controls
+        [paginationData]="p"
+      ></app-custom-pagination-controls>
+    </pagination-template>
+    <pagination-template
+      #p="paginationApi"
+      [id]="favConfig.id"
+      (pageChange)="favConfig.currentPage = $event"
+      *ngIf="recentsFavorites === 1"
+      (pageBoundsCorrection)="favConfig.currentPage = $event"
+    >
+      <app-custom-pagination-controls
+        [paginationData]="p"
+      ></app-custom-pagination-controls>
+    </pagination-template>
+  </div>
+</div>

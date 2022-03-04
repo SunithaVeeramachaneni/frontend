@@ -1,139 +1,120 @@
-.split-pane-visible > ion-menu.custom-menu1 {
-  max-width: 250px!important;
-  min-width: 250px!important;
+.app-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.mat-drawer-content {
+  overflow: hidden;
+  background-color: #f2f2f2;
+}
+
+.mat-drawer {
   border: none;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.split-pane-visible > ion-menu.custom-menu2 {
-  max-width: 80px!important;
-  min-width: 80px!important;
-  border: none;
+.max-drawer-content {
+  margin-left: 260px !important;
 }
 
-ion-menu ion-content {
-  --padding-top: 20px;
-  --padding-bottom: 20px;
-
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
+.min-drawer-content {
+  margin-left: 80px !important;
 }
 
-/* Remove background transitions for switching themes */
-ion-menu ion-item {
-  --transition: none;
+.maximized-sidebar-container {
+  max-width: 260px !important;
+  min-width: 260px !important;
 }
 
-ion-item {
-   padding-left: 10px;
-}
-
-ion-item.selected {
-  --color: #673AB7;
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 27px;
-}
-
-/*
- * Material Design Menu
-*/
-ion-menu.md ion-list {
-  padding: 20px 0;
-}
-
-ion-menu.md ion-list-header {
-  padding-left: 18px;
-  padding-right: 18px;
-
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  font-weight: 450;
-}
-
-ion-menu.md ion-item {
-  --padding-start: 18px;
-
-  margin-right: 10px;
-
-  border-radius: 0 50px 50px 0;
-
-  font-weight: 500;
-}
-
-ion-menu.md ion-item.selected {
-  border-left: 5px solid #673AB7;
-  padding-left: 5px;
-}
-
-.submenu.selected{
-  border-left: none !important;
-  padding-left: 10px !important;
-}
-
-ion-menu.md ion-item.selected mat-icon {
-  color: #673AB7;
-}
-
-ion-menu.md ion-list-header,
-ion-menu.md ion-item mat-icon {
-  color: var(--ion-color-step-650,#76767B);
-}
-
-ion-menu.ios ion-list-header {
-  padding-left: 16px;
-  padding-right: 16px;
-
-  margin-bottom: 8px;
-}
-
-ion-menu.ios ion-list {
-  padding: 20px 0 0;
-}
-
-ion-menu.ios ion-item {
-  --padding-start: 16px;
-  --min-height: 50px;
-}
-
-ion-menu.ios ion-item mat-icon {
-  font-size: 24px;
-  color:#76767B;
-}
-
-ion-menu.ios ion-item.selected mat-icon {
-  color: #673AB7;
-}
-
-.item.sc-ion-label-md-h, .item .sc-ion-label-md-h {
-  font-family: Poppins;
-  font-size: 14px;
-  white-space: pre-wrap;
-}
-
-.p-0 {
-  padding: 0 !important;
+.minimized-sidebar-container {
+  max-width: 80px !important;
+  min-width: 80px !important;
 }
 
 .sidebar-logo {
-  padding: 20px 30px;
+  padding: 20px 30px 10px 30px;
+  width: 200px;
+}
+
+.menu-item {
+  margin: 7px 0;
 }
 
 .sidebar-small-logo {
-  padding: 20px 25px;
+  padding: 25px;
 }
 
-.icon-margin {
-  margin: 0;
+ul {
+  padding: 0;
 }
 
-@media screen and (min-width:990px) {
+.menu-item:first-child {
+  margin-top: 0;
+}
+
+li {
+  list-style: none;
+}
+
+li:hover {
+  background: rgba(103, 58, 183, 0.08);
+  margin-right: 10px;
+}
+
+.menu-item li {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  color: #76767b;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.menu-item li.selected {
+  border-left: 5px solid #5449b7;
+  color: #5449b7;
+}
+
+.submenu li {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  color: #76767b;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.submenu li.subSelected {
+  color: #5449b7;
+  background: rgba(103, 58, 183, 0.08);
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.sidebar-icons {
+  margin-left: 20px;
+  margin-top: 7px;
+}
+
+li.selected .sidebar-icons {
+  margin-left: 15px;
+  margin-top: 7px;
+}
+
+.submenu {
+  margin: 7px 0;
+}
+
+@media screen and (min-width: 990px) {
   .min-app {
     display: none;
-  } 
+  }
 }
 
-@media screen and (max-width:1022px) {
+@media screen and (max-width: 1022px) {
   .min-app {
     position: fixed;
     top: 40%;
@@ -143,11 +124,19 @@ ion-menu.ios ion-item.selected mat-icon {
     margin-right: auto;
     width: 50%;
     text-align: center;
-  } 
+  }
 }
 
-@media screen and (max-width:1022px) {
+@media screen and (max-width: 1022px) {
   .main-app {
     display: none;
-  } 
+  }
+}
+
+.sidenav-drawer {
+  border-right: 1px solid #e0e0e0;
+}
+
+.m-l-60 {
+  margin-left: 60px;
 }

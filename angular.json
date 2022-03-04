@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "59cd7bdb-c04d-46c1-b17a-57a4d58730ef"
+  },
   "version": 1,
   "defaultProject": "app",
   "newProjectRoot": "projects",
@@ -14,35 +17,22 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "www",
+            "outputPath": "dist/cwp",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "assets"
-              },
-              {
-                "glob": "**/*.svg",
-                "input": "node_modules/ionicons/dist/ionicons/svg",
-                "output": "./svg"
-              }
+              "src/favicon.ico",
+              "src/assets"
             ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/bootstrap/dist/css/bootstrap.css",
-              "src/theme/variables.scss",
               "node_modules/plyr/dist/plyr.css",
-              "src/global.scss",
               "src/scss/style.scss"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/popper.js/dist/umd/popper.min.js"
             ],
             "aot": false,
             "vendorChunk": true,
@@ -53,7 +43,8 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "quill-delta-to-html",
-              "buffer"
+              "buffer",
+              "exceljs"
             ]
           },
           "configurations": {
@@ -118,7 +109,6 @@
                 }
               ]
             },
-
             "qaauto": {
               "fileReplacements": [
                 {
@@ -184,28 +174,15 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "styles": [
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/bootstrap/dist/css/bootstrap.css",
-              "src/theme/variables.scss",
-              "src/global.scss",
-              "src/scss/style.scss"
+              "src/scss/style.scss",
+              "node_modules/font-awesome/css/font-awesome.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/popper.js/dist/umd/popper.min.js"
             ],
             "assets": [
-              {
-                "glob": "favicon.ico",
-                "input": "src/",
-                "output": "/"
-              },
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "/assets"
-              }
+              "src/favicon.ico",
+              "src/assets"
             ]
           },
           "configurations": {
@@ -216,14 +193,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
         "e2e": {
@@ -233,51 +208,24 @@
             "devServerTarget": "app:serve"
           },
           "configurations": {
+            "devlopment": {
+              "devServerTarget": "app:serve:devlopment"
+            },
             "production": {
               "devServerTarget": "app:serve:production"
+            },
+            "qa": {
+              "devServerTarget": "app:serve:qa"
+            },
+            "qaauto": {
+              "devServerTarget": "app:serve:qaauto"
             },
             "ci": {
               "devServerTarget": "app:serve:ci"
             }
           }
-        },
-        "ionic-cordova-build": {
-          "builder": "@ionic/angular-toolkit:cordova-build",
-          "options": {
-            "browserTarget": "app:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production"
-            }
-          }
-        },
-        "ionic-cordova-serve": {
-          "builder": "@ionic/angular-toolkit:cordova-serve",
-          "options": {
-            "cordovaBuildTarget": "app:ionic-cordova-build",
-            "devServerTarget": "app:serve"
-          },
-          "configurations": {
-            "production": {
-              "cordovaBuildTarget": "app:ionic-cordova-build:production",
-              "devServerTarget": "app:serve:production"
-            }
-          }
         }
       }
-    }
-  },
-  "cli": {
-    "analytics": false,
-    "defaultCollection": "@ionic/angular-toolkit"
-  },
-  "schematics": {
-    "@ionic/angular-toolkit:component": {
-      "styleext": "scss"
-    },
-    "@ionic/angular-toolkit:page": {
-      "styleext": "scss"
     }
   }
 }

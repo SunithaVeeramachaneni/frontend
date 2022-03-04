@@ -1,0 +1,20 @@
+<div
+  class="chart-wrapper"
+  [ngStyle]="{ 'height.px': height - 75 }"
+  *ngIf="!widget.isTable"
+>
+  <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+    <app-chart [chartConfig]="chartConfig" [chartData]="data"> </app-chart>
+  </ng-container>
+</div>
+<div class="table-wrapper" *ngIf="widget.isTable">
+  <ng-container *ngIf="reportDetails$ | async; else loadingReportDetails">
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="tableEventHandler($event)"
+    ></cwp-dynamictable>
+  </ng-container>
+</div>
+<ng-template #loadingChartData>Loading Chart Data...</ng-template>
+<ng-template #loadingReportDetails>Loading Report Data...</ng-template>

@@ -1,0 +1,19 @@
+{
+  "searchWorkOrders": "Search Work Orders",
+  "filter": "Filter",
+  "showOverdue": "Show Overdue",
+  "priority": "Priority",
+  "kittingStatus": "Kitting Status",
+  "apply": "Apply",
+  "reset": "Reset",
+  "dueToday": "Due Today",
+  "dueThisWeek": "Due This Week",
+  "dueThisMonth": "Due This Month",
+  "custom": "Custom",
+  "kitsRequired": "Kits Required",
+  "assignForPicking": "Assigned For Picking",
+  "kittingInProgress": "Kitting In Progress",
+  "kitsComplete": "Kits Complete",
+  "kitsIssued": "Kits Issued",
+  "assignPicklist": "ASSIGN PICKLIST"
+}

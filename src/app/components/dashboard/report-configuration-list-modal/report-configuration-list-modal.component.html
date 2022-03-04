@@ -1,0 +1,76 @@
+<div class="report-configuration">
+  <h2 mat-dialog-title class="modal-header-title" translate>
+    reportConfiguration
+  </h2>
+  <mat-dialog-content class="mat-typography content">
+    <div class="content-div">
+      <div class="content-left-div">
+        <mat-form-field appearance="outline" class="search-fields">
+          <mat-label translate>searchObjects</mat-label>
+          <input
+            matInput
+            placeholder=""
+            [formControl]="searchObject"
+            tabindex="-1"
+          />
+        </mat-form-field>
+        <h6 class="titles" translate>objects</h6>
+        <ng-container
+          *ngIf="
+            filteredReportCategories$ | async as reportCategories;
+            else loadingObjects
+          "
+        >
+          <ul
+            *ngFor="let reportCategory of reportCategories; let i = index"
+            class="p-0 m-b-0 m-0"
+          >
+            <li
+              class="list-group-item"
+              [ngClass]="{ active: selectedIndex === i }"
+              (click)="updateSelectedIndex(i)"
+            >
+              {{ reportCategory.category }}
+            </li>
+          </ul>
+        </ng-container>
+        <ng-template #loadingObjects>Loading Objects...</ng-template>
+      </div>
+      <div class="content-right-div">
+        <mat-form-field appearance="outline" class="search-fields">
+          <mat-label translate>searchReports</mat-label>
+          <input
+            matInput
+            placeholder=""
+            [formControl]="searchReport"
+            tabindex="-1"
+          />
+        </mat-form-field>
+        <h6 class="titles" translate>reports</h6>
+        <ng-container
+          *ngIf="
+            filteredReportCategories$ | async as reportCategories;
+            else loadingReports
+          "
+        >
+          <ng-container
+            *ngFor="let reportCategory of reportCategories; let i = index"
+          >
+            <ng-container *ngIf="selectedIndex === i">
+              <li
+                class="list-group-item"
+                *ngFor="let subCategory of reportCategory.subCategories"
+                (click)="updateReportDefinitionName(subCategory)"
+                mat-dialog-close
+                routerLink="/dashboard/reports/addreport"
+              >
+                {{ subCategory }}
+              </li>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <ng-template #loadingReports>Loading Reports...</ng-template>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>

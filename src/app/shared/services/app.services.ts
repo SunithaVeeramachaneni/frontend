@@ -1,26 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
-  ErrorInfo,
-  Instruction,
-  InstructionOptional,
-  Step,
-  StepOptional,
-  User,
-  UserOptional,
-  Category,
-  CategoryOptional,
-  Mail,
-  RenameFileInfo,
-  CopyFilesPathInfo
-} from '../../interfaces';
+import { ErrorInfo } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
-
   constructor(private http: HttpClient) { }
 
   /**
@@ -32,7 +18,11 @@ export class AppService {
    *
    * @returns { headers: HttpHeaders }
    */
-  private getHttpOptions = ({ displayToast, failureResponse, contentType = '' }: any): {headers: HttpHeaders} => {
+  private getHttpOptions = ({
+    displayToast,
+    failureResponse,
+    contentType = ''
+  }: any): { headers: HttpHeaders } => {
     if (contentType) {
       return {
         headers: new HttpHeaders({
@@ -47,7 +37,7 @@ export class AppService {
         })
       };
     }
-  }
+  };
 
   /**
    * Prepare http request url and returns it
@@ -58,29 +48,68 @@ export class AppService {
    */
   public prepareUrl = (apiUrl: string, urlString: string): string => {
     return `${apiUrl}${urlString}`;
-  }
+  };
 
-  _getResp(apiUrl: string, urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _getResp(
+    apiUrl: string,
+    urlStr: string,
+    info: ErrorInfo = {} as ErrorInfo,
+    queryParams: any = {}
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = [] } = info;
     const httpOptions = this.getHttpOptions({
       displayToast,
       failureResponse
     });
-    return this.http.get<any>(url, httpOptions);
+    return this.http.get<any>(
+      url + this.getQueryString(queryParams),
+      httpOptions
+    );
   }
 
-  _getRespById(apiUrl: string, urlStr: string, id: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _getRespById(
+    apiUrl: string,
+    urlStr: string,
+    id: string,
+    info: ErrorInfo = {} as ErrorInfo,
+    queryParams: any = {}
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
     const httpOptions = this.getHttpOptions({
       displayToast,
       failureResponse
     });
-    return this.http.get<any>(url + id, httpOptions);
+    return this.http.get<any>(
+      url + id + this.getQueryString(queryParams),
+      httpOptions
+    );
   }
 
-  _getRespByName(apiUrl: string, urlStr: string, name: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _downloadFile(
+    apiUrl: string,
+    urlStr: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.get<any>(
+      url,
+      { ...httpOptions, responseType: 'blob' as 'json', }
+    );
+  }
+
+  _getRespByName(
+    apiUrl: string,
+    urlStr: string,
+    name: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = [] } = info;
     const httpOptions = this.getHttpOptions({
@@ -93,7 +122,86 @@ export class AppService {
   _postData(
     apiUrl: string,
     urlStr: string,
-    data: Instruction | InstructionOptional | Step | StepOptional | User | UserOptional | Category | CategoryOptional | Mail | FormData | CopyFilesPathInfo,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo,
+    queryParams: any = {}
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.post<any>(
+      url + this.getQueryString(queryParams),
+      data,
+      httpOptions
+    );
+  }
+
+  _updateData(
+    apiUrl: string,
+    urlStr: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.put<any>(url, data, httpOptions);
+  }
+
+  patchData(
+    apiUrl: string,
+    urlStr: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.patch<any>(url, data, httpOptions);
+  }
+
+  _removeData(
+    apiUrl: string,
+    urlStr: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.delete<any>(url, httpOptions);
+  }
+
+  _removeDataFromGateway(
+    apiUrl: string,
+    urlStr: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    const { displayToast = true, failureResponse = {} } = info;
+    const httpOptions = this.getHttpOptions({
+      displayToast,
+      failureResponse
+    });
+    return this.http.put<any>(url, data, httpOptions); // it is update in this case not delete
+  }
+
+  _postDataToGateway(
+    apiUrl: string,
+    urlStr: string,
+    data: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
@@ -105,7 +213,12 @@ export class AppService {
     return this.http.post<any>(url, data, httpOptions);
   }
 
-  _updateData(apiUrl: string, urlStr: string, data: Instruction | Step | Category | RenameFileInfo, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _putDataToGateway(
+    apiUrl: string,
+    urlStr: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
     const httpOptions = this.getHttpOptions({
@@ -115,47 +228,11 @@ export class AppService {
     return this.http.put<any>(url, data, httpOptions);
   }
 
-  _removeData(apiUrl: string, urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    const url = this.prepareUrl(apiUrl, urlStr);
-    const { displayToast = true, failureResponse = {} } = info;
-    const httpOptions = this.getHttpOptions({
-      displayToast,
-      failureResponse
-    });
-    return this.http.delete<any>(url, httpOptions);
-  }
-
-  _removeDataFromGateway(apiUrl: string, urlStr: string, data: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    const url = this.prepareUrl(apiUrl, urlStr);
-    const { displayToast = true, failureResponse = {} } = info;
-    const httpOptions = this.getHttpOptions({
-      displayToast,
-      failureResponse
-    });
-    return this.http.put<any>(url, data, httpOptions); // it is update in this case not delete
-  }
-
-  _postDataToGateway(apiUrl: string, urlStr: string, data: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    const url = this.prepareUrl(apiUrl, urlStr);
-    const { displayToast = true, failureResponse = {} } = info;
-    const httpOptions = this.getHttpOptions({
-      displayToast,
-      failureResponse
-    });
-    return this.http.post<any>(url, data, httpOptions);
-  }
-
-  _putDataToGateway(apiUrl: string, urlStr: string, data: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    const url = this.prepareUrl(apiUrl, urlStr);
-    const { displayToast = true, failureResponse = {} } = info;
-    const httpOptions = this.getHttpOptions({
-      displayToast,
-      failureResponse
-    });
-    return this.http.put<any>(url, data, httpOptions);
-  }
-
-  _getRespFromGateway(apiUrl: string, urlStr: string, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _getRespFromGateway(
+    apiUrl: string,
+    urlStr: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = [] } = info;
     const httpOptions = this.getHttpOptions({
@@ -165,7 +242,12 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
-  _getDataFromGatewayById(apiUrl: string, urlStr: string, params: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _getDataFromGatewayById(
+    apiUrl: string,
+    urlStr: string,
+    params: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = [] } = info;
     const headers = this.getHttpOptions({
@@ -176,7 +258,12 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
-  _getDataFromGatewayByStep(apiUrl: string, urlStr: string, params: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  _getDataFromGatewayByStep(
+    apiUrl: string,
+    urlStr: string,
+    params: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
     const headers = this.getHttpOptions({
@@ -187,14 +274,25 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
-  postRefreshToken(tokenEndPoint: string, data: any, info: ErrorInfo = {} as ErrorInfo): Observable<any> {
+  postRefreshToken(
+    tokenEndPoint: string,
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
     const body = new HttpParams({ fromObject: data });
     const { displayToast = true, failureResponse = {} } = info;
     const httpOptions = this.getHttpOptions({
       displayToast,
       failureResponse,
-      contentType : 'application/x-www-form-urlencoded'
+      contentType: 'application/x-www-form-urlencoded'
     });
     return this.http.post<any>(tokenEndPoint, body, httpOptions);
+  }
+
+  private getQueryString(queryParams: any): string {
+    const queryString = Object.keys(queryParams)
+      .map((param) => `${param}=${queryParams[param]}`)
+      .join('&');
+    return queryString ? `?${queryString}` : queryString;
   }
 }

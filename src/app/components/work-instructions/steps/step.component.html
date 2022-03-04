@@ -1,0 +1,3439 @@
+<section class="form-container">
+  <header class="custom-header-height">
+    <div class="dis-flex" style="position: relative">
+      <div class="p-6 dis-flex width-80">
+        <div class="prevbtn p-0">
+          <button
+            (click)="buttonActionsInHeader(this.tabs.length)"
+            [disabled]="firstButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>first_page</mat-icon>
+          </button>
+          <button
+            (click)="
+              buttonActionsInSteps(selectedID.value - 1, this.tabs.length)
+            "
+            [disabled]="firstButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+        </div>
+        <div class="stepsbar p-0">
+          <mat-tab-group
+            [selectedIndex]="selectedID.value"
+            (selectedIndexChange)="selectedID.setValue($event)"
+            (selectedTabChange)="onTabChange(selectedID.value, tabs.length)"
+          >
+            <mat-tab
+              *ngFor="let tab of tabsObject | keyvalue; let index = index"
+              [label]="
+                index > 0
+                  ? index + '. ' + tabs[index].toUpperCase()
+                  : tabs[index].toUpperCase()
+              "
+            >
+              <ng-template mat-tab-label>
+                <label
+                  class="labelHeading"
+                  [matTooltip]="
+                    index > 0
+                      ? index + '. ' + tabs[index].toUpperCase()
+                      : tabs[index].toUpperCase()
+                  "
+                  matTooltipClass=""
+                >
+                  {{
+                    index > 0
+                      ? index + '. ' + tabs[index].toUpperCase()
+                      : tabs[index].toUpperCase()
+                  }}
+                </label>
+              </ng-template>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+        <div class="nextbtn p-0">
+          <button
+            (click)="buttonActionsInSteps(selectedID.value + 1, tabs.length)"
+            [disabled]="lastButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+          <button
+            (click)="buttonActionsInSteps(tabs.length - 1, tabs.length)"
+            [disabled]="lastButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>last_page</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="add-step-btn width-20">
+        <button
+          [disabled]="!titleProvided"
+          mat-stroked-button
+          (click)="addTab()"
+          class="btn-outline-blue b-r-8 pull-right header-add-step"
+        >
+          <mat-icon>add</mat-icon>
+          <span class="header-add-step-text">Add Step</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="dis-flex custom-row p-r-0" style="height: 100%">
+    <div *ngIf="!shownPreview" class="bg-white p-0 width-100">
+      <ng-container
+        *ngIf="selectedID.value === 0"
+        [ngTemplateOutlet]="selected.content"
+      >
+        <button
+          *ngIf="
+            tabs.length > 0 &&
+            selectedID.value === 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 0 &&
+            selectedID.value === 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          [disabled]="!titleProvided"
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 1">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 2">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 3">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 4">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 5">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 6">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 7">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 8">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 9">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 10">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 11">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 12">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 13">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 14">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 15">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 16">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 17">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 18">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 19">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 20">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 21">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 22">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 23">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 24">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 25">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 26">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 27">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 28">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 29">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 30">
+        <app-step-content
+          [twelveColumned]="'true'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+    </div>
+    <div
+      *ngIf="shownPreview"
+      class="bg-white p-0 width-40"
+      style="position: relative"
+    >
+      <ng-container
+        *ngIf="selectedID.value === 0"
+        [ngTemplateOutlet]="selected.content"
+      >
+        <button
+          *ngIf="
+            tabs.length > 0 &&
+            selectedID.value === 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 0 &&
+            selectedID.value === 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          [disabled]="!titleProvided"
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 1">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 2">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 3">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 4">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 5">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 6">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 7">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 8">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 9">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 10">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 11">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 12">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 13">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <img
+            src="assets/work-instructions-icons/svg/backward-arrow.svg"
+            alt=""
+            class="p-l-5 m-b-3"
+          />
+          Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 14">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 15">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 16">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 17">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 18">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 19">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 20">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 21">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 22">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 23">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 24">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 25">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 26">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 27">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 28">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 29">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="selectedID.value === 30">
+        <app-step-content
+          [twelveColumned]="'false'"
+          (cloneStep)="cloneTab($event)"
+          (sendDisplayStatus)="previewDisplayStatus($event)"
+          (onStepDataEntry)="getStepData($event)"
+          [previewDisplay]="shownPreview"
+          [selectedTabIndex]="selectedID.value"
+        ></app-step-content>
+        <button
+          (click)="onClickHeader()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 pull-left m-l-15 header-btn"
+          matTooltip="{{ prepareHeaderTitle() }}"
+          matTooltipClass=""
+        >
+          <mat-icon class="m-b-1">arrow_back</mat-icon> Header
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length !== selectedID.value + 1
+          "
+          (click)="onClickOfStep(selectedID.value + 1)"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareStepTitle(selectedID.value) }}"
+          matTooltipClass=""
+        >
+          <a class="step-btn-ellipsis">Step {{ selectedID.value + 1 }}</a
+          ><mat-icon class="p-l-5">arrow_forward</mat-icon>
+        </button>
+        <button
+          *ngIf="
+            tabs.length > 1 &&
+            selectedID.value !== 0 &&
+            tabs.length === selectedID.value + 1
+          "
+          (click)="addTab()"
+          mat-stroked-button
+          matStepperNext
+          class="btn-outline-blue b-r-8 step-btn"
+          matTooltip="{{ prepareAddStepTitle(tabs.length) }}"
+          matTooltipClass=""
+        >
+          Add Step {{ tabs.length - 1 + 1 }}
+          <mat-icon class="p-l-5 m-b-1">arrow_forward</mat-icon>
+        </button>
+      </ng-container>
+    </div>
+    <div
+      *ngIf="shownPreview"
+      class="flex-col gray-bg p-t-b-10 m-centered p-t-b-10 ipad-iphone-preview-block width-60"
+    >
+      <div>
+        <div class="form-factors has-text-right ipad-iphone-dropdown">
+          <form [formGroup]="formFactors" class="p-t-10">
+            <button
+              (click)="hidePreview()"
+              class="has-text-right btn btn-hide-show-preview"
+            >
+              HIDE PREVIEW
+            </button>
+            <mat-form-field appearance="outline">
+              <mat-label>Preview on</mat-label>
+              <mat-select
+                placeholder="Category"
+                (ngModelChange)="onDeviceSelection($event)"
+                formControlName="formFactors"
+                [disableOptionCentering]="true"
+                panelClass="myPanelClass"
+              >
+                <mat-option *ngFor="let device of devices" [value]="device">
+                  {{ device.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </div>
+
+        <div *ngIf="selectedFormFactor.name === 'iPad'" class="section-block">
+          <app-ipad-preview
+            [selectedID]="selectedID.value"
+            [titleProvided]="titleProvided"
+            [tabs]="tabs"
+            [selectedInstructionData]="selectedInstructionData"
+            [selectedInstruction]="instruction"
+            [loadedImages]="loadedImages"
+            [currentStepTitle]="currentStepTitle"
+            [instructions]="instructions"
+            [warnings]="warnings"
+            [hints]="hints"
+            [reactionPlan]="reactionPlan"
+          >
+          </app-ipad-preview>
+        </div>
+        <div *ngIf="selectedFormFactor.name === 'iPhone'" class="section-block">
+          <app-iphone-preview
+            [selectedID]="selectedID.value"
+            [titleProvided]="titleProvided"
+            [tabs]="tabs"
+            [selectedInstructionData]="selectedInstructionData"
+            [selectedInstruction]="instruction"
+            [loadedImages]="loadedImages"
+            [currentStepTitle]="currentStepTitle"
+            [instructions]="instructions"
+            [warnings]="warnings"
+            [hints]="hints"
+            [reactionPlan]="reactionPlan"
+          >
+          </app-iphone-preview>
+        </div>
+        <br />
+      </div>
+    </div>
+  </div>
+  <footer class="example-step-navigation-bar"></footer>
+</section>

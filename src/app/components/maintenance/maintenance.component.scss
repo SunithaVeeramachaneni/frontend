@@ -1,0 +1,95 @@
+.maintenance-page {
+  height: 120vh;
+  padding: 15px 0;
+  margin: 0px 5px;
+}
+
+.maintenance-body {
+  background-color: #f2f2f2;
+  height: 100%;
+  position: relative;
+  border-top-left-radius: 10px;
+}
+
+.header-filters {
+  display: flex;
+  background-color: #ffffff;
+  height: 50px;
+  padding-top: 5px;
+  margin: 10px 10px 0 10px;
+}
+
+.unassigned-workorder-list {
+  border-top: 10px solid #5856d6;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.assigned-workorder-list {
+  border-top: 10px solid #5ac8fa;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.in-progress-workorder-list {
+  border-top: 10px solid#FFCC00;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.completed-workorder-list {
+  border-top: 10px solid #ff9500;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.list-elements {
+  padding: 12px;
+  border-bottom: 1px solid #cccccc;
+  list-style-type: none;
+}
+
+.li-cols {
+  border-top: 1px solid #cccccc;
+  padding-top: 10px;
+}
+
+.li-cols:first-child {
+  border-top: none;
+  padding-top: 10px;
+}
+
+.column-height {
+  max-height: calc(100vh - 230px);
+  overflow-y: scroll;
+}
+
+.kits-count {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 26px;
+  color: #000000;
+}
+
+.kit-heading {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000000;
+}

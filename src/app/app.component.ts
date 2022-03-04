@@ -1,11 +1,18 @@
-import { AfterViewChecked, ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { CommonService } from './shared/services/common.service';
-import { Router ,NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { routingUrls } from './app.constants';
+import { defaultLanguage, routingUrls } from './app.constants';
+import { TranslateService } from '@ngx-translate/core';
 
 const {
   dashboard,
+  reports,
   spareParts,
   maintenance,
   workInstructions,
@@ -19,26 +26,26 @@ const {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewChecked {
-  public logo = "../assets/img/svg/innov-logo.svg";
-  public smallLogo = "../assets/img/svg/innov-small-logo.svg";
-
   menus = [
     {
       title: dashboard.title,
       url: dashboard.url,
-      icon: 'home',
+      inActiveImage: '../assets/sidebar-icons/dashboard-gray.svg',
+      activeImage: '../assets/sidebar-icons/dashboard-blue.svg',
       showSubMenu: false,
-      subPages: null,
-      disable: true
+      disable: false,
+      subPages: [
+        { title: reports.title, url: reports.url }
+      ],
     },
     {
       title: maintenance.title,
       url: maintenance.url,
-      icon: 'view_column',
+      inActiveImage: '../assets/sidebar-icons/maintenance-gray.svg',
+      activeImage: '../assets/sidebar-icons/maintenance-blue.svg',
       showSubMenu: false,
       subPages: null,
       disable: false
@@ -46,7 +53,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: spareParts.title,
       url: spareParts.url,
-      icon: 'view_column',
+      inActiveImage: '../assets/sidebar-icons/spare-parts-gray.svg',
+      activeImage: '../assets/sidebar-icons/spare-parts-blue.svg',
       showSubMenu: false,
       subPages: null,
       disable: false
@@ -54,7 +62,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: workInstructions.title,
       url: workInstructions.url,
-      icon: 'format_list_numbered',
+      inActiveImage: '../assets/sidebar-icons/work-instructions-gray.svg',
+      activeImage: '../assets/sidebar-icons/work-instructions-blue.svg',
       showSubMenu: false,
       disable: false,
       subPages: [
@@ -64,46 +73,75 @@ export class AppComponent implements OnInit, AfterViewChecked {
         { title: recents.title, url: recents.url },
         { title: files.title, url: files.url }
       ]
-    },
+    }
   ];
   loggedIn = false;
   dark = false;
   sidebar: boolean;
   currentRouteUrl: string;
+  selectedMenu: string;
 
-  constructor(private commonService: CommonService, 
-              private router: Router,
-              private cdrf: ChangeDetectorRef) { }
+  constructor(
+    private commonService: CommonService,
+    private router: Router,
+    private cdrf: ChangeDetectorRef,
+    private translateService: TranslateService
+  ) { }
 
   ngOnInit() {
-    this.commonService.minimizeSidebarAction$.subscribe(data => {
+    this.commonService.minimizeSidebarAction$.subscribe((data) => {
       this.sidebar = data;
-      if(this.currentRouteUrl) {
-        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
+      if (this.currentRouteUrl) {
+        this.menus = this.toggleSubMenu(
+          this.menus,
+          this.currentRouteUrl,
+          this.sidebar
+        );
       }
     });
 
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(
-      (event: NavigationEnd)  => {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
         this.currentRouteUrl = event.url;
+        const splitedUrl = '/' + this.currentRouteUrl.split('/')[1];
+        const selectedmenu = this.menus.find((x) => x.url === splitedUrl);
+        this.selectedMenu = selectedmenu?.title;
         this.commonService.setCurrentRouteUrl(this.currentRouteUrl);
-        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl, this.sidebar);
-    });
+        this.menus = this.toggleSubMenu(
+          this.menus,
+          this.currentRouteUrl,
+          this.sidebar
+        );
+      });
+
+    this.translateService.use(defaultLanguage);
+    this.commonService.setTranslateLanguage(defaultLanguage);
   }
 
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
   }
 
-  toggleSubMenu(menus: any, currentRouteUrl: string, sidebarMinimized: boolean) {
-    return menus.map(menuItem => {
+  selectedListElement(title) {
+    this.selectedMenu = title;
+  }
+
+  toggleSubMenu(
+    menus: any,
+    currentRouteUrl: string,
+    sidebarMinimized: boolean
+  ) {
+    return menus.map((menuItem) => {
       let showSubMenu = false;
-      if (menuItem.subPages !== null && !sidebarMinimized && currentRouteUrl.indexOf(menuItem.url) === 0) {
+      if (
+        menuItem.subPages !== null &&
+        !sidebarMinimized &&
+        currentRouteUrl.indexOf(menuItem.url) === 0
+      ) {
         showSubMenu = true;
       }
-     return { ...menuItem, showSubMenu };
-   });
+      return { ...menuItem, showSubMenu };
+    });
   }
 }
