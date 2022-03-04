@@ -1,0 +1,20 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "importHelpers": true,
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "target": "es5",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["esnext", "dom"]
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  }
+}

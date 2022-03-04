@@ -1,0 +1,136 @@
+<div class="modal-card">
+  <form [formGroup]="frmSubscribe" (ngSubmit)="onSubmit()">
+    <h1 mat-dialog-title>
+      {{ title }}
+      <button (click)="cancel()" class="cancel-icon">
+        <mat-icon>close</mat-icon>
+      </button>
+    </h1>
+    <div mat-dialog-content>
+      <div class="mat-error">{{ categoryValidatedMsg }}</div>
+      <input type="text" formControlName="cid" type="hidden" />
+      <div class="form-group margin-bottom">
+        <p class="form-headings">Title<span class="text-required">*</span></p>
+        <input
+          type="text"
+          name="title"
+          formControlName="title"
+          id="Category_Name"
+          autocomplete="off"
+          #CatName
+          class="title-field"
+          [ngClass]="{
+            'is-invalid': f.title.errors && (f.title.dirty || f.title.touched)
+          }"
+        />
+        <div
+          *ngIf="f.title.errors && (f.title.dirty || f.title.touched)"
+          class="invalid-feedback"
+        >
+          <div *ngIf="f.title.errors.required">Title is required</div>
+          <div *ngIf="f.title.errors.minlength">
+            Title must be at least 3 characters
+          </div>
+          <div *ngIf="f.title.errors.maxlength">
+            Title must be at the max of 48 characters
+          </div>
+          <div *ngIf="f.title.errors.categoryNameExists">
+            Category name already exists
+          </div>
+        </div>
+        <div class="has-text-right char-count">
+          {{ f.title.value.length }}/48
+        </div>
+      </div>
+      <div class="form-group">
+        <p class="form-headings pt10">Cover Image</p>
+
+        <div
+          class="uploadfilecontainer1"
+          (click)="fileInput.click()"
+          appDragDrop
+          (onFileDropped)="uploadFile($event)"
+        >
+          <input
+            hidden
+            type="file"
+            accept="image/*"
+            #fileInput
+            (change)="uploadFile($event.target.files)"
+            placeholder="drap here"
+          />
+          <label class="uploadfilecontainertitle">
+            <img
+              src="assets/work-instructions-icons/svg/upload.svg"
+              alt=""
+              class="upload-img"
+            />
+            Upload your own</label
+          >
+        </div>
+        <div
+          class="files-list dis-flex"
+          *ngFor="let file of files; let i = index"
+        >
+          <div class="width-50 f-left">
+            <img
+              alt="Cover Image"
+              [hidden]="!getImageSrc(file)"
+              [attr.src]="getImageSrc(file)"
+              class="s3coverImage"
+              [ngStyle]="getS3CoverImageHeight()"
+            />
+          </div>
+          <div class="width-40 fnt-gray p-0 my-auto">
+            {{ file }}
+          </div>
+          <div class="width-10 p-0 my-auto">
+            <button
+              type="button"
+              class="delete-file"
+              (click)="deleteAttachment(i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngFor="let coverImage of coverImages; let i = index">
+        <div
+          class="dis-flex row-padding"
+          *ngIf="(i + 1) % 2 !== 0"
+          [ngStyle]="i === 0 && { 'padding-top': '10px' }"
+        >
+          <div class="width-50" style="padding-right: 10px">
+            <label>
+              <input
+                type="radio"
+                formControlName="coverImage"
+                [value]="coverImages[i]"
+              />
+              <img #image class="coverImages" [src]="coverImages[i]" alt="" />
+            </label>
+          </div>
+          <div class="width-50" style="padding-left: 10px">
+            <label>
+              <input
+                type="radio"
+                formControlName="coverImage"
+                [value]="coverImages[i + 1]"
+              />
+              <img
+                class="coverImages cover-image"
+                [src]="coverImages[i + 1]"
+                alt=""
+              />
+            </label>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div mat-dialog-actions>
+      <button type="submit" class="save-btn">SAVE</button>
+    </div>
+  </form>
+</div>

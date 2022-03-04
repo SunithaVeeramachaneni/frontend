@@ -1,0 +1,150 @@
+.min-toolbar {
+  background-color: white;
+  height: 65px;
+}
+
+.header-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 22px;
+  margin-left: 10px;
+  color: #000000;
+}
+
+.header-cols {
+  display: flex;
+  position: absolute;
+  right: 25px;
+}
+
+.width-auto {
+  width: auto;
+}
+
+.header-message-icon {
+  width: 30px;
+  height: 30px;
+  padding-left: 10px;
+  padding-top: 7px;
+}
+
+.header-user-icon {
+  width: 45px;
+  height: 45px;
+  margin: 0px 5px 0px 10px;
+  border-radius: 50%;
+}
+
+.loggedin-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: right;
+  color: #000000;
+  white-space: nowrap;
+  float: right;
+  text-transform: capitalize;
+  line-height: 1;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.loggedin-user-role {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: right;
+  color: #8f8f8f;
+  white-space: nowrap;
+  margin-top: 5px;
+}
+
+.arrow-icon {
+  margin-top: 10px;
+  font-size: 45px;
+}
+
+.create-new-ins {
+  height: 36px;
+}
+
+.create-new-ins-btn {
+  padding: 0 10px 0 10px;
+  font-size: 14px;
+}
+
+.sidebar-minimize-icons {
+  display: inline-flex;
+}
+
+.sidebar-close {
+  width: 28px;
+  min-width: 28px;
+  // padding: 7px 10px 7px 7px;
+  cursor: pointer;
+}
+
+// .sidebar-close:hover {
+//   background: rgba(61, 90, 254, 0.08);
+//   border-radius: 50%;
+// }
+
+.sidebar-open {
+  width: 28px;
+  min-width: 28px;
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  left: 5px;
+}
+// .sidebar-open:hover {
+//   background: rgba(61, 90, 254, 0.08);
+//   border-radius: 50%;
+// }
+
+::ng-deep xng-breadcrumb {
+  font-size: 12px;
+  margin-left: 45px;
+  margin-bottom: 10px;
+}
+
+.displayGrid {
+  display: grid;
+}
+
+.breadcrumbs {
+  position: relative;
+  top: -50px;
+  height: 0px;
+  left: 40px;
+}
+
+::ng-deep xng-breadcrumb .xng-breadcrumb-trail {
+  margin-bottom: 0px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+::ng-deep xng-breadcrumb .xng-breadcrumb-link {
+  color: #3d5afe;
+}
+
+::ng-deep xng-breadcrumb .xng-breadcrumb-link:hover {
+  text-decoration: none;
+}
+
+@media (max-width: 991px) {
+  .sidebar-open {
+    display: none;
+  }
+  .sidebar-close {
+    display: none;
+  }
+}
+
+.cursor {
+  cursor: pointer;
+}

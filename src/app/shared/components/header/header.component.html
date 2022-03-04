@@ -1,0 +1,44 @@
+<mat-toolbar class="min-toolbar">
+  <div>
+    <div class="sidebar-minimize-icons">
+      <img
+        src="../../../../assets/img/svg/sidebar-closed.svg"
+        (click)="minimize(true)"
+        *ngIf="this.sidebarMinimize === false"
+        class="sidebar-close"
+      />
+      <img
+        src="../../../../assets/img/svg/sidebar-opened.svg"
+        (click)="minimize(false)"
+        *ngIf="this.sidebarMinimize === true"
+        class="sidebar-open"
+      />
+      <h6 class="header-title">{{ title }}</h6>
+    </div>
+    <div class="breadcrumbs">
+      <xng-breadcrumb separator=">"></xng-breadcrumb>
+    </div>
+  </div>
+
+  <div class="header-cols" *ngIf="userData$ | async as userDetails">
+    <div class="width-auto displayGrid">
+      <span class="loggedin-user-name"
+        >{{ this.username[0] }} {{ this.username[1] }}</span
+      >
+      <span class="loggedin-user-role">Maintenance Manager</span>
+    </div>
+    <div class="width-auto">
+      <mat-icon
+        class="m-r-10 m-l-10 cursor arrow-icon"
+        [matMenuTriggerFor]="menu"
+        >account_circle</mat-icon
+      >
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="signout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Sign Out</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-toolbar>

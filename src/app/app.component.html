@@ -1,0 +1,82 @@
+<div class="min-app">
+  <img src="assets/img/svg/small_screen.svg" /><br />
+  Please use a tablet or desktop for the best connected worker experience
+</div>
+
+<mat-drawer-container class="app-container main-app">
+  <mat-drawer mode="side" opened class="sidenav-drawer">
+    <div
+      [ngClass]="{
+        'maximized-sidebar-container': this.sidebar === false,
+        'minimized-sidebar-container': this.sidebar === true
+      }"
+    >
+      <div class="sidebar-header">
+        <img
+          src="../../../assets/img/svg/innov-logo.svg"
+          class="sidebar-logo"
+          *ngIf="this.sidebar === false"
+        />
+        <img
+          src="../../../assets/img/svg/innov-small-logo.svg"
+          class="sidebar-small-logo"
+          *ngIf="this.sidebar === true"
+        />
+      </div>
+      <ul *ngFor="let menuitem of menus; let i = index" class="menu-item">
+        <li
+          [routerLink]="menuitem.url"
+          routerLinkActive="selected"
+          routerDirection="root"
+          detail="false"
+          (click)="selectedListElement(menuitem.title)"
+        >
+          <img
+            [src]="menuitem.inActiveImage"
+            *ngIf="selectedMenu !== menuitem.title"
+            class="sidebar-icons"
+          />
+          <img
+            [src]="menuitem.activeImage"
+            *ngIf="selectedMenu === menuitem.title"
+            class="sidebar-icons"
+          />
+          <span
+            *ngIf="this.sidebar === false"
+            style="position: relative; top: -2px; left: 10px"
+          >
+            {{ menuitem.title }}
+          </span>
+        </li>
+
+        <div
+          *ngIf="menuitem.showSubMenu && menuitem.subPages !== null"
+          class="m-l-60"
+        >
+          <ul
+            lines="none"
+            class="p-0 submenu"
+            *ngFor="let submenuitem of menuitem.subPages"
+          >
+            <li
+              [routerLink]="submenuitem.url"
+              routerLinkActive="subSelected"
+              routerDirection="root"
+              detail="false"
+            >
+              <span>{{ submenuitem.title }}</span>
+            </li>
+          </ul>
+        </div>
+      </ul>
+    </div>
+  </mat-drawer>
+  <mat-drawer-content
+    [ngClass]="{
+      'max-drawer-content': this.sidebar === false,
+      'min-drawer-content': this.sidebar === true
+    }"
+  >
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>

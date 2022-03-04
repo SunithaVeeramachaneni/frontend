@@ -1,0 +1,134 @@
+<div class="bg-white categories-div categories-grid">
+  <div class="categories-header" style="display: flex">
+    <div class="categories-row-heading" style="width: 80%">
+      <img src="./assets/work-instructions-icons/svg/categories.svg" alt="" />
+      <span class="categories-heading">Categories</span>
+    </div>
+    <div style="width: 20%">
+      <button
+        type="button"
+        class="btn btn-link font-weight-bold btn-link-custom categories-button"
+        (click)="open(catSubscribeComponent, {})"
+      >
+        <img
+          src="./assets/work-instructions-icons/svg/addcategory.svg"
+          alt=""
+          class="categories-img"
+        />
+        <span class="addcategory">ADD CATEGORY</span>
+      </button>
+    </div>
+  </div>
+  <ng-container
+    *ngIf="
+      this.categoriesList
+        | filter: searchCriteria
+        | orderBy: 'Created_At':true:'case-insensitive'
+        | paginate: config as result
+    "
+  >
+    <mat-grid-list
+      cols="3"
+      rowHeight="250px"
+      class="categories-details"
+      [ngClass]="{ 'categories-details-with-no-results': result.length === 0 }"
+    >
+      <mat-grid-tile *ngFor="let obj of result">
+        <div
+          *ngIf="obj.CId !== defaultCategoryId"
+          class="card custom-card hoverWrapper categories-details-card"
+        >
+          <a [routerLink]="['/work-instructions/category', obj.CId]">
+            <img
+              class="card-img-top"
+              style="height: 100px; width: 100%"
+              [ngStyle]="getS3CoverImageStyles(obj.Cover_Image)"
+              [hidden]="!getImageSrc(obj.Cover_Image, obj.CId)"
+              [attr.src]="getImageSrc(obj.Cover_Image, obj.CId)"
+              alt=""
+            />
+          </a>
+          <div class="card-body categories-details-card-body">
+            <p>
+              <a
+                [routerLink]="['/work-instructions/category', obj.CId]"
+                class="categories-Title"
+              >
+                {{ obj.Category_Name }}</a
+              >
+            </p>
+            <p class="categories-Wicount">
+              <strong>{{ obj.Drafts_Count }}</strong> Drafted -
+              <strong>{{ obj.Published_Count }}</strong> Published
+            </p>
+            <div id="hoverShow1" class="categories-details-card-hover">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                style="margin-right: 20px"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button
+                  mat-menu-item
+                  (click)="open(catSubscribeComponent, obj)"
+                  id="editCategory"
+                >
+                  <mat-icon>edit</mat-icon>
+                  <span class="menu-text">Edit Category</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="open(delCatSubscribeComponent, obj)"
+                  id="deleteCategory"
+                >
+                  <mat-icon class="text-red">close</mat-icon>
+                  <span class="menu-text text-red">Delete Category</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+        </div>
+        <div
+          *ngIf="obj.CId === defaultCategoryId"
+          class="card custom-card hoverWrapper categories-details-card"
+        >
+          <a [routerLink]="['/work-instructions/category', obj.CId]"
+            ><img
+              #image
+              style="height: 100px; width: 100%"
+              class="card-img-top"
+              src="{{ obj.Cover_Image }}"
+              alt=""
+          /></a>
+          <div class="card-body categories-details-card-body">
+            <p>
+              <a
+                [routerLink]="['/work-instructions/category', obj.CId]"
+                class="categories-Title"
+                >{{ obj.Category_Name }}</a
+              >
+            </p>
+            <p class="categories-Wicount">
+              <strong>{{ obj.Drafts_Count }}</strong> Drafted -
+              <strong>{{ obj.Published_Count }}</strong> Published
+            </p>
+          </div>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <div [hidden]="result.length === 0">
+      <pagination-template
+        #p="paginationApi"
+        [id]="config.id"
+        (pageChange)="config.currentPage = $event"
+        (pageBoundsCorrection)="config.currentPage = $event"
+      >
+        <app-custom-pagination-controls
+          [paginationData]="p"
+        ></app-custom-pagination-controls>
+      </pagination-template>
+    </div>
+  </ng-container>
+</div>

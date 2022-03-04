@@ -1,0 +1,185 @@
+.files {
+  border-radius: 10px 0px 0px 0px;
+  border-top: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
+  height: 100%;
+  background: white;
+  margin-bottom: 30px;
+}
+
+.drafts-table-title h2 {
+  margin: 0;
+  padding: 15px 0px;
+  color: #000000;
+  background: #fff;
+  font-size: 1.5rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+}
+
+.text-left-align {
+  text-align: left;
+}
+
+.input-group-text {
+  background: #f2f2f2;
+  border: none;
+}
+
+.search-icon {
+  height: 14px;
+}
+.mat-icon-circle {
+  font-size: 35px;
+  vertical-align: middle;
+  position: relative;
+  left: -10px;
+  top: -5px;
+  color: #bdbdbd;
+}
+.mat-icon-star {
+  position: relative;
+  top: 6px;
+}
+.search-box {
+  width: 50%;
+  background-color: #f2f2f2;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  height: 36px;
+}
+
+.font-color {
+  color: #000000;
+}
+
+.arrow {
+  font-size: 16px;
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+}
+
+.arrow-inactive {
+  color: white;
+}
+
+table {
+  width: 98%;
+}
+td {
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+thead th {
+  cursor: pointer;
+  border-top: none;
+}
+
+tbody tr td:nth-child(5) {
+  text-align: right;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+  border-bottom: 1px solid #c8ced3;
+  font-family: 'Roboto';
+  padding: 10px;
+}
+
+.files-icons-list {
+  position: relative;
+  top: 5px;
+}
+
+.files-icons {
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+.create-wi-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 28px;
+  letter-spacing: 0.15px;
+  color: #3d5afe;
+  background-color: transparent;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  border-radius: 4px;
+}
+
+.create-wi-btn-icon {
+  position: relative;
+  top: 5px;
+}
+
+.create-wi-btn-text {
+  position: relative;
+  top: -1px;
+  padding-left: 5px;
+}
+
+.files-data {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  align-items: center;
+  color: #76767b;
+}
+
+.files-names {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 21px;
+  color: #25282b;
+}
+
+.music-icon {
+  color: rgba(0, 0, 0, 0.54);
+  position: relative;
+  top: 5px;
+  margin-right: 10px;
+}
+
+.save-files-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 5px 10px;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  background: #3d5afe;
+  border-radius: 4px;
+  border: none;
+}
+
+.cancel-files-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 22px;
+  padding: 5px 10px;
+  letter-spacing: 0.5px;
+  color: #000000;
+  background: #c7c7ca;
+  border-radius: 4px;
+  margin-left: 10px;
+  border: none;
+}
+
+.files-input {
+  height: 40px;
+  border: 1px solid #3d5afe;
+  border-radius: 4px;
+}

@@ -1,0 +1,92 @@
+.widget-config-modal {
+  width: 700px;
+  max-width: 800px;
+  min-height: 430px;
+  background: white;
+  overflow: hidden;
+  padding: 20px;
+}
+
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+}
+
+.dialog-content {
+  border-bottom: 1px solid #e5e5e5;
+  height: 345px;
+  overflow: hidden;
+}
+
+.widget-config-title {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 0px;
+}
+
+.report-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: Roboto;
+  line-height: 35px;
+}
+
+.description-title {
+  font-size: 15px;
+  font-family: Roboto;
+  line-height: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+.created-time-by {
+  font-size: 15px;
+  font-family: Roboto;
+  line-height: 32px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+.select-report-text {
+  text-align: center;
+  position: relative;
+  top: 30%;
+}
+
+.save-btn {
+  position: absolute;
+  bottom: 23%;
+  right: 35%;
+}
+
+.close-btn {
+  position: relative;
+  top: 15px;
+  float: right;
+}
+
+.chart-wrapper {
+  height: 240px;
+  margin: 10px 0px;
+}
+
+::ng-deep .widget-config-modal .mat-elevation-z8 {
+  box-shadow: none;
+}
+
+::ng-deep .widget-config-modal .tableColumns {
+  height: auto !important;
+}
+
+::ng-deep .widget-config-modal .mat-table {
+  height: 285px !important;
+}

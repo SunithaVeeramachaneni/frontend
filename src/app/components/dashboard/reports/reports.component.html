@@ -1,0 +1,63 @@
+<app-header title="Reports"></app-header>
+<div
+  class="reports-body"
+  *ngIf="reports$ | async as reports; else loadingReports"
+>
+  <div class="dis-flex">
+    <div class="width-40 toggle-btns">
+      <mat-button-toggle-group [formControl]="selectedReportSegmentControl">
+        <mat-button-toggle value="recent" class="toogle-btn-text">
+          Recent
+        </mat-button-toggle>
+        <mat-button-toggle value="favorite" class="toogle-btn-text">
+          Favorite
+        </mat-button-toggle>
+        <mat-button-toggle value="all" class="toogle-btn-text">
+          All
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <span
+        class="no-of-records"
+        *ngIf="reportsCount$ | async as reportsCount; else loadingReportsCount"
+      >
+        {{
+          'reportPlural'
+            | translate
+              : {
+                  totalCount: reportsCount.count
+                    ? (reportsCount.count | numberToKM)
+                    : 0,
+                  count: reports.data ? reports.data.length : 0
+                }
+        }}
+      </span>
+    </div>
+    <div class="width-60 custom-mat-form-field-gray-color">
+      <button
+        class="new-report-btn"
+        (click)="openDialog()"
+        translate="newReport"
+      ></button>
+      <mat-form-field appearance="outline" class="search-form-field">
+        <mat-icon matPrefix class="searchIcon">search</mat-icon>
+        <input
+          matInput
+          type="text"
+          placeholder="Search Reports"
+          [(ngModel)]="searchValue"
+          (ngModelChange)="debouncedSearchReports($event)"
+        />
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="p-l-10 p-r-10">
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+    ></cwp-dynamictable>
+  </div>
+</div>
+<ng-template #loadingReports>Loading Reports...</ng-template>
+<ng-template #loadingReportsCount>Loading Reports Count...</ng-template>

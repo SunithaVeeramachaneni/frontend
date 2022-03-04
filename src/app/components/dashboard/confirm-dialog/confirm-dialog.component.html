@@ -1,0 +1,18 @@
+<div class="report-delete-modal">
+  <p class="title">Delete Dashboard?</p>
+  <p class="warning-body">
+    <b>Note:</b> Deletion of any dashboard will also delete its widgets/reports
+  </p>
+  <button mat-raised-button color="warn" class="yes-no-btn" (click)="confirm()">
+    Yes
+  </button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+  >
+    No
+  </button>
+</div>

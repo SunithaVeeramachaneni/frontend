@@ -1,0 +1,156 @@
+.right-div {
+  position: absolute;
+  right: 40px;
+}
+
+.search-form-field {
+  float: right;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.searchIcon {
+  position: relative;
+  top: 2px;
+  color: #757575;
+  right: 2px;
+  margin-right: 10px;
+}
+
+.reports-body {
+  background: #ffffff;
+  margin: 14px;
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+::ng-deep .reports-body .mat-elevation-z8 {
+  box-shadow: none;
+}
+
+::ng-deep .reports-body #matTableMain {
+  height: calc(100vh - 160px) !important;
+}
+
+.reports-body > div {
+  width: 100%;
+}
+
+.headings {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: 0.15px;
+  color: #212121;
+}
+
+.text-align {
+  text-align: right;
+}
+
+.new-report-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  border-radius: 4px;
+  background-color: #3d5afe;
+  height: 39px;
+  padding: 0px 14px;
+  float: right;
+  margin: 8px 10px 0 0;
+  cursor: pointer;
+}
+
+::ng-deep .reportsSearch-formfield {
+  .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.2em 0px 0.5em 0px !important;
+    top: -0.5em;
+  }
+
+  .mat-form-field-label-wrapper {
+    margin-top: -0.15em;
+  }
+
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: #ffffff;
+    border-radius: 4px;
+  }
+}
+
+.report-button {
+  height: 36px;
+  color: #3d5afe;
+  min-width: auto;
+  margin: 4px;
+  top: 4px;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+}
+
+.text {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 19px;
+  text-align: center;
+  color: #000000;
+  opacity: 0.5;
+  position: relative;
+  top: 190px;
+}
+
+.noOfWidgets {
+  margin-top: 16px;
+  margin-left: 12px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  color: #757575;
+}
+
+td,
+th {
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.no-of-records {
+  font-weight: 500;
+  padding-left: 10px;
+}
+
+::ng-deep .dashboard-body .mat-elevation-z8 {
+  box-shadow: none;
+}
+
+.toggle-btns {
+  margin: 10px 0 0 10px;
+}
+
+.toggle-btns {
+  ::ng-deep .mat-button-toggle-group {
+    height: 34px;
+    align-items: center;
+    border: 1px solid #f2f2f2;
+  }
+  ::ng-deep .mat-button-toggle {
+    width: 80px;
+  }
+}
+
+.toogle-btn-text {
+  font-family: Roboto;
+  font-size: 13px;
+}

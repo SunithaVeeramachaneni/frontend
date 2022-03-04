@@ -1,0 +1,103 @@
+<span>
+  <span class="kit-number">{{ workOrder.workOrderID }}</span
+  ><br />
+  <span class="display-flex">
+    <img src="../../../assets/spare-parts-icons/date.svg" class="list-icons" />
+    <span class="date-priority-label">{{
+      workOrder.dueDate | date: 'd-MMM-yyyy'
+    }}</span>
+  </span>
+  <span
+    class="display-flex"
+    *ngIf="
+      workOrder.priorityStatus !== '' &&
+      (workOrder.statusCode !== '1' || workOrder.statusCode !== '2')
+    "
+  >
+    <img
+      src="../../../assets/spare-parts-icons/priority.svg"
+      class="list-icons"
+    />
+    <span class="date-priority-label">{{ workOrder.priorityStatus }}</span>
+  </span>
+  <span>
+    <span
+      class="display-flex"
+      class="date-priority-label"
+      *ngIf="workOrder.statusCode === '3'"
+    >
+      <img
+        src="../../../assets/spare-parts-icons/parts.svg"
+        class="list-icons"
+      />
+      <span
+        >{{ workOrder.staged }} of {{ workOrder.totItems }} Parts Picked</span
+      >
+    </span>
+    <div class="m-l-20">
+      <mat-progress-bar
+        *ngIf="workOrder.statusCode === '3'"
+        mode="determinate"
+        color="medium"
+        class="progress-bar-class"
+        value="{{ workOrder.progressValue }}"
+      ></mat-progress-bar>
+      <span
+        *ngIf="workOrder.statusCode !== '4' && workOrder.statusCode !== '5'"
+        [ngClass]="{
+          'parts-available-label':
+            workOrder.partsavailable === 'PARTS AVAILABLE',
+          'waiting-on-parts-label':
+            workOrder.partsavailable === 'WAITING ON PARTS'
+        }"
+      >
+        {{ workOrder.partsavailable }}
+      </span>
+    </div>
+  </span>
+  <div
+    class="display-flex m-t-10"
+    *ngIf="workOrder.statusCode === '2' || workOrder.statusCode === '3'"
+  >
+    <img
+      src="../../../assets/spare-parts-icons/technicianProfile.svg"
+      style="width: 15px"
+    />
+    <span class="m-l-10">{{ workOrder.assignee }}</span>
+  </div>
+  <span
+    class="display-flex"
+    *ngIf="workOrder.statusCode === '4' || workOrder.statusCode === '5'"
+  >
+    <img src="../../../assets/spare-parts-icons/parts.svg" class="list-icons" />
+    <span class="date-priority-label">{{ workOrder.totItems }} Parts</span>
+  </span>
+  <span class="display-flex" *ngIf="workOrder.statusCode === '5'">
+    <img
+      src="../../../assets/spare-parts-icons/pickedup.svg"
+      class="list-icons"
+    />
+    <span class="date-priority-label"
+      >Picked up by {{ workOrder.assignee }}</span
+    >
+  </span>
+  <span *ngIf="technicians$ | async as technicians">
+    <button mat-button [matMenuTriggerFor]="menu" class="assign-picklist-btn">
+      <img
+        src="../../../assets/spare-parts-icons/assign.svg"
+        style="width: 18px"
+      />
+      <span class="assign-text-class">{{ 'assignPicklist' | translate }}</span>
+    </button>
+
+    <mat-menu #menu="matMenu" class="custom-mat-menu">
+      <button
+        mat-menu-item
+        *ngFor="let technician of technicians; let i = index"
+        (click)="assignTech(technician.fName, workOrder.workOrderID)"
+      >
+        <span> {{ technician.fName }}</span>
+      </button>
+    </mat-menu>
+  </span>
+</span>

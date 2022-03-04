@@ -1,0 +1,83 @@
+<div class="report-delete-modal">
+  <p class="title">Delete Report?</p>
+  <p *ngIf="widgetCount" class="warning-body">
+    Do you want to delete report <b>{{ reportName }}</b> & its
+    <span
+      class="widgets-associated-text"
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+      (click)="isPopoverOpen = !isPopoverOpen"
+    >
+      {{ widgetCount }} associated
+    </span>
+    Widgets?
+    <ng-template
+      cdkConnectedOverlay
+      cdkConnectedOverlayPanelClass="custom-popover"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      [cdkConnectedOverlayHasBackdrop]="true"
+      [cdkConnectedOverlayOpen]="isPopoverOpen"
+      [cdkConnectedOverlayOrigin]="trigger"
+      cdkConnectedOverlayWidth="400px"
+      (backdropClick)="isPopoverOpen = false"
+    >
+      <div class="widgets-modal">
+        <div class="header custom-mat-form-field-gray-color">
+          <span class="widgets-heading">Widgets</span>
+          <button (click)="isPopoverOpen = false" class="widgets-cancel">
+            <img src="../../../../../assets/img/svg/cancel-icon.svg" />
+          </button>
+          <mat-form-field
+            appearance="outline"
+            style="width: 100%; margin-top: 10px"
+          >
+            <mat-icon matPrefix class="search-icon">search</mat-icon>
+            <input
+              matInput
+              [placeholder]="'searchDashboardOrWidgets' | translate"
+              autocomplete="off"
+              disabled
+            />
+          </mat-form-field>
+        </div>
+        <div class="dashboard-widgets-list">
+          <ng-container *ngFor="let dashboard of groupedWidgets">
+            <p class="dashboard-heading">
+              {{ dashboard.dashboardName }}
+              <span style="float: right">{{ dashboard.widgets.length }}</span>
+            </p>
+            <div *ngFor="let widget of dashboard.widgets">
+              <p class="dashboard-titles">
+                {{ widget.name }}
+              </p>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+  </p>
+  <p *ngIf="!widgetCount" class="warning-body">
+    Do you want to delete report <b>{{ reportName }}</b
+    >?
+  </p>
+  <p class="warning-body">
+    <b>Note:</b> Deletion of any report will also delete its widgets
+  </p>
+  <button
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="deleteReport()"
+  >
+    Yes
+  </button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+  >
+    No
+  </button>
+</div>

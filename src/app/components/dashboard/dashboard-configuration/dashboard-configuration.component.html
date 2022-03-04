@@ -1,0 +1,96 @@
+<div
+  class="customer-row"
+  [ngClass]="dashboardDisplayMode === 'ALL' ? 'cust-row-all' : ''"
+>
+  <mat-form-field
+    appearance="outline"
+    *ngIf="dashboardDisplayMode !== 'ALL' && dashboards$ | async as dashboards"
+    class="dashboard-dropdown m-r-5"
+  >
+    <mat-label translate>dashboards</mat-label>
+    <mat-select
+      [(value)]="dashboard"
+      (selectionChange)="dashboardSelectionChanged($event)"
+    >
+      <mat-option *ngFor="let dashboard of dashboards" [value]="dashboard">
+        {{ dashboard.name }}
+        {{ dashboard.isDefault === true ? '(default)' : '' }}
+      </mat-option>
+      <mat-option value="VIEW_ALL_DASHBOARDS">All Dashboards</mat-option>
+      <mat-option value="CREATE_DASHBOARD" class="create-dashboard-opt"
+        >Create Dashboard</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <div class="width-60 dis-flex">
+    <span class="dashboard-title">
+      {{ dashboard.name }}
+      <span *ngIf="dashboard.isDefault" class="default-chip">Default</span>
+    </span>
+
+    <button
+      [matMenuTriggerFor]="menu"
+      class="more-icon"
+      [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
+    >
+      <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button mat-menu-item>Edit</button>
+      <button mat-menu-item>Mark default</button>
+      <button mat-menu-item class="delete-menu-item">Delete</button>
+    </mat-menu>
+  </div>
+
+  <div style="text-align: right">
+    <button
+      class="new-widget-btn"
+      translate="newWidget"
+      [disabled]="!dashboard.id"
+      (click)="createWidget()"
+    ></button>
+  </div>
+</div>
+<mat-divider></mat-divider>
+<ng-container *ngIf="mimimizeSidebar$ | async"></ng-container>
+<ng-container *ngIf="interval$ | async"></ng-container>
+<div id="gridster-container" #gridsterContainer>
+  <gridster [options]="options">
+    <ng-container
+      *ngIf="widgetsData$ | async as widgetsData; else loadingWidgets"
+    >
+      <gridster-item
+        [item]="widget.config"
+        *ngFor="let widget of widgetsData.data"
+      >
+        <div>
+          <div class="dis-flex widget-header">
+            <span class="gridster-item-content widget-title">
+              {{ widget.name }}
+            </span>
+            <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #widgetMenu="matMenu">
+              <button mat-menu-item (click)="editWidget(widget)">
+                <mat-icon class="mat-icon-action">edit</mat-icon>
+                <span translate>editWidget</span>
+              </button>
+              <button mat-menu-item (click)="deleteWidget(widget)">
+                <mat-icon class="mat-icon-action">delete</mat-icon>
+                <span translate>deleteWidget</span>
+              </button>
+            </mat-menu>
+          </div>
+          <div class="widget-body">
+            <app-widget
+              [widget]="widget"
+              [height]="widgetHeights[widget.id]"
+            ></app-widget>
+          </div>
+        </div>
+      </gridster-item>
+    </ng-container>
+  </gridster>
+</div>
+<ng-template #loadingWidgets>Loading Widgets...</ng-template>

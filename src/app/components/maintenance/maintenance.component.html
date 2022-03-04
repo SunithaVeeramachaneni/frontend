@@ -1,0 +1,119 @@
+<div class="header">
+  <app-header [title]="headerTitle"></app-header>
+</div>
+
+<div class="maintenance-body">
+  <div class="header-filters">
+    <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
+    </app-date-segment>
+
+    <div style="position: absolute; right: 20px">
+      <app-common-filter
+        [title]="headerTitle"
+        [showOverdueList]="showOverdueList"
+        [priorityList]="priorityList"
+        [kitStatusList]="kitStatusList"
+        [workCenterList]="workCenterList"
+        [technicians]="technicians"
+      >
+      </app-common-filter>
+    </div>
+  </div>
+
+  <mat-grid-list
+    cols="4"
+    *ngIf="this.filteredWorkOrderList$ | async as workOrders"
+    class="maintenance-page"
+  >
+    <mat-grid-tile>
+      <ul class="unassigned-workorder-list">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders.unassigned.length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'unassignedWorkOrders' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            *ngFor="let workOrder of workOrders.unassigned; let i = index"
+            class="li-cols"
+          >
+            <app-mcc-card
+              [workOrder]="workOrder"
+              (assign)="onAssignPress($event)"
+            ></app-mcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="assigned-workorder-list">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders.assigned.length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'assignedWorkOrders' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            *ngFor="let workOrder of workOrders.assigned; let i = index"
+            class="li-cols"
+          >
+            <app-mcc-card
+              [workOrder]="workOrder"
+              (assign)="onAssignPress($event)"
+            ></app-mcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="in-progress-workorder-list">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders.inProgress.length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'inProgressWorkOrders' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            *ngFor="let workOrder of workOrders.inProgress; let i = index"
+            class="li-cols"
+          >
+            <app-mcc-card [workOrder]="workOrder"></app-mcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <ul class="completed-workorder-list">
+        <li class="list-elements">
+          <span>
+            <span class="kits-count">{{ workOrders.completed.length }}</span>
+            <br />
+            <span class="kit-heading">{{
+              'completedWorkOrders' | translate
+            }}</span>
+          </span>
+        </li>
+        <div class="column-height">
+          <li
+            *ngFor="let workOrder of workOrders.completed; let i = index"
+            class="li-cols"
+          >
+            <app-mcc-card [workOrder]="workOrder"></app-mcc-card>
+          </li>
+        </div>
+      </ul>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

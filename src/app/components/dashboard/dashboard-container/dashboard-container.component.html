@@ -1,0 +1,24 @@
+<div class="dashboard-header">
+  <app-header [title]="headerTitle"></app-header>
+  <div class="header-filters dashboard-formfield" style="display: none">
+    <mat-form-field
+      appearance="outline"
+      *ngIf="dashboards$ | async as dashboards"
+      class="dashboard-dropdown"
+    >
+      <mat-label translate>dashboards</mat-label>
+      <mat-select [(value)]="selectedDashboard">
+        <mat-option *ngFor="let dashboard of dashboards" [value]="dashboard">
+          {{ dashboard.name }}
+          {{ dashboard.isDefault === true ? '(default)' : '' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+<div class="dashboard-body">
+  <ng-container>
+    <app-dashboards [selectedDashboard]="selectedDashboard"></app-dashboards>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>

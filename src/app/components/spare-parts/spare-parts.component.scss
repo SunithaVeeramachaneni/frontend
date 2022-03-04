@@ -1,0 +1,104 @@
+.spare-parts-body {
+  background-color: #f2f2f2;
+  height: 100%;
+  position: relative;
+  border-top-left-radius: 10px;
+}
+
+.spareparts-page {
+  height: 120vh;
+  padding: 20px;
+  margin: 0px 12px;
+}
+
+.header-filters {
+  display: flex;
+  background-color: #ffffff;
+  height: 50px;
+  padding-top: 5px;
+  margin: 10px 10px 0 10px;
+}
+
+.list-elements {
+  padding: 12px;
+  border-bottom: 1px solid #cccccc;
+  list-style-type: none;
+}
+
+.kits-count {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 26px;
+  color: #000000;
+}
+
+.kit-heading {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16px;
+  color: #000000;
+}
+
+.kits-required {
+  border-top: 10px solid #af52de;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.assign-for-picking {
+  border-top: 10px solid #5856d6;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.kitting-in-progress {
+  border-top: 10px solid #ffcc00;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.kits-complete {
+  border-top: 10px solid #34c759;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.kits-issued {
+  border-top: 10px solid #007aff;
+  width: 100%;
+  margin: 0;
+  border-radius: 8px;
+  background-color: white;
+  padding: 0;
+}
+
+.li-cols {
+  border-top: 1px solid #cccccc;
+  padding: 10px 15px 10px 15px;
+}
+
+.li-cols:first-child {
+  border-top: none;
+  padding: 10px 15px 10px 15px;
+}
+
+.column-height {
+  max-height: calc(100vh - 230px);
+  overflow-y: scroll;
+}

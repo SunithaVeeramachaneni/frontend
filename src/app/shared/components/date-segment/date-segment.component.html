@@ -1,0 +1,40 @@
+<div class="date-segment">
+  <mat-button-toggle-group [value]="selectDate" (change)="dateChanged($event)">
+    <mat-button-toggle value="today" class="toogle-btn-text">{{
+      'dueToday' | translate
+    }}</mat-button-toggle>
+    <mat-button-toggle value="week" class="toogle-btn-text">{{
+      'dueThisWeek' | translate
+    }}</mat-button-toggle>
+    <mat-button-toggle value="month" class="toogle-btn-text">{{
+      'dueThisMonth' | translate
+    }}</mat-button-toggle>
+    <mat-button-toggle
+      value="custom"
+      (click)="rangePicker.open()"
+      class="toogle-btn-text"
+      >{{ customText | translate }}</mat-button-toggle
+    >
+  </mat-button-toggle-group>
+  <mat-form-field appearance="fill" style="visibility: hidden; width: 0">
+    <mat-date-range-input [rangePicker]="rangePicker">
+      <input type="button" matStartDate [(ngModel)]="startDate" />
+      <input type="button" matEndDate [(ngModel)]="endDate" />
+    </mat-date-range-input>
+    <mat-date-range-picker #rangePicker>
+      <mat-date-range-picker-actions>
+        <button mat-button matDateRangePickerCancel>
+          {{ 'cancel' | translate }}
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          matDateRangePickerApply
+          (click)="appliedDateRange(startDate, endDate)"
+        >
+          {{ 'apply' | translate }}
+        </button>
+      </mat-date-range-picker-actions>
+    </mat-date-range-picker>
+  </mat-form-field>
+</div>

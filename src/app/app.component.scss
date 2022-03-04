@@ -1,0 +1,142 @@
+.app-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.mat-drawer-content {
+  overflow: hidden;
+  background-color: #f2f2f2;
+}
+
+.mat-drawer {
+  border: none;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.max-drawer-content {
+  margin-left: 260px !important;
+}
+
+.min-drawer-content {
+  margin-left: 80px !important;
+}
+
+.maximized-sidebar-container {
+  max-width: 260px !important;
+  min-width: 260px !important;
+}
+
+.minimized-sidebar-container {
+  max-width: 80px !important;
+  min-width: 80px !important;
+}
+
+.sidebar-logo {
+  padding: 20px 30px 10px 30px;
+  width: 200px;
+}
+
+.menu-item {
+  margin: 7px 0;
+}
+
+.sidebar-small-logo {
+  padding: 25px;
+}
+
+ul {
+  padding: 0;
+}
+
+.menu-item:first-child {
+  margin-top: 0;
+}
+
+li {
+  list-style: none;
+}
+
+li:hover {
+  background: rgba(103, 58, 183, 0.08);
+  margin-right: 10px;
+}
+
+.menu-item li {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  color: #76767b;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.menu-item li.selected {
+  border-left: 5px solid #5449b7;
+  color: #5449b7;
+}
+
+.submenu li {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  color: #76767b;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.submenu li.subSelected {
+  color: #5449b7;
+  background: rgba(103, 58, 183, 0.08);
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.sidebar-icons {
+  margin-left: 20px;
+  margin-top: 7px;
+}
+
+li.selected .sidebar-icons {
+  margin-left: 15px;
+  margin-top: 7px;
+}
+
+.submenu {
+  margin: 7px 0;
+}
+
+@media screen and (min-width: 990px) {
+  .min-app {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1022px) {
+  .min-app {
+    position: fixed;
+    top: 40%;
+    left: 25%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 1022px) {
+  .main-app {
+    display: none;
+  }
+}
+
+.sidenav-drawer {
+  border-right: 1px solid #e0e0e0;
+}
+
+.m-l-60 {
+  margin-left: 60px;
+}

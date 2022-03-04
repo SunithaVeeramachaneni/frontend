@@ -1,0 +1,94 @@
+.kit-number {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  color: #000000;
+}
+
+.date-priority-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+  color: #76767b;
+  padding: 2px 0;
+}
+
+.parts-available-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background: #34c759;
+  border-radius: 2px;
+  padding: 2px 6px;
+  margin-top: 2px;
+}
+
+.waiting-on-parts-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background: #ff9500;
+  border-radius: 2px;
+  padding: 2px 6px;
+  margin-top: 2px;
+}
+
+.assign-picklist-btn {
+  height: 36px;
+  background: #f2f2f2;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 7px;
+}
+
+.assign-text-class {
+  padding-left: 7px;
+  padding-top: 3px;
+  font-weight: 500;
+  color: black;
+}
+
+.list-icons {
+  width: 12px;
+  padding-right: 7px;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.progress-bar-class {
+  margin-bottom: 7px;
+  height: 6px;
+  border-radius: 8px;
+  width: 85%;
+}
+
+.m-l-20 {
+  margin-left: 20px;
+}
+
+.m-t-10 {
+  margin-top: 10px;
+}
+
+.m-l-10 {
+  margin-left: 10px;
+}

@@ -1,0 +1,275 @@
+.kit-number {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  align-items: center;
+  color: #000000;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  margin-bottom: 5px;
+  padding-top: 7px;
+}
+
+.date-priority-label {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 19px;
+  white-space: pre-wrap;
+  align-items: center;
+  color: #76767b;
+  padding: 2px 0;
+  margin-left: 5px;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+}
+
+.assign-btn {
+  margin-top: 10px;
+  opacity: 0.75;
+  border-radius: 4px;
+  width: 90%;
+  height: 36px;
+  background: #f2f2f2;
+  border: none;
+  color: black;
+  font-size: 15px;
+  font-family: Roboto;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.assign-btn-icon {
+  width: 20px;
+}
+
+.assign-btn-text {
+  padding-left: 5px;
+  padding-top: 2px;
+  color: #000000;
+}
+
+.list-icons {
+  width: 18px;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.high-priority {
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background-color: #f39f9b;
+}
+
+.very-high-priority {
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background-color: #ff3b30;
+}
+
+.medium-priority {
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background-color: #ff9800;
+}
+
+.low-priority {
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 27px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  background-color: #4caf50;
+}
+
+.kit-ready {
+  background-color: #34c759;
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  float: right;
+}
+
+.waiting-on-parts {
+  background-color: #ff9500;
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  float: right;
+}
+
+.parts-available {
+  background-color: #5ac8fa;
+  font-family: Roboto;
+  padding: 4px 7px 4px 7px;
+  border-radius: 5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  float: right;
+}
+
+.show-operations-btn {
+  padding: 10px;
+  text-transform: initial;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  color: #76767b;
+  letter-spacing: 0;
+  background-color: white;
+  border: none;
+}
+
+.down-up-arrow {
+  font-size: 22px;
+  top: 5px;
+  position: relative;
+}
+
+.operations-line {
+  height: 5px;
+  margin: 0;
+  border: 0;
+  box-shadow: 0 10px 8px -12px #8c8c8c inset;
+}
+
+.operations-div {
+  border-left: 2px solid #e5e5e5;
+  margin-left: 15px;
+}
+
+.operations-list {
+  border-bottom: none !important;
+  list-style-type: none;
+  padding: 7px;
+}
+
+.assign-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #000000;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  margin-top: 10px;
+}
+
+.assign-user-image {
+  width: 46px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.inprogress-user-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 16px;
+  color: #76767b;
+  cursor: default;
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  margin-top: 10px;
+}
+
+::ng-deep .maintenance-card .mat-progress-bar-fill::after {
+  background-color: #76767b;
+}
+
+::ng-deep .maintenance-card .mat-progress-bar-buffer {
+  background: #f5f5f5;
+}
+
+.progress-bar-class {
+  margin-bottom: 7px;
+  margin-left: 20px;
+  height: 6px;
+  border-radius: 8px;
+  width: 90%;
+}
+
+.float-right {
+  float: right;
+  text-align: right;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.text-align-center {
+  text-align: center;
+}

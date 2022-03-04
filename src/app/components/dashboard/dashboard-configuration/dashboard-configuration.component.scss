@@ -1,0 +1,141 @@
+.header-filters {
+  background-color: #ffffff;
+  height: 65px;
+  margin-top: -10px;
+}
+.customer-row {
+  background: #ffffff;
+  margin: 0px 20px;
+  display: flex;
+  flex-direction: row;
+}
+.cust-row-all {
+  margin-bottom: 15px;
+}
+
+.customer-row > div {
+  width: 100%;
+}
+
+.dashboard-title {
+  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 500;
+  position: relative;
+  top: 20px;
+  left: 10px;
+}
+
+.more-icon {
+  position: relative;
+  left: 10px;
+  background: none;
+  border: none;
+  .more-icon-no-color {
+    color: #757575;
+  }
+}
+.more-icon-all {
+  margin-top: 18px;
+}
+
+.no-of-widgets {
+  font-weight: 500;
+  padding: 18px 22px;
+  float: right;
+  font-family: Roboto;
+  font-size: 16px;
+  color: #757575;
+}
+
+.new-widget-btn {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.15px;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  border-radius: 4px;
+  background-color: #3d5afe;
+  height: 39px;
+  padding: 0px 14px;
+  float: right;
+  margin: 8px 10px 0 0;
+  cursor: pointer;
+}
+
+.widget-more-icon {
+  float: right;
+  text-align: right;
+}
+
+.widget-header {
+  padding: 0 15px 0 15px;
+  margin: 15px 0;
+  justify-content: space-between;
+}
+
+.widget-body {
+  padding: 0 15px 0 15px;
+  height: 80%;
+}
+
+.gridster-item-content {
+  height: 100%;
+}
+
+#gridster-container {
+  height: 75vh;
+  padding-top: 10px;
+  width: 98%;
+}
+
+::ng-deep #gridster-container gridster .gridster-column {
+  border-left: none;
+  border-right: 10px solid white;
+  box-sizing: initial;
+}
+
+::ng-deep #gridster-container gridster .gridster-row {
+  border-top: none;
+  border-bottom: 10px solid white;
+  box-sizing: initial;
+}
+
+::ng-deep #gridster-container gridster {
+  border: 10px solid white;
+  margin: -10px 0px 0px 10px;
+  padding: 0 !important;
+  background-color: #eeeeee;
+}
+
+::ng-deep gridster-item {
+  border: 3px solid #eeeeee;
+  border-radius: 5px;
+}
+
+.create-dashboard-opt {
+  color: #3d5afe;
+}
+.default-chip {
+  margin-left: 3px;
+  border-radius: 15px;
+  padding: 1px 6px;
+  font-size: 12px;
+  background: #3f51b5;
+  color: #ffff;
+}
+
+.m-r-5 {
+  margin-right: 5px;
+}
+.w-100 {
+  width: 100%;
+}
+
+.mat-icon-action {
+  margin-top: 2px;
+  margin-right: 5px;
+  font-size: 20px;
+}
