@@ -20,7 +20,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 export class ChartComponent {
   @Input() set chartConfig(chartConfig: AppChartConfig) {
     this._chartConfig = chartConfig;
-    console.log(chartConfig);
     if (chartConfig.renderChart) {
       this.prepareChartDetails();
     }

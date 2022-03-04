@@ -32,12 +32,12 @@
           (click)="selectedListElement(menuitem.title)"
         >
           <img
-            [src]="menuitem.inActiveImage"
+            src="{{ menuitem.inActiveImage }}"
             *ngIf="selectedMenu !== menuitem.title"
             class="sidebar-icons"
           />
           <img
-            [src]="menuitem.activeImage"
+            src="{{ menuitem.activeImage }}"
             *ngIf="selectedMenu === menuitem.title"
             class="sidebar-icons"
           />
