@@ -55,7 +55,7 @@ export class MaintenanceComponent implements OnInit {
     assigned: [],
     inProgress: [],
     completed: []
-});
+  });
   public allWorkOrders: WorkOrders;
   public filter: FormControl;
   public filter$: Observable<string>;
@@ -189,18 +189,15 @@ export class MaintenanceComponent implements OnInit {
         let a;
         for (let key in workOrders) {
           filtered[key] = workOrders[key].filter((workOrder) => {
-             return (
+            return (
               workOrder.headerText
                 .toLowerCase()
                 .indexOf(
                   filterObj['search'] ? filterObj['search'].toLowerCase() : ''
-                ) !== -1  &&
+                ) !== -1 &&
               // this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
-              this.filterPriority(
-                workOrder.priorityText,
-                filterObj.priority
-              ) &&
+              this.filterPriority(workOrder.priorityText, filterObj.priority) &&
               this.filterWorkCenter(
                 workOrder.workCenter,
                 filterObj.workCenter
