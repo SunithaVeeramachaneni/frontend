@@ -39,6 +39,7 @@ import {
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
+import { cloneDeep } from 'lodash';
 
 export interface WidgetConfigurationModalData {
   dashboard: Dashboard;
@@ -59,8 +60,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
   selectedReport: ReportConfiguration;
   chartConfig: AppChartConfig;
   fetchChartData$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    true
+    false
   );
+  isFetchingChartData = false;
   chartData$: Observable<AppChartData[]>;
   chartVarient: string;
   chartVarient$: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -97,7 +99,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   limit = defaultLimit;
   reportColumns: TableColumn[] = [];
   fetchFilterOptions$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    true
+    false
   );
   filterOptions$: Observable<FilterOptions>;
   countType: string;
@@ -137,7 +139,12 @@ export class WidgetConfigurationModalComponent implements OnInit {
 
     this.chartData$ = this.fetchChartData$.pipe(
       filter((fetchChartData) => fetchChartData === true),
-      switchMap(() => this.getGroupByCountDetails())
+      tap(() => (this.isFetchingChartData = true)),
+      switchMap(() =>
+        this.getGroupByCountDetails().pipe(
+          tap(() => (this.isFetchingChartData = false))
+        )
+      )
     );
 
     this.reportDetailsOnChartVarientFilter$ = combineLatest([
@@ -221,7 +228,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   }
 
   onReportSelection = (report: ReportConfiguration) => {
-    this.selectedReport = report || ({} as ReportConfiguration);
+    this.selectedReport = cloneDeep({ ...report });
     this.reportConfigurationForTable = { ...this.selectedReport };
     const {
       chartDetails: { type, indexAxis, countFieldName }
@@ -390,7 +397,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.chartConfig = {
           ...this.chartConfig,
           title: value,
-          renderChart: true
+          renderChart: !this.isFetchingChartData
         };
         break;
 
@@ -399,7 +406,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.chartConfig = {
           ...this.chartConfig,
           showValues: value,
-          renderChart: true
+          renderChart: !this.isFetchingChartData
         };
         break;
 
@@ -408,7 +415,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.chartConfig = {
           ...this.chartConfig,
           showLegends: value,
-          renderChart: true
+          renderChart: !this.isFetchingChartData
         };
         break;
 
