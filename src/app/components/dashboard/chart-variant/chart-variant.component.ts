@@ -91,6 +91,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
 
     this.f.showValues.valueChanges
       .pipe(
+        distinctUntilChanged(),
         takeUntil(this.destroy$),
         tap((showValues) => {
           this.chartVarientChanges.emit({
@@ -103,6 +104,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
 
     this.f.showLegends.valueChanges
       .pipe(
+        distinctUntilChanged(),
         takeUntil(this.destroy$),
         tap((showLegends) => {
           this.chartVarientChanges.emit({
