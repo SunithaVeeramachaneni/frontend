@@ -65,13 +65,23 @@ export class DashboardConfigurationComponent implements OnInit {
   dashboards$: Observable<Dashboard[]>;
   showAllDashboards = false;
 
+  staticDropDownOptions: Dashboard[] = [
+    {
+      name: 'VIEW_ALL_DASHBOARDS',
+      isDefault: false,
+      createdBy: 'dummy'
+    },
+    {
+      name: 'CREATE_DASHBOARD',
+      isDefault: false,
+      createdBy: 'dummy'
+    }
+  ]
+
   @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter();
 
   @Input() set dashboard(dashboard: Dashboard) {
     this._dashboard = dashboard ? dashboard : ({} as Dashboard);
-    this.widgets = [];
-    this.widgetsDataOnLoadCreation$ = of({ data: [] });
-    this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.renderDashboard();
   }
   get dashboard(): Dashboard {
@@ -170,10 +180,10 @@ export class DashboardConfigurationComponent implements OnInit {
   ) { }
 
   renderDashboard() {
+    this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgets = [];
     this.widgetsDataOnLoadCreation$ = of({ data: [] });
     this.widgetsDataInitial$.next({ data: [] });
-    const _widgets$ = this.widgetService.getDahboardWidgetsWithReport$(this.dashboard.id);
     this.widgetsDataOnLoadCreation$ = combineLatest([
       this.widgetsDataInitial$,
       this.widgetService.getDahboardWidgetsWithReport$(this.dashboard.id),
@@ -233,10 +243,10 @@ export class DashboardConfigurationComponent implements OnInit {
   }
 
   dashboardSelectionChanged(event: any) {
-    const dashboardSelectionVal = event.value;
-    if (dashboardSelectionVal === 'VIEW_ALL_DASHBOARDS') {
+    let dashboardSelectionVal = event.value;
+    if (dashboardSelectionVal.name === 'VIEW_ALL_DASHBOARDS') {
       this.showAllDashboards = true;
-      // this.selectedDashboard = dashboardSelectionVal;
+      // this.dashboard = dashboardSelectionVal;
     }
     this.dashboardService.dashboardSelectionChanged(dashboardSelectionVal);
     this.dashboardService.updateGridOptions({
@@ -273,9 +283,13 @@ export class DashboardConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.dashboards$ = this.dashboardService.dashboardsAction$.pipe(
       tap((dashboards) => {
-        // if (dashboards.length) {
-        //   // this.selectedDashboard = dashboards[0];
-        // }
+        if (dashboards.length) {
+          const defaultDashboards: Dashboard[] = dashboards.filter(d => d.isDefault);
+          let _defaultDashboard = defaultDashboards[0];
+          this.dashboard = _defaultDashboard;
+          console.log(this.dashboard);
+          return of(dashboards);
+        }
       })
     );
     this.mimimizeSidebar$ = this.commonService.minimizeSidebarAction$.pipe(
