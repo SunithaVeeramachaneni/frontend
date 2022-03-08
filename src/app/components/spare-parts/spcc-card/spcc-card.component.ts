@@ -25,8 +25,8 @@ export class SPCCCardComponent implements OnInit {
   isDropdownOpen = false;
   ngOnInit() {}
 
-  assignTech = (fName, workOrderID) => {
-    this.assign.emit({ fName, workOrderID });
+  assignTech = (technician, workOrder) => {
+    this.assign.emit({ technician, workOrder });
   };
 
   ngOnDestroy() {}

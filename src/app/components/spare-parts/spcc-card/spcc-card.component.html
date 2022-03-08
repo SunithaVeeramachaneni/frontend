@@ -63,6 +63,7 @@
       src="../../../assets/spare-parts-icons/technicianProfile.svg"
       style="width: 15px"
     />
+    <span>Ghost Loading</span>
     <span class="m-l-10">{{ workOrder.assignee }}</span>
   </div>
   <span
@@ -94,7 +95,7 @@
       <button
         mat-menu-item
         *ngFor="let technician of technicians; let i = index"
-        (click)="assignTech(technician.fName, workOrder.workOrderID)"
+        (click)="assignTech(technician, workOrder)"
       >
         <span> {{ technician.fName }}</span>
       </button>

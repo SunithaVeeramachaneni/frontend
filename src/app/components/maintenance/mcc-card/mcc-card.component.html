@@ -88,9 +88,10 @@
         workOrder.status === 'inProgress' || workOrder.status === 'completed'
       "
       mode="determinate"
-      value="{{ workOrder?.timeProgress}}"
+      value="{{ workOrder?.timeProgress }}"
       class="progress-bar-class"
     ></mat-progress-bar>
+    <span *ngIf="workOrder.isLoading">Hello</span>
     <span
       *ngIf="
         workOrder.status === 'inProgress' || workOrder.status === 'completed'
