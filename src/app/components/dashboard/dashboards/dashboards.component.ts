@@ -9,6 +9,7 @@ import { CreateUpdateDashboardDialogComponent } from '../dashboard-create-update
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
 import { DashboardService } from '../services/dashboard.service';
 import { ToastService } from 'src/app/shared/toast';
+import { AlertDialog } from '../alert-dialog/alert-dialog.component';
 
 interface CreateUpdateDeleteDashboard {
   type: 'create' | 'update' | 'delete' | 'mark_default';
@@ -270,6 +271,13 @@ export class DashboardsComponent implements OnInit {
   }
 
   deleteDashboard(dashboard: Dashboard) {
+    if (dashboard.isDefault) {
+      this.dialog.open(AlertDialog, {
+        width: '400px'
+      });
+      return;
+    }
+
     const deleteReportRef = this.dialog.open(ConfirmDialog, {
       data: {}
     });

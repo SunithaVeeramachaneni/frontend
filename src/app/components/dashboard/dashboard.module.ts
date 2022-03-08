@@ -34,6 +34,7 @@ import { CreateUpdateDashboardDialogComponent } from './dashboard-create-update-
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog.component';
 import { WidgetDeleteModalComponent } from './widget-delete-modal/widget-delete-modal.component';
+import { AlertDialog } from './alert-dialog/alert-dialog.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -78,6 +79,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ChartVariantComponent,
     CreateUpdateDashboardDialogComponent,
     ConfirmDialog,
+    AlertDialog,
     WidgetDeleteModalComponent
   ],
   exports: [],

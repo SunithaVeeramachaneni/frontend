@@ -43,5 +43,11 @@
   "showLegends": "Show Legends",
   "variants": "Variants",
   "VIEW_ALL_DASHBOARDS": "All Dashboards",
-  "CREATE_DASHBOARD": " Create Dashboard"
+  "CREATE_DASHBOARD": " Create Dashboard",
+  "allDashboards": "All Dashboards",
+  "edit": "Edit",
+  "markDefault": "Mark Default",
+  "delete": "Delete",
+  "done": "Done",
+  "close": "Close"
 }
