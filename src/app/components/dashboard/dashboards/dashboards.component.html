@@ -11,19 +11,19 @@
         >
           <mat-label translate>dashboards</mat-label>
           <mat-select
+            [compareWith]="compareFn"
             [value]="selectedGlobalDashboard"
             (selectionChange)="globalDashboardSelectionChanged($event)"
           >
             <mat-option
-              *ngFor="let dashboard of dashboards"
+              *ngFor="
+                let dashboard of dashboards.concat([staticDropDownOption])
+              "
               [value]="dashboard"
             >
-              {{ dashboard.name }}
+              {{ dashboard.name | translate }}
               {{ dashboard.isDefault === true ? '(default)' : '' }}
             </mat-option>
-            <mat-option [value]="staticDropDownOption">{{
-              staticDropDownOption.name | translate
-            }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-divider class="m-r-n20"></mat-divider>
@@ -41,7 +41,7 @@
             </div>
           </mat-list-item>
           <mat-divider></mat-divider>
-          <div *ngIf="dashboards$ | async as dashboards">
+          <div>
             <div *ngFor="let dashboard of dashboards">
               <mat-list-item
                 class="dashboards-list"
@@ -104,11 +104,7 @@
       ></mat-divider>
       <div [ngClass]="displayAllDashboards ? 'right' : 'fullWidth'">
         <app-dashboard-configuration
-          [dashboard]="
-            dashboardMode === 'ALL'
-              ? selectedDashboard
-              : selectedGlobalDashboard
-          "
+          [dashboard]="selectedDashboard"
           [dashboardDisplayMode]="dashboardMode"
           (dashboardActionHandler)="handleDashboardActions($event)"
         ></app-dashboard-configuration>

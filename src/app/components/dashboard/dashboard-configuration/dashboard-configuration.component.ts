@@ -41,18 +41,15 @@ import { DashboardService } from '../services/dashboard.service';
 import { WidgetService } from '../services/widget.service';
 import { WidgetConfigurationModalComponent } from '../widget-configuration-modal/widget-configuration-modal.component';
 import { WidgetDeleteModalComponent } from '../widget-delete-modal/widget-delete-modal.component';
-
 interface GridInterface extends GridsterConfig {
   draggable: Draggable;
   resizable: Resizable;
   pushDirections: PushDirections;
 }
-
 interface CreateUpdateDeleteWidget {
   type: 'create' | 'update' | 'delete';
   widget: Widget;
 }
-
 @Component({
   selector: 'app-dashboard-configuration',
   templateUrl: './dashboard-configuration.component.html',
@@ -67,21 +64,24 @@ export class DashboardConfigurationComponent implements OnInit {
 
   staticDropDownOptions: Dashboard[] = [
     {
+      id: 'VIEW_ALL_DASHBOARDS',
       name: 'VIEW_ALL_DASHBOARDS',
       isDefault: false,
       createdBy: 'dummy'
     },
     {
+      id: 'CREATE_DASHBOARD',
       name: 'CREATE_DASHBOARD',
       isDefault: false,
       createdBy: 'dummy'
     }
-  ]
+  ];
 
-  @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter();
+  @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() set dashboard(dashboard: Dashboard) {
     this._dashboard = dashboard ? dashboard : ({} as Dashboard);
+    this.dashboardControl.setValue(this.dashboard);
     this.renderDashboard();
   }
   get dashboard(): Dashboard {
@@ -167,6 +167,7 @@ export class DashboardConfigurationComponent implements OnInit {
   widgetHeights: any = {};
   mimimizeSidebar$: Observable<boolean>;
   interval$: Observable<number>;
+  dashboardControl = new FormControl();
   private _dashboard: Dashboard;
   private _dashboardDisplayMode: string;
 
@@ -177,7 +178,7 @@ export class DashboardConfigurationComponent implements OnInit {
     private widgetService: WidgetService,
     private dashboardService: DashboardService,
     private toast: ToastService
-  ) { }
+  ) {}
 
   renderDashboard() {
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
@@ -243,10 +244,10 @@ export class DashboardConfigurationComponent implements OnInit {
   }
 
   dashboardSelectionChanged(event: any) {
-    let dashboardSelectionVal = event.value;
+    const dashboardSelectionVal = event.value;
+    this.dashboardControl.setValue(this.dashboard);
     if (dashboardSelectionVal.name === 'VIEW_ALL_DASHBOARDS') {
       this.showAllDashboards = true;
-      // this.dashboard = dashboardSelectionVal;
     }
     this.dashboardService.dashboardSelectionChanged(dashboardSelectionVal);
     this.dashboardService.updateGridOptions({
@@ -281,17 +282,7 @@ export class DashboardConfigurationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dashboards$ = this.dashboardService.dashboardsAction$.pipe(
-      tap((dashboards) => {
-        if (dashboards.length) {
-          const defaultDashboards: Dashboard[] = dashboards.filter(d => d.isDefault);
-          let _defaultDashboard = defaultDashboards[0];
-          this.dashboard = _defaultDashboard;
-          console.log(this.dashboard);
-          return of(dashboards);
-        }
-      })
-    );
+    this.dashboards$ = this.dashboardService.dashboardsAction$;
     this.mimimizeSidebar$ = this.commonService.minimizeSidebarAction$.pipe(
       tap(() =>
         this.dashboardService.updateGridOptions({
@@ -311,7 +302,7 @@ export class DashboardConfigurationComponent implements OnInit {
               this.updateOptions(
                 (this.gridsterContainer.nativeElement.offsetWidth -
                   subtractWidth) /
-                12
+                  12
               );
             }
           })
@@ -402,23 +393,18 @@ export class DashboardConfigurationComponent implements OnInit {
     this.options.api.optionsChanged();
   };
 
-
-  updateDashboard(name: string, isDefault: boolean = false, dashboard: Dashboard) {
+  updateDashboard(
+    name: string,
+    isDefault: boolean = false,
+    dashboard: Dashboard
+  ) {
     dashboard = { ...dashboard, name, isDefault };
     this.dashboardService
       .updateDashboard$(dashboard.id, dashboard)
       .subscribe((response) => {
-        this.dashboards$.pipe(take(1)).subscribe((data) => {
-          this.dashboards$ = of(data);
-        });
         this.toast.show({
           text: 'Dashboard updated successfully',
           type: 'success'
-        });
-      }, (err) => {
-        this.toast.show({
-          text: 'Error occured while updating dashboard',
-          type: 'warning'
         });
       });
   }
@@ -444,4 +430,7 @@ export class DashboardConfigurationComponent implements OnInit {
     });
   }
 
+  compareFn(option1: Dashboard, option2: Dashboard) {
+    return option1.name === option2.name;
+  }
 }

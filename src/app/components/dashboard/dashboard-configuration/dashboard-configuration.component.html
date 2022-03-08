@@ -9,7 +9,9 @@
   >
     <mat-label translate>dashboards</mat-label>
     <mat-select
+      [compareWith]="compareFn"
       [value]="dashboard"
+      [formControl]="dashboardControl"
       *ngIf="dashboards$ | async as dashboards"
       (selectionChange)="dashboardSelectionChanged($event)"
     >
