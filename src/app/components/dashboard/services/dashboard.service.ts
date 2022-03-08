@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
@@ -52,6 +53,8 @@ export class DashboardService {
       `dashboards/${dashboardId}`,
       dashboard,
       info
+    ).pipe(
+      map((response) => response === null ? dashboard : response)
     );
 
   deleteDashboard$ = (

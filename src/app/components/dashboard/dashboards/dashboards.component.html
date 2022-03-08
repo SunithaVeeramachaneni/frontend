@@ -7,12 +7,11 @@
       <div class="left" *ngIf="displayAllDashboards && dashboardMode === 'ALL'">
         <mat-form-field
           appearance="outline"
-          *ngIf="dashboards$ | async as dashboards"
           class="dashboard-dropdown m-r-5 w-100"
         >
           <mat-label translate>dashboards</mat-label>
           <mat-select
-            [(value)]="selectedGlobalDashboard"
+            [value]="selectedGlobalDashboard"
             (selectionChange)="globalDashboardSelectionChanged($event)"
           >
             <mat-option
@@ -22,14 +21,16 @@
               {{ dashboard.name }}
               {{ dashboard.isDefault === true ? '(default)' : '' }}
             </mat-option>
-            <mat-option value="VIEW_ALL_DASHBOARDS">All Dashboards</mat-option>
+            <mat-option [value]="staticDropDownOption">{{
+              staticDropDownOption.name | translate
+            }}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-divider class="m-r-n20"></mat-divider>
         <mat-list role="list" class="m-r-n20">
           <mat-list-item role="listitem">
             <div class="create-btn-row">
-              <span class="left-head-text">All Dashboards</span>
+              <span class="left-head-text">All Dashboards </span>
               <button
                 mat-icon-button
                 color="primary"
@@ -40,54 +41,60 @@
             </div>
           </mat-list-item>
           <mat-divider></mat-divider>
-          <mat-list-item
-            class="dashboards-list"
-            [ngClass]="
-              dashboard.id === selectedDashboard.id ? 'active-dashboard' : ''
-            "
-            role="listitem"
-            *ngFor="let dashboard of dashboards"
-            (click)="setSelectedDashboard(dashboard)"
-          >
-            <div class="create-btn-row">
-              <span class="display-flex default-row">
-                {{ dashboard.name }}
-                <span *ngIf="dashboard.isDefault" class="default-chip"
-                  >Default</span
-                >
-              </span>
-              <button
-                mat-icon-button
-                color="primary"
-                [matMenuTriggerFor]="menu"
-                class="more-icon"
+          <div *ngIf="dashboards$ | async as dashboards">
+            <div *ngFor="let dashboard of dashboards">
+              <mat-list-item
+                class="dashboards-list"
+                [ngClass]="
+                  dashboard.id === selectedDashboard.id
+                    ? 'active-dashboard'
+                    : ''
+                "
+                role="listitem"
+                *ngIf="dashboard.id"
+                (click)="setSelectedDashboard(dashboard)"
               >
-                <mat-icon>more_horiz</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu" xPosition="before">
-                <button
-                  mat-menu-item
-                  (click)="openCreateDashboardDialog('EDIT', dashboard)"
-                >
-                  Edit
-                </button>
-                <button
-                  mat-menu-item
-                  (click)="markDashboardDefault(dashboard)"
-                  *ngIf="!dashboard.isDefault"
-                >
-                  Mark default
-                </button>
-                <button
-                  mat-menu-item
-                  class="delete-menu-item"
-                  (click)="deleteDashboard(dashboard)"
-                >
-                  Delete
-                </button>
-              </mat-menu>
+                <div class="create-btn-row">
+                  <span class="display-flex default-row">
+                    {{ dashboard.name }}
+                    <span *ngIf="dashboard.isDefault" class="default-chip"
+                      >Default</span
+                    >
+                  </span>
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    [matMenuTriggerFor]="menu"
+                    class="more-icon"
+                  >
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu" xPosition="before">
+                    <button
+                      mat-menu-item
+                      (click)="openCreateDashboardDialog('EDIT', dashboard)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      mat-menu-item
+                      (click)="markDashboardDefault(dashboard)"
+                      *ngIf="!dashboard.isDefault"
+                    >
+                      Mark default
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="delete-menu-item"
+                      (click)="deleteDashboard(dashboard)"
+                    >
+                      Delete
+                    </button>
+                  </mat-menu>
+                </div>
+              </mat-list-item>
             </div>
-          </mat-list-item>
+          </div>
         </mat-list>
       </div>
       <mat-divider

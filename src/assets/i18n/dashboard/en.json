@@ -41,5 +41,7 @@
   "no": "No",
   "showValues": "Show Values",
   "showLegends": "Show Legends",
-  "variants": "Variants"
+  "variants": "Variants",
+  "VIEW_ALL_DASHBOARDS": "All Dashboards",
+  "CREATE_DASHBOARD": " Create Dashboard"
 }
