@@ -2,7 +2,8 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
-  OnInit
+  OnInit,
+  ViewEncapsulation
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
@@ -26,7 +27,8 @@ const {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit, AfterViewChecked {
   menus = [
@@ -37,9 +39,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       activeImage: '../assets/sidebar-icons/dashboard-blue.svg',
       showSubMenu: false,
       disable: false,
-      subPages: [
-        { title: reports.title, url: reports.url }
-      ],
+      subPages: [{ title: reports.title, url: reports.url }]
     },
     {
       title: maintenance.title,
@@ -86,7 +86,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.commonService.minimizeSidebarAction$.subscribe((data) => {
