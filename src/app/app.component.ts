@@ -2,8 +2,7 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
-  OnInit,
-  ViewEncapsulation
+  OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
@@ -27,8 +26,7 @@ const {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewChecked {
   menus = [

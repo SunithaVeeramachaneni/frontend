@@ -691,3 +691,17 @@ button.mat-menu-item {
 .right-alignment .ngx-shimmer {
   float: right;
 }
+
+.sidebar-menu-panel {
+  min-height: auto !important;
+  padding: 0 10px;
+  position: absolute;
+  left: 40px;
+  top: -30px;
+  white-space: nowrap;
+}
+
+.sidebar-menu-panel .mat-menu-content:not(:empty) {
+  padding-top: 0;
+  padding-bottom: 0;
+}

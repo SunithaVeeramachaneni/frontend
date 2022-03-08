@@ -141,20 +141,6 @@ li.selected .sidebar-icons {
   margin-left: 60px;
 }
 
-.mat-menu-panel {
-  min-height: auto !important;
-  padding: 0 10px;
-  position: absolute;
-  left: 40px;
-  top: -30px;
-  white-space: nowrap;
-}
-
-.mat-menu-content:not(:empty) {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
 .menu-trigger-btn {
   border: none;
   background-color: transparent;
