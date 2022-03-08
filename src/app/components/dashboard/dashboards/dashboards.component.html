@@ -30,7 +30,7 @@
         <mat-list role="list" class="m-r-n20">
           <mat-list-item role="listitem">
             <div class="create-btn-row">
-              <span class="left-head-text">All Dashboards </span>
+              <span class="left-head-text" translate>allDashboards</span>
               <button
                 mat-icon-button
                 color="primary"
@@ -73,22 +73,25 @@
                     <button
                       mat-menu-item
                       (click)="openCreateDashboardDialog('EDIT', dashboard)"
+                      translate
                     >
-                      Edit
+                      edit
                     </button>
                     <button
                       mat-menu-item
                       (click)="markDashboardDefault(dashboard)"
                       *ngIf="!dashboard.isDefault"
+                      translate
                     >
-                      Mark default
+                      markDefault
                     </button>
                     <button
                       mat-menu-item
                       class="delete-menu-item"
                       (click)="deleteDashboard(dashboard)"
+                      translate
                     >
-                      Delete
+                      delete
                     </button>
                   </mat-menu>
                 </div>

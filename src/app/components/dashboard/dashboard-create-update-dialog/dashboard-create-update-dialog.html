@@ -21,14 +21,18 @@
     >
   </div>
   <div mat-dialog-actions class="dialog-footer">
-    <button mat-button color="primary" (click)="onNoClick()">Cancel</button>
+    <button
+      mat-button
+      color="primary"
+      (click)="onNoClick()"
+      translate="cancel"
+    ></button>
     <button
       mat-raised-button
       color="primary"
       (click)="createDashboard($event)"
       class="create-dashboard-btn"
-    >
-      Done
-    </button>
+      translate="done"
+    ></button>
   </div>
 </div>

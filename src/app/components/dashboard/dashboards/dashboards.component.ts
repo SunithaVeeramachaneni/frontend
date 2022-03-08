@@ -6,7 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, Observable, of, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, take, tap } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -22,7 +22,7 @@ interface CreateUpdateDeleteDashboard {
 }
 
 interface DashboardData {
-  data: Dashboard[]
+  data: Dashboard[];
 }
 
 @Component({
@@ -47,25 +47,26 @@ export class DashboardsComponent implements OnInit {
 
   dashboards$: Observable<Dashboard[]>;
   dashboardDataInitial$: Observable<DashboardData>;
-  createUpdateDeleteDashboard$ = new BehaviorSubject<CreateUpdateDeleteDashboard>({
-    type: 'create',
-    dashboard: {} as Dashboard
-  });
+  createUpdateDeleteDashboard$ =
+    new BehaviorSubject<CreateUpdateDeleteDashboard>({
+      type: 'create',
+      dashboard: {} as Dashboard
+    });
 
   private _selectedDashboard: Dashboard;
 
-  staticDropDownOption: Dashboard = ({
+  staticDropDownOption: Dashboard = {
     name: 'VIEW_ALL_DASHBOARDS',
     isDefault: false,
     createdBy: 'dummy'
-  } as Dashboard);
+  } as Dashboard;
 
   constructor(
     private dialog: MatDialog,
     private toast: ToastService,
     private dashboardService: DashboardService,
     private commonService: CommonService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const info: ErrorInfo = {
@@ -74,29 +75,32 @@ export class DashboardsComponent implements OnInit {
     };
 
     this.dashboardDataInitial$ = of({ data: [] as Dashboard[] });
-    this.dashboardDataInitial$ = this.dashboardService.getDashboards$(info).pipe(
-      mergeMap((dashboards) => {
-        if (dashboards.length) {
-          const defaultDashboards: Dashboard[] = dashboards.filter(d => d.isDefault);
-          let _defaultDashboard = defaultDashboards[0];
-          this.setDefaultDashboard(_defaultDashboard);
-          return of({ data: dashboards });
-        } else {
-          return this.createDefaultDashboard().pipe(
-            map((dashboard) => {
-              if (Object.keys(dashboard).length) {
-                return { data: [dashboard] };
-              } else {
-                return { data: [] };
-              }
-            })
-          );
-        }
-      }),
-      catchError(() => of({ data: [] })),
-      tap(({ data }) =>
-        this.dashboardService.updateDashboards(data)
-      ));
+    this.dashboardDataInitial$ = this.dashboardService
+      .getDashboards$(info)
+      .pipe(
+        mergeMap((dashboards) => {
+          if (dashboards.length) {
+            const defaultDashboards: Dashboard[] = dashboards.filter(
+              (d) => d.isDefault
+            );
+            let _defaultDashboard = defaultDashboards[0];
+            this.setDefaultDashboard(_defaultDashboard);
+            return of({ data: dashboards });
+          } else {
+            return this.createDefaultDashboard().pipe(
+              map((dashboard) => {
+                if (Object.keys(dashboard).length) {
+                  return { data: [dashboard] };
+                } else {
+                  return { data: [] };
+                }
+              })
+            );
+          }
+        }),
+        catchError(() => of({ data: [] })),
+        tap(({ data }) => this.dashboardService.updateDashboards(data))
+      );
     this.dashboards$ = combineLatest([
       this.dashboardDataInitial$,
       this.createUpdateDeleteDashboard$
@@ -131,7 +135,9 @@ export class DashboardsComponent implements OnInit {
             return initial.data;
           } else if (type === 'delete') {
             initial.data = initial.data.filter((db) => db.id !== dashboard.id);
-            let defaultDashboard: Dashboard[] = initial.data.filter(d => d.isDefault);
+            let defaultDashboard: Dashboard[] = initial.data.filter(
+              (d) => d.isDefault
+            );
             const _defaultDashboard: Dashboard = defaultDashboard[0];
             this.selectedDashboard = _defaultDashboard;
             return initial.data;
@@ -153,7 +159,9 @@ export class DashboardsComponent implements OnInit {
             return initial.data;
           }
         } else {
-          const defaultDashboards: Dashboard[] = initial.data.filter(d => d.isDefault);
+          const defaultDashboards: Dashboard[] = initial.data.filter(
+            (d) => d.isDefault
+          );
           let _defaultDashboard = defaultDashboards[0];
           this.setDefaultDashboard(_defaultDashboard);
           return initial.data;
@@ -264,11 +272,14 @@ export class DashboardsComponent implements OnInit {
       );
   }
 
-  updateDashboard(name: string, isDefault: boolean = false, dashboard: Dashboard) {
+  updateDashboard(
+    name: string,
+    isDefault: boolean = false,
+    dashboard: Dashboard
+  ) {
     dashboard = { ...dashboard, name, isDefault };
-    this.dashboardService
-      .updateDashboard$(dashboard.id, dashboard)
-      .subscribe((response) => {
+    this.dashboardService.updateDashboard$(dashboard.id, dashboard).subscribe(
+      (response) => {
         this.createUpdateDeleteDashboard$.next({
           type: 'update',
           dashboard: { ...response }
@@ -277,12 +288,14 @@ export class DashboardsComponent implements OnInit {
           text: 'Dashboard updated successfully',
           type: 'success'
         });
-      }, (err) => {
+      },
+      (err) => {
         this.toast.show({
           text: 'Error occured while updating dashboard',
           type: 'warning'
         });
-      });
+      }
+    );
   }
 
   deleteDashboard(dashboard: Dashboard) {
@@ -298,9 +311,8 @@ export class DashboardsComponent implements OnInit {
     });
     deleteReportRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.dashboardService
-          .deleteDashboard$(dashboard.id)
-          .subscribe((response) => {
+        this.dashboardService.deleteDashboard$(dashboard.id).subscribe(
+          (response) => {
             this.createUpdateDeleteDashboard$.next({
               type: 'delete',
               dashboard: { ...dashboard }
@@ -309,12 +321,14 @@ export class DashboardsComponent implements OnInit {
               text: 'Dashboard deleted successfully',
               type: 'success'
             });
-          }, err => {
+          },
+          (err) => {
             this.toast.show({
               text: 'Error occured while deleting dashboard',
               type: 'warning'
             });
-          });
+          }
+        );
       }
     });
   }
@@ -322,21 +336,24 @@ export class DashboardsComponent implements OnInit {
   markDashboardDefault(dashboard: Dashboard) {
     this.dashboardService
       .markDashboardDefault$(dashboard.id, dashboard)
-      .subscribe((response) => {
-        this.createUpdateDeleteDashboard$.next({
-          type: 'mark_default',
-          dashboard: { ...dashboard }
-        });
-        this.toast.show({
-          text: 'Dashboard marked default successfully',
-          type: 'success'
-        });
-      }, (err) => {
-        this.toast.show({
-          text: 'Error occured while marking dashboard as default',
-          type: 'warning'
-        });
-      });
+      .subscribe(
+        (response) => {
+          this.createUpdateDeleteDashboard$.next({
+            type: 'mark_default',
+            dashboard: { ...dashboard }
+          });
+          this.toast.show({
+            text: 'Dashboard marked default successfully',
+            type: 'success'
+          });
+        },
+        (err) => {
+          this.toast.show({
+            text: 'Error occured while marking dashboard as default',
+            type: 'warning'
+          });
+        }
+      );
   }
 
   createDefaultDashboard = () =>
@@ -345,7 +362,6 @@ export class DashboardsComponent implements OnInit {
       isDefault: true,
       createdBy: this.commonService.getUserName()
     });
-
 
   handleDashboardActions(event) {
     if (!event) return;
@@ -357,7 +373,7 @@ export class DashboardsComponent implements OnInit {
       case 'DELETE':
         this.deleteDashboard(data);
       case 'MARK_DEFAULT':
-        this.markDashboardDefault(data)
+        this.markDashboardDefault(data);
     }
   }
 }

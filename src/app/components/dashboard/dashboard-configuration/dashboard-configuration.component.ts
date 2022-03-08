@@ -76,7 +76,7 @@ export class DashboardConfigurationComponent implements OnInit {
       isDefault: false,
       createdBy: 'dummy'
     }
-  ]
+  ];
 
   @Output() dashboardActionHandler: EventEmitter<any> = new EventEmitter();
 
@@ -177,7 +177,7 @@ export class DashboardConfigurationComponent implements OnInit {
     private widgetService: WidgetService,
     private dashboardService: DashboardService,
     private toast: ToastService
-  ) { }
+  ) {}
 
   renderDashboard() {
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
@@ -284,7 +284,9 @@ export class DashboardConfigurationComponent implements OnInit {
     this.dashboards$ = this.dashboardService.dashboardsAction$.pipe(
       tap((dashboards) => {
         if (dashboards.length) {
-          const defaultDashboards: Dashboard[] = dashboards.filter(d => d.isDefault);
+          const defaultDashboards: Dashboard[] = dashboards.filter(
+            (d) => d.isDefault
+          );
           let _defaultDashboard = defaultDashboards[0];
           this.dashboard = _defaultDashboard;
           console.log(this.dashboard);
@@ -311,7 +313,7 @@ export class DashboardConfigurationComponent implements OnInit {
               this.updateOptions(
                 (this.gridsterContainer.nativeElement.offsetWidth -
                   subtractWidth) /
-                12
+                  12
               );
             }
           })
@@ -402,12 +404,14 @@ export class DashboardConfigurationComponent implements OnInit {
     this.options.api.optionsChanged();
   };
 
-
-  updateDashboard(name: string, isDefault: boolean = false, dashboard: Dashboard) {
+  updateDashboard(
+    name: string,
+    isDefault: boolean = false,
+    dashboard: Dashboard
+  ) {
     dashboard = { ...dashboard, name, isDefault };
-    this.dashboardService
-      .updateDashboard$(dashboard.id, dashboard)
-      .subscribe((response) => {
+    this.dashboardService.updateDashboard$(dashboard.id, dashboard).subscribe(
+      (response) => {
         this.dashboards$.pipe(take(1)).subscribe((data) => {
           this.dashboards$ = of(data);
         });
@@ -415,12 +419,14 @@ export class DashboardConfigurationComponent implements OnInit {
           text: 'Dashboard updated successfully',
           type: 'success'
         });
-      }, (err) => {
+      },
+      (err) => {
         this.toast.show({
           text: 'Error occured while updating dashboard',
           type: 'warning'
         });
-      });
+      }
+    );
   }
 
   editDashboard(dashboard: Dashboard) {
@@ -443,5 +449,4 @@ export class DashboardConfigurationComponent implements OnInit {
       data: dashboard
     });
   }
-
 }

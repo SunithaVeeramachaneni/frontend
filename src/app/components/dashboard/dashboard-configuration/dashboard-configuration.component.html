@@ -37,20 +37,24 @@
       <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item (click)="editDashboard(dashboard)">Edit</button>
+      <button mat-menu-item (click)="editDashboard(dashboard)" translate>
+        edit
+      </button>
       <button
         mat-menu-item
         (click)="markDashboardDefault(dashboard)"
         *ngIf="!dashboard.isDefault"
+        translate
       >
-        Mark default
+        markDefault
       </button>
       <button
         mat-menu-item
         class="delete-menu-item"
         (click)="deleteDashboard(dashboard)"
+        translate
       >
-        Delete
+        delete
       </button>
     </mat-menu>
   </div>
