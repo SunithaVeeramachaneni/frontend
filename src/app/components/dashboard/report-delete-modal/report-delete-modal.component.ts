@@ -24,10 +24,10 @@ export interface DeleteReportData {
 })
 export class ReportDeleteModalComponent implements OnInit {
   isPopoverOpen = false;
-  private reportID;
-  private reportName;
-  private groupedWidgets;
-  private widgetCount;
+  reportID;
+  reportName;
+  groupedWidgets;
+  widgetCount;
 
   constructor(
     private dialogRef: MatDialogRef<ReportDeleteModalComponent>,

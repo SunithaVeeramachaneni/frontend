@@ -41,7 +41,7 @@ export class FavoritesComponent implements OnInit {
     favorites: DummyComponent
   ) {
     if (favorites) {
-      favorites.value.map((instruction) => {
+      favorites.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&

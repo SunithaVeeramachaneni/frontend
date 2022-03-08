@@ -45,7 +45,7 @@ export const httpLoaderFactory = (
           issValidationOff: false, // this needs to be true if using a common endpoint in Azure
           autoUserInfo: false,
           useRefreshToken: true,
-          logLevel: environment.production ? LogLevel.Error : LogLevel.Error,
+          logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
           secureRoutes: urls,
           customParamsRefreshTokenRequest: {
             scope
