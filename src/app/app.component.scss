@@ -42,7 +42,7 @@
 }
 
 .menu-item {
-  margin: 7px 0;
+  margin: 0;
 }
 
 .sidebar-small-logo {
@@ -51,10 +51,6 @@
 
 ul {
   padding: 0;
-}
-
-.menu-item:first-child {
-  margin-top: 0;
 }
 
 li {
@@ -162,4 +158,9 @@ li.selected .sidebar-icons {
 .menu-trigger-btn {
   border: none;
   background-color: transparent;
+}
+
+.menu-title {
+  position: relative;
+  left: 10px;
 }
