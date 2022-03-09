@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,13 +34,17 @@ import { CommonFilterService } from '../../shared/components/common-filter/commo
 })
 export class SparePartsComponent implements OnInit {
   subscription: Subscription;
-  public workOrderList$ = new BehaviorSubject<WorkOrders>({
+  public emptyWorkOrders: WorkOrders = {
     '1': [],
     '2': [],
     '3': [],
     '4': [],
     '5': []
-  });
+  };
+  public putWorkOrder$: BehaviorSubject<WorkOrders> = new BehaviorSubject(
+    this.emptyWorkOrders
+  );
+  public workOrderList$ = new BehaviorSubject<WorkOrders>(this.emptyWorkOrders);
   public filteredWorkOrderList$ = new BehaviorSubject<WorkOrders>(null);
   public combineWorkOrderList$: Observable<WorkOrders>;
   public updatedWorkOrderList$: Observable<WorkOrders>;
@@ -105,6 +110,31 @@ export class SparePartsComponent implements OnInit {
     this.getTechnicians();
   }
 
+  combineWorkOrders = (
+    oldWorkOrders$: Observable<WorkOrders>,
+    newWorkOrders$: Observable<WorkOrders>
+  ): Observable<WorkOrders> =>
+    combineLatest([oldWorkOrders$, newWorkOrders$]).pipe(
+      map(([oldWorkOrders, newWorkOrders]) => {
+        if (newWorkOrders) {
+          for (const key in newWorkOrders) {
+            if (newWorkOrders[key])
+              newWorkOrders[key].forEach((workOrder: { workOrderID: any }) => {
+                const id = workOrder.workOrderID;
+                for (const key2 in oldWorkOrders) {
+                  oldWorkOrders[key2] = oldWorkOrders[key2].filter(
+                    (oldWorkOrder: { workOrderID: any }) =>
+                      !(oldWorkOrder.workOrderID === id)
+                  );
+                }
+              });
+            oldWorkOrders[key] = [...newWorkOrders[key], ...oldWorkOrders[key]];
+          }
+        }
+        return oldWorkOrders;
+      })
+    );
+
   getTechnicians() {
     this.technicians$ = this.sparepartsSvc.getPickerList();
     this.technicians$.subscribe((resp) => (this.technicians = resp));
@@ -123,8 +153,12 @@ export class SparePartsComponent implements OnInit {
     const tempWorkOrderList$ = this.dateRange$
       .asObservable()
       .pipe(mergeMap((val) => this.sparepartsSvc.getAllWorkOrders(val)));
-    const tempFilteredWorkOrderList$ = combineLatest([
+    const updatedWorkOrderList$ = this.combineWorkOrders(
       tempWorkOrderList$,
+      this.putWorkOrder$
+    );
+    const tempFilteredWorkOrderList$ = combineLatest([
+      updatedWorkOrderList$,
       this.filterObj$
     ]).pipe(
       map(([workOrders, filterObj]) => {
@@ -156,27 +190,31 @@ export class SparePartsComponent implements OnInit {
   }
 
   assignTech(details) {
-    const event = details.fName;
-    const workorderid = details.workOrderID;
-    let technician = this.technicians$.pipe(
-      map((epics) => epics.filter((epic) => epic.fName === event))
-    );
-    technician.subscribe((technician) => {
-      console.log('Technician ', technician);
-      let data = {
-        USNAM: technician[0].userId,
-        ASSIGNEE: technician[0].fName,
-        AUFNR: workorderid
-      };
-      this.filteredWorkOrderList$.next(null);
-      this.sparepartsSvc
-        .assignTechnicianToWorkorder(data)
-        .pipe(delay(5000))
-        .subscribe((res) => {
-          if (res) {
-            this.getWorkOrders();
-          }
+    const { technician, workOrder } = details;
+    const addWorkOrder = {
+      ...this.emptyWorkOrders,
+      2: [{ ...workOrder, isLoading: true, statusCode: '2' }]
+    };
+    this.putWorkOrder$.next(addWorkOrder);
+    const data = {
+      USNAM: technician.userId,
+      ASSIGNEE: technician.fName,
+      AUFNR: workOrder.workOrderID
+    };
+    this.sparepartsSvc.assignTechnicianToWorkorder(data).subscribe((res) => {
+      if (res) {
+        const newWorkOrder$ = this.sparepartsSvc.getWorkOrderByID(
+          workOrder.workOrderID
+        );
+        newWorkOrder$.subscribe((workOrderNew) => {
+          this.putWorkOrder$.next(workOrderNew);
         });
+      } else {
+        this.putWorkOrder$.next({
+          ...this.emptyWorkOrders,
+          [`${workOrder.statusCode}`]: [{ ...workOrder, isLoading: false }]
+        });
+      }
     });
   }
 
