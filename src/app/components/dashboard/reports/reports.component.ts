@@ -21,6 +21,8 @@ import { debounce } from 'ts-debounce';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportDeleteModalComponent } from '../report-delete-modal/report-delete-modal.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-reports',
@@ -33,6 +35,7 @@ export class ReportsComponent implements OnInit {
   selectedReportSegment$ = this.selectedReportSegmentControl.valueChanges.pipe(
     startWith('all')
   );
+  isExportInProgress = false;
   searchValue = '';
   finalData;
   reportsInitial$: Observable<Report>;
@@ -104,6 +107,8 @@ export class ReportsComponent implements OnInit {
     new BehaviorSubject<TableEvent>({} as TableEvent);
 
   constructor(
+    private snackBar: MatSnackBar,
+    private toast: ToastService,
     public dialog: MatDialog,
     private reportService: ReportService,
     private reportConfigService: ReportConfigurationService,
@@ -263,14 +268,24 @@ export class ReportsComponent implements OnInit {
         if (!report.id) {
           return;
         }
-
+        this.snackBar.open('Export is in progress...', '', {
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
         this.reportConfigService
           .downloadReport$(`reports/${report.id}/download`, info)
           .subscribe(
             (data) => {
               downloadFile(data, report.name);
+              this.snackBar.dismiss();
+              this.toast.show({
+                text: 'Report exported successfully',
+                type: 'success'
+              });
             },
-            (err) => {}
+            (err) => {
+              this.snackBar.dismiss();
+            }
           );
         break;
       default:
