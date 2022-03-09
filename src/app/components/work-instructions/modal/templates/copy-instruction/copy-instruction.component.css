@@ -239,19 +239,17 @@
 }
 
 .chip {
-  width: 46px;
-  height: 20px;
   background: #cccccc;
+  padding: 5px;
   border-radius: 4px;
-  padding: 4px 5px;
   font-size: 12px;
   font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
-  line-height: 14px;
   color: #ffffff;
   margin-left: 10px;
   text-align: center;
+  height: 15px;
 }
 
 .t-minus-5 {

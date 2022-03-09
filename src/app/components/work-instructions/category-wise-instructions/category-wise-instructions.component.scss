@@ -1,88 +1,39 @@
 .work-instructions {
-  background: #ffffff;
-  padding-left: 20px;
-  border-top: 1px solid #e5e5e5;
-  border-left: 1px solid #e5e5e5;
-  border-radius: 10px 0px 0px 0px;
-  height: 100%;
-  margin-bottom: 30px;
+  height: 95vh;
+  margin: 14px;
 }
 
-.instructions-table-title {
-  height: 40px;
+.header-ins {
+  background: white;
+  height: 56px;
+  padding: 0px 10px;
+  justify-content: flex-end;
 }
 
 .instructions-table-title h2 {
   margin: 0;
-  padding: 20px 0px 0px 0px;
+  padding: 15px 0px;
   color: #000000;
   background: #fff;
   font-size: 1.5rem;
   font-family: 'Roboto', sans-serif;
-}
-
-.input-group-text {
-  background: #f2f2f2;
-  border: none;
-}
-.search-icon {
-  height: 14px;
-}
-.search-box {
-  width: 50%;
-  background-color: #f2f2f2;
-  border: 1px solid #f2f2f2;
-  border-radius: 5px;
-  height: 36px;
-}
-
-table {
-  width: 98%;
-}
-
-thead th {
-  cursor: pointer;
-  border-top: none;
-}
-
-tbody tr td:nth-child(4) {
-  text-align: right;
-}
-
-.table th,
-.table td {
-  vertical-align: middle;
-  border-bottom: 1px solid #c8ced3;
-  font-family: 'Roboto';
-  padding: 10px;
-}
-
-.wi-name {
-  position: relative;
-  top: -15px;
-}
-
-td:first-child {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 21px;
-  color: #25282b;
 }
 
-td:last-child {
-  font-family: 'Roboto', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 15px;
-  line-height: 19px;
-  color: #25282b;
+.mat-icon-circle {
+  font-size: 35px;
+  vertical-align: middle;
+  position: relative;
+  left: -10px;
+  top: -5px;
+  color: #bdbdbd;
 }
-
-td {
-  font-size: 14px;
-  font-family: 'Roboto', sans-serif;
+.mat-icon-star {
+  position: relative;
+  top: 6px;
+}
+.font-color {
+  color: #000000;
 }
 
 .arrow {
@@ -96,29 +47,65 @@ td {
   color: white;
 }
 
-.mat-icon-circle {
-  font-size: 35px;
+.mat-tabs {
+  margin-top: 14px;
+}
+
+table {
+  width: 100%;
+  background: white;
+}
+
+td {
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+thead th {
+  cursor: pointer;
+  border-top: none;
+  text-align: left;
+  font-weight: 500;
+  color: #000;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+}
+
+tbody th {
+  text-align: left;
+  font-weight: 500;
+  color: #000;
+  font-size: 15px;
+  font-family: 'Roboto', sans-serif;
+}
+
+tbody td {
+  color: #212121;
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+}
+
+tbody tr td:nth-child(5) {
+  text-align: right;
+}
+
+.wi-name {
+  position: relative;
+  top: -15px;
+}
+
+.table th,
+.table td {
   vertical-align: middle;
-  position: relative;
-  left: -10px;
-  top: -5px;
-  color: #bdbdbd;
+  border-bottom: 1px solid #c8ced3;
+  font-family: 'Roboto';
+  padding: 10px;
 }
 
-.font-color {
-  color: #000000;
-}
-
-.mat-icon-star {
-  position: relative;
-  top: 6px;
-}
-
-.no-search-records1 {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 600;
-  position: relative;
-  left: 75%;
-  top: 20px;
+.pagination-main {
+  background-color: #ffffff;
+  height: 45px;
+  padding-top: 10px;
 }

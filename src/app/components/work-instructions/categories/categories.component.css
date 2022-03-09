@@ -1,12 +1,11 @@
 .categories-header {
-  padding: 25px 7px 10px 7px;
+  padding: 20px 7px 10px 7px;
   flex-wrap: nowrap;
 }
 
 .categories-div {
   border-radius: 8px;
-  margin: 10px 22px;
-  padding-bottom: 1px;
+  margin: 0 14px;
 }
 
 .categories-row-heading {
@@ -58,8 +57,8 @@
 }
 
 .categories-details {
-  padding: 0px 15px 10px 10px;
-  margin: 0px 15px;
+  padding: 0;
+  margin: 0px 10px;
 }
 
 .categories-details-with-no-results {

@@ -1,11 +1,10 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
-    class="work-instructions tables-data"
+    class="work-instructions custom-mat-form-field-gray-color"
     *ngIf="currentRouteUrl === routeUrl"
   >
-    <br />
-    <div class="p-b-10 dis-flex">
-      <mat-form-field appearance="outline" class="search-field width-40">
+    <div class="dis-flex header-ins">
+      <mat-form-field appearance="outline" class="search-field m-t-5">
         <mat-icon matPrefix class="search-icon">search</mat-icon>
         <input
           id="inputSearch"
@@ -25,6 +24,7 @@
       #tabGroup
       (selectedTabChange)="tabChanged($event)"
       *ngIf="workInstructions$ | async as workInstructions"
+      class="mat-tabs"
     >
       <mat-tab label="DRAFTS">
         <div *ngIf="this.tabIndex === 0 || this.tabGroup._selectedIndex === 0">
@@ -106,25 +106,22 @@
                 <app-dummy #draftedFilteredResults [value]="result"></app-dummy>
                 <tr *ngFor="let obj of result">
                   <th scope="row" class="width-40">
-                    <a
-                      class="font-color list-ellipsis"
-                      [routerLink]="[
-                        '/work-instructions/category',
-                        categoryId,
-                        obj.Id
-                      ]"
-                      ><img
+                    <div class="dis-flex">
+                      <img
                         class="coverImg"
                         [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
                         [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
                         alt=""
-                      /><span
-                        class="p-l-10 wi-name"
-                        matTooltip="{{ obj.WI_Name }}"
-                        matTooltipClass=""
-                        >{{ obj.WI_Name }}</span
-                      ></a
-                    >
+                      />
+                      <a
+                        class="list-ellipsis"
+                        [routerLink]="['/work-instructions/category', obj.Id]"
+                      >
+                        <span matTooltip="{{ obj.WI_Name }}">
+                          {{ obj.WI_Name }}
+                        </span>
+                      </a>
+                    </div>
                   </th>
                   <td class="width-25">
                     <a
@@ -237,6 +234,7 @@
             *ngIf="
               workInstructions.drafts && workInstructions.drafts.length > 0
             "
+            class="pagination-main"
           >
             <pagination-template
               #p="paginationApi"
@@ -335,25 +333,22 @@
                 ></app-dummy>
                 <tr *ngFor="let obj of result">
                   <th scope="row" class="width-40">
-                    <a
-                      class="font-color list-ellipsis"
-                      [routerLink]="[
-                        '/work-instructions/category',
-                        categoryId,
-                        obj.Id
-                      ]"
-                      ><img
+                    <div class="dis-flex">
+                      <img
                         class="coverImg"
                         [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
                         [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
                         alt=""
-                      /><span
-                        class="p-l-10"
-                        matTooltip="{{ obj.WI_Name }}"
-                        matTooltipClass=""
-                        >{{ obj.WI_Name }}</span
-                      ></a
-                    >
+                      />
+                      <a
+                        class="list-ellipsis"
+                        [routerLink]="['/work-instructions/category', obj.Id]"
+                      >
+                        <span matTooltip="{{ obj.WI_Name }}">
+                          {{ obj.WI_Name }}
+                        </span>
+                      </a>
+                    </div>
                   </th>
                   <td class="width-25">
                     <a
@@ -456,6 +451,7 @@
               workInstructions.published &&
               workInstructions.published.length > 0
             "
+            class="pagination-main"
           >
             <pagination-template
               #p="paginationApi"

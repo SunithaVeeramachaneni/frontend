@@ -1,5 +1,5 @@
 <div
-  class="customer-row"
+  class="dashboard"
   [ngClass]="dashboardDisplayMode === 'ALL' ? 'cust-row-all' : ''"
 >
   <mat-form-field
@@ -78,9 +78,13 @@
       >
         <div>
           <div class="dis-flex widget-header">
-            <span class="gridster-item-content widget-title">
+            <div
+              class="gridster-item-content widget-title"
+              matTooltip="{{ widget.name }}"
+              matTooltipClass=""
+            >
               {{ widget.name }}
-            </span>
+            </div>
             <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
               <mat-icon>more_horiz</mat-icon>
             </button>

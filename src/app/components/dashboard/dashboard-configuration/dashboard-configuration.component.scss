@@ -3,17 +3,17 @@
   height: 65px;
   margin-top: -10px;
 }
-.customer-row {
+.dashboard {
   background: #ffffff;
-  margin: 0px 20px;
+  margin: 7px 10px 0 10px;
   display: flex;
-  flex-direction: row;
 }
+
 .cust-row-all {
   margin-bottom: 15px;
 }
 
-.customer-row > div {
+.dashboard > div {
   width: 100%;
 }
 
@@ -61,7 +61,7 @@
   height: 39px;
   padding: 0px 14px;
   float: right;
-  margin: 8px 10px 0 0;
+  margin-top: 8px;
   cursor: pointer;
 }
 
@@ -74,6 +74,13 @@
   padding: 0 15px 0 15px;
   margin: 15px 0;
   justify-content: space-between;
+}
+
+.widget-title {
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .widget-body {

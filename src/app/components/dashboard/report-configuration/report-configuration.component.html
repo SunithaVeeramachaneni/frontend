@@ -104,6 +104,8 @@
             mat-stroked-button
             color="primary"
             class="report-button"
+            matTooltip="undo"
+            matTooltipClass=""
             (click)="undo($event)"
             [disabled]="!undoRedoUtil.undoSize()"
           >
@@ -114,6 +116,8 @@
             color="primary"
             class="report-button"
             (click)="redo($event)"
+            matTooltip="redo"
+            matTooltipClass=""
             [disabled]="!undoRedoUtil.redoSize()"
           >
             <mat-icon>redo</mat-icon>
@@ -122,6 +126,7 @@
             mat-stroked-button
             color="primary"
             class="report-button"
+            matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
           >
@@ -130,7 +135,8 @@
           <button
             mat-stroked-button
             color="primary"
-            class="report-button"
+            class="report-button show-chart-btn"
+            matTooltip="Show Chart"
             (click)="toggleChart()"
             *ngIf="!reportDetails.report?.showChart"
             [disabled]="!reportDetails.report?.groupBy?.length"
@@ -140,6 +146,7 @@
           <button
             mat-stroked-button
             color="primary"
+            matTooltip="Preview"
             class="report-button"
             disabled
           >
@@ -149,6 +156,7 @@
             mat-stroked-button
             color="primary"
             class="report-button"
+            matTooltip="Export to Excel"
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
           >
@@ -161,6 +169,7 @@
             mat-stroked-button
             color="primary"
             class="cancel-button"
+            matTooltip="Cancel"
             [routerLink]="['/dashboard/reports']"
             routerLinkActive="router-link-active"
             translate="cancel"
@@ -170,6 +179,7 @@
             color="primary"
             class="save-button"
             translate="save"
+            matTooltip="Save"
             (click)="saveReport()"
             [disabled]="!reportDetails.report"
           ></button>
@@ -187,7 +197,7 @@
           <app-chart [chartConfig]="chartConfig" [chartData]="data"></app-chart>
         </ng-container>
       </div>
-      <div>
+      <div class="m-r-15">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"
