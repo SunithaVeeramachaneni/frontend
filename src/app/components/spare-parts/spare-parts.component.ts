@@ -52,6 +52,7 @@ export class SparePartsComponent implements OnInit {
   public filterObj$: Observable<any>;
 
   public baseCode: any;
+  public technicians: WarehouseTechnician[];
 
   public selectedUser = '';
   headerTitle = 'Spare Parts Control Center';
@@ -106,6 +107,7 @@ export class SparePartsComponent implements OnInit {
 
   getTechnicians() {
     this.technicians$ = this.sparepartsSvc.getPickerList();
+    this.technicians$.subscribe((resp) => (this.technicians = resp));
   }
 
   public myFunction() {
@@ -154,17 +156,14 @@ export class SparePartsComponent implements OnInit {
   }
 
   assignTech(details) {
-    const firstName = details.fName;
+    const event = details.fName;
     const workorderid = details.workOrderID;
-    const technician$ = this.technicians$.pipe(
-      map((technicians) => {
-        return technicians.filter(
-          (technician) => technician.fName === firstName
-        );
-      })
+    let technician = this.technicians$.pipe(
+      map((epics) => epics.filter((epic) => epic.fName === event))
     );
-    technician$.subscribe((technician) => {
-      const data = {
+    technician.subscribe((technician) => {
+      console.log('Technician ', technician);
+      let data = {
         USNAM: technician[0].userId,
         ASSIGNEE: technician[0].fName,
         AUFNR: workorderid

@@ -1,5 +1,5 @@
 export interface PlantTechnician {
-    personName: string,
-    personKey: string,
-     image: string,
+  personName: string;
+  personKey: string;
+  image: string;
 }

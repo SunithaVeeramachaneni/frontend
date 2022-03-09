@@ -9,6 +9,7 @@ import { WorkCenter } from '../../../interfaces/work-center';
 
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { PlantTechnician } from 'src/app/interfaces/plant_technician';
 
 @Component({
   selector: 'app-modal',
@@ -23,11 +24,11 @@ export class ModalComponent implements OnInit {
   public saveDisabled = true;
 
   public workCenter: string;
-  public workCenterList: string[];
+  public workCenterList: any[];
 
   public assignee: string = '';
   public assigneeList: any;
-  public displayedAssigneeList: Observable<WarehouseTechnician>;
+  public displayedAssigneeList: PlantTechnician[];
 
   public base64Code;
   constructor(

@@ -108,7 +108,7 @@
               drafts
                 | filter: search
                 | dropdownFilter: CreatedBy
-                | orderBy: order:reverse:'case-insensitive'
+                | orderBy: order:reverse:true
                 | paginate: config as result
             "
           >
