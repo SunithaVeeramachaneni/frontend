@@ -289,7 +289,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
           this.assignedObjectsList[index]['Value'] =
             this.assignedObjcetsTmp[indexObj].Value;
           this.assignedObjcetsTmp.splice(indexObj, 1);
-          this.updateBusinessObject(assignedObjet, assignedObjet.Value, false);
+          this.updateBusinessObject(
+            assignedObjet,
+            { target: { value: assignedObjet.Value } },
+            false
+          );
           this.assignedObjectsSelected = [
             ...this.assignedObjectsSelected,
             assignedObjet
@@ -317,7 +321,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     }
   };
 
-  updateBusinessObject(obj, event: Event, update: boolean = true) {
+  updateBusinessObject(obj, event: any, update: boolean = true) {
     const { value: enteredVal } = event.target as HTMLInputElement;
     this.assignedObjectsList.forEach((assignedObjet: any, index: number) => {
       if (assignedObjet.FILEDNAME === obj.FILEDNAME) {
@@ -353,14 +357,14 @@ export class OverviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  requisiteChange = (event: Event, type) => {
+  requisiteChange = (event: any, type) => {
     const { value } = event.target as HTMLInputElement;
     if (value && type) {
       this.updatePrequisite(value, type, true);
     }
   };
 
-  uploadCoverImageFile(event: Event) {
+  uploadCoverImageFile(event: any) {
     const { files } = event.target as HTMLInputElement;
     const wid = this.recentWorkInstruction.Id;
     const file = files[0];

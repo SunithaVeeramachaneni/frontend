@@ -16,7 +16,7 @@ import { getInstruction } from '../state/instruction.selectors';
 import * as InstructionActions from '../state/intruction.actions';
 import {
   CustomStepperComponent,
-  OverviewComponent,
+  OverviewComponent
 } from './overview.component';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 
@@ -24,52 +24,52 @@ const categoryDetails = [
   {
     Category_Id: defaultCategoryId,
     Category_Name: defaultCategoryName,
-    Cover_Image: 'assets/work-instructions-icons/img/brand/category-placeholder.png',
+    Cover_Image:
+      'assets/work-instructions-icons/img/brand/category-placeholder.png'
   },
   {
     Category_Id: 'xyzkddaz_',
     Category_Name: 'Health-Precautions',
-    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage2.png'
   },
   {
     Category_Id: '_aswehdjf',
     Category_Name: 'Sample Category',
-    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
+    Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png'
   }
 ];
 
 const [category1, category2, category3] = categoryDetails;
 const categories1 = [` ${category1.Category_Name}`];
-const categories2 = [` ${category2.Category_Name}`, ` ${category3.Category_Name}`];
+const categories2 = [
+  ` ${category2.Category_Name}`,
+  ` ${category3.Category_Name}`
+];
 const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const businessObjects = [
   {
     __metadata: {
-      id:
-        "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='ATNAM')",
-      uri:
-        "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='ATNAM')",
-      type: 'RACECLIENT.WIObjectCategory',
+      id: "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='ATNAM')",
+      uri: "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='ATNAM')",
+      type: 'RACECLIENT.WIObjectCategory'
     },
     APPNAME: 'MWORKORDER',
     OBJECTCATEGORY: 'WORKORDER',
     FILEDNAME: 'ATNAM',
-    FIELDDESCRIPTION: 'CHARACTERISTIC NAME',
+    FIELDDESCRIPTION: 'CHARACTERISTIC NAME'
   },
   {
     __metadata: {
-      id:
-        "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='AUART')",
-      uri:
-        "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='AUART')",
-      type: 'RACECLIENT.WIObjectCategory',
+      id: "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='AUART')",
+      uri: "http://54.208.252.183:8000/sap/opu/odata/INVCEC/RACE_SRV/WIOBJECTCATEGORYCollection(APPNAME='MWORKORDER',OBJECTCATEGORY='WORKORDER',FILEDNAME='AUART')",
+      type: 'RACECLIENT.WIObjectCategory'
     },
     APPNAME: 'MWORKORDER',
     OBJECTCATEGORY: 'WORKORDER',
     FILEDNAME: 'AUART',
-    FIELDDESCRIPTION: 'ORDER TYPE',
-  },
+    FIELDDESCRIPTION: 'ORDER TYPE'
+  }
 ];
 
 const workInstruction = [
@@ -101,7 +101,7 @@ const workInstruction = [
     IsAudioOrVideoFileDeleted: false,
     FilePath: null,
     FileType: null
-  },
+  }
 ];
 
 const steps = [
@@ -123,7 +123,7 @@ const steps = [
     isCloned: null,
     Reaction_Plan:
       '{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":""}',
-    Published: false,
+    Published: false
   },
   {
     StepId: '2860',
@@ -143,16 +143,16 @@ const steps = [
     isCloned: null,
     Reaction_Plan:
       '{"Title":"Reaction Plan","Position":4,"Active":"true","FieldCategory":"REACTION PLAN","FieldType":"RTF","FieldValue":""}',
-    Published: false,
-  },
+    Published: false
+  }
 ];
 
 const IMAGECONTENT = [
   {
     fileContent: '/9j/4AAQSkZJRgABAQEASABIAAD==',
     fileName: 'Thumbnail.jpg',
-    fileType: '.jpg',
-  },
+    fileType: '.jpg'
+  }
 ];
 
 const wid = workInstruction[0].Id;
@@ -168,47 +168,55 @@ describe('OverviewComponent', () => {
   let store: MockStore<State>;
   let mockInstructionSelector;
 
-  beforeEach(waitForAsync(() => {
-    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-      snapshot: {
-        paramMap: convertToParamMap({
-          id: wid,
-        }),
-      },
-    });
-    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-      'getAllCategories',
-      'getAllBusinessObjects',
-      'getStepsByWID',
-      'getInstructionsById',
-    ]);
-    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-      'getImageContents',
-      'getBase64ImageData',
-      'getBase64Image',
-      'resetBase64ImageDetails'
-    ]);
+  beforeEach(
+    waitForAsync(() => {
+      activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+        snapshot: {
+          paramMap: convertToParamMap({
+            id: wid
+          })
+        }
+      });
+      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+        'getAllCategories',
+        'getAllBusinessObjects',
+        'getStepsByWID',
+        'getInstructionsById'
+      ]);
+      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+        'getImageContents',
+        'getBase64ImageData',
+        'getBase64Image',
+        'resetBase64ImageDetails'
+      ]);
 
-    TestBed.configureTestingModule({
-      declarations: [OverviewComponent, MockComponent(CustomStepperComponent)],
-      imports: [
-        ReactiveFormsModule,
-        AppMaterialModules,
-        CdkStepperModule,
-        BrowserAnimationsModule,
-      ],
-      providers: [
-        { provide: ActivatedRoute, useValue: activatedRouteSpy },
-        { provide: InstructionService, useValue: instructionServiceSpy },
-        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-        provideMockStore()
-      ],
-    }).compileComponents();
-  }));
+      TestBed.configureTestingModule({
+        declarations: [
+          OverviewComponent,
+          MockComponent(CustomStepperComponent)
+        ],
+        imports: [
+          ReactiveFormsModule,
+          AppMaterialModules,
+          CdkStepperModule,
+          BrowserAnimationsModule
+        ],
+        providers: [
+          { provide: ActivatedRoute, useValue: activatedRouteSpy },
+          { provide: InstructionService, useValue: instructionServiceSpy },
+          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+          provideMockStore()
+        ]
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);
-    mockInstructionSelector = store.overrideSelector(getInstruction, workInstruction[0]);
+    mockInstructionSelector = store.overrideSelector(
+      getInstruction,
+      workInstruction[0]
+    );
     spyOn(store, 'dispatch');
     fixture = TestBed.createComponent(OverviewComponent);
     component = fixture.componentInstance;
@@ -276,13 +284,13 @@ describe('OverviewComponent', () => {
 
     it('should remove selected category from the list', () => {
       spyOn(<any>component, 'removeFirst').and.callFake(() => [
-        categoryDetails[1].Category_Name,
+        categoryDetails[1].Category_Name
       ]);
       spyOn(component.instructionDataEntry, 'emit');
       component.recentWorkInstruction = { ...workInstruction[0] };
       component.categoriesSelected = [
         categoryDetails[1].Category_Name,
-        categoryDetails[2].Category_Name,
+        categoryDetails[2].Category_Name
       ];
       component.OnCategoryObjectsList(categoryDetails[2].Category_Name);
       expect(component['removeFirst']).toHaveBeenCalledWith(
@@ -290,14 +298,14 @@ describe('OverviewComponent', () => {
         categoryDetails[2].Category_Name
       );
       expect(component.categoriesSelected).toEqual([
-        categoryDetails[1].Category_Name,
+        categoryDetails[1].Category_Name
       ]);
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[1].Category_Id]),
+          Categories: JSON.stringify([categoryDetails[1].Category_Id])
         },
-        update: true,
+        update: true
       });
     });
 
@@ -311,13 +319,15 @@ describe('OverviewComponent', () => {
         [categoryDetails[1].Category_Name],
         categoryDetails[1].Category_Name
       );
-      expect(component.categoriesSelected).toEqual([categoryDetails[0].Category_Name]);
+      expect(component.categoriesSelected).toEqual([
+        categoryDetails[0].Category_Name
+      ]);
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[0].Category_Id]),
+          Categories: JSON.stringify([categoryDetails[0].Category_Id])
         },
-        update: true,
+        update: true
       });
     });
   });
@@ -388,7 +398,7 @@ describe('OverviewComponent', () => {
 
     it('should remove assigned objcets list', () => {
       spyOn(<any>component, 'removeFirst').and.callFake(() => [
-        businessObjects[0],
+        businessObjects[0]
       ]);
       component.assignedObjectsSelected = businessObjects;
       component.OnassignedObjectsList(businessObjects[1]);
@@ -396,11 +406,9 @@ describe('OverviewComponent', () => {
         businessObjects,
         businessObjects[1]
       );
-      expect(component.assignedObjectsSelected).toEqual([
-        businessObjects[0],
-      ]);
+      expect(component.assignedObjectsSelected).toEqual([businessObjects[0]]);
       expect(component.updateAssignedObjects).toHaveBeenCalledWith([
-        businessObjects[0],
+        businessObjects[0]
       ]);
     });
   });
@@ -413,7 +421,8 @@ describe('OverviewComponent', () => {
     it('should remove value from objcet & set AssignedObjects', () => {
       mockInstructionSelector.setResult({
         ...workInstruction[0],
-        AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}, {"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Name"}]'
+        AssignedObjects:
+          '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}, {"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Name"}]'
       });
       store.refreshState();
       spyOn(component.instructionDataEntry, 'emit');
@@ -425,9 +434,10 @@ describe('OverviewComponent', () => {
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}]'
+          AssignedObjects:
+            '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}]'
         },
-        update: true,
+        update: true
       });
     });
 
@@ -440,7 +450,7 @@ describe('OverviewComponent', () => {
       expect(result).toEqual([]);
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: { ...workInstruction[0], AssignedObjects: null },
-        update: true,
+        update: true
       });
     });
   });
@@ -491,7 +501,6 @@ describe('OverviewComponent', () => {
     });
   });
 
-
   describe('updateCategory', () => {
     it('should define function', () => {
       expect(component.updateCategory).toBeDefined();
@@ -503,9 +512,9 @@ describe('OverviewComponent', () => {
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Categories: JSON.stringify([categoryDetails[1].Category_Id]),
+          Categories: JSON.stringify([categoryDetails[1].Category_Id])
         },
-        update: true,
+        update: true
       });
     });
   });
@@ -525,12 +534,12 @@ describe('OverviewComponent', () => {
       expect(component.updateAssignedObjects).toHaveBeenCalledWith();
       expect(component.assignedObjectsList).toEqual([
         businessObjects[0],
-        { ...businessObjects[1], Value },
+        { ...businessObjects[1], Value }
       ]);
       expect(component['assignedObjcetsTmp']).toEqual([]);
       expect(component.updateBusinessObject).toHaveBeenCalledWith(
         { ...businessObjects[1], Value },
-        Value,
+        { target: { value: Value } },
         false
       );
     });
@@ -538,7 +547,8 @@ describe('OverviewComponent', () => {
     it('should update assignedObjectsList and call removeFirst method', () => {
       mockInstructionSelector.setResult({
         ...workInstruction[0],
-        AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]'
+        AssignedObjects:
+          '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]'
       });
       store.refreshState();
       (component.updateAssignedObjects as jasmine.Spy).and.callThrough();
@@ -549,13 +559,13 @@ describe('OverviewComponent', () => {
       component.updateAssignedObjects([businessObjects[1]]);
       expect(component.assignedObjectsList).toEqual([
         { ...businessObjects[0], Value: '' },
-        { ...businessObjects[1], Value },
+        { ...businessObjects[1], Value }
       ]);
       expect(component['removeFirst']).toHaveBeenCalledWith(
         [businessObjects[1]],
         {
           ...businessObjects[0],
-          Value: 'Test Characteristic Value',
+          Value: 'Test Characteristic Value'
         }
       );
     });
@@ -570,22 +580,23 @@ describe('OverviewComponent', () => {
       (component.updateAssignedObjects as jasmine.Spy).and.callThrough();
       mockInstructionSelector.setResult({
         ...workInstruction[0],
-        AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}]'
+        AssignedObjects:
+          '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"}]'
       });
       store.refreshState();
       spyOn(component.instructionDataEntry, 'emit');
       component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
-      component.updateBusinessObject(
-        businessObjects[0],
-        'Test Characteristic Value'
-      );
+      component.updateBusinessObject(businessObjects[0], {
+        target: { value: 'Test Characteristic Value' }
+      });
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          AssignedObjects: '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]'
+          AssignedObjects:
+            '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"ATNAM","FIELDDESCRIPTION":"CHARACTERISTIC NAME","Value":"Test Characteristic Value"}]'
         },
-        update: true,
+        update: true
       });
     });
   });
@@ -596,7 +607,10 @@ describe('OverviewComponent', () => {
     });
 
     it('should call updatePrequisite method', () => {
-      component.requisiteChange('Test Tools One', 'Tools');
+      component.requisiteChange(
+        { target: { value: 'Test Tools One' } },
+        'Tools'
+      );
       expect(component.updatePrequisite).toHaveBeenCalledWith(
         'Test Tools One',
         'Tools',
@@ -614,12 +628,15 @@ describe('OverviewComponent', () => {
       const src = 'image.jpg';
       component.recentWorkInstruction = workInstruction[0];
       component.getImageSrc(src);
-      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(src, component.recentWorkInstruction.Id);
+      expect(base64HelperServiceSpy.getBase64ImageData).toHaveBeenCalledWith(
+        src,
+        component.recentWorkInstruction.Id
+      );
     });
-    
+
     it(`should not call getBase64Image if getBase64ImageData already exists or image
     data call already happend`, () => {
-      component.recentWorkInstruction = workInstruction[0];      
+      component.recentWorkInstruction = workInstruction[0];
       let src = 'image.jpg';
       (base64HelperServiceSpy.getBase64ImageData as jasmine.Spy)
         .withArgs(src, component.recentWorkInstruction.Id)
@@ -631,7 +648,6 @@ describe('OverviewComponent', () => {
       component.imageDataCalls[src] = true;
       component.getImageSrc(src);
       expect(base64HelperServiceSpy.getBase64Image).not.toHaveBeenCalled();
-
     });
   });
 
@@ -647,7 +663,7 @@ describe('OverviewComponent', () => {
       const result = component.preparePrerequisite({
         prequisiteDetails,
         enteredVal,
-        remove,
+        remove
       });
       expect(result).toEqual([...prequisiteDetails, enteredVal]);
     });
@@ -659,7 +675,7 @@ describe('OverviewComponent', () => {
       const result = component.preparePrerequisite({
         prequisiteDetails,
         enteredVal,
-        remove,
+        remove
       });
       expect(result).toEqual([...prequisiteDetails, ...enteredVal]);
     });
@@ -671,7 +687,7 @@ describe('OverviewComponent', () => {
       const result = component.preparePrerequisite({
         prequisiteDetails,
         enteredVal,
-        remove,
+        remove
       });
       expect(result).toEqual(prequisiteDetails.slice(0, 1));
     });
@@ -683,7 +699,7 @@ describe('OverviewComponent', () => {
       const result = component.preparePrerequisite({
         prequisiteDetails,
         enteredVal,
-        remove,
+        remove
       });
       expect(result).toEqual(prequisiteDetails);
     });
@@ -707,7 +723,7 @@ describe('OverviewComponent', () => {
       expect(component.preparePrerequisite).toHaveBeenCalledWith({
         prequisiteDetails: [],
         enteredVal,
-        remove: false,
+        remove: false
       });
       expect(component.formControls.tools.value).toBe('');
       expect(component.selectedTools).toEqual(enteredVal);
@@ -716,7 +732,7 @@ describe('OverviewComponent', () => {
       );
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: workInstruction[0],
-        update: false,
+        update: false
       });
     });
 
@@ -725,24 +741,28 @@ describe('OverviewComponent', () => {
       component.ngOnInit();
       const enteredVal = 'Test Tools Three';
       const prerequisite = 'Tools';
-      const selectedTools = [...JSON.parse(workInstruction[0].Tools).FieldValue];
+      const selectedTools = [
+        ...JSON.parse(workInstruction[0].Tools).FieldValue
+      ];
       component.updatePrequisite(enteredVal, prerequisite, true, false);
       expect(component.preparePrerequisite).toHaveBeenCalledWith({
         prequisiteDetails: [...selectedTools],
         enteredVal,
-        remove: false,
+        remove: false
       });
       expect(component.formControls.tools.value).toBe('');
       expect(component.selectedTools).toEqual([...selectedTools, enteredVal]);
-      expect(component.selectedInstructionData.selectedTools).toEqual(
-        [...selectedTools, enteredVal]
-      );
+      expect(component.selectedInstructionData.selectedTools).toEqual([
+        ...selectedTools,
+        enteredVal
+      ]);
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: {
           ...workInstruction[0],
-          Tools: '{"Title":"Tools","Position":0,"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","FieldValue":["Test Tools One","Test Tools Two","Test Tools Three"]}'
+          Tools:
+            '{"Title":"Tools","Position":0,"Active":"true","FieldCategory":"HEADER","FieldType":"RTF","FieldValue":["Test Tools One","Test Tools Two","Test Tools Three"]}'
         },
-        update: false,
+        update: false
       });
     });
 
@@ -753,7 +773,7 @@ describe('OverviewComponent', () => {
       expect(component.preparePrerequisite).toHaveBeenCalledWith({
         prequisiteDetails: [],
         enteredVal,
-        remove: false,
+        remove: false
       });
       expect(component.formControls.safetyKit.value).toBe('');
       expect(component.selectedSafetyKits).toEqual(enteredVal);
@@ -762,7 +782,7 @@ describe('OverviewComponent', () => {
       );
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: workInstruction[0],
-        update: false,
+        update: false
       });
     });
 
@@ -773,7 +793,7 @@ describe('OverviewComponent', () => {
       expect(component.preparePrerequisite).toHaveBeenCalledWith({
         prequisiteDetails: [],
         enteredVal,
-        remove: false,
+        remove: false
       });
       expect(component.formControls.spareParts.value).toBe('');
       expect(component.selectedSpareParts).toEqual(enteredVal);
@@ -782,7 +802,7 @@ describe('OverviewComponent', () => {
       );
       expect(component.instructionDataEntry.emit).toHaveBeenCalledWith({
         insObj: workInstruction[0],
-        update: true,
+        update: true
       });
     });
   });
@@ -808,7 +828,10 @@ describe('OverviewComponent', () => {
     });
 
     it('should return true/false on business objcets FILEDNAME comparision', () => {
-      const result = component.assignedObjectsComparison(businessObjects[1], JSON.parse(workInstruction[0].AssignedObjects)[0]);
+      const result = component.assignedObjectsComparison(
+        businessObjects[1],
+        JSON.parse(workInstruction[0].AssignedObjects)[0]
+      );
       expect(result).toBeTrue();
     });
   });
@@ -831,12 +854,16 @@ describe('OverviewComponent', () => {
       expect(component['updateOverviewDetailsCalled']).toBeTrue();
       expect(component.categoriesList).toEqual(categoryDetails);
       expect(component.titleProvided).toBeTrue();
-      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateCategories({ categories: categoryDetails }));
+      expect(store.dispatch).toHaveBeenCalledWith(
+        InstructionActions.updateCategories({ categories: categoryDetails })
+      );
       expect(component.enableReactiveFormFields).toHaveBeenCalledWith();
-      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(
+        workInstruction[0]
+      );
     });
   });
-  
+
   describe('updateOverviewDetails', () => {
     it('should define function', () => {
       expect(component.updateOverviewDetails).toBeDefined();
@@ -848,9 +875,13 @@ describe('OverviewComponent', () => {
       component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
 
-      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(
+        workInstruction[0]
+      );
       expect(instructionServiceSpy.getStepsByWID).toHaveBeenCalledWith(wid);
-      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateSteps( { steps }));
+      expect(store.dispatch).toHaveBeenCalledWith(
+        InstructionActions.updateSteps({ steps })
+      );
       expect(component.assignedObjectsSelected).toEqual(
         JSON.parse(workInstruction[0].AssignedObjects)
       );
@@ -879,7 +910,12 @@ describe('OverviewComponent', () => {
       const imageName = 'Thumbnail.jpg';
       (instructionServiceSpy.getStepsByWID as jasmine.Spy)
         .withArgs(wid)
-        .and.returnValue(of([{...steps[0], Attachment: JSON.stringify([imageName])}, steps[1] ]))
+        .and.returnValue(
+          of([
+            { ...steps[0], Attachment: JSON.stringify([imageName]) },
+            steps[1]
+          ])
+        )
         .and.callThrough();
       (base64HelperServiceSpy.getImageContents as jasmine.Spy)
         .withArgs([imageName], `${wid}/${steps[0].StepId}`)
@@ -890,14 +926,22 @@ describe('OverviewComponent', () => {
       component['updateOverviewDetailsCalled'] = false;
       component.ngOnInit();
 
-      expect(component.updateOverviewDetails).toHaveBeenCalledWith(workInstruction[0]);
+      expect(component.updateOverviewDetails).toHaveBeenCalledWith(
+        workInstruction[0]
+      );
       expect(instructionServiceSpy.getStepsByWID).toHaveBeenCalledWith(wid);
-      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateSteps( { steps }));
-      expect(store.dispatch).toHaveBeenCalledWith(InstructionActions.updateStepImages({ stepImages: {
-        stepId: steps[0].StepId,
-        attachments: JSON.stringify([imageName]),
-        imageContents: JSON.stringify(IMAGECONTENT)
-      }}));
+      expect(store.dispatch).toHaveBeenCalledWith(
+        InstructionActions.updateSteps({ steps })
+      );
+      expect(store.dispatch).toHaveBeenCalledWith(
+        InstructionActions.updateStepImages({
+          stepImages: {
+            stepId: steps[0].StepId,
+            attachments: JSON.stringify([imageName]),
+            imageContents: JSON.stringify(IMAGECONTENT)
+          }
+        })
+      );
       expect(component.assignedObjectsSelected).toEqual(
         JSON.parse(workInstruction[0].AssignedObjects)
       );
@@ -922,7 +966,7 @@ describe('OverviewComponent', () => {
       );
     });
   });
-  
+
   describe('ngOnDestroy', () => {
     it('should define function', () => {
       expect(component.ngOnDestroy).toBeDefined();
@@ -932,7 +976,9 @@ describe('OverviewComponent', () => {
       spyOn(<any>component['currentPreviousStatusSubscription'], 'unsubscribe');
       spyOn(<any>component['instructionSubscription'], 'unsubscribe');
       component.ngOnDestroy();
-      expect(base64HelperServiceSpy.resetBase64ImageDetails).toHaveBeenCalledWith();
+      expect(
+        base64HelperServiceSpy.resetBase64ImageDetails
+      ).toHaveBeenCalledWith();
       expect(
         component['currentPreviousStatusSubscription'].unsubscribe
       ).toHaveBeenCalledWith();
@@ -945,7 +991,12 @@ describe('OverviewComponent', () => {
       const imageName = 'Thumbnail.jpg';
       (instructionServiceSpy.getStepsByWID as jasmine.Spy)
         .withArgs(wid)
-        .and.returnValue(of([{...steps[0], Attachment: JSON.stringify([imageName])}, steps[1] ]))
+        .and.returnValue(
+          of([
+            { ...steps[0], Attachment: JSON.stringify([imageName]) },
+            steps[1]
+          ])
+        )
         .and.callThrough();
       (base64HelperServiceSpy.getImageContents as jasmine.Spy)
         .withArgs([imageName], `${wid}/${steps[0].StepId}`)

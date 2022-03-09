@@ -106,7 +106,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     return this.frmSubscribe.controls;
   }
 
-  uploadFile(event: Event) {
+  uploadFile(event: any) {
     const { files } = event.target as HTMLInputElement;
     if (this.files.length) {
       this.categoryService.setDeleteFiles(this.files[0]);
