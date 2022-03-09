@@ -1,6 +1,8 @@
+import { MediaType } from 'plyr';
+
 export interface FileInfo {
   filePath: string;
-  fileType: string;
+  fileType: MediaType;
 }
 
 export interface RenameFileInfo {

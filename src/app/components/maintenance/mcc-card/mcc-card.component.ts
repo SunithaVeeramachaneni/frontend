@@ -17,20 +17,18 @@ import { DomSanitizer } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MCCCardComponent implements OnInit {
-
   constructor(
-    private translateService: TranslateService,
+    public translateService: TranslateService,
     private sanitizer: DomSanitizer
-  ){};
+  ) {}
 
   @Input('workOrder') workOrder;
-  @Output('assign') assign = new EventEmitter()
+  @Output('assign') assign = new EventEmitter();
   isDropdownOpen = false;
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  toggleDropdown(){
-    this.isDropdownOpen = !this.isDropdownOpen
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
   }
   getImageSrc = (source: string) => {
     if (source) {
@@ -38,13 +36,9 @@ export class MCCCardComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
-  onAssignPress =(workOrder) =>{
-    this.assign.emit(workOrder)
-  }
+  onAssignPress = (workOrder) => {
+    this.assign.emit(workOrder);
+  };
 
-
-
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 }
-  

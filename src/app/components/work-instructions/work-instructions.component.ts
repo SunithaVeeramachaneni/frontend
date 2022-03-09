@@ -135,7 +135,7 @@ export class WorkInstructionsComponent
   }
 
   getBase64Images = (instructions: Instruction[]) => {
-    instructions.map((instruction) => {
+    instructions.forEach((instruction) => {
       const { Cover_Image: coverImage, Id: path } = instruction;
       if (
         coverImage.indexOf('assets/') === -1 &&

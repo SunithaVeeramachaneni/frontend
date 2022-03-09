@@ -1,19 +1,24 @@
 /* eslint-disable no-underscore-dangle */
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { CreateUpdateDashboardDialogComponent } from '../dashboard-create-update-dialog/dashboard-create-update-dialog.component';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
 import { DashboardService } from '../services/dashboard.service';
 import { ToastService } from 'src/app/shared/toast';
+import { AlertDialog } from '../alert-dialog/alert-dialog.component';
+
+interface CreateUpdateDeleteDashboard {
+  type: 'create' | 'update' | 'delete' | 'mark_default';
+  dashboard: Dashboard;
+}
+
+interface DashboardData {
+  data: Dashboard[];
+}
 
 @Component({
   selector: 'app-dashboards',
@@ -24,81 +29,151 @@ import { ToastService } from 'src/app/shared/toast';
 export class DashboardsComponent implements OnInit {
   displayAllDashboards = false;
   dashboardMode = 'SINGLE';
-
-  @Input() set selectedGlobalDashboard(selectedGlobalDashboard: Dashboard) {
-    this._selectedGlobalDashboard = selectedGlobalDashboard;
-  }
-  get selectedGlobalDashboard(): Dashboard {
-    return this._selectedGlobalDashboard;
-  }
-
-  @Input() set selectedDashboard(selectedDashboard: Dashboard) {
-    this._selectedDashboard = selectedDashboard;
-  }
-  get selectedDashboard(): Dashboard {
-    return this._selectedDashboard;
-  }
-
+  selectedGlobalDashboard: Dashboard;
+  selectedDashboard: Dashboard;
+  defaultDashboard: Dashboard;
+  skipSetDefaultDashboard = false;
   dashboards$: Observable<Dashboard[]>;
-  private _selectedGlobalDashboard: Dashboard;
-  private _selectedDashboard: Dashboard;
+  dashboardDataInitial$: Observable<DashboardData>;
+  createUpdateDeleteDashboard$ =
+    new BehaviorSubject<CreateUpdateDeleteDashboard>({
+      type: 'create',
+      dashboard: {} as Dashboard
+    });
+  staticDropDownOption: Dashboard = {
+    id: 'CREATE_DASHBOARD',
+    name: 'VIEW_ALL_DASHBOARDS',
+    isDefault: false,
+    createdBy: 'dummy'
+  } as Dashboard;
 
   constructor(
     private dialog: MatDialog,
     private toast: ToastService,
     private dashboardService: DashboardService,
     private commonService: CommonService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
     };
-    this.dashboards$ = this.dashboardService.getDashboards$(info).pipe(
-      mergeMap((dashboards) => {
-        if (dashboards.length) {
-          this.setDefaultDashboard(dashboards);
-          return of(dashboards);
-        } else {
-          return this.createDefaultDashboard().pipe(
-            map((dashboard) => {
-              if (Object.keys(dashboard).length) {
-                return [dashboard];
-              } else {
-                return [];
+
+    this.dashboardDataInitial$ = of({ data: [] as Dashboard[] });
+    this.dashboardDataInitial$ = this.dashboardService
+      .getDashboards$(info)
+      .pipe(
+        mergeMap((dashboards) => {
+          if (dashboards.length) {
+            return of({ data: dashboards });
+          } else {
+            return this.createDefaultDashboard().pipe(
+              map((dashboard) => {
+                if (Object.keys(dashboard).length) {
+                  return { data: [dashboard] };
+                } else {
+                  return { data: [] };
+                }
+              })
+            );
+          }
+        }),
+        catchError(() => of({ data: [] }))
+      );
+
+    this.dashboards$ = combineLatest([
+      this.dashboardDataInitial$,
+      this.createUpdateDeleteDashboard$
+    ]).pipe(
+      map(([initial, dashboardAction]) => {
+        const { type, dashboard } = dashboardAction;
+        if (Object.keys(dashboard).length) {
+          if (type === 'create') {
+            if (this.dashboardMode === 'ALL') {
+              this.displayAllDashboards = true;
+            } else {
+              this.selectedGlobalDashboard = dashboard;
+              this.displayAllDashboards = false;
+            }
+            this.selectedDashboard = dashboard;
+            this.skipSetDefaultDashboard = true;
+            initial.data = initial.data.concat(dashboard);
+            return initial.data;
+          } else if (type === 'update') {
+            initial.data = initial.data.map((db) => {
+              if (db.id === dashboard.id) {
+                return dashboard;
               }
-            })
-          );
+              return db;
+            });
+            if (this.dashboardMode === 'ALL') {
+              this.displayAllDashboards = true;
+              this.selectedDashboard = dashboard;
+            } else {
+              this.selectedGlobalDashboard = dashboard;
+              this.displayAllDashboards = false;
+            }
+            this.skipSetDefaultDashboard = true;
+            return initial.data;
+          } else if (type === 'delete') {
+            initial.data = initial.data.filter((db) => db.id !== dashboard.id);
+            this.skipSetDefaultDashboard = false;
+            return initial.data;
+          } else if (type === 'mark_default') {
+            initial.data = initial.data.map((db) => {
+              if (db.id === dashboard.id) {
+                db.isDefault = true;
+                if (this.dashboardMode === 'ALL') {
+                  this.selectedDashboard = { ...db };
+                } else {
+                  this.selectedGlobalDashboard = db;
+                }
+              } else {
+                db.isDefault = false;
+              }
+              return db;
+            });
+            this.skipSetDefaultDashboard = true;
+            return initial.data;
+          }
+        } else {
+          return initial.data;
         }
       }),
-      catchError(() => of([])),
-      tap(this.dashboardService.updateDashboards)
+      tap((dashboards) => {
+        this.dashboardService.updateDashboards(dashboards);
+        this.defaultDashboard = dashboards.find(
+          (dashboard) => dashboard.isDefault
+        );
+        if (!this.skipSetDefaultDashboard) {
+          this.setDefaultDashboard(this.defaultDashboard);
+        }
+      })
     );
-
     this.dashboardService.dashboardSelectionChanged$.subscribe((event) => {
-      if (event === 'VIEW_ALL_DASHBOARDS') {
+      if (event.name === 'VIEW_ALL_DASHBOARDS') {
         this.displayAllDashboards = true;
         this.dashboardMode = 'ALL';
-        this.selectedGlobalDashboard = event;
-        let current = [];
-        this.dashboards$.subscribe((dashboards) => {
-          current = dashboards.filter((d) => d.isDefault);
-        });
-        this.setSelectedDashboard(current[0]);
-      } else if (event === 'CREATE_DASHBOARD') {
+        this.selectedGlobalDashboard = { ...event };
+        this.setSelectedDashboard(this.defaultDashboard);
+      } else if (event.name === 'CREATE_DASHBOARD') {
         this.openCreateDashboardDialog();
       } else {
         this.selectedGlobalDashboard = event;
+        this.selectedDashboard = event;
         this.displayAllDashboards = false;
       }
     });
   }
 
-  setDefaultDashboard(dashboards: Dashboard[]) {
-    const current = dashboards.filter(d => d.isDefault);
-    this.selectedDashboard = current[0];
-    this.selectedGlobalDashboard = current[0];
+  setDefaultDashboard(dashboard: Dashboard) {
+    if (this.dashboardMode === 'ALL') {
+      this.selectedDashboard = { ...dashboard };
+    } else {
+      this.selectedDashboard = { ...dashboard };
+      this.selectedGlobalDashboard = { ...dashboard };
+    }
   }
 
   setSelectedDashboard(dashboard: Dashboard) {
@@ -107,25 +182,22 @@ export class DashboardsComponent implements OnInit {
   }
 
   globalDashboardSelectionChanged(event: any) {
-    if (event === 'VIEW_ALL_DASHBOARDS') {
+    const eventVal = event.value;
+    if (eventVal.name === 'VIEW_ALL_DASHBOARDS') {
       this.displayAllDashboards = true;
       this.dashboardMode = 'ALL';
-      this.selectedGlobalDashboard = event;
-      let current = [];
-      this.dashboards$.subscribe(dashboards => {
-        current = dashboards.filter(d => d.isDefault);
-      });
-      this.setSelectedDashboard(current[0]);
+      this.selectedGlobalDashboard = { ...eventVal };
     } else {
-      this.dashboardMode = 'SINGLE';
-      const dashboardSelectionVal = event.value;
-      this.selectedGlobalDashboard = dashboardSelectionVal;
-      this.selectedDashboard = dashboardSelectionVal;
       this.displayAllDashboards = false;
-      this.dashboardService.dashboardSelectionChanged(dashboardSelectionVal);
+      this.dashboardMode = 'SINGLE';
+      this.selectedGlobalDashboard = eventVal;
+      this.selectedDashboard = eventVal;
+      this.dashboardService.dashboardSelectionChanged(eventVal);
     }
-
-
+    this.dashboardService.updateGridOptions({
+      update: true,
+      subtractWidth: 150
+    });
   }
 
   openCreateDashboardDialog(
@@ -160,15 +232,9 @@ export class DashboardsComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.dashboards$.pipe(take(1)).subscribe((data) => {
-            this.dashboards$ = of(data);
-            if (this.dashboardMode === 'ALL') {
-              this.displayAllDashboards = true;
-              this.selectedDashboard = data[data.length - 1];
-            } else {
-              this.selectedGlobalDashboard = data[data.length - 1];
-              this.displayAllDashboards = false;
-            }
+          this.createUpdateDeleteDashboard$.next({
+            type: 'create',
+            dashboard: { ...response }
           });
           this.toast.show({
             text: 'Dashboard created successfully',
@@ -184,27 +250,34 @@ export class DashboardsComponent implements OnInit {
       );
   }
 
-  updateDashboard(name: string, isDefault: boolean = false, dashboard: Dashboard) {
+  updateDashboard(
+    name: string,
+    isDefault: boolean = false,
+    dashboard: Dashboard
+  ) {
     dashboard = { ...dashboard, name, isDefault };
     this.dashboardService
       .updateDashboard$(dashboard.id, dashboard)
       .subscribe((response) => {
-        this.dashboards$.pipe(take(1)).subscribe((data) => {
-          this.dashboards$ = of(data);
+        this.createUpdateDeleteDashboard$.next({
+          type: 'update',
+          dashboard: { ...response }
         });
         this.toast.show({
           text: 'Dashboard updated successfully',
           type: 'success'
         });
-      }, (err) => {
-        this.toast.show({
-          text: 'Error occured while updating dashboard',
-          type: 'warning'
-        });
       });
   }
 
   deleteDashboard(dashboard: Dashboard) {
+    if (dashboard.isDefault) {
+      this.dialog.open(AlertDialog, {
+        width: '400px'
+      });
+      return;
+    }
+
     const deleteReportRef = this.dialog.open(ConfirmDialog, {
       data: {}
     });
@@ -213,17 +286,13 @@ export class DashboardsComponent implements OnInit {
         this.dashboardService
           .deleteDashboard$(dashboard.id)
           .subscribe((response) => {
-            this.dashboards$.pipe(take(1)).subscribe((data) => {
-              this.dashboards$ = of(data);
+            this.createUpdateDeleteDashboard$.next({
+              type: 'delete',
+              dashboard: { ...dashboard }
             });
             this.toast.show({
               text: 'Dashboard deleted successfully',
               type: 'success'
-            });
-          }, err => {
-            this.toast.show({
-              text: 'Error occured while deleting dashboard',
-              type: 'warning'
             });
           });
       }
@@ -234,17 +303,13 @@ export class DashboardsComponent implements OnInit {
     this.dashboardService
       .markDashboardDefault$(dashboard.id, dashboard)
       .subscribe((response) => {
-        this.dashboards$.pipe(take(1)).subscribe((data) => {
-          this.dashboards$ = of(data);
+        this.createUpdateDeleteDashboard$.next({
+          type: 'mark_default',
+          dashboard: { ...dashboard }
         });
         this.toast.show({
           text: 'Dashboard marked default successfully',
           type: 'success'
-        });
-      }, (err) => {
-        this.toast.show({
-          text: 'Error occured while marking dashboard as default',
-          type: 'warning'
         });
       });
   }
@@ -256,7 +321,6 @@ export class DashboardsComponent implements OnInit {
       createdBy: this.commonService.getUserName()
     });
 
-
   handleDashboardActions(event) {
     if (!event) return;
     const { type, data } = event;
@@ -266,8 +330,14 @@ export class DashboardsComponent implements OnInit {
         break;
       case 'DELETE':
         this.deleteDashboard(data);
+        break;
       case 'MARK_DEFAULT':
-        this.markDashboardDefault(data)
+        this.markDashboardDefault(data);
+        break;
     }
+  }
+
+  compareFn(option1: Dashboard, option2: Dashboard) {
+    return option1.name === option2.name;
   }
 }

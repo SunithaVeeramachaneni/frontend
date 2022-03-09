@@ -8,7 +8,7 @@ import { MyOverlayRef } from '../myoverlay-ref';
 })
 export class OverlayComponent implements OnInit {
   contentType: 'template' | 'string' | 'component';
-  content: string | TemplateRef<any> | Type<any>;
+  content: any; // string | TemplateRef<any> | Type<any>;
   context;
 
   constructor(private ref: MyOverlayRef) {}

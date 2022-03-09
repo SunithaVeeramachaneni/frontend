@@ -59,7 +59,7 @@
             *ngIf="
               mediaFiles
                 | filter: search
-                | orderBy: order:reverse:'case-insensitive'
+                | orderBy: order:reverse:true
                 | paginate: config as result
             "
           >

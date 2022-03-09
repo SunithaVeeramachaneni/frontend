@@ -27,7 +27,9 @@
       class="mat-tabs"
     >
       <mat-tab label="DRAFTS">
-        <div *ngIf="this.tabIndex === 0 || this.tabGroup._selectedIndex === 0">
+        <div
+          *ngIf="this.tabIndex === 0 || this.tabGroup['_selectedIndex'] === 0"
+        >
           <table class="table">
             <thead>
               <tr>
@@ -99,7 +101,7 @@
                   workInstructions.drafts
                     | filter: search
                     | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:'case-insensitive'
+                    | orderBy: order:reverse:true
                     | paginate: draftsConfig as result
                 "
               >
@@ -323,7 +325,7 @@
                   workInstructions.published
                     | filter: search
                     | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:'case-insensitive'
+                    | orderBy: order:reverse:true
                     | paginate: publishedConfig as result
                 "
               >
