@@ -17,28 +17,17 @@ import { DomSanitizer } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SPCCCardComponent implements OnInit {
-
-  constructor(
-    private translateService: TranslateService,
-  ){};
+  constructor(private translateService: TranslateService) {}
 
   @Input('workOrder') workOrder;
-  @Input('technicians$') technicians$;
-  @Output('assign') assign = new EventEmitter()
+  @Input('technicians') technicians;
+  @Output('assign') assign = new EventEmitter();
   isDropdownOpen = false;
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
+  assignTech = (fName, workOrderID) => {
+    this.assign.emit({ fName, workOrderID });
+  };
 
-  assignTech =(fname, workOrderID) =>{
-    this.assign.emit({fname, workOrderID})
-  }
-
-  
-
-
-
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 }
-  
