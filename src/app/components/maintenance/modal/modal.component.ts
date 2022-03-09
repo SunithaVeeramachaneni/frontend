@@ -23,7 +23,7 @@ export class ModalComponent implements OnInit {
   public saveDisabled = true;
 
   public workCenter: string;
-  public workCenterList: string[];
+  public workCenterList: any[];
 
   public assignee: string = '';
   public assigneeList: any;

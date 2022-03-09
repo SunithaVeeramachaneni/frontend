@@ -17,6 +17,7 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterContentChecked {
+  isPopoverOpen = false;
   private _fileInfo: FileInfo;
   @Input() set fileInfo(fileInfo: FileInfo) {
     this._fileInfo = fileInfo;
@@ -96,11 +97,11 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
     const m = Math.floor((d % 3600) / 60);
     const s = Math.floor((d % 3600) % 60);
 
-    const hDisplay = h > 0 ? h + (h == 1 ? '' : '') : '';
-    const mDisplay = m > 0 ? m + (m == 1 ? '' : '') : '';
-    const sDisplay = s > 0 ? s + (s == 1 ? '' : '') : '';
+    const hDisplay = h > 0 ? h + '' : '';
+    const mDisplay = m > 0 ? m + '' : '';
+    const sDisplay = s > 0 ? s + '' : '';
 
-    if (hDisplay != '') {
+    if (hDisplay !== '') {
       return (
         (hDisplay.length > 1 ? hDisplay : '0' + hDisplay) +
         ':' +
@@ -108,7 +109,7 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
         ':' +
         (sDisplay.length > 1 ? sDisplay : '0' + sDisplay)
       );
-    } else if (mDisplay != '') {
+    } else if (mDisplay !== '') {
       return (
         (mDisplay.length > 1 ? mDisplay : '0' + mDisplay) +
         ':' +

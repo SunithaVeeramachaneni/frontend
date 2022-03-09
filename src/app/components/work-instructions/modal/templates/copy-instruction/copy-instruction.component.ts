@@ -43,7 +43,7 @@ export class CopyInstructionComponent implements OnInit {
     recents: DummyComponent
   ) {
     if (recents) {
-      recents.value.map((instruction) => {
+      recents.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&
@@ -59,7 +59,7 @@ export class CopyInstructionComponent implements OnInit {
     favourites: DummyComponent
   ) {
     if (favourites) {
-      favourites.value.map((instruction) => {
+      favourites.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&
