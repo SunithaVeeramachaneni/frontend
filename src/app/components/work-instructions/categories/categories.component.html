@@ -23,7 +23,7 @@
     *ngIf="
       this.categoriesList
         | filter: searchCriteria
-        | orderBy: 'Created_At':true:'case-insensitive'
+        | orderBy: 'Created_At':true:true
         | paginate: config as result
     "
   >

@@ -101,7 +101,7 @@
                   workInstructions.drafts
                     | filter: search
                     | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:'case-insensitive'
+                    | orderBy: order:reverse:true
                     | paginate: draftsConfig as result
                 "
               >
@@ -327,7 +327,7 @@
                   workInstructions.published
                     | filter: search
                     | dropdownFilter: CreatedBy
-                    | orderBy: order:reverse:'case-insensitive'
+                    | orderBy: order:reverse:true
                     | paginate: publishedConfig as result
                 "
               >

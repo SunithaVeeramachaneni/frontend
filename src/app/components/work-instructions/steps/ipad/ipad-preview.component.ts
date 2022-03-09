@@ -7,7 +7,8 @@ import {
   getCurrentStep,
   getCurrentStepImages
 } from '../../state/instruction.selectors';
-import { Step } from '../../../../interfaces';
+import { Instruction, Step } from '../../../../interfaces';
+import { SelectedInstructionData } from '../overview.component';
 
 @Component({
   selector: 'app-ipad-preview',
@@ -18,8 +19,8 @@ export class IpadPreviewComponent implements OnInit, OnDestroy {
   @Input() titleProvided;
   @Input() selectedID;
   @Input() tabs;
-  @Input() selectedInstructionData: any[];
-  @Input() selectedInstruction: any[];
+  @Input() selectedInstructionData: SelectedInstructionData;
+  @Input() selectedInstruction: Instruction;
   @Input() loadedImages: any[];
   @Input() currentStepTitle;
   @Input() instructions;
