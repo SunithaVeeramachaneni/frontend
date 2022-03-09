@@ -163,7 +163,9 @@
             [matAutocomplete]="autoCompleteFilter"
           />
           <mat-autocomplete #autoCompleteFilter="matAutocomplete">
-            <mat-option *ngFor="let col of dropdownReportColumns; let index = index">
+            <mat-option
+              *ngFor="let col of dropdownReportColumns; let index = index"
+            >
               <div (click)="addFilter(col, index)">
                 {{ col.displayName }}
               </div>

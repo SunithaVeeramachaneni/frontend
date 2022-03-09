@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { interval, Observable, Subject, timer } from 'rxjs';
 import {
@@ -17,10 +18,17 @@ import {
   WarehouseTechnicians
 } from '../../interfaces/warehouse_technicians';
 import { AppService } from '../../shared/services/app.services';
-import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class SparepartsService {
+  public emptyWorkOrders: WorkOrders = {
+    '1': [],
+    '2': [],
+    '3': [],
+    '4': [],
+    '5': []
+  };
+
   constructor(private _appService: AppService) {}
 
   private statusMap = {
@@ -36,17 +44,19 @@ export class SparepartsService {
   ngOnDestroy = () => {
     this.stopPolling.next();
   };
+
   getPickerList(): Observable<WarehouseTechnician[]> {
     return this._appService._getRespFromGateway(
       environment.spccAbapApiUrl,
       'pickerlist'
     );
   }
+
   assignTechnicianToWorkorder(
     data,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
-    let updateResp$ = this._appService._putDataToGateway(
+    const updateResp$ = this._appService._putDataToGateway(
       environment.spccAbapApiUrl,
       `workorderspcc/${data.AUFNR}`,
       data
@@ -54,23 +64,39 @@ export class SparepartsService {
     return updateResp$;
   }
 
+  getWorkOrderByID(id) {
+    const rawWorkOrder$ = this._appService._getRespFromGateway(
+      environment.mccAbapApiUrl,
+      `workOrderSPCC/${id}`
+    );
+    rawWorkOrder$.subscribe((resp) => console.log('Raw work order is', resp));
+    return rawWorkOrder$.pipe(
+      map((workOrder) => {
+        const newWorkOrderList = {
+          ...this.emptyWorkOrders,
+          [workOrder.statusCode]: [workOrder]
+        };
+        return newWorkOrderList;
+      })
+    );
+  }
+
   getAllWorkOrders(
     dateRange,
     pagination: boolean = true,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<WorkOrders> {
-    let workOrders$ = timer(1, 1000 * 60 * 2).pipe(
+    const workOrders$ = timer(1, 1000 * 60 * 2).pipe(
       switchMap(() =>
         this._appService._getRespFromGateway(
           environment.spccAbapApiUrl,
-          `workorderspcc?startdate=${dateRange['startDate']}&enddate=${dateRange['endDate']}`
+          `workorderspcc?startdate=${dateRange.startDate}&enddate=${dateRange.endDate}`
         )
       ),
       retry(3),
       share(),
       takeUntil(this.stopPolling)
     );
-
     return workOrders$;
   }
 

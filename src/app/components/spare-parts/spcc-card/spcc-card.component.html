@@ -55,6 +55,7 @@
       </span>
     </div>
   </span>
+  <span *ngIf="workOrder.isLoading">Ghost Loading</span>
   <div
     class="display-flex m-t-10"
     *ngIf="workOrder.statusCode === '2' || workOrder.statusCode === '3'"
@@ -63,7 +64,7 @@
       src="../../../assets/spare-parts-icons/technicianProfile.svg"
       style="width: 15px"
     />
-    <span>Ghost Loading</span>
+
     <span class="m-l-10">{{ workOrder.assignee }}</span>
   </div>
   <span

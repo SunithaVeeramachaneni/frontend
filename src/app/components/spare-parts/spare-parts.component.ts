@@ -41,6 +41,9 @@ export class SparePartsComponent implements OnInit {
     '4': [],
     '5': []
   };
+  public putWorkOrder$: BehaviorSubject<WorkOrders> = new BehaviorSubject(
+    this.emptyWorkOrders
+  );
   public workOrderList$ = new BehaviorSubject<WorkOrders>(this.emptyWorkOrders);
   public filteredWorkOrderList$ = new BehaviorSubject<WorkOrders>(null);
   public combineWorkOrderList$: Observable<WorkOrders>;
@@ -148,9 +151,12 @@ export class SparePartsComponent implements OnInit {
     const tempWorkOrderList$ = this.dateRange$
       .asObservable()
       .pipe(mergeMap((val) => this.sparepartsSvc.getAllWorkOrders(val)));
-    tempWorkOrderList$.subscribe((resp) => console.log(resp));
-    const tempFilteredWorkOrderList$ = combineLatest([
+    const updatedWorkOrderList$ = this.combineWorkOrders(
       tempWorkOrderList$,
+      this.putWorkOrder$
+    );
+    const tempFilteredWorkOrderList$ = combineLatest([
+      updatedWorkOrderList$,
       this.filterObj$
     ]).pipe(
       map(([workOrders, filterObj]) => {
@@ -182,20 +188,30 @@ export class SparePartsComponent implements OnInit {
   }
 
   assignTech(details) {
-    // set work order's isLoading to true
     const { technician, workOrder } = details;
+    const addWorkOrder = {
+      ...this.emptyWorkOrders,
+      2: [{ ...workOrder, isLoading: true, statusCode: '2' }]
+    };
+    this.putWorkOrder$.next(addWorkOrder);
     const data = {
       USNAM: technician.userId,
       ASSIGNEE: technician.fName,
       AUFNR: workOrder.workOrderID
     };
-    this.filteredWorkOrderList$.next(null);
     this.sparepartsSvc.assignTechnicianToWorkorder(data).subscribe((res) => {
       if (res) {
-        // set work order's isLoading to false
-        this.getWorkOrders();
+        const newWorkOrder$ = this.sparepartsSvc.getWorkOrderByID(
+          workOrder.workOrderID
+        );
+        newWorkOrder$.subscribe((workOrderNew) => {
+          this.putWorkOrder$.next(workOrderNew);
+        });
       } else {
-        //set work order's isLoading to false and statusCode to 0
+        this.putWorkOrder$.next({
+          ...this.emptyWorkOrders,
+          [`${workOrder.statusCode}`]: [{ ...workOrder, isLoading: false }]
+        });
       }
     });
   }

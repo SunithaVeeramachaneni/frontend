@@ -352,20 +352,16 @@ export class MaintenanceComponent implements OnInit {
           ...this.emptyWorkOrder,
           assigned: [{ ...workOrder, isLoading: true, status: 'assigned' }]
         });
-        // delete the old work order
-        // set the work order to loading in assigned
 
         const res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
         res.subscribe(async (response) => {
           if (response === true) {
-            // set the work order to not loading
             const workOrder$ = await this._maintenanceSvc.getWorkOrderByID(
               workOrderID
             );
             workOrder$.subscribe((workOrderNew) =>
               this.putWorkOrder$.next(workOrderNew)
             );
-            // this.spinner.hide();
           } else {
             this.putWorkOrder$.next({
               ...this.emptyWorkOrder,
