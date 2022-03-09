@@ -91,7 +91,6 @@
       value="{{ workOrder?.timeProgress }}"
       class="progress-bar-class"
     ></mat-progress-bar>
-    <span *ngIf="workOrder.isLoading">Hello</span>
     <span
       *ngIf="
         workOrder.status === 'inProgress' || workOrder.status === 'completed'
@@ -122,8 +121,18 @@
       value="{{ workOrder.operationProgress[2] }}"
       class="progress-bar-class"
     ></mat-progress-bar>
+    <div style="width: 100%" *ngIf="workOrder.isLoading">
+      <ngx-shimmer-loading [shape]="'circle'" [width]="'34px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading
+        [width]="'80%'"
+        [height]="'20px'"
+        style="position: relative; top: -7px; left: 10px"
+      >
+      </ngx-shimmer-loading>
+    </div>
     <div
-      *ngIf="workOrder.technician.length !== 0"
+      *ngIf="workOrder.technician.length !== 0 && !workOrder.isLoading"
       class="m-t-10 display-flex"
       [ngClass]="{ cursor: workOrder.status === 'assigned' }"
       (click)="workOrder.status === 'assigned' && onAssignPress(workOrder)"
