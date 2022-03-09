@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
@@ -17,19 +18,17 @@ export class DashboardService {
   private dashboardSelectionChangedSubject = new BehaviorSubject<any>({});
 
   private dashboardsSubject = new BehaviorSubject<Dashboard[]>([]);
-  private dashboardTabSubject = new BehaviorSubject<string>('dashboards');
   private updateGridOptionsSubject = new BehaviorSubject<UpdateGridOptions>({
     update: false,
     subtractWidth: 0
   });
 
   dashboardsAction$ = this.dashboardsSubject.asObservable();
-  dashboardTabAction$ = this.dashboardTabSubject.asObservable();
   updateGridOptionsAction$ = this.updateGridOptionsSubject.asObservable();
   dashboardSelectionChanged$ =
     this.dashboardSelectionChangedSubject.asObservable();
 
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService) {}
 
   createDashboard$ = (
     dashboard: Dashboard,
@@ -47,12 +46,14 @@ export class DashboardService {
     dashboard: Dashboard,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Dashboard> =>
-    this.appService.patchData(
-      environment.dashboardApiUrl,
-      `dashboards/${dashboardId}`,
-      dashboard,
-      info
-    );
+    this.appService
+      .patchData(
+        environment.dashboardApiUrl,
+        `dashboards/${dashboardId}`,
+        dashboard,
+        info
+      )
+      .pipe(map((response) => (response === null ? dashboard : response)));
 
   deleteDashboard$ = (
     dashboardId: string,
@@ -73,7 +74,7 @@ export class DashboardService {
       `dashboards/${dashboardId}/markdefault`,
       dashboard,
       info
-    )
+    );
   getDashboards$ = (
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Dashboard[]> =>
@@ -81,10 +82,6 @@ export class DashboardService {
 
   updateDashboards = (dashboards: Dashboard[]) =>
     this.dashboardsSubject.next(dashboards);
-
-  updateDashboardTab = (tab: string) => {
-    this.dashboardTabSubject.next(tab);
-  };
 
   updateGridOptions = (options: UpdateGridOptions) => {
     this.updateGridOptionsSubject.next(options);

@@ -38,6 +38,11 @@ export class ChartComponent {
   chartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        bottom: 10
+      }
+    },
     scales: {
       x: {
         title: {
