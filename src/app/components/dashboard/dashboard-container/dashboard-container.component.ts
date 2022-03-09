@@ -1,14 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Dashboard } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { DashboardService } from '../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard-container',
@@ -27,9 +24,8 @@ export class DashboardContainerComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
-    private breadcrumbService: BreadcrumbService,
-    private dashboardService: DashboardService
-  ) { }
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
@@ -44,18 +40,5 @@ export class DashboardContainerComponent implements OnInit {
         }
       })
     );
-
-    this.dashboards$ = this.dashboardService.dashboardsAction$.pipe(
-      tap((dashboards) => {
-        if (dashboards.length) {
-          this.selectedDashboard = dashboards[0];
-        }
-      })
-    );
   }
-
-  // onDashboardTabChange = (event: MatButtonToggleChange) => {
-  //   this.router.navigate(['/dashboard'], { queryParams: { view: event.value }, queryParamsHandling: 'merge' },);
-  //   this.dashboardService.updateDashboardTab(event.value);
-  // };
 }

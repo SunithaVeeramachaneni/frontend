@@ -93,7 +93,7 @@
       >Picked up by {{ workOrder.assignee }}</span
     >
   </span>
-  <span *ngIf="technicians$ | async as technicians">
+  <span *ngIf="technicians">
     <button mat-button [matMenuTriggerFor]="menu" class="assign-picklist-btn">
       <img
         src="../../../assets/spare-parts-icons/assign.svg"

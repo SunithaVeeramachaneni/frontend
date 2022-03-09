@@ -67,7 +67,7 @@ export class CategoryWiseInstructionsComponent
     published: DummyComponent
   ) {
     if (published) {
-      published.value.map((instruction) => {
+      published.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&
@@ -83,7 +83,7 @@ export class CategoryWiseInstructionsComponent
     drafts: DummyComponent
   ) {
     if (drafts) {
-      drafts.value.map((instruction) => {
+      drafts.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&
@@ -231,7 +231,7 @@ export class CategoryWiseInstructionsComponent
         map((workInstructions) => {
           let drafts: Instruction[] = [],
             published: Instruction[] = [];
-          workInstructions.map((workInstruction) => {
+          workInstructions.forEach((workInstruction) => {
             const { Published } = workInstruction;
             if (Published) {
               published = [...published, workInstruction];

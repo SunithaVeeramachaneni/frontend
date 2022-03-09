@@ -97,10 +97,8 @@
                   >
                     <mat-label>{{ obj.FIELDDESCRIPTION }}</mat-label>
                     <input
-                      (blur)="updateBusinessObject(obj, $event.target.value)"
-                      (keyup.enter)="
-                        updateBusinessObject(obj, $event.target.value)
-                      "
+                      (blur)="updateBusinessObject(obj, $event)"
+                      (keyup.enter)="updateBusinessObject(obj, $event)"
                       [name]="obj.FILEDNAME"
                       value="{{ obj.Value }}"
                       matInput
@@ -124,7 +122,7 @@
                 type="file"
                 #coverImageuploader
                 accept="image/x-png,image/jpeg"
-                (change)="uploadCoverImageFile($event.target.files)"
+                (change)="uploadCoverImageFile($event)"
               />
               <div *ngFor="let file of coverImageFiles; let i = index">
                 <img
@@ -143,9 +141,7 @@
                 <mat-form-field class="input-group" appearance="outline">
                   <mat-label>Tools</mat-label>
                   <input
-                    (keyup.enter)="
-                      requisiteChange($event.target.value, 'Tools')
-                    "
+                    (keyup.enter)="requisiteChange($event, 'Tools')"
                     formControlName="tools"
                     matInput
                   />
@@ -171,9 +167,7 @@
                 <mat-form-field appearance="outline">
                   <mat-label>Safety & PPEs</mat-label>
                   <input
-                    (keyup.enter)="
-                      requisiteChange($event.target.value, 'SafetyKit')
-                    "
+                    (keyup.enter)="requisiteChange($event, 'SafetyKit')"
                     formControlName="safetyKit"
                     matInput
                   />
@@ -202,9 +196,7 @@
                 <mat-form-field appearance="outline">
                   <mat-label>Spare Parts</mat-label>
                   <input
-                    (keyup.enter)="
-                      requisiteChange($event.target.value, 'SpareParts')
-                    "
+                    (keyup.enter)="requisiteChange($event, 'SpareParts')"
                     formControlName="spareParts"
                     matInput
                   />
@@ -310,10 +302,8 @@
                 >
                   <mat-label>{{ obj.FIELDDESCRIPTION }}</mat-label>
                   <input
-                    (blur)="updateBusinessObject(obj, $event.target.value)"
-                    (keyup.enter)="
-                      updateBusinessObject(obj, $event.target.value)
-                    "
+                    (blur)="updateBusinessObject(obj, $event)"
+                    (keyup.enter)="updateBusinessObject(obj, $event)"
                     [name]="obj.FILEDNAME"
                     value="{{ obj.Value }}"
                     matInput
@@ -337,7 +327,7 @@
               type="file"
               #coverImageuploader
               accept="image/x-png,image/jpeg"
-              (change)="uploadCoverImageFile($event.target.files)"
+              (change)="uploadCoverImageFile($event)"
             />
             <div *ngFor="let file of coverImageFiles; let i = index">
               <img
@@ -354,7 +344,7 @@
               <mat-form-field class="input-group" appearance="outline">
                 <mat-label>Tools</mat-label>
                 <input
-                  (keyup.enter)="requisiteChange($event.target.value, 'Tools')"
+                  (keyup.enter)="requisiteChange($event, 'Tools')"
                   formControlName="tools"
                   matInput
                 />
@@ -378,9 +368,7 @@
               <mat-form-field appearance="outline">
                 <mat-label>Safety & PPEs</mat-label>
                 <input
-                  (keyup.enter)="
-                    requisiteChange($event.target.value, 'SafetyKit')
-                  "
+                  (keyup.enter)="requisiteChange($event, 'SafetyKit')"
                   formControlName="safetyKit"
                   matInput
                 />
@@ -406,9 +394,7 @@
               <mat-form-field appearance="outline">
                 <mat-label>Spare Parts</mat-label>
                 <input
-                  (keyup.enter)="
-                    requisiteChange($event.target.value, 'SpareParts')
-                  "
+                  (keyup.enter)="requisiteChange($event, 'SpareParts')"
                   formControlName="spareParts"
                   matInput
                 />

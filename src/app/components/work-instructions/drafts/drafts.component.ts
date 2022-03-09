@@ -41,7 +41,7 @@ export class DraftsComponent implements OnInit {
     drafts: DummyComponent
   ) {
     if (drafts) {
-      drafts.value.map((instruction) => {
+      drafts.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&

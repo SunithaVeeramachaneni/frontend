@@ -39,7 +39,7 @@ export class PublishedComponent implements OnInit {
     published: DummyComponent
   ) {
     if (published) {
-      published.value.map((instruction) => {
+      published.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&

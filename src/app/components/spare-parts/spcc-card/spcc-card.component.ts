@@ -20,7 +20,7 @@ export class SPCCCardComponent implements OnInit {
   constructor(private translateService: TranslateService) {}
 
   @Input('workOrder') workOrder;
-  @Input('technicians$') technicians$;
+  @Input('technicians') technicians;
   @Output('assign') assign = new EventEmitter();
   isDropdownOpen = false;
   ngOnInit() {}

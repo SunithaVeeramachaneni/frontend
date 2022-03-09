@@ -57,6 +57,7 @@ export class SparePartsComponent implements OnInit {
   public filterObj$: Observable<any>;
 
   public baseCode: any;
+  public technicians: WarehouseTechnician[];
 
   public selectedUser = '';
   headerTitle = 'Spare Parts Control Center';
@@ -136,6 +137,7 @@ export class SparePartsComponent implements OnInit {
 
   getTechnicians() {
     this.technicians$ = this.sparepartsSvc.getPickerList();
+    this.technicians$.subscribe((resp) => (this.technicians = resp));
   }
 
   public myFunction() {

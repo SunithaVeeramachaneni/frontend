@@ -148,7 +148,7 @@ export class WidgetComponent implements OnInit {
         this.countField = countFieldName;
       }
     } else {
-      this.configOptions.tableID = `${this.configOptions.tableID}${this.report.id}`;
+      this.configOptions.tableID = `${this.configOptions.tableID}${this.widget.id}`;
       this.report.groupBy = groupBy;
       const tableColumnsObj = tableColumns.reduce((acc, val) => {
         acc[val.name] = val;
@@ -157,7 +157,7 @@ export class WidgetComponent implements OnInit {
       const tableDetails = this.report.tableDetails.map((tableDetail) => {
         const columns = tableDetail.columns.map((column) => {
           if (tableColumnsObj[column.name]) {
-            return { ...column, ...tableColumnsObj };
+            return { ...column, ...tableColumnsObj[column.name] };
           } else {
             return { ...column, order: null, sticky: false, visible: false };
           }

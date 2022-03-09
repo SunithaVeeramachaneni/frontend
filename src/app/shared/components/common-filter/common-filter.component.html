@@ -172,14 +172,14 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <form [formGroup]="filtersForm" (ngSubmit)="saveFilter()">
+        <form [formGroup]="filtersForm">
           <mat-list
             role="list"
             *ngFor="let filterForm of filters.controls; let i = index"
             formArrayName="filters"
           >
             <mat-list-item role="listitem">
-              <ng-container [formGroup]="filterForm">
+              <ng-container [formGroupName]="i">
                 <mat-form-field
                   appearance="outline"
                   cdkOverlayOrigin
@@ -197,21 +197,14 @@
                   />
                   <mat-icon
                     matSuffix
-                    (click)="
-                      deleteFilteredField(
-                        filterForm.value,
-                        i,
-                        operatorType[i],
-                        inputValue[i]
-                      )
-                    "
+                    (click)="deleteFilteredField(filterForm.value, i)"
                     class="delete-icon"
                   >
                     delete
                   </mat-icon>
                 </mat-form-field>
               </ng-container>
-              <ng-container [formGroup]="filterForm">
+              <ng-container [formGroupName]="i">
                 <mat-form-field
                   appearance="outline"
                   cdkOverlayOrigin
@@ -248,7 +241,7 @@
               (backdropClick)="isfilterTooltipOpen[i] = false"
             >
               <form
-                [formGroup]="filterForm"
+                [formGroupName]="i"
                 (ngSubmit)="onSave()"
                 class="filter-input-modal"
               >

@@ -39,7 +39,7 @@ export class RecentsComponent implements OnInit {
     recents: DummyComponent
   ) {
     if (recents) {
-      recents.value.map((instruction) => {
+      recents.value.forEach((instruction) => {
         const { Cover_Image: coverImage, Id: path } = instruction;
         if (
           coverImage.indexOf('assets/') === -1 &&

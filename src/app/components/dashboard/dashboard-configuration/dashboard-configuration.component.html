@@ -4,22 +4,24 @@
 >
   <mat-form-field
     appearance="outline"
-    *ngIf="dashboardDisplayMode !== 'ALL' && dashboards$ | async as dashboards"
+    *ngIf="dashboardDisplayMode !== 'ALL'"
     class="dashboard-dropdown m-r-5"
   >
     <mat-label translate>dashboards</mat-label>
     <mat-select
-      [(value)]="dashboard"
+      [compareWith]="compareFn"
+      [value]="dashboard"
+      [formControl]="dashboardControl"
+      *ngIf="dashboards$ | async as dashboards"
       (selectionChange)="dashboardSelectionChanged($event)"
     >
-      <mat-option *ngFor="let dashboard of dashboards" [value]="dashboard">
-        {{ dashboard.name }}
+      <mat-option
+        *ngFor="let dashboard of dashboards.concat(staticDropDownOptions)"
+        [value]="dashboard"
+      >
+        {{ dashboard.name | translate }}
         {{ dashboard.isDefault === true ? '(default)' : '' }}
       </mat-option>
-      <mat-option value="VIEW_ALL_DASHBOARDS">All Dashboards</mat-option>
-      <mat-option value="CREATE_DASHBOARD" class="create-dashboard-opt"
-        >Create Dashboard</mat-option
-      >
     </mat-select>
   </mat-form-field>
   <div class="width-60 dis-flex">
@@ -37,20 +39,24 @@
       <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item (click)="editDashboard(dashboard)">Edit</button>
+      <button mat-menu-item (click)="editDashboard(dashboard)" translate>
+        edit
+      </button>
       <button
         mat-menu-item
         (click)="markDashboardDefault(dashboard)"
         *ngIf="!dashboard.isDefault"
+        translate
       >
-        Mark default
+        markDefault
       </button>
       <button
         mat-menu-item
         class="delete-menu-item"
         (click)="deleteDashboard(dashboard)"
+        translate
       >
-        Delete
+        delete
       </button>
     </mat-menu>
   </div>
@@ -106,4 +112,4 @@
     </ng-container>
   </gridster>
 </div>
-<ng-template #loadingWidgets>Loading Widgets...</ng-template>
+<ng-template #loadingWidgets></ng-template>

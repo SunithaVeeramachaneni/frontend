@@ -34,6 +34,7 @@ import { CommonService } from '../../../shared/services/common.service';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
+import { MediaType } from 'plyr';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -129,7 +130,7 @@ export class AddWorkinstructionComponent
         FileType: fileType,
         WI_Name
       } = this.selectedInstruction;
-      this.fileInfo = { filePath, fileType };
+      this.fileInfo = { filePath, fileType: fileType as MediaType };
       this.breadcrumbService.set(currentRouteUrl, {
         label: WI_Name ? WI_Name : 'Untitled Work Instruction'
       });
