@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -108,7 +113,7 @@ export class ReportConfigurationComponent implements OnInit {
     private commonService: CommonService,
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.undoRedoUtil = new UndoRedoUtil();
@@ -434,6 +439,10 @@ export class ReportConfigurationComponent implements OnInit {
           this.cdrf.markForCheck();
           this.isExportInProgress = false;
           downloadFile(data, this.reportConfiguration.name);
+          this.toast.show({
+            text: 'Report exported successfully',
+            type: 'success'
+          });
         },
         (err) => {
           this.isExportInProgress = false;
