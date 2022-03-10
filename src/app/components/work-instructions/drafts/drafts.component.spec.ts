@@ -288,7 +288,7 @@ describe('DraftsComponent', () => {
       ).toContain(draft1.Cover_Image);
       const tableBodyTh = draftsEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = draftsEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(draft1.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(draft1.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(draft1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(draft1.EditedBy);
@@ -412,7 +412,7 @@ describe('DraftsComponent', () => {
       const [, draft2] = drafts;
       const tableBodyTh = draftsEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = draftsEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(draft2.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(draft2.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(draft2.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(draft2.EditedBy);

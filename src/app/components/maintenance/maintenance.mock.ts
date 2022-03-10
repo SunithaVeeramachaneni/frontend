@@ -200,7 +200,8 @@ export const unassignedWorkOrder1Card = {
   ],
   workCenter: 'ELEKTRIK',
   technician: [],
-  estimatedTime: '15 hrs'
+  estimatedTime: '15 hrs',
+  isLoading: false
 };
 
 const assignedWorkOrder1Card = {
@@ -234,7 +235,8 @@ const assignedWorkOrder1Card = {
       image: '1'
     }
   ],
-  estimatedTime: '15 hrs'
+  estimatedTime: '15 hrs',
+  isLoading: false
 };
 
 const inProgressWorkOrder1Card = {
@@ -271,7 +273,8 @@ const inProgressWorkOrder1Card = {
   estimatedTime: '15 hrs',
   actualTime: '12 hrs',
   timeProgress: 0.8,
-  operationProgress: [1, 2, 0.5]
+  operationProgress: [1, 2, 0.5],
+  isLoading: false
 };
 
 const inProgressWorkOrder2Card = {
@@ -308,7 +311,8 @@ const inProgressWorkOrder2Card = {
   estimatedTime: '6 hrs',
   actualTime: '5 hrs',
   timeProgress: 0.8333333333333334,
-  operationProgress: [2, 2, 1]
+  operationProgress: [2, 2, 1],
+  isLoading: false
 };
 
 const completedWorkOrder1Card = {
@@ -345,7 +349,8 @@ const completedWorkOrder1Card = {
   estimatedTime: '15 hrs',
   actualTime: '7 hrs',
   timeProgress: 0.4666666666666667,
-  operationProgress: [2, 2, 1]
+  operationProgress: [2, 2, 1],
+  isLoading: false
 };
 
 export const expectedWorkOrders$ = of({
