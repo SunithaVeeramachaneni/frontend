@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
@@ -137,7 +137,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('RecentsComponent', () => {
   let component: RecentsComponent;
   let fixture: ComponentFixture<RecentsComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -148,7 +147,6 @@ describe('RecentsComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getRecentInstructions',
         'setFavoriteInstructions',
@@ -185,7 +183,6 @@ describe('RecentsComponent', () => {
           BrowserAnimationsModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
           { provide: ToastService, useValue: toastServiceSpy },
           { provide: Base64HelperService, useValue: base64HelperServiceSpy },
@@ -536,16 +533,15 @@ describe('RecentsComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    it('should call getAllRecentInstructions, AuthorDropDown', () => {
+    it('should call getAllRecentInstructions, authorDropDown', () => {
       spyOn(component, 'getAllRecentInstructions');
-      spyOn(component, 'AuthorDropDown');
+      spyOn(component, 'authorDropDown');
       component.ngOnInit();
       expect(component.getAllRecentInstructions).toHaveBeenCalledWith();
-      expect(component.AuthorDropDown).toHaveBeenCalledWith();
+      expect(component.authorDropDown).toHaveBeenCalledWith();
     });
 
     it('should set header title', () => {
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       component.currentRouteUrl$.subscribe((data) => {
         expect(data).toBe(routingUrls.recents.url);
         expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
@@ -555,16 +551,16 @@ describe('RecentsComponent', () => {
     });
   });
 
-  describe('AuthorDropDown', () => {
+  describe('authorDropDown', () => {
     it('should define function', () => {
-      expect(component.AuthorDropDown).toBeDefined();
+      expect(component.authorDropDown).toBeDefined();
     });
 
     it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
-      component.AuthorDropDown();
+      component.authorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
       component.authors$.subscribe((data) => expect(data).toEqual(authors));
     });
@@ -631,8 +627,6 @@ describe('RecentsComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(toastServiceSpy.show).toHaveBeenCalledWith({
           text: "Work instuction '" + recent.WI_Name + "' has been deleted",
           type: 'success'
@@ -694,8 +688,6 @@ describe('RecentsComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
           message: 'Unable to delete WI'
         } as HttpErrorResponse);
@@ -794,11 +786,9 @@ describe('RecentsComponent', () => {
 
     it('should set recents observable', () => {
       component.getAllRecentInstructions();
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getRecentInstructions
       ).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.recents$.subscribe((data) => expect(data).toEqual(recents));
     });
   });
@@ -844,8 +834,6 @@ describe('RecentsComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
         text: 'Selected work instruction has been successfully copied',
         type: 'success'
@@ -874,8 +862,6 @@ describe('RecentsComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to copy WI'
       } as HttpErrorResponse);

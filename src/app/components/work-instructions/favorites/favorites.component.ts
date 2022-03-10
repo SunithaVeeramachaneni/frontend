@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import Swal from 'sweetalert2';
 import { InstructionService } from '../services/instruction.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../../shared/toast';
 import { ActivatedRoute } from '@angular/router';
 import { ErrorInfo, Instruction } from '../../../interfaces';
@@ -54,9 +53,8 @@ export class FavoritesComponent implements OnInit {
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
-    private _instructionSvc: InstructionService,
-    private _toastService: ToastService,
+    private instructionSvc: InstructionService,
+    private toastService: ToastService,
     private route: ActivatedRoute,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
@@ -64,20 +62,19 @@ export class FavoritesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.spinner.hide();
     this.routeWithSearch = `${routingUrls.favorites.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.commonService.setHeaderTitle(routingUrls.favorites.title))
     );
     this.getAllWorkInstructionsByFav();
-    this.AuthorDropDown();
+    this.authorDropDown();
     this.route.queryParamMap.subscribe((params) => {
       this.search = params.get('search');
     });
   }
 
-  AuthorDropDown() {
-    this.authors$ = this._instructionSvc
+  authorDropDown() {
+    this.authors$ = this.instructionSvc
       .getUsers()
       .pipe(
         map((users) =>
@@ -97,25 +94,22 @@ export class FavoritesComponent implements OnInit {
   }
 
   copyWI(ins) {
-    this.spinner.show();
     const userName = JSON.parse(localStorage.getItem('loggedInUser'));
     const info: ErrorInfo = {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc
+    this.instructionSvc
       .copyWorkInstruction(ins.WI_Name, userName, info)
       .subscribe(
         () => {
-          this.spinner.hide();
-          this._toastService.show({
+          this.toastService.show({
             text: 'Selected work instruction has been successfully copied',
             type: 'success'
           });
           this.getAllWorkInstructionsByFav();
         },
         (error) => {
-          this.spinner.hide();
           this.errorHandlerService.handleError(error);
         }
       );
@@ -133,22 +127,19 @@ export class FavoritesComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        this.spinner.show();
         const info: ErrorInfo = {
           displayToast: false,
           failureResponse: 'throwError'
         };
-        this._instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
+        this.instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
           (data) => {
-            this.spinner.hide();
             this.getAllWorkInstructionsByFav();
-            this._toastService.show({
+            this.toastService.show({
               text: "Work instuction '" + el.WI_Name + "' has been deleted",
               type: 'success'
             });
           },
           (err) => {
-            this.spinner.hide();
             this.errorHandlerService.handleError(err);
           }
         );
@@ -161,7 +152,7 @@ export class FavoritesComponent implements OnInit {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
+    this.instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
       (ins) => {
         el.IsFavorite = ins.IsFavorite;
         this.getAllWorkInstructionsByFav();
@@ -171,15 +162,11 @@ export class FavoritesComponent implements OnInit {
   }
 
   getAllWorkInstructionsByFav() {
-    this.spinner.show();
-    this.favorites$ = this._instructionSvc
-      .getFavInstructions()
-      .pipe(tap(() => this.spinner.hide()));
+    this.favorites$ = this.instructionSvc.getFavInstructions();
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 }

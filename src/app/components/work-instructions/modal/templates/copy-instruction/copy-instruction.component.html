@@ -1,3 +1,11 @@
+<ngx-spinner
+  size="medium"
+  bdColor="rgba(0, 0, 0, 0.8)"
+  type="ball-clip-rotate-pulse"
+  [fullScreen]="false"
+>
+</ngx-spinner>
+
 <div class="modal-card p-10 copy-ins custom-mat-form-field-gray-color">
   <h1 mat-dialog-title class="copy-header">
     Copy Work Instructions
@@ -14,7 +22,7 @@
         placeholder="Search by title or author"
       />
     </mat-form-field>
-    <select [(ngModel)]="CreatedBy" class="filter-dropdowns minimal width-40">
+    <select [(ngModel)]="createdBy" class="filter-dropdowns minimal width-40">
       <option value="">Authors</option>
       <option *ngFor="let obj of this.authors" [value]="obj">{{ obj }}</option>
     </select>
@@ -32,7 +40,7 @@
               *ngIf="
                 recentsAndFavsObject.recents
                   | filter: search
-                  | dropdownFilter: CreatedBy
+                  | dropdownFilter: createdBy
                   | sortBy: 'desc':'updated_at'
                   | paginate: recentsConfig as result
               "
@@ -99,7 +107,7 @@
               *ngIf="
                 recentsAndFavsObject.favs
                   | filter: search
-                  | dropdownFilter: CreatedBy
+                  | dropdownFilter: createdBy
                   | sortBy: 'desc':'updated_at'
                   | paginate: favConfig as result
               "

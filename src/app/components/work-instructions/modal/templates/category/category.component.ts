@@ -24,6 +24,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ErrorInfo } from '../../../../../interfaces';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-category',
@@ -31,6 +32,8 @@ import { ErrorHandlerService } from '../../../../../shared/error-handler/error-h
   styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent implements OnInit, AfterViewInit {
+  @ViewChild('image', { static: false }) image: ElementRef;
+  @ViewChild('CatName') private elementRef: ElementRef;
   public files = [];
   public title = '';
   public categoryValidatedMsg = '';
@@ -38,22 +41,21 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   readonly coverImages = COVER_IMAGES;
   imageHeight = '';
   path: string;
-  @ViewChild('image', { static: false }) image: ElementRef;
-  @ViewChild('CatName') private elementRef: ElementRef;
+
+  constructor(
+    private fb: FormBuilder,
+    private ref: MyOverlayRef,
+    private instructionSvc: InstructionService,
+    private categoryService: CategoryService,
+    private base64HelperService: Base64HelperService,
+    private errorHandlerService: ErrorHandlerService,
+    private spinner: NgxSpinnerService
+  ) {}
 
   @HostListener('window:resize')
   onResize() {
     this.imageHeight = `${this.image.nativeElement.offsetHeight}px`;
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private ref: MyOverlayRef,
-    private _instructionSvc: InstructionService,
-    private categoryService: CategoryService,
-    private base64HelperService: Base64HelperService,
-    private errorHandlerService: ErrorHandlerService
-  ) {}
 
   ngOnInit() {
     this.frmSubscribe = this.fb.group({
@@ -107,6 +109,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   }
 
   uploadFile(event: any) {
+    this.spinner.show();
     const { files } = event.target as HTMLInputElement;
     if (this.files.length) {
       this.categoryService.setDeleteFiles(this.files[0]);
@@ -120,13 +123,14 @@ export class CategoryComponent implements OnInit, AfterViewInit {
       failureResponse: 'throwError'
     };
 
-    this._instructionSvc.uploadAttachments(imageForm, info).subscribe(
+    this.instructionSvc.uploadAttachments(imageForm, info).subscribe(
       (resp) => {
         const { image: uploadedImage } = resp;
         this.files = [uploadedImage];
         this.base64HelperService.getBase64Image(uploadedImage, this.path);
         this.categoryService.setDeleteFiles(uploadedImage);
         this.frmSubscribe.patchValue({ coverImage: uploadedImage });
+        this.spinner.hide();
       },
       (error) => {
         Swal.fire(
@@ -169,18 +173,17 @@ export class CategoryComponent implements OnInit, AfterViewInit {
     this.ref.close(null);
   }
 
-  getImageSrc = (source: string) => {
-    return this.base64HelperService.getBase64ImageData(source, this.path);
-  };
+  getImageSrc = (source: string) =>
+    this.base64HelperService.getBase64ImageData(source, this.path);
 
-  getS3CoverImageHeight = () => {
-    return { height: this.imageHeight ? this.imageHeight : '100%' };
-  };
+  getS3CoverImageHeight = () => ({
+    height: this.imageHeight ? this.imageHeight : '100%'
+  });
 
   validateCategoryName({
     value
   }: AbstractControl): Observable<ValidationErrors | null> {
-    return this._instructionSvc.getCategoriesByName(value).pipe(
+    return this.instructionSvc.getCategoriesByName(value).pipe(
       debounceTime(500),
       distinctUntilChanged(),
       map((categories) => {

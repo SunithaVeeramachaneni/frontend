@@ -17,22 +17,21 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent implements OnInit, AfterContentChecked {
-  isPopoverOpen = false;
-  private _fileInfo: FileInfo;
-  @Input() set fileInfo(fileInfo: FileInfo) {
-    this._fileInfo = fileInfo;
-    this.playSources = [{ src: this.getS3Url(fileInfo.filePath) }];
-  }
-  get fileInfo(): FileInfo {
-    return this._fileInfo;
-  }
-  @ViewChild(PlyrComponent)
-  plyr: PlyrComponent;
+  @ViewChild(PlyrComponent) plyr: PlyrComponent;
   player: Plyr;
   playerStatus = 'pause';
   playSources: Plyr.Source[] = [];
   currentTime = 0;
   updateCurrentTime = true;
+  isPopoverOpen = false;
+  private fileInfoData: FileInfo;
+  @Input() set fileInfo(fileInfo: FileInfo) {
+    this.fileInfoData = fileInfo;
+    this.playSources = [{ src: this.getS3Url(fileInfo.filePath) }];
+  }
+  get fileInfo(): FileInfo {
+    return this.fileInfoData;
+  }
 
   constructor(private cdrf: ChangeDetectorRef) {}
 
@@ -82,9 +81,7 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
     this.currentTime = this.player.currentTime;
   }
 
-  getS3Url = (filePath: string) => {
-    return `${environment.s3BaseUrl}${filePath}`;
-  };
+  getS3Url = (filePath: string) => `${environment.s3BaseUrl}${filePath}`;
 
   getAudioTitle = (filePath: string) => {
     const splitString = filePath.includes('\\') ? '\\' : '/';
@@ -115,7 +112,7 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
         ':' +
         (sDisplay.length > 1 ? sDisplay : '0' + sDisplay)
       );
-    } else if (sDisplay != '') {
+    } else if (sDisplay !== '') {
       return '00:' + (sDisplay.length > 1 ? sDisplay : '0' + sDisplay);
     }
     return '00:00';

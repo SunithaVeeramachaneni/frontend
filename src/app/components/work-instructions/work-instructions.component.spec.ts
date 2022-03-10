@@ -7,7 +7,7 @@ import { MockComponent } from 'ng-mocks';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { ErrorInfo } from '../../interfaces';
 import { AppMaterialModules } from '../../material.module';
@@ -180,7 +180,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('WorkInstructionsComponent', () => {
   let component: WorkInstructionsComponent;
   let fixture: ComponentFixture<WorkInstructionsComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -196,7 +195,6 @@ describe('WorkInstructionsComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getFavInstructions',
         'getDraftedInstructions',
@@ -235,7 +233,6 @@ describe('WorkInstructionsComponent', () => {
         declarations: [
           WorkInstructionsComponent,
           MockComponent(CategoriesComponent),
-          MockComponent(NgxSpinnerComponent),
           TimeAgoPipe,
           DummyComponent
         ],
@@ -250,7 +247,6 @@ describe('WorkInstructionsComponent', () => {
           BrowserAnimationsModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
           { provide: ToastService, useValue: toastServiceSpy },
           { provide: Base64HelperService, useValue: base64HelperServiceSpy },
@@ -658,8 +654,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         instructionServiceSpy.getRecentInstructions
       ).toHaveBeenCalledWith();
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.workInstructions$.subscribe((workInstructions) => {
         expect(workInstructions.drafts).toEqual(drafts);
         expect(workInstructions.favorites).toEqual(favorites);
@@ -739,7 +733,6 @@ describe('WorkInstructionsComponent', () => {
           s3Folder: `bulkupload/${time}`
         }
       );
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
     });
 
     it('should not call bulkUploadDialog function on uploadWIExcel empty response', () => {
@@ -756,7 +749,6 @@ describe('WorkInstructionsComponent', () => {
       spyOn(component, 'bulkUploadDialog');
       component.uploadFile({ target });
       expect(component.bulkUploadDialog).not.toHaveBeenCalled();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
     });
   });
 

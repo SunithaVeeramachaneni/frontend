@@ -98,8 +98,8 @@ export class AddWorkinstructionComponent
     private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
     private wiCommonSvc: WiCommonService,
-    private _instructionsvc: InstructionService,
-    private _toastService: ToastService,
+    private instructionsvc: InstructionService,
+    private toastService: ToastService,
     private location: Location,
     private store: Store<State>,
     private commonService: CommonService,
@@ -151,7 +151,7 @@ export class AddWorkinstructionComponent
 
     const wid = this.route.snapshot.paramMap.get('id');
     if (wid) {
-      this._instructionsvc.getInstructionsById(wid).subscribe((res) => {
+      this.instructionsvc.getInstructionsById(wid).subscribe((res) => {
         if (res && Object.keys(res).length > 0) {
           this.store.dispatch(
             InstructionActions.updateInstruction({ instruction: res })
@@ -181,7 +181,7 @@ export class AddWorkinstructionComponent
         debounceTime(1000),
         distinctUntilChanged(),
         switchMap((WI_Name) =>
-          this._instructionsvc.getInstructionsByName(WI_Name, {
+          this.instructionsvc.getInstructionsByName(WI_Name, {
             displayToast: false,
             failureResponse: 'throwError'
           })
@@ -212,16 +212,14 @@ export class AddWorkinstructionComponent
     const steps = this.steps;
     const wid = this.selectedInstruction?.Id;
     const favFlag = this.selectedInstruction?.IsFavorite;
-    const { first_name, last_name } = JSON.parse(
-      localStorage.getItem('loggedInUser')
-    );
-    const editedBy = `${first_name} ${last_name}`;
+    const editedBy = this.commonService.getUserName();
     this.spinner.show();
     const info: ErrorInfo = {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this.publishInstructionSubscription = this._instructionsvc
+
+    this.publishInstructionSubscription = this.instructionsvc
       .publishInstruction(
         {
           wiToBePublsihed,
@@ -234,7 +232,7 @@ export class AddWorkinstructionComponent
       .subscribe(
         () => {
           this.spinner.hide();
-          this._toastService.show({
+          this.toastService.show({
             text: `Work instruction '${el.WI_Name}' has been published successfully`,
             type: 'success'
           });
@@ -264,7 +262,7 @@ export class AddWorkinstructionComponent
       VERSION,
       WINSTRIND
     };
-    this._instructionsvc
+    this.instructionsvc
       .updateGatewayFavWorkInstruction(favInstructionData)
       .subscribe();
   }
@@ -302,7 +300,7 @@ export class AddWorkinstructionComponent
     if (this.isWIPublished) {
       const userName = JSON.parse(localStorage.getItem('loggedInUser'));
       if (this.selectedInstruction && this.selectedInstruction?.Id) {
-        this._instructionsvc
+        this.instructionsvc
           .getInstructionsById(this.selectedInstruction?.Id)
           .subscribe((res) => {
             if (res && Object.keys(res).length > 0) {
@@ -313,7 +311,7 @@ export class AddWorkinstructionComponent
                 Published: true,
                 IsPublishedTillSave
               };
-              this._instructionsvc
+              this.instructionsvc
                 .updateWorkInstruction(instruction)
                 .subscribe(() => {
                   this.store.dispatch(
@@ -333,12 +331,12 @@ export class AddWorkinstructionComponent
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionsvc
+    this.instructionsvc
       .copyWorkInstruction(ins.WI_Name, userName, info)
       .subscribe(
         () => {
           this.spinner.hide();
-          this._toastService.show({
+          this.toastService.show({
             text: 'Selected work instruction has been successfully copied',
             type: 'success'
           });
@@ -369,11 +367,11 @@ export class AddWorkinstructionComponent
           displayToast: false,
           failureResponse: 'throwError'
         };
-        this._instructionsvc.deleteWorkInstruction$(ID, info).subscribe(
+        this.instructionsvc.deleteWorkInstruction$(ID, info).subscribe(
           (data) => {
             this.spinner.hide();
             this.location.back();
-            this._toastService.show({
+            this.toastService.show({
               text: `Work instuction '${el.WI_Name}' has been deleted`,
               type: 'success'
             });
@@ -391,7 +389,7 @@ export class AddWorkinstructionComponent
     this.saveStatus = 'Saving..';
     const ID = this.selectedInstruction?.Id;
     const userName = JSON.parse(localStorage.getItem('loggedInUser'));
-    this._instructionsvc.getInstructionsById(ID).subscribe((res) => {
+    this.instructionsvc.getInstructionsById(ID).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
         const ins = res;
         ins.EditedBy = userName.first_name + ' ' + userName.last_name;
@@ -403,7 +401,7 @@ export class AddWorkinstructionComponent
         ins.SpareParts = SpareParts;
         ins.Categories = Categories;
 
-        this._instructionsvc
+        this.instructionsvc
           .updateWorkInstruction(ins)
           .subscribe((instruction) => {
             if (Object.keys(instruction).length) {
@@ -428,7 +426,7 @@ export class AddWorkinstructionComponent
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionsvc.setFavoriteInstructions(wid, info).subscribe(
+    this.instructionsvc.setFavoriteInstructions(wid, info).subscribe(
       (ins) => {
         this.store.dispatch(
           InstructionActions.updateInstruction({ instruction: ins })
@@ -449,7 +447,7 @@ export class AddWorkinstructionComponent
         displayToast: false,
         failureResponse: 'throwError'
       };
-      this._instructionsvc
+      this.instructionsvc
         .editWorkInstructionTitle(id, userName, this.selectedInstruction, info)
         .subscribe(
           (resp) => {
@@ -469,7 +467,7 @@ export class AddWorkinstructionComponent
         displayToast: false,
         failureResponse: 'throwError'
       };
-      this._instructionsvc
+      this.instructionsvc
         .addWorkInstructionTitle(userName, this.selectedInstruction, info)
         .subscribe(
           (instruction) => {
@@ -494,9 +492,9 @@ export class AddWorkinstructionComponent
     }
   }
 
-  titleChange = (WI_Name: string, addOrUpdateTitle: boolean) => {
+  titleChange = (wiName: string, addOrUpdateTitle: boolean) => {
     this.addOrUpdateTitle = addOrUpdateTitle;
-    this.wi_title = WI_Name?.trim();
+    this.wi_title = wiName?.trim();
     if (this.wi_title) {
       this.titleErrors = { ...this.titleErrors, required: false };
       this.titleTextChanged.next(this.wi_title);
