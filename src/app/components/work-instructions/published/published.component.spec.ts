@@ -283,7 +283,7 @@ describe('PublishedComponent', () => {
       ).toContain(publish1.Cover_Image);
       const tableBodyTh = publishedEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = publishedEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(publish1.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(publish1.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(publish1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(publish1.EditedBy);
@@ -410,7 +410,7 @@ describe('PublishedComponent', () => {
       const [, publish2] = published;
       const tableBodyTh = publishedEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = publishedEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(publish2.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(publish2.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(publish2.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(publish2.EditedBy);

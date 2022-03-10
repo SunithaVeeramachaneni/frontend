@@ -447,7 +447,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const [, drafted] = instructions;
         const tableBodyTh = wiComponentEl.querySelectorAll('table tbody tr th');
         const tableBodyTd = wiComponentEl.querySelectorAll('table tbody tr td');
-        expect(tableBodyTh[0].textContent).toBe(drafted.WI_Name);
+        expect(tableBodyTh[0].textContent).toContain(drafted.WI_Name);
         expect(tableBodyTd[0].textContent).toContain('Edited');
         expect(tableBodyTd[0].textContent).toContain(drafted.EditedBy);
         expect(tableBodyTd[1].textContent).toContain(drafted.CreatedBy);

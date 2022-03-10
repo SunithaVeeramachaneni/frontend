@@ -161,6 +161,7 @@ export class MaintenanceComponent implements OnInit {
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
+
     this.updateWorkOrderList$ = this._maintenanceSvc
       .getServerSentEvent('/updateWorkOrders')
       .pipe(
