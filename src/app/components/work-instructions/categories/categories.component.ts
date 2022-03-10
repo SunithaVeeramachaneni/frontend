@@ -81,6 +81,7 @@ export class CategoriesComponent
   public categoryDetailObject = null;
   public workInstructionsDetailObject = null;
   public imageHeight = '';
+  public isCategoriesLoading: boolean;
   private image: ElementRef;
   private fetchCategoriesSubscription: Subscription;
   @ViewChild('image', { static: false }) set content(content: ElementRef) {
@@ -110,6 +111,7 @@ export class CategoriesComponent
   ) {}
 
   getAllCategories() {
+    this.isCategoriesLoading = true;
     this._instructionSvc.getAllCategories().subscribe((categories) => {
       for (let catCnt = 0; catCnt <= categories.length; catCnt++) {
         this.categoryDetail = {
@@ -137,6 +139,7 @@ export class CategoriesComponent
               ? new Date('2050-01-01').toISOString()
               : categories[catCnt].Created_At;
           this.categoriesList.push(this.categoryDetail);
+          this.isCategoriesLoading = false;
         }
       }
 
@@ -216,7 +219,6 @@ export class CategoriesComponent
           } = this.categoryDetailObject || {};
           this.categoryService.removeDeleteFiles(Cover_Image);
           if (CId) {
-            this.spinner.show();
             const info: ErrorInfo = {
               displayToast: true,
               failureResponse: 'throwError'
@@ -229,7 +231,6 @@ export class CategoriesComponent
               )
               .subscribe(
                 (response) => {
-                  this.spinner.hide();
                   this.categoriesList = [];
                   this.getAllCategories();
                   this.wiCommonService.fetchWorkInstructions();
@@ -243,9 +244,7 @@ export class CategoriesComponent
                     });
                   }
                 },
-                (error) => {
-                  this.spinner.hide();
-                }
+                (error) => {}
               );
           } else {
             this._instructionSvc
@@ -310,7 +309,6 @@ export class CategoriesComponent
           Cover_Image: this.categoryDetailObject.Cover_Image
         };
 
-        this.spinner.show();
         const info: ErrorInfo = {
           displayToast: false,
           failureResponse: 'throwError'
@@ -319,7 +317,6 @@ export class CategoriesComponent
           .deleteCategory$(category, this.categories, info)
           .subscribe(
             (data) => {
-              this.spinner.hide();
               this.categoriesList = [];
               this.getAllCategories();
               this.wiCommonService.fetchWorkInstructions();
@@ -333,7 +330,6 @@ export class CategoriesComponent
             },
             (error) => {
               this.errorHandlerService.handleError(error);
-              this.spinner.hide();
             }
           );
       }

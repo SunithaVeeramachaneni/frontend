@@ -179,7 +179,6 @@ export class MaintenanceComponent implements OnInit {
       this.combinedWorkOrderList1$,
       this.putWorkOrder$
     );
-    this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([
       this.combinedWorkOrderList$,
       this.dateRange$,
@@ -212,7 +211,6 @@ export class MaintenanceComponent implements OnInit {
               this.filterKitStatus(workOrder.kitStatusText, filterObj.kitStatus)
           );
         }
-        this.spinner.hide();
         return filtered;
       })
     );
@@ -345,7 +343,6 @@ export class MaintenanceComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (data) => {
       if (data) {
-        this.spinner.show();
         const resp = data;
         const workOrderID = resp.workOrderID;
         this.putWorkOrder$.next({
@@ -367,7 +364,6 @@ export class MaintenanceComponent implements OnInit {
               ...this.emptyWorkOrder,
               [`${workOrder.status}`]: [{ ...workOrder, isLoading: false }]
             });
-            this.spinner.hide();
           }
         });
       }

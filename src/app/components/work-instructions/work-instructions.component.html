@@ -6,12 +6,6 @@
   *ngIf="currentRouteUrl$ | async as currentRouteUrl"
   class="work-instructions-body"
 >
-  <ngx-spinner
-    size="medium"
-    bdColor="#C0C0C0"
-    type="ball-clip-rotate-pulse"
-    [fullScreen]="false"
-  ></ngx-spinner>
   <div *ngIf="currentRouteUrl === routingUrls.workInstructions.url">
     <div
       class="bg-white work-instructions-header custom-mat-form-field-gray-color"
@@ -65,10 +59,7 @@
         />
       </div>
     </div>
-    <div
-      class="drafts-favorites"
-      *ngIf="workInstructions$ | async as workInstructions"
-    >
+    <div class="drafts-favorites">
       <div
         class="width-50"
         style="margin-right: 7px"
@@ -79,93 +70,100 @@
             <i class="fa fa-file-o draft-icon" aria-hidden="true"></i>
             <span class="p-l-5">Drafts</span>
           </div>
-          <ng-container
+          <div
             *ngIf="
-              workInstructions.drafts
-                | filter: searchCriteria
-                | sortBy: 'desc':'updated_at'
-                | slice: 0:3 as result
+              workInstructions$ | async as workInstructions;
+              else loadingDrafts
             "
           >
-            <app-dummy #recentDrafts [value]="result"></app-dummy>
-            <ul class="recents-favorites-list">
-              <li class="list-data" *ngFor="let obj of result">
-                <div class="recent-wi-img p-0 width-10">
-                  <img
-                    class="coverImg"
-                    [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
-                    [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
-                    alt=""
-                  />
-                </div>
-
-                <div class="p-l-r-0 width-60">
-                  <div
-                    class="ellipsis"
-                    [routerLink]="['/work-instructions/edit', obj.Id]"
-                  >
-                    <a>
-                      <span
-                        class="recent-title"
-                        matTooltip="{{ obj.WI_Name }}"
-                        matTooltipClass=""
-                      >
-                        {{ obj.WI_Name }}
-                      </span>
-                    </a>
+            <ng-container
+              *ngIf="
+                workInstructions.drafts
+                  | filter: searchCriteria
+                  | sortBy: 'desc':'updated_at'
+                  | slice: 0:3 as result
+              "
+            >
+              <app-dummy #recentDrafts [value]="result"></app-dummy>
+              <ul class="recents-favorites-list">
+                <li class="list-data" *ngFor="let obj of result">
+                  <div class="recent-wi-img p-0 width-10">
+                    <img
+                      class="coverImg"
+                      [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
+                      [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
+                      alt=""
+                    />
                   </div>
-                  <div class="category-ellipsis">
-                    <span
-                      class="recent-subtitle"
-                      matTooltip="{{ obj.categories }}"
-                      matTooltipClass=""
-                      >{{ obj.categories }}</span
+
+                  <div class="p-l-r-0 width-60">
+                    <div
+                      class="ellipsis"
+                      [routerLink]="['/work-instructions/edit', obj.Id]"
                     >
+                      <a>
+                        <span
+                          class="recent-title"
+                          matTooltip="{{ obj.WI_Name }}"
+                          matTooltipClass=""
+                        >
+                          {{ obj.WI_Name }}
+                        </span>
+                      </a>
+                    </div>
+                    <div class="category-ellipsis">
+                      <span
+                        class="recent-subtitle"
+                        matTooltip="{{ obj.categories }}"
+                        matTooltipClass=""
+                        >{{ obj.categories }}</span
+                      >
+                    </div>
                   </div>
-                </div>
 
-                <div
-                  class="p-l-10 width-30"
-                  style="position: absolute; right: 0%"
-                >
-                  <span class="recent-edited">
-                    Edited {{ obj.updated_at | timeAgo }}
-                  </span>
-                  <br />
-                  <span class="recent-edited">by {{ obj.EditedBy }}</span>
-                </div>
-              </li>
-            </ul>
-            <div
-              *ngIf="
-                (result.length === 0 && workInstructions.drafts.length > 0) ||
-                (workInstructions.drafts &&
-                  workInstructions.drafts.length === 0)
-              "
-              class="no-fav"
-            >
-              {{
-                workInstructions.drafts.length
-                  ? 'No Results Found !!'
-                  : 'No Drafted Instructions found !!'
-              }}
-            </div>
-            <div
-              class="text-center seeall-fixed"
-              *ngIf="
-                workInstructions.drafts.length !== 0 && result.length !== 0
-              "
-            >
-              <button
-                class="seeall isDisabled"
-                [routerLink]="['/work-instructions/drafts']"
-                [queryParams]="{ search: searchCriteria }"
-                (click)="showMore = true"
+                  <div
+                    class="p-l-10 width-30"
+                    style="position: absolute; right: 0%"
+                  >
+                    <span class="recent-edited">
+                      Edited {{ obj.updated_at | timeAgo }}
+                    </span>
+                    <br />
+                    <span class="recent-edited">by {{ obj.EditedBy }}</span>
+                  </div>
+                </li>
+              </ul>
+              <div
+                *ngIf="
+                  (result.length === 0 && workInstructions.drafts.length > 0) ||
+                  (workInstructions.drafts &&
+                    workInstructions.drafts.length === 0)
+                "
+                class="no-fav"
               >
-                SEE ALL
-              </button>
-            </div>
-          </ng-container>
+                {{
+                  workInstructions.drafts.length
+                    ? 'No Results Found !!'
+                    : 'No Drafted Instructions found !!'
+                }}
+              </div>
+              <div
+                class="text-center seeall-fixed"
+                *ngIf="
+                  workInstructions.drafts.length !== 0 && result.length !== 0
+                "
+              >
+                <button
+                  class="seeall isDisabled"
+                  [routerLink]="['/work-instructions/drafts']"
+                  [queryParams]="{ search: searchCriteria }"
+                  (click)="showMore = true"
+                >
+                  SEE ALL
+                </button>
+              </div>
+            </ng-container>
+          </div>
         </div>
       </div>
       <div
@@ -177,101 +175,109 @@
             <i class="fa fa-star-o favorite-icon" aria-hidden="true"></i>
             <span class="p-l-5">Favorites</span>
           </div>
-          <ng-container
+          <div
             *ngIf="
-              workInstructions.favorites
-                | filter: searchCriteria
-                | sortBy: 'desc':'updated_at'
-                | slice: 0:3 as result
+              workInstructions$ | async as workInstructions;
+              else loadingDrafts
             "
           >
-            <app-dummy #recentFavourites [value]="result"></app-dummy>
-            <ul class="recents-favorites-list">
-              <li class="list-data" *ngFor="let obj of result">
-                <div class="recent-wi-img p-0 width-10">
-                  <img
-                    class="coverImg"
-                    [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
-                    [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
-                    alt=""
-                  />
-                </div>
+            <ng-container
+              *ngIf="
+                workInstructions.favorites
+                  | filter: searchCriteria
+                  | sortBy: 'desc':'updated_at'
+                  | slice: 0:3 as result
+              "
+            >
+              <app-dummy #recentFavourites [value]="result"></app-dummy>
+              <ul class="recents-favorites-list">
+                <li class="list-data" *ngFor="let obj of result">
+                  <div class="recent-wi-img p-0 width-10">
+                    <img
+                      class="coverImg"
+                      [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
+                      [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
+                      alt=""
+                    />
+                  </div>
 
-                <div class="p-l-r-0 width-60">
-                  <div
-                    [routerLink]="['/work-instructions/edit', obj.Id]"
-                    class="dis-flex"
-                  >
-                    <a class="ellipsis">
+                  <div class="p-l-r-0 width-60">
+                    <div
+                      [routerLink]="['/work-instructions/edit', obj.Id]"
+                      class="dis-flex"
+                    >
+                      <a class="ellipsis">
+                        <span
+                          class="recent-title"
+                          matTooltip="{{ obj.WI_Name }}"
+                          matTooltipClass=""
+                        >
+                          {{ obj.WI_Name }}
+                        </span>
+                      </a>
+                      <a (click)="setFav($event, obj)">
+                        <mat-icon class="mat-icon-star is-fav-icon fav-icon">
+                          star
+                        </mat-icon>
+                      </a>
+                      <span class="chip" *ngIf="obj.Published === false">
+                        Draft
+                      </span>
+                    </div>
+                    <div class="category-ellipsis">
                       <span
-                        class="recent-title"
-                        matTooltip="{{ obj.WI_Name }}"
+                        class="recent-subtitle"
+                        matTooltip="{{ obj.categories }}"
                         matTooltipClass=""
                       >
-                        {{ obj.WI_Name }}
+                        {{ obj.categories }}
                       </span>
-                    </a>
-                    <a (click)="setFav($event, obj)">
-                      <mat-icon class="mat-icon-star is-fav-icon fav-icon">
-                        star
-                      </mat-icon>
-                    </a>
-                    <span class="chip" *ngIf="obj.Published === false">
-                      Draft
-                    </span>
+                    </div>
                   </div>
-                  <div class="category-ellipsis">
-                    <span
-                      class="recent-subtitle"
-                      matTooltip="{{ obj.categories }}"
-                      matTooltipClass=""
-                    >
-                      {{ obj.categories }}
-                    </span>
-                  </div>
-                </div>
 
-                <div
-                  class="p-l-10 width-30"
-                  style="position: absolute; right: 0%"
-                >
-                  <span class="recent-edited">
-                    Edited {{ obj.updated_at | timeAgo }}
-                  </span>
-                  <br />
-                  <span class="recent-edited">by {{ obj.EditedBy }}</span>
-                </div>
-              </li>
-            </ul>
-            <div
-              *ngIf="
-                (result.length === 0 &&
-                  workInstructions.favorites.length > 0) ||
-                (workInstructions.favorites &&
-                  workInstructions.favorites.length === 0)
-              "
-              class="no-fav"
-            >
-              {{
-                workInstructions.favorites.length
-                  ? 'No Results Found !!'
-                  : 'No Favorite Instructions found !!'
-              }}
-            </div>
-            <div class="text-center seeall-fixed">
-              <button
+                  <div
+                    class="p-l-10 width-30"
+                    style="position: absolute; right: 0%"
+                  >
+                    <span class="recent-edited">
+                      Edited {{ obj.updated_at | timeAgo }}
+                    </span>
+                    <br />
+                    <span class="recent-edited">by {{ obj.EditedBy }}</span>
+                  </div>
+                </li>
+              </ul>
+              <div
                 *ngIf="
-                  result.length !== 0 && workInstructions.favorites.length !== 0
+                  (result.length === 0 &&
+                    workInstructions.favorites.length > 0) ||
+                  (workInstructions.favorites &&
+                    workInstructions.favorites.length === 0)
                 "
-                class="seeall isDisabled"
-                [routerLink]="['/work-instructions/favorites']"
-                [queryParams]="{ search: searchCriteria }"
-                (click)="showMore = true"
+                class="no-fav"
               >
-                SEE ALL
-              </button>
-            </div>
-          </ng-container>
+                {{
+                  workInstructions.favorites.length
+                    ? 'No Results Found !!'
+                    : 'No Favorite Instructions found !!'
+                }}
+              </div>
+              <div class="text-center seeall-fixed">
+                <button
+                  *ngIf="
+                    result.length !== 0 &&
+                    workInstructions.favorites.length !== 0
+                  "
+                  class="seeall isDisabled"
+                  [routerLink]="['/work-instructions/favorites']"
+                  [queryParams]="{ search: searchCriteria }"
+                  (click)="showMore = true"
+                >
+                  SEE ALL
+                </button>
+              </div>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
@@ -280,3 +286,122 @@
   </div>
   <router-outlet></router-outlet>
 </div>
+
+<ng-template #loadingDrafts>
+  <div class="ghost-loader-wi-home">
+    <div>
+      <ngx-shimmer-loading
+        [width]="'9%'"
+        [height]="'45px'"
+        class="drafted-fav-image"
+      >
+      </ngx-shimmer-loading>
+      <span class="drafted-fav-wi-name-category">
+        <ngx-shimmer-loading
+          [width]="'60%'"
+          [height]="'20px'"
+          class="drafted-fav-title"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'50%'"
+          [height]="'10px'"
+          class="drafted-fav-category"
+        >
+        </ngx-shimmer-loading>
+      </span>
+      <span class="drafted-fav-updated-details">
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+      </span>
+    </div>
+    <div>
+      <ngx-shimmer-loading
+        [width]="'9%'"
+        [height]="'45px'"
+        class="drafted-fav-image"
+      >
+      </ngx-shimmer-loading>
+      <span class="drafted-fav-wi-name-category">
+        <ngx-shimmer-loading
+          [width]="'60%'"
+          [height]="'20px'"
+          class="drafted-fav-title"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'50%'"
+          [height]="'10px'"
+          class="drafted-fav-category"
+        >
+        </ngx-shimmer-loading>
+      </span>
+      <span class="drafted-fav-updated-details">
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+      </span>
+    </div>
+    <div>
+      <ngx-shimmer-loading
+        [width]="'9%'"
+        [height]="'45px'"
+        class="drafted-fav-image"
+      >
+      </ngx-shimmer-loading>
+      <span class="drafted-fav-wi-name-category">
+        <ngx-shimmer-loading
+          [width]="'60%'"
+          [height]="'20px'"
+          class="drafted-fav-title"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'50%'"
+          [height]="'10px'"
+          class="drafted-fav-category"
+        >
+        </ngx-shimmer-loading>
+      </span>
+      <span class="drafted-fav-updated-details">
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+        <br />
+        <ngx-shimmer-loading
+          [width]="'20%'"
+          [height]="'10px'"
+          class="right-alignment"
+        >
+        </ngx-shimmer-loading>
+      </span>
+    </div>
+  </div>
+</ng-template>

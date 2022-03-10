@@ -21,7 +21,7 @@
   </div>
   <ng-container
     *ngIf="
-      this.categoriesList
+      this.isCategoriesLoading === false && this.categoriesList
         | filter: searchCriteria
         | orderBy: 'Created_At':true:true
         | paginate: config as result
@@ -132,3 +132,66 @@
     </div>
   </ng-container>
 </div>
+
+<ng-container *ngIf="this.isCategoriesLoading === true">
+  <div class="ghost-loader-categories-container">
+    <div class="categories-div">
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+    <div class="categories-div">
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</ng-container>
