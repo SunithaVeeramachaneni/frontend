@@ -462,7 +462,7 @@ describe('RecentsComponent', () => {
       const tableBodyTh = recentsEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = recentsEl.querySelectorAll('table tbody tr td');
       expect(tableBodyTh[0].textContent).toContain(recent2.WI_Name);
-      expect(tableBodyTh[1].textContent).toContain(`${recent1.WI_Name}Draft`);
+      expect(tableBodyTh[1].textContent).toContain(`${recent1.WI_Name} Draft`);
       expect(tableBodyTd[0].textContent).toBe(recent2.categories.join());
       expect(tableBodyTd[4].textContent).toBe(recent1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
