@@ -353,12 +353,11 @@ export class MaintenanceComponent implements OnInit {
           assigned: [{ ...workOrder, isLoading: true, status: 'assigned' }]
         });
 
-        const res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
+        const res = this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
         res.subscribe(async (response) => {
           if (response === true) {
-            const workOrder$ = await this._maintenanceSvc.getWorkOrderByID(
-              workOrderID
-            );
+            const workOrder$ =
+              this._maintenanceSvc.getWorkOrderByID(workOrderID);
             workOrder$.subscribe((workOrderNew) =>
               this.putWorkOrder$.next(workOrderNew)
             );

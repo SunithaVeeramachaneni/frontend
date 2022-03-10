@@ -192,7 +192,7 @@ export class MaintenanceService {
     }));
     return technicians;
   };
-  setAssigneeAndWorkCenter = async (params) => {
+  setAssigneeAndWorkCenter = (params) => {
     const req = {
       workOrderID: params.workOrderID,
       details: {
@@ -203,12 +203,11 @@ export class MaintenanceService {
         PRIOKX: params.priorityStatus
       }
     };
-    const res = await this._appService._putDataToGateway(
+    return this._appService._putDataToGateway(
       environment.mccAbapApiUrl,
       'workOrdersAndOperations',
       req
     );
-    return res;
   };
 
   getAssignedTechnician = (technicians, workOrder) => {
@@ -226,8 +225,8 @@ export class MaintenanceService {
     return assignedTechnician;
   };
 
-  getWorkOrderByID = async (id) => {
-    const rawWorkOrder$ = await this._appService._getRespFromGateway(
+  getWorkOrderByID = (id) => {
+    const rawWorkOrder$ = this._appService._getRespFromGateway(
       environment.mccAbapApiUrl,
       `workOrder/${id}`
     );
