@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 import {
   Component,
   ViewChild,
@@ -50,6 +51,12 @@ export class MaintenanceComponent implements OnInit {
   public updateWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList1$: Observable<WorkOrders>;
+  public emptyWorkOrder: WorkOrders = {
+    unassigned: [],
+    assigned: [],
+    inProgress: [],
+    completed: []
+  };
   public filteredWorkOrderList$: Observable<WorkOrders> = of({
     unassigned: [],
     assigned: [],
@@ -79,7 +86,7 @@ export class MaintenanceComponent implements OnInit {
   public selectedUser;
   headerTitle = 'Maintenance Control Center';
 
-  public showOverdue: string = '';
+  public showOverdue = '';
   public showOverdueList: string[] = ['Yes', 'No'];
 
   public priority: string[] = ['Very High'];
@@ -143,7 +150,7 @@ export class MaintenanceComponent implements OnInit {
 
   getImageSrc = (source: string) => {
     if (source) {
-      let base64Image = 'data:image/jpeg;base64,' + source;
+      const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
@@ -154,7 +161,6 @@ export class MaintenanceComponent implements OnInit {
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
-    // console.log(this.workOrderList$);
     this.updateWorkOrderList$ = this._maintenanceSvc
       .getServerSentEvent('/updateWorkOrders')
       .pipe(
@@ -180,20 +186,20 @@ export class MaintenanceComponent implements OnInit {
       this.filterObj$
     ]).pipe(
       map(([workOrders, filterDate, filterObj]) => {
-        let filtered: WorkOrders = {
+        const filtered: WorkOrders = {
           unassigned: [],
           assigned: [],
           inProgress: [],
           completed: []
         };
         let a;
-        for (let key in workOrders) {
-          filtered[key] = workOrders[key].filter((workOrder) => {
-            return (
+        for (const key in workOrders) {
+          filtered[key] = workOrders[key].filter(
+            (workOrder) =>
               workOrder.headerText
                 .toLowerCase()
                 .indexOf(
-                  filterObj['search'] ? filterObj['search'].toLowerCase() : ''
+                  filterObj.search ? filterObj.search.toLowerCase() : ''
                 ) !== -1 &&
               // this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
@@ -204,8 +210,7 @@ export class MaintenanceComponent implements OnInit {
               ) &&
               this.filterAssignee(workOrder.technician[0], filterObj.assign) &&
               this.filterKitStatus(workOrder.kitStatusText, filterObj.kitStatus)
-            );
-          });
+          );
         }
         this.spinner.hide();
         return filtered;
@@ -216,19 +221,18 @@ export class MaintenanceComponent implements OnInit {
   combineWorkOrders = (
     oldWorkOrders$: Observable<WorkOrders>,
     newWorkOrders$: Observable<WorkOrders>
-  ): Observable<WorkOrders> => {
-    return combineLatest([oldWorkOrders$, newWorkOrders$]).pipe(
+  ): Observable<WorkOrders> =>
+    combineLatest([oldWorkOrders$, newWorkOrders$]).pipe(
       map(([oldWorkOrders, newWorkOrders]) => {
         if (newWorkOrders) {
-          for (let key in newWorkOrders) {
+          for (const key in newWorkOrders) {
             if (newWorkOrders[key])
-              newWorkOrders[key].forEach((workOrder) => {
-                let id = workOrder.workOrderID;
-                for (let key2 in oldWorkOrders) {
+              newWorkOrders[key].forEach((workOrder: { workOrderID: any }) => {
+                const id = workOrder.workOrderID;
+                for (const key2 in oldWorkOrders) {
                   oldWorkOrders[key2] = oldWorkOrders[key2].filter(
-                    (oldWorkOrder) => {
-                      return !(oldWorkOrder.workOrderID === id);
-                    }
+                    (oldWorkOrder: { workOrderID: any }) =>
+                      !(oldWorkOrder.workOrderID === id)
                   );
                 }
               });
@@ -238,10 +242,9 @@ export class MaintenanceComponent implements OnInit {
         return oldWorkOrders;
       })
     );
-  };
 
   public filterPriority = (status, priority) => {
-    if (priority === null || priority.length == 0) {
+    if (priority === null || priority.length === 0) {
       return true;
     } else {
       for (let i = 0; i < priority.length; i++) {
@@ -289,9 +292,9 @@ export class MaintenanceComponent implements OnInit {
   };
 
   public filterDate(dueDate, filterDate) {
-    var sDate = moment(dueDate);
+    const sDate = moment(dueDate);
     sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    let date = sDate.format('YYYY-MM-DDTHH:mm:ss');
+    const date = sDate.format('YYYY-MM-DDTHH:mm:ss');
     return date >= filterDate.startDate && date <= filterDate.endDate;
   }
 
@@ -299,9 +302,9 @@ export class MaintenanceComponent implements OnInit {
     if (overdue !== 'No') return true;
     else if (overdue === 'No') {
       const interval = 1000 * 60 * 60 * 24; // 24 hours in milliseconds
-      let startOfDay = Math.floor(Date.now() / interval) * interval;
-      let endOfDay = startOfDay + interval - 1; // 23:59:59:9999
-      let dueDateTime = new Date(dueDate).getTime();
+      const startOfDay = Math.floor(Date.now() / interval) * interval;
+      const endOfDay = startOfDay + interval - 1; // 23:59:59:9999
+      const dueDateTime = new Date(dueDate).getTime();
       if (dueDateTime < startOfDay) {
       }
       return dueDate >= startOfDay;
@@ -323,6 +326,12 @@ export class MaintenanceComponent implements OnInit {
   }
 
   async onAssignPress(workOrder: any) {
+    // first we delete the old work order
+    // next, a ghost loaded work order (isLoading = true) is added to the assigned section
+    // once assign is pressed, the observable is updated so that isLoading
+    // if assign is suceess, change isLoading to false
+    // if assign is fail, move work order back to unassigned
+
     const dialogRef = this.dialog.open(ModalComponent, {
       data: {
         techniciansList: this.technicians,
@@ -337,55 +346,30 @@ export class MaintenanceComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (data) => {
       if (data) {
         this.spinner.show();
-        const resp = data; // Here's your selected user!
+        const resp = data;
         const workOrderID = resp.workOrderID;
-        let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
+        this.putWorkOrder$.next({
+          ...this.emptyWorkOrder,
+          assigned: [{ ...workOrder, isLoading: true, status: 'assigned' }]
+        });
+
+        const res = this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
         res.subscribe(async (response) => {
           if (response === true) {
-            console.log('Put succesful');
-            let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(
-              workOrderID
+            const workOrder$ =
+              this._maintenanceSvc.getWorkOrderByID(workOrderID);
+            workOrder$.subscribe((workOrderNew) =>
+              this.putWorkOrder$.next(workOrderNew)
             );
-            workOrder$.subscribe((workOrder) =>
-              this.putWorkOrder$.next(workOrder)
-            );
-            // this.spinner.hide();
-          } else if (Object.keys(response).length === 0) {
+          } else {
+            this.putWorkOrder$.next({
+              ...this.emptyWorkOrder,
+              [`${workOrder.status}`]: [{ ...workOrder, isLoading: false }]
+            });
             this.spinner.hide();
           }
         });
       }
     });
-    // const modal = await this.modalCtrl.create({
-    //   component: ModalComponent,
-    //   componentProps: {
-    //     techniciansList: this.technicians,
-    //     workCenterList: this.workCenterList,
-    //     defaultWorkCenter: workOrder.workCenter,
-    //     workOrderID: workOrder.workOrderID,
-    //     priorityNumber: workOrder.priorityNumber,
-    //     priorityStatus: workOrder.priorityStatus
-    //   }
-    // });
-    // modal.onDidDismiss()
-    //   .then(async (data) => {
-    //     if (data.data) {
-    //       this.spinner.show();
-    //       const resp = data['data']; // Here's your selected user!
-    //       const workOrderID = resp.workOrderID
-    //       let res = await this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
-    //       res.subscribe(async response => {
-    //         if (response === true) {
-    //           console.log("Put succesful")
-    //           let workOrder$ = await this._maintenanceSvc.getWorkOrderByID(workOrderID);
-    //           workOrder$.subscribe(workOrder => this.putWorkOrder$.next(workOrder))
-    //           // this.spinner.hide();
-    //         } else if (Object.keys(response).length === 0) {
-    //           this.spinner.hide();
-    //         }
-    //       })
-    //     }
-    //   });
-    // return await modal.present();
   }
 }

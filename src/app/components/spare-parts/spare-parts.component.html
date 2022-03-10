@@ -33,10 +33,7 @@
           </span>
         </li>
         <div class="column-height">
-          <li
-            class="li-cols"
-            *ngFor="let workOrder of workOrders['1']; let i = index"
-          >
+          <li class="li-cols" *ngFor="let workOrder of workOrders['1']">
             <app-spcc-card
               [workOrder]="workOrder"
               [technicians]="this.technicians"

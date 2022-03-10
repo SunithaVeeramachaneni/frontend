@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { interval, Observable, Subject, timer } from 'rxjs';
+import { Observable, Subject, timer } from 'rxjs';
 import {
   catchError,
   map,
@@ -17,10 +18,18 @@ import {
   WarehouseTechnicians
 } from '../../interfaces/warehouse_technicians';
 import { AppService } from '../../shared/services/app.services';
-import * as moment from 'moment';
 
 @Injectable({ providedIn: 'root' })
 export class SparepartsService {
+  workOrders$ = null;
+  public emptyWorkOrders: WorkOrders = {
+    '1': [],
+    '2': [],
+    '3': [],
+    '4': [],
+    '5': []
+  };
+
   constructor(private _appService: AppService) {}
 
   private statusMap = {
@@ -33,38 +42,23 @@ export class SparepartsService {
 
   private stopPolling = new Subject();
 
-  ngOnDestroy = () => {
+  stopSeamlessUpdate() {
     this.stopPolling.next();
-  };
+    this.stopPolling.complete();
+  }
+
   getPickerList(): Observable<WarehouseTechnician[]> {
-    let technicians$ = this._appService._getRespFromGateway(
+    return this._appService._getRespFromGateway(
       environment.spccAbapApiUrl,
       'pickerlist'
     );
-    let transformedObservable$ = technicians$.pipe(
-      map((rawTechnicians) => {
-        let technicians: WarehouseTechnician[] = [];
-        let technician: WarehouseTechnician;
-        rawTechnicians.forEach((rawTechnician) => {
-          technician = {
-            userName: rawTechnician['UserName'],
-            userId: rawTechnician['UserID'],
-            fName: rawTechnician['FirstName'],
-            LName: rawTechnician['LastName']
-          };
-          technicians.push(technician);
-        });
-        return technicians;
-      }),
-      share()
-    );
-    return transformedObservable$;
   }
+
   assignTechnicianToWorkorder(
     data,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> {
-    let updateResp$ = this._appService._putDataToGateway(
+    const updateResp$ = this._appService._putDataToGateway(
       environment.spccAbapApiUrl,
       `workorderspcc/${data.AUFNR}`,
       data
@@ -72,74 +66,44 @@ export class SparepartsService {
     return updateResp$;
   }
 
+  getWorkOrderByID(id) {
+    const rawWorkOrder$ = this._appService._getRespFromGateway(
+      environment.mccAbapApiUrl,
+      `workOrderSPCC/${id}`
+    );
+    return rawWorkOrder$.pipe(
+      map((workOrder) => {
+        const newWorkOrderList = {
+          ...this.emptyWorkOrders,
+          [workOrder.statusCode]: [workOrder]
+        };
+        return newWorkOrderList;
+      })
+    );
+  }
+
   getAllWorkOrders(
     dateRange,
     pagination: boolean = true,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<WorkOrders> {
-    let workOrders$ = timer(1, 1000 * 60 * 2).pipe(
+    if (this.workOrders$) {
+      this.stopPolling.next();
+      this.stopPolling.complete();
+      this.stopPolling = new Subject();
+    }
+    this.workOrders$ = timer(1, 1000 * 10 * 2).pipe(
       switchMap(() =>
         this._appService._getRespFromGateway(
           environment.spccAbapApiUrl,
-          `workorderspcc?startdate=${dateRange['startDate']}&enddate=${dateRange['endDate']}`
+          `workorderspcc?startdate=${dateRange.startDate}&enddate=${dateRange.endDate}`
         )
       ),
       retry(3),
       share(),
       takeUntil(this.stopPolling)
     );
-
-    let transformedObservable$ = workOrders$.pipe(
-      map((rawWorkOrders) => {
-        let workOrders: WorkOrders = {
-          '1': [],
-          '2': [],
-          '3': [],
-          '4': [],
-          '5': []
-        };
-        let workOrder: WorkOrder;
-        rawWorkOrders.forEach((rawWorkOrder) => {
-          workOrder = {
-            statusCode: rawWorkOrder['STATUSKEY'],
-            status: this.statusMap[`${rawWorkOrder['STATUSKEY']}`],
-            personDetails: '',
-            //rawWorkOrder['PARNR'],
-            priorityNumber: rawWorkOrder['PRIOK'],
-            priorityStatus: rawWorkOrder['PRIOKX']
-              ? rawWorkOrder['PRIOKX'] + ' Priority'
-              : '',
-            colour: '',
-            //rawWorkOrder['COLOUR'],
-            workOrderID: rawWorkOrder['AUFNR'],
-            workOrderDesc: '',
-            //rawWorkOrder['AUFTEXT'],
-            equipmentID: '',
-            //rawWorkOrder['ARBPL'],
-            equipmentName: '',
-            //rawWorkOrder['KTEXT'],
-            kitStatus: rawWorkOrder['TXT04'],
-            dueDate: this.parseJsonDate(rawWorkOrder['GSTRP']),
-            estimatedTime: '',
-            actualTime: '',
-            progress: rawWorkOrder['PROGRESS'],
-            partsavailable: rawWorkOrder['PARTS_AVAIL']
-              ? 'PARTS AVAILABLE'
-              : 'WAITING ON PARTS',
-            progressValue: rawWorkOrder['TOTITEMS']
-              ? rawWorkOrder['STAGED'] / rawWorkOrder['TOTITEMS']
-              : 0,
-            staged: rawWorkOrder['STAGED'],
-            totItems: rawWorkOrder['TOTITEMS'],
-            assigneeId: rawWorkOrder['USNAM'],
-            assignee: rawWorkOrder['ASSIGNEE']
-          };
-          workOrders[`${workOrder.statusCode}`].push(workOrder);
-        });
-        return workOrders;
-      })
-    );
-    return transformedObservable$;
+    return this.workOrders$;
   }
 
   parseJsonDate(jsonDateString) {
