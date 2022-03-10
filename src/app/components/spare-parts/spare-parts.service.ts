@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { interval, Observable, Subject, timer } from 'rxjs';
+import { Observable, Subject, timer } from 'rxjs';
 import {
   catchError,
   map,
@@ -21,6 +21,7 @@ import { AppService } from '../../shared/services/app.services';
 
 @Injectable({ providedIn: 'root' })
 export class SparepartsService {
+  workOrders$ = null;
   public emptyWorkOrders: WorkOrders = {
     '1': [],
     '2': [],
@@ -41,9 +42,10 @@ export class SparepartsService {
 
   private stopPolling = new Subject();
 
-  ngOnDestroy = () => {
+  stopSeamlessUpdate() {
     this.stopPolling.next();
-  };
+    this.stopPolling.complete();
+  }
 
   getPickerList(): Observable<WarehouseTechnician[]> {
     return this._appService._getRespFromGateway(
@@ -69,7 +71,6 @@ export class SparepartsService {
       environment.mccAbapApiUrl,
       `workOrderSPCC/${id}`
     );
-    rawWorkOrder$.subscribe((resp) => console.log('Raw work order is', resp));
     return rawWorkOrder$.pipe(
       map((workOrder) => {
         const newWorkOrderList = {
@@ -86,7 +87,12 @@ export class SparepartsService {
     pagination: boolean = true,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<WorkOrders> {
-    const workOrders$ = timer(1, 1000 * 60 * 2).pipe(
+    if (this.workOrders$) {
+      this.stopPolling.next();
+      this.stopPolling.complete();
+      this.stopPolling = new Subject();
+    }
+    this.workOrders$ = timer(1, 1000 * 10 * 2).pipe(
       switchMap(() =>
         this._appService._getRespFromGateway(
           environment.spccAbapApiUrl,
@@ -97,7 +103,7 @@ export class SparepartsService {
       share(),
       takeUntil(this.stopPolling)
     );
-    return workOrders$;
+    return this.workOrders$;
   }
 
   parseJsonDate(jsonDateString) {

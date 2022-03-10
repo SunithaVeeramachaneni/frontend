@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  OnDestroy,
   QueryList,
   ViewChild,
   ViewChildren
@@ -32,7 +33,7 @@ import { CommonFilterService } from '../../shared/components/common-filter/commo
   styleUrls: ['./spare-parts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SparePartsComponent implements OnInit {
+export class SparePartsComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   public emptyWorkOrders: WorkOrders = {
     '1': [],
@@ -110,6 +111,9 @@ export class SparePartsComponent implements OnInit {
     this.getTechnicians();
   }
 
+  ngOnDestroy() {
+    this.sparepartsSvc.stopSeamlessUpdate();
+  }
   combineWorkOrders = (
     oldWorkOrders$: Observable<WorkOrders>,
     newWorkOrders$: Observable<WorkOrders>
@@ -229,7 +233,7 @@ export class SparePartsComponent implements OnInit {
   };
 
   public filterPriority = (status, priority) => {
-    if (priority === null || priority.length == 0) {
+    if (priority === null || priority.length === 0) {
       return true;
     } else {
       for (let i = 0; i < priority.length; i++) {

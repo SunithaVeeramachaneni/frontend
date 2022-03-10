@@ -354,7 +354,7 @@ describe('CategoryComponent', () => {
           name: image
         }
       ]);
-      component.uploadFile(fileList);
+      component.uploadFile({ target: { files: fileList } });
       // expect(spinnerSpy.show).toHaveBeenCalledWith();
       // expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(instructionServiceSpy.uploadAttachments).toHaveBeenCalled();
@@ -383,7 +383,7 @@ describe('CategoryComponent', () => {
           name: image
         }
       ]);
-      component.uploadFile(fileList);
+      component.uploadFile({ target: { files: fileList } });
       // expect(spinnerSpy.show).toHaveBeenCalledWith();
       // expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(instructionServiceSpy.uploadAttachments).toHaveBeenCalled();

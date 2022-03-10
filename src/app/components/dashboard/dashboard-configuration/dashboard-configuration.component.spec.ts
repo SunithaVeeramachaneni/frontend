@@ -1,7 +1,14 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule,
+  TranslateService
+} from '@ngx-translate/core';
 import { GridsterModule } from 'angular-gridster2';
 import { MockComponent } from 'ng-mocks';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -60,8 +67,20 @@ describe('DashboardConfigurationComponent', () => {
         DashboardConfigurationComponent,
         MockComponent(WidgetComponent)
       ],
-      imports: [AppMaterialModules, GridsterModule, BrowserAnimationsModule],
+      imports: [
+        AppMaterialModules,
+        GridsterModule,
+        BrowserAnimationsModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        }),
+        ReactiveFormsModule
+      ],
       providers: [
+        TranslateService,
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
         { provide: CommonService, useValue: commonServiceSpy },
@@ -141,8 +160,20 @@ describe('TestDashboardConfigurationHostComponent', () => {
         TestDashboardConfigurationHostComponent,
         MockComponent(WidgetComponent)
       ],
-      imports: [AppMaterialModules, GridsterModule, BrowserAnimationsModule],
+      imports: [
+        AppMaterialModules,
+        GridsterModule,
+        BrowserAnimationsModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        }),
+        ReactiveFormsModule
+      ],
       providers: [
+        TranslateService,
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
         { provide: CommonService, useValue: commonServiceSpy },
