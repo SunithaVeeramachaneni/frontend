@@ -42,7 +42,7 @@
 }
 
 .menu-item {
-  margin: 7px 0;
+  margin: 0;
 }
 
 .sidebar-small-logo {
@@ -53,17 +53,12 @@ ul {
   padding: 0;
 }
 
-.menu-item:first-child {
-  margin-top: 0;
-}
-
 li {
   list-style: none;
 }
 
 li:hover {
   background: rgba(103, 58, 183, 0.08);
-  margin-right: 10px;
 }
 
 .menu-item li {
@@ -73,7 +68,7 @@ li:hover {
   font-size: 15px;
   color: #76767b;
   cursor: pointer;
-  padding: 3px 0 7px 0;
+  padding: 10px;
 }
 
 .menu-item li.selected {
@@ -99,13 +94,14 @@ li:hover {
 }
 
 .sidebar-icons {
-  margin-left: 20px;
-  margin-top: 7px;
+  width: 20px;
+  margin-left: 10px;
+  position: relative;
+  top: 2px;
 }
 
 li.selected .sidebar-icons {
-  margin-left: 15px;
-  margin-top: 7px;
+  margin-left: 5px;
 }
 
 .submenu {
@@ -143,4 +139,14 @@ li.selected .sidebar-icons {
 
 .m-l-60 {
   margin-left: 60px;
+}
+
+.menu-trigger-btn {
+  border: none;
+  background-color: transparent;
+}
+
+.menu-title {
+  position: relative;
+  left: 10px;
 }

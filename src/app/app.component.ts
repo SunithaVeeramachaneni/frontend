@@ -37,9 +37,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       activeImage: '../assets/sidebar-icons/dashboard-blue.svg',
       showSubMenu: false,
       disable: false,
-      subPages: [
-        { title: reports.title, url: reports.url }
-      ],
+      subPages: [{ title: reports.title, url: reports.url }]
     },
     {
       title: maintenance.title,
@@ -86,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.commonService.minimizeSidebarAction$.subscribe((data) => {

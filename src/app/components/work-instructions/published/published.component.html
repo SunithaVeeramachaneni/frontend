@@ -1,10 +1,10 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
-    class="p-l-20 p-t-20 publish-main tables-data"
+    class="publish-main custom-mat-form-field-gray-color"
     *ngIf="currentRouteUrl === routingUrls.published.url"
   >
-    <div class="p-b-10 dis-flex">
-      <mat-form-field appearance="outline" class="search-field width-40">
+    <div class="dis-flex header-publish">
+      <mat-form-field appearance="outline" class="search-field m-t-5">
         <mat-icon matPrefix class="search-icon">search</mat-icon>
         <input
           id="inputSearch"
@@ -112,22 +112,24 @@
             <app-dummy #filteredResults [value]="result"></app-dummy>
             <tr *ngFor="let obj of result">
               <th scope="row" class="width-30">
-                <a
-                  class="font-color list-ellipsis"
-                  [routerLink]="['/work-instructions/published', obj.Id]"
-                  ><img
+                <div class="dis-flex">
+                  <img
                     class="coverImg"
                     [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
                     [attr.src]="getImageSrc(obj.Cover_Image, obj.Id)"
                     alt=""
-                  /><span
-                    class="p-l-10 wi-name"
-                    matTooltip="{{ obj.WI_Name }}"
-                    matTooltipClass=""
-                    >{{ obj.WI_Name }}</span
-                  ></a
-                >
+                  />
+                  <a
+                    class="list-ellipsis"
+                    [routerLink]="['/work-instructions/published, obj.Id']"
+                  >
+                    <span matTooltip="{{ obj.WI_Name }}">
+                      {{ obj.WI_Name }}
+                    </span>
+                  </a>
+                </div>
               </th>
+
               <td class="width-20">
                 <a
                   class="font-color"
@@ -222,16 +224,15 @@
       <div class="no-records" *ngIf="published && published.length === 0">
         No Published Work Instructions
       </div>
-      <div *ngIf="published && published.length > 0">
+      <div *ngIf="published && published.length > 0" class="pagination-main">
         <pagination-template
           #p="paginationApi"
           [id]="config.id"
           (pageChange)="config.currentPage = $event"
           (pageBoundsCorrection)="config.currentPage = $event"
         >
-          <app-custom-pagination-controls
-            [paginationData]="p"
-          ></app-custom-pagination-controls>
+          <app-custom-pagination-controls [paginationData]="p">
+          </app-custom-pagination-controls>
         </pagination-template>
       </div>
     </ng-container>

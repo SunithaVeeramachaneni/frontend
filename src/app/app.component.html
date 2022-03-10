@@ -31,21 +31,34 @@
           detail="false"
           (click)="selectedListElement(menuitem.title)"
         >
-          <img
-            src="{{ menuitem.inActiveImage }}"
-            *ngIf="selectedMenu !== menuitem.title"
-            class="sidebar-icons"
-          />
-          <img
-            src="{{ menuitem.activeImage }}"
-            *ngIf="selectedMenu === menuitem.title"
-            class="sidebar-icons"
-          />
-          <span
-            *ngIf="this.sidebar === false"
-            style="position: relative; top: -2px; left: 10px"
-          >
-            {{ menuitem.title }}
+          <span *ngIf="this.sidebar === false">
+            <img
+              src="{{ menuitem.inActiveImage }}"
+              *ngIf="selectedMenu !== menuitem.title"
+              class="sidebar-icons"
+            />
+            <img
+              src="{{ menuitem.activeImage }}"
+              *ngIf="selectedMenu === menuitem.title"
+              class="sidebar-icons"
+            />
+            <span class="menu-title">
+              {{ menuitem.title }}
+            </span>
+          </span>
+          <span *ngIf="this.sidebar === true">
+            <button [matMenuTriggerFor]="menu" class="menu-trigger-btn">
+              <img
+                src="{{ menuitem.inActiveImage }}"
+                *ngIf="selectedMenu !== menuitem.title"
+                class="sidebar-icons"
+              />
+              <img
+                src="{{ menuitem.activeImage }}"
+                *ngIf="selectedMenu === menuitem.title"
+                class="sidebar-icons"
+              />
+            </button>
           </span>
         </li>
 
@@ -68,6 +81,24 @@
             </li>
           </ul>
         </div>
+
+        <mat-menu #menu="matMenu" class="sidebar-menu-panel">
+          <span *ngIf="menuitem.subPages !== null && this.sidebar === true">
+            <ul
+              class="p-0 submenu"
+              *ngFor="let submenuitem of menuitem.subPages"
+            >
+              <li
+                [routerLink]="submenuitem.url"
+                routerLinkActive="subSelected"
+                routerDirection="root"
+                detail="false"
+              >
+                {{ submenuitem.title }}
+              </li>
+            </ul>
+          </span>
+        </mat-menu>
       </ul>
     </div>
   </mat-drawer>

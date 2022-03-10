@@ -112,6 +112,7 @@ export class ReportConfigurationComponent implements OnInit {
 
   ngOnInit() {
     this.undoRedoUtil = new UndoRedoUtil();
+    this.commonService.minimizeSidebar(true);
 
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,

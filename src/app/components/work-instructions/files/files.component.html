@@ -1,10 +1,10 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
-    class="p-l-20 p-t-20 files tables-data"
+    class="files custom-mat-form-field-gray-color"
     *ngIf="currentRouteUrl === routingUrls.files.url"
   >
-    <div class="p-b-10">
-      <mat-form-field appearance="outline" class="search-field width-40">
+    <div class="dis-flex header-files">
+      <mat-form-field appearance="outline" class="search-field m-t-5">
         <mat-icon matPrefix class="search-icon">search</mat-icon>
         <input
           matInput
@@ -151,7 +151,7 @@
       <div class="no-records" *ngIf="mediaFiles && mediaFiles.length === 0">
         No Video/Audio Files available in the repository!
       </div>
-      <div *ngIf="mediaFiles && mediaFiles.length > 0">
+      <div *ngIf="mediaFiles && mediaFiles.length > 0" class="pagination-main">
         <pagination-template
           #p="paginationApi"
           [id]="config.id"
