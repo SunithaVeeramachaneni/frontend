@@ -184,6 +184,9 @@ export const unassignedWorkOrder1Card = {
   headerText: '58369 - Mock Description',
   workCenterInfo: 'ELEKTRIK -  ELEKTRIK1',
   dueDate: '2021-08-17T20:13:20.000Z',
+  actualTime: null,
+  timeProgress: null,
+  operationProgress: null,
   operations: [
     {
       actualTime: '8 hrs',
@@ -213,6 +216,9 @@ const assignedWorkOrder1Card = {
   headerText: '58370 - Mock Description 2',
   workCenterInfo: 'MECHANIK -  MEKHANIK1',
   dueDate: '2021-08-18T10:06:40.000Z',
+  actualTime: null,
+  timeProgress: null,
+  operationProgress: null,
   operations: [
     {
       actualTime: '8 hrs',

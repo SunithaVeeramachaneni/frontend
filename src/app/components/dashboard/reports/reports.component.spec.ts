@@ -18,7 +18,7 @@ import { userData$ } from 'src/app/shared/components/header/header.component.moc
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ToastService } from 'src/app/shared/toast';
+import { ToastModule, ToastService } from 'src/app/shared/toast';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
 
@@ -90,7 +90,7 @@ describe('ReportsComponent', () => {
         },
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provider: ToastService, useValue: toastServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy }
       ]
     }).compileComponents();
   });

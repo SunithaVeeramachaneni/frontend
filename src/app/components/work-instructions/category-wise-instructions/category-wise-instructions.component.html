@@ -348,7 +348,11 @@
                       />
                       <a
                         class="list-ellipsis"
-                        [routerLink]="['/work-instructions/category', obj.Id]"
+                        [routerLink]="[
+                          '/work-instructions/category',
+                          categoryId,
+                          obj.Id
+                        ]"
                       >
                         <span matTooltip="{{ obj.WI_Name }}">
                           {{ obj.WI_Name }}
