@@ -139,8 +139,6 @@ describe('Maintenance service', () => {
       workOrders = resp;
     });
     expectedWorkOrders$.subscribe((resp) => (expectedWorkOrders = resp));
-    console.log('workOrders', JSON.stringify(workOrders));
-    console.log('expectedWorkOrders', JSON.stringify(expectedWorkOrders));
     expect(isEqual(workOrders, expectedWorkOrders)).toBeTrue();
   });
 
