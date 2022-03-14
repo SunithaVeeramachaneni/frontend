@@ -30,21 +30,12 @@
         </mat-button-toggle-group>
         <mat-menu #menu="matMenu">
           <button id="import" mat-menu-item (click)="uploader.click()">
-            <img
-              alt="Import"
-              src="assets/work-instructions-icons/svg/save.svg"
-            />
             <span class="dropdown-item-title">Import File</span>
           </button>
           <button id="copy" mat-menu-item (click)="copyWorkInstruction()">
-            <img alt="Copy" src="assets/work-instructions-icons/svg/copy.svg" />
             <span class="dropdown-item-title">Copy Existing</span>
           </button>
           <button id="export" mat-menu-item (click)="exportAsXLSX()">
-            <img
-              alt="Download"
-              src="assets/work-instructions-icons/svg/excel1.svg"
-            />
             <span class="dropdown-item-title">Download Template</span>
           </button>
         </mat-menu>
