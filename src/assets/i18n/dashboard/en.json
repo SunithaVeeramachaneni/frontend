@@ -49,5 +49,7 @@
   "markDefault": "Mark Default",
   "delete": "Delete",
   "done": "Done",
-  "close": "Close"
+  "close": "Close",
+  "widgetWarningMessage": "A few changes have been made to the associated report, edit widget to view them",
+  "widgetConfigurationWarningMessage": "Please configure the widget"
 }

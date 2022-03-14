@@ -74,10 +74,19 @@
         <div class="chart-wrapper" *ngIf="chartVarient !== 'table'">
           <h4 style="margin: 0 10px">Preview</h4>
           <ng-container
-            *ngIf="chartData$ | async as data; else loadingChartData"
+            *ngIf="
+              chartConfig &&
+                chartConfig.countFieldName &&
+                chartConfig.datasetFieldName;
+              else displayWidgetWarning
+            "
           >
-            <app-chart [chartConfig]="chartConfig" [chartData]="data">
-            </app-chart>
+            <ng-container
+              *ngIf="chartData$ | async as data; else loadingChartData"
+            >
+              <app-chart [chartConfig]="chartConfig" [chartData]="data">
+              </app-chart>
+            </ng-container>
           </ng-container>
         </div>
         <div *ngIf="chartVarient === 'table'">
@@ -107,6 +116,11 @@
     </button>
   </mat-dialog-actions>
 </div>
+<ng-template #displayWidgetWarning>
+  <div class="warning-message">
+    {{ 'widgetConfigurationWarningMessage' | translate }}
+  </div>
+</ng-template>
 <ng-template #loadingReports>
   <ngx-shimmer-loading [width]="'100%'" [height]="'30px'"></ngx-shimmer-loading>
 </ng-template>

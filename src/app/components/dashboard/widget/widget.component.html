@@ -3,8 +3,15 @@
   [ngStyle]="{ 'height.px': height - 75 }"
   *ngIf="!widget.isTable"
 >
-  <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
-    <app-chart [chartConfig]="chartConfig" [chartData]="data"> </app-chart>
+  <ng-container
+    *ngIf="
+      chartConfig && chartConfig.countFieldName && chartConfig.datasetFieldName;
+      else displayWidgetWarning
+    "
+  >
+    <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+      <app-chart [chartConfig]="chartConfig" [chartData]="data"> </app-chart>
+    </ng-container>
   </ng-container>
 </div>
 <div class="table-wrapper" *ngIf="widget.isTable">
@@ -16,6 +23,18 @@
     ></cwp-dynamictable>
   </ng-container>
 </div>
+<ng-template #displayWidgetWarning>
+  <div class="warning-message">
+    {{ 'widgetWarningMessage' | translate }}
+    <button
+      mat-stroked-button
+      color="primary"
+      matTooltip="Edit"
+      class="edit-button"
+      translate="edit"
+    ></button>
+  </div>
+</ng-template>
 <ng-template #loadingChartData>
   <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
   <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>

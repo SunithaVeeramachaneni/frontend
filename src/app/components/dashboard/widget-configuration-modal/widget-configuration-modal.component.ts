@@ -237,6 +237,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.chartConfig = this.reportConfigService.updateChartConfig(
       this.selectedReport,
       this.chartConfig,
+      false,
+      false,
       false
     );
     this.reportColumns = [];
@@ -366,7 +368,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
           };
           this.chartConfig = this.reportConfigService.updateChartConfig(
             this.selectedReport,
-            this.chartConfig
+            this.chartConfig,
+            false,
+            false
           );
         }
         this.chartVarient = value;
@@ -377,7 +381,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.selectedReport.chartDetails.datasetFieldName = value;
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.selectedReport,
-          this.chartConfig
+          this.chartConfig,
+          false,
+          false
         );
         break;
 
@@ -386,6 +392,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.selectedReport,
           this.chartConfig,
+          false,
+          false,
           false
         );
         this.setGroupByCountQueryParams(value);

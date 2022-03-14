@@ -225,6 +225,8 @@ export class ReportConfigurationService {
   updateChartConfig = (
     reportConfiguration: ReportConfiguration,
     chartConfig: AppChartConfig,
+    setDatasetField: boolean,
+    setCountFieldName: boolean,
     renderChart: boolean = true
   ): AppChartConfig => {
     const {
@@ -232,15 +234,14 @@ export class ReportConfigurationService {
       tableDetails = [],
       chartDetails = {} as ChartDetail
     } = reportConfiguration;
-    const { datasetFields = [], countFields = [] } = chartConfig || {};
     const { datasetFieldName = '', countFieldName = '' } = chartDetails;
     let tableColumns: TableColumn[] = [];
     tableDetails.forEach(
       (table) => (tableColumns = tableColumns.concat(table.columns))
     );
-    const newDatasetFields: AppDatasetField[] = [];
+    let newDatasetFields: AppDatasetField[] = [];
     let newDatasetFieldName: string;
-    const newCountFields: CountField[] = [
+    let newCountFields: CountField[] = [
       {
         name: defaultCountFieldName,
         displayName: defaultCountFieldName,
@@ -252,28 +253,24 @@ export class ReportConfigurationService {
     for (const column of tableColumns) {
       const { visible, type, name, displayName } = column;
       if (visible && type === 'number') {
-        const countField = countFields.find(
-          (field) => field.name === name && countFieldName === name
-        );
-        if (countField) {
-          newCountFieldName = countFieldName;
-          newCountFields.push({
-            ...countField,
-            visible: true
-          });
-        } else {
-          const countVisible = countFieldName === name ? true : false;
-          newCountFieldName = countVisible ? name : newCountFieldName;
-          newCountFields.push({
-            name,
-            displayName: `Sum of ${displayName}`,
-            visible: countVisible
-          });
-        }
+        newCountFields.push({
+          name,
+          displayName: `Sum of ${displayName}`,
+          visible: false
+        });
       }
     }
 
-    if (!newCountFieldName) {
+    newCountFields = newCountFields.map((countField) => {
+      const { name } = countField;
+      if (name === countFieldName) {
+        newCountFieldName = name;
+        return { ...countField, visible: true };
+      }
+      return countField;
+    });
+
+    if (setCountFieldName && !newCountFieldName) {
       newCountFields[0].visible = true;
       newCountFieldName = newCountFields[0].name;
     }
@@ -282,25 +279,23 @@ export class ReportConfigurationService {
       const column = tableColumns.find(
         (tableColumn) => tableColumn.name === groupField
       );
-      const datasetField = datasetFields.find(
-        (field) => field.name === groupField && datasetFieldName === groupField
-      );
-
-      if (datasetField) {
-        newDatasetFieldName = datasetFieldName;
-        newDatasetFields.push({ ...datasetField, visible: true });
-      } else {
-        const visible = datasetFieldName === groupField ? true : false;
-        newDatasetFieldName = visible ? groupField : newDatasetFieldName;
-        newDatasetFields.push({
-          name: groupField,
-          displayName: column?.displayName,
-          visible
-        });
-      }
+      newDatasetFields.push({
+        name: groupField,
+        displayName: column?.displayName,
+        visible: false
+      });
     }
 
-    if (newDatasetFields.length && !newDatasetFieldName) {
+    newDatasetFields = newDatasetFields.map((datasetField) => {
+      const { name } = datasetField;
+      if (name === datasetFieldName) {
+        newDatasetFieldName = name;
+        return { ...datasetField, visible: true };
+      }
+      return datasetField;
+    });
+
+    if (setDatasetField && newDatasetFields.length && !newDatasetFieldName) {
       newDatasetFields[0].visible = true;
       newDatasetFieldName = newDatasetFields[0].name;
     }

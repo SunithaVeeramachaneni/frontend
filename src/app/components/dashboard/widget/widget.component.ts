@@ -137,7 +137,9 @@ export class WidgetComponent implements OnInit {
     if (!isTable) {
       this.chartConfig = this.reportConfigService.updateChartConfig(
         this.report,
-        this.chartConfig
+        this.chartConfig,
+        false,
+        false
       );
       const { countFieldName } = chartDetails;
       if (countFieldName === defaultCountFieldName) {
