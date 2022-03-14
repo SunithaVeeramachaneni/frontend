@@ -2,7 +2,7 @@ import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockComponent } from 'ng-mocks';
-import { NgxSpinnerComponent, NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
 import { AppMaterialModules } from '../../../../material.module';
 import { WiCommonService } from '../../services/wi-common.services';
 import { ToastService } from '../../../../shared/toast';

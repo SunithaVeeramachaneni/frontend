@@ -7,7 +7,7 @@ import {
   tick
 } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { AppMaterialModules } from '../../../material.module';
 import { WiCommonService } from '../services/wi-common.services';
 import { ToastService } from '../../../shared/toast';
@@ -223,7 +223,8 @@ describe('AddWorkinstructionComponent', () => {
       TestBed.configureTestingModule({
         declarations: [
           AddWorkinstructionComponent,
-          MockComponent(OverviewComponent)
+          MockComponent(OverviewComponent),
+          MockComponent(NgxSpinnerComponent)
         ],
         imports: [
           RouterTestingModule,

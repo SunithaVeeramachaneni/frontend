@@ -11,6 +11,7 @@ import { DashboardService } from '../services/dashboard.service';
 
 import { DashboardsComponent } from './dashboards.component';
 import { dashboards, dashboards$ } from './dashboards.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 const info: ErrorInfo = {
   displayToast: true,
@@ -42,7 +43,7 @@ describe('DashboardsComponent', () => {
         DashboardsComponent,
         MockComponent(DashboardConfigurationComponent)
       ],
-      imports: [AppMaterialModules],
+      imports: [AppMaterialModules, NgxShimmerLoadingModule],
       providers: [
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },

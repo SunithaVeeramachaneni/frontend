@@ -24,6 +24,7 @@ import { ReportService } from '../services/report.service';
 
 import { ReportsComponent } from './reports.component';
 import { configOptions, reports, reports$ } from './reports.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -73,6 +74,7 @@ describe('ReportsComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        NgxShimmerLoadingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,

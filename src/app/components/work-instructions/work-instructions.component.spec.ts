@@ -37,6 +37,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
+import { NgxSpinnerComponent } from 'ngx-spinner';
 
 const categoryDetails = [
   {
@@ -234,7 +235,8 @@ describe('WorkInstructionsComponent', () => {
           WorkInstructionsComponent,
           MockComponent(CategoriesComponent),
           TimeAgoPipe,
-          DummyComponent
+          DummyComponent,
+          MockComponent(NgxSpinnerComponent)
         ],
         imports: [
           NgxPaginationModule,
@@ -244,7 +246,8 @@ describe('WorkInstructionsComponent', () => {
           AppMaterialModules,
           FormsModule,
           SharedModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
           { provide: InstructionService, useValue: instructionServiceSpy },
@@ -329,15 +332,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons[2].getAttribute('ng-reflect-router-link')).toBe(
         '/work-instructions/drafts'
@@ -408,15 +402,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       expect(homeEl.querySelectorAll('.drafts-favorites').length).toBe(1);
       expect(
         homeEl.querySelectorAll('.drafts-favorites')[0].textContent
@@ -472,15 +457,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       expect(homeEl.querySelectorAll('.drafts-favorites').length).toBe(1);
       expect(
         homeEl.querySelectorAll('.drafts-favorites')[0].textContent

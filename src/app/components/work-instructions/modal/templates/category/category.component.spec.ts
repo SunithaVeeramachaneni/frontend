@@ -2,7 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { MockComponent } from 'ng-mocks';
+import { NgxSpinnerService, NgxSpinnerComponent} from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ErrorInfo } from '../../../../../interfaces';
@@ -77,7 +78,7 @@ describe('CategoryComponent', () => {
       ]);
 
       TestBed.configureTestingModule({
-        declarations: [CategoryComponent],
+        declarations: [CategoryComponent,MockComponent(NgxSpinnerComponent)],
         imports: [ReactiveFormsModule, AppMaterialModules],
         providers: [
           { provide: MyOverlayRef, useValue: myOverlayRefSpy },

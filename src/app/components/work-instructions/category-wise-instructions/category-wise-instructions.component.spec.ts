@@ -194,7 +194,8 @@ describe('CategoryWiseInstructionsComponent', () => {
           SharedModule,
           Ng2SearchPipeModule,
           OrderModule,
-          RouterTestingModule
+          RouterTestingModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
           {

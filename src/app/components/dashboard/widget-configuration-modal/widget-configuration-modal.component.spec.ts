@@ -9,6 +9,7 @@ import { dashboards } from '../dashboards/dashboards.component.mock';
 import { reports$ } from '../reports/reports.component.mock';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 import {
   WidgetConfigurationModalComponent,
@@ -48,7 +49,8 @@ describe('WidgetConfigurationModalComponent', () => {
         AppMaterialModules,
         SharedModule,
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        NgxShimmerLoadingModule
       ],
       providers: [
         { provide: ReportService, useValue: reportServiceSpy },

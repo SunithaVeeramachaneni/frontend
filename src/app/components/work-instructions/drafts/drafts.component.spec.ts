@@ -185,7 +185,8 @@ describe('DraftsComponent', () => {
           RouterTestingModule,
           SharedModule,
           FormsModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
           { provide: InstructionService, useValue: instructionServiceSpy },
