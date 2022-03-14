@@ -13,7 +13,6 @@ import { ToastService } from '../../../shared/toast';
 import { combineLatest, Observable } from 'rxjs';
 
 import Swal from 'sweetalert2';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { map } from 'rxjs/operators';
 import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
@@ -96,7 +95,6 @@ export class CategoryWiseInstructionsComponent
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
     private toastService: ToastService,
     private route: ActivatedRoute,
     private instructionSvc: InstructionService,

@@ -469,7 +469,9 @@ describe('FavoritesComponent', () => {
       const tableBodyTh = favoritesEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = favoritesEl.querySelectorAll('table tbody tr td');
       expect(tableBodyTh[0].textContent).toContain(favorite2.WI_Name);
-      expect(tableBodyTh[1].textContent).toBe(`${favorite1.WI_Name} Draft`);
+      expect(tableBodyTh[1].textContent).toContain(
+        `${favorite1.WI_Name}  Draft`
+      );
       expect(tableBodyTd[0].textContent).toBe(favorite2.categories.join());
       expect(tableBodyTd[4].textContent).toBe(favorite1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');

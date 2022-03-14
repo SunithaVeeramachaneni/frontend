@@ -5,6 +5,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { AppMaterialModules } from '../../material.module';
 import { GridsterModule } from 'angular-gridster2';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { ReportConfigurationListModalComponent } from './report-configuration-list-modal/report-configuration-list-modal.component';
 import { ReportDeleteModalComponent } from './report-delete-modal/report-delete-modal.component';
@@ -63,7 +64,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     NgChartsModule,
     GridsterModule,
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    NgxSpinnerModule
   ],
   declarations: [
     ReportConfigurationListModalComponent,

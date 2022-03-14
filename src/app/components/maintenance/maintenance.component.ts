@@ -27,7 +27,6 @@ import {
   toArray,
   flatMap
 } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { remove } from 'lodash';
 import { MCCCardComponent } from './mcc-card/mcc-card.component';
 import { ModalComponent } from './modal/modal.component';
@@ -111,7 +110,6 @@ export class MaintenanceComponent implements OnInit {
   showFilters = false;
   constructor(
     private _maintenanceSvc: MaintenanceService,
-    private spinner: NgxSpinnerService,
     // private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,

@@ -212,7 +212,10 @@ export class AddWorkinstructionComponent
     const steps = this.steps;
     const wid = this.selectedInstruction?.Id;
     const favFlag = this.selectedInstruction?.IsFavorite;
-    const editedBy = this.commonService.getUserName();
+    const { first_name, last_name } = JSON.parse(
+      localStorage.getItem('loggedInUser')
+    );
+    const editedBy = `${first_name} ${last_name}`;
     this.spinner.show();
     const info: ErrorInfo = {
       displayToast: false,
