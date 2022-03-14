@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
@@ -66,7 +67,8 @@ describe('MediaFilesComponent', () => {
           NgxPaginationModule,
           OrderModule,
           Ng2SearchPipeModule,
-          FormsModule
+          FormsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
           { provide: InstructionService, useValue: instructionServiceSpy },

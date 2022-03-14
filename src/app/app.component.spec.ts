@@ -7,6 +7,8 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AppMaterialModules } from './material.module';
 import { CommonService } from './shared/services/common.service';
+import { NgxSpinnerComponent} from 'ngx-spinner';
+import { MockComponent } from 'ng-mocks';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -32,7 +34,7 @@ describe('AppComponent', () => {
         AppMaterialModules,
         BrowserAnimationsModule
       ],
-      declarations: [AppComponent],
+      declarations: [AppComponent, MockComponent(NgxSpinnerComponent)],
       providers: [
         {
           provide: CommonService,

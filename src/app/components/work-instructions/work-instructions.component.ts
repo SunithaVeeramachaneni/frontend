@@ -9,7 +9,6 @@ import {
   ViewChild
 } from '@angular/core';
 import { InstructionService } from './services/instruction.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ExcelService } from './services/excel.service';
@@ -93,7 +92,6 @@ export class WorkInstructionsComponent
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
     private excelSrv: ExcelService,
     private instructionSvc: InstructionService,
     private overlayService: OverlayService,
@@ -187,7 +185,6 @@ export class WorkInstructionsComponent
   }
 
   getAllFavsDraftsAndRecentIns() {
-    this.spinner.show();
     this.workInstructions$ = combineLatest([
       this.instructionSvc.getFavInstructions(),
       this.instructionSvc.getDraftedInstructions(),
@@ -201,7 +198,6 @@ export class WorkInstructionsComponent
         ]) => {
           this.copyInstructionsData.recents = recents;
           this.copyInstructionsData.favs = favorites;
-          this.spinner.hide();
           return { favorites, drafts, recents };
         }
       )
@@ -235,7 +231,6 @@ export class WorkInstructionsComponent
   }
 
   uploadFile(event) {
-    this.spinner.show();
     let isAudioOrVideoFile = false;
     const file = event.target.files[0];
     if (file.type.indexOf('audio') > -1 || file.type.indexOf('video') > -1) {
@@ -252,7 +247,6 @@ export class WorkInstructionsComponent
           (data) => {
             const { progress } = data;
             if (progress === 0) {
-              this.spinner.hide();
               this.bulkUploadDialog(this.bulkUploadComponent, {
                 ...data,
                 isAudioOrVideoFile,
@@ -268,7 +262,6 @@ export class WorkInstructionsComponent
             }
           },
           (error) => {
-            this.spinner.hide();
             this.wiCommonService.updateUploadInfo({
               message: this.errorHandlerService.getErrorMessage(error, true),
               progress: 100,
@@ -291,7 +284,6 @@ export class WorkInstructionsComponent
             s3Folder
           });
         }
-        this.spinner.hide();
       });
     }
   }
@@ -301,15 +293,12 @@ export class WorkInstructionsComponent
     file.value = '';
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 
-  getS3Folder = (time: number) => {
-    return `bulkupload/${time}`;
-  };
+  getS3Folder = (time: number) => `bulkupload/${time}`;
 
   ngOnDestroy(): void {
     if (this.fetchWISubscription) {

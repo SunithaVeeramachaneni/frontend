@@ -4,6 +4,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
 
 import { WidgetComponent } from './widget.component';
 import { widget } from './widget.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('WidgetComponent', () => {
   let component: WidgetComponent;
@@ -24,6 +25,7 @@ describe('WidgetComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent],
+      imports: [NgxShimmerLoadingModule],
       providers: [
         {
           provide: ReportConfigurationService,
@@ -72,6 +74,7 @@ describe('TestWidgetHostComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent, TestWidgetHostComponent],
+      imports: [NgxShimmerLoadingModule],
       providers: [
         {
           provide: ReportConfigurationService,

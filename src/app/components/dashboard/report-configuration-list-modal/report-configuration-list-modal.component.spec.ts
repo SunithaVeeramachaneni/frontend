@@ -5,6 +5,7 @@ import { AppMaterialModules } from 'src/app/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { categories$ } from './report-configuration-list-modal.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('ReportConfigurationListModalComponent', () => {
   let component: ReportConfigurationListModalComponent;
@@ -22,7 +23,8 @@ describe('ReportConfigurationListModalComponent', () => {
       imports: [
         AppMaterialModules,
         ReactiveFormsModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        NgxShimmerLoadingModule
       ],
       providers: [{ provide: ReportService, useValue: reportServiceSpy }]
     }).compileComponents();

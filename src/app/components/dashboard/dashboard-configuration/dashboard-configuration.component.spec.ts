@@ -11,7 +11,7 @@ import {
 } from '@ngx-translate/core';
 import { GridsterModule } from 'angular-gridster2';
 import { MockComponent } from 'ng-mocks';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService, NgxSpinnerComponent} from 'ngx-spinner';
 import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -27,7 +27,7 @@ import { WidgetComponent } from '../widget/widget.component';
 import { DashboardConfigurationComponent } from './dashboard-configuration.component';
 import { widgets$ } from './dashboard-configuration.component.mock';
 
-describe('DashboardConfigurationComponent', () => {
+fdescribe('DashboardConfigurationComponent', () => {
   let component: DashboardConfigurationComponent;
   let fixture: ComponentFixture<DashboardConfigurationComponent>;
   let dialogSpy: MatDialog;
@@ -65,7 +65,8 @@ describe('DashboardConfigurationComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         DashboardConfigurationComponent,
-        MockComponent(WidgetComponent)
+        MockComponent(WidgetComponent),
+        MockComponent(NgxSpinnerComponent)
       ],
       imports: [
         AppMaterialModules,

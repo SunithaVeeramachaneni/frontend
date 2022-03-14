@@ -1,3 +1,10 @@
+.dashboard-create-update-dialog {
+  overflow: hidden;
+  padding: 20px;
+}
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+}
 .fullWidth {
   width: 100% !important;
 }

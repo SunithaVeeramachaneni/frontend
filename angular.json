@@ -22,18 +22,14 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/plyr/dist/plyr.css",
-              "src/scss/style.scss"
+              "src/scss/style.scss",
+              "node_modules/ngx-spinner/animations/ball-clip-rotate-pulse.css"
             ],
-            "scripts": [
-              "node_modules/popper.js/dist/umd/popper.min.js"
-            ],
+            "scripts": ["node_modules/popper.js/dist/umd/popper.min.js"],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
@@ -175,15 +171,11 @@
             "karmaConfig": "karma.conf.js",
             "styles": [
               "src/scss/style.scss",
-              "node_modules/font-awesome/css/font-awesome.css"
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/ngx-spinner/animations/ball-clip-rotate-pulse.css"
             ],
-            "scripts": [
-              "node_modules/popper.js/dist/umd/popper.min.js"
-            ],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ]
+            "scripts": ["node_modules/popper.js/dist/umd/popper.min.js"],
+            "assets": ["src/favicon.ico", "src/assets"]
           },
           "configurations": {
             "ci": {
@@ -195,10 +187,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
         "e2e": {

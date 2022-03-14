@@ -270,7 +270,6 @@ export class MaintenanceService {
       operationProgress: null,
       isLoading: false
     };
-
     if (card.status === 'unassigned' || card.status === 'assigned') {
       card.estimatedTime = workOrder.estimatedTime;
     } else if (card.status === 'inProgress' || card.status === 'completed') {

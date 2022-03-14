@@ -13,7 +13,6 @@ import { ToastService } from '../../../shared/toast';
 import { combineLatest, Observable } from 'rxjs';
 
 import Swal from 'sweetalert2';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { map } from 'rxjs/operators';
 import { ErrorInfo, Instruction } from '../../../interfaces';
 import { Base64HelperService } from '../services/base64-helper.service';
@@ -96,10 +95,9 @@ export class CategoryWiseInstructionsComponent
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
-    private _toastService: ToastService,
+    private toastService: ToastService,
     private route: ActivatedRoute,
-    private _instructionSvc: InstructionService,
+    private instructionSvc: InstructionService,
     private cdrf: ChangeDetectorRef,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
@@ -129,7 +127,7 @@ export class CategoryWiseInstructionsComponent
   }
 
   getAuthors() {
-    this.authors$ = this._instructionSvc
+    this.authors$ = this.instructionSvc
       .getUsers()
       .pipe(
         map((users) =>
@@ -144,7 +142,7 @@ export class CategoryWiseInstructionsComponent
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
+    this.instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
       (ins) => {
         el.IsFavorite = ins.IsFavorite;
         if (userName) {
@@ -157,26 +155,23 @@ export class CategoryWiseInstructionsComponent
   }
 
   copyWI(ins) {
-    this.spinner.show();
     const userName = JSON.parse(localStorage.getItem('loggedInUser'));
     const info: ErrorInfo = {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc
+    this.instructionSvc
       .copyWorkInstruction(ins.WI_Name, userName, info)
       .subscribe(
         () => {
-          this.spinner.hide();
           this.getInstructionsByCategoryId(this.categoryId);
           this.cdrf.markForCheck();
-          this._toastService.show({
+          this.toastService.show({
             text: 'Selected work instruction has been successfully copied',
             type: 'success'
           });
         },
         (error) => {
-          this.spinner.hide();
           this.errorHandlerService.handleError(error);
         }
       );
@@ -199,23 +194,20 @@ export class CategoryWiseInstructionsComponent
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        this.spinner.show();
         const info: ErrorInfo = {
           displayToast: false,
           failureResponse: 'throwError'
         };
-        this._instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
+        this.instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
           (data) => {
-            this.spinner.hide();
             this.getInstructionsByCategoryId(this.categoryId);
             this.cdrf.markForCheck();
-            this._toastService.show({
+            this.toastService.show({
               text: "Work instuction '" + el.WI_Name + "' has been deleted",
               type: 'success'
             });
           },
           (err) => {
-            this.spinner.hide();
             this.errorHandlerService.handleError(err);
           }
         );
@@ -224,13 +216,12 @@ export class CategoryWiseInstructionsComponent
   }
 
   getInstructionsByCategoryId = (categoryId: string) => {
-    this.spinner.show();
-    this.workInstructions$ = this._instructionSvc
+    this.workInstructions$ = this.instructionSvc
       .getInstructionsByCategoryId(categoryId)
       .pipe(
         map((workInstructions) => {
-          let drafts: Instruction[] = [],
-            published: Instruction[] = [];
+          let drafts: Instruction[] = [];
+          let published: Instruction[] = [];
           workInstructions.forEach((workInstruction) => {
             const { Published } = workInstruction;
             if (Published) {
@@ -239,21 +230,19 @@ export class CategoryWiseInstructionsComponent
               drafts = [...drafts, workInstruction];
             }
           });
-          this.spinner.hide();
           return { drafts, published };
         })
       );
   };
 
   ngOnInit(): void {
-    this.spinner.hide();
     const cid = this.route.snapshot.paramMap.get('cid');
     this.categoryId = cid;
     this.routeUrl = `${workInstructionsInfo.url}/category/${cid}`;
 
     this.currentRouteUrl$ = combineLatest([
       this.commonService.currentRouteUrlAction$,
-      this._instructionSvc.getSelectedCategory(cid)
+      this.instructionSvc.getSelectedCategory(cid)
     ]).pipe(
       map(([currentRouteUrl, category]) => {
         const { Category_Name } = category;
@@ -268,9 +257,8 @@ export class CategoryWiseInstructionsComponent
     this.getAuthors();
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 }

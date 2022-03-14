@@ -9,7 +9,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import Swal from 'sweetalert2';
@@ -142,7 +142,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('CategoryWiseInstructionsComponent', () => {
   let component: CategoryWiseInstructionsComponent;
   let fixture: ComponentFixture<CategoryWiseInstructionsComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -154,7 +153,6 @@ describe('CategoryWiseInstructionsComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getInstructionsByCategoryId',
         'getSelectedCategory',
@@ -196,10 +194,10 @@ describe('CategoryWiseInstructionsComponent', () => {
           SharedModule,
           Ng2SearchPipeModule,
           OrderModule,
-          RouterTestingModule
+          RouterTestingModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           {
             provide: ActivatedRoute,
             useValue: {
@@ -307,7 +305,7 @@ describe('CategoryWiseInstructionsComponent', () => {
             wiComponentEl.querySelectorAll('table tbody tr th');
           const tableBodyTd =
             wiComponentEl.querySelectorAll('table tbody tr td');
-          expect(tableBodyTh[0].textContent).toBe(drafted.WI_Name);
+          expect(tableBodyTh[0].textContent).toContain(drafted.WI_Name);
           expect(tableBodyTd[0].textContent).toContain('Edited');
           expect(tableBodyTd[0].textContent).toContain(drafted.EditedBy);
           expect(tableBodyTd[1].textContent).toContain(drafted.CreatedBy);
@@ -447,7 +445,7 @@ describe('CategoryWiseInstructionsComponent', () => {
         const [, drafted] = instructions;
         const tableBodyTh = wiComponentEl.querySelectorAll('table tbody tr th');
         const tableBodyTd = wiComponentEl.querySelectorAll('table tbody tr td');
-        expect(tableBodyTh[0].textContent).toBe(drafted.WI_Name);
+        expect(tableBodyTh[0].textContent).toContain(drafted.WI_Name);
         expect(tableBodyTd[0].textContent).toContain('Edited');
         expect(tableBodyTd[0].textContent).toContain(drafted.EditedBy);
         expect(tableBodyTd[1].textContent).toContain(drafted.CreatedBy);
@@ -512,7 +510,7 @@ describe('CategoryWiseInstructionsComponent', () => {
             wiComponentEl.querySelectorAll('table tbody tr th');
           const tableBodyTd =
             wiComponentEl.querySelectorAll('table tbody tr td');
-          expect(tableBodyTh[0].textContent).toBe(published.WI_Name);
+          expect(tableBodyTh[0].textContent).toContain(published.WI_Name);
           expect(tableBodyTd[0].textContent).toContain('Edited');
           expect(tableBodyTd[0].textContent).toContain(published.EditedBy);
           expect(tableBodyTd[1].textContent).toContain(published.CreatedBy);
@@ -956,8 +954,6 @@ describe('CategoryWiseInstructionsComponent', () => {
         expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
           1
         );
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(toastServiceSpy.show).toHaveBeenCalledWith({
           text: 'Selected work instruction has been successfully copied',
           type: 'success'
@@ -995,8 +991,6 @@ describe('CategoryWiseInstructionsComponent', () => {
         expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
           1
         );
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
           message: 'Unable to copy WI'
         } as HttpErrorResponse);
@@ -1044,8 +1038,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(
             instructionServiceSpy.deleteWorkInstruction$
           ).toHaveBeenCalledTimes(1);
-          expect(spinnerSpy.show).toHaveBeenCalledWith();
-          expect(spinnerSpy.hide).toHaveBeenCalledWith();
           expect(toastServiceSpy.show).toHaveBeenCalledWith({
             text:
               "Work instuction '" + published.WI_Name + "' has been deleted",
@@ -1127,8 +1119,6 @@ describe('CategoryWiseInstructionsComponent', () => {
           expect(
             instructionServiceSpy.deleteWorkInstruction$
           ).toHaveBeenCalledTimes(1);
-          expect(spinnerSpy.show).toHaveBeenCalledWith();
-          expect(spinnerSpy.hide).toHaveBeenCalledWith();
           expect(toastServiceSpy.show).toHaveBeenCalledWith({
             text: "Work instuction '" + drafted.WI_Name + "' has been deleted",
             type: 'success'
@@ -1227,11 +1217,9 @@ describe('CategoryWiseInstructionsComponent', () => {
     it('should set workInstructions obervable', () => {
       const [published, drafts] = instructions;
       component.getInstructionsByCategoryId(categoryId);
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getInstructionsByCategoryId
       ).toHaveBeenCalledWith(categoryId);
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.workInstructions$.subscribe((data) =>
         expect(data).toEqual({ drafts: [drafts], published: [published] })
       );
@@ -1254,7 +1242,6 @@ describe('CategoryWiseInstructionsComponent', () => {
 
     it('should set header title', () => {
       const { Category_Name } = category1;
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.routeUrl).toBe(
         `${routingUrls.workInstructions.url}/category/${categoryId}`
       );

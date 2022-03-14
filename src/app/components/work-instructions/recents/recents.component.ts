@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { ToastService } from '../../../shared/toast';
@@ -52,25 +51,23 @@ export class RecentsComponent implements OnInit {
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
-    private _toastService: ToastService,
-    private _instructionSvc: InstructionService,
+    private toastService: ToastService,
+    private instructionSvc: InstructionService,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
     private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
-    this.spinner.hide();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() => this.commonService.setHeaderTitle(routingUrls.recents.title))
     );
     this.getAllRecentInstructions();
-    this.AuthorDropDown();
+    this.authorDropDown();
   }
 
-  AuthorDropDown() {
-    this.authors$ = this._instructionSvc
+  authorDropDown() {
+    this.authors$ = this.instructionSvc
       .getUsers()
       .pipe(
         map((users) =>
@@ -95,7 +92,7 @@ export class RecentsComponent implements OnInit {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
+    this.instructionSvc.setFavoriteInstructions(el.Id, info).subscribe(
       (ins) => {
         el.IsFavorite = ins.IsFavorite;
         if (userName) {
@@ -107,25 +104,22 @@ export class RecentsComponent implements OnInit {
   }
 
   copyWI(ins) {
-    this.spinner.show();
     const userName = JSON.parse(localStorage.getItem('loggedInUser'));
     const info: ErrorInfo = {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc
+    this.instructionSvc
       .copyWorkInstruction(ins.WI_Name, userName, info)
       .subscribe(
         () => {
-          this.spinner.hide();
-          this._toastService.show({
+          this.toastService.show({
             text: 'Selected work instruction has been successfully copied',
             type: 'success'
           });
           this.getAllRecentInstructions();
         },
         (error) => {
-          this.spinner.hide();
           this.errorHandlerService.handleError(error);
         }
       );
@@ -144,22 +138,19 @@ export class RecentsComponent implements OnInit {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        this.spinner.show();
         const info: ErrorInfo = {
           displayToast: false,
           failureResponse: 'throwError'
         };
-        this._instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
+        this.instructionSvc.deleteWorkInstruction$(el.Id, info).subscribe(
           (data) => {
-            this.spinner.hide();
             this.getAllRecentInstructions();
-            this._toastService.show({
+            this.toastService.show({
               text: "Work instuction '" + el.WI_Name + "' has been deleted",
               type: 'success'
             });
           },
           (err) => {
-            this.spinner.hide();
             this.errorHandlerService.handleError(err);
           }
         );
@@ -168,15 +159,11 @@ export class RecentsComponent implements OnInit {
   }
 
   getAllRecentInstructions() {
-    this.spinner.show();
-    this.recents$ = this._instructionSvc
-      .getRecentInstructions()
-      .pipe(tap(() => this.spinner.hide()));
+    this.recents$ = this.instructionSvc.getRecentInstructions();
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 }
