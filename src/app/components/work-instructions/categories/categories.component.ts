@@ -15,7 +15,6 @@ import { OverlayService } from '../modal/overlay.service';
 import { ComponentType } from '@angular/cdk/portal';
 import { CategoryComponent } from '../modal/templates/category/category.component';
 import { DeleteCategoryComponent } from '../modal/templates/delete-category/delete-category.component';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { CategoryService } from '../services/category.service';
 import { InstructionService } from '../services/instruction.service';
 import { ToastService } from '../../../shared/toast';
@@ -98,7 +97,6 @@ export class CategoriesComponent
   }
 
   constructor(
-    private spinner: NgxSpinnerService,
     private overlayService: OverlayService,
     private categoryService: CategoryService,
     private _instructionSvc: InstructionService,
