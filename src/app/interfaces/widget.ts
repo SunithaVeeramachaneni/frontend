@@ -28,3 +28,8 @@ export interface Widget {
 export interface WidgetsData {
   data: Widget[];
 }
+
+export interface WidgetAction {
+  type: 'edit';
+  value: Widget;
+}

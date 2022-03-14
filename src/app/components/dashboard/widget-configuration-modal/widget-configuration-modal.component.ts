@@ -4,7 +4,12 @@ import {
   Inject,
   OnInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import {
@@ -55,7 +60,7 @@ export interface WidgetConfigurationModalData {
 export class WidgetConfigurationModalComponent implements OnInit {
   reports$: Observable<Report>;
   filteredReports$: Observable<Report>;
-  searchReport: FormControl;
+  widgetConfigForm: FormGroup;
   searchReport$: Observable<any>;
   selectedReport: ReportConfiguration;
   chartConfig: AppChartConfig;
@@ -113,13 +118,23 @@ export class WidgetConfigurationModalComponent implements OnInit {
     private commonService: CommonService,
     private dialogRef: MatDialogRef<WidgetConfigurationModalComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: WidgetConfigurationModalData
+    public data: WidgetConfigurationModalData,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.reports$ = this.reportService.getReports$({ pagination: false });
-    this.searchReport = new FormControl('');
-    this.searchReport$ = this.searchReport.valueChanges.pipe(startWith(''));
+    this.widgetConfigForm = this.fb.group({
+      searchReport: new FormControl(''),
+      widgetName: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(48)
+      ])
+    });
+    this.reports$ = this.reportService.getReports$({
+      pagination: false
+    });
+    this.searchReport$ = this.f.searchReport.valueChanges.pipe(startWith(''));
 
     this.filteredReports$ = combineLatest([
       this.reports$,
@@ -212,15 +227,20 @@ export class WidgetConfigurationModalComponent implements OnInit {
           map(() => {
             const { widget } = this.data;
             if (widget) {
-              const { report } = widget;
-              this.searchReport.setValue(report);
+              const { report, name } = widget;
+              this.f.searchReport.setValue(report);
               this.onReportSelection(report);
+              this.f.widgetName.setValue(name);
             }
             return setSearchReport;
           })
         )
       )
     );
+  }
+
+  get f() {
+    return this.widgetConfigForm.controls;
   }
 
   displayWith(report: ReportConfiguration) {
@@ -231,6 +251,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.selectedReport = cloneDeep({ ...report });
     this.reportConfigurationForTable = { ...this.selectedReport };
     const {
+      name,
       chartDetails: { type, indexAxis, countFieldName }
     } = this.selectedReport;
 
@@ -260,11 +281,13 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.setGroupByCountQueryParams(countFieldName);
     this.fetchChartData$.next(true);
     this.fetchFilterOptions$.next(true);
+    this.f.widgetName.setValue(name);
   };
 
   saveWidget = () => {
+    const name = this.f.widgetName.value;
     const { datasetFields, countFields, ...chartDetails } = this.chartConfig;
-    const { name, id: reportId, filtersApplied } = this.selectedReport;
+    const { id: reportId, filtersApplied } = this.selectedReport;
     const { id: dashboardId } = this.data.dashboard;
     const createdBy = this.commonService.getUserName();
     const isTable = this.chartVarient === 'table' ? true : false;

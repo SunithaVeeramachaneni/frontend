@@ -51,5 +51,6 @@
   "done": "Done",
   "close": "Close",
   "widgetWarningMessage": "A few changes have been made to the associated report, edit widget to view them",
-  "widgetConfigurationWarningMessage": "Please configure the widget"
+  "widgetConfigurationWarningMessage": "Please configure the widget",
+  "widgetLabel": "Widget Label"
 }

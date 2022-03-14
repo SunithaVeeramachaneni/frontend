@@ -46,11 +46,16 @@ describe('WidgetComponent', () => {
 });
 
 @Component({
-  template: `<app-widget [widget]="widget" [height]="height"></app-widget>`
+  template: `<app-widget
+    [widget]="widget"
+    [height]="height"
+    (widgetAction)="widgetActionHandler($event)"
+  ></app-widget>`
 })
 class TestWidgetHostComponent {
   widget = widget;
   height = 250;
+  widgetActionHandler = () => {};
 }
 
 describe('TestWidgetHostComponent', () => {

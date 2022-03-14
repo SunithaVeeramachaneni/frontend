@@ -75,7 +75,7 @@
 }
 
 .chart-wrapper {
-  height: 240px;
+  height: 260px;
   margin: 10px 0px;
 }
 
@@ -103,4 +103,14 @@
 
 ::ng-deep .widget-config-modal .mat-table {
   height: 285px !important;
+}
+
+::ng-deep .table-filter-panel {
+  overflow-y: scroll;
+  height: 150px;
+}
+
+::ng-deep .configurations-div .chart-settings {
+  height: 150px;
+  overflow-y: scroll;
 }
