@@ -103,11 +103,13 @@
             </button>
             <mat-menu #widgetMenu="matMenu">
               <button mat-menu-item (click)="editWidget(widget)">
-                <mat-icon class="mat-icon-action">edit</mat-icon>
                 <span translate>editWidget</span>
               </button>
-              <button mat-menu-item (click)="deleteWidget(widget)">
-                <mat-icon class="mat-icon-action">delete</mat-icon>
+              <button
+                mat-menu-item
+                (click)="deleteWidget(widget)"
+                class="text-red"
+              >
                 <span translate>deleteWidget</span>
               </button>
             </mat-menu>
