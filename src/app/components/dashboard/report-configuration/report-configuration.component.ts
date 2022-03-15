@@ -576,6 +576,8 @@ export class ReportConfigurationComponent implements OnInit {
     this.chartConfig = this.reportConfigService.updateChartConfig(
       this.reportConfiguration,
       this.chartConfig,
+      true,
+      true,
       renderChart
     );
     this.fetchChartData$.next(fetchChartData);
