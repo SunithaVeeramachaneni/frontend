@@ -47,6 +47,7 @@ import {
 } from '@ngx-translate/core';
 import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/work-instructions/', '.json');
@@ -68,6 +69,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CdkStepperModule,
     NgxDropzoneModule,
     NgxSpinnerModule,
+    NgxShimmerLoadingModule,
     PlyrModule,
     NgxSlickJsModule.forRoot({
       links: {

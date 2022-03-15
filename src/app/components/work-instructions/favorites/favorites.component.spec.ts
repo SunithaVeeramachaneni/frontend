@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
@@ -138,7 +138,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('FavoritesComponent', () => {
   let component: FavoritesComponent;
   let fixture: ComponentFixture<FavoritesComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -150,7 +149,6 @@ describe('FavoritesComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getFavInstructions',
         'setFavoriteInstructions',
@@ -187,10 +185,10 @@ describe('FavoritesComponent', () => {
           RouterTestingModule,
           SharedModule,
           FormsModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
           { provide: ToastService, useValue: toastServiceSpy },
           { provide: Base64HelperService, useValue: base64HelperServiceSpy },
@@ -471,8 +469,10 @@ describe('FavoritesComponent', () => {
       const [favorite1, favorite2] = favorites;
       const tableBodyTh = favoritesEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = favoritesEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(favorite2.WI_Name);
-      expect(tableBodyTh[1].textContent).toBe(`${favorite1.WI_Name}Draft`);
+      expect(tableBodyTh[0].textContent).toContain(favorite2.WI_Name);
+      expect(tableBodyTh[1].textContent).toContain(
+        `${favorite1.WI_Name}  Draft`
+      );
       expect(tableBodyTd[0].textContent).toBe(favorite2.categories.join());
       expect(tableBodyTd[4].textContent).toBe(favorite1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
@@ -553,17 +553,16 @@ describe('FavoritesComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    it('should call getAllWorkInstructionsByFav, AuthorDropDown', () => {
+    it('should call getAllWorkInstructionsByFav, authorDropDown', () => {
       spyOn(component, 'getAllWorkInstructionsByFav');
-      spyOn(component, 'AuthorDropDown');
+      spyOn(component, 'authorDropDown');
       component.ngOnInit();
       expect(component.getAllWorkInstructionsByFav).toHaveBeenCalledWith();
-      expect(component.AuthorDropDown).toHaveBeenCalledWith();
+      expect(component.authorDropDown).toHaveBeenCalledWith();
       expect(component.search).toBeNull();
     });
 
     it('should set header title', () => {
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.routeWithSearch).toBe(
         `${routingUrls.favorites.url}?search=`
       );
@@ -576,16 +575,16 @@ describe('FavoritesComponent', () => {
     });
   });
 
-  describe('AuthorDropDown', () => {
+  describe('authorDropDown', () => {
     it('should define function', () => {
-      expect(component.AuthorDropDown).toBeDefined();
+      expect(component.authorDropDown).toBeDefined();
     });
 
     it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
-      component.AuthorDropDown();
+      component.authorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
       component.authors$.subscribe((data) => expect(data).toEqual(authors));
     });
@@ -652,8 +651,6 @@ describe('FavoritesComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(toastServiceSpy.show).toHaveBeenCalledWith({
           text: "Work instuction '" + favorite.WI_Name + "' has been deleted",
           type: 'success'
@@ -715,8 +712,6 @@ describe('FavoritesComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
           message: 'Unable to delete WI'
         } as HttpErrorResponse);
@@ -793,9 +788,7 @@ describe('FavoritesComponent', () => {
 
     it('should set favorite observable', () => {
       component.getAllWorkInstructionsByFav();
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(instructionServiceSpy.getFavInstructions).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.favorites$.subscribe((data) => expect(data).toEqual(favorites));
     });
   });
@@ -841,8 +834,6 @@ describe('FavoritesComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
         text: 'Selected work instruction has been successfully copied',
         type: 'success'
@@ -871,8 +862,6 @@ describe('FavoritesComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to copy WI'
       } as HttpErrorResponse);

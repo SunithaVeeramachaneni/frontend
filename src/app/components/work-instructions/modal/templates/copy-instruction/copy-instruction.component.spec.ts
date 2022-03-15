@@ -8,7 +8,7 @@ import {
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { AppMaterialModules } from '../../../../../material.module';
 import { ToastService } from '../../../../../shared/toast';
 import { InstructionService } from '../../../services/instruction.service';
@@ -26,6 +26,7 @@ import {
   defaultCategoryId,
   defaultCategoryName
 } from '../../../../../app.constants';
+import { MockComponent } from 'ng-mocks';
 
 const categoryDetails = [
   {
@@ -159,7 +160,8 @@ describe('CopyInstructionComponent', () => {
           CopyInstructionComponent,
           CustomPaginationControlsComponent,
           DummyComponent,
-          DropDownFilterPipe
+          DropDownFilterPipe,
+          MockComponent(NgxSpinnerComponent)
         ],
         imports: [
           NgxPaginationModule,

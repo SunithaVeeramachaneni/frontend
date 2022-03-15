@@ -20,7 +20,7 @@
         </ng-container>
       </select>
     </div>
-    <ng-container *ngIf="recents$ | async as recents">
+    <ng-container *ngIf="recents$ | async as recents; else loadingRecents">
       <table id="recent-table" class="table">
         <thead>
           <tr>
@@ -121,7 +121,7 @@
                   />
                   <a
                     class="list-ellipsis"
-                    [routerLink]="['/work-instructions/recents, obj.Id']"
+                    [routerLink]="['/work-instructions/recents', obj.Id]"
                   >
                     <span matTooltip="{{ obj.WI_Name }}">
                       {{ obj.WI_Name }}
@@ -186,7 +186,6 @@
                     [routerLink]="['/work-instructions/recents', obj.Id]"
                     id="editWorkInstruction"
                   >
-                    <mat-icon>edit</mat-icon>
                     <span class="menu-text">Edit Work Instruction</span>
                   </button>
                   <button
@@ -194,21 +193,16 @@
                     (click)="copyWI(obj)"
                     id="copyWorkInstruction"
                   >
-                    <img
-                      src="assets/work-instructions-icons/svg/copy.svg"
-                      alt=""
-                    />
-                    <span class="menu-text m-l-15">Copy Work Instruction</span>
+                    <span class="menu-text">Copy Work Instruction</span>
                   </button>
                   <button
                     mat-menu-item
                     (click)="removeWI(obj)"
                     id="deleteWorkInstruction"
                   >
-                    <mat-icon class="text-red">close</mat-icon>
-                    <span class="menu-text text-red"
-                      >Delete Work Instruction</span
-                    >
+                    <span class="menu-text text-red">
+                      Delete Work Instruction
+                    </span>
                   </button>
                 </mat-menu>
               </td>
@@ -242,3 +236,40 @@
   </div>
   <router-outlet></router-outlet>
 </ng-container>
+
+<ng-template #loadingRecents>
+  <div class="drafts-fav-recents-publish">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

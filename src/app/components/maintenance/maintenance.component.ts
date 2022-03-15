@@ -27,7 +27,6 @@ import {
   toArray,
   flatMap
 } from 'rxjs/operators';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { remove } from 'lodash';
 import { MCCCardComponent } from './mcc-card/mcc-card.component';
 import { ModalComponent } from './modal/modal.component';
@@ -111,7 +110,6 @@ export class MaintenanceComponent implements OnInit {
   showFilters = false;
   constructor(
     private _maintenanceSvc: MaintenanceService,
-    private spinner: NgxSpinnerService,
     // private modalCtrl: ModalController,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,
@@ -161,6 +159,7 @@ export class MaintenanceComponent implements OnInit {
 
   getWorkOrders() {
     this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
+
     this.updateWorkOrderList$ = this._maintenanceSvc
       .getServerSentEvent('/updateWorkOrders')
       .pipe(
@@ -179,7 +178,6 @@ export class MaintenanceComponent implements OnInit {
       this.combinedWorkOrderList1$,
       this.putWorkOrder$
     );
-    this.spinner.show();
     this.filteredWorkOrderList$ = combineLatest([
       this.combinedWorkOrderList$,
       this.dateRange$,
@@ -212,7 +210,6 @@ export class MaintenanceComponent implements OnInit {
               this.filterKitStatus(workOrder.kitStatusText, filterObj.kitStatus)
           );
         }
-        this.spinner.hide();
         return filtered;
       })
     );
@@ -345,7 +342,6 @@ export class MaintenanceComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (data) => {
       if (data) {
-        this.spinner.show();
         const resp = data;
         const workOrderID = resp.workOrderID;
         this.putWorkOrder$.next({
@@ -366,7 +362,6 @@ export class MaintenanceComponent implements OnInit {
               ...this.emptyWorkOrder,
               [`${workOrder.status}`]: [{ ...workOrder, isLoading: false }]
             });
-            this.spinner.hide();
           }
         });
       }

@@ -18,11 +18,13 @@ import { userData$ } from 'src/app/shared/components/header/header.component.moc
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ToastModule, ToastService } from 'src/app/shared/toast';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
 
 import { ReportsComponent } from './reports.component';
 import { configOptions, reports, reports$ } from './reports.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -32,6 +34,7 @@ describe('ReportsComponent', () => {
   let reportConfigServiceSpy: ReportConfigurationService;
   let headerServiceSpy: HeaderService;
   let oidcSecurityServiceSpy: OidcSecurityService;
+  let toastServiceSpy: ToastService;
 
   beforeEach(async () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
@@ -59,6 +62,7 @@ describe('ReportsComponent', () => {
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
     });
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
       declarations: [ReportsComponent],
@@ -70,6 +74,7 @@ describe('ReportsComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        NgxShimmerLoadingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -86,7 +91,8 @@ describe('ReportsComponent', () => {
           useValue: reportConfigServiceSpy
         },
         { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy }
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy }
       ]
     }).compileComponents();
   });

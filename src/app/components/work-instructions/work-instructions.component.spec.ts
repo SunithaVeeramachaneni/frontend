@@ -7,7 +7,7 @@ import { MockComponent } from 'ng-mocks';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { ErrorInfo } from '../../interfaces';
 import { AppMaterialModules } from '../../material.module';
@@ -37,6 +37,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
+import { NgxSpinnerComponent } from 'ngx-spinner';
 
 const categoryDetails = [
   {
@@ -180,7 +181,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('WorkInstructionsComponent', () => {
   let component: WorkInstructionsComponent;
   let fixture: ComponentFixture<WorkInstructionsComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -196,7 +196,6 @@ describe('WorkInstructionsComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getFavInstructions',
         'getDraftedInstructions',
@@ -235,9 +234,9 @@ describe('WorkInstructionsComponent', () => {
         declarations: [
           WorkInstructionsComponent,
           MockComponent(CategoriesComponent),
-          MockComponent(NgxSpinnerComponent),
           TimeAgoPipe,
-          DummyComponent
+          DummyComponent,
+          MockComponent(NgxSpinnerComponent)
         ],
         imports: [
           NgxPaginationModule,
@@ -247,10 +246,10 @@ describe('WorkInstructionsComponent', () => {
           AppMaterialModules,
           FormsModule,
           SharedModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
           { provide: ToastService, useValue: toastServiceSpy },
           { provide: Base64HelperService, useValue: base64HelperServiceSpy },
@@ -333,15 +332,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       const buttons = homeEl.querySelectorAll('button');
       expect(buttons[2].getAttribute('ng-reflect-router-link')).toBe(
         '/work-instructions/drafts'
@@ -412,15 +402,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       expect(homeEl.querySelectorAll('.drafts-favorites').length).toBe(1);
       expect(
         homeEl.querySelectorAll('.drafts-favorites')[0].textContent
@@ -476,15 +457,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         homeDe.query(By.css('#export')).nativeElement.textContent
       ).toContain('Download Template');
-      expect(
-        homeDe.query(By.css('#import img')).nativeElement.getAttribute('src')
-      ).toContain('save.svg');
-      expect(
-        homeDe.query(By.css('#copy img')).nativeElement.getAttribute('src')
-      ).toContain('copy.svg');
-      expect(
-        homeDe.query(By.css('#export img')).nativeElement.getAttribute('src')
-      ).toContain('excel1.svg');
       expect(homeEl.querySelectorAll('.drafts-favorites').length).toBe(1);
       expect(
         homeEl.querySelectorAll('.drafts-favorites')[0].textContent
@@ -658,8 +630,6 @@ describe('WorkInstructionsComponent', () => {
       expect(
         instructionServiceSpy.getRecentInstructions
       ).toHaveBeenCalledWith();
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.workInstructions$.subscribe((workInstructions) => {
         expect(workInstructions.drafts).toEqual(drafts);
         expect(workInstructions.favorites).toEqual(favorites);
@@ -739,7 +709,6 @@ describe('WorkInstructionsComponent', () => {
           s3Folder: `bulkupload/${time}`
         }
       );
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
     });
 
     it('should not call bulkUploadDialog function on uploadWIExcel empty response', () => {
@@ -756,7 +725,6 @@ describe('WorkInstructionsComponent', () => {
       spyOn(component, 'bulkUploadDialog');
       component.uploadFile({ target });
       expect(component.bulkUploadDialog).not.toHaveBeenCalled();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
     });
   });
 

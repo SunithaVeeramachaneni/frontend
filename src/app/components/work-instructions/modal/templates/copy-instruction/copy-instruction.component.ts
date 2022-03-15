@@ -17,7 +17,7 @@ export class CopyInstructionComponent implements OnInit {
   public recentsFavorites = 0;
   public search: string;
   public authors = [];
-  public CreatedBy: string = '';
+  public createdBy = '';
   public favIns = [];
   public recentIns = [];
   public recentsAndFavsObject = {
@@ -74,8 +74,8 @@ export class CopyInstructionComponent implements OnInit {
   constructor(
     public ref: MyOverlayRef,
     private spinner: NgxSpinnerService,
-    private _toastService: ToastService,
-    private _instructionSvc: InstructionService,
+    private toastService: ToastService,
+    private instructionSvc: InstructionService,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService
   ) {}
@@ -86,7 +86,7 @@ export class CopyInstructionComponent implements OnInit {
   }
 
   filterByAuthors() {
-    this._instructionSvc.getUsers().subscribe((users) => {
+    this.instructionSvc.getUsers().subscribe((users) => {
       this.authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
@@ -97,11 +97,10 @@ export class CopyInstructionComponent implements OnInit {
     this.ref.close();
   }
 
-  getImageSrc = (source: string, path: string) => {
-    return source && source.indexOf('assets/') > -1
+  getImageSrc = (source: string, path: string) =>
+    source && source.indexOf('assets/') > -1
       ? source
       : this.base64HelperService.getBase64ImageData(source, path);
-  };
 
   copyInstruction(title) {
     this.spinner.show();
@@ -110,11 +109,11 @@ export class CopyInstructionComponent implements OnInit {
       displayToast: false,
       failureResponse: 'throwError'
     };
-    this._instructionSvc.copyWorkInstruction(title, userName, info).subscribe(
+    this.instructionSvc.copyWorkInstruction(title, userName, info).subscribe(
       () => {
         this.ref.close();
         this.spinner.hide();
-        this._toastService.show({
+        this.toastService.show({
           text: 'Selected work instruction has been successfully copied',
           type: 'success'
         });

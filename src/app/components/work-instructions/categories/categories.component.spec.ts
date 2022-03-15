@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerComponent } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { SharedModule } from '../../../shared/shared.module';
@@ -29,6 +29,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 const categoryDetails = [
   {
@@ -102,7 +103,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('CategoriesComponent', () => {
   let component: CategoriesComponent;
   let fixture: ComponentFixture<CategoriesComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let overlayServiceSpy: OverlayService;
   let categoryServiceSpy: CategoryService;
   let instructionServiceSpy: InstructionService;
@@ -119,7 +119,6 @@ describe('CategoriesComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
       categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
         'removeDeleteFiles',
@@ -160,10 +159,10 @@ describe('CategoriesComponent', () => {
           AppMaterialModules,
           BrowserAnimationsModule,
           RouterTestingModule,
-          OrderModule
+          OrderModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: OverlayService, useValue: overlayServiceSpy },
           { provide: CategoryService, useValue: categoryServiceSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
@@ -282,6 +281,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 }
       ];
       component.categoriesList = categoriesList;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       expect(
         categoriesEl.querySelectorAll('.categories-details-card').length
@@ -565,6 +565,7 @@ describe('CategoriesComponent', () => {
       ];
       component.categoriesList = categoriesList;
       component.categories = categoryDetails;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -634,6 +635,7 @@ describe('CategoriesComponent', () => {
       ];
       component.categoriesList = categoriesList;
       component.categories = categoryDetails;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -703,6 +705,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 }
       ];
       component.categoriesList = categoriesList;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const files = ['coverimage-from-s3.jpg'];
       const s3DeleteResponse = { file: files[0] };
@@ -761,6 +764,7 @@ describe('CategoriesComponent', () => {
         { CId: CId1, ...rest1, Drafts_Count: 0, Published_Count: 0 }
       ];
       component.categoriesList = categoriesList;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -822,6 +826,7 @@ describe('CategoriesComponent', () => {
       ];
       component.categoriesList = categoriesList;
       component.categories = categoryDetails;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -835,7 +840,6 @@ describe('CategoriesComponent', () => {
         delCatSubscribeComponent,
         { ...categoriesList[1], path: CId1 }
       );
-      expect(spinnerSpy.show).toHaveBeenCalled();
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledWith(
         {
           Category_Name,
@@ -846,7 +850,6 @@ describe('CategoriesComponent', () => {
         info
       );
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.getAllCategories).toHaveBeenCalled();
       expect(wiCommonServiceSpy.fetchWorkInstructions).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
@@ -893,6 +896,7 @@ describe('CategoriesComponent', () => {
       ];
       component.categoriesList = categoriesList;
       component.categories = categoryDetails;
+      component.isCategoriesLoading = false;
       fixture.detectChanges();
       const menuTigger: MatMenuTrigger = fixture.debugElement
         .query(By.directive(MatMenuTrigger))
@@ -906,7 +910,6 @@ describe('CategoriesComponent', () => {
         delCatSubscribeComponent,
         { ...categoriesList[1], path: CId1 }
       );
-      expect(spinnerSpy.show).toHaveBeenCalled();
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledWith(
         {
           Category_Name,
@@ -918,7 +921,6 @@ describe('CategoriesComponent', () => {
       );
       expect(instructionServiceSpy.deleteCategory$).toHaveBeenCalledTimes(1);
       expect(toastServiceSpy.show).not.toHaveBeenCalled();
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to delete Category'
       } as HttpErrorResponse);

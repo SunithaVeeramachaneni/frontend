@@ -23,7 +23,7 @@
         </ng-container>
       </select>
     </div>
-    <ng-container *ngIf="drafts$ | async as drafts">
+    <ng-container *ngIf="drafts$ | async as drafts; else loadingDrafts">
       <table id="draft-table" class="table">
         <thead>
           <tr>
@@ -185,7 +185,6 @@
                     [routerLink]="['/work-instructions/drafts', obj.Id]"
                     id="editWorkInstruction"
                   >
-                    <mat-icon>edit</mat-icon>
                     <span class="menu-text">Edit Work Instruction</span>
                   </button>
                   <button
@@ -193,21 +192,16 @@
                     (click)="copyWI(obj)"
                     id="copyWorkInstruction"
                   >
-                    <img
-                      src="assets/work-instructions-icons/svg/copy.svg"
-                      alt=""
-                    />
-                    <span class="menu-text m-l-15">Copy Work Instruction</span>
+                    <span class="menu-text">Copy Work Instruction</span>
                   </button>
                   <button
                     mat-menu-item
                     (click)="removeWI(obj)"
                     id="deleteWorkInstruction"
                   >
-                    <mat-icon class="text-red">close</mat-icon>
-                    <span class="menu-text text-red"
-                      >Delete Work Instruction</span
-                    >
+                    <span class="menu-text text-red">
+                      Delete Work Instruction
+                    </span>
                   </button>
                 </mat-menu>
               </td>
@@ -242,3 +236,40 @@
   </div>
   <router-outlet></router-outlet>
 </ng-container>
+
+<ng-template #loadingDrafts>
+  <div class="drafts-fav-recents-publish">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

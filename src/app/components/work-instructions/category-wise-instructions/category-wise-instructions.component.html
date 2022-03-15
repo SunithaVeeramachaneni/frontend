@@ -23,7 +23,10 @@
     <mat-tab-group
       #tabGroup
       (selectedTabChange)="tabChanged($event)"
-      *ngIf="workInstructions$ | async as workInstructions"
+      *ngIf="
+        workInstructions$ | async as workInstructions;
+        else loadingCategoryBasedInstructions
+      "
       class="mat-tabs"
     >
       <mat-tab label="DRAFTS">
@@ -117,7 +120,11 @@
                       />
                       <a
                         class="list-ellipsis"
-                        [routerLink]="['/work-instructions/category', obj.Id]"
+                        [routerLink]="[
+                          '/work-instructions/category',
+                          categoryId,
+                          obj.Id
+                        ]"
                       >
                         <span matTooltip="{{ obj.WI_Name }}">
                           {{ obj.WI_Name }}
@@ -181,7 +188,6 @@
                         ]"
                         id="editWorkInstruction"
                       >
-                        <mat-icon>edit</mat-icon>
                         <span class="menu-text">Edit Work Instruction</span>
                       </button>
                       <button
@@ -189,23 +195,16 @@
                         (click)="copyWI(obj)"
                         id="copyWorkInstruction"
                       >
-                        <img
-                          alt="Copy"
-                          src="assets/work-instructions-icons/svg/copy.svg"
-                        />
-                        <span class="menu-text m-l-15"
-                          >Copy Work Instruction</span
-                        >
+                        <span class="menu-text"> Copy Work Instruction </span>
                       </button>
                       <button
                         mat-menu-item
                         (click)="removeWI(obj)"
                         id="deleteWorkInstruction"
                       >
-                        <mat-icon class="text-red">close</mat-icon>
-                        <span class="menu-text text-red"
-                          >Delete Work Instruction</span
-                        >
+                        <span class="menu-text text-red">
+                          Delete Work Instruction
+                        </span>
                       </button>
                     </mat-menu>
                   </td>
@@ -344,7 +343,11 @@
                       />
                       <a
                         class="list-ellipsis"
-                        [routerLink]="['/work-instructions/category', obj.Id]"
+                        [routerLink]="[
+                          '/work-instructions/category',
+                          categoryId,
+                          obj.Id
+                        ]"
                       >
                         <span matTooltip="{{ obj.WI_Name }}">
                           {{ obj.WI_Name }}
@@ -408,7 +411,6 @@
                         ]"
                         id="editWorkInstruction"
                       >
-                        <mat-icon>edit</mat-icon>
                         <span class="menu-text">Edit Work Instruction</span>
                       </button>
                       <button
@@ -416,7 +418,6 @@
                         (click)="removeWI(obj)"
                         id="deleteWorkInstruction"
                       >
-                        <mat-icon class="text-red">close</mat-icon>
                         <span class="menu-text text-red"
                           >Delete Work Instruction</span
                         >
@@ -472,3 +473,40 @@
   </div>
   <router-outlet></router-outlet>
 </ng-container>
+
+<ng-template #loadingCategoryBasedInstructions>
+  <div class="drafts-fav-recents-publish">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

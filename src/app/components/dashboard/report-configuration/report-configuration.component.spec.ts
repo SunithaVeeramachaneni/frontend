@@ -28,6 +28,9 @@ import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { NgxSpinnerComponent } from 'ngx-spinner';
+import { MockComponent } from 'ng-mocks';
 
 describe('ReportConfigurationComponent', () => {
   let component: ReportConfigurationComponent;
@@ -73,7 +76,7 @@ describe('ReportConfigurationComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      declarations: [ReportConfigurationComponent],
+      declarations: [ReportConfigurationComponent, MockComponent(NgxSpinnerComponent)],
       imports: [
         RouterTestingModule,
         SharedModule,
@@ -81,6 +84,7 @@ describe('ReportConfigurationComponent', () => {
         DynamictableModule,
         BrowserAnimationsModule,
         FormsModule,
+        NgxShimmerLoadingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,

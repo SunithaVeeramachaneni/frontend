@@ -1,3 +1,11 @@
+<ngx-spinner
+  size="medium"
+  bdColor="rgba(0, 0, 0, 0.8)"
+  type="ball-clip-rotate-pulse"
+  [fullScreen]="false"
+>
+</ngx-spinner>
+
 <div class="add-instruction-main">
   <div class="wi-status-container" style="display: flex">
     <div class="p-0" style="width: 40%">
@@ -88,18 +96,13 @@
               (click)="copyWI(selectedInstruction)"
               id="copyWorkInstruction"
             >
-              <img
-                alt="Copy Work Instruction"
-                src="assets/work-instructions-icons/svg/copy.svg"
-              />
-              <span class="menu-text m-l-15">Copy Work Instruction</span>
+              <span class="menu-text">Copy Work Instruction</span>
             </button>
             <button
               mat-menu-item
               (click)="removeWI(selectedInstruction)"
               id="deleteWorkInstruction"
             >
-              <mat-icon class="text-red">close</mat-icon>
               <span class="menu-text text-red">Delete Work Instruction</span>
             </button>
           </mat-menu>

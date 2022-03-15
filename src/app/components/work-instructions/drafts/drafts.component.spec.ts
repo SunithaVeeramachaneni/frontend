@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of, throwError } from 'rxjs';
 import { AppMaterialModules } from '../../../material.module';
 import { DropDownFilterPipe } from '../../../shared/pipes/dropdown-filter.pipe';
@@ -138,7 +138,6 @@ const info: ErrorInfo = { displayToast: false, failureResponse: 'throwError' };
 describe('DraftsComponent', () => {
   let component: DraftsComponent;
   let fixture: ComponentFixture<DraftsComponent>;
-  let spinnerSpy: NgxSpinnerService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -150,7 +149,6 @@ describe('DraftsComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
       instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
         'getDraftedInstructions',
         'setFavoriteInstructions',
@@ -187,10 +185,10 @@ describe('DraftsComponent', () => {
           RouterTestingModule,
           SharedModule,
           FormsModule,
-          BrowserAnimationsModule
+          BrowserAnimationsModule,
+          NgxShimmerLoadingModule
         ],
         providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
           { provide: InstructionService, useValue: instructionServiceSpy },
           { provide: ToastService, useValue: toastServiceSpy },
           { provide: Base64HelperService, useValue: base64HelperServiceSpy },
@@ -291,7 +289,7 @@ describe('DraftsComponent', () => {
       ).toContain(draft1.Cover_Image);
       const tableBodyTh = draftsEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = draftsEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(draft1.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(draft1.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(draft1.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(draft1.EditedBy);
@@ -415,7 +413,7 @@ describe('DraftsComponent', () => {
       const [, draft2] = drafts;
       const tableBodyTh = draftsEl.querySelectorAll('table tbody tr th');
       const tableBodyTd = draftsEl.querySelectorAll('table tbody tr td');
-      expect(tableBodyTh[0].textContent).toBe(draft2.WI_Name);
+      expect(tableBodyTh[0].textContent).toContain(draft2.WI_Name);
       expect(tableBodyTd[0].textContent).toBe(draft2.categories.join());
       expect(tableBodyTd[1].textContent).toContain('Edited');
       expect(tableBodyTd[1].textContent).toContain(draft2.EditedBy);
@@ -513,17 +511,16 @@ describe('DraftsComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    it('should call getAllDraftedInstructions, AuthorDropDown', () => {
+    it('should call getAllDraftedInstructions, authorDropDown', () => {
       spyOn(component, 'getAllDraftedInstructions');
-      spyOn(component, 'AuthorDropDown');
+      spyOn(component, 'authorDropDown');
       component.ngOnInit();
       expect(component.getAllDraftedInstructions).toHaveBeenCalledWith();
-      expect(component.AuthorDropDown).toHaveBeenCalledWith();
+      expect(component.authorDropDown).toHaveBeenCalledWith();
       expect(component.search).toBeNull();
     });
 
     it('should set header title', () => {
-      expect(spinnerSpy.hide).toHaveBeenCalled();
       expect(component.routeWithSearch).toBe(
         `${routingUrls.drafts.url}?search=`
       );
@@ -536,16 +533,16 @@ describe('DraftsComponent', () => {
     });
   });
 
-  describe('AuthorDropDown', () => {
+  describe('authorDropDown', () => {
     it('should define function', () => {
-      expect(component.AuthorDropDown).toBeDefined();
+      expect(component.authorDropDown).toBeDefined();
     });
 
     it('should set authors observable', () => {
       const authors = users.map(
         (user) => `${user.first_name} ${user.last_name}`
       );
-      component.AuthorDropDown();
+      component.authorDropDown();
       expect(instructionServiceSpy.getUsers).toHaveBeenCalledWith();
       component.authors$.subscribe((data) => expect(data).toEqual(authors));
     });
@@ -612,8 +609,6 @@ describe('DraftsComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(toastServiceSpy.show).toHaveBeenCalledWith({
           text: "Work instuction '" + drafted.WI_Name + "' has been deleted",
           type: 'success'
@@ -675,8 +670,6 @@ describe('DraftsComponent', () => {
         expect(
           instructionServiceSpy.deleteWorkInstruction$
         ).toHaveBeenCalledTimes(1);
-        expect(spinnerSpy.show).toHaveBeenCalledWith();
-        expect(spinnerSpy.hide).toHaveBeenCalledWith();
         expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
           message: 'Unable to delete WI'
         } as HttpErrorResponse);
@@ -775,11 +768,9 @@ describe('DraftsComponent', () => {
 
     it('should set drafts observable', () => {
       component.getAllDraftedInstructions();
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
       expect(
         instructionServiceSpy.getDraftedInstructions
       ).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       component.drafts$.subscribe((data) => expect(data).toEqual(drafts));
     });
   });
@@ -825,8 +816,6 @@ describe('DraftsComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(toastServiceSpy.show).toHaveBeenCalledWith({
         text: 'Selected work instruction has been successfully copied',
         type: 'success'
@@ -855,8 +844,6 @@ describe('DraftsComponent', () => {
       expect(instructionServiceSpy.copyWorkInstruction).toHaveBeenCalledTimes(
         1
       );
-      expect(spinnerSpy.show).toHaveBeenCalledWith();
-      expect(spinnerSpy.hide).toHaveBeenCalledWith();
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to copy WI'
       } as HttpErrorResponse);

@@ -10,6 +10,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
 
 import { WidgetComponent } from './widget.component';
 import { widget } from './widget.component.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('WidgetComponent', () => {
   let component: WidgetComponent;
@@ -36,7 +37,8 @@ describe('WidgetComponent', () => {
             provide: TranslateLoader,
             useValue: TranslateFakeLoader
           }
-        })
+        }),
+        NgxShimmerLoadingModule
       ],
       providers: [
         TranslateService,
@@ -98,7 +100,8 @@ describe('TestWidgetHostComponent', () => {
             provide: TranslateLoader,
             useValue: TranslateFakeLoader
           }
-        })
+        }),
+        NgxShimmerLoadingModule
       ],
       providers: [
         TranslateService,

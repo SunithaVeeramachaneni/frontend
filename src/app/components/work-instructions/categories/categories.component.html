@@ -21,7 +21,7 @@
   </div>
   <ng-container
     *ngIf="
-      this.categoriesList
+      this.isCategoriesLoading === false && this.categoriesList
         | filter: searchCriteria
         | orderBy: 'Created_At':true:true
         | paginate: config as result
@@ -75,7 +75,6 @@
                   (click)="open(catSubscribeComponent, obj)"
                   id="editCategory"
                 >
-                  <mat-icon>edit</mat-icon>
                   <span class="menu-text">Edit Category</span>
                 </button>
                 <button
@@ -83,7 +82,6 @@
                   (click)="open(delCatSubscribeComponent, obj)"
                   id="deleteCategory"
                 >
-                  <mat-icon class="text-red">close</mat-icon>
                   <span class="menu-text text-red">Delete Category</span>
                 </button>
               </mat-menu>
@@ -132,3 +130,66 @@
     </div>
   </ng-container>
 </div>
+
+<ng-container *ngIf="this.isCategoriesLoading === true">
+  <div class="ghost-loader-categories-container">
+    <div class="categories-div">
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+    <div class="categories-div">
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+      <div class="categories-div-width">
+        <ngx-shimmer-loading [width]="'95%'" [height]="'100px'">
+        </ngx-shimmer-loading
+        ><br />
+        <ngx-shimmer-loading [width]="'70%'" [height]="'20px'">
+        </ngx-shimmer-loading>
+        <ngx-shimmer-loading [width]="'70%'" [height]="'10px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </div>
+</ng-container>
