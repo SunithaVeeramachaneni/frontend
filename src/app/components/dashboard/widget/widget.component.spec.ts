@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule,
+  TranslateService
+} from '@ngx-translate/core';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 
 import { WidgetComponent } from './widget.component';
@@ -24,7 +30,16 @@ describe('WidgetComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent],
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        })
+      ],
       providers: [
+        TranslateService,
         {
           provide: ReportConfigurationService,
           useValue: reportConfigServiceSpy
@@ -77,7 +92,16 @@ describe('TestWidgetHostComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent, TestWidgetHostComponent],
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        })
+      ],
       providers: [
+        TranslateService,
         {
           provide: ReportConfigurationService,
           useValue: reportConfigServiceSpy
