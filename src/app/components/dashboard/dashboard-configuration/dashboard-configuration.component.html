@@ -118,6 +118,7 @@
             <app-widget
               [widget]="widget"
               [height]="widgetHeights[widget.id]"
+              (widgetAction)="widgetActionHandler($event)"
             ></app-widget>
           </div>
         </div>

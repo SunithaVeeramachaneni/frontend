@@ -3,6 +3,30 @@
   margin: 10px 0px;
 }
 
+.warning-message {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f44336;
+  padding: 0 50px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.edit-button {
+  background: #ffffff;
+  min-width: auto;
+  margin: 0px 3px;
+  color: #3d5afe;
+  border: 1px solid #3d5afe;
+  padding: 0px 10px 5px 10px;
+  height: 36px;
+}
+
 ::ng-deep .table-wrapper .mat-elevation-z8 {
   box-shadow: none;
 }

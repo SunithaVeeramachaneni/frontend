@@ -13,21 +13,20 @@ describe('OverlayComponent', () => {
   let overlayComponentDe: DebugElement;
   let overlayComponentEl: HTMLElement;
 
-  beforeEach(waitForAsync(() => {
-    myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
-      content: "string data",
-      data: {}
-    });
+  beforeEach(
+    waitForAsync(() => {
+      myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
+        content: 'string data',
+        data: {}
+      });
 
-    TestBed.configureTestingModule({
-      declarations: [ OverlayComponent ],
-      imports: [ ReactiveFormsModule ],
-      providers: [
-        { provide: MyOverlayRef, useValue: myOverlayRefSpy }
-      ]
+      TestBed.configureTestingModule({
+        declarations: [OverlayComponent, DeleteCategoryComponent],
+        imports: [ReactiveFormsModule],
+        providers: [{ provide: MyOverlayRef, useValue: myOverlayRefSpy }]
+      }).compileComponents();
     })
-    .compileComponents();
-  }));
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(OverlayComponent);
@@ -43,26 +42,35 @@ describe('OverlayComponent', () => {
 
   describe('template', () => {
     it('should render for contentType string', () => {
-      expect(overlayComponentEl.querySelector('div')).toHaveClass('modal-content');
+      expect(overlayComponentEl.querySelector('div')).toHaveClass(
+        'modal-content'
+      );
       expect(overlayComponentEl.querySelectorAll('div').length).toBe(3);
     });
 
     it('should render for contentType component', () => {
       const delCatSubscribeComponent = DeleteCategoryComponent;
-      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'content')
-        .get as jasmine.Spy).and.returnValue(delCatSubscribeComponent);
-        const categoryName = 'Testing123';
-      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
-        .get as jasmine.Spy).and.returnValue({
+      (
+        Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'content')
+          .get as jasmine.Spy
+      ).and.returnValue(delCatSubscribeComponent);
+      const categoryName = 'Testing123';
+      (
+        Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'data')
+          .get as jasmine.Spy
+      ).and.returnValue({
         CId: 290,
         Category_Name: categoryName,
         WI_Count: 0,
-        Cover_Image: 'assets/work-instructions-icons/CoverImages/coverimage3.png',
-        selectedButton: 'no',
+        Cover_Image:
+          'assets/work-instructions-icons/CoverImages/coverimage3.png',
+        selectedButton: 'no'
       });
       component.ngOnInit();
       fixture.detectChanges();
-      expect(overlayComponentEl.querySelector('div')).toHaveClass('modal-content');
+      expect(overlayComponentEl.querySelector('div')).toHaveClass(
+        'modal-content'
+      );
     });
   });
 
@@ -88,8 +96,10 @@ describe('OverlayComponent', () => {
 
     it('should set contentType to component if content is of type neither string nor TemplateRef', () => {
       const delCatSubscribeComponent = DeleteCategoryComponent;
-      (Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'content')
-        .get as jasmine.Spy).and.returnValue(delCatSubscribeComponent);
+      (
+        Object.getOwnPropertyDescriptor(myOverlayRefSpy, 'content')
+          .get as jasmine.Spy
+      ).and.returnValue(delCatSubscribeComponent);
       component.ngOnInit();
       expect(component.contentType).toBe('component');
     });
@@ -98,5 +108,4 @@ describe('OverlayComponent', () => {
       // need to add code for test
     });
   });
-
 });

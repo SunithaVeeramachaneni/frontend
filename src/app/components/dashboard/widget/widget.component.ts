@@ -2,8 +2,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
-  OnInit
+  OnInit,
+  Output
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
@@ -17,7 +19,8 @@ import {
   ReportConfiguration,
   ReportDetails,
   TableEvent,
-  Widget
+  Widget,
+  WidgetAction
 } from 'src/app/interfaces';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 
@@ -49,6 +52,8 @@ export class WidgetComponent implements OnInit {
   get height(): number {
     return this._height;
   }
+  @Output() widgetAction: EventEmitter<WidgetAction> =
+    new EventEmitter<WidgetAction>();
   chartConfig: AppChartConfig;
   chartData$: Observable<AppChartData[]>;
   report: ReportConfiguration;
@@ -137,7 +142,9 @@ export class WidgetComponent implements OnInit {
     if (!isTable) {
       this.chartConfig = this.reportConfigService.updateChartConfig(
         this.report,
-        this.chartConfig
+        this.chartConfig,
+        false,
+        false
       );
       const { countFieldName } = chartDetails;
       if (countFieldName === defaultCountFieldName) {
@@ -187,4 +194,7 @@ export class WidgetComponent implements OnInit {
 
   getReportDataCount = () =>
     this.reportConfigService.getReportDataCount$(this.report, {});
+
+  editWidget = (widget: Widget) =>
+    this.widgetAction.emit({ type: 'edit', value: widget });
 }

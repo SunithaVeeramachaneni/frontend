@@ -75,8 +75,22 @@
 }
 
 .chart-wrapper {
-  height: 240px;
+  height: 260px;
   margin: 10px 0px;
+}
+
+.warning-message {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #f44336;
+  padding: 0 50px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 ::ng-deep .widget-config-modal .mat-elevation-z8 {
@@ -89,4 +103,14 @@
 
 ::ng-deep .widget-config-modal .mat-table {
   height: 285px !important;
+}
+
+::ng-deep .table-filter-panel {
+  overflow-y: scroll;
+  height: 150px;
+}
+
+::ng-deep .configurations-div .chart-settings {
+  height: 150px;
+  overflow-y: scroll;
 }
