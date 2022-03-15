@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="column2">
-      <div class="dis-flex" style="margin-bottom: 15px">
+      <div class="dis-flex">
         <div class="width-50">
           <app-common-filter
             [title]=""
@@ -125,7 +125,7 @@
           <button
             mat-stroked-button
             color="primary"
-            class="report-button"
+            class="hide-chart-btn"
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
@@ -141,7 +141,14 @@
             *ngIf="!reportDetails.report?.showChart"
             [disabled]="!reportDetails.report?.groupBy?.length"
           >
-            <img src="assets/dashboard-icons/show_chart.svg" />
+            <img
+              src="assets/dashboard-icons/show_chart.svg"
+              *ngIf="reportDetails.report?.groupBy?.length"
+            />
+            <img
+              src="assets/dashboard-icons/show_chart_disabled.svg"
+              *ngIf="!reportDetails.report?.groupBy?.length"
+            />
           </button>
           <button
             mat-stroked-button
@@ -253,7 +260,9 @@
   </ng-template>
 
   <ng-template #loadingChartData>
-    <div class="p-0-15">
+    <div class="p-0-15" style="margin-top: 30px">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
       <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
       </ngx-shimmer-loading>
       <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">

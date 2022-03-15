@@ -22,7 +22,6 @@ input[type='text']:focus {
 .mat-raised-button,
 .mat-stroked-button {
   color: #76767b;
-  font-family: 'Roboto', sans-serif !important;
   text-transform: uppercase;
 }
 
@@ -44,7 +43,7 @@ input[type='text']:focus {
 .wi-status-container ul.wi-title li h2 {
   padding: 0;
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 600;
   font-size: 24px;
@@ -79,7 +78,7 @@ input[type='text']:focus {
   width: 100%;
   background: none !important;
   font-size: 22px;
-  font-family: 'Roboto';
+
   font-weight: 500;
   /* overflow: hidden; */
   /*text-overflow: ellipsis; */
@@ -112,17 +111,12 @@ input[type='text']:focus {
   padding: 10px !important;
 }
 
-.mat-tab-group {
-  font-family: 'Roboto', sans-serif !important;
-}
-
 .success-msg {
   padding: 0 5px;
   opacity: 0.8;
 }
 
 .message {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -184,7 +178,7 @@ input[type='text']:focus {
 
 .dis-publish {
   background: #e5e5e5;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -199,7 +193,6 @@ input[type='text']:focus {
 }
 
 .publish {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;

@@ -80,38 +80,36 @@
         [item]="widget.config"
         *ngFor="let widget of widgetsData.data"
       >
-        <div>
-          <div class="dis-flex widget-header">
-            <div
-              class="gridster-item-content widget-title"
-              matTooltip="{{ widget.name }}"
-              matTooltipClass=""
-            >
-              {{ widget.name }}
-            </div>
-            <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
-              <mat-icon>more_horiz</mat-icon>
+        <div class="dis-flex widget-header">
+          <div
+            class="gridster-item-content widget-title"
+            matTooltip="{{ widget.name }}"
+            matTooltipClass=""
+          >
+            {{ widget.name }}
+          </div>
+          <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #widgetMenu="matMenu">
+            <button mat-menu-item (click)="editWidget(widget)">
+              <span translate>editWidget</span>
             </button>
-            <mat-menu #widgetMenu="matMenu">
-              <button mat-menu-item (click)="editWidget(widget)">
-                <span translate>editWidget</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="deleteWidget(widget)"
-                class="text-red"
-              >
-                <span translate>deleteWidget</span>
-              </button>
-            </mat-menu>
-          </div>
-          <div class="widget-body">
-            <app-widget
-              [widget]="widget"
-              [height]="widgetHeights[widget.id]"
-              (widgetAction)="widgetActionHandler($event)"
-            ></app-widget>
-          </div>
+            <button
+              mat-menu-item
+              (click)="deleteWidget(widget)"
+              class="text-red"
+            >
+              <span translate>deleteWidget</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="widget-body">
+          <app-widget
+            [widget]="widget"
+            [height]="widgetHeights[widget.id]"
+            (widgetAction)="widgetActionHandler($event)"
+          ></app-widget>
         </div>
       </gridster-item>
     </ng-container>

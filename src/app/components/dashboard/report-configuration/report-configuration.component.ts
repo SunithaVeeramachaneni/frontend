@@ -471,7 +471,7 @@ export class ReportConfigurationComponent implements OnInit {
     if (showChart) {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 400px)'
+        tableHeight: 'calc(100vh - 360px)'
       };
     } else {
       this.configOptions = {
