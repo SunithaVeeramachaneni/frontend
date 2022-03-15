@@ -58,27 +58,22 @@ export class ReportsComponent implements OnInit {
     rowLevelActions: {
       menuActions: [
         {
-          icon: 'remove_red_eye',
           title: 'Preview',
           action: 'preview'
         },
         {
-          icon: 'edit',
           title: 'Edit',
           action: 'edit'
         },
         {
-          icon: 'file_download',
           title: 'Export to Excel',
           action: 'export'
         },
         {
-          icon: 'content_copy',
           title: 'Copy',
           action: 'copy'
         },
         {
-          icon: 'delete',
           title: 'Delete',
           action: 'delete'
         }
@@ -170,6 +165,7 @@ export class ReportsComponent implements OnInit {
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
+        console.log(this.skip);
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })

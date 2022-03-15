@@ -1,8 +1,5 @@
 <app-header title="Reports"></app-header>
-<div
-  class="reports-body"
-  *ngIf="reports$ | async as reports; else loadingReports"
->
+<div class="reports-body">
   <div class="dis-flex">
     <div class="width-40 toggle-btns">
       <mat-button-toggle-group [formControl]="selectedReportSegmentControl">
@@ -27,7 +24,7 @@
                   totalCount: reportsCount.count
                     ? (reportsCount.count | numberToKM)
                     : 0,
-                  count: reports.data ? reports.data.length : 0
+                  count: this.skip ? this.skip : 0
                 }
         }}
       </span>
@@ -50,7 +47,10 @@
       </mat-form-field>
     </div>
   </div>
-  <div class="p-l-10 p-r-10">
+  <div
+    class="p-l-10 p-r-10"
+    *ngIf="reports$ | async as reports; else loadingReports"
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
@@ -59,9 +59,36 @@
     ></cwp-dynamictable>
   </div>
 </div>
+
+<ng-template #loadingReportsCount>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+  </ngx-shimmer-loading>
+</ng-template>
 <ng-template #loadingReports>
   <div style="padding: 0 20px">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
     </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
     </ngx-shimmer-loading>
