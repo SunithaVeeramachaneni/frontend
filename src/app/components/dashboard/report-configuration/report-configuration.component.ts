@@ -251,7 +251,9 @@ export class ReportConfigurationComponent implements OnInit {
           };
           this.chartConfig = this.reportConfigService.updateChartConfig(
             this.reportConfiguration,
-            this.chartConfig
+            this.chartConfig,
+            true,
+            true
           );
         }
         this.chartVarient = value;
@@ -262,7 +264,9 @@ export class ReportConfigurationComponent implements OnInit {
         this.reportConfiguration.chartDetails.datasetFieldName = value;
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.reportConfiguration,
-          this.chartConfig
+          this.chartConfig,
+          true,
+          true
         );
         break;
 
@@ -271,6 +275,8 @@ export class ReportConfigurationComponent implements OnInit {
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.reportConfiguration,
           this.chartConfig,
+          true,
+          true,
           false
         );
         this.setGroupByCountQueryParams(value);

@@ -220,7 +220,7 @@
           (backdropClick)="isPopoverOpen = false"
         >
           <div class="settings-modal">
-            <div class="header custom-mat-form-field-gray-color">
+            <div class="header custom-mat-form-select">
               <app-chart-variant
                 [report]="reportConfiguration"
                 [chartConfig]="chartConfig"
@@ -228,14 +228,6 @@
                 [displayTableVarient]="false"
                 (chartVarientChanges)="appendChartVariantChanges($event)"
               ></app-chart-variant>
-              <button
-                mat-button
-                color="primary"
-                class="yes-no-btn"
-                (click)="isPopoverOpen = false; chartVariantChanges = {}"
-              >
-                Cancel
-              </button>
               <button
                 mat-raised-button
                 color="primary"
@@ -245,6 +237,14 @@
                 (click)="applyChartVariantChanges()"
               >
                 Done
+              </button>
+              <button
+                mat-button
+                color="primary"
+                class="yes-no-btn"
+                (click)="isPopoverOpen = false; chartVariantChanges = {}"
+              >
+                Cancel
               </button>
             </div>
           </div>
