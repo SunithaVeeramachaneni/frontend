@@ -61,7 +61,7 @@
       Select a report to start adding a widget
     </p>
     <div class="dis-flex dashboard-formfield" *ngIf="selectedReport">
-      <div class="width-50">
+      <div class="width-50" style="border-right: 1px solid #e5e5e5">
         <app-chart-variant
           [report]="selectedReport"
           [chartConfig]="chartConfig"
