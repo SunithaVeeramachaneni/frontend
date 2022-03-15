@@ -194,7 +194,8 @@ export class ReportsComponent implements OnInit {
 
   openDialog() {
     const addReportRef = this.dialog.open(
-      ReportConfigurationListModalComponent
+      ReportConfigurationListModalComponent,
+      { autoFocus: false }
     );
     addReportRef.afterClosed().subscribe();
   }

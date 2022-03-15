@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule,
+  TranslateService
+} from '@ngx-translate/core';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 
 import { WidgetComponent } from './widget.component';
@@ -25,8 +31,17 @@ describe('WidgetComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent],
-      imports: [NgxShimmerLoadingModule],
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        }),
+        NgxShimmerLoadingModule
+      ],
       providers: [
+        TranslateService,
         {
           provide: ReportConfigurationService,
           useValue: reportConfigServiceSpy
@@ -48,11 +63,16 @@ describe('WidgetComponent', () => {
 });
 
 @Component({
-  template: `<app-widget [widget]="widget" [height]="height"></app-widget>`
+  template: `<app-widget
+    [widget]="widget"
+    [height]="height"
+    (widgetAction)="widgetActionHandler($event)"
+  ></app-widget>`
 })
 class TestWidgetHostComponent {
   widget = widget;
   height = 250;
+  widgetActionHandler = () => {};
 }
 
 describe('TestWidgetHostComponent', () => {
@@ -74,8 +94,17 @@ describe('TestWidgetHostComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [WidgetComponent, TestWidgetHostComponent],
-      imports: [NgxShimmerLoadingModule],
+      imports: [
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        }),
+        NgxShimmerLoadingModule
+      ],
       providers: [
+        TranslateService,
         {
           provide: ReportConfigurationService,
           useValue: reportConfigServiceSpy

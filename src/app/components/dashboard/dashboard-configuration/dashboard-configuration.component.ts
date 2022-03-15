@@ -34,7 +34,12 @@ import {
   take,
   tap
 } from 'rxjs/operators';
-import { Dashboard, Widget, WidgetsData } from 'src/app/interfaces';
+import {
+  Dashboard,
+  Widget,
+  WidgetAction,
+  WidgetsData
+} from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { DashboardService } from '../services/dashboard.service';
@@ -338,7 +343,8 @@ export class DashboardConfigurationComponent implements OnInit {
 
   editWidget = (widget: Widget) => {
     const dialogRef = this.dialog.open(WidgetConfigurationModalComponent, {
-      data: { dashboard: this.dashboard, widget }
+      data: { dashboard: this.dashboard, widget },
+      autoFocus: false
     });
     dialogRef.afterClosed().subscribe((widgetDetails) => {
       if (widgetDetails && Object.keys(widgetDetails).length) {
@@ -433,4 +439,11 @@ export class DashboardConfigurationComponent implements OnInit {
   compareFn(option1: Dashboard, option2: Dashboard) {
     return option1.name === option2.name;
   }
+
+  widgetActionHandler = (event: WidgetAction) => {
+    const { type, value } = event;
+    if (type === 'edit') {
+      this.editWidget(value);
+    }
+  };
 }
