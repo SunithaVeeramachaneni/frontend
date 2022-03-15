@@ -179,3 +179,25 @@
 .no-wrap {
   white-space: nowrap;
 }
+
+.chart-container {
+  position: relative;
+  height: 200px;
+}
+
+.settings-icon {
+  top: 0px;
+  right: 0px;
+  position: absolute;
+}
+
+.settings-modal {
+  margin: 10px 0px 15px 0px;
+  background: white;
+  border: 1px solid gray;
+  border-radius: 4px;
+  position: relative;
+  left: 95px;
+  top: -90px;
+  width: 290px;
+}
