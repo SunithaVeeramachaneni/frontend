@@ -10,7 +10,8 @@ export const environment = {
   wiApiUrl: 'http://localhost:7001/wiapi/',
   wiAbapApiUrl: 'http://localhost:7004/wiabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
-  requestTimeout: 60000 * 3
+  requestTimeout: 60000 * 3,
+  undoRedoOffset: 5
 };
 
 /*

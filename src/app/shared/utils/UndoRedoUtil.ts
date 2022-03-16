@@ -1,36 +1,42 @@
+import { environment } from '../../../environments/environment';
+
+const UNDO_REDO_OFFSET = environment.undoRedoOffset || 5;
+
 export class UndoRedoUtil {
-    private undo: any[];
-    private redo: any[];
+  private undo: any[];
+  private redo: any[];
 
-    constructor() {
-        this.undo = [];
-        this.redo = [];
-    }
+  constructor() {
+    this.undo = [];
+    this.redo = [];
+  }
 
-    WRITE(X: any) {
-        this.undo.push(X);
-        if (this.undo.length >= 5) {
-            this.undo.splice(0, 1);
-        }
+  WRITE(action: any) {
+    this.undo.push(action);
+    if (this.undo.length > UNDO_REDO_OFFSET) {
+      this.undo.splice(0, 1);
     }
+  }
 
-    UNDO() {
-        let X = this.undo.pop();
-        this.redo.push(X);
-        return X;
+  UNDO() {
+    const action = this.undo.pop();
+    this.redo.push(action);
+    if (this.redo.length > UNDO_REDO_OFFSET) {
+      this.redo.splice(0, 1);
     }
+    return action;
+  }
 
-    REDO() {
-        let X = this.redo.pop();
-        this.undo.push(X);
-        return X;
-    }
+  REDO() {
+    const action = this.redo.pop();
+    this.undo.push(action);
+    return action;
+  }
 
-    undoSize() {
-        return this.undo.length;
-    }
-    redoSize() {
-        return this.redo.length;
-    }
-
+  undoSize() {
+    return this.undo.length;
+  }
+  redoSize() {
+    return this.redo.length;
+  }
 }
