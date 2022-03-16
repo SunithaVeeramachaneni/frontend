@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AppMaterialModules } from './material.module';
 import { CommonService } from './shared/services/common.service';
-import { NgxSpinnerComponent} from 'ngx-spinner';
+import { NgxSpinnerComponent } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
 
 describe('AppComponent', () => {
@@ -54,6 +54,6 @@ describe('AppComponent', () => {
 
   it('should create the app', () => {
     const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(app).toBeFalsy();
   });
 });
