@@ -186,6 +186,10 @@ export class DashboardConfigurationComponent implements OnInit {
   ) {}
 
   renderDashboard() {
+    this.createUpdateDeleteWidget$.next({
+      type: 'create',
+      widget: {} as Widget
+    });
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgets = [];
     this.widgetsDataOnLoadCreateUpdateDelete$ = of({ data: [] });
