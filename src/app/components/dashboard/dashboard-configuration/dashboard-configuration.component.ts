@@ -188,6 +188,7 @@ export class DashboardConfigurationComponent implements OnInit {
   renderDashboard() {
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgets = [];
+    this.widgetsDataOnLoadCreateUpdateDelete$ = of({ data: [] });
     this.widgetsDataInitial$.next({ data: [] });
     this.widgetsDataOnLoadCreateUpdateDelete$ = combineLatest([
       this.widgetsDataInitial$,
