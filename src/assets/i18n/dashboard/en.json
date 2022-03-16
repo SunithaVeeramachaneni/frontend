@@ -50,7 +50,7 @@
   "delete": "Delete",
   "done": "Done",
   "close": "Close",
-  "widgetWarningMessage": "A few changes have been made to the associated report, edit widget to view them",
+  "widgetWarningMessage": "Report added to the widget got modified, please do reconfigure",
   "widgetConfigurationWarningMessage": "Please configure the widget",
   "widgetLabel": "Widget Label"
 }
