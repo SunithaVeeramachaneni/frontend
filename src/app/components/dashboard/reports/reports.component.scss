@@ -3,6 +3,15 @@
   right: 40px;
 }
 
+::ng-deep .mat-snack-bar-container {
+  margin: 0 !important;
+  margin-top: 5px !important;
+  position: absolute;
+  right: 1px;
+  top: 60px;
+  border-radius: 0px !important;
+}
+
 .search-form-field {
   float: right;
   margin-right: 10px;
