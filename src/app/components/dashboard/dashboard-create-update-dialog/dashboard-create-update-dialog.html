@@ -16,7 +16,10 @@
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" [(ngModel)]="name" />
     </mat-form-field>
-    <mat-checkbox class="fullWidth" [(ngModel)]="isDefault"
+    <mat-checkbox
+      class="fullWidth"
+      [(ngModel)]="isDefault"
+      disabled="{{dialogData.dialogMode ==='EDIT' && dialogData.data.isDefault}}"
       >Set to Default</mat-checkbox
     >
   </div>

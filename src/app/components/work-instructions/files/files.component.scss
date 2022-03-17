@@ -16,7 +16,7 @@
   color: #000000;
   background: #fff;
   font-size: 1.5rem;
-  font-family: 'Roboto', sans-serif;
+
   font-weight: 600;
 }
 
@@ -55,7 +55,6 @@ table {
 
 td {
   font-size: 14px;
-  font-family: 'Roboto', sans-serif;
 }
 
 thead th {
@@ -65,7 +64,6 @@ thead th {
   font-weight: 500;
   color: #000;
   font-size: 15px;
-  font-family: 'Roboto', sans-serif;
 }
 
 tbody th {
@@ -73,7 +71,6 @@ tbody th {
   font-weight: 500;
   color: #000;
   font-size: 15px;
-  font-family: 'Roboto', sans-serif;
 }
 
 tbody td {
@@ -81,7 +78,6 @@ tbody td {
   text-align: left;
   font-weight: normal;
   font-size: 14px;
-  font-family: 'Roboto', sans-serif;
 }
 
 tbody tr td:nth-child(5) {
@@ -99,7 +95,6 @@ tbody tr td:nth-child(5) {
 }
 
 .create-wi-btn {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -123,7 +118,6 @@ tbody tr td:nth-child(5) {
 }
 
 .files-data {
-  font-family: Roboto;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -133,7 +127,6 @@ tbody tr td:nth-child(5) {
 }
 
 .files-names {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 15px;
@@ -149,7 +142,6 @@ tbody tr td:nth-child(5) {
 }
 
 .save-files-btn {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -163,7 +155,6 @@ tbody tr td:nth-child(5) {
 }
 
 .cancel-files-btn {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -192,7 +183,7 @@ tbody tr td:nth-child(5) {
 .table td {
   vertical-align: middle;
   border-bottom: 1px solid #c8ced3;
-  font-family: 'Roboto';
+
   padding: 10px;
 }
 

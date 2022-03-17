@@ -2,9 +2,6 @@
   padding: 10px !important;
 }
 
-.mat-tab-group {
-  font-family: 'Roboto', sans-serif !important;
-}
 .m-l-5 {
   margin-left: -5px;
 }
@@ -44,7 +41,7 @@
 .ipad-view-default-content p {
   color: #76767b;
   font-size: 16px;
-  font-family: 'Roboto', sans-serif;
+
   padding: 0 10px;
   text-align: center;
   margin: 0 10px;
@@ -439,7 +436,7 @@
   padding-left: 10px;
   font-size: 20px;
   font-weight: 600;
-  font-family: 'Roboto', sans-serif;
+
   margin-bottom: 3px;
 }
 
@@ -448,7 +445,7 @@
   padding-left: 80px;
   font-size: 20px;
   font-weight: 600;
-  font-family: 'Roboto', sans-serif;
+
   margin-bottom: 3px;
 }
 .editor-listvalues .bullet-icon {
@@ -647,7 +644,6 @@
   cursor: default;
 }
 .header-step-title {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;

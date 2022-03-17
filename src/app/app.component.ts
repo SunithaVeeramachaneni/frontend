@@ -33,8 +33,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: dashboard.title,
       url: dashboard.url,
-      inActiveImage: '../assets/sidebar-icons/dashboard-gray.svg',
-      activeImage: '../assets/sidebar-icons/dashboard-blue.svg',
+      image: '../assets/sidebar-icons/dashboard-gray.svg',
       showSubMenu: false,
       disable: false,
       subPages: [{ title: reports.title, url: reports.url }]
@@ -42,8 +41,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: maintenance.title,
       url: maintenance.url,
-      inActiveImage: '../assets/sidebar-icons/maintenance-gray.svg',
-      activeImage: '../assets/sidebar-icons/maintenance-blue.svg',
+      image: '../assets/sidebar-icons/maintenance-gray.svg',
       showSubMenu: false,
       subPages: null,
       disable: false
@@ -51,8 +49,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: spareParts.title,
       url: spareParts.url,
-      inActiveImage: '../assets/sidebar-icons/spare-parts-gray.svg',
-      activeImage: '../assets/sidebar-icons/spare-parts-blue.svg',
+      image: '../assets/sidebar-icons/spare-parts-gray.svg',
       showSubMenu: false,
       subPages: null,
       disable: false
@@ -60,8 +57,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: workInstructions.title,
       url: workInstructions.url,
-      inActiveImage: '../assets/sidebar-icons/work-instructions-gray.svg',
-      activeImage: '../assets/sidebar-icons/work-instructions-blue.svg',
+      image: '../assets/sidebar-icons/work-instructions-gray.svg',
       showSubMenu: false,
       disable: false,
       subPages: [

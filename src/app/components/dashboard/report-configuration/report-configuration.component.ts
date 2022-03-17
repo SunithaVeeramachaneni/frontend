@@ -8,10 +8,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import {
   AppChartConfig,
   AppChartData,
+  ChartVariantChanges,
   ColumnObject,
   Count,
   ErrorInfo,
@@ -44,10 +45,17 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
 export class ReportConfigurationComponent implements OnInit {
   headerTitle = 'Dashboard';
   disableReportName = true;
+  isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   reportDetails$: Observable<ReportDetails>;
   dataSource: MatTableDataSource<any>;
+  chartVarient: string;
+  chartVarient$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  isFetchingChartData = false;
+  countType: string;
+  countField: string;
+  chartVariantChanges = {};
   configOptions: ConfigOptions = {
     tableID: 'reportConfigurationTable',
     rowsExpandable: false,
@@ -62,7 +70,7 @@ export class ReportConfigurationComponent implements OnInit {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 173px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e6d9d9']
   };
   dummy = '';
   skip = 0;
@@ -212,9 +220,120 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.chartData$ = this.fetchChartData$.pipe(
       filter((fetchChartData) => fetchChartData === true),
-      switchMap(() => this.getGroupByCountDetails())
+      tap(() => (this.isFetchingChartData = true)),
+      switchMap(() =>
+        this.getGroupByCountDetails().pipe(
+          tap(() => (this.isFetchingChartData = false))
+        )
+      )
     );
   }
+
+  appendChartVariantChanges = (event: ChartVariantChanges) => {
+    const { type: eventType } = event;
+    if (!this.chartVariantChanges[eventType])
+      this.chartVariantChanges[eventType] = null;
+    this.chartVariantChanges[eventType] = event;
+  };
+
+  applyChartVarientChange = (event: ChartVariantChanges) => {
+    const { type: eventType, value } = event;
+
+    switch (eventType) {
+      case 'chartVarient':
+        if (value !== 'table') {
+          const chartInfo = value.split('_');
+          const [type, indexAxis = ''] = chartInfo;
+          this.reportConfiguration.chartDetails = {
+            ...this.reportConfiguration.chartDetails,
+            type,
+            indexAxis
+          };
+          this.chartConfig = this.reportConfigService.updateChartConfig(
+            this.reportConfiguration,
+            this.chartConfig,
+            true,
+            true
+          );
+        }
+        this.chartVarient = value;
+        this.chartVarient$.next(value);
+        break;
+
+      case 'datasetFieldName':
+        this.reportConfiguration.chartDetails.datasetFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true
+        );
+        break;
+
+      case 'countFieldName':
+        this.reportConfiguration.chartDetails.countFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true,
+          false
+        );
+        this.setGroupByCountQueryParams(value);
+        this.fetchChartData$.next(true);
+        break;
+
+      case 'chartTitle':
+        this.reportConfiguration.chartDetails.title = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          title: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      case 'showValues':
+        this.reportConfiguration.chartDetails.showValues = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          showValues: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      case 'showLegends':
+        this.reportConfiguration.chartDetails.showLegends = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          showLegends: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      default:
+      // do nothing
+    }
+  };
+
+  setGroupByCountQueryParams = (countFieldName) => {
+    if (countFieldName === defaultCountFieldName) {
+      this.countType = 'count';
+      this.countField = '';
+    } else {
+      this.countType = 'sum';
+      this.countField = countFieldName;
+    }
+  };
+
+  applyChartVariantChanges = () => {
+    this.isPopoverOpen = false;
+    // eslint-disable-next-line guard-for-in
+    for (const key in this.chartVariantChanges) {
+      if (this.chartVariantChanges[key])
+        this.applyChartVarientChange(this.chartVariantChanges[key]);
+    }
+    this.chartVariantChanges = {};
+  };
 
   handleEvent(event: any) {
     if (event.eventType === 'WRITE_TO_UNDO_REDO') {
@@ -325,10 +444,10 @@ export class ReportConfigurationComponent implements OnInit {
     });
 
   getGroupByCountDetails = () =>
-    this.reportConfigService.getGroupByCountDetails$(
-      this.reportConfiguration,
-      {}
-    );
+    this.reportConfigService.getGroupByCountDetails$(this.reportConfiguration, {
+      type: this.countType,
+      field: this.countField
+    });
 
   getReportDataCountById = () =>
     this.reportConfigService.getReportDataCountById$(
@@ -471,7 +590,7 @@ export class ReportConfigurationComponent implements OnInit {
     if (showChart) {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 400px)'
+        tableHeight: 'calc(100vh - 360px)'
       };
     } else {
       this.configOptions = {

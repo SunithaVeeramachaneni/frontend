@@ -1,6 +1,7 @@
 .chart-wrapper {
   height: 100%;
-  margin: 10px 0px;
+  position: relative;
+  top: -10px;
 }
 
 .warning-message {
@@ -10,7 +11,7 @@
   align-items: center;
   color: #f44336;
   padding: 0 50px;
-  font-family: Roboto;
+
   font-style: normal;
   font-weight: 400;
   font-size: 14px;

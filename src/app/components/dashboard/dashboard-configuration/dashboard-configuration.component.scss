@@ -19,7 +19,7 @@
 
 .dashboard-title {
   font-size: 16px;
-  font-family: Roboto;
+
   font-weight: 500;
   position: relative;
   top: 20px;
@@ -43,13 +43,12 @@
   font-weight: 500;
   padding: 18px 22px;
   float: right;
-  font-family: Roboto;
+
   font-size: 16px;
   color: #757575;
 }
 
 .new-widget-btn {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -72,7 +71,7 @@
 
 .widget-header {
   padding: 0 15px 0 15px;
-  margin: 15px 0;
+  margin-top: 10px;
   justify-content: space-between;
 }
 
@@ -81,16 +80,16 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  font-family: Roboto;
+
   font-style: normal;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 32px;
 }
 
 .widget-body {
   padding: 0 15px 0 15px;
-  height: 80%;
+  height: 85%;
 }
 
 .gridster-item-content {

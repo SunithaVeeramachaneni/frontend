@@ -9,6 +9,10 @@
 @import '~quill/dist/quill.snow.css';
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 
+html * {
+  font-family: 'Roboto', sans-serif;
+}
+
 .modal {
   pointer-events: none !important;
 }
@@ -18,7 +22,6 @@
 }
 
 li.breadcrumb-item {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -176,7 +179,6 @@ li.breadcrumb-item.active span {
   padding-left: 10px;
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Roboto', sans-serif;
 }
 .custom-header-height .mat-tab-label {
   width: 100% !important;
@@ -585,7 +587,7 @@ button.mat-menu-item {
 .mat-button-toggle {
   background: #f2f2f2;
   border: none;
-  font-family: Roboto;
+
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -600,7 +602,7 @@ button.mat-menu-item {
 
 .mat-button-toggle-checked {
   background: #f2f2f2;
-  font-family: Roboto;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;

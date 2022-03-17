@@ -27,6 +27,17 @@
         | paginate: config as result
     "
   >
+    <div
+      *ngIf="
+        (result.length === 0 && categoriesList.length > 0) ||
+        (categoriesList && categoriesList.length === 0)
+      "
+      class="no-fav"
+    >
+      {{
+        categoriesList.length ? 'No Results Found !!' : 'No Categories found !!'
+      }}
+    </div>
     <mat-grid-list
       cols="3"
       rowHeight="190px"
