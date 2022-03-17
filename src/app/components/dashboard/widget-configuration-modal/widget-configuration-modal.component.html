@@ -5,11 +5,15 @@
   <mat-dialog-content class="dialog-content">
     <div class="dis-flex">
       <ng-container *ngIf="updateWidget$ | async"></ng-container>
-      <div class="dashboard-formfield width-50" [formGroup]="widgetConfigForm">
+      <div
+        class="dashboard-formfield width-50"
+        [ngClass]="!selectedReport ? '' : 'border-right'"
+        [formGroup]="widgetConfigForm"
+      >
         <ng-container
           *ngIf="filteredReports$ | async as reports; else loadingReports"
         >
-          <mat-form-field appearance="outline" style="width: 90%">
+          <mat-form-field appearance="outline" class="width-90">
             <mat-label translate>report</mat-label>
             <input
               type="text"
@@ -26,7 +30,7 @@
               <mat-option
                 *ngFor="let report of reports.data"
                 [value]="report"
-                style="height: 85px"
+                class="report-list-height"
               >
                 <div>
                   <p class="report-name">{{ report.name }}</p>
@@ -43,7 +47,7 @@
           </mat-form-field>
         </ng-container>
         <ng-container *ngIf="selectedReport">
-          <mat-form-field appearance="outline" style="width: 90%">
+          <mat-form-field appearance="outline" class="width-90">
             <mat-label translate>widgetLabel</mat-label>
             <input type="text" matInput formControlName="widgetName" />
           </mat-form-field>
@@ -62,7 +66,7 @@
             *ngIf="filterOptions$ | async; else loadingFilterOptions"
           >
             <app-common-filter
-              style="margin-left: 15px; margin-top: 5px"
+              class="filter-component"
               [title]=""
               [filtersApplied]="selectedReport.filtersApplied"
               [reportColumns]="reportColumns"
@@ -72,7 +76,7 @@
             </app-common-filter>
           </ng-container>
           <div class="chart-wrapper" *ngIf="chartVarient !== 'table'">
-            <h4 style="margin: 0 10px">Preview</h4>
+            <h4 class="preview-heading">Preview</h4>
             <ng-container
               *ngIf="
                 chartConfig &&

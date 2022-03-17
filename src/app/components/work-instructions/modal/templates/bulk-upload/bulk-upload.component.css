@@ -7,7 +7,6 @@ ul.bulk-upload-instructions-list {
 
 ul.bulk-upload-instructions-list li {
   line-height: 2.5rem;
-  font-family: 'Roboto', 'Trebuchet MS', Arial, Helvetica, sans-serif;
 }
 
 .example-h2 {
@@ -30,7 +29,6 @@ ul.bulk-upload-instructions-list li {
   background-color: #ffffff;
 }
 .building-wi {
-  font-family: 'Roboto', 'Trebuchet MS', Arial, Helvetica, sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -43,7 +41,6 @@ ul.bulk-upload-instructions-list li {
   width: 450px;
 }
 .cancel-btn {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -56,7 +53,6 @@ ul.bulk-upload-instructions-list li {
   margin-right: 10px;
 }
 .publishnow-btn {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -68,7 +64,6 @@ ul.bulk-upload-instructions-list li {
   border: none;
 }
 .okay-btn {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -83,9 +78,6 @@ ul.bulk-upload-instructions-list li {
   padding: 6px 16px;
 }
 
-.bulk-upload {
-  font-family: 'Roboto', 'Trebuchet MS', Arial, Helvetica, sans-serif;
-}
 .bulk-upload .modal-footer {
   display: flex;
   align-items: center;

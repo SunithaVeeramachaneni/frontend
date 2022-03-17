@@ -98,12 +98,21 @@ export class DashboardsComponent implements OnInit {
             }
             this.selectedDashboard = dashboard;
             this.skipSetDefaultDashboard = true;
+            if (dashboard.isDefault) {
+              initial.data = initial.data.map((db) => {
+                db.isDefault = false;
+                return db;
+              });
+            }
             initial.data = initial.data.concat(dashboard);
             return initial.data;
           } else if (type === 'update') {
             initial.data = initial.data.map((db) => {
               if (db.id === dashboard.id) {
                 return dashboard;
+              }
+              if (dashboard.isDefault) {
+                db.isDefault = false;
               }
               return db;
             });
@@ -112,6 +121,7 @@ export class DashboardsComponent implements OnInit {
               this.selectedDashboard = dashboard;
             } else {
               this.selectedGlobalDashboard = dashboard;
+              this.selectedDashboard = dashboard;
               this.displayAllDashboards = false;
             }
             this.skipSetDefaultDashboard = true;
@@ -232,14 +242,16 @@ export class DashboardsComponent implements OnInit {
       })
       .subscribe(
         (response) => {
-          this.createUpdateDeleteDashboard$.next({
-            type: 'create',
-            dashboard: { ...response }
-          });
-          this.toast.show({
-            text: 'Dashboard created successfully',
-            type: 'success'
-          });
+          if (response && Object.keys(response).length) {
+            this.createUpdateDeleteDashboard$.next({
+              type: 'create',
+              dashboard: { ...response }
+            });
+            this.toast.show({
+              text: 'Dashboard created successfully',
+              type: 'success'
+            });
+          }
         },
         (err) => {
           this.toast.show({
@@ -259,21 +271,25 @@ export class DashboardsComponent implements OnInit {
     this.dashboardService
       .updateDashboard$(dashboard.id, dashboard)
       .subscribe((response) => {
-        this.createUpdateDeleteDashboard$.next({
-          type: 'update',
-          dashboard: { ...response }
-        });
-        this.toast.show({
-          text: 'Dashboard updated successfully',
-          type: 'success'
-        });
+        if (response && Object.keys(response).length) {
+          this.createUpdateDeleteDashboard$.next({
+            type: 'update',
+            dashboard: { ...response }
+          });
+          this.toast.show({
+            text: 'Dashboard updated successfully',
+            type: 'success'
+          });
+        }
       });
   }
 
   deleteDashboard(dashboard: Dashboard) {
     if (dashboard.isDefault) {
       this.dialog.open(AlertDialog, {
-        width: '400px'
+        disableClose: true,
+        width: '500px',
+        height: '190px'
       });
       return;
     }

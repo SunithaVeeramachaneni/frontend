@@ -1,10 +1,3 @@
-<ngx-spinner
-  size="medium"
-  bdColor="rgba(0, 0, 0, 0.8)"
-  type="ball-clip-rotate-pulse"
-  [fullScreen]="false"
->
-</ngx-spinner>
 <div
   class="dashboard"
   [ngClass]="dashboardDisplayMode === 'ALL' ? 'cust-row-all' : ''"
@@ -82,48 +75,43 @@
 <ng-container *ngIf="interval$ | async"></ng-container>
 <div id="gridster-container" #gridsterContainer>
   <gridster [options]="options">
-    <ng-container
-      *ngIf="widgetsData$ | async as widgetsData; else loadingWidgets"
-    >
+    <ng-container *ngIf="widgetsData$ | async as widgetsData">
       <gridster-item
         [item]="widget.config"
         *ngFor="let widget of widgetsData.data"
       >
-        <div>
-          <div class="dis-flex widget-header">
-            <div
-              class="gridster-item-content widget-title"
-              matTooltip="{{ widget.name }}"
-              matTooltipClass=""
-            >
-              {{ widget.name }}
-            </div>
-            <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
-              <mat-icon>more_horiz</mat-icon>
+        <div class="dis-flex widget-header">
+          <div
+            class="gridster-item-content widget-title"
+            matTooltip="{{ widget.name }}"
+            matTooltipClass=""
+          >
+            {{ widget.name }}
+          </div>
+          <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #widgetMenu="matMenu">
+            <button mat-menu-item (click)="editWidget(widget)">
+              <span translate>editWidget</span>
             </button>
-            <mat-menu #widgetMenu="matMenu">
-              <button mat-menu-item (click)="editWidget(widget)">
-                <span translate>editWidget</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="deleteWidget(widget)"
-                class="text-red"
-              >
-                <span translate>deleteWidget</span>
-              </button>
-            </mat-menu>
-          </div>
-          <div class="widget-body">
-            <app-widget
-              [widget]="widget"
-              [height]="widgetHeights[widget.id]"
-              (widgetAction)="widgetActionHandler($event)"
-            ></app-widget>
-          </div>
+            <button
+              mat-menu-item
+              (click)="deleteWidget(widget)"
+              class="text-red"
+            >
+              <span translate>deleteWidget</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div class="widget-body">
+          <app-widget
+            [widget]="widget"
+            [height]="widgetHeights[widget.id]"
+            (widgetAction)="widgetActionHandler($event)"
+          ></app-widget>
         </div>
       </gridster-item>
     </ng-container>
   </gridster>
 </div>
-<ng-template #loadingWidgets></ng-template>

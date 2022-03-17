@@ -1,8 +1,16 @@
-<h4 mat-dialog-title>Error Deleting Dashboard</h4>
-<div mat-dialog-content>
-  Selected dashboard is marked as default, change the default dashboard and
-  delete it
-</div>
-<div mat-dialog-actions>
-  <button mat-button mat-dialog-close translate="close"></button>
+<div class="alert-dialog">
+  <h4 mat-dialog-title>Error Deleting Dashboard</h4>
+  <div>
+    Selected dashboard is marked as default, change the default dashboard and
+    delete it
+  </div>
+  <div>
+    <button
+      mat-button
+      class="close-btn"
+      color="warn"
+      mat-dialog-close
+      translate="close"
+    ></button>
+  </div>
 </div>
