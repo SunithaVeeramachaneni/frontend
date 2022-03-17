@@ -8,11 +8,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import {
   AppChartConfig,
   AppChartData,
-  ChartVariantChanges,
   ColumnObject,
   Count,
   ErrorInfo,
@@ -45,17 +44,10 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
 export class ReportConfigurationComponent implements OnInit {
   headerTitle = 'Dashboard';
   disableReportName = true;
-  isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   reportDetails$: Observable<ReportDetails>;
   dataSource: MatTableDataSource<any>;
-  chartVarient: string;
-  chartVarient$: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  isFetchingChartData = false;
-  countType: string;
-  countField: string;
-  chartVariantChanges = {};
   configOptions: ConfigOptions = {
     tableID: 'reportConfigurationTable',
     rowsExpandable: false,
@@ -220,12 +212,7 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.chartData$ = this.fetchChartData$.pipe(
       filter((fetchChartData) => fetchChartData === true),
-      tap(() => (this.isFetchingChartData = true)),
-      switchMap(() =>
-        this.getGroupByCountDetails().pipe(
-          tap(() => (this.isFetchingChartData = false))
-        )
-      )
+      switchMap(() => this.getGroupByCountDetails())
     );
   }
 
@@ -444,10 +431,10 @@ export class ReportConfigurationComponent implements OnInit {
     });
 
   getGroupByCountDetails = () =>
-    this.reportConfigService.getGroupByCountDetails$(this.reportConfiguration, {
-      type: this.countType,
-      field: this.countField
-    });
+    this.reportConfigService.getGroupByCountDetails$(
+      this.reportConfiguration,
+      {}
+    );
 
   getReportDataCountById = () =>
     this.reportConfigService.getReportDataCountById$(
@@ -590,7 +577,7 @@ export class ReportConfigurationComponent implements OnInit {
     if (showChart) {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 400px)'
+        tableHeight: 'calc(100vh - 360px)'
       };
     } else {
       this.configOptions = {

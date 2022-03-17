@@ -24,7 +24,6 @@
 }
 
 .all-dropdown-headings {
-  font-family: Roboto;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -64,7 +63,6 @@
 }
 
 .group-rows-text {
-  font-family: Roboto;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -78,6 +76,15 @@
   border: none;
   padding: 0px 10px 5px 10px;
   height: 36px;
+}
+
+.hide-chart-btn {
+  background: rgba(61, 90, 254, 0.08);
+  min-width: auto;
+  margin: 0px 3px;
+  padding: 0px 10px 0px 10px;
+  height: 40px;
+  border: 3px solid #637bfe;
 }
 
 .export-btn-loader {
@@ -143,12 +150,13 @@
 }
 
 .favorite-toggle {
-  margin-top: 40px;
-  margin-left: 15px;
+  margin-top: 25px;
+  margin-left: 12px;
 }
 
 .chart-wrapper {
   height: 200px;
+  margin-top: -25px;
 }
 
 ::ng-deep .report-configuration .mat-elevation-z8 {
@@ -180,30 +188,6 @@
   white-space: nowrap;
 }
 
-.chart-container {
-  position: relative;
-  height: 200px;
-}
-
-.settings-icon {
-  top: 0px;
-  right: 0px;
-  position: absolute;
-  color: #757575;
-  cursor: pointer;
-}
-
-.settings-modal {
-  margin: 10px 0px 15px 0px;
-  background: white;
-  border: 1px solid gray;
-  border-radius: 4px;
-  position: relative;
-  left: 55px;
-  top: -35px;
-  padding: 15px;
-  width: 290px;
-}
-.yes-no-btn {
-  float: right;
+.m-t-14 {
+  margin-top: 14px;
 }

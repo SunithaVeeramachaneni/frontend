@@ -8,9 +8,9 @@
   >
     <div class="column1">
       <div class="report-name-col dis-flex">
-        <div class="width-95">
-          <p class="all-dropdown-headings" translate>reportName</p>
+        <div class="width-95 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
+            <mat-label translate>reportName</mat-label>
             <mat-icon
               matSuffix
               class="edit-icon"
@@ -66,7 +66,7 @@
       </div>
     </div>
     <div class="column2">
-      <div class="dis-flex" style="margin-bottom: 15px">
+      <div class="dis-flex">
         <div class="width-50">
           <app-common-filter
             [title]=""
@@ -125,7 +125,7 @@
           <button
             mat-stroked-button
             color="primary"
-            class="report-button"
+            class="hide-chart-btn"
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
@@ -141,7 +141,14 @@
             *ngIf="!reportDetails.report?.showChart"
             [disabled]="!reportDetails.report?.groupBy?.length"
           >
-            <img src="assets/dashboard-icons/show_chart.svg" />
+            <img
+              src="assets/dashboard-icons/show_chart.svg"
+              *ngIf="reportDetails.report?.groupBy?.length"
+            />
+            <img
+              src="assets/dashboard-icons/show_chart_disabled.svg"
+              *ngIf="!reportDetails.report?.groupBy?.length"
+            />
           </button>
           <button
             mat-stroked-button
@@ -185,70 +192,17 @@
           ></button>
         </div>
       </div>
+
       <div
-        class="chart-container"
+        class="chart-wrapper"
         *ngIf="
           reportDetails.report?.showChart &&
           reportDetails.report?.groupBy?.length
         "
       >
-        <mat-icon
-          cdkOverlayOrigin
-          class="settings-icon"
-          #trigger="cdkOverlayOrigin"
-          (click)="isPopoverOpen = !isPopoverOpen"
-          >settings_border</mat-icon
-        >
-        <div class="chart-wrapper">
-          <ng-container
-            *ngIf="chartData$ | async as data; else loadingChartData"
-          >
-            <app-chart
-              [chartConfig]="chartConfig"
-              [chartData]="data"
-            ></app-chart>
-          </ng-container>
-        </div>
-        <ng-template
-          cdkConnectedOverlay
-          cdkConnectedOverlayPanelClass="custom-popover"
-          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-          [cdkConnectedOverlayHasBackdrop]="true"
-          [cdkConnectedOverlayOpen]="isPopoverOpen"
-          [cdkConnectedOverlayOrigin]="trigger"
-          cdkConnectedOverlayWidth="400px"
-          (backdropClick)="isPopoverOpen = false"
-        >
-          <div class="settings-modal">
-            <div class="header custom-mat-form-select">
-              <app-chart-variant
-                [report]="reportConfiguration"
-                [chartConfig]="chartConfig"
-                [configOptions]="configOptions"
-                [displayTableVarient]="false"
-                (chartVarientChanges)="appendChartVariantChanges($event)"
-              ></app-chart-variant>
-              <button
-                mat-raised-button
-                color="primary"
-                class="yes-no-btn"
-                autofocus="false"
-                mat-dialog-close
-                (click)="applyChartVariantChanges()"
-              >
-                Done
-              </button>
-              <button
-                mat-button
-                color="primary"
-                class="yes-no-btn"
-                (click)="isPopoverOpen = false; chartVariantChanges = {}"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </ng-template>
+        <ng-container *ngIf="chartData$ | async as data; else loadingChartData">
+          <app-chart [chartConfig]="chartConfig" [chartData]="data"></app-chart>
+        </ng-container>
       </div>
       <div class="m-r-15">
         <cwp-dynamictable
@@ -260,18 +214,69 @@
       </div>
     </div>
   </div>
-  <ng-template #loading>Loading Report Configuration...</ng-template>
+  <ng-template #loading>
+    <div class="p-15">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
+  </ng-template>
+
   <ng-template #loadingChartData>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'"></ngx-shimmer-loading>
+    <div class="p-0-15" style="margin-top: 30px">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
   </ng-template>
 </div>

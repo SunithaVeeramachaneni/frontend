@@ -11,7 +11,6 @@
 }
 
 .main-heading {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 1.5em;
@@ -28,7 +27,7 @@
 
 .recents-favorites-row {
   padding: 20px 20px 0px 20px;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 600;
   font-size: 1rem;
@@ -83,7 +82,7 @@
 .nav-tabs .nav-link {
   border: none;
   width: 50%;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -115,7 +114,6 @@
 }
 
 .tabs-recent-title {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
@@ -124,7 +122,6 @@
 }
 
 .tabs-recent-subtitle {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -146,7 +143,6 @@
 }
 
 .tab-recent-add-title {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 13px;
@@ -204,7 +200,6 @@
 }
 
 .data {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -243,7 +238,7 @@
   padding: 5px;
   border-radius: 4px;
   font-size: 12px;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: normal;
   color: #ffffff;
@@ -262,7 +257,6 @@
 }
 
 .dropdown-item-title {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -337,7 +331,7 @@
   box-sizing: border-box;
   -webkit-appearance: none;
   -moz-appearance: none;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: normal;
   font-size: 15px;
@@ -395,7 +389,6 @@
 }
 
 h5.modal-title {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 600 !important;
   font-size: 14px !important;

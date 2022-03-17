@@ -23,10 +23,6 @@
   padding: 10px !important;
 }
 
-.mat-tab-group {
-  font-family: 'Roboto', sans-serif !important;
-}
-
 .add-step-btn {
   float: right;
   padding: 9px;
@@ -50,7 +46,7 @@
   height: 36px;
   background: #ffffff;
   border: 1px solid #1351d8;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -73,7 +69,7 @@
   height: 36px;
   background: #ffffff;
   border: 1px solid #1351d8;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -108,7 +104,6 @@
   padding: 10px;
   color: #76767b;
   text-transform: uppercase;
-  font-family: 'Roboto', sans-serif;
 }
 
 .example-step.example-active {
@@ -148,7 +143,6 @@ input:focus {
 }
 
 .btn-hide-show-preview {
-  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;

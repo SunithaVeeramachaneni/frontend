@@ -23,7 +23,7 @@ h2 {
   min-width: 250px;
   background: rgba(0, 0, 0, 0.87);
   border-radius: 4px;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -48,7 +48,7 @@ h2 {
 .titles {
   font-size: 14px;
   font-weight: 600;
-  font-family: 'Roboto';
+
   margin-top: 10px;
 }
 
@@ -113,7 +113,7 @@ h2 {
   top: 50%;
   transform: translateY(25%);
   left: -5%;
-  font-family: 'Roboto', sans-serif;
+
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -146,7 +146,6 @@ h2 {
 }
 
 .uploadfilecontainertitle {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
@@ -160,7 +159,6 @@ h2 {
 }
 
 .attachment-placeholder-text {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
@@ -282,7 +280,6 @@ h2 {
   text-overflow: ellipsis;
   cursor: pointer;
   font-size: 20px;
-  font-family: 'Roboto';
 }
 
 .wi_title_input:focus {
@@ -302,7 +299,6 @@ h2 {
 }
 
 button.btn-hide-show-preview {
-  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;

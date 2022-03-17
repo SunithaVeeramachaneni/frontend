@@ -32,32 +32,14 @@
           (click)="selectedListElement(menuitem.title)"
         >
           <span *ngIf="this.sidebar === false">
-            <img
-              src="{{ menuitem.inActiveImage }}"
-              *ngIf="selectedMenu !== menuitem.title"
-              class="sidebar-icons"
-            />
-            <img
-              src="{{ menuitem.activeImage }}"
-              *ngIf="selectedMenu === menuitem.title"
-              class="sidebar-icons"
-            />
+            <img src="{{ menuitem.image }}" class="sidebar-icons" />
             <span class="menu-title">
               {{ menuitem.title }}
             </span>
           </span>
           <span *ngIf="this.sidebar === true">
             <button [matMenuTriggerFor]="menu" class="menu-trigger-btn">
-              <img
-                src="{{ menuitem.inActiveImage }}"
-                *ngIf="selectedMenu !== menuitem.title"
-                class="sidebar-icons"
-              />
-              <img
-                src="{{ menuitem.activeImage }}"
-                *ngIf="selectedMenu === menuitem.title"
-                class="sidebar-icons"
-              />
+              <img src="{{ menuitem.image }}" class="sidebar-icons" />
             </button>
           </span>
         </li>
