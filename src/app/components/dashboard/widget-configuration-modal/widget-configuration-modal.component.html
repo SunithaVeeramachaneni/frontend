@@ -6,7 +6,8 @@
     <div class="dis-flex">
       <ng-container *ngIf="updateWidget$ | async"></ng-container>
       <div
-        class="dashboard-formfield width-50 border-right"
+        class="dashboard-formfield width-50"
+        [ngClass]="!selectedReport ? '' : 'border-right'"
         [formGroup]="widgetConfigForm"
       >
         <ng-container
