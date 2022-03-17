@@ -62,7 +62,7 @@ export class ReportConfigurationComponent implements OnInit {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 173px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e6d9d9']
   };
   dummy = '';
   skip = 0;
@@ -215,6 +215,112 @@ export class ReportConfigurationComponent implements OnInit {
       switchMap(() => this.getGroupByCountDetails())
     );
   }
+
+  appendChartVariantChanges = (event: ChartVariantChanges) => {
+    const { type: eventType } = event;
+    if (!this.chartVariantChanges[eventType])
+      this.chartVariantChanges[eventType] = null;
+    this.chartVariantChanges[eventType] = event;
+  };
+
+  applyChartVarientChange = (event: ChartVariantChanges) => {
+    const { type: eventType, value } = event;
+
+    switch (eventType) {
+      case 'chartVarient':
+        if (value !== 'table') {
+          const chartInfo = value.split('_');
+          const [type, indexAxis = ''] = chartInfo;
+          this.reportConfiguration.chartDetails = {
+            ...this.reportConfiguration.chartDetails,
+            type,
+            indexAxis
+          };
+          this.chartConfig = this.reportConfigService.updateChartConfig(
+            this.reportConfiguration,
+            this.chartConfig,
+            true,
+            true
+          );
+        }
+        this.chartVarient = value;
+        this.chartVarient$.next(value);
+        break;
+
+      case 'datasetFieldName':
+        this.reportConfiguration.chartDetails.datasetFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true
+        );
+        break;
+
+      case 'countFieldName':
+        this.reportConfiguration.chartDetails.countFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true,
+          false
+        );
+        this.setGroupByCountQueryParams(value);
+        this.fetchChartData$.next(true);
+        break;
+
+      case 'chartTitle':
+        this.reportConfiguration.chartDetails.title = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          title: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      case 'showValues':
+        this.reportConfiguration.chartDetails.showValues = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          showValues: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      case 'showLegends':
+        this.reportConfiguration.chartDetails.showLegends = value;
+        this.chartConfig = {
+          ...this.chartConfig,
+          showLegends: value,
+          renderChart: !this.isFetchingChartData
+        };
+        break;
+
+      default:
+      // do nothing
+    }
+  };
+
+  setGroupByCountQueryParams = (countFieldName) => {
+    if (countFieldName === defaultCountFieldName) {
+      this.countType = 'count';
+      this.countField = '';
+    } else {
+      this.countType = 'sum';
+      this.countField = countFieldName;
+    }
+  };
+
+  applyChartVariantChanges = () => {
+    this.isPopoverOpen = false;
+    // eslint-disable-next-line guard-for-in
+    for (const key in this.chartVariantChanges) {
+      if (this.chartVariantChanges[key])
+        this.applyChartVarientChange(this.chartVariantChanges[key]);
+    }
+    this.chartVariantChanges = {};
+  };
 
   handleEvent(event: any) {
     if (event.eventType === 'WRITE_TO_UNDO_REDO') {

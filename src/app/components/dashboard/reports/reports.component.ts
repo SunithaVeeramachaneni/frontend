@@ -266,6 +266,7 @@ export class ReportsComponent implements OnInit {
           return;
         }
         this.snackBar.open('Export is in progress...', '', {
+          panelClass: 'exportSnackbar',
           horizontalPosition: 'right',
           verticalPosition: 'top'
         });

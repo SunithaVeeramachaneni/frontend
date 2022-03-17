@@ -100,7 +100,7 @@ export class DashboardConfigurationComponent implements OnInit {
     return this._dashboardDisplayMode;
   }
 
-  widgetsDataOnLoadCreation$: Observable<WidgetsData>;
+  widgetsDataOnLoadCreateUpdateDelete$: Observable<WidgetsData>;
   widgets: Widget[];
   widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
   widgetsData$: Observable<WidgetsData>;
@@ -186,11 +186,15 @@ export class DashboardConfigurationComponent implements OnInit {
   ) {}
 
   renderDashboard() {
+    this.createUpdateDeleteWidget$.next({
+      type: 'create',
+      widget: {} as Widget
+    });
     this.widgetsDataInitial$ = new BehaviorSubject<WidgetsData>({ data: [] });
     this.widgets = [];
-    this.widgetsDataOnLoadCreation$ = of({ data: [] });
+    this.widgetsDataOnLoadCreateUpdateDelete$ = of({ data: [] });
     this.widgetsDataInitial$.next({ data: [] });
-    this.widgetsDataOnLoadCreation$ = combineLatest([
+    this.widgetsDataOnLoadCreateUpdateDelete$ = combineLatest([
       this.widgetsDataInitial$,
       this.widgetService.getDahboardWidgetsWithReport$(this.dashboard.id),
       this.createUpdateDeleteWidget$
@@ -232,7 +236,7 @@ export class DashboardConfigurationComponent implements OnInit {
     );
 
     this.widgetsData$ = combineLatest([
-      this.widgetsDataOnLoadCreation$,
+      this.widgetsDataOnLoadCreateUpdateDelete$,
       this.selectedTabIndex$
     ]).pipe(
       map(([widgetsData, selectedReportSegment]) => {
