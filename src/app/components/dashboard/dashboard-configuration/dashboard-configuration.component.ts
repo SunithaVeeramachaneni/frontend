@@ -7,7 +7,8 @@ import {
   ViewChild,
   ElementRef,
   Output,
-  EventEmitter
+  EventEmitter,
+  HostListener
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -184,6 +185,13 @@ export class DashboardConfigurationComponent implements OnInit {
     private dashboardService: DashboardService,
     private toast: ToastService
   ) {}
+
+  @HostListener('window:resize') onResize() {
+    this.dashboardService.updateGridOptions({
+      update: true,
+      subtractWidth: 150
+    });
+  }
 
   renderDashboard() {
     this.createUpdateDeleteWidget$.next({

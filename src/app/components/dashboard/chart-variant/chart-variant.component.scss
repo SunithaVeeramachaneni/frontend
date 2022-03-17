@@ -48,3 +48,7 @@
   margin-top: -13px;
   margin-left: -5px;
 }
+
+::ng-deep .configurations-div mat-error {
+  margin: 5px 0;
+}

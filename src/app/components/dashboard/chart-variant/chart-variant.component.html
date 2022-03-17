@@ -99,8 +99,28 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="width-90">
-        <mat-label>Title</mat-label>
+        <mat-label translate>title</mat-label>
         <input matInput placeholder="Title" formControlName="chartTitle" />
+        <mat-error *ngIf="f.chartTitle.errors?.minlength">
+          {{
+            'fieldMinimumLength'
+              | translate
+                : {
+                    name: 'title' | translate,
+                    length: f.chartTitle.errors?.minlength.requiredLength
+                  }
+          }}
+        </mat-error>
+        <mat-error *ngIf="f.chartTitle.errors?.maxlength">
+          {{
+            'fieldMaximumLength'
+              | translate
+                : {
+                    name: 'title' | translate,
+                    length: f.chartTitle.errors?.maxlength.requiredLength
+                  }
+          }}
+        </mat-error>
       </mat-form-field>
       <mat-checkbox formControlName="showValues">{{
         'showValues' | translate

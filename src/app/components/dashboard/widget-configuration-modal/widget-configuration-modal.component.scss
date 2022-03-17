@@ -130,3 +130,7 @@
 .report-list-height {
   height: 85px;
 }
+
+::ng-deep .widget-config-modal mat-error {
+  margin: 5px 0;
+}
