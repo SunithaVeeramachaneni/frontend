@@ -45,6 +45,8 @@ export class ReportsComponent implements OnInit {
   removeReport$: BehaviorSubject<string> = new BehaviorSubject<string>(
     '' as string
   );
+  addReport$: BehaviorSubject<ReportConfiguration> =
+    new BehaviorSubject<ReportConfiguration>({} as ReportConfiguration);
   reduceReportCount$: BehaviorSubject<string> = new BehaviorSubject<string>(
     '' as string
   );
@@ -152,7 +154,7 @@ export class ReportsComponent implements OnInit {
       })
     );
 
-    this.reports$ = combineLatest([
+    const reportsScrollUpdate$ = combineLatest([
       this.reportsInitial$,
       this.reportsOnScroll$
     ]).pipe(
@@ -175,7 +177,10 @@ export class ReportsComponent implements OnInit {
       })
     );
 
-    this.reports$ = combineLatest([this.reports$, this.removeReport$]).pipe(
+    const reportsDeleteUpdate$ = combineLatest([
+      reportsScrollUpdate$,
+      this.removeReport$
+    ]).pipe(
       map(([reports, deleteReportID]) => {
         const { data = [] } = reports;
         if (deleteReportID) {
@@ -186,6 +191,24 @@ export class ReportsComponent implements OnInit {
             data.splice(index, 1);
             this.dataSource = new MatTableDataSource(data);
           }
+        }
+        return { ...reports, data };
+      })
+    );
+
+    this.reports$ = combineLatest([reportsDeleteUpdate$, this.addReport$]).pipe(
+      map(([reports, newReportConfiguration]) => {
+        this.skip += 1;
+        let { data = [] } = reports;
+
+        if (
+          !(
+            Object.keys(newReportConfiguration).length === 0 &&
+            newReportConfiguration.constructor === Object
+          )
+        ) {
+          data.unshift(newReportConfiguration);
+          this.dataSource = new MatTableDataSource(data);
         }
         return { ...reports, data };
       })
@@ -214,7 +237,7 @@ export class ReportsComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((reportID) => {
       if (reportID) {
         this.reportService.deleteReport$(reportID).subscribe((resp) => {
-          this.removeRow(reportID);
+          this.removeReport(reportID);
         });
         this.reduceReportCount$.next('reduce');
       }
@@ -233,9 +256,14 @@ export class ReportsComponent implements OnInit {
     this.fetchData$.next(event);
   }
 
-  removeRow(id: string) {
+  removeReport(id: string) {
     this.removeReport$.next(id);
     this.removeReport$.next('');
+  }
+
+  addReport(report: ReportConfiguration) {
+    this.addReport$.next(report);
+    this.addReport$.next({} as ReportConfiguration);
   }
 
   rowLevelActionHandler(event: ReportsRowActionEvent) {
@@ -243,6 +271,7 @@ export class ReportsComponent implements OnInit {
       action,
       data: { id, name, isFavorite }
     } = event;
+    let report;
     switch (action) {
       case 'edit':
         this.router.navigate(['dashboard/reports/editreport', id]);
@@ -257,7 +286,7 @@ export class ReportsComponent implements OnInit {
           .updateReport$({ id, isFavorite: !isFavorite } as ReportConfiguration)
           .subscribe();
         if (this.selectedReportSegmentControl.value === 'favorite') {
-          this.removeRow(id);
+          this.removeReport(id);
         }
         break;
       case 'export':
@@ -265,7 +294,7 @@ export class ReportsComponent implements OnInit {
           displayToast: true,
           failureResponse: 'throwError'
         };
-        const report = event.data;
+        report = event.data;
         if (!report.id) {
           return;
         }
@@ -288,6 +317,17 @@ export class ReportsComponent implements OnInit {
               this.snackBar.dismiss();
             }
           );
+        break;
+      case 'copy':
+        report = event.data;
+
+        this.reportService.copyReport$(report).subscribe((res) => {
+          this.addReport(res);
+          this.toast.show({
+            text: 'Report copied successfully',
+            type: 'success'
+          });
+        });
         break;
       default:
       // do nothing;
