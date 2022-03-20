@@ -1,5 +1,4 @@
 .kit-number {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
@@ -16,7 +15,6 @@
 }
 
 .date-priority-label {
-  font-family: Roboto;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -42,7 +40,7 @@
   border: none;
   color: black;
   font-size: 15px;
-  font-family: Roboto;
+
   font-weight: 600;
   cursor: pointer;
 }
@@ -66,7 +64,6 @@
 }
 
 .high-priority {
-  font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -80,7 +77,6 @@
 }
 
 .very-high-priority {
-  font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -94,7 +90,6 @@
 }
 
 .medium-priority {
-  font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -108,7 +103,6 @@
 }
 
 .low-priority {
-  font-family: Roboto;
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -123,7 +117,7 @@
 
 .kit-ready {
   background-color: #34c759;
-  font-family: Roboto;
+
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -138,7 +132,7 @@
 
 .waiting-on-parts {
   background-color: #ff9500;
-  font-family: Roboto;
+
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -153,7 +147,7 @@
 
 .parts-available {
   background-color: #5ac8fa;
-  font-family: Roboto;
+
   padding: 4px 7px 4px 7px;
   border-radius: 5px;
   font-style: normal;
@@ -169,7 +163,7 @@
 .show-operations-btn {
   padding: 10px;
   text-transform: initial;
-  font-family: Roboto;
+
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -204,7 +198,6 @@
 }
 
 .assign-user-name {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 15px;
@@ -229,7 +222,6 @@
 }
 
 .inprogress-user-name {
-  font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 15px;

@@ -10,12 +10,7 @@
   padding: 10px !important;
 }
 
-.mat-tab-group {
-  font-family: 'Roboto', sans-serif !important;
-}
-
 .mat-subheader {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;
@@ -35,7 +30,6 @@
 }
 
 .btn-hide-show-preview {
-  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 12px;
   text-transform: uppercase;
@@ -61,7 +55,6 @@
 }
 
 .uploadfilecontainertitle {
-  font-family: 'Roboto', sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;

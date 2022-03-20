@@ -6,5 +6,6 @@ export const environment = {
   wiApiUrl: 'https://cwpqa.innovapptive.com/wiapi/',
   wiAbapApiUrl: 'https://cwpqa.innovapptive.com/wiabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
-  requestTimeout: 60000 * 3
+  requestTimeout: 60000 * 3,
+  undoRedoOffset: 5
 };
