@@ -100,4 +100,12 @@ export class ReportService {
       `reports/${reportId}`,
       info
     );
+
+  copyReport$ = (report: Report, info: ErrorInfo = {} as ErrorInfo) =>
+    this.appService._postData(
+      environment.dashboardApiUrl,
+      `reports/duplicate`,
+      report,
+      info
+    );
 }
