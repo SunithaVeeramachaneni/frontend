@@ -71,6 +71,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   chartData$: Observable<AppChartData[]>;
   chartVarient: string;
   chartVarient$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  isChartVarientFormValid = true;
   reportConfigurationForTable: ReportConfiguration;
   configOptions: ConfigOptions = {
     tableID: 'widgetConfiguration',
@@ -377,7 +378,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   }
 
   onChartVarientChanges = (event: ChartVariantChanges) => {
-    const { type: eventType, value } = event;
+    const { type: eventType, value, isFormValid } = event;
 
     switch (eventType) {
       case 'chartVarient':
@@ -425,6 +426,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
 
       case 'chartTitle':
         this.selectedReport.chartDetails.title = value;
+        this.isChartVarientFormValid = isFormValid;
         this.chartConfig = {
           ...this.chartConfig,
           title: value,

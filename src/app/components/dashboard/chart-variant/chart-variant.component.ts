@@ -8,7 +8,7 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { Subject } from 'rxjs';
@@ -67,7 +67,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   xAxisName: string;
   yAxisName: string;
   chartVarientForm = this.fb.group({
-    chartTitle: new FormControl(''),
+    chartTitle: new FormControl('', [
+      Validators.minLength(3),
+      Validators.maxLength(48)
+    ]),
     chartVarient: new FormControl(''),
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
@@ -80,11 +83,15 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.f.chartTitle.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         takeUntil(this.destroy$),
         tap((title) => {
-          this.chartVarientChanges.emit({ type: 'chartTitle', value: title });
+          this.chartVarientChanges.emit({
+            type: 'chartTitle',
+            value: title,
+            isFormValid: this.chartVarientForm.valid
+          });
         })
       )
       .subscribe();

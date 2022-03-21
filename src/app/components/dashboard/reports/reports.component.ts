@@ -165,7 +165,6 @@ export class ReportsComponent implements OnInit {
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
-        console.log(this.skip);
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
