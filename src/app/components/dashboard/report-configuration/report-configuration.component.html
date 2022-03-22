@@ -181,25 +181,37 @@
             routerLinkActive="router-link-active"
             translate="cancel"
           ></button>
-          <button
-            mat-raised-button
-            color="primary"
-            class="save-button"
-            translate="save"
-            matTooltip="Save"
-            (click)="saveReport({ saveAs: false })"
-            [disabled]="!reportDetails.report"
-          ></button>
-          <button
-            *ngIf="reportDetails.report?.id"
-            mat-raised-button
-            color="primary"
-            (click)="saveReport({ saveAs: true })"
-            class="save-button"
-            translate="saveAs"
-            matTooltip="Save As"
-            [disabled]="!reportDetails.report"
-          ></button>
+
+          <mat-button-toggle-group class="save-btn-toggle">
+            <mat-button-toggle
+              matTooltip="Save"
+              class="save-button"
+              (click)="saveReport({ saveAs: false })"
+              [disabled]="!reportDetails.report"
+            >
+              <span>Save</span>
+            </mat-button-toggle>
+            <mat-button-toggle
+              *ngIf="reportDetails.report?.id"
+              [disabled]="!reportDetails.report"
+              [matMenuTriggerFor]="menu"
+              class="save-button"
+            >
+              <img
+                src="assets/work-instructions-icons/svg/dropdown.svg"
+                alt=""
+              />
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              matTooltip="Save As"
+              (click)="saveReport({ saveAs: true })"
+            >
+              Save As
+            </button>
+          </mat-menu>
         </div>
       </div>
 

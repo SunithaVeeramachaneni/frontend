@@ -101,13 +101,15 @@
   height: 36px;
 }
 
+.save-btn-toggle {
+  height: 35px;
+  align-items: center;
+  background: #3d5afe;
+}
+
 .save-button {
   background: #3d5afe;
   color: #ffffff;
-  min-width: auto;
-  margin: 0px 3px;
-  padding: 0px 10px 5px 10px;
-  height: 36px;
 }
 
 .no-of-records {
