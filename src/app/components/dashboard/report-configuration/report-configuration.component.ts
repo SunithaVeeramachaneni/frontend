@@ -380,7 +380,7 @@ export class ReportConfigurationComponent implements OnInit {
     }
   };
 
-  saveReport() {
+  saveReport(params) {
     const { id, tableDetails = [] } = this.reportConfiguration;
     const allColumns: Column[] = this.configOptions.allColumns;
     const columnsObj: ColumnObject = allColumns.reduce((acc, val) => {
@@ -400,7 +400,7 @@ export class ReportConfigurationComponent implements OnInit {
     });
 
     this.spinner.show();
-    if (id === undefined) {
+    if (id === undefined || params.saveAs) {
       this.reportConfiguration.createdBy = this.commonService.getUserName();
       this.reportConfigService
         .saveReport$(this.reportConfiguration)

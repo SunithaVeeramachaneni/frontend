@@ -187,7 +187,17 @@
             class="save-button"
             translate="save"
             matTooltip="Save"
-            (click)="saveReport()"
+            (click)="saveReport({ saveAs: false })"
+            [disabled]="!reportDetails.report"
+          ></button>
+          <button
+            *ngIf="reportDetails.report?.id"
+            mat-raised-button
+            color="primary"
+            (click)="saveReport({ saveAs: true })"
+            class="save-button"
+            translate="saveAs"
+            matTooltip="Save As"
             [disabled]="!reportDetails.report"
           ></button>
         </div>
