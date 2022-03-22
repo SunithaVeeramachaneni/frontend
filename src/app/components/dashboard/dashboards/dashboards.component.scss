@@ -10,7 +10,7 @@
     width: 20%;
     height: 100%;
     .dashboard-dropdown {
-      padding: 0px 10px;
+      padding: 7px 10px 0 10px;
     }
     .create-btn-row {
       width: 100%;
@@ -68,15 +68,15 @@
   background: #3f51b5;
   color: #ffff;
 }
+
 .display-flex {
   display: flex;
 }
+
 .default-row {
   align-items: center;
 }
-.w-100 {
-  width: 100%;
-}
+
 .p-10 {
   padding: 3px;
 }
