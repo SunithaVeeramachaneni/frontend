@@ -160,9 +160,9 @@ button:focus {
 
 .no-fav {
   text-align: center;
-  width: 96%;
+  width: 95%;
   background: #f2f2f2;
-  margin: 0 12px;
+  margin: 0 20px;
   border-radius: 5px;
   padding: 10px;
   border: 1px dashed #666;

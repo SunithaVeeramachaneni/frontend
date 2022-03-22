@@ -39,7 +39,7 @@
 }
 
 ::ng-deep .reports-body #matTableMain {
-  height: calc(100vh - 160px) !important;
+  height: calc(100vh - 160px);
 }
 
 .reports-body > div {
@@ -72,28 +72,6 @@
   float: right;
   margin: 8px 10px 0 0;
   cursor: pointer;
-}
-
-::ng-deep .reportsSearch-formfield {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.5em 0px !important;
-    top: -0.5em;
-  }
-
-  .mat-form-field-label-wrapper {
-    margin-top: -0.15em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #ffffff;
-    border-radius: 4px;
-  }
 }
 
 .report-button {
