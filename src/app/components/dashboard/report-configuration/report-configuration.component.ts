@@ -241,7 +241,6 @@ export class ReportConfigurationComponent implements OnInit {
 
   appendChartVariantChanges = (event: ChartVariantChanges) => {
     const { type: eventType, isFormValid } = event;
-    console.log('changed,', event);
     if (isFormValid !== undefined)
       this.isChartVariantApplyDisabled = !isFormValid;
     if (!this.chartVariantChanges[eventType])
