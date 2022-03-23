@@ -1,0 +1,164 @@
+# 1. Run docker compose build
+# 2. Run docker compose up
+
+version: '3.8'
+services:
+  nginx:
+    container_name: nginx-service-local
+    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: .docker/nginx.dockerfile
+    volumes:
+      - ./dist/cwp:/usr/share/nginx/html
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - wi
+      - wi-abap
+      - mcc-spcc-abap
+      - dashboard
+      - data-collector
+    networks:
+      - app-network
+
+  wi:
+    container_name: wi-service-local
+    image: wi-service-local
+    build:
+      context: ${BACKEND_HOME}/WorkInstructions
+      dockerfile: .docker/wi-service.dockerfile
+    volumes:
+      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-service
+      - /usr/src/wi-service/node_modules
+    command: sh -c "cd /usr/src/wi-service && npm i && nodemon server.js"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi-service/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
+      - NODE_ENV=development
+      - DEPLOYMENT_ENV=development
+      - NODE_HEAPDUMP_OPTIONS=nosignal
+      - MONGODB_HOST_NAME=mongo-service-local
+    ports:
+      - '8001:8001'
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  wi-abap:
+    container_name: wi-abap-service-local
+    image: wi-abap-service-local
+    build:
+      context: ${BACKEND_HOME}/WorkInstructions
+      dockerfile: .docker/wi-abap-service.dockerfile
+    volumes:
+      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap-service
+      - /usr/src/wi-abap-service/node_modules
+    command: sh -c "cd /usr/src/wi-abap-service && npm i && nodemon server_abap.js"
+    environment:
+      - NODE_ENV=development
+      - DEPLOYMENT_ENV=development
+      - NODE_HEAPDUMP_OPTIONS=nosignal
+    ports:
+      - '8002:8002'
+    networks:
+      - app-network
+
+  mcc-spcc-abap:
+    container_name: mcc-spcc-abap-service-local
+    image: mcc-spcc-abap-service-local
+    build:
+      context: ${BACKEND_HOME}/MCC_SCC
+      dockerfile: .docker/mcc-spcc-abap-service.dockerfile
+    volumes:
+      - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap-service
+      - /usr/src/mcc-spcc-abap-service/node_modules
+    command: sh -c "cd /usr/src/mcc-spcc-abap-service && npm i && nodemon app.js"
+    environment:
+      - NODE_ENV=development
+      - DEPLOYMENT_ENV=development
+      - NODE_HEAPDUMP_OPTIONS=nosignal
+      - MONGODB_HOST_NAME=mongo-service-local
+      - REDIS_HOST_NAME=redis-service-local
+    ports:
+      - '8003:8003'
+    depends_on:
+      - redis
+      - mongo
+    networks:
+      - app-network
+
+  dashboard:
+    container_name: dashboard-service-local
+    image: dashboard-service-local
+    build:
+      context: ${BACKEND_HOME}/Reports
+      dockerfile: .docker/dashboard-service.dockerfile
+    volumes:
+      - ${BACKEND_HOME}/Reports:/usr/src/dashboard-service
+      - /usr/src/dashboard-service/node_modules
+    command: sh -c "cd /usr/src/dashboard-service && npm i && nodemon server.js"
+    environment:
+      - NODE_ENV=development
+      - DEPLOYMENT_ENV=development
+      - NODE_HEAPDUMP_OPTIONS=nosignal
+      - MONGODB_HOST_NAME=mongo-service-local
+    ports:
+      - '8004:8004'
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  data-collector:
+    container_name: data-collector-service-local
+    image: data-collector-service-local
+    build:
+      context: ${BACKEND_HOME}/DataCollectorService
+      dockerfile: .docker/data-collector-service.dockerfile
+    volumes:
+      - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector-service
+      - /usr/src/data-collector-service/node_modules
+    command: sh -c "cd /usr/src/data-collector-service && npm i && nodemon src/server.js"
+    environment:
+      - NODE_ENV=development
+      - DEPLOYMENT_ENV=development
+      - NODE_HEAPDUMP_OPTIONS=nosignal
+      - MONGODB_HOST_NAME=mongo-service-local
+      - NODE_CONFIG_ENV=development
+    ports:
+      - '8005:8005'
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    container_name: mongo-service-local
+    image: mongo:latest
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: root
+    #  MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodata:/data/db
+      - ./.docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - '27017:27017'
+    networks:
+      - app-network
+
+  redis:
+    container_name: redis-service-local
+    image: redis
+    ports:
+      - '6379:6379'
+    networks:
+      - app-network
+
+volumes:
+  mongodata:
+
+networks:
+  app-network:
+    driver: bridge
