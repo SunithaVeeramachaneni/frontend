@@ -67,10 +67,6 @@ export class ReportsComponent implements OnInit {
     rowLevelActions: {
       menuActions: [
         {
-          title: 'Preview',
-          action: 'preview'
-        },
-        {
           title: 'Edit',
           action: 'edit'
         },

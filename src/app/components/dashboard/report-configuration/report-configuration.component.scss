@@ -142,11 +142,7 @@
 }
 
 .width-95 {
-  width: 95% !important;
-}
-
-.width-100 {
-  width: 100% !important;
+  width: 95%;
 }
 
 .favorite-toggle {
@@ -171,9 +167,9 @@
   background-color: rgba(0, 0, 0, 0.54) !important;
 }
 
-::ng-deep .mat-checkbox-frame {
-  border-width: 2px !important;
-  border-color: #888 !important;
+::ng-deep .report-configuration .mat-checkbox-frame {
+  border-width: 2px;
+  border-color: #6e6f75;
 }
 
 .m-t-5 {
