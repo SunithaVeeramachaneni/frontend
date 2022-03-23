@@ -11,13 +11,13 @@
   <div mat-dialog-content class="dialog-content">
     <mat-form-field
       appearance="outline"
-      class="fullWidth dashboardTitle-formfield"
+      class="width-100 dashboardTitle-formfield"
     >
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" [(ngModel)]="name" />
     </mat-form-field>
     <mat-checkbox
-      class="fullWidth"
+      class="width-100"
       [(ngModel)]="isDefault"
       disabled="{{dialogData.dialogMode ==='EDIT' && dialogData.data.isDefault}}"
       >Set to Default</mat-checkbox

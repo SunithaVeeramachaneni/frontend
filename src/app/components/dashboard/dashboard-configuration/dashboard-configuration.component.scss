@@ -98,14 +98,13 @@
 
 #gridster-container {
   height: 75vh;
-  padding-top: 10px;
-  width: 98%;
 }
 
 ::ng-deep #gridster-container gridster .gridster-column {
   border-left: none;
   border-right: 10px solid white;
   box-sizing: initial;
+  background-color: #eeeeee;
 }
 
 ::ng-deep #gridster-container gridster .gridster-row {
@@ -115,10 +114,8 @@
 }
 
 ::ng-deep #gridster-container gridster {
-  border: 10px solid white;
-  margin: -10px 0px 0px 10px;
-  padding: 0 !important;
-  background-color: #eeeeee;
+  border-bottom: 5px solid white;
+  background-color: #ffffff;
 }
 
 ::ng-deep gridster-item {
@@ -153,4 +150,16 @@
 
 .delete-menu-item {
   color: #f6685e;
+}
+
+.widgets-count {
+  position: relative;
+  right: 15px;
+  top: 18px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.widget-count-text {
+  opacity: 0.6;
 }

@@ -52,7 +52,6 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
   }
 
   pause(): void {
-    console.log('pause');
     this.player.pause();
   }
 

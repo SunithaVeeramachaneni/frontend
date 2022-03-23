@@ -50,6 +50,32 @@
           <mat-form-field appearance="outline" class="width-90">
             <mat-label translate>widgetLabel</mat-label>
             <input type="text" matInput formControlName="widgetName" />
+
+            <mat-error *ngIf="f.widgetName.errors?.required">
+              {{
+                'fieldRequired' | translate: { name: 'widgetLabel' | translate }
+              }}
+            </mat-error>
+            <mat-error *ngIf="f.widgetName.errors?.minlength">
+              {{
+                'fieldMinimumLength'
+                  | translate
+                    : {
+                        name: 'widgetLabel' | translate,
+                        length: f.widgetName.errors?.minlength.requiredLength
+                      }
+              }}
+            </mat-error>
+            <mat-error *ngIf="f.widgetName.errors?.maxlength">
+              {{
+                'fieldMaximumLength'
+                  | translate
+                    : {
+                        name: 'widgetLabel' | translate,
+                        length: f.widgetName.errors?.maxlength.requiredLength
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
           <app-chart-variant
             [report]="selectedReport"
@@ -118,7 +144,9 @@
       mat-raised-button
       color="primary"
       (click)="saveWidget()"
-      [disabled]="!selectedReport || widgetConfigForm.invalid"
+      [disabled]="
+        !selectedReport || widgetConfigForm.invalid || !isChartVarientFormValid
+      "
     >
       Save
     </button>

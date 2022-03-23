@@ -30,4 +30,5 @@ export interface ChartVariantChanges {
     | 'showValues'
     | 'showLegends';
   value: string | boolean | any;
+  isFormValid?: boolean;
 }

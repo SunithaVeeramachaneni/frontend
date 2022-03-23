@@ -14,11 +14,11 @@ html * {
 }
 
 .modal {
-  pointer-events: none !important;
+  pointer-events: none;
 }
 
 .modal-content {
-  pointer-events: all !important;
+  pointer-events: all;
 }
 
 li.breadcrumb-item {
@@ -30,12 +30,8 @@ li.breadcrumb-item {
 }
 
 li.breadcrumb-item.active span {
-  outline: none !important;
+  outline: none;
   border: none;
-}
-
-.navbar-minimized .app-sidebar-nav-dropdown a {
-  padding-left: 15px !important;
 }
 
 .mat-select-panel {
