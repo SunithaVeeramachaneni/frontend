@@ -54,7 +54,7 @@ export class ReportsComponent implements OnInit {
   );
   addReport$: BehaviorSubject<ReportConfiguration> =
     new BehaviorSubject<ReportConfiguration>({} as ReportConfiguration);
-  reduceReportCount$: BehaviorSubject<string> = new BehaviorSubject<string>(
+  changeReportCount$: BehaviorSubject<string> = new BehaviorSubject<string>(
     '' as string
   );
   configOptions: ConfigOptions = {
@@ -120,11 +120,14 @@ export class ReportsComponent implements OnInit {
   fetchReports() {
     this.reportsCount$ = combineLatest([
       this.reportService.getReportsCount$(),
-      this.reduceReportCount$
+      this.changeReportCount$
     ]).pipe(
-      map(([reportsCount, reduceAction]) => {
-        if (reduceAction === 'reduce') {
+      map(([reportsCount, changeCountAction]) => {
+        if (changeCountAction === 'reduce') {
           reportsCount.count = reportsCount.count - 1;
+        }
+        if (changeCountAction === 'increase') {
+          reportsCount.count = reportsCount.count + 1;
         }
         return reportsCount;
       })
@@ -198,15 +201,14 @@ export class ReportsComponent implements OnInit {
 
     this.reports$ = combineLatest([reportsDeleteUpdate$, this.addReport$]).pipe(
       map(([reports, newReportConfiguration]) => {
-        this.skip += 1;
-        let { data = [] } = reports;
-
+        const { data = [] } = reports;
         if (
           !(
             Object.keys(newReportConfiguration).length === 0 &&
             newReportConfiguration.constructor === Object
           )
         ) {
+          this.skip += 1;
           data.unshift(newReportConfiguration);
           this.dataSource = new MatTableDataSource(data);
         }
@@ -249,12 +251,12 @@ export class ReportsComponent implements OnInit {
         groupedWidgets
       }
     });
-    deleteReportRef.afterClosed().subscribe((reportID) => {
-      if (reportID) {
-        this.reportService.deleteReport$(reportID).subscribe((resp) => {
-          this.removeReport(reportID);
+    deleteReportRef.afterClosed().subscribe((deleteReportID) => {
+      if (deleteReportID) {
+        this.reportService.deleteReport$(deleteReportID).subscribe((resp) => {
+          this.removeReport(deleteReportID);
         });
-        this.reduceReportCount$.next('reduce');
+        this.changeReportCount$.next('reduce');
       }
     });
   }
@@ -344,6 +346,7 @@ export class ReportsComponent implements OnInit {
             type: 'success'
           });
         });
+        this.changeReportCount$.next('increase');
         break;
       default:
       // do nothing;
