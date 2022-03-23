@@ -4,11 +4,17 @@ import {
   Inject,
   OnInit
 } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Widget } from 'src/app/interfaces';
 
-export interface WidgetDeleteModalData {
-  widget: Widget;
+export interface ReportData {
+  name: string;
+  //description: string;
 }
 
 @Component({
@@ -18,20 +24,40 @@ export interface WidgetDeleteModalData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportSaveAsModalComponent implements OnInit {
-  widget: Widget;
-
+  reportNameAndDescForm: FormGroup;
   constructor(
     private dialogRef: MatDialogRef<ReportSaveAsModalComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: WidgetDeleteModalData
+    public data: ReportData,
+    private fb: FormBuilder
   ) {}
 
-  ngOnInit(): void {
-    const { widget } = this.data;
-    this.widget = widget;
+  get reportName() {
+    return this.reportNameAndDescForm.get('name');
   }
 
-  deleteWidget = () => {
-    this.dialogRef.close(this.widget.id);
+  get reportDescription() {
+    return this.reportNameAndDescForm.get('description');
+  }
+
+  ngOnInit(): void {
+    this.reportNameAndDescForm = this.fb.group({
+      // reportDescription: new FormControl(''),[
+      //   Validators.required,
+      //   Validators.minLength(3),
+      //   Validators.maxLength(48)
+      // ],
+      name: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(48)
+      ])
+    });
+
+    this.reportName.patchValue(this.data.name);
+  }
+
+  saveAs = () => {
+    this.dialogRef.close(this.reportName.value);
   };
 }

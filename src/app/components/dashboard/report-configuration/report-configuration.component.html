@@ -195,18 +195,20 @@
             translate="cancel"
           ></button>
 
-          <mat-button-toggle-group class="save-btn-toggle">
+          <mat-button-toggle-group class="save-btn-toggle" [disabled]="true">
             <mat-button-toggle
               matTooltip="Save"
               class="save-button"
+              [disabled]="true"
               (click)="saveReport({ saveAs: false })"
-              [disabled]="!reportDetails.report"
+              type="submit"
             >
               <span>Save</span>
             </mat-button-toggle>
             <mat-button-toggle
               *ngIf="reportDetails.report?.id"
-              [disabled]="!reportDetails.report"
+              type="submit"
+              [disabled]="true"
               [matMenuTriggerFor]="menu"
               class="save-button"
             >

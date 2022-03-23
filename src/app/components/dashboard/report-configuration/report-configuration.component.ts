@@ -168,7 +168,6 @@ export class ReportConfigurationComponent implements OnInit {
         pairwise() // gets a pair of old and new value
       )
       .subscribe(([oldValue, newValue]) => {
-        console.log(oldValue, newValue);
         this.reportConfiguration.name = newValue;
         this.undoRedoUtil.WRITE({
           eventType: 'REPORT_TITLE',
@@ -435,9 +434,14 @@ export class ReportConfigurationComponent implements OnInit {
   };
 
   openSaveAsDialog() {
-    const deleteReportRef = this.dialog.open(ReportSaveAsModalComponent, {});
-    deleteReportRef.afterClosed().subscribe((reportID) => {
-      console.log('Report ID is', reportID);
+    const saveAsReportRef = this.dialog.open(ReportSaveAsModalComponent, {
+      data: { name: this.reportName.value }
+    });
+    saveAsReportRef.afterClosed().subscribe((name) => {
+      if (name) {
+        this.reportConfiguration.name = name;
+        this.saveReport({ saveAs: true });
+      }
     });
   }
 

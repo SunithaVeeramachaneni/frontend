@@ -1,12 +1,36 @@
-<div class="widget-delete-modal">
+<div class="widget-delete-modal" [formGroup]="reportNameAndDescForm">
   <p class="title" translate>saveReportAs</p>
-  <input matInput placeholder="Title" />
+  <mat-form-field appearance="outline">
+    <input matInput formControlName="name" />
+    <mat-error *ngIf="reportName.errors?.minlength">
+      {{
+        'fieldMinimumLength'
+          | translate
+            : {
+                name: 'name' | translate,
+                length: reportName.errors?.minlength.requiredLength
+              }
+      }}
+    </mat-error>
+    <mat-error *ngIf="reportName.errors?.maxlength">
+      {{
+        'fieldMaximumLength'
+          | translate
+            : {
+                name: 'name' | translate,
+                length: reportName.errors?.maxlength.requiredLength
+              }
+      }}
+    </mat-error>
+  </mat-form-field>
   <button
     mat-raised-button
     color="warn"
     class="yes-no-btn"
-    (click)="deleteWidget()"
-    translate="yes"
+    type="submit"
+    [disabled]="reportNameAndDescForm.invalid"
+    (click)="saveAs()"
+    translate="save"
   ></button>
   <button
     mat-button
@@ -14,6 +38,6 @@
     class="yes-no-btn"
     autofocus="false"
     mat-dialog-close
-    translate="no"
+    translate="cancel"
   ></button>
 </div>
