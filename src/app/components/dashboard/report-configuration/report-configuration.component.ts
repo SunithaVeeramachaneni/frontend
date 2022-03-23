@@ -48,6 +48,7 @@ export class ReportConfigurationComponent implements OnInit {
   isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
+  isChartVariantApplyDisabled = false;
   reportDetails$: Observable<ReportDetails>;
   dataSource: MatTableDataSource<any>;
   chartVarient: string;
@@ -239,7 +240,10 @@ export class ReportConfigurationComponent implements OnInit {
   }
 
   appendChartVariantChanges = (event: ChartVariantChanges) => {
-    const { type: eventType } = event;
+    const { type: eventType, isFormValid } = event;
+    console.log('changed,', event);
+    if (isFormValid !== undefined)
+      this.isChartVariantApplyDisabled = !isFormValid;
     if (!this.chartVariantChanges[eventType])
       this.chartVariantChanges[eventType] = null;
     this.chartVariantChanges[eventType] = event;
