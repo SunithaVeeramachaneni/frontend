@@ -23,7 +23,7 @@
 
 .content {
   height: 100%;
-  max-height: 95%;
+  max-height: 80%;
 }
 
 .content-div {
@@ -73,4 +73,13 @@
 
 li {
   list-style-type: none;
+}
+
+.footer {
+  border-top: 1px solid #bdbdbd;
+}
+
+.cancel-button {
+  color: #3d5afe;
+  margin-right: 10px;
 }
