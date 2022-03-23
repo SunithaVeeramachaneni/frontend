@@ -184,6 +184,28 @@
   white-space: nowrap;
 }
 
+.settings-modal {
+  background: white;
+  border: 1ps solid gray;
+  border: 1px solid gray;
+  padding: 15px;
+  position: absolute;
+  width: 290px;
+  right: 400px;
+  top: -25px;
+}
+.settings-icon {
+  top: 150px;
+  right: 10px;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.yes-no-btn {
+  float: right;
+}
+
 .m-t-14 {
   margin-top: 14px;
 }
