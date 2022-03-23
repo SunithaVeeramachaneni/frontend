@@ -194,7 +194,12 @@
             *ngIf="reportDetails.report?.id"
             mat-raised-button
             color="primary"
-            (click)="saveReport({ saveAs: true })"
+            (click)="
+              openSaveAsDialog(
+                reportDetails.report.name,
+                reportDetails.report.description
+              )
+            "
             class="save-button"
             translate="saveAs"
             matTooltip="Save As"

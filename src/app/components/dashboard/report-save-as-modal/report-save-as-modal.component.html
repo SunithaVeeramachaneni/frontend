@@ -1,0 +1,22 @@
+<div class="widget-delete-modal">
+  <p class="title" translate>deleteWidgetHeader</p>
+  <p translate>
+    deleteWidgetConfirmation <b>{{ widget.name }}</b
+    >?
+  </p>
+  <button
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="deleteWidget()"
+    translate="yes"
+  ></button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    translate="no"
+  ></button>
+</div>

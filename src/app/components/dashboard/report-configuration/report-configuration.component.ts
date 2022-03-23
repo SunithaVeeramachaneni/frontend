@@ -7,6 +7,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import {
@@ -35,6 +36,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
 import { UndoRedoUtil } from '../../../shared/utils/UndoRedoUtil';
 import { DynamictableFilterService } from '@innovapptive.com/dynamictable';
 import { downloadFile } from '../../../shared/utils/fileUtils';
+import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
 
 @Component({
   selector: 'app-report-configuration',
@@ -120,7 +122,8 @@ export class ReportConfigurationComponent implements OnInit {
     private toast: ToastService,
     private commonService: CommonService,
     private route: ActivatedRoute,
-    private dynamictableFilterService: DynamictableFilterService
+    private dynamictableFilterService: DynamictableFilterService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -379,6 +382,17 @@ export class ReportConfigurationComponent implements OnInit {
       this.reportConfiguration.name = operation.currentValue;
     }
   };
+
+  openSaveAsDialog(name, description = '') {
+    const deleteReportRef = this.dialog.open(ReportSaveAsModalComponent, {
+      data: {
+        name
+      }
+    });
+    deleteReportRef.afterClosed().subscribe((reportID) => {
+      console.log('Report ID is', reportID);
+    });
+  }
 
   saveReport(params) {
     const { id, tableDetails = [] } = this.reportConfiguration;
