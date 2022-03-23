@@ -5,11 +5,24 @@ import {
   OnInit
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import {
   AppChartConfig,
   AppChartData,
@@ -48,6 +61,7 @@ export class ReportConfigurationComponent implements OnInit {
   headerTitle = 'Dashboard';
   disableReportName = true;
   isPopoverOpen = false;
+  reportNameAndDescForm: FormGroup;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   reportDetails$: Observable<ReportDetails>;
@@ -79,7 +93,6 @@ export class ReportConfigurationComponent implements OnInit {
   searchKey = '';
   limit = defaultLimit;
   reportConfiguration: ReportConfiguration;
-  reportTitle: string;
   reportDefinitionNameOrId: string;
   reportDetailsUrlString: string;
   reportDataCountUrlString: string;
@@ -123,10 +136,48 @@ export class ReportConfigurationComponent implements OnInit {
     private commonService: CommonService,
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private fb: FormBuilder
   ) {}
 
+  get reportName() {
+    return this.reportNameAndDescForm.get('name');
+  }
+
+  get reportDescription() {
+    return this.reportNameAndDescForm.get('description');
+  }
+
   ngOnInit() {
+    this.reportNameAndDescForm = this.fb.group({
+      // reportDescription: new FormControl(''),[
+      //   Validators.required,
+      //   Validators.minLength(3),
+      //   Validators.maxLength(48)
+      // ],
+      name: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(48)
+      ])
+    });
+
+    this.reportName.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        pairwise() // gets a pair of old and new value
+      )
+      .subscribe(([oldValue, newValue]) => {
+        console.log(oldValue, newValue);
+        this.reportConfiguration.name = newValue;
+        this.undoRedoUtil.WRITE({
+          eventType: 'REPORT_TITLE',
+          currentValue: newValue,
+          prevValue: oldValue
+        });
+        this.reportName.patchValue(newValue);
+      });
+
     this.undoRedoUtil = new UndoRedoUtil();
     this.commonService.minimizeSidebar(true);
 
@@ -189,7 +240,7 @@ export class ReportConfigurationComponent implements OnInit {
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
-          this.reportTitle = this.reportConfiguration.name;
+          this.reportName.patchValue(this.reportConfiguration.name);
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
@@ -542,14 +593,15 @@ export class ReportConfigurationComponent implements OnInit {
     });
   };
 
-  reportTitleChanged = (reportTitle: string) => {
-    this.undoRedoUtil.WRITE({
-      eventType: 'REPORT_TITLE',
-      currentValue: reportTitle,
-      prevValue: this.reportTitle
-    });
-    this.reportTitle = reportTitle;
-  };
+  // reportTitleChanged = () => {
+  //   const currentValue = this.reportNameAndDescForm.get('name').value;
+  //   this.undoRedoUtil.WRITE({
+  //     eventType: 'REPORT_TITLE',
+  //     currentValue,
+  //     prevValue: this.reportTitle
+  //   });
+  //   this.reportTitle = currentValue;
+  // };
 
   downloadReport = (event: Event) => {
     event.stopPropagation();

@@ -56,5 +56,6 @@
   "fieldRequired": "{name} is required",
   "fieldMinimumLength": "{name} must be at least {length} characters",
   "fieldMaximumLength": "{name} must be at the max of {length} characters",
-  "title": "Title"
+  "title": "Title",
+  "saveReportAs": "Save Report As"
 }

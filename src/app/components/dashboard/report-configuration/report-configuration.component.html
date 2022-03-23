@@ -1,7 +1,7 @@
 <div class="header">
   <app-header [title]="headerTitle"></app-header>
 </div>
-<div class="report-configuration">
+<div class="report-configuration" [formGroup]="reportNameAndDescForm">
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -21,7 +21,6 @@
             <input
               *ngIf="!reportDetails.report"
               matInput
-              [(ngModel)]="dummy"
               [disabled]="disableReportName"
               (keyup.enter)="disableReportName = true"
               (blur)="disableReportName = true"
@@ -29,17 +28,31 @@
             <input
               *ngIf="reportDetails.report"
               matInput
-              [(ngModel)]="reportDetails.report.name"
+              formControlName="name"
               [disabled]="disableReportName"
-              (keyup.enter)="
-                disableReportName = true;
-                reportTitleChanged(reportDetails.report.name)
-              "
-              (blur)="
-                disableReportName = true;
-                reportTitleChanged(reportDetails.report.name)
-              "
+              (keyup.enter)="disableReportName = true"
+              (blur)="disableReportName = true"
             />
+            <mat-error *ngIf="reportName.errors?.minlength">
+              {{
+                'fieldMinimumLength'
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: reportName.errors?.minlength.requiredLength
+                      }
+              }}
+            </mat-error>
+            <mat-error *ngIf="reportName.errors?.maxlength">
+              {{
+                'fieldMaximumLength'
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: reportName.errors?.maxlength.requiredLength
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -155,7 +168,7 @@
             color="primary"
             matTooltip="Preview"
             class="report-button"
-            disabled
+            [disabled]="true"
           >
             <img src="assets/dashboard-icons/preview.svg" />
           </button>
