@@ -383,12 +383,8 @@ export class ReportConfigurationComponent implements OnInit {
     }
   };
 
-  openSaveAsDialog(name, description = '') {
-    const deleteReportRef = this.dialog.open(ReportSaveAsModalComponent, {
-      data: {
-        name
-      }
-    });
+  openSaveAsDialog() {
+    const deleteReportRef = this.dialog.open(ReportSaveAsModalComponent, {});
     deleteReportRef.afterClosed().subscribe((reportID) => {
       console.log('Report ID is', reportID);
     });
