@@ -19,6 +19,7 @@
   color: #25282b;
   margin-top: 10px;
   margin-bottom: 10px;
+  padding: 0;
 }
 
 .mat-tab-label-container .mat-tab-list .mat-tab-labels .mat-tab-label {

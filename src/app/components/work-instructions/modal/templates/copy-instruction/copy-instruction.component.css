@@ -181,7 +181,7 @@
 .coverImg {
   width: 48px;
   height: 48px;
-  max-width: none !important;
+  max-width: none;
 }
 
 .fav-icon {
@@ -250,7 +250,7 @@
 
 .t-minus-5 {
   position: relative;
-  top: -5px !important;
+  top: -5px;
 }
 .dropdown-item {
   border-bottom: none;
@@ -348,11 +348,11 @@
     calc(100% - 14px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
   background-size: 5px 5px, 5px 5px, 1px 1.5em;
   background-repeat: no-repeat;
-  margin-left: 25px !important;
+  margin-left: 25px;
 }
 
 .custom-modal-card {
-  width: 550px !important;
+  width: 550px;
 }
 
 :host /deep/ .modal-body .mat-tab-label {
@@ -384,14 +384,14 @@
 }
 .copy-ins-coverimages {
   width: 60px;
-  padding-right: 15px !important;
-  padding-left: 15px !important;
+  padding-right: 15px;
+  padding-left: 15px;
 }
 
 h5.modal-title {
   font-style: normal;
-  font-weight: 600 !important;
-  font-size: 14px !important;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 21px;
   color: rgb(37, 40, 43);
   margin-top: 0;

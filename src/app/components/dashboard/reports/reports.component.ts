@@ -5,7 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, startWith, switchMap, tap } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
 import {
   Count,
@@ -23,6 +23,9 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportDeleteModalComponent } from '../report-delete-modal/report-delete-modal.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastService } from 'src/app/shared/toast';
+import { routingUrls } from 'src/app/app.constants';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-reports',
@@ -31,6 +34,10 @@ import { ToastService } from 'src/app/shared/toast';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit {
+  currentRouteUrl$: Observable<string>;
+  headerTitle$: Observable<string>;
+  readonly routingUrls = routingUrls;
+
   selectedReportSegmentControl = new FormControl('all');
   selectedReportSegment$ = this.selectedReportSegmentControl.valueChanges.pipe(
     startWith('all')
@@ -45,6 +52,8 @@ export class ReportsComponent implements OnInit {
   removeReport$: BehaviorSubject<string> = new BehaviorSubject<string>(
     '' as string
   );
+  addReport$: BehaviorSubject<ReportConfiguration> =
+    new BehaviorSubject<ReportConfiguration>({} as ReportConfiguration);
   reduceReportCount$: BehaviorSubject<string> = new BehaviorSubject<string>(
     '' as string
   );
@@ -57,10 +66,6 @@ export class ReportsComponent implements OnInit {
     displayActionsColumn: true,
     rowLevelActions: {
       menuActions: [
-        {
-          title: 'Preview',
-          action: 'preview'
-        },
         {
           title: 'Edit',
           action: 'edit'
@@ -107,7 +112,9 @@ export class ReportsComponent implements OnInit {
     public dialog: MatDialog,
     private reportService: ReportService,
     private reportConfigService: ReportConfigurationService,
-    private router: Router
+    private router: Router,
+    private commonService: CommonService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   fetchReports() {
@@ -147,7 +154,7 @@ export class ReportsComponent implements OnInit {
       })
     );
 
-    this.reports$ = combineLatest([
+    const reportsScrollUpdate$ = combineLatest([
       this.reportsInitial$,
       this.reportsOnScroll$
     ]).pipe(
@@ -170,7 +177,10 @@ export class ReportsComponent implements OnInit {
       })
     );
 
-    this.reports$ = combineLatest([this.reports$, this.removeReport$]).pipe(
+    const reportsDeleteUpdate$ = combineLatest([
+      reportsScrollUpdate$,
+      this.removeReport$
+    ]).pipe(
       map(([reports, deleteReportID]) => {
         const { data = [] } = reports;
         if (deleteReportID) {
@@ -185,9 +195,42 @@ export class ReportsComponent implements OnInit {
         return { ...reports, data };
       })
     );
+
+    this.reports$ = combineLatest([reportsDeleteUpdate$, this.addReport$]).pipe(
+      map(([reports, newReportConfiguration]) => {
+        this.skip += 1;
+        let { data = [] } = reports;
+
+        if (
+          !(
+            Object.keys(newReportConfiguration).length === 0 &&
+            newReportConfiguration.constructor === Object
+          )
+        ) {
+          data.unshift(newReportConfiguration);
+          this.dataSource = new MatTableDataSource(data);
+        }
+        return { ...reports, data };
+      })
+    );
   }
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap((currentRouteUrl) => {
+        this.commonService.setHeaderTitle(routingUrls.reports.title);
+        if (currentRouteUrl === routingUrls.reports.url) {
+          this.breadcrumbService.set(routingUrls.reports.url, {
+            skip: false
+          });
+        } else {
+          this.breadcrumbService.set(routingUrls.reports.url, {
+            skip: false
+          });
+        }
+      })
+    );
+    this.headerTitle$ = this.commonService.headerTitleAction$;
     this.fetchReports();
   }
 
@@ -209,7 +252,7 @@ export class ReportsComponent implements OnInit {
     deleteReportRef.afterClosed().subscribe((reportID) => {
       if (reportID) {
         this.reportService.deleteReport$(reportID).subscribe((resp) => {
-          this.removeRow(reportID);
+          this.removeReport(reportID);
         });
         this.reduceReportCount$.next('reduce');
       }
@@ -228,9 +271,14 @@ export class ReportsComponent implements OnInit {
     this.fetchData$.next(event);
   }
 
-  removeRow(id: string) {
+  removeReport(id: string) {
     this.removeReport$.next(id);
     this.removeReport$.next('');
+  }
+
+  addReport(report: ReportConfiguration) {
+    this.addReport$.next(report);
+    this.addReport$.next({} as ReportConfiguration);
   }
 
   rowLevelActionHandler(event: ReportsRowActionEvent) {
@@ -238,6 +286,7 @@ export class ReportsComponent implements OnInit {
       action,
       data: { id, name, isFavorite }
     } = event;
+    let report;
     switch (action) {
       case 'edit':
         this.router.navigate(['dashboard/reports/editreport', id]);
@@ -252,7 +301,7 @@ export class ReportsComponent implements OnInit {
           .updateReport$({ id, isFavorite: !isFavorite } as ReportConfiguration)
           .subscribe();
         if (this.selectedReportSegmentControl.value === 'favorite') {
-          this.removeRow(id);
+          this.removeReport(id);
         }
         break;
       case 'export':
@@ -260,7 +309,7 @@ export class ReportsComponent implements OnInit {
           displayToast: true,
           failureResponse: 'throwError'
         };
-        const report = event.data;
+        report = event.data;
         if (!report.id) {
           return;
         }
@@ -284,6 +333,17 @@ export class ReportsComponent implements OnInit {
               this.snackBar.dismiss();
             }
           );
+        break;
+      case 'copy':
+        report = event.data;
+
+        this.reportService.copyReport$(report).subscribe((res) => {
+          this.addReport(res);
+          this.toast.show({
+            text: 'Report copied successfully',
+            type: 'success'
+          });
+        });
         break;
       default:
       // do nothing;

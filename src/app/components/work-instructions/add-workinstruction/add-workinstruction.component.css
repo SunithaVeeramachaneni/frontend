@@ -72,16 +72,12 @@ input[type='text']:focus {
 }
 
 .wi_title_input {
-  /* border: 3px solid lightblue; */
   border: none;
   cursor: pointer;
   width: 100%;
-  background: none !important;
+  background: none;
   font-size: 22px;
-
   font-weight: 500;
-  /* overflow: hidden; */
-  /*text-overflow: ellipsis; */
 }
 
 .wi-status-container ul.wi-status li:first-child {
@@ -108,7 +104,7 @@ input[type='text']:focus {
 }
 
 .mat-tab-body {
-  padding: 10px !important;
+  padding: 10px;
 }
 
 .success-msg {
@@ -138,8 +134,9 @@ input[type='text']:focus {
   position: relative;
   left: -8px;
   top: 18px;
-  color: #dc3545 !important;
-  font-size: 14px;
+  color: #dc3545;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .wi-title-info-created {
@@ -204,10 +201,6 @@ input[type='text']:focus {
   position: relative;
   left: 3px;
   /* top: 2px; */
-}
-
-.mat-raised-button:not([class*='mat-elevation-z']) {
-  box-shadow: none !important;
 }
 
 .width {

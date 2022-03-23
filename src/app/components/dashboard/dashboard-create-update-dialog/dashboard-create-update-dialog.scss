@@ -5,9 +5,7 @@
 ::ng-deep .mat-dialog-container {
   padding: 0 !important;
 }
-.fullWidth {
-  width: 100% !important;
-}
+
 .dialog-head {
   display: flex;
   flex-direction: row;
@@ -48,7 +46,7 @@
 
 ::ng-deep .dashboardTitle-formfield {
   .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.5em 0px !important;
+    padding: 0.2em 0px 0.5em 0px;
   }
 
   .mat-form-field-label-wrapper {
