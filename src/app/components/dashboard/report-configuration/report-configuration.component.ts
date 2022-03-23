@@ -35,6 +35,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
 import { UndoRedoUtil } from '../../../shared/utils/UndoRedoUtil';
 import { DynamictableFilterService } from '@innovapptive.com/dynamictable';
 import { downloadFile } from '../../../shared/utils/fileUtils';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-report-configuration',
@@ -43,7 +44,6 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportConfigurationComponent implements OnInit {
-  headerTitle = 'Dashboard';
   disableReportName = true;
   isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
@@ -120,7 +120,8 @@ export class ReportConfigurationComponent implements OnInit {
     private toast: ToastService,
     private commonService: CommonService,
     private route: ActivatedRoute,
-    private dynamictableFilterService: DynamictableFilterService
+    private dynamictableFilterService: DynamictableFilterService,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   ngOnInit() {
@@ -178,15 +179,23 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$
+      this.reportDetailsOnScroll$,
+      this.commonService.currentRouteUrlAction$
     ]).pipe(
-      map(([loadFilter, scroll]) => {
+      map(([loadFilter, scroll, currentRouteUrl]) => {
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
           this.reportTitle = this.reportConfiguration.name;
+          this.breadcrumbService.set(currentRouteUrl, {
+            label:
+              this.reportConfiguration && this.reportConfiguration.id
+                ? this.reportTitle
+                : `${this.reportTitle} *`
+          });
+
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
