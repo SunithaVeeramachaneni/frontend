@@ -29,10 +29,12 @@
   position: absolute;
   right: -30px;
 }
+
 .add-step-btn button {
   text-transform: uppercase;
   position: absolute;
   right: 10px;
+  border: 1px solid #1351d8;
 }
 
 .add-step-btn button:hover {
@@ -128,7 +130,9 @@ input:focus {
   margin-right: 30px;
   width: 160px;
   height: 36px;
+  border: 1px solid #1351d8;
 }
+
 .header-add-step-text {
   /* position: relative; */
   top: 1px;

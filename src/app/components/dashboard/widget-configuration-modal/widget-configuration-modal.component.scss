@@ -97,14 +97,14 @@
 }
 
 ::ng-deep .widget-config-modal .tableColumns {
-  height: auto !important;
+  height: auto;
 }
 
 ::ng-deep .widget-config-modal .mat-table {
   height: 285px !important;
 }
 
-::ng-deep .table-filter-panel {
+::ng-deep .widget-config-modal .table-filter-panel {
   overflow-y: scroll;
   height: 150px;
 }

@@ -50,6 +50,7 @@ import { UndoRedoUtil } from '../../../shared/utils/UndoRedoUtil';
 import { DynamictableFilterService } from '@innovapptive.com/dynamictable';
 import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-report-configuration',
@@ -58,12 +59,12 @@ import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportConfigurationComponent implements OnInit {
-  headerTitle = 'Dashboard';
   disableReportName = true;
   isPopoverOpen = false;
   reportNameAndDescForm: FormGroup;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
+  isChartVariantApplyDisabled = false;
   reportDetails$: Observable<ReportDetails>;
   dataSource: MatTableDataSource<any>;
   chartVarient: string;
@@ -137,7 +138,8 @@ export class ReportConfigurationComponent implements OnInit {
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService,
     public dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private breadcrumbService: BreadcrumbService
   ) {}
 
   get reportName() {
@@ -231,15 +233,23 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$
+      this.reportDetailsOnScroll$,
+      this.commonService.currentRouteUrlAction$
     ]).pipe(
-      map(([loadFilter, scroll]) => {
+      map(([loadFilter, scroll, currentRouteUrl]) => {
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
           this.reportName.patchValue(this.reportConfiguration.name);
+          this.breadcrumbService.set(currentRouteUrl, {
+            label:
+              this.reportConfiguration && this.reportConfiguration.id
+                ? this.reportName.value
+                : `${this.reportName.value} *`
+          });
+
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
@@ -283,7 +293,9 @@ export class ReportConfigurationComponent implements OnInit {
   }
 
   appendChartVariantChanges = (event: ChartVariantChanges) => {
-    const { type: eventType } = event;
+    const { type: eventType, isFormValid } = event;
+    if (isFormValid !== undefined)
+      this.isChartVariantApplyDisabled = !isFormValid;
     if (!this.chartVariantChanges[eventType])
       this.chartVariantChanges[eventType] = null;
     this.chartVariantChanges[eventType] = event;

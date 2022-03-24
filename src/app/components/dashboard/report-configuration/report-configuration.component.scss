@@ -164,11 +164,7 @@
 }
 
 .width-95 {
-  width: 95% !important;
-}
-
-.width-100 {
-  width: 100% !important;
+  width: 95%;
 }
 
 .report-name-error {
@@ -198,9 +194,9 @@
   background-color: rgba(0, 0, 0, 0.54) !important;
 }
 
-::ng-deep .mat-checkbox-frame {
-  border-width: 2px !important;
-  border-color: #888 !important;
+::ng-deep .report-configuration .mat-checkbox-frame {
+  border-width: 2px;
+  border-color: #6e6f75;
 }
 
 .m-t-5 {
@@ -213,6 +209,28 @@
 
 .no-wrap {
   white-space: nowrap;
+}
+
+.settings-modal {
+  background: white;
+  border: 1ps solid gray;
+  border: 1px solid gray;
+  padding: 15px;
+  position: absolute;
+  width: 290px;
+  right: 400px;
+  top: -25px;
+}
+.settings-icon {
+  top: 150px;
+  right: 10px;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.yes-no-btn {
+  float: right;
 }
 
 .m-t-14 {

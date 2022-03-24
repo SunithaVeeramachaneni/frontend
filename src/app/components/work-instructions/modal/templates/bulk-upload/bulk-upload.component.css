@@ -25,7 +25,7 @@ ul.bulk-upload-instructions-list li {
 }
 
 .custom-modal-card {
-  width: 400px !important;
+  width: 400px;
   background-color: #ffffff;
 }
 .building-wi {

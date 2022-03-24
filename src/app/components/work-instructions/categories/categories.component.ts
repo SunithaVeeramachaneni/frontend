@@ -138,6 +138,8 @@ export class CategoriesComponent
               : categories[catCnt].Created_At;
           this.categoriesList.push(this.categoryDetail);
           this.isCategoriesLoading = false;
+        } else {
+          this.isCategoriesLoading = false;
         }
       }
 
