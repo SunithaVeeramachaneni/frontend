@@ -8,8 +8,8 @@
   >
     <div class="column1">
       <div class="report-name-col dis-flex">
-        <div class="width-95 m-t-14">
-          <mat-form-field appearance="outline" class="m-r-10 width-100">
+        <div class="width-100 m-t-14">
+          <mat-form-field appearance="outline" class="width-100">
             <mat-label translate>reportName</mat-label>
             <mat-icon
               matSuffix
@@ -33,7 +33,10 @@
               (keyup.enter)="disableReportName = true"
               (blur)="disableReportName = true"
             />
-            <mat-error *ngIf="reportName.errors?.minlength">
+            <mat-error
+              *ngIf="reportName.errors?.minlength"
+              class="report-name-error"
+            >
               {{
                 'fieldMinimumLength'
                   | translate
@@ -195,34 +198,43 @@
             translate="cancel"
           ></button>
 
-          <mat-button-toggle-group class="save-btn-toggle" [disabled]="true">
+          <mat-button-toggle-group class="save-btn-toggle">
             <mat-button-toggle
+              *ngIf="reportDetails.report?.id"
               matTooltip="Save"
               class="save-button"
-              [disabled]="true"
-              (click)="saveReport({ saveAs: false })"
-              type="submit"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
+              (click)="
+                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                  saveReport({ saveAs: false })
+              "
             >
               <span>Save</span>
             </mat-button-toggle>
             <mat-button-toggle
               *ngIf="reportDetails.report?.id"
-              type="submit"
-              [disabled]="true"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
               [matMenuTriggerFor]="menu"
-              class="save-button"
+              class="save-button-arrow"
             >
-              <img
-                src="assets/work-instructions-icons/svg/dropdown.svg"
-                alt=""
-              />
+              <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
           <mat-menu #menu="matMenu">
             <button
               mat-menu-item
               matTooltip="Save As"
-              (click)="openSaveAsDialog()"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
+              (click)="
+                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                  openSaveAsDialog()
+              "
             >
               Save As
             </button>

@@ -104,12 +104,32 @@
 .save-btn-toggle {
   height: 35px;
   align-items: center;
-  background: #3d5afe;
+  cursor: pointer;
+  margin-right: 20px;
 }
 
 .save-button {
   background: #3d5afe;
   color: #ffffff;
+  cursor: pointer;
+}
+
+.save-button-arrow {
+  width: 30px;
+  background: #3d5afe;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  position: relative;
+  right: 8px;
+}
+
+::ng-deep .mat-button-toggle-disabled .mat-button-toggle-button {
+  cursor: default;
+  background: #e0e0e0;
+  color: #bdbdbd;
 }
 
 .no-of-records {
@@ -151,9 +171,14 @@
   width: 100% !important;
 }
 
+.report-name-error {
+  white-space: nowrap;
+  margin-top: 7px;
+}
+
 .favorite-toggle {
   margin-top: 25px;
-  margin-left: 12px;
+  margin-left: 5px;
 }
 
 .chart-wrapper {
