@@ -14,9 +14,17 @@ Open Terminal
 
 Open another Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\local.env build
 
 > docker compose --env-file .docker\env\local.env up
+
+Linux
+
+> docker compose --env-file .docker/env/local.env build
+
+> docker compose --env-file .docker/env/local.env up
 
 Access the application using `http://localhost:4200`. This will be served from angular development server.
 
@@ -30,9 +38,17 @@ Open Terminal
 
 Open another Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\local.env build
 
 > docker compose --env-file .docker\env\local.env up
+
+Linux
+
+> docker compose --env-file .docker/env/local.env build
+
+> docker compose --env-file .docker/env/local.env up
 
 Access the application using `http://localhost`. This will be served from nginx service running in docker.
 
@@ -44,9 +60,17 @@ Run the following commads from CWP HOME
 
 Open Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\development.env -f docker-compose.deployment.yml build
 
 > docker compose --env-file .docker\env\development.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/development.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/development.env -f docker-compose.deployment.yml up -d
 
 ## To deploy application in testing server using docker
 
@@ -56,9 +80,17 @@ Run the following commads from CWP HOME
 
 Open Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\testing.env -f docker-compose.deployment.yml build
 
 > docker compose --env-file .docker\env\testing.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/testing.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/testing.env -f docker-compose.deployment.yml up -d
 
 ## To deploy application in staging server using docker
 
@@ -68,9 +100,17 @@ Run the following commads from CWP HOME
 
 Open Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\staging.env -f docker-compose.deployment.yml build
 
 > docker compose --env-file .docker\env\staging.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/staging.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/staging.env -f docker-compose.deployment.yml up -d
 
 ## To deploy application in production server using docker
 
@@ -80,6 +120,14 @@ Run the following commads from CWP HOME
 
 Open Terminal
 
+Windows
+
 > docker compose --env-file .docker\env\production.env -f docker-compose.deployment.yml build
 
 > docker compose --env-file .docker\env\production.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/production.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/production.env -f docker-compose.deployment.yml up -d
