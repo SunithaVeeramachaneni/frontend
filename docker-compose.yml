@@ -124,7 +124,6 @@ services:
     environment:
       - NODE_ENV=development
       - DEPLOYMENT_ENV=development
-      - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-service-local
       - NODE_CONFIG_ENV=development
     ports:
