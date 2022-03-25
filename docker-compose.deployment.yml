@@ -107,7 +107,6 @@ services:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - MONGODB_HOST_NAME=10.0.0.27
-      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8005:8005'
     networks:

@@ -125,7 +125,6 @@ services:
       - NODE_ENV=development
       - DEPLOYMENT_ENV=development
       - MONGODB_HOST_NAME=mongo-service-local
-      - NODE_CONFIG_ENV=development
     ports:
       - '8005:8005'
     depends_on:
