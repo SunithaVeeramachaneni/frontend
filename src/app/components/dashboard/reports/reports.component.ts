@@ -67,6 +67,10 @@ export class ReportsComponent implements OnInit {
     rowLevelActions: {
       menuActions: [
         {
+          title: 'Preview',
+          action: 'preview'
+        },
+        {
           title: 'Edit',
           action: 'edit'
         },
@@ -290,6 +294,11 @@ export class ReportsComponent implements OnInit {
     } = event;
     let report;
     switch (action) {
+      case 'preview':
+        this.router.navigate(['dashboard/reports/editreport', id], {
+          queryParams: { preview: true }
+        });
+        break;
       case 'edit':
         this.router.navigate(['dashboard/reports/editreport', id]);
         break;

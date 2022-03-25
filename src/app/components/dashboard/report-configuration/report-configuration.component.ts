@@ -107,10 +107,10 @@ export class ReportConfigurationComponent implements OnInit {
   );
   chartData$: Observable<AppChartData[]>;
   reportColumns: TableColumn[] = [];
-
   undoRedoUtil: any;
   subscription: any;
   isExportInProgress = false;
+  showPreview = false;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -132,11 +132,13 @@ export class ReportConfigurationComponent implements OnInit {
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
       this.filtersApplied$,
-      this.route.params
+      this.route.params,
+      this.route.queryParams
     ]).pipe(
-      map(([reportDefinition, filtersApplied, params]) => {
+      map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
+        this.showPreview = queryParams.preview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();
@@ -584,6 +586,10 @@ export class ReportConfigurationComponent implements OnInit {
   toggleChart = () => {
     this.reportConfiguration.showChart = !this.reportConfiguration.showChart;
     this.updateChartConfig(this.reportConfiguration.showChart, true, false);
+  };
+
+  togglePreview = () => {
+    this.showPreview = !this.showPreview;
   };
 
   updateChartConfig = (

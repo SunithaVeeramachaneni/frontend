@@ -3,7 +3,10 @@
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
   >
-    <div class="column1">
+    <div
+      class="column1"
+      [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
+    >
       <div class="report-name-col dis-flex">
         <div class="width-95 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
@@ -62,7 +65,7 @@
         </cwp-table-filter-panel>
       </div>
     </div>
-    <div class="column2">
+    <div class="column2" [ngStyle]="{ width: showPreview ? '98.8%' : '77%' }">
       <div class="dis-flex">
         <div class="width-50">
           <app-common-filter
@@ -122,7 +125,7 @@
           <button
             mat-stroked-button
             color="primary"
-            class="hide-chart-btn"
+            class="highlight-btn"
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
@@ -152,7 +155,8 @@
             color="primary"
             matTooltip="Preview"
             class="report-button"
-            disabled
+            [ngClass]="{ 'highlight-btn': showPreview }"
+            (click)="togglePreview()"
           >
             <img src="assets/dashboard-icons/preview.svg" />
           </button>
