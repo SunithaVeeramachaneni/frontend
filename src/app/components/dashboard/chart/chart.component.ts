@@ -40,6 +40,9 @@ export class ChartComponent {
     maintainAspectRatio: false,
     layout: {
       padding: {
+        left: 10,
+        right: 50,
+        top: 10,
         bottom: 10
       }
     },
@@ -140,6 +143,7 @@ export class ChartComponent {
       this.chartOptions.plugins.datalabels.display = showValues
         ? 'auto'
         : false;
+      this.chartOptions.plugins.datalabels.align = 'end';
       this.preparedChartData = this.prepareChartData();
 
       switch (type) {
@@ -158,6 +162,11 @@ export class ChartComponent {
             this.chartOptions.scales['y']['title']['text'] =
               this.datasetField.displayName;
           }
+
+          if (type === 'line') {
+            this.chartOptions.plugins.datalabels.align = 'right';
+          }
+
           break;
 
         case 'pie':
@@ -187,7 +196,7 @@ export class ChartComponent {
     const sortedObject = Object.keys(reducedObject)
       .sort()
       .reduce((acc, val) => {
-        acc[val] = reducedObject[val];
+        acc[val] = +reducedObject[val].toFixed(2);
         return acc;
       }, {});
 

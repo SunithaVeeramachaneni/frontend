@@ -22,14 +22,19 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/plyr/dist/plyr.css",
               "src/scss/style.scss",
               "node_modules/ngx-spinner/animations/ball-clip-rotate-pulse.css"
             ],
-            "scripts": ["node_modules/popper.js/dist/umd/popper.min.js"],
+            "scripts": [
+              "node_modules/popper.js/dist/umd/popper.min.js"
+            ],
             "aot": false,
             "vendorChunk": true,
             "extractLicenses": false,
@@ -48,7 +53,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
+                  "with": "src/environments/environment.development.ts"
                 }
               ],
               "aot": false,
@@ -63,7 +68,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
               "optimization": true,
@@ -82,11 +87,11 @@
                 }
               ]
             },
-            "qa": {
+            "testing": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.qa.ts"
+                  "with": "src/environments/environment.testing.ts"
                 }
               ],
               "optimization": true,
@@ -105,11 +110,11 @@
                 }
               ]
             },
-            "qaauto": {
+            "staging": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.qaauto.ts"
+                  "with": "src/environments/environment.staging.ts"
                 }
               ],
               "optimization": true,
@@ -145,11 +150,11 @@
             "production": {
               "browserTarget": "app:build:production"
             },
-            "qa": {
-              "browserTarget": "app:build:qa"
+            "testing": {
+              "browserTarget": "app:build:testing"
             },
-            "qaauto": {
-              "browserTarget": "app:build:qaauto"
+            "staging": {
+              "browserTarget": "app:build:staging"
             },
             "ci": {
               "progress": false
@@ -174,8 +179,13 @@
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/ngx-spinner/animations/ball-clip-rotate-pulse.css"
             ],
-            "scripts": ["node_modules/popper.js/dist/umd/popper.min.js"],
-            "assets": ["src/favicon.ico", "src/assets"]
+            "scripts": [
+              "node_modules/popper.js/dist/umd/popper.min.js"
+            ],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ]
           },
           "configurations": {
             "ci": {
@@ -187,7 +197,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
         "e2e": {
@@ -203,11 +216,11 @@
             "production": {
               "devServerTarget": "app:serve:production"
             },
-            "qa": {
-              "devServerTarget": "app:serve:qa"
+            "testing": {
+              "devServerTarget": "app:serve:testing"
             },
-            "qaauto": {
-              "devServerTarget": "app:serve:qaauto"
+            "staging": {
+              "devServerTarget": "app:serve:staging"
             },
             "ci": {
               "devServerTarget": "app:serve:ci"
