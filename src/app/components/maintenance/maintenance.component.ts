@@ -199,7 +199,7 @@ export class MaintenanceComponent implements OnInit {
                 .indexOf(
                   filterObj.search ? filterObj.search.toLowerCase() : ''
                 ) !== -1 &&
-              // this.filterDate(workOrder.dueDate, filterDate) &&
+              this.filterDate(workOrder.dueDate, filterDate) &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
               this.filterPriority(workOrder.priorityText, filterObj.priority) &&
               this.filterWorkCenter(

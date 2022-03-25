@@ -88,7 +88,7 @@
         workOrder.status === 'inProgress' || workOrder.status === 'completed'
       "
       mode="determinate"
-      value="{{ workOrder?.timeProgress }}"
+      value="{{ workOrder?.timeProgress * 100 }}"
       class="progress-bar-class"
     ></mat-progress-bar>
     <span
@@ -118,7 +118,7 @@
         workOrder.status === 'inProgress' || workOrder.status === 'completed'
       "
       mode="determinate"
-      value="{{ workOrder.operationProgress[2] }}"
+      value="{{ workOrder.operationProgress[2] * 100 }}"
       class="progress-bar-class"
     ></mat-progress-bar>
     <div style="width: 100%" *ngIf="workOrder.isLoading">
@@ -207,9 +207,9 @@
               src="../../../assets/maintenance-icons/dataIcon.svg"
               class="list-icons"
             />
-            <span class="date-priority-label"
-              >{{ workOrder.workCenter }} - {{ workOrder.equipmentName }}</span
-            >
+            <span class="date-priority-label">{{
+              workOrder.workCenterInfo
+            }}</span>
           </span>
           <span class="display-flex">
             <img

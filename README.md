@@ -1,27 +1,133 @@
 # CWP
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.5.
+## To setup local development environment using docker
 
-## Development server
+Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+### Approch 1: Access application from angular development server
 
-## Code scaffolding
+Run the following commads from CWP HOME
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Open Terminal
 
-## Build
+> npm start
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Open another Terminal
 
-## Running unit tests
+Windows
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+> docker compose --env-file .docker\env\local.env build
 
-## Running end-to-end tests
+> docker compose --env-file .docker\env\local.env up
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Linux
 
-## Further help
+> docker compose --env-file .docker/env/local.env build
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+> docker compose --env-file .docker/env/local.env up
+
+Access the application using `http://localhost:4200`. This will be served from angular development server.
+
+### Approch 2: Access application from nginx
+
+Run the following commads from CWP HOME
+
+Open Terminal
+
+> npm run build -- --delete-output-path false --watch true
+
+Open another Terminal
+
+Windows
+
+> docker compose --env-file .docker\env\local.env build
+
+> docker compose --env-file .docker\env\local.env up
+
+Linux
+
+> docker compose --env-file .docker/env/local.env build
+
+> docker compose --env-file .docker/env/local.env up
+
+Access the application using `http://localhost`. This will be served from nginx service running in docker.
+
+## To deploy application in development server using docker
+
+Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/development.env file from CWP HOME
+
+Run the following commads from CWP HOME
+
+Open Terminal
+
+Windows
+
+> docker compose --env-file .docker\env\development.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker\env\development.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/development.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/development.env -f docker-compose.deployment.yml up -d
+
+## To deploy application in testing server using docker
+
+Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/testing.env file from CWP HOME
+
+Run the following commads from CWP HOME
+
+Open Terminal
+
+Windows
+
+> docker compose --env-file .docker\env\testing.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker\env\testing.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/testing.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/testing.env -f docker-compose.deployment.yml up -d
+
+## To deploy application in staging server using docker
+
+Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/staging.env file from CWP HOME
+
+Run the following commads from CWP HOME
+
+Open Terminal
+
+Windows
+
+> docker compose --env-file .docker\env\staging.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker\env\staging.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/staging.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/staging.env -f docker-compose.deployment.yml up -d
+
+## To deploy application in production server using docker
+
+Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/production.env file from CWP HOME
+
+Run the following commads from CWP HOME
+
+Open Terminal
+
+Windows
+
+> docker compose --env-file .docker\env\production.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker\env\production.env -f docker-compose.deployment.yml up -d
+
+Linux
+
+> docker compose --env-file .docker/env/production.env -f docker-compose.deployment.yml build
+
+> docker compose --env-file .docker/env/production.env -f docker-compose.deployment.yml up -d
