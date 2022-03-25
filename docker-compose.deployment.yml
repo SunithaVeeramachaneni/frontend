@@ -46,7 +46,6 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi-service/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MONGODB_HOST_NAME=10.0.0.27
     ports:
       - '8001:8001'
     networks:
@@ -75,8 +74,6 @@ services:
     environment:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MONGODB_HOST_NAME=10.0.0.27
-      - REDIS_HOST_NAME=cwppoc.bfq93e.clustercfg.use1.cache.amazonaws.com
     ports:
       - '8003:8003'
     networks:
@@ -91,7 +88,6 @@ services:
     environment:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MONGODB_HOST_NAME=10.0.0.27
     ports:
       - '8004:8004'
     networks:
@@ -106,7 +102,6 @@ services:
     environment:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MONGODB_HOST_NAME=10.0.0.27
     ports:
       - '8005:8005'
     networks:
