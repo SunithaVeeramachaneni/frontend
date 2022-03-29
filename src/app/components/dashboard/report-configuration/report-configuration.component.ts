@@ -111,6 +111,7 @@ export class ReportConfigurationComponent implements OnInit {
   subscription: any;
   isExportInProgress = false;
   showPreview = false;
+  currentRouteUrl: string;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -186,6 +187,7 @@ export class ReportConfigurationComponent implements OnInit {
       this.commonService.currentRouteUrlAction$
     ]).pipe(
       map(([loadFilter, scroll, currentRouteUrl]) => {
+        this.currentRouteUrl = currentRouteUrl;
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
@@ -198,7 +200,11 @@ export class ReportConfigurationComponent implements OnInit {
                 ? this.reportTitle
                 : `${this.reportTitle} *`
           });
-
+          this.commonService.setHeaderTitle(
+            this.reportConfiguration && this.reportConfiguration.id
+              ? this.reportTitle
+              : `${this.reportTitle} *`
+          );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
@@ -553,6 +559,8 @@ export class ReportConfigurationComponent implements OnInit {
       prevValue: this.reportTitle
     });
     this.reportTitle = reportTitle;
+    this.breadcrumbService.set(this.currentRouteUrl, { label: reportTitle });
+    this.commonService.setHeaderTitle(reportTitle);
   };
 
   downloadReport = (event: Event) => {

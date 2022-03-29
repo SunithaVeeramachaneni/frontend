@@ -15,8 +15,16 @@ const routes: Routes = [
     component: WorkInstructionsComponent,
     data: { breadcrumb: { label: 'Work Instructions Authoring' } },
     children: [
-      { path: 'create', component: AddWorkinstructionComponent },
-      { path: 'edit/:id', component: AddWorkinstructionComponent },
+      {
+        path: 'create',
+        component: AddWorkinstructionComponent,
+        data: { breadcrumb: { label: 'Create Work Instruction' } }
+      },
+      {
+        path: 'edit/:id',
+        component: AddWorkinstructionComponent,
+        data: { breadcrumb: { label: 'Edit Work Instruction' } }
+      },
       {
         path: 'drafts',
         data: { breadcrumb: { label: 'Drafts' } },

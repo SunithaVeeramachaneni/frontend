@@ -223,20 +223,8 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap((currentRouteUrl) => {
-        this.commonService.setHeaderTitle(routingUrls.reports.title);
-        if (currentRouteUrl === routingUrls.reports.url) {
-          this.breadcrumbService.set(routingUrls.reports.url, {
-            skip: false
-          });
-        } else {
-          this.breadcrumbService.set(routingUrls.reports.url, {
-            skip: false
-          });
-        }
-      })
+      tap(() => this.commonService.setHeaderTitle(routingUrls.reports.title))
     );
-    this.headerTitle$ = this.commonService.headerTitleAction$;
     this.fetchReports();
   }
 
