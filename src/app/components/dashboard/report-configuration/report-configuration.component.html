@@ -158,7 +158,7 @@
             [ngClass]="{ 'highlight-btn': showPreview }"
             (click)="togglePreview()"
           >
-            <img src="assets/dashboard-icons/preview.svg" />
+            <img [src]="getImage('preview', showPreview)" />
           </button>
           <button
             mat-stroked-button

@@ -110,8 +110,7 @@ export class ReportConfigurationComponent implements OnInit {
   undoRedoUtil: any;
   subscription: any;
   isExportInProgress = false;
-  showPreview = false;
-  currentRouteUrl: string;
+  showPreview: boolean;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -139,7 +138,10 @@ export class ReportConfigurationComponent implements OnInit {
       map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
-        this.showPreview = queryParams.preview;
+        this.showPreview =
+          this.showPreview === undefined
+            ? queryParams.preview
+            : this.showPreview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();
@@ -183,18 +185,16 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$,
-      this.commonService.currentRouteUrlAction$
+      this.reportDetailsOnScroll$
     ]).pipe(
-      map(([loadFilter, scroll, currentRouteUrl]) => {
-        this.currentRouteUrl = currentRouteUrl;
+      map(([loadFilter, scroll]) => {
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
           this.reportTitle = this.reportConfiguration.name;
-          this.breadcrumbService.set(currentRouteUrl, {
+          this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
                 ? this.reportTitle
@@ -559,7 +559,7 @@ export class ReportConfigurationComponent implements OnInit {
       prevValue: this.reportTitle
     });
     this.reportTitle = reportTitle;
-    this.breadcrumbService.set(this.currentRouteUrl, { label: reportTitle });
+    this.breadcrumbService.set('@reportConfiguration', { label: reportTitle });
     this.commonService.setHeaderTitle(reportTitle);
   };
 
@@ -625,4 +625,9 @@ export class ReportConfigurationComponent implements OnInit {
       };
     }
   };
+
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/dashboard-icons/${imageName}_active.svg`
+      : `assets/dashboard-icons/${imageName}.svg`;
 }

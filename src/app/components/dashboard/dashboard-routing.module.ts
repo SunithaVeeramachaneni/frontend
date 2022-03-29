@@ -19,12 +19,16 @@ const routes: Routes = [
           {
             path: 'addreport',
             component: ReportConfigurationComponent,
-            data: { breadcrumb: { label: 'Add Report' } }
+            data: {
+              breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' }
+            }
           },
           {
             path: 'editreport/:id',
             component: ReportConfigurationComponent,
-            data: { breadcrumb: { label: 'Edit Report' } }
+            data: {
+              breadcrumb: { label: 'Edit Report', alias: 'reportConfiguration' }
+            }
           }
         ]
       }
