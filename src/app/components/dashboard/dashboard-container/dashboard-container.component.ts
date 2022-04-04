@@ -21,6 +21,7 @@ export class DashboardContainerComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   dashboards$: Observable<Dashboard[]>;
+  headerTitle$: Observable<string>;
 
   constructor(
     private commonService: CommonService,
@@ -40,5 +41,6 @@ export class DashboardContainerComponent implements OnInit {
         }
       })
     );
+    this.headerTitle$ = this.commonService.headerTitleAction$;
   }
 }

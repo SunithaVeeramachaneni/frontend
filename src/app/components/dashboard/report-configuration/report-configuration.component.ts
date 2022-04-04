@@ -107,10 +107,10 @@ export class ReportConfigurationComponent implements OnInit {
   );
   chartData$: Observable<AppChartData[]>;
   reportColumns: TableColumn[] = [];
-
   undoRedoUtil: any;
   subscription: any;
   isExportInProgress = false;
+  showPreview: boolean;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -132,11 +132,16 @@ export class ReportConfigurationComponent implements OnInit {
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
       this.filtersApplied$,
-      this.route.params
+      this.route.params,
+      this.route.queryParams
     ]).pipe(
-      map(([reportDefinition, filtersApplied, params]) => {
+      map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
+        this.showPreview =
+          this.showPreview === undefined
+            ? queryParams.preview
+            : this.showPreview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();
@@ -180,23 +185,26 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$,
-      this.commonService.currentRouteUrlAction$
+      this.reportDetailsOnScroll$
     ]).pipe(
-      map(([loadFilter, scroll, currentRouteUrl]) => {
+      map(([loadFilter, scroll]) => {
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
           this.reportTitle = this.reportConfiguration.name;
-          this.breadcrumbService.set(currentRouteUrl, {
+          this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
                 ? this.reportTitle
                 : `${this.reportTitle} *`
           });
-
+          this.commonService.setHeaderTitle(
+            this.reportConfiguration && this.reportConfiguration.id
+              ? this.reportTitle
+              : `${this.reportTitle} *`
+          );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
@@ -551,6 +559,8 @@ export class ReportConfigurationComponent implements OnInit {
       prevValue: this.reportTitle
     });
     this.reportTitle = reportTitle;
+    this.breadcrumbService.set('@reportConfiguration', { label: reportTitle });
+    this.commonService.setHeaderTitle(reportTitle);
   };
 
   downloadReport = (event: Event) => {
@@ -586,6 +596,10 @@ export class ReportConfigurationComponent implements OnInit {
     this.updateChartConfig(this.reportConfiguration.showChart, true, false);
   };
 
+  togglePreview = () => {
+    this.showPreview = !this.showPreview;
+  };
+
   updateChartConfig = (
     showChart: boolean,
     fetchChartData: boolean,
@@ -611,4 +625,9 @@ export class ReportConfigurationComponent implements OnInit {
       };
     }
   };
+
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/dashboard-icons/${imageName}_active.svg`
+      : `assets/dashboard-icons/${imageName}.svg`;
 }

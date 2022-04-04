@@ -67,6 +67,10 @@ export class ReportsComponent implements OnInit {
     rowLevelActions: {
       menuActions: [
         {
+          title: 'Preview',
+          action: 'preview'
+        },
+        {
           title: 'Edit',
           action: 'edit'
         },
@@ -219,20 +223,8 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap((currentRouteUrl) => {
-        this.commonService.setHeaderTitle(routingUrls.reports.title);
-        if (currentRouteUrl === routingUrls.reports.url) {
-          this.breadcrumbService.set(routingUrls.reports.url, {
-            skip: false
-          });
-        } else {
-          this.breadcrumbService.set(routingUrls.reports.url, {
-            skip: false
-          });
-        }
-      })
+      tap(() => this.commonService.setHeaderTitle(routingUrls.reports.title))
     );
-    this.headerTitle$ = this.commonService.headerTitleAction$;
     this.fetchReports();
   }
 
@@ -290,6 +282,11 @@ export class ReportsComponent implements OnInit {
     } = event;
     let report;
     switch (action) {
+      case 'preview':
+        this.router.navigate(['dashboard/reports/editreport', id], {
+          queryParams: { preview: true }
+        });
+        break;
       case 'edit':
         this.router.navigate(['dashboard/reports/editreport', id]);
         break;
