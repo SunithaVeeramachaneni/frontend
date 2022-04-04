@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppMaterialModules } from 'src/app/material.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   CreateUpdateDashboardDialogComponent,
@@ -8,6 +8,11 @@ import {
 } from './dashboard-create-update-dialog.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { dashboards } from '../dashboards/dashboards.component.mock';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule
+} from '@ngx-translate/core';
 
 describe('CreateUpdateDashboardDialogComponent', () => {
   let component: CreateUpdateDashboardDialogComponent;
@@ -24,7 +29,18 @@ describe('CreateUpdateDashboardDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [CreateUpdateDashboardDialogComponent],
-      imports: [AppMaterialModules, FormsModule, BrowserAnimationsModule],
+      imports: [
+        AppMaterialModules,
+        FormsModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        })
+      ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
         {

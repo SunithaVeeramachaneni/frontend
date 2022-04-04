@@ -29,6 +29,7 @@
     <mat-checkbox
       class="width-100"
       [(ngModel)]="isDefault"
+      [ngModelOptions]="{standalone: true}"
       disabled="{{dialogData.dialogMode ==='EDIT' && dialogData.data.isDefault}}"
     >
       Set to Default
