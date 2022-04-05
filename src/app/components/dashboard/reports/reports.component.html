@@ -46,7 +46,7 @@
               type="text"
               placeholder="Search Reports"
               [(ngModel)]="searchValue"
-              (ngModelChange)="debouncedSearchReports()"
+              (keyup.enter)="debouncedSearchReports()"
             />
           </mat-form-field>
         </div>

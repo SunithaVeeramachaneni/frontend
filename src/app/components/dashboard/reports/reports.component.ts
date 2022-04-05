@@ -106,7 +106,7 @@ export class ReportsComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   skip = 0;
   limit = defaultLimit;
-  debouncedSearchReports = debounce(() => this.fetchReports(), 2500);
+  debouncedSearchReports = debounce(() => this.fetchReports(), 1);
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 
