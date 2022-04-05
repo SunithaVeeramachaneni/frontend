@@ -1,11 +1,4 @@
-<div>
-  <app-header [title]="headerTitle$ | async"></app-header>
-</div>
-
-<div
-  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
-  class="work-instructions-body"
->
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.reports.url">
     <div class="reports-body">
       <div class="dis-flex">
@@ -53,7 +46,7 @@
               type="text"
               placeholder="Search Reports"
               [(ngModel)]="searchValue"
-              (ngModelChange)="debouncedSearchReports()"
+              (keyup.enter)="debouncedSearchReports()"
             />
           </mat-form-field>
         </div>
@@ -72,7 +65,7 @@
     </div>
   </div>
   <router-outlet></router-outlet>
-</div>
+</ng-container>
 
 <ng-template #loadingReportsCount>
   <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
