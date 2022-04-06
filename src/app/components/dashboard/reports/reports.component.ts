@@ -100,13 +100,13 @@ export class ReportsComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 200px)',
+    tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: []
   };
   dataSource: MatTableDataSource<any>;
   skip = 0;
   limit = defaultLimit;
-  debouncedSearchReports = debounce(() => this.fetchReports(), 2500);
+  debouncedSearchReports = debounce(() => this.fetchReports(), 1);
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 

@@ -1,11 +1,14 @@
-import { Component, OnInit, Input, Output, EventEmitter,  OnChanges, SimpleChanges } from '@angular/core';
-import { uniqBy } from 'lodash';
 import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
+import { uniqBy } from 'lodash';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonFilterService } from './common-filter.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
@@ -41,6 +44,9 @@ export class CommonFilterComponent implements OnChanges {
   public kitStatus = [];
   public workCenter = [];
   public assign = [];
+  public resetBtnDisable = true;
+  public applyBtnDisable = true;
+  public resetdynamicFilters = true;
 
   public displayedAssigneeList: any[];
   public filteredOptionsByType = [];
@@ -118,43 +124,49 @@ export class CommonFilterComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.filterOptions = changes.filterOptions ? changes.filterOptions.currentValue : this.filterOptions;
-    if(changes.filtersApplied && changes.reportColumns){
+    this.filterOptions = changes.filterOptions
+      ? changes.filterOptions.currentValue
+      : this.filterOptions;
+    if (changes.filtersApplied && changes.reportColumns) {
       this.dropdownReportColumns = [];
-      this.dropdownReportColumns = changes.reportColumns.currentValue; 
+      this.dropdownReportColumns = changes.reportColumns.currentValue;
       this.filtersApplied = changes.filtersApplied.currentValue;
-      while(this.filters.length)
-      this.removeFilter(0);
-    if(this.dropdownReportColumns){
-      this.dropdownReportColumns = this.dropdownReportColumns.map((reportColumn) => ({
-      displayName: reportColumn.displayName,
-      filterType: reportColumn.filterType,
-      name: reportColumn.name
-    }));
-  }
-    if (this.filtersApplied && this.filtersApplied.length > 0) {
-      for(const filter of this.filtersApplied){
-        if(this.dropdownReportColumns && this.dropdownReportColumns.length > 0){
-        let index = this.dropdownReportColumns.findIndex(
-          (column) => column.name === filter.column
+      while (this.filters.length) this.removeFilter(0);
+      if (this.dropdownReportColumns) {
+        this.dropdownReportColumns = this.dropdownReportColumns.map(
+          (reportColumn) => ({
+            displayName: reportColumn.displayName,
+            filterType: reportColumn.filterType,
+            name: reportColumn.name
+          })
         );
-        if (index > -1) {
-          let displayName = this.dropdownReportColumns[index].displayName;
-          this.dropdownReportColumns.splice(index, 1);
-          this.filters.push(
-            this.newFilter({
-              name: filter.column,
-              displayName: displayName,
-              filterType: filter.type,
-              operator: filter.filters[0].operation,
-              operand: filter.filters[0].operand
-            })
-          );
+      }
+      if (this.filtersApplied && this.filtersApplied.length > 0) {
+        for (const filter of this.filtersApplied) {
+          if (
+            this.dropdownReportColumns &&
+            this.dropdownReportColumns.length > 0
+          ) {
+            let index = this.dropdownReportColumns.findIndex(
+              (column) => column.name === filter.column
+            );
+            if (index > -1) {
+              let displayName = this.dropdownReportColumns[index].displayName;
+              this.dropdownReportColumns.splice(index, 1);
+              this.filters.push(
+                this.newFilter({
+                  name: filter.column,
+                  displayName: displayName,
+                  filterType: filter.type,
+                  operator: filter.filters[0].operation,
+                  operand: filter.filters[0].operand
+                })
+              );
+            }
+          }
         }
       }
-      };
     }
-  }
   }
 
   getImageSrc = (source: string) => {
@@ -190,6 +202,16 @@ export class CommonFilterComponent implements OnChanges {
     2500
   );
 
+  selectedFilterValue(selectedValue) {
+    if (selectedValue === '' || selectedValue.length === 0) {
+      this.resetBtnDisable = true;
+      this.applyBtnDisable = true;
+    } else {
+      this.resetBtnDisable = false;
+      this.applyBtnDisable = false;
+    }
+  }
+
   searchOrder(newValue) {
     this.commonFilterService.searchFilter({
       search: newValue,
@@ -209,6 +231,8 @@ export class CommonFilterComponent implements OnChanges {
 
   clearFilter = () => {
     this.workCenter = [];
+    this.resetBtnDisable = true;
+    this.applyBtnDisable = true;
   };
 
   addFilter = (column, index) => {
@@ -236,6 +260,11 @@ export class CommonFilterComponent implements OnChanges {
     this.isfilterTooltipOpen.fill(false);
     this.filtersApplied = [];
     this.prepareAppliedFilters();
+    this.filtersForm.value.filters.forEach((e) => {
+      if (e.displayText !== '') {
+        this.resetdynamicFilters = false;
+      }
+    });
   }
 
   prepareAppliedFilters() {
@@ -301,7 +330,6 @@ export class CommonFilterComponent implements OnChanges {
 
   applyFilters() {
     this.isPopoverOpen = false;
-    console.log("Applying filters");
     this.appliedFilters.emit({
       filters: this.filtersApplied,
       searchKey: this.searchValue
@@ -310,6 +338,7 @@ export class CommonFilterComponent implements OnChanges {
 
   clearFilters() {
     this.filters.clear();
+    this.resetdynamicFilters = true;
   }
 
   appliedDateRange(start, end) {
