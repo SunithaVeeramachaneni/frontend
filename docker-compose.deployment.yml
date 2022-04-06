@@ -1,7 +1,8 @@
-# 1. Set APP_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Set APP_ENV, DEPLOYMENT_ENV & BACKEND_HOME environment variable by running the following command in your commnand window (see the notes below if on Windows).
 
 #    export APP_ENV=development or export APP_ENV=production
 #    export DEPLOYMENT_ENV=development or DEPLOYMENT_ENV=testing or DEPLOYMENT_ENV=staging or DEPLOYMENT_ENV=production
+#    export BACKEND_HOME='backend home path comes here...'
 
 #    NOTE: If you're on Windows use one of the following commands to create the environment variables.
 
@@ -10,15 +11,28 @@
 
 #    $env:APP_ENV="development" or $env:APP_ENV="production"
 #    $env:DEPLOYMENT_ENV="development"
+#    $env:BACKEND_HOME="backend home path comes here..."
 
-# 2. Run docker compose build
-# 3. Run docker compose up -d
+# 2. Run docker compose -f docker-compose.deployment.yml build
+# 3. Run docker compose -f docker-compose.deployment.yml up -d
+
+################ OR ################
+
+# 1. Update APP_ENV, DEPLOYMENT_ENV & BACKEND_HOME environment (backend source code home path) variable in .docker/env/[development|testing|staging|production].env file from CWP HOME
+
+# In Windows
+# 2. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env build`
+# 3. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env up`
+
+# In Linux
+# 2. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env build`
+# 3. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env up`
 
 version: '3.8'
 services:
   nginx:
-    container_name: nginx-service-${DEPLOYMENT_ENV}
-    image: nginx-service-${DEPLOYMENT_ENV}
+    container_name: nginx-${DEPLOYMENT_ENV}
+    image: nginx-${DEPLOYMENT_ENV}
     build:
       context: .
       dockerfile: .docker/nginx.${DEPLOYMENT_ENV}.dockerfile
@@ -38,14 +52,14 @@ services:
       - app-network
 
   wi:
-    container_name: wi-service-${DEPLOYMENT_ENV}
-    image: wi-service-${DEPLOYMENT_ENV}
+    container_name: wi-${DEPLOYMENT_ENV}
+    image: wi-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-service.deployment.dockerfile
+      dockerfile: .docker/wi.deployment.dockerfile
     restart: always
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi-service/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -54,11 +68,11 @@ services:
       - app-network
 
   wi-abap:
-    container_name: wi-abap-service-${DEPLOYMENT_ENV}
-    image: wi-abap-service-${DEPLOYMENT_ENV}
+    container_name: wi-abap-${DEPLOYMENT_ENV}
+    image: wi-abap-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-abap-service.deployment.dockerfile
+      dockerfile: .docker/wi-abap.deployment.dockerfile
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}
@@ -69,11 +83,11 @@ services:
       - app-network
 
   mcc-spcc-abap:
-    container_name: mcc-spcc-abap-service-${DEPLOYMENT_ENV}
-    image: mcc-spcc-abap-service-${DEPLOYMENT_ENV}
+    container_name: mcc-spcc-abap-${DEPLOYMENT_ENV}
+    image: mcc-spcc-abap-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/MCC_SCC
-      dockerfile: .docker/mcc-spcc-abap-service.deployment.dockerfile
+      dockerfile: .docker/mcc-spcc-abap.deployment.dockerfile
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}
@@ -84,11 +98,11 @@ services:
       - app-network
 
   dashboard:
-    container_name: dashboard-service-${DEPLOYMENT_ENV}
-    image: dashboard-service-${DEPLOYMENT_ENV}
+    container_name: dashboard-${DEPLOYMENT_ENV}
+    image: dashboard-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/Reports
-      dockerfile: .docker/dashboard-service.deployment.dockerfile
+      dockerfile: .docker/dashboard.deployment.dockerfile
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}
@@ -99,11 +113,11 @@ services:
       - app-network
 
   data-collector:
-    container_name: data-collector-service-${DEPLOYMENT_ENV}
-    image: data-collector-service-${DEPLOYMENT_ENV}
+    container_name: data-collector-${DEPLOYMENT_ENV}
+    image: data-collector-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/DataCollectorService
-      dockerfile: .docker/data-collector-service.deployment.dockerfile
+      dockerfile: .docker/data-collector.deployment.dockerfile
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}

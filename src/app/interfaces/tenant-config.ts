@@ -6,6 +6,6 @@ export interface TenantConfig {
   clientId: string;
   authority: string;
   redirectUri: string;
-  secureRoutes: [string[], string]
-  protectedResources: [string[], string][]
+  sapProtectedResources: [string[], string];
+  nodeProtectedResources: [string[], string];
 }

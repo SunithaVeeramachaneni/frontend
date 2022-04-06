@@ -25,11 +25,14 @@ export const httpLoaderFactory = (
         const {
           authority,
           clientId,
-          secureRoutes = [],
-          protectedResources = []
+          sapProtectedResources = [],
+          nodeProtectedResources = []
         } = tenatConfig;
-        const [urls, scope] = secureRoutes;
-        commonService.setProtectedResources(protectedResources);
+        const [urls, scope] = sapProtectedResources;
+        commonService.setProtectedResources(
+          nodeProtectedResources as [string[], string]
+        );
+        commonService.setTenantConfig(tenatConfig);
 
         return {
           authority,
