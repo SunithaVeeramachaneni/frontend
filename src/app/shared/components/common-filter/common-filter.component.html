@@ -447,6 +447,7 @@
         color="primary"
         class="btn apply-filters-btn"
         (click)="applyFilters()"
+        [disabled]="this.applydynamicFiltersBtnDisable"
         type="button"
       >
         {{ 'apply' | translate }}
@@ -455,7 +456,7 @@
         mat-button
         color="primary"
         class="btn reset-filters-btn"
-        [disabled]="this.resetdynamicFilters"
+        [disabled]="this.resetdynamicFiltersBtnDisable"
         (click)="clearFilters()"
       >
         {{ 'reset' | translate }}

@@ -46,7 +46,8 @@ export class CommonFilterComponent implements OnChanges {
   public assign = [];
   public resetBtnDisable = true;
   public applyBtnDisable = true;
-  public resetdynamicFilters = true;
+  public resetdynamicFiltersBtnDisable = true;
+  public applydynamicFiltersBtnDisable = true;
 
   public displayedAssigneeList: any[];
   public filteredOptionsByType = [];
@@ -249,6 +250,10 @@ export class CommonFilterComponent implements OnChanges {
     });
     this.filters.removeAt(index);
     this.filtersApplied.splice(index, 1);
+    if (this.filtersApplied.length === 0) {
+      this.resetdynamicFiltersBtnDisable = true;
+      this.applydynamicFiltersBtnDisable = true;
+    }
   }
 
   openFilterModal(column: TableColumn, index) {
@@ -262,7 +267,8 @@ export class CommonFilterComponent implements OnChanges {
     this.prepareAppliedFilters();
     this.filtersForm.value.filters.forEach((e) => {
       if (e.displayText !== '') {
-        this.resetdynamicFilters = false;
+        this.resetdynamicFiltersBtnDisable = false;
+        this.applydynamicFiltersBtnDisable = false;
       }
     });
   }
@@ -338,7 +344,8 @@ export class CommonFilterComponent implements OnChanges {
 
   clearFilters() {
     this.filters.clear();
-    this.resetdynamicFilters = true;
+    this.resetdynamicFiltersBtnDisable = true;
+    this.applydynamicFiltersBtnDisable = true;
   }
 
   appliedDateRange(start, end) {
