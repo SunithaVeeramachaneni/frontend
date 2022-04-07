@@ -3,8 +3,9 @@ FROM node:14.18.2-alpine as build
 LABEL author="CWP Development Team"
 WORKDIR /usr/src/cwp
 ARG NPM_AUTH_TOKEN
-COPY . .
+COPY package.json .npmrc ./
 RUN npm i
+COPY . .
 RUN npm run staging -- --delete-output-path false
 
 # Stage 2

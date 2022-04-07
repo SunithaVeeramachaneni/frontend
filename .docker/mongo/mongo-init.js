@@ -25,11 +25,11 @@ db.tenants.insertOne({
   redirectUri: 'http://localhost:4200/',
   sapProtectedResources: [
     ['http://localhost:8002/', 'http://localhost:8003/'],
-    'openid profile offline_access email api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access'
+    'api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access'
   ],
   nodeProtectedResources: [
     ['http://localhost:8001/', 'http://localhost:8004/'],
-    'openid profile offline_access email api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user'
+    'api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user'
   ],
   nsb100: {
     idp: {

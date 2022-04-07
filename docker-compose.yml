@@ -1,19 +1,3 @@
-# 1. Set BACKEND_HOME environment variable by running the following command in your commnand window (see the notes below if on Windows).
-
-#    export BACKEND_HOME='backend home path comes here...'
-
-#    NOTE: If you're on Windows use one of the following commands to create the environment variables.
-
-#    For the standard Windows DOS command shell use `set` instead of `export` for environment variables.
-#    For Windows Powershell use `$env:APP_ENV = "value"`.
-
-#    $env:BACKEND_HOME="backend home path comes here..."
-
-# 2. Run docker compose build
-# 3. Run docker compose up
-
-################ OR ################
-
 # 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
 
 # In Windows
@@ -23,6 +7,28 @@
 # In Linux
 # 2. Run `docker compose --env-file .docker/env/local.env build`
 # 3. Run `docker compose --env-file .docker/env/local.env up`
+
+################ OR ################
+
+# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+
+#    export BACKEND_HOME='backend home path comes here...'
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export APP_ENV=development
+#    export DEPLOYMENT_ENV=development
+
+#    NOTE: If you're on Windows use one of the following commands to create the environment variables.
+
+#    For the standard Windows DOS command shell use `set` instead of `export` for environment variables.
+#    For Windows Powershell use `$env:APP_ENV = "value"`.
+
+#    $env:BACKEND_HOME="backend home path comes here..."
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:APP_ENV="development"
+#    $env:DEPLOYMENT_ENV="development"
+
+# 2. Run docker compose build
+# 3. Run docker compose up
 
 version: '3.8'
 services:
@@ -52,14 +58,15 @@ services:
     build:
       context: ${BACKEND_HOME}/WorkInstructions
       dockerfile: .docker/wi.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi
       - /usr/src/wi/node_modules
-    command: sh -c "cd /usr/src/wi && npm i && nodemon server.js"
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - REDIS_HOST_NAME=redis-local
@@ -78,13 +85,14 @@ services:
     build:
       context: ${BACKEND_HOME}/WorkInstructions
       dockerfile: .docker/wi-abap.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap
       - /usr/src/wi-abap/node_modules
-    command: sh -c "cd /usr/src/wi-abap && npm i && nodemon server_abap.js"
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
     ports:
       - '8002:8002'
@@ -97,13 +105,14 @@ services:
     build:
       context: ${BACKEND_HOME}/MCC_SCC
       dockerfile: .docker/mcc-spcc-abap.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
       - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap
       - /usr/src/mcc-spcc-abap/node_modules
-    command: sh -c "cd /usr/src/mcc-spcc-abap && npm i && nodemon app.js"
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - REDIS_HOST_NAME=redis-local
@@ -121,13 +130,14 @@ services:
     build:
       context: ${BACKEND_HOME}/Reports
       dockerfile: .docker/dashboard.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
       - ${BACKEND_HOME}/Reports:/usr/src/dashboard
       - /usr/src/dashboard/node_modules
-    command: sh -c "cd /usr/src/dashboard && npm i && nodemon server.js"
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
     ports:
@@ -143,13 +153,15 @@ services:
     build:
       context: ${BACKEND_HOME}/DataCollectorService
       dockerfile: .docker/data-collector.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
       - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector
       - /usr/src/data-collector/node_modules
     command: sh -c "cd /usr/src/data-collector && npm i && nodemon src/server.js"
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - MONGODB_HOST_NAME=mongo-local
     ports:
       - '8005:8005'
@@ -184,7 +196,7 @@ services:
     container_name: mysql-local
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: cwp-tenants
+      MYSQL_DATABASE: cwp_tenants
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password

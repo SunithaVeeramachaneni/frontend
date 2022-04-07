@@ -40,7 +40,7 @@ export const httpLoaderFactory = (
           redirectUrl: window.location.origin,
           postLogoutRedirectUri: window.location.origin,
           clientId,
-          scope,
+          scope: `openid profile offline_access email ${scope}`,
           responseType: 'code',
           silentRenew: true,
           ignoreNonceAfterRefresh: true,
