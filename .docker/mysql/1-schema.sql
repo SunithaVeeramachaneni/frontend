@@ -1,6 +1,6 @@
 use cwp_tenant;
 
-create table catalog(
+create table catalogs(
    id INT NOT NULL AUTO_INCREMENT,
    tenantId VARCHAR(255) NOT NULL,
    tenantName VARCHAR(100) NOT NULL,
@@ -19,11 +19,11 @@ create table catalog(
    UNIQUE (tenantId)
 );
 
-create table tenant(
+create table tenants(
    id INT NOT NULL AUTO_INCREMENT,
    catalogId INT,
    tenantSpecificProducts JSON NOT NULL,
    tenantLogLevel VARCHAR(50) NOT NULL,
    PRIMARY KEY ( id ),
-   FOREIGN KEY (catalogId) REFERENCES catalog(id)
+   FOREIGN KEY (catalogId) REFERENCES catalogs(id)
 );

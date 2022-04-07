@@ -1,6 +1,6 @@
 use cwp_tenant;
 
-insert into catalog (
+insert into catalogs (
   tenantId,
   tenantName,
   tenantDate,
