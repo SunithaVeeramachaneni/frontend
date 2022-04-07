@@ -27,6 +27,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const { tenantId } = this.commonService.getTenantConfig();
     if (request.headers.get('authorization') === null) {
       const protectedResource = this.getProtectedResource(request.url) || [];
 
@@ -40,10 +41,9 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           new Date().getTime() < access_token_expires_at - 30000
         ) {
           const cloneRequest = request.clone({
-            headers: request.headers.set(
-              'authorization',
-              `${token_type} ${access_token}`
-            )
+            headers: request.headers
+              .set('authorization', `${token_type} ${access_token}`)
+              .set('tenantid', tenantId)
           });
           return next.handle(cloneRequest);
         } else {
@@ -73,10 +73,12 @@ export class HttpRequestInterceptor implements HttpInterceptor {
                 delete response.refresh_token;
                 sessionStorage.setItem(hash(urls), JSON.stringify(response));
                 const cloneRequest = request.clone({
-                  headers: request.headers.set(
-                    'authorization',
-                    `${response['token_type']} ${response['access_token']}`
-                  )
+                  headers: request.headers
+                    .set(
+                      'authorization',
+                      `${response['token_type']} ${response['access_token']}`
+                    )
+                    .set('tenantid', tenantId)
                 });
                 return next.handle(cloneRequest);
               } else {
@@ -89,7 +91,10 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         return next.handle(request);
       }
     } else {
-      return next.handle(request);
+      const cloneRequest = request.clone({
+        headers: request.headers.set('tenantid', tenantId)
+      });
+      return next.handle(cloneRequest);
     }
   }
 

@@ -64,11 +64,13 @@ services:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi
       - /usr/src/wi/node_modules
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
+      - MYSQL_HOST_NAME=mysql-local
       - REDIS_HOST_NAME=redis-local
     ports:
       - '8001:8001'
@@ -91,6 +93,7 @@ services:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap
       - /usr/src/wi-abap/node_modules
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
@@ -111,6 +114,7 @@ services:
       - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap
       - /usr/src/mcc-spcc-abap/node_modules
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
@@ -136,14 +140,19 @@ services:
       - ${BACKEND_HOME}/Reports:/usr/src/dashboard
       - /usr/src/dashboard/node_modules
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
+      - MYSQL_HOST_NAME=mysql-local
+      - REDIS_HOST_NAME=redis-local
     ports:
       - '8004:8004'
     depends_on:
       - mongo
+      - mysql
+      - redis
     networks:
       - app-network
 
@@ -160,6 +169,7 @@ services:
       - /usr/src/data-collector/node_modules
     command: sh -c "cd /usr/src/data-collector && npm i && nodemon src/server.js"
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - MONGODB_HOST_NAME=mongo-local
@@ -197,8 +207,8 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_DATABASE: cwp_tenants
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Innovation54321
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - mysqldata:/var/lib/mysql

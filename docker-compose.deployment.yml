@@ -63,6 +63,7 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
@@ -81,6 +82,7 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -98,6 +100,7 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -115,6 +118,7 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
