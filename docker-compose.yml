@@ -206,7 +206,7 @@ services:
     container_name: mysql-local
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: cwp_tenants
+      MYSQL_DATABASE: cwp_tenant
       MYSQL_USER: admin
       MYSQL_PASSWORD: Innovation54321
       MYSQL_ROOT_PASSWORD: password

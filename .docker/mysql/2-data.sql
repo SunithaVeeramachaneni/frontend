@@ -1,4 +1,4 @@
-use cwp_tenants;
+use cwp_tenant;
 
 insert into catalog (
   tenantId,

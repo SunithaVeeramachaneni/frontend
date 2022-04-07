@@ -1,4 +1,4 @@
-use cwp_tenants;
+use cwp_tenant;
 
 create table catalog(
    id INT NOT NULL AUTO_INCREMENT,
