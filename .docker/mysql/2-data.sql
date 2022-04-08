@@ -11,7 +11,7 @@ insert into catalogs (
   redirectUri,
   sapProtectedResources,
   nodeProtectedResources,
-  tenantDomianName,
+  tenantDomainName,
   saml,
   sap
 ) values(

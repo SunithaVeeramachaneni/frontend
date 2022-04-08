@@ -12,7 +12,7 @@ create table catalogs(
    redirectUri VARCHAR(255) NOT NULL,
    sapProtectedResources JSON,
    nodeProtectedResources JSON,
-   tenantDomianName VARCHAR(100) NOT NULL,
+   tenantDomainName VARCHAR(100) NOT NULL,
    saml JSON,
    sap JSON,
    PRIMARY KEY ( id ),
