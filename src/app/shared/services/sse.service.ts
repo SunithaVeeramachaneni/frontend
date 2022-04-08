@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SSE } from 'sse.js';
+import { CommonService } from './common.service';
+import * as hash from 'object-hash';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +13,11 @@ import { SSE } from 'sse.js';
 export class SseService {
   eventSource: SSE;
 
-  constructor() {}
+  constructor(private commonService: CommonService) {}
 
   /**
    * Create an event source of POST request
+   *
    * @param API url
    * @formData data (file, ...etc.)
    */
@@ -24,6 +27,7 @@ export class SseService {
 
   /**
    * Create an event source of GET request
+   *
    * @param API url
    * @formData data (file, ...etc.)
    */
@@ -32,50 +36,69 @@ export class SseService {
   }
 
   /**
-   * Building the event source
-   * @param url  API URL
-   * @param meth  (POST, GET, ...etc.)
-   * @param formData data
-   */
-  private buildEventSource(url: string, meth: string, formData: FormData): SSE {
-    const options = this.buildOptions(meth, formData);
-    this.eventSource = new SSE(url, options);
-    return  this.eventSource;
-  }
-
-  /**
    * close connection
    */
   public closeEventSource() {
-    if (!! this.eventSource) {
-       this.eventSource.close();
+    if (!!this.eventSource) {
+      this.eventSource.close();
     }
   }
 
   /**
-   * checks authorization code
+   * Building the event source
    *
-   * @returns string
+   * @param url  API URL
+   * @param meth  (POST, GET, ...etc.)
+   * @param formData data
    */
-  protected checkAuthorization(): string {
-    return '';
+  private buildEventSource(
+    url: string,
+    method: string,
+    formData: FormData
+  ): SSE {
+    const options = this.buildOptions(url, method, formData);
+    this.eventSource = new SSE(url, options);
+    return this.eventSource;
   }
 
   /**
    * Build query options
+   *
    * @param method POST or GET
    * @param formData data
    */
-  private buildOptions(method: string, formData: FormData): {
+  private buildOptions(
+    url: string,
+    method: string,
+    formData: FormData
+  ): {
     payload: FormData;
     method: string;
-    headers: string | { Authorization: string };
+    headers: { authorization: string; tenantid: string };
   } {
-    const auth = this.checkAuthorization();
+    const { tenantId: tenantid } = this.commonService.getTenantConfig();
+    const protectedResource = this.getProtectedResource(url);
+    let authorization;
+    if (protectedResource.length) {
+      const [urls] = protectedResource;
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { token_type, access_token } =
+        JSON.parse(sessionStorage.getItem(hash(urls))) || {};
+      authorization = `${token_type} ${access_token}`;
+    }
     return {
       payload: formData,
       method,
-      headers: auth !== '' ? { Authorization: auth } : '',
+      headers: { tenantid, authorization }
     };
+  }
+
+  private getProtectedResource(requestUrl: string) {
+    return this.commonService
+      .getProtectedResources()
+      .find((protectedResource) => {
+        const [urls] = protectedResource;
+        return urls.find((url) => requestUrl.indexOf(url) > -1);
+      });
   }
 }

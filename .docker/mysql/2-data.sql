@@ -16,7 +16,7 @@ insert into catalogs (
   sap
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
-  "localhost",
+  "innovapptive",
   "2022-04-05",
   "azure",
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
