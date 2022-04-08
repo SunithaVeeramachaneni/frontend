@@ -78,9 +78,9 @@ export class SseService {
   } {
     const { tenantId: tenantid } = this.commonService.getTenantConfig();
     const protectedResource = this.getProtectedResource(url);
-    let authorization;
-    if (protectedResource.length) {
-      const [urls] = protectedResource;
+    let authorization: string;
+    if (protectedResource && Object.keys(protectedResource).length) {
+      const { urls } = protectedResource;
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const { token_type, access_token } =
         JSON.parse(sessionStorage.getItem(hash(urls))) || {};
@@ -97,7 +97,7 @@ export class SseService {
     return this.commonService
       .getProtectedResources()
       .find((protectedResource) => {
-        const [urls] = protectedResource;
+        const { urls } = protectedResource;
         return urls.find((url) => requestUrl.indexOf(url) > -1);
       });
   }

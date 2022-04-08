@@ -1,3 +1,8 @@
+export interface ProtectedResource {
+  urls: string[];
+  scope: string;
+}
+
 export interface TenantConfig {
   tenantId: string;
   tenantName: string;
@@ -6,6 +11,6 @@ export interface TenantConfig {
   clientId: string;
   authority: string;
   redirectUri: string;
-  sapProtectedResources: [string[], string];
-  nodeProtectedResources: [string[], string];
+  sapProtectedResources: ProtectedResource;
+  nodeProtectedResources: ProtectedResource;
 }

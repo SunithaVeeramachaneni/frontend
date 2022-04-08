@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   HttpEvent,
   HttpHandler,
@@ -29,10 +30,10 @@ export class HttpRequestInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const { tenantId } = this.commonService.getTenantConfig();
     if (request.headers.get('authorization') === null) {
-      const protectedResource = this.getProtectedResource(request.url) || [];
+      const protectedResource = this.getProtectedResource(request.url);
 
-      if (protectedResource.length) {
-        const [urls, scope] = protectedResource;
+      if (protectedResource && Object.keys(protectedResource).length) {
+        const { urls, scope } = protectedResource;
         const { token_type, access_token, access_token_expires_at } =
           JSON.parse(sessionStorage.getItem(hash(urls))) || {};
 
@@ -102,7 +103,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     return this.commonService
       .getProtectedResources()
       .find((protectedResource) => {
-        const [urls] = protectedResource;
+        const { urls } = protectedResource;
         return urls.find((url) => requestUrl.indexOf(url) > -1);
       });
   }

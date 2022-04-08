@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LoggedInUserInfo, TenantConfig } from 'src/app/interfaces';
+import {
+  LoggedInUserInfo,
+  ProtectedResource,
+  TenantConfig
+} from 'src/app/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
-  private protectedResources: [string[], string][] = [];
+  private protectedResources: ProtectedResource[] = [];
   private tenantConfig: TenantConfig = {} as TenantConfig;
   private userInfo = {} as LoggedInUserInfo;
 
@@ -35,8 +39,11 @@ export class CommonService {
     this.headerTitleSubject.next(value);
   }
 
-  setProtectedResources(protectedResources: [string[], string]) {
-    this.protectedResources = [...this.protectedResources, protectedResources];
+  setProtectedResources(protectedResources: ProtectedResource) {
+    this.protectedResources = [
+      ...this.protectedResources,
+      { ...protectedResources }
+    ];
   }
 
   getProtectedResources() {

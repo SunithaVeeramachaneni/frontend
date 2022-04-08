@@ -8,7 +8,7 @@ import {
 } from 'angular-auth-oidc-client';
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-import { TenantConfig } from './interfaces/tenant-config';
+import { TenantConfig } from './interfaces';
 import { CommonService } from './shared/services/common.service';
 
 const hostname =
@@ -25,13 +25,11 @@ export const httpLoaderFactory = (
         const {
           authority,
           clientId,
-          sapProtectedResources = [],
-          nodeProtectedResources = []
+          sapProtectedResources,
+          nodeProtectedResources
         } = tenatConfig;
-        const [urls, scope] = sapProtectedResources;
-        commonService.setProtectedResources(
-          nodeProtectedResources as [string[], string]
-        );
+        const { urls, scope } = sapProtectedResources || {};
+        commonService.setProtectedResources(nodeProtectedResources);
         commonService.setTenantConfig(tenatConfig);
 
         return {
