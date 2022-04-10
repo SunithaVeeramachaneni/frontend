@@ -125,6 +125,7 @@ export class ChartComponent {
       const {
         title,
         type = 'bar',
+        isStacked = 'false',
         indexAxis = 'x',
         showLegends = false,
         showValues = false,
@@ -149,6 +150,10 @@ export class ChartComponent {
       switch (type) {
         case 'bar':
         case 'line':
+          if (isStacked) {
+            this.chartOptions.scales['x']['stacked'] = true;
+            this.chartOptions.scales['y']['stacked'] = true;
+          }
           this.chartOptions.scales['x'].display = true;
           this.chartOptions.scales['y'].display = true;
           if (indexAxis === 'x') {
@@ -182,7 +187,53 @@ export class ChartComponent {
   };
 
   prepareChartData = (): ChartData<ChartType> => {
-    const { backgroundColors, type = 'bar' } = this.chartConfig;
+    const { backgroundColors, type = 'bar', isStacked } = this.chartConfig;
+    if (isStacked) {
+      const datasetObject = {};
+      const distinct = [];
+      const unique = [];
+
+      const stackFieldName = this.chartConfig.stackFieldName;
+      this.chartData.forEach((data) => {
+        if (!unique[data[this.datasetField.name]]) {
+          distinct.push(data[this.datasetField.name]);
+          unique[data[this.datasetField.name]] = 1;
+        }
+      });
+      const datasetFieldMap = {};
+      let i = 0;
+      distinct
+        .sort()
+        .forEach((datasetField) => (datasetFieldMap[datasetField] = i++));
+
+      this.chartData.forEach((data) => {
+        if (!datasetObject[data[stackFieldName]]) {
+          datasetObject[data[stackFieldName]] = {};
+          datasetObject[data[stackFieldName]]['countArray'] = new Array(
+            distinct.length
+          ).fill(0);
+        }
+
+        datasetObject[data[stackFieldName]].countArray[
+          datasetFieldMap[data[this.datasetField.name]]
+        ] += data.count;
+      });
+
+      const colors = this.getRandomColors(Object.keys(datasetObject));
+      const datasets = Object.keys(datasetObject).map((stackName, index) => {
+        const dataset = {
+          label: stackName,
+          data: datasetObject[stackName].countArray,
+          backgroundColor: colors[index]
+        };
+        return dataset;
+      });
+
+      return {
+        labels: distinct,
+        datasets
+      };
+    }
     const reducedObject: { [key: string]: number } = this.chartData.reduce(
       (acc, data) => {
         acc[data[this.datasetField.name]] = acc[data[this.datasetField.name]]
@@ -193,6 +244,7 @@ export class ChartComponent {
       },
       {}
     );
+
     const sortedObject = Object.keys(reducedObject)
       .sort()
       .reduce((acc, val) => {

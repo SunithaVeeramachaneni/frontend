@@ -34,11 +34,13 @@ export interface ChartDetail {
   title: string;
   type: ChartType;
   indexAxis: 'x' | 'y';
+  isStacked: boolean;
   backgroundColors: string[];
   showLegends: boolean;
   showValues: boolean;
   datasetFieldName: string;
   countFieldName: string;
+  stackFieldName?: string;
   renderChart?: boolean;
 }
 

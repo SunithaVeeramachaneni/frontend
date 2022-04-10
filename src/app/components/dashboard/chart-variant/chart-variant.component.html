@@ -18,23 +18,29 @@
         class="chart-icons"
       />
     </mat-button-toggle>
-    <mat-button-toggle value="stacked_bar_x" disabled>
+    <mat-button-toggle
+      value="stacked_bar_y"
+      [disabled]="report.groupBy?.length < 1"
+    >
       <img
         [src]="
           getImage(
             'stacked_bar_chart',
-            f.chartVarient.value === 'stacked_bar_x'
+            f.chartVarient.value === 'stacked_bar_y'
           )
         "
         class="chart-icons"
       />
     </mat-button-toggle>
-    <mat-button-toggle value="stacked_bar_y" disabled>
+    <mat-button-toggle
+      value="stacked_bar_x"
+      [disabled]="report.groupBy?.length < 1"
+    >
       <img
         [src]="
           getImage(
             'stacked_column_chart',
-            f.chartVarient.value === 'stacked_bar_y'
+            f.chartVarient.value === 'stacked_bar_x'
           )
         "
         class="chart-icons"
@@ -71,7 +77,7 @@
   <ng-container *ngIf="f.chartVarient.value !== 'table'">
     <div class="chart-settings">
       <mat-form-field appearance="outline" class="width-90">
-        <mat-label>{{ xAxisName }}</mat-label>
+        <mat-label>{{ firstInputName }}</mat-label>
         <mat-select
           [(value)]="chartConfig.datasetFieldName"
           (selectionChange)="onDatasetFieldNameChange()"
@@ -85,7 +91,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="width-90">
-        <mat-label>{{ yAxisName }}</mat-label>
+        <mat-label>{{ secondInputName }}</mat-label>
         <mat-select
           [(value)]="chartConfig.countFieldName"
           (selectionChange)="onCountFieldNameChange()"
@@ -93,6 +99,27 @@
           <mat-option
             [value]="field.name"
             *ngFor="let field of chartConfig.countFields"
+          >
+            {{ field.displayName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field
+        appearance="outline"
+        class="width-90"
+        *ngIf="
+          f.chartVarient.value === 'stacked_bar_x' ||
+          f.chartVarient.value === 'stacked_bar_y'
+        "
+      >
+        <mat-label translate>stackBy</mat-label>
+        <mat-select
+          [(value)]="chartConfig.stackFieldName"
+          (selectionChange)="onStackFieldNameChange()"
+        >
+          <mat-option
+            [value]="field.name"
+            *ngFor="let field of chartConfig.datasetFields"
           >
             {{ field.displayName }}
           </mat-option>

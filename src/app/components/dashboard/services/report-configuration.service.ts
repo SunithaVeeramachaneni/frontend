@@ -234,7 +234,11 @@ export class ReportConfigurationService {
       tableDetails = [],
       chartDetails = {} as ChartDetail
     } = reportConfiguration;
-    const { datasetFieldName = '', countFieldName = '' } = chartDetails;
+    const {
+      datasetFieldName = '',
+      countFieldName = '',
+      stackFieldName = ''
+    } = chartDetails;
     let tableColumns: TableColumn[] = [];
     tableDetails.forEach(
       (table) => (tableColumns = tableColumns.concat(table.columns))
@@ -294,10 +298,12 @@ export class ReportConfigurationService {
       }
       return datasetField;
     });
-
+    let newStackFieldName;
     if (setDatasetField && newDatasetFields.length && !newDatasetFieldName) {
       newDatasetFields[0].visible = true;
       newDatasetFieldName = newDatasetFields[0].name;
+      if (!stackFieldName) newStackFieldName = newDatasetFields[1].name;
+      else newStackFieldName = stackFieldName;
     }
 
     reportConfiguration.chartDetails.datasetFieldName = newDatasetFieldName;
@@ -308,6 +314,7 @@ export class ReportConfigurationService {
       ...chartDetails,
       datasetFields: newDatasetFields,
       datasetFieldName: newDatasetFieldName,
+      stackFieldName,
       countFields: newCountFields,
       countFieldName: newCountFieldName,
       renderChart
