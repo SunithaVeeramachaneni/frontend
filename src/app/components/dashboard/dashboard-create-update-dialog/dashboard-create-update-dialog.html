@@ -15,7 +15,9 @@
       <mat-label translate>dashboardTitle</mat-label>
       <input matInput type="text" formControlName="dashboardName" />
     </mat-form-field>
-    <mat-error *ngIf="f.dashboardName.errors?.required">
+    <mat-error
+      *ngIf="f.dashboardName.errors?.required && f.dashboardName.touched"
+    >
       {{ 'fieldRequired' | translate: { name: 'dashboardLabel' | translate } }}
     </mat-error>
     <mat-error *ngIf="f.dashboardName.errors?.minlength">
