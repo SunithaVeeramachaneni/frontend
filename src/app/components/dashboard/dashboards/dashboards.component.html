@@ -79,6 +79,13 @@
                     </button>
                     <button
                       mat-menu-item
+                      (click)="copyDashboard(dashboard)"
+                      translate
+                    >
+                      copy
+                    </button>
+                    <button
+                      mat-menu-item
                       (click)="markDashboardDefault(dashboard)"
                       *ngIf="!dashboard.isDefault"
                       translate

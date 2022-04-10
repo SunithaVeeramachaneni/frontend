@@ -58,5 +58,6 @@
   "fieldMinimumLength": "{name} must be at least {length} characters",
   "fieldMaximumLength": "{name} must be at the max of {length} characters",
   "title": "Title",
-  "stackBy": "Stack By"
+  "stackBy": "Stack By",
+  "copy": "Copy"
 }

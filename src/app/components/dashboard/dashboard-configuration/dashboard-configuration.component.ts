@@ -434,6 +434,13 @@ export class DashboardConfigurationComponent implements OnInit {
     });
   }
 
+  copyDashboard(dashboard: Dashboard) {
+    this.dashboardActionHandler.emit({
+      type: 'COPY',
+      data: dashboard
+    });
+  }
+
   deleteDashboard(dashboard: Dashboard) {
     this.dashboardActionHandler.emit({
       type: 'DELETE',
