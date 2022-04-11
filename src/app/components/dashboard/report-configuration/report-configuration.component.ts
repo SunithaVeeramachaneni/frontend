@@ -108,6 +108,7 @@ export class ReportConfigurationComponent implements OnInit {
   chartConfig: AppChartConfig = {
     title: '',
     type: 'bar',
+    isStacked: false,
     indexAxis: 'y',
     backgroundColors: ['rgba(61, 90, 254, 0.5)'],
     showLegends: false,
@@ -313,14 +314,26 @@ export class ReportConfigurationComponent implements OnInit {
 
   applyChartVarientChange = (event: ChartVariantChanges) => {
     const { type: eventType, value } = event;
-
     switch (eventType) {
       case 'chartVarient':
         if (value !== 'table') {
           const chartInfo = value.split('_');
-          const [type, indexAxis = ''] = chartInfo;
+          let type;
+          let indexAxis;
+          let isStacked = false;
+          if (chartInfo.length === 2) {
+            [type, indexAxis = ''] = chartInfo;
+            isStacked = false;
+          } else if (chartInfo.length === 3) {
+            [, /*ignore*/ type, indexAxis] = chartInfo;
+            isStacked = true;
+          } else {
+            [type, ,] = chartInfo;
+          }
+
           this.reportConfiguration.chartDetails = {
             ...this.reportConfiguration.chartDetails,
+            isStacked,
             type,
             indexAxis
           };
@@ -337,6 +350,16 @@ export class ReportConfigurationComponent implements OnInit {
 
       case 'datasetFieldName':
         this.reportConfiguration.chartDetails.datasetFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true
+        );
+        break;
+
+      case 'stackFieldName':
+        this.reportConfiguration.chartDetails.stackFieldName = value;
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.reportConfiguration,
           this.chartConfig,

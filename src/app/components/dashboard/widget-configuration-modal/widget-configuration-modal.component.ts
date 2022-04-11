@@ -384,9 +384,21 @@ export class WidgetConfigurationModalComponent implements OnInit {
       case 'chartVarient':
         if (value !== 'table') {
           const chartInfo = value.split('_');
-          const [type, indexAxis = ''] = chartInfo;
+          let type;
+          let indexAxis;
+          let isStacked = false;
+          if (chartInfo.length === 2) {
+            [type, indexAxis = ''] = chartInfo;
+            isStacked = false;
+          } else if (chartInfo.length === 3) {
+            [, /*ignore*/ type, indexAxis] = chartInfo;
+            isStacked = true;
+          } else {
+            [type, ,] = chartInfo;
+          }
           this.selectedReport.chartDetails = {
             ...this.selectedReport.chartDetails,
+            isStacked,
             type,
             indexAxis
           };
@@ -408,6 +420,16 @@ export class WidgetConfigurationModalComponent implements OnInit {
           this.chartConfig,
           false,
           false
+        );
+        break;
+
+      case 'stackFieldName':
+        this.selectedReport.chartDetails.stackFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.selectedReport,
+          this.chartConfig,
+          true,
+          true
         );
         break;
 
