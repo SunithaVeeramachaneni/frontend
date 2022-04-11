@@ -2,9 +2,6 @@
   overflow: hidden;
   padding: 20px;
 }
-::ng-deep .mat-dialog-container {
-  padding: 0 !important;
-}
 
 .dialog-head {
   display: flex;
@@ -14,20 +11,25 @@
   margin: 0px;
   align-items: center;
 }
+
 .dialog-close {
   margin-top: 5px;
 }
+
 .dialog-title {
   font-size: 16px;
 }
+
 .dialog-content {
-  height: 95px;
+  height: 120px;
 }
+
 .dialog-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
+
 .dialog-close-btn {
   cursor: pointer;
 }
@@ -37,7 +39,6 @@
   font-size: 16px;
   letter-spacing: 0.15px;
   color: #ffffff;
-  border: 1px solid #3d5afe;
   border-radius: 4px;
   background-color: #3d5afe;
   float: right;

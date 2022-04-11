@@ -97,7 +97,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.currentRouteUrl = event.url;
+        this.currentRouteUrl = event.urlAfterRedirects;
         const splitedUrl = '/' + this.currentRouteUrl.split('/')[1];
         const selectedmenu = this.menus.find((x) => x.url === splitedUrl);
         this.selectedMenu = selectedmenu?.title;

@@ -54,6 +54,7 @@
   "widgetWarningMessage": "Report added to the widget got modified, please do reconfigure",
   "widgetConfigurationWarningMessage": "Please configure the widget",
   "widgetLabel": "Widget Label",
+  "dashboardLabel": "Dashboard Label",
   "fieldRequired": "{name} is required",
   "fieldMinimumLength": "{name} must be at least {length} characters",
   "fieldMaximumLength": "{name} must be at the max of {length} characters",

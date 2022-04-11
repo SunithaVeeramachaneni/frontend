@@ -122,10 +122,10 @@ export class ReportConfigurationComponent implements OnInit {
   );
   chartData$: Observable<AppChartData[]>;
   reportColumns: TableColumn[] = [];
-
   undoRedoUtil: any;
   subscription: any;
   isExportInProgress = false;
+  showPreview: boolean;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -177,6 +177,8 @@ export class ReportConfigurationComponent implements OnInit {
           prevValue: oldValue
         });
         this.reportName.patchValue(newValue);
+        this.breadcrumbService.set('@reportConfiguration', { label: newValue });
+        this.commonService.setHeaderTitle(newValue);
       });
 
     this.undoRedoUtil = new UndoRedoUtil();
@@ -185,11 +187,16 @@ export class ReportConfigurationComponent implements OnInit {
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
       this.filtersApplied$,
-      this.route.params
+      this.route.params,
+      this.route.queryParams
     ]).pipe(
-      map(([reportDefinition, filtersApplied, params]) => {
+      map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
+        this.showPreview =
+          this.showPreview === undefined
+            ? queryParams.preview
+            : this.showPreview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();
@@ -233,23 +240,26 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.reportDetails$ = combineLatest([
       this.reportDetailsOnLoadFilter$,
-      this.reportDetailsOnScroll$,
-      this.commonService.currentRouteUrlAction$
+      this.reportDetailsOnScroll$
     ]).pipe(
-      map(([loadFilter, scroll, currentRouteUrl]) => {
+      map(([loadFilter, scroll]) => {
         if (this.skip === 0 && !this.filtersApplied) {
           const { report } = loadFilter;
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
           this.reportName.patchValue(this.reportConfiguration.name);
-          this.breadcrumbService.set(currentRouteUrl, {
+          this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
                 ? this.reportName.value
                 : `${this.reportName.value} *`
           });
-
+          this.commonService.setHeaderTitle(
+            this.reportConfiguration && this.reportConfiguration.id
+              ? this.reportName.value
+              : `${this.reportName.value} *`
+          );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
             this.reportConfigService.updateConfigOptionsFromReportConfiguration(
@@ -609,16 +619,6 @@ export class ReportConfigurationComponent implements OnInit {
     });
   };
 
-  // reportTitleChanged = () => {
-  //   const currentValue = this.reportNameAndDescForm.get('name').value;
-  //   this.undoRedoUtil.WRITE({
-  //     eventType: 'REPORT_TITLE',
-  //     currentValue,
-  //     prevValue: this.reportTitle
-  //   });
-  //   this.reportTitle = currentValue;
-  // };
-
   downloadReport = (event: Event) => {
     event.stopPropagation();
     if (!this.reportConfiguration.id) {
@@ -652,6 +652,10 @@ export class ReportConfigurationComponent implements OnInit {
     this.updateChartConfig(this.reportConfiguration.showChart, true, false);
   };
 
+  togglePreview = () => {
+    this.showPreview = !this.showPreview;
+  };
+
   updateChartConfig = (
     showChart: boolean,
     fetchChartData: boolean,
@@ -668,13 +672,18 @@ export class ReportConfigurationComponent implements OnInit {
     if (showChart) {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 360px)'
+        tableHeight: 'calc(100vh - 330px)'
       };
     } else {
       this.configOptions = {
         ...this.configOptions,
-        tableHeight: 'calc(100vh - 173px)'
+        tableHeight: 'calc(100vh - 150px)'
       };
     }
   };
+
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/dashboard-icons/${imageName}_active.svg`
+      : `assets/dashboard-icons/${imageName}.svg`;
 }

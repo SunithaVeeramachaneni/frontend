@@ -3,10 +3,13 @@
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
   >
-    <div class="column1">
+    <div
+      class="column1"
+      [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
+    >
       <div class="report-name-col dis-flex">
-        <div class="width-100 m-t-14">
-          <mat-form-field appearance="outline" class="width-100">
+        <div class="width-85 m-t-14">
+          <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
             <mat-icon
               matSuffix
@@ -56,7 +59,7 @@
           </mat-form-field>
         </div>
 
-        <a (click)="favoriteToggle()" class="favorite-toggle">
+        <a (click)="favoriteToggle()" class="favorite-toggle width-10">
           <span
             *ngIf="!reportDetails.report?.isFavorite"
             matTooltip="Mark as Favorite"
@@ -73,12 +76,26 @@
           </span>
         </a>
       </div>
-      <div class="table-filter-panel">
-        <cwp-table-filter-panel [configOptions]="configOptions">
-        </cwp-table-filter-panel>
+
+      <div class="table-filter-panel height-100">
+        <mat-tab-group class="outline-filter-tabs">
+          <mat-tab label="OUTLINE">
+            <cwp-table-filter-panel [configOptions]="configOptions">
+            </cwp-table-filter-panel>
+          </mat-tab>
+          <mat-tab label="FILTER" class="height-100">
+            <app-dynamic-filters
+              [filtersApplied]="reportDetails.report?.filtersApplied"
+              [reportColumns]="this.reportColumns"
+              [filterOptions]="reportDetails.report?.filterOptions"
+              (appliedFilters)="applyFilter($event)"
+            >
+            </app-dynamic-filters>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
-    <div class="column2">
+    <div class="column2" [ngStyle]="{ width: showPreview ? '98.8%' : '77%' }">
       <div class="dis-flex">
         <div class="width-50">
           <app-common-filter
@@ -89,7 +106,6 @@
             (appliedFilters)="applyFilter($event)"
           >
           </app-common-filter>
-
           <div class="no-of-records">
             <ng-template #loadingCount>
               <mat-spinner [diameter]="20"></mat-spinner>
@@ -112,7 +128,7 @@
             </div>
           </div>
         </div>
-        <div class="width-50 text-align-right m-t-5 no-wrap">
+        <div class="width-50 text-align-right m-t-5 m-r-5 no-wrap">
           <button
             mat-stroked-button
             color="primary"
@@ -138,7 +154,7 @@
           <button
             mat-stroked-button
             color="primary"
-            class="hide-chart-btn"
+            class="highlight-btn"
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
@@ -168,9 +184,10 @@
             color="primary"
             matTooltip="Preview"
             class="report-button"
-            [disabled]="true"
+            [ngClass]="{ 'highlight-btn': showPreview }"
+            (click)="togglePreview()"
           >
-            <img src="assets/dashboard-icons/preview.svg" />
+            <img [src]="getImage('preview', showPreview)" />
           </button>
           <button
             mat-stroked-button
@@ -305,7 +322,7 @@
           </div>
         </ng-template>
       </div>
-      <div class="m-r-15">
+      <div class="m-r-10">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"

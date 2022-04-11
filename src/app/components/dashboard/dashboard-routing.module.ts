@@ -9,22 +9,28 @@ const routes: Routes = [
   {
     path: '',
     component: DashboardContainerComponent,
-    data: { breadcrumb: { label: 'Dashboard' } }
-  },
-  {
-    path: 'reports',
-    component: ReportsComponent,
-    data: { breadcrumb: { label: 'Reports' } },
+    data: { breadcrumb: { label: 'Dashboard' } },
     children: [
       {
-        path: 'addreport',
-        component: ReportConfigurationComponent,
-        data: { breadcrumb: { label: 'Add Report' } }
-      },
-      {
-        path: 'editreport/:id',
-        component: ReportConfigurationComponent,
-        data: { breadcrumb: { label: 'Edit Report' } }
+        path: 'reports',
+        component: ReportsComponent,
+        data: { breadcrumb: { label: 'Reports' } },
+        children: [
+          {
+            path: 'addreport',
+            component: ReportConfigurationComponent,
+            data: {
+              breadcrumb: { label: 'Add Report', alias: 'reportConfiguration' }
+            }
+          },
+          {
+            path: 'editreport/:id',
+            component: ReportConfigurationComponent,
+            data: {
+              breadcrumb: { label: 'Edit Report', alias: 'reportConfiguration' }
+            }
+          }
+        ]
       }
     ]
   }

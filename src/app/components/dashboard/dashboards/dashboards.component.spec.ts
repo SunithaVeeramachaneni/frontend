@@ -12,6 +12,7 @@ import { DashboardService } from '../services/dashboard.service';
 import { DashboardsComponent } from './dashboards.component';
 import { dashboards, dashboards$ } from './dashboards.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const info: ErrorInfo = {
   displayToast: true,
@@ -43,7 +44,11 @@ describe('DashboardsComponent', () => {
         DashboardsComponent,
         MockComponent(DashboardConfigurationComponent)
       ],
-      imports: [AppMaterialModules, NgxShimmerLoadingModule],
+      imports: [
+        AppMaterialModules,
+        NgxShimmerLoadingModule,
+        RouterTestingModule
+      ],
       providers: [
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },
