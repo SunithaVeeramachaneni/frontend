@@ -12,7 +12,8 @@ insert into catalogs (
   nodeProtectedResources,
   tenantDomainName,
   saml,
-  sap
+  sap,
+  createdOn
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
   "innovapptive",
@@ -69,5 +70,14 @@ insert into catalogs (
     "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
     "clientId": "cwpuser",
     "scope": "/INVCEC/RACE_SRV_0001"
-  }'
+  }',
+  "2022-04-11 10:00:00"
 );
+
+insert into tenants (
+  catalogId,
+  products,
+  dbType,
+  logLevel,
+  createdOn
+) values (1, '["wi"]', "nosql", "error", "2022-04-11 10:00:00");
