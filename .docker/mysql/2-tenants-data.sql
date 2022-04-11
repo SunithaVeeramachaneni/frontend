@@ -78,4 +78,4 @@ insert into tenants (
   dbType,
   logLevel,
   createdOn
-) values (1, '["wi"]', "nosql", "error", "2022-04-11 10:00:00");
+) values (1, '["dashboards", "mcc", "spcc", "wi"]', "nosql", "error", "2022-04-11 10:00:00");
