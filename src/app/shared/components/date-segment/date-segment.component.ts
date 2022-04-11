@@ -49,14 +49,11 @@ export class DateSegmentComponent implements OnInit {
   }
 
   appliedDateRange(start, end) {
-    console.log('star is', start);
-    console.log('end is', end);
     const sDate = moment(start);
     let eDate;
     sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
     if (!end) {
-      console.log("I'm here");
       eDate = moment(start);
       eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
     } else {
