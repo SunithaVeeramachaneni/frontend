@@ -7,7 +7,6 @@ insert into catalogs (
   tenantIdp,
   clientId,
   authority,
-  identityMetadata,
   redirectUri,
   sapProtectedResources,
   nodeProtectedResources,
@@ -21,9 +20,13 @@ insert into catalogs (
   "azure",
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
   "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0",
-  "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0/.well-known/openid-configuration",
   "http://localhost:4200/",
   '{
+    "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
+    "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
+    "clientID": "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
+    "audience": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
+    "scope": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access",
     "urls": [
       "http://localhost:8002/",
       "http://localhost:8003/",
@@ -31,10 +34,14 @@ insert into catalogs (
       "https://cwpdev.innovapptive.com/mccspccabapapi/",
       "https://cwpqa.innovapptive.com/wiabapapi/",
       "https://cwpqa.innovapptive.com/mccspccabapapi/"
-    ],
-    "scope": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access"
+    ]
   }',
   '{
+    "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
+    "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
+    "clientID": "9d93f9da-6989-4aea-b59f-c26e06a2ef91",
+    "audience": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91",
+    "scope": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91/access_as_user",
     "urls": [
       "http://localhost:8001/",
       "http://localhost:8004/",
@@ -42,8 +49,7 @@ insert into catalogs (
       "https://cwpdev.innovapptive.com/dashboardapi/",
       "https://cwpqa.innovapptive.com/wiapi/",
       "https://cwpqa.innovapptive.com/dashboardapi/"
-    ],
-    "scope": "api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user"
+    ]
   }',
   "innovapptive.com",
   '{

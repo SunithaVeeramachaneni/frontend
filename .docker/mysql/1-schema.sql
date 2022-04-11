@@ -8,7 +8,6 @@ create table catalogs(
    tenantIdp VARCHAR(255) NOT NULL,
    clientId VARCHAR(255) NOT NULL,
    authority VARCHAR(255) NOT NULL,
-   identityMetadata VARCHAR(255) NOT NULL,
    redirectUri VARCHAR(255) NOT NULL,
    sapProtectedResources JSON,
    nodeProtectedResources JSON,
