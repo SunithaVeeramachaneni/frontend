@@ -212,8 +212,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - mysqldata:/var/lib/mysql
-      - ./.docker/mysql/1-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
-      - ./.docker/mysql/2-data.sql:/docker-entrypoint-initdb.d/2-data.sql:ro
+      - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
+      - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
     ports:
       - '3306:3306'
     networks:
