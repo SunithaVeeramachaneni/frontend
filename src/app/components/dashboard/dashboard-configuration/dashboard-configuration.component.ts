@@ -53,7 +53,7 @@ interface GridInterface extends GridsterConfig {
   pushDirections: PushDirections;
 }
 interface CreateUpdateDeleteWidget {
-  type: 'create' | 'update' | 'delete';
+  type: 'create' | 'update' | 'delete' | 'copy';
   widget: Widget;
 }
 @Component({
@@ -209,7 +209,7 @@ export class DashboardConfigurationComponent implements OnInit {
     ]).pipe(
       mergeMap(([initial, widgets, { type, widget }]) => {
         if (Object.keys(widget).length) {
-          if (type === 'create') {
+          if (type === 'create' || type === 'copy') {
             widget.config = this.options.api.getFirstPossiblePosition(
               widget.config
             );
@@ -401,6 +401,22 @@ export class DashboardConfigurationComponent implements OnInit {
               type: 'success'
             });
           }
+        });
+      }
+    });
+  };
+
+  copyWidget = (widget: Widget) => {
+    this.widgetService.copyWidget$(widget).subscribe((response) => {
+      this.spinner.hide();
+      if (Object.keys(response).length) {
+        this.createUpdateDeleteWidget$.next({
+          type: 'copy',
+          widget: { ...response }
+        });
+        this.toast.show({
+          text: 'Widget copied successfully',
+          type: 'success'
         });
       }
     });
