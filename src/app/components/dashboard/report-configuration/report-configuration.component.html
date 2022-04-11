@@ -8,7 +8,7 @@
       [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
     >
       <div class="report-name-col dis-flex">
-        <div class="width-95 m-t-14">
+        <div class="width-85 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
             <mat-icon
@@ -43,7 +43,7 @@
           </mat-form-field>
         </div>
 
-        <a (click)="favoriteToggle()" class="favorite-toggle">
+        <a (click)="favoriteToggle()" class="favorite-toggle width-10">
           <span
             *ngIf="!reportDetails.report?.isFavorite"
             matTooltip="Mark as Favorite"
@@ -60,9 +60,23 @@
           </span>
         </a>
       </div>
-      <div class="table-filter-panel">
-        <cwp-table-filter-panel [configOptions]="configOptions">
-        </cwp-table-filter-panel>
+
+      <div class="table-filter-panel height-100">
+        <mat-tab-group class="outline-filter-tabs">
+          <mat-tab label="OUTLINE">
+            <cwp-table-filter-panel [configOptions]="configOptions">
+            </cwp-table-filter-panel>
+          </mat-tab>
+          <mat-tab label="FILTER" class="height-100">
+            <app-dynamic-filters
+              [filtersApplied]="reportDetails.report?.filtersApplied"
+              [reportColumns]="this.reportColumns"
+              [filterOptions]="reportDetails.report?.filterOptions"
+              (appliedFilters)="applyFilter($event)"
+            >
+            </app-dynamic-filters>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
     <div class="column2" [ngStyle]="{ width: showPreview ? '98.8%' : '77%' }">
@@ -76,7 +90,6 @@
             (appliedFilters)="applyFilter($event)"
           >
           </app-common-filter>
-
           <div class="no-of-records">
             <ng-template #loadingCount>
               <mat-spinner [diameter]="20"></mat-spinner>
