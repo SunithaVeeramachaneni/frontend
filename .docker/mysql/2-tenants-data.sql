@@ -3,7 +3,6 @@ use cwp_tenant;
 insert into catalogs (
   tenantId,
   tenantName,
-  tenantDate,
   tenantIdp,
   clientId,
   authority,
@@ -17,7 +16,6 @@ insert into catalogs (
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
   "innovapptive",
-  "2022-04-05",
   "azure",
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
   "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0",

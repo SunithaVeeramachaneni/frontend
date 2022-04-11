@@ -4,7 +4,6 @@ create table catalogs(
   id INT NOT NULL AUTO_INCREMENT,
   tenantId VARCHAR(255) NOT NULL,
   tenantName VARCHAR(100) NOT NULL,
-  tenantDate DATE NOT NULL,
   tenantIdp VARCHAR(255) NOT NULL,
   clientId VARCHAR(255) NOT NULL,
   authority VARCHAR(255) NOT NULL,
