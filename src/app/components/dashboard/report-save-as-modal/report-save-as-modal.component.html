@@ -1,6 +1,10 @@
-<div class="widget-delete-modal" [formGroup]="reportNameAndDescForm">
+<div
+  class="widget-delete-modal dashboard-formfield"
+  [formGroup]="reportNameAndDescForm"
+>
   <p class="title" translate>saveReportAs</p>
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" class="width-100">
+    <mat-label>Report Name</mat-label>
     <input matInput formControlName="name" />
     <mat-error *ngIf="reportName.errors?.minlength">
       {{
@@ -23,6 +27,7 @@
       }}
     </mat-error>
   </mat-form-field>
+  <br />
   <button
     mat-raised-button
     color="warn"
