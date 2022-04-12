@@ -11,7 +11,16 @@ export const routingUrls = {
   favorites: { url: '/work-instructions/favorites', title: 'Favorites' },
   published: { url: '/work-instructions/published', title: 'Published' },
   recents: { url: '/work-instructions/recents', title: 'Recents' },
-  files: { url: '/work-instructions/files', title: 'Files' }
+  files: { url: '/work-instructions/files', title: 'Files' },
+  userManagement: { url: '/user-management', title: 'User Management' },
+  rolesPermissions: {
+    url: '/user-management/roles-permissions',
+    title: 'Roles & Permissions'
+  },
+  inActiveUsers: {
+    url: '/user-management/in-active-users',
+    title: 'Inactive Users'
+  }
 };
 
 export const defaultCategoryId = '_UnassignedCategory_';

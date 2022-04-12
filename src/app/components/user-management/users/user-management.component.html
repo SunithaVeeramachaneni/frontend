@@ -1,0 +1,13 @@
+<div class="header">
+  <app-header [title]="headerTitle$ | async"></app-header>
+</div>
+
+<div
+  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
+  class="work-instructions-body"
+>
+  <div *ngIf="currentRouteUrl === routingUrls.userManagement.url">
+    user management
+  </div>
+</div>
+<router-outlet></router-outlet>

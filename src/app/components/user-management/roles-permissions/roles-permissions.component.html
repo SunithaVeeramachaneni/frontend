@@ -1,0 +1,53 @@
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
+    <div class="main-container">
+      <div
+        style="
+          text-align: right;
+          padding: 10px;
+          border-bottom: 1px solid #e7e7e7;
+        "
+      >
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <span>Delete</span>
+          </button>
+        </mat-menu>
+        <span style="margin: 0 15px">
+          <span class="roles-count">3</span>
+          <span class="roles-text">Roles</span>
+        </span>
+        <button
+          mat-raised-button
+          class="add-role-btn"
+          (click)="toggleTextBox()"
+        >
+          Add Role
+        </button>
+      </div>
+      <div class="dis-flex" style="height: 75vh">
+        <div
+          class="width-30 custom-mat-form-field-gray-color"
+          style="border-right: 1px solid #e7e7e7"
+          [formGroup]="roleForm"
+        >
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input matInput type="text" placeholder="Search" />
+          </mat-form-field>
+        </div>
+        <div class="width-70" *ngIf="this.showTextBox === true">
+          <mat-form-field appearance="outline" style="margin: 0 10px">
+            <mat-label>Role</mat-label>
+            <input matInput formControlName="role" />
+          </mat-form-field>
+          <button mat-stroked-button class="copy-role-btn">Copy Role</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <router-outlet></router-outlet>
+</ng-container>
