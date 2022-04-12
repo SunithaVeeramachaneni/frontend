@@ -33,26 +33,6 @@ import {
 export class ChartVariantComponent implements OnInit, OnDestroy {
   @Input() set report(report: ReportConfiguration) {
     this._report = report ? report : ({} as ReportConfiguration);
-    const {
-      chartDetails: {
-        type,
-        indexAxis,
-        title: chartTitle,
-        showValues,
-        showLegends
-      } = {},
-      groupBy
-    } = this.report;
-    const chartVarient = groupBy?.length
-      ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
-      : 'table';
-    this.chartVarientForm.patchValue({
-      chartVarient,
-      chartTitle,
-      showValues,
-      showLegends
-    });
-    this.setAxisNames();
   }
   get report(): ReportConfiguration {
     return this._report;
@@ -64,8 +44,8 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   @Output() chartVarientChanges: EventEmitter<ChartVariantChanges> =
     new EventEmitter<ChartVariantChanges>();
 
-  xAxisName: string;
-  yAxisName: string;
+  firstInputName: string;
+  secondInputName: string;
   chartVarientForm = this.fb.group({
     chartTitle: new FormControl('', [
       Validators.minLength(3),
@@ -75,12 +55,38 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
   });
+
   private _report: ReportConfiguration;
   private destroy$ = new Subject();
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    const {
+      chartDetails: {
+        type,
+        indexAxis,
+        title: chartTitle,
+        showValues,
+        showLegends
+      } = {},
+      groupBy
+    } = this.report;
+    const { isStacked } = this.chartConfig;
+    let chartVarient;
+    if (isStacked) chartVarient = `stacked_${type}_${indexAxis}`;
+    else
+      chartVarient = groupBy?.length
+        ? `${type}${indexAxis ? `_${indexAxis}` : ``}`
+        : 'table';
+    this.chartVarientForm.patchValue({
+      chartVarient,
+      chartTitle,
+      showValues,
+      showLegends
+    });
+    this.setAxisNames();
+
     this.f.chartTitle.valueChanges
       .pipe(
         debounceTime(500),
@@ -141,6 +147,13 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     });
   };
 
+  onStackFieldNameChange = () => {
+    this.chartVarientChanges.emit({
+      type: 'stackFieldName',
+      value: this.chartConfig.stackFieldName
+    });
+  };
+
   onChartVarientChange = (event: MatButtonToggleChange) => {
     const { value } = event;
     this.chartVarientChanges.emit({
@@ -160,11 +173,17 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       this.f.chartVarient.value === 'doughnut' ||
       this.f.chartVarient.value === 'pie'
     ) {
-      this.xAxisName = 'Sliced By';
-      this.yAxisName = 'Value';
+      this.firstInputName = 'Sliced By';
+      this.secondInputName = 'Value';
+    } else if (
+      this.f.chartVarient.value === 'stacked_bar_x' ||
+      this.f.chartVarient.value === 'bar_x'
+    ) {
+      this.firstInputName = 'X axis';
+      this.secondInputName = 'Y axis';
     } else {
-      this.xAxisName = 'X axis';
-      this.yAxisName = 'Y axis';
+      this.firstInputName = 'Y axis';
+      this.secondInputName = 'X axis';
     }
   };
 

@@ -1,4 +1,4 @@
-<div class="report-configuration">
+<div class="report-configuration" [formGroup]="reportNameAndDescForm">
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -21,7 +21,6 @@
             <input
               *ngIf="!reportDetails.report"
               matInput
-              [(ngModel)]="dummy"
               [disabled]="disableReportName"
               (keyup.enter)="disableReportName = true"
               (blur)="disableReportName = true"
@@ -29,17 +28,34 @@
             <input
               *ngIf="reportDetails.report"
               matInput
-              [(ngModel)]="reportDetails.report.name"
+              formControlName="name"
               [disabled]="disableReportName"
-              (keyup.enter)="
-                disableReportName = true;
-                reportTitleChanged(reportDetails.report.name)
-              "
-              (blur)="
-                disableReportName = true;
-                reportTitleChanged(reportDetails.report.name)
-              "
+              (keyup.enter)="disableReportName = true"
+              (blur)="disableReportName = true"
             />
+            <mat-error
+              *ngIf="reportName.errors?.minlength"
+              class="report-name-error"
+            >
+              {{
+                'fieldMinimumLength'
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: reportName.errors?.minlength.requiredLength
+                      }
+              }}
+            </mat-error>
+            <mat-error *ngIf="reportName.errors?.maxlength">
+              {{
+                'fieldMaximumLength'
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: reportName.errors?.maxlength.requiredLength
+                      }
+              }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -195,15 +211,48 @@
             routerLinkActive="router-link-active"
             translate="cancel"
           ></button>
-          <button
-            mat-raised-button
-            color="primary"
-            class="save-button"
-            translate="save"
-            matTooltip="Save"
-            (click)="saveReport()"
-            [disabled]="!reportDetails.report"
-          ></button>
+
+          <mat-button-toggle-group class="save-btn-toggle">
+            <mat-button-toggle
+              *ngIf="reportDetails.report?.id"
+              matTooltip="Save"
+              class="save-button"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
+              (click)="
+                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                  saveReport({ saveAs: false })
+              "
+            >
+              <span>Save</span>
+            </mat-button-toggle>
+            <mat-button-toggle
+              *ngIf="reportDetails.report?.id"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
+              [matMenuTriggerFor]="menu"
+              class="save-button-arrow"
+            >
+              <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              matTooltip="Save As"
+              [disabled]="
+                !reportDetails.report || reportNameAndDescForm.invalid
+              "
+              (click)="
+                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                  openSaveAsDialog()
+              "
+            >
+              Save As
+            </button>
+          </mat-menu>
         </div>
       </div>
 

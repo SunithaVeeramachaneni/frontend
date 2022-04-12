@@ -12,7 +12,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { AlertDialog } from '../alert-dialog/alert-dialog.component';
 
 interface CreateUpdateDeleteDashboard {
-  type: 'create' | 'update' | 'delete' | 'mark_default';
+  type: 'create' | 'update' | 'delete' | 'mark_default' | 'copy';
   dashboard: Dashboard;
 }
 
@@ -146,6 +146,9 @@ export class DashboardsComponent implements OnInit {
             });
             this.skipSetDefaultDashboard = true;
             return initial.data;
+          } else if (type === 'copy') {
+            initial.data.push(dashboard);
+            return initial.data;
           }
         } else {
           return initial.data;
@@ -161,6 +164,7 @@ export class DashboardsComponent implements OnInit {
         }
       })
     );
+
     this.dashboardService.dashboardSelectionChanged$.subscribe((event) => {
       if (event.name === 'VIEW_ALL_DASHBOARDS') {
         this.displayAllDashboards = true;
@@ -315,6 +319,19 @@ export class DashboardsComponent implements OnInit {
     });
   }
 
+  copyDashboard(dashboard: Dashboard) {
+    this.dashboardService.copyDashboard$(dashboard).subscribe((response) => {
+      this.createUpdateDeleteDashboard$.next({
+        type: 'copy',
+        dashboard: { ...response }
+      });
+      this.toast.show({
+        text: 'Dashboard copied successfully',
+        type: 'success'
+      });
+    });
+  }
+
   markDashboardDefault(dashboard: Dashboard) {
     this.dashboardService
       .markDashboardDefault$(dashboard.id, dashboard)
@@ -350,6 +367,8 @@ export class DashboardsComponent implements OnInit {
       case 'MARK_DEFAULT':
         this.markDashboardDefault(data);
         break;
+      case 'COPY':
+        this.copyDashboard(data);
     }
   }
 

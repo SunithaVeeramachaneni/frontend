@@ -22,6 +22,17 @@ export class WidgetService {
       info
     );
 
+  copyWidget$ = (
+    widget: Widget,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Widget> =>
+    this.appService._postData(
+      environment.dashboardApiUrl,
+      'widgets/duplicate',
+      widget,
+      info
+    );
+
   updateWidget$ = (
     widget: Widget,
     info: ErrorInfo = {} as ErrorInfo
