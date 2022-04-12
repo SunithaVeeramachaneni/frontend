@@ -29,10 +29,10 @@ insert into catalogs (
     "urls": [
       "http://localhost:8002/",
       "http://localhost:8003/",
-      "https://cwpdev.innovapptive.com/wiabapapi/",
-      "https://cwpdev.innovapptive.com/mccspccabapapi/",
-      "https://cwpqa.innovapptive.com/wiabapapi/",
-      "https://cwpqa.innovapptive.com/mccspccabapapi/"
+      "http://cwpdev.innovapptive.com/wiabapapi/",
+      "http://cwpdev.innovapptive.com/mccspccabapapi/",
+      "http://cwpqa.innovapptive.com/wiabapapi/",
+      "http://cwpqa.innovapptive.com/mccspccabapapi/"
     ]
   }',
   '{
@@ -44,10 +44,10 @@ insert into catalogs (
     "urls": [
       "http://localhost:8001/",
       "http://localhost:8004/",
-      "https://cwpdev.innovapptive.com/wiapi/",
-      "https://cwpdev.innovapptive.com/dashboardapi/",
-      "https://cwpqa.innovapptive.com/wiapi/",
-      "https://cwpqa.innovapptive.com/dashboardapi/"
+      "http://cwpdev.innovapptive.com/wiapi/",
+      "http://cwpdev.innovapptive.com/dashboardapi/",
+      "http://cwpqa.innovapptive.com/wiapi/",
+      "http://cwpqa.innovapptive.com/dashboardapi/"
     ]
   }',
   "innovapptive.com",
