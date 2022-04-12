@@ -8,7 +8,7 @@ import {
 } from 'angular-auth-oidc-client';
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-import { TenantConfig } from './interfaces/tenant-config';
+import { TenantConfig } from './interfaces';
 import { CommonService } from './shared/services/common.service';
 
 const hostname =
@@ -25,11 +25,12 @@ export const httpLoaderFactory = (
         const {
           authority,
           clientId,
-          secureRoutes = [],
-          protectedResources = []
+          sapProtectedResources,
+          nodeProtectedResources
         } = tenatConfig;
-        const [urls, scope] = secureRoutes;
-        commonService.setProtectedResources(protectedResources);
+        const { urls, scope } = sapProtectedResources || {};
+        commonService.setProtectedResources(nodeProtectedResources);
+        commonService.setTenantConfig(tenatConfig);
 
         return {
           authority,
@@ -37,7 +38,7 @@ export const httpLoaderFactory = (
           redirectUrl: window.location.origin,
           postLogoutRedirectUri: window.location.origin,
           clientId,
-          scope,
+          scope: `openid profile offline_access email ${scope}`,
           responseType: 'code',
           silentRenew: true,
           ignoreNonceAfterRefresh: true,

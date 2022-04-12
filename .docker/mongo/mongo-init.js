@@ -21,16 +21,14 @@ db.tenants.insertOne({
   authority:
     'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0',
   redirectUri: 'http://localhost:4200/',
-  secureRoutes: [
-    ['http://localhost:8002/', 'http://localhost:8003/'],
-    'openid profile offline_access email api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access'
-  ],
-  protectedResources: [
-    [
-      ['http://localhost:8001/', 'http://localhost:8004/'],
-      'openid profile offline_access email api://09b861a8-8458-4630-9c18-36c00c43e9b0/access_as_user'
-    ]
-  ],
+  sapProtectedResources: {
+    urls: ['http://localhost:8002/', 'http://localhost:8003/'],
+    scope: 'api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access'
+  },
+  nodeProtectedResources: {
+    urls: ['http://localhost:8001/', 'http://localhost:8004/'],
+    scope: 'api://9d93f9da-6989-4aea-b59f-c26e06a2ef91/access_as_user'
+  },
   nsb100: {
     idp: {
       oauth2Url:

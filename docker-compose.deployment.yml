@@ -1,5 +1,19 @@
-# 1. Set APP_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/[development|testing|staging|production].env file from CWP HOME
 
+# In Windows
+# 2. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env build`
+# 3. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env up`
+
+# In Linux
+# 2. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env build`
+# 3. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env up`
+
+################ OR ################
+
+# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+
+#    export BACKEND_HOME='backend home path comes here...'
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
 #    export APP_ENV=development or export APP_ENV=production
 #    export DEPLOYMENT_ENV=development or DEPLOYMENT_ENV=testing or DEPLOYMENT_ENV=staging or DEPLOYMENT_ENV=production
 
@@ -8,22 +22,24 @@
 #    For the standard Windows DOS command shell use `set` instead of `export` for environment variables.
 #    For Windows Powershell use `$env:APP_ENV = "value"`.
 
+#    $env:BACKEND_HOME="backend home path comes here..."
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
 #    $env:APP_ENV="development" or $env:APP_ENV="production"
 #    $env:DEPLOYMENT_ENV="development"
 
-# 2. Run docker compose build
-# 3. Run docker compose up -d
+# 2. Run docker compose -f docker-compose.deployment.yml build
+# 3. Run docker compose -f docker-compose.deployment.yml up -d
 
 version: '3.8'
 services:
   nginx:
-    container_name: nginx-service-${DEPLOYMENT_ENV}
-    image: nginx-service-${DEPLOYMENT_ENV}
+    container_name: nginx-${DEPLOYMENT_ENV}
+    image: nginx-${DEPLOYMENT_ENV}
     build:
       context: .
       dockerfile: .docker/nginx.${DEPLOYMENT_ENV}.dockerfile
       args:
-        - NPM_AUTH_TOKEN=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
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     ports:
       - '80:80'
@@ -38,14 +54,17 @@ services:
       - app-network
 
   wi:
-    container_name: wi-service-${DEPLOYMENT_ENV}
-    image: wi-service-${DEPLOYMENT_ENV}
+    container_name: wi-${DEPLOYMENT_ENV}
+    image: wi-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-service.deployment.dockerfile
+      dockerfile: .docker/wi.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi-service/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -54,13 +73,16 @@ services:
       - app-network
 
   wi-abap:
-    container_name: wi-abap-service-${DEPLOYMENT_ENV}
-    image: wi-abap-service-${DEPLOYMENT_ENV}
+    container_name: wi-abap-${DEPLOYMENT_ENV}
+    image: wi-abap-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-abap-service.deployment.dockerfile
+      dockerfile: .docker/wi-abap.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -69,13 +91,16 @@ services:
       - app-network
 
   mcc-spcc-abap:
-    container_name: mcc-spcc-abap-service-${DEPLOYMENT_ENV}
-    image: mcc-spcc-abap-service-${DEPLOYMENT_ENV}
+    container_name: mcc-spcc-abap-${DEPLOYMENT_ENV}
+    image: mcc-spcc-abap-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/MCC_SCC
-      dockerfile: .docker/mcc-spcc-abap-service.deployment.dockerfile
+      dockerfile: .docker/mcc-spcc-abap.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -84,13 +109,16 @@ services:
       - app-network
 
   dashboard:
-    container_name: dashboard-service-${DEPLOYMENT_ENV}
-    image: dashboard-service-${DEPLOYMENT_ENV}
+    container_name: dashboard-${DEPLOYMENT_ENV}
+    image: dashboard-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/Reports
-      dockerfile: .docker/dashboard-service.deployment.dockerfile
+      dockerfile: .docker/dashboard.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
@@ -99,11 +127,13 @@ services:
       - app-network
 
   data-collector:
-    container_name: data-collector-service-${DEPLOYMENT_ENV}
-    image: data-collector-service-${DEPLOYMENT_ENV}
+    container_name: data-collector-${DEPLOYMENT_ENV}
+    image: data-collector-${DEPLOYMENT_ENV}
     build:
       context: ${BACKEND_HOME}/DataCollectorService
-      dockerfile: .docker/data-collector-service.deployment.dockerfile
+      dockerfile: .docker/data-collector.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}
