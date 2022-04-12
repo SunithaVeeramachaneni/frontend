@@ -50,10 +50,16 @@ export class DateSegmentComponent implements OnInit {
 
   appliedDateRange(start, end) {
     const sDate = moment(start);
+    let eDate;
     sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
-    const eDate = moment(end);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
+    if (!end) {
+      eDate = moment(start);
+      eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
+    } else {
+      eDate = moment(end);
+      eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
+    }
 
     this.dateRange = {
       startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
@@ -64,12 +70,14 @@ export class DateSegmentComponent implements OnInit {
       'dd MMM YYYY',
       '',
       this.translateService.currentLang
-    )} - ${this.datePipe.transform(
-      `${eDate}`,
-      'dd MMM YYYY',
-      '',
-      this.translateService.currentLang
     )}`;
+    if (end)
+      this.customText += `- ${this.datePipe.transform(
+        `${eDate}`,
+        'dd MMM YYYY',
+        '',
+        this.translateService.currentLang
+      )}`;
 
     this.dateRangeEvent.emit(this.dateRange);
   }

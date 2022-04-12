@@ -1,10 +1,39 @@
-# 1. Run docker compose build
-# 2. Run docker compose up
+# 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
+
+# In Windows
+# 2. Run `docker compose --env-file .\.docker\env\local.env build`
+# 3. Run `docker compose --env-file .\.docker\env\local.env up`
+
+# In Linux
+# 2. Run `docker compose --env-file .docker/env/local.env build`
+# 3. Run `docker compose --env-file .docker/env/local.env up`
+
+################ OR ################
+
+# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+
+#    export BACKEND_HOME='backend home path comes here...'
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export APP_ENV=development
+#    export DEPLOYMENT_ENV=development
+
+#    NOTE: If you're on Windows use one of the following commands to create the environment variables.
+
+#    For the standard Windows DOS command shell use `set` instead of `export` for environment variables.
+#    For Windows Powershell use `$env:APP_ENV = "value"`.
+
+#    $env:BACKEND_HOME="backend home path comes here..."
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:APP_ENV="development"
+#    $env:DEPLOYMENT_ENV="development"
+
+# 2. Run docker compose build
+# 3. Run docker compose up
 
 version: '3.8'
 services:
   nginx:
-    container_name: nginx-service-local
+    container_name: nginx-local
     image: nginx:alpine
     build:
       context: .
@@ -24,41 +53,49 @@ services:
       - app-network
 
   wi:
-    container_name: wi-service-local
-    image: wi-service-local
+    container_name: wi-local
+    image: wi-local
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-service.dockerfile
+      dockerfile: .docker/wi.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
-      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-service
-      - /usr/src/wi-service/node_modules
-    command: sh -c "cd /usr/src/wi-service && npm i && nodemon server.js"
+      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi
+      - /usr/src/wi/node_modules
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi-service/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
-      - MONGODB_HOST_NAME=mongo-service-local
+      - MONGODB_HOST_NAME=mongo-local
+      - MYSQL_HOST_NAME=mysql-local
+      - REDIS_HOST_NAME=redis-local
     ports:
       - '8001:8001'
     depends_on:
       - mongo
+      - mysql
+      - redis
     networks:
       - app-network
 
   wi-abap:
-    container_name: wi-abap-service-local
-    image: wi-abap-service-local
+    container_name: wi-abap-local
+    image: wi-abap-local
     build:
       context: ${BACKEND_HOME}/WorkInstructions
-      dockerfile: .docker/wi-abap-service.dockerfile
+      dockerfile: .docker/wi-abap.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
-      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap-service
-      - /usr/src/wi-abap-service/node_modules
-    command: sh -c "cd /usr/src/wi-abap-service && npm i && nodemon server_abap.js"
+      - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap
+      - /usr/src/wi-abap/node_modules
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
     ports:
       - '8002:8002'
@@ -66,21 +103,23 @@ services:
       - app-network
 
   mcc-spcc-abap:
-    container_name: mcc-spcc-abap-service-local
-    image: mcc-spcc-abap-service-local
+    container_name: mcc-spcc-abap-local
+    image: mcc-spcc-abap-local
     build:
       context: ${BACKEND_HOME}/MCC_SCC
-      dockerfile: .docker/mcc-spcc-abap-service.dockerfile
+      dockerfile: .docker/mcc-spcc-abap.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
-      - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap-service
-      - /usr/src/mcc-spcc-abap-service/node_modules
-    command: sh -c "cd /usr/src/mcc-spcc-abap-service && npm i && nodemon app.js"
+      - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap
+      - /usr/src/mcc-spcc-abap/node_modules
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
-      - MONGODB_HOST_NAME=mongo-service-local
-      - REDIS_HOST_NAME=redis-service-local
+      - MONGODB_HOST_NAME=mongo-local
+      - REDIS_HOST_NAME=redis-local
     ports:
       - '8003:8003'
     depends_on:
@@ -90,41 +129,50 @@ services:
       - app-network
 
   dashboard:
-    container_name: dashboard-service-local
-    image: dashboard-service-local
+    container_name: dashboard-local
+    image: dashboard-local
     build:
       context: ${BACKEND_HOME}/Reports
-      dockerfile: .docker/dashboard-service.dockerfile
+      dockerfile: .docker/dashboard.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
-      - ${BACKEND_HOME}/Reports:/usr/src/dashboard-service
-      - /usr/src/dashboard-service/node_modules
-    command: sh -c "cd /usr/src/dashboard-service && npm i && nodemon server.js"
+      - ${BACKEND_HOME}/Reports:/usr/src/dashboard
+      - /usr/src/dashboard/node_modules
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
-      - MONGODB_HOST_NAME=mongo-service-local
+      - MONGODB_HOST_NAME=mongo-local
+      - MYSQL_HOST_NAME=mysql-local
+      - REDIS_HOST_NAME=redis-local
     ports:
       - '8004:8004'
     depends_on:
       - mongo
+      - mysql
+      - redis
     networks:
       - app-network
 
   data-collector:
-    container_name: data-collector-service-local
-    image: data-collector-service-local
+    container_name: data-collector-local
+    image: data-collector-local
     build:
       context: ${BACKEND_HOME}/DataCollectorService
-      dockerfile: .docker/data-collector-service.dockerfile
+      dockerfile: .docker/data-collector.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     volumes:
-      - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector-service
-      - /usr/src/data-collector-service/node_modules
-    command: sh -c "cd /usr/src/data-collector-service && npm i && nodemon src/server.js"
+      - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector
+      - /usr/src/data-collector/node_modules
+    command: sh -c "cd /usr/src/data-collector && npm i && nodemon src/server.js"
     environment:
-      - NODE_ENV=development
-      - DEPLOYMENT_ENV=development
-      - MONGODB_HOST_NAME=mongo-service-local
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - MONGODB_HOST_NAME=mongo-local
     ports:
       - '8005:8005'
     depends_on:
@@ -133,7 +181,7 @@ services:
       - app-network
 
   mongo:
-    container_name: mongo-service-local
+    container_name: mongo-local
     image: mongo:latest
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
@@ -147,15 +195,33 @@ services:
       - app-network
 
   redis:
-    container_name: redis-service-local
+    container_name: redis-local
     image: redis
     ports:
       - '6379:6379'
     networks:
       - app-network
 
+  mysql:
+    container_name: mysql-local
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: cwp_tenant
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Innovation54321
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
+      - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
+    ports:
+      - '3306:3306'
+    networks:
+      - app-network
+
 volumes:
   mongodata:
+  mysqldata:
 
 networks:
   app-network:

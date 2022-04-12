@@ -1,67 +1,37 @@
 import {
   Component,
-  OnInit,
   Input,
   Output,
   EventEmitter,
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { uniqBy } from 'lodash';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CommonFilterService } from './common-filter.service';
-import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
-import { DateSegmentService } from '../date-segment/date-segment.service';
-import * as moment from 'moment';
-import { debounce } from 'ts-debounce';
+import { DateSegmentService } from '../../../shared/components/date-segment/date-segment.service';
+
 @Component({
-  selector: 'app-common-filter',
-  templateUrl: './common-filter.component.html',
-  styleUrls: ['./common-filter.component.scss']
+  selector: 'app-dynamic-filters',
+  templateUrl: './dynamic-filters.component.html',
+  styleUrls: ['./dynamic-filters.component.scss']
 })
-export class CommonFilterComponent implements OnChanges {
-  @Input() showOverdueList;
+export class DynamicFiltersComponent implements OnChanges {
   @Input() filtersApplied;
-  @Input() priorityList;
-  @Input() kitStatusList;
-  @Input() workCenterList;
-  @Input() technicians;
   @Input() reportColumns;
   @Input() filterOptions;
-  @Input() title;
   @Output() appliedFilters: EventEmitter<any> = new EventEmitter();
-
-  isPopoverOpen = false;
-  isfilterTooltipOpen = [];
-  allColumns = [];
-  filtersForm: FormGroup;
-  dropdownReportColumns = [];
-
+  public dynamicFilterModalTopPosition;
+  public isOpen = true;
+  public isfilterTooltipOpen = [];
+  public filtersForm: FormGroup;
+  public dropdownReportColumns = [];
   public searchValue = '';
-  public priority = [];
-  public showOverdue = '';
-  public kitStatus = [];
-  public workCenter = [];
-  public assign = [];
-  public resetBtnDisable = true;
-  public applyBtnDisable = true;
-  public resetdynamicFiltersBtnDisable = true;
-  public applydynamicFiltersBtnDisable = true;
-
-  public displayedAssigneeList: any[];
   public filteredOptionsByType = [];
-
-  public operatorType = [];
-  public inputValue = [];
   public dateRange: any;
-  public dateRangeText: any;
   public customBtnText = 'Select the Date Range';
 
   constructor(
     private formBuilder: FormBuilder,
-    private commonFilterService: CommonFilterService,
-    private sanitizer: DomSanitizer,
     private dateSegmentService: DateSegmentService
   ) {
     this.filtersForm = this.formBuilder.group({
@@ -148,16 +118,16 @@ export class CommonFilterComponent implements OnChanges {
             this.dropdownReportColumns &&
             this.dropdownReportColumns.length > 0
           ) {
-            let index = this.dropdownReportColumns.findIndex(
+            const index = this.dropdownReportColumns.findIndex(
               (column) => column.name === filter.column
             );
             if (index > -1) {
-              let displayName = this.dropdownReportColumns[index].displayName;
+              const displayname = this.dropdownReportColumns[index].displayName;
               this.dropdownReportColumns.splice(index, 1);
               this.filters.push(
                 this.newFilter({
                   name: filter.column,
-                  displayName: displayName,
+                  displayName: displayname,
                   filterType: filter.type,
                   operator: filter.filters[0].operation,
                   operand: filter.filters[0].operand
@@ -169,72 +139,6 @@ export class CommonFilterComponent implements OnChanges {
       }
     }
   }
-
-  getImageSrc = (source: string) => {
-    const base64Image = 'data:image/jpeg;base64,' + source;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-  };
-
-  onCenterChange = (event) => {
-    const workCenters = event.value;
-    this.displayedAssigneeList = [];
-    workCenters.forEach((workCenter) => {
-      this.displayedAssigneeList = this.arrayUnion(
-        this.technicians[workCenter.workCenterKey],
-        this.displayedAssigneeList,
-        'personName'
-      );
-    });
-  };
-
-  searchFilter() {
-    this.commonFilterService.searchFilter({
-      search: this.searchValue,
-      priority: this.priority,
-      showOverdue: this.showOverdue,
-      kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
-      assign: this.assign
-    });
-  }
-
-  debouncedSearchOrder = debounce(
-    (newValue) => this.searchOrder(newValue),
-    2500
-  );
-
-  selectedFilterValue(selectedValue) {
-    if (selectedValue === '' || selectedValue.length === 0) {
-      this.resetBtnDisable = true;
-      this.applyBtnDisable = true;
-    } else {
-      this.resetBtnDisable = false;
-      this.applyBtnDisable = false;
-    }
-  }
-
-  searchOrder(newValue) {
-    this.commonFilterService.searchFilter({
-      search: newValue,
-      priority: this.priority,
-      showOverdue: this.showOverdue,
-      kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
-      assign: this.assign
-    });
-    this.applyFilters();
-  }
-
-  arrayUnion = (arr1, arr2, identifier) => {
-    const array = [...arr1, ...arr2];
-    return uniqBy(array, identifier);
-  };
-
-  clearFilter = () => {
-    this.workCenter = [];
-    this.resetBtnDisable = true;
-    this.applyBtnDisable = true;
-  };
 
   addFilter = (column, index) => {
     this.dropdownReportColumns.splice(index, 1);
@@ -250,27 +154,23 @@ export class CommonFilterComponent implements OnChanges {
     });
     this.filters.removeAt(index);
     this.filtersApplied.splice(index, 1);
-    if (this.filtersApplied.length === 0) {
-      this.resetdynamicFiltersBtnDisable = true;
-      this.applydynamicFiltersBtnDisable = true;
-    }
+    this.appliedFilters.emit({
+      filters: this.filtersApplied,
+      searchKey: this.searchValue
+    });
   }
 
-  openFilterModal(column: TableColumn, index) {
+  openFilterModal(column: TableColumn, index, el) {
     this.isfilterTooltipOpen[index] = true;
     this.filteredOptionsByType = this.filterOptions[column.filterType];
+
+    this.dynamicFilterModalTopPosition = el.y - 85 + 'px';
   }
 
   onSave() {
     this.isfilterTooltipOpen.fill(false);
     this.filtersApplied = [];
     this.prepareAppliedFilters();
-    this.filtersForm.value.filters.forEach((e) => {
-      if (e.displayText !== '') {
-        this.resetdynamicFiltersBtnDisable = false;
-        this.applydynamicFiltersBtnDisable = false;
-      }
-    });
   }
 
   prepareAppliedFilters() {
@@ -331,39 +231,11 @@ export class CommonFilterComponent implements OnChanges {
           }
         ]
       });
+
+      this.appliedFilters.emit({
+        filters: this.filtersApplied,
+        searchKey: this.searchValue
+      });
     }
-  }
-
-  applyFilters() {
-    this.isPopoverOpen = false;
-    this.appliedFilters.emit({
-      filters: this.filtersApplied,
-      searchKey: this.searchValue
-    });
-  }
-
-  clearFilters() {
-    this.filters.clear();
-    this.resetdynamicFiltersBtnDisable = true;
-    this.applydynamicFiltersBtnDisable = true;
-  }
-
-  appliedDateRange(start, end) {
-    const sDate = moment(start);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    const eDate = moment(end);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-
-    this.dateRange = {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-
-    const customDate =
-      this.dateRange.startDate.split('T')[0] +
-      ' - ' +
-      this.dateRange.endDate.split('T')[0];
-    this.customBtnText = customDate;
   }
 }

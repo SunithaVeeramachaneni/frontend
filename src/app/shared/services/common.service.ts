@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LoggedInUserInfo } from 'src/app/interfaces/logged-in-user-info';
+import {
+  LoggedInUserInfo,
+  ProtectedResource,
+  TenantConfig
+} from 'src/app/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
-  private protectedResources: [string[], string][] = [];
+  private protectedResources: ProtectedResource[] = [];
+  private tenantConfig: TenantConfig = {} as TenantConfig;
   private userInfo = {} as LoggedInUserInfo;
 
   private minimizeSidebarSubject = new BehaviorSubject<boolean>(true);
@@ -34,12 +39,23 @@ export class CommonService {
     this.headerTitleSubject.next(value);
   }
 
-  setProtectedResources(protectedResources: [string[], string][]) {
-    this.protectedResources = protectedResources ? protectedResources : [];
+  setProtectedResources(protectedResources: ProtectedResource) {
+    this.protectedResources = [
+      ...this.protectedResources,
+      { ...protectedResources }
+    ];
   }
 
   getProtectedResources() {
     return this.protectedResources;
+  }
+
+  setTenantConfig(tenantConfig: TenantConfig) {
+    this.tenantConfig = tenantConfig;
+  }
+
+  getTenantConfig() {
+    return this.tenantConfig;
   }
 
   setTranslateLanguage(value: string) {

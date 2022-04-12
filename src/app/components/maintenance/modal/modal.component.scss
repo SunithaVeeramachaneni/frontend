@@ -1,6 +1,11 @@
-::ng-deep .mat-dialog-container {
-  padding: 15px 0;
+.assignee-modal {
+  height: 220px;
+  padding: 20px 0;
   overflow: hidden;
+}
+
+.assignee-modal-heading {
+  margin-bottom: 0;
 }
 
 .assign-work-order-heading {
@@ -17,6 +22,7 @@
   border: none;
   float: right;
   margin-right: 15px;
+  margin-top: 5px;
 }
 
 .cancel-btn {

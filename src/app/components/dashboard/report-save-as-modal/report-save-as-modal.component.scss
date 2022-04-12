@@ -1,5 +1,5 @@
 .widget-delete-modal {
-  width: auto;
+  width: 300px;
   height: auto;
   overflow: hidden;
   padding: 20px;
@@ -19,4 +19,8 @@
     float: right;
     margin-top: 10px;
   }
+}
+
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
 }

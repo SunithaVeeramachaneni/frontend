@@ -26,6 +26,7 @@ export interface ChartVariantChanges {
     | 'chartVarient'
     | 'datasetFieldName'
     | 'countFieldName'
+    | 'stackFieldName'
     | 'chartTitle'
     | 'showValues'
     | 'showLegends';

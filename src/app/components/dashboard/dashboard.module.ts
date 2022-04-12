@@ -36,6 +36,8 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog.component';
 import { WidgetDeleteModalComponent } from './widget-delete-modal/widget-delete-modal.component';
 import { AlertDialog } from './alert-dialog/alert-dialog.component';
+import { ReportSaveAsModalComponent } from './report-save-as-modal/report-save-as-modal.component';
+import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -82,7 +84,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateUpdateDashboardDialogComponent,
     ConfirmDialog,
     AlertDialog,
-    WidgetDeleteModalComponent
+    WidgetDeleteModalComponent,
+    ReportSaveAsModalComponent,
+    DynamicFiltersComponent
   ],
   exports: [],
   entryComponents: []

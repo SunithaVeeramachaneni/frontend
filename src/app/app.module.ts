@@ -140,7 +140,7 @@ export class AppModule {
         from(protectedResources)
           .pipe(
             mergeMap((protectedResource) => {
-              const [urls, scope] = protectedResource;
+              const { urls, scope } = protectedResource;
               const data = {
                 grant_type: 'refresh_token',
                 client_id: clientId,

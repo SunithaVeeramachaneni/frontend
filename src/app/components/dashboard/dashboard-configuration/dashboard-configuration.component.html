@@ -42,6 +42,9 @@
       <button mat-menu-item (click)="editDashboard(dashboard)" translate>
         edit
       </button>
+      <button mat-menu-item (click)="copyDashboard(dashboard)" translate>
+        copy
+      </button>
       <button
         mat-menu-item
         (click)="markDashboardDefault(dashboard)"
@@ -98,6 +101,9 @@
           <mat-menu #widgetMenu="matMenu">
             <button mat-menu-item (click)="editWidget(widget)">
               <span translate>editWidget</span>
+            </button>
+            <button mat-menu-item (click)="copyWidget(widget)">
+              <span translate>copyWidget</span>
             </button>
             <button
               mat-menu-item

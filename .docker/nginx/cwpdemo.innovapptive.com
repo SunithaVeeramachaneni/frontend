@@ -26,7 +26,7 @@ server {
         root    /usr/share/nginx/html/cwp/;
     }
     location /wiapi {
-        proxy_pass http://wi-service-staging:8001;#whatever port your app run
+        proxy_pass http://wi-staging:8001;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -34,7 +34,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /wiapi/appmetrics-dash {
-        proxy_pass http://wi-service-staging:8001/appmetrics-dash;#whatever port your app run
+        proxy_pass http://wi-staging:8001/appmetrics-dash;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -42,7 +42,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /wiabapapi {
-        proxy_pass http://wi-abap-service-staging:8002;#whatever port your app run
+        proxy_pass http://wi-abap-staging:8002;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -50,7 +50,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /wiabapapi/appmetrics-dash {
-        proxy_pass http://wi-abap-service-staging:8002/appmetrics-dash;#whatever port your app run
+        proxy_pass http://wi-abap-staging:8002/appmetrics-dash;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -58,7 +58,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /mccspccabapapi {
-        proxy_pass http://mcc-spcc-abap-service-staging:8003;#whatever port your app run
+        proxy_pass http://mcc-spcc-abap-staging:8003;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -66,7 +66,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /mccspccabapapi/appmetrics-dash {
-        proxy_pass http://mcc-spcc-abap-service-staging:8003/appmetrics-dash;#whatever port your app run
+        proxy_pass http://mcc-spcc-abap-staging:8003/appmetrics-dash;#whatever port your app run
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -74,7 +74,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /dashboardapi {
-        proxy_pass http://dashboard-service-staging:8004;
+        proxy_pass http://dashboard-staging:8004;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -82,7 +82,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /dashboardapi/appmetrics-dash {
-        proxy_pass http://dashboard-service-staging:8004/appmetrics-dash;
+        proxy_pass http://dashboard-staging:8004/appmetrics-dash;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -90,7 +90,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
     location /datacollectorapi {
-        proxy_pass http://data-collector-service-staging:8005/datacollectorapi;
+        proxy_pass http://data-collector-staging:8005/datacollectorapi;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

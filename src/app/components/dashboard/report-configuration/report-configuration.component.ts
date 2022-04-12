@@ -5,10 +5,24 @@ import {
   OnInit
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import {
   AppChartConfig,
   AppChartData,
@@ -35,6 +49,7 @@ import { ReportConfigurationService } from '../services/report-configuration.ser
 import { UndoRedoUtil } from '../../../shared/utils/UndoRedoUtil';
 import { DynamictableFilterService } from '@innovapptive.com/dynamictable';
 import { downloadFile } from '../../../shared/utils/fileUtils';
+import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
@@ -46,6 +61,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 export class ReportConfigurationComponent implements OnInit {
   disableReportName = true;
   isPopoverOpen = false;
+  reportNameAndDescForm: FormGroup;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   isChartVariantApplyDisabled = false;
@@ -78,7 +94,6 @@ export class ReportConfigurationComponent implements OnInit {
   searchKey = '';
   limit = defaultLimit;
   reportConfiguration: ReportConfiguration;
-  reportTitle: string;
   reportDefinitionNameOrId: string;
   reportDetailsUrlString: string;
   reportDataCountUrlString: string;
@@ -93,6 +108,7 @@ export class ReportConfigurationComponent implements OnInit {
   chartConfig: AppChartConfig = {
     title: '',
     type: 'bar',
+    isStacked: false,
     indexAxis: 'y',
     backgroundColors: ['rgba(61, 90, 254, 0.5)'],
     showLegends: false,
@@ -122,10 +138,50 @@ export class ReportConfigurationComponent implements OnInit {
     private commonService: CommonService,
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService,
+    public dialog: MatDialog,
+    private fb: FormBuilder,
     private breadcrumbService: BreadcrumbService
   ) {}
 
+  get reportName() {
+    return this.reportNameAndDescForm.get('name');
+  }
+
+  get reportDescription() {
+    return this.reportNameAndDescForm.get('description');
+  }
+
   ngOnInit() {
+    this.reportNameAndDescForm = this.fb.group({
+      // reportDescription: new FormControl(''),[
+      //   Validators.required,
+      //   Validators.minLength(3),
+      //   Validators.maxLength(48)
+      // ],
+      name: new FormControl('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(48)
+      ])
+    });
+
+    this.reportName.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        pairwise() // gets a pair of old and new value
+      )
+      .subscribe(([oldValue, newValue]) => {
+        this.reportConfiguration.name = newValue;
+        this.undoRedoUtil.WRITE({
+          eventType: 'REPORT_TITLE',
+          currentValue: newValue,
+          prevValue: oldValue
+        });
+        this.reportName.patchValue(newValue);
+        this.breadcrumbService.set('@reportConfiguration', { label: newValue });
+        this.commonService.setHeaderTitle(newValue);
+      });
+
     this.undoRedoUtil = new UndoRedoUtil();
     this.commonService.minimizeSidebar(true);
 
@@ -193,17 +249,17 @@ export class ReportConfigurationComponent implements OnInit {
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
-          this.reportTitle = this.reportConfiguration.name;
+          this.reportName.patchValue(this.reportConfiguration.name);
           this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
-                ? this.reportTitle
-                : `${this.reportTitle} *`
+                ? this.reportName.value
+                : `${this.reportName.value} *`
           });
           this.commonService.setHeaderTitle(
             this.reportConfiguration && this.reportConfiguration.id
-              ? this.reportTitle
-              : `${this.reportTitle} *`
+              ? this.reportName.value
+              : `${this.reportName.value} *`
           );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
@@ -258,14 +314,26 @@ export class ReportConfigurationComponent implements OnInit {
 
   applyChartVarientChange = (event: ChartVariantChanges) => {
     const { type: eventType, value } = event;
-
     switch (eventType) {
       case 'chartVarient':
         if (value !== 'table') {
           const chartInfo = value.split('_');
-          const [type, indexAxis = ''] = chartInfo;
+          let type;
+          let indexAxis;
+          let isStacked = false;
+          if (chartInfo.length === 2) {
+            [type, indexAxis = ''] = chartInfo;
+            isStacked = false;
+          } else if (chartInfo.length === 3) {
+            [, /*ignore*/ type, indexAxis] = chartInfo;
+            isStacked = true;
+          } else {
+            [type, ,] = chartInfo;
+          }
+
           this.reportConfiguration.chartDetails = {
             ...this.reportConfiguration.chartDetails,
+            isStacked,
             type,
             indexAxis
           };
@@ -282,6 +350,16 @@ export class ReportConfigurationComponent implements OnInit {
 
       case 'datasetFieldName':
         this.reportConfiguration.chartDetails.datasetFieldName = value;
+        this.chartConfig = this.reportConfigService.updateChartConfig(
+          this.reportConfiguration,
+          this.chartConfig,
+          true,
+          true
+        );
+        break;
+
+      case 'stackFieldName':
+        this.reportConfiguration.chartDetails.stackFieldName = value;
         this.chartConfig = this.reportConfigService.updateChartConfig(
           this.reportConfiguration,
           this.chartConfig,
@@ -400,7 +478,19 @@ export class ReportConfigurationComponent implements OnInit {
     }
   };
 
-  saveReport() {
+  openSaveAsDialog() {
+    const saveAsReportRef = this.dialog.open(ReportSaveAsModalComponent, {
+      data: { name: this.reportName.value }
+    });
+    saveAsReportRef.afterClosed().subscribe((name) => {
+      if (name) {
+        this.reportConfiguration.name = name;
+        this.saveReport({ saveAs: true });
+      }
+    });
+  }
+
+  saveReport(params) {
     const { id, tableDetails = [] } = this.reportConfiguration;
     const allColumns: Column[] = this.configOptions.allColumns;
     const columnsObj: ColumnObject = allColumns.reduce((acc, val) => {
@@ -420,7 +510,7 @@ export class ReportConfigurationComponent implements OnInit {
     });
 
     this.spinner.show();
-    if (id === undefined) {
+    if (id === undefined || params.saveAs) {
       this.reportConfiguration.createdBy = this.commonService.getUserName();
       this.reportConfigService
         .saveReport$(this.reportConfiguration)
@@ -550,17 +640,6 @@ export class ReportConfigurationComponent implements OnInit {
       eventType: 'FAVORITE_TOGGLE',
       isFavorite: this.reportConfiguration.isFavorite
     });
-  };
-
-  reportTitleChanged = (reportTitle: string) => {
-    this.undoRedoUtil.WRITE({
-      eventType: 'REPORT_TITLE',
-      currentValue: reportTitle,
-      prevValue: this.reportTitle
-    });
-    this.reportTitle = reportTitle;
-    this.breadcrumbService.set('@reportConfiguration', { label: reportTitle });
-    this.commonService.setHeaderTitle(reportTitle);
   };
 
   downloadReport = (event: Event) => {
