@@ -6,6 +6,7 @@ export const widget: Widget = {
   chartDetails: {
     title: '',
     type: 'bar',
+    isStacked: false,
     indexAxis: 'y',
     backgroundColors: ['rgba(61, 90, 254, 0.5)'],
     showValues: false,
@@ -253,6 +254,7 @@ export const widget: Widget = {
     chartDetails: {
       title: '',
       type: 'bar',
+      isStacked: false,
       indexAxis: 'y',
       backgroundColors: ['rgba(61, 90, 254, 0.5)'],
       showLegends: false,

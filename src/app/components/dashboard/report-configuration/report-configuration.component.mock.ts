@@ -535,6 +535,7 @@ export const chartConfig: AppChartConfig = {
   title: '',
   type: 'bar',
   indexAxis: 'y',
+  isStacked: false,
   backgroundColors: ['rgba(61, 90, 254, 0.5)'],
   showValues: false,
   showLegends: false,

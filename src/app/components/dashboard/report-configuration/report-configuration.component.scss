@@ -99,13 +99,35 @@
   height: 36px;
 }
 
+.save-btn-toggle {
+  height: 35px;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
 .save-button {
   background: #3d5afe;
   color: #ffffff;
-  min-width: auto;
-  margin: 0px 3px;
-  padding: 0px 10px 5px 10px;
-  height: 36px;
+  cursor: pointer;
+}
+
+.save-button-arrow {
+  width: 30px;
+  background: #3d5afe;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.dropdown-arrow {
+  position: relative;
+  right: 8px;
+}
+
+::ng-deep .mat-button-toggle-disabled .mat-button-toggle-button {
+  cursor: default;
+  background: #e0e0e0;
+  color: #bdbdbd;
 }
 
 .no-of-records {
@@ -141,6 +163,11 @@
 
 .width-95 {
   width: 95%;
+}
+
+.report-name-error {
+  white-space: nowrap;
+  margin-top: 7px;
 }
 
 .favorite-toggle {

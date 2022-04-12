@@ -64,6 +64,15 @@ export class DashboardService {
       `dashboards/${dashboardId}`,
       info
     );
+
+  copyDashboard$ = (dashboard: Dashboard, info: ErrorInfo = {} as ErrorInfo) =>
+    this.appService._postData(
+      environment.dashboardApiUrl,
+      `dashboards/duplicate`,
+      dashboard,
+      info
+    );
+
   markDashboardDefault$ = (
     dashboardId: string,
     dashboard: Dashboard,
