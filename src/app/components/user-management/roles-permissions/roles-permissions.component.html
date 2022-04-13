@@ -14,11 +14,7 @@
           <span class="roles-count">3</span>
           <span class="roles-text">Roles</span>
         </span>
-        <button
-          mat-raised-button
-          class="add-role-btn"
-          (click)="toggleTextBox()"
-        >
+        <button mat-raised-button class="add-role-btn" (click)="addRole()">
           Add Role
         </button>
       </div>
@@ -28,17 +24,26 @@
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input matInput type="text" placeholder="Search" />
           </mat-form-field>
-          <mat-list role="list">
-            <mat-list-item *ngFor="let roles of rolesList" class="roles-list">
+          <mat-list role="list" class="roles">
+            <mat-list-item
+              *ngFor="let roles of rolesList"
+              class="roles-list"
+              (click)="showSelectedRole(roles)"
+              [ngClass]="{
+                'selected-roles-list': roles.id === this.selectedRole.id
+              }"
+            >
               <mat-checkbox></mat-checkbox>
-              <span class="role-name">{{ roles.role }}</span>
+              <span class="role-name">
+                {{ roles.role }}
+              </span>
               <span class="role-count">
                 {{ roles.countOfPermissions }} of 5
               </span>
               <button
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"
-                style="position: absolute; right: 0"
+                class="more-items"
               >
                 <mat-icon>more_horiz</mat-icon>
               </button>
@@ -52,14 +57,10 @@
         </div>
         <div
           class="width-70 custom-mat-form-field-white-color"
-          *ngIf="this.showTextBox === true"
           [formGroup]="roleForm"
         >
-          <div style="border-bottom: 1px solid #e7e7e7">
-            <mat-form-field
-              appearance="outline"
-              style="margin: 10px 10px 0 10px"
-            >
+          <div class="roles-right-panel">
+            <mat-form-field appearance="outline" class="roles-title">
               <mat-label>Role</mat-label>
               <input matInput formControlName="role" />
             </mat-form-field>

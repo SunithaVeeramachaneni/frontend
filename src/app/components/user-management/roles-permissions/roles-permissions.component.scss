@@ -45,10 +45,17 @@
   border-right: 1px solid #e7e7e7;
 }
 
+.roles-right-panel {
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.roles-title {
+  margin: 10px 10px 0 10px;
+}
+
 .search-form-field {
   width: 95%;
   margin: 10px 10px 0 10px;
-  border-bottom: 1px solid #e7e7e7;
 }
 
 .copy-role-btn {
@@ -74,9 +81,29 @@
   right: 40px;
 }
 
+.more-items {
+  position: absolute;
+  right: 0;
+}
+
+.roles {
+  padding: 0;
+}
+
 .roles-list {
   cursor: pointer;
   border-bottom: 1px solid #e7e7e7;
+}
+
+.roles-list:first-child {
+  border-top: 1px solid #e7e7e7;
+}
+
+.selected-roles-list {
+  background: rgba(61, 90, 254, 0.08);
+  .role-name {
+    color: #5449b7;
+  }
 }
 
 .roles-list:hover {
