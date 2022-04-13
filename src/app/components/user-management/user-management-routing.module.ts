@@ -3,18 +3,24 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { RolesPermissionsComponent } from './roles-permissions/roles-permissions.component';
 
-import { UserManagementComponent } from './users/user-management.component';
+import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: UserManagementComponent,
+    component: UserManagementContainerComponent,
     data: { breadcrumb: { label: 'User Management' } },
     children: [
       {
         path: 'roles-permissions',
         component: RolesPermissionsComponent,
         data: { breadcrumb: { label: 'roles & permissions' } }
+      },
+      {
+        path: 'inactive-users',
+        component: UsersComponent,
+        data: { breadcrumb: { label: 'Inactive Users' } }
       }
     ]
   }

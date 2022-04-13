@@ -7,7 +7,8 @@
   class="work-instructions-body"
 >
   <div *ngIf="currentRouteUrl === routingUrls.userManagement.url">
-    user management
+    <app-users></app-users>
   </div>
 </div>
+
 <router-outlet></router-outlet>

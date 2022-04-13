@@ -18,7 +18,7 @@ export const routingUrls = {
     title: 'Roles & Permissions'
   },
   inActiveUsers: {
-    url: '/user-management/in-active-users',
+    url: '/user-management/inactive-users',
     title: 'Inactive Users'
   }
 };

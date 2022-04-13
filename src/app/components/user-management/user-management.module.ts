@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { UserManagementRoutingModule } from './user-management-routing.module';
-import { UserManagementComponent } from './users/user-management.component';
+import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
 import {
@@ -21,6 +21,7 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { RolesPermissionsComponent } from './roles-permissions/roles-permissions.component';
+import { UsersComponent } from './users/users.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/spare-parts/', '.json');
@@ -44,7 +45,11 @@ export const customTranslateLoader = (http: HttpClient) =>
       defaultLanguage
     })
   ],
-  declarations: [UserManagementComponent, RolesPermissionsComponent],
+  declarations: [
+    UserManagementContainerComponent,
+    RolesPermissionsComponent,
+    UsersComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   providers: [],
   exports: [],

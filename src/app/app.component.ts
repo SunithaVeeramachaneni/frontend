@@ -74,7 +74,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: userManagement.title,
       url: userManagement.url,
-      image: '../assets/sidebar-icons/spare-parts-gray.svg',
+      image: '../assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
       subPages: [
         { title: rolesPermissions.title, url: rolesPermissions.url },
