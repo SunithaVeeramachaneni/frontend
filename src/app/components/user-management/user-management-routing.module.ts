@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '',
     component: UserManagementComponent,
-    data: { breadcrumb: { label: 'Dashboard' } },
+    data: { breadcrumb: { label: 'User Management' } },
     children: [
       {
         path: 'roles-permissions',

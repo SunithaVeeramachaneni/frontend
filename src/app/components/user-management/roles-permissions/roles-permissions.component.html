@@ -1,13 +1,7 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
     <div class="main-container">
-      <div
-        style="
-          text-align: right;
-          padding: 10px;
-          border-bottom: 1px solid #e7e7e7;
-        "
-      >
+      <div class="roles-header">
         <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
           <mat-icon>more_horiz</mat-icon>
         </button>
@@ -16,7 +10,7 @@
             <span>Delete</span>
           </button>
         </mat-menu>
-        <span style="margin: 0 15px">
+        <span class="count-of-roles">
           <span class="roles-count">3</span>
           <span class="roles-text">Roles</span>
         </span>
@@ -28,23 +22,49 @@
           Add Role
         </button>
       </div>
-      <div class="dis-flex" style="height: 75vh">
-        <div
-          class="width-30 custom-mat-form-field-gray-color"
-          style="border-right: 1px solid #e7e7e7"
-          [formGroup]="roleForm"
-        >
+      <div class="dis-flex roles-content">
+        <div class="width-30 custom-mat-form-field-gray-color roles-left-panel">
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input matInput type="text" placeholder="Search" />
           </mat-form-field>
+          <mat-list role="list">
+            <mat-list-item *ngFor="let roles of rolesList" class="roles-list">
+              <mat-checkbox></mat-checkbox>
+              <span class="role-name">{{ roles.role }}</span>
+              <span class="role-count">
+                {{ roles.countOfPermissions }} of 5
+              </span>
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="submenu"
+                style="position: absolute; right: 0"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #submenu="matMenu">
+                <button mat-menu-item>
+                  <span>Delete</span>
+                </button>
+              </mat-menu>
+            </mat-list-item>
+          </mat-list>
         </div>
-        <div class="width-70" *ngIf="this.showTextBox === true">
-          <mat-form-field appearance="outline" style="margin: 0 10px">
-            <mat-label>Role</mat-label>
-            <input matInput formControlName="role" />
-          </mat-form-field>
-          <button mat-stroked-button class="copy-role-btn">Copy Role</button>
+        <div
+          class="width-70 custom-mat-form-field-white-color"
+          *ngIf="this.showTextBox === true"
+          [formGroup]="roleForm"
+        >
+          <div style="border-bottom: 1px solid #e7e7e7">
+            <mat-form-field
+              appearance="outline"
+              style="margin: 10px 10px 0 10px"
+            >
+              <mat-label>Role</mat-label>
+              <input matInput formControlName="role" />
+            </mat-form-field>
+            <button mat-stroked-button class="copy-role-btn">Copy Role</button>
+          </div>
         </div>
       </div>
     </div>

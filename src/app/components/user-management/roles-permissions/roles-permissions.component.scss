@@ -3,9 +3,19 @@
   margin: 14px;
 }
 
+.roles-header {
+  text-align: right;
+  padding: 10px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
 .more-roles {
   position: relative;
   top: -2px;
+}
+
+.count-of-roles {
+  margin: 0 15px;
 }
 
 .roles-count {
@@ -27,9 +37,18 @@
   color: #ffffff;
 }
 
+.roles-content {
+  height: 75vh;
+}
+
+.roles-left-panel {
+  border-right: 1px solid #e7e7e7;
+}
+
 .search-form-field {
   width: 95%;
-  margin: 5px 10px;
+  margin: 10px 10px 0 10px;
+  border-bottom: 1px solid #e7e7e7;
 }
 
 .copy-role-btn {
@@ -37,4 +56,65 @@
   border: 1px solid #3d5afe;
   float: right;
   margin: 10px;
+}
+
+.role-name {
+  padding: 10px;
+  margin-top: 3px;
+}
+
+.role-count {
+  padding: 3px 7px;
+  font-size: 12px;
+  background: pink;
+  border-radius: 27px;
+  background: rgba(61, 90, 254, 0.08);
+  border-radius: 20px;
+  position: absolute;
+  right: 40px;
+}
+
+.roles-list {
+  cursor: pointer;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.roles-list:hover {
+  background-color: rgba(61, 90, 254, 0.08);
+}
+
+.custom-mat-form-field-white-color {
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 1px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  // .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  //   opacity: 0;
+  // }
+
+  // .mat-form-field-appearance-outline .mat-form-field-outline-start,
+  // .mat-form-field-appearance-outline .mat-form-field-outline-end {
+  //   border: none !important;
+  //   min-width: 0;
+  // }
 }

@@ -22,6 +22,21 @@ export class RolesPermissionsComponent implements OnInit {
   showTextBox = false;
   roleForm: FormGroup;
 
+  rolesList = [
+    {
+      role: 'Super Admin',
+      countOfPermissions: 5
+    },
+    {
+      role: 'Maintenance Manager',
+      countOfPermissions: 5
+    },
+    {
+      role: 'Warehouse Supervisor',
+      countOfPermissions: 3
+    }
+  ];
+
   constructor(private commonService: CommonService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -32,11 +47,20 @@ export class RolesPermissionsComponent implements OnInit {
       )
     );
     this.roleForm = this.fb.group({
-      role: new FormControl('New Role')
+      role: new FormControl('', [Validators.required])
     });
   }
 
+  get f() {
+    return this.roleForm.controls;
+  }
+
   toggleTextBox() {
+    this.f.role.setValue('New Role');
     this.showTextBox = true;
+    this.rolesList.push({
+      role: 'New Role',
+      countOfPermissions: 0
+    });
   }
 }
