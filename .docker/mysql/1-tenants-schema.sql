@@ -1,4 +1,4 @@
-use cwp_tenant;
+use CWPCatalog;
 
 create table catalogs(
   id INT NOT NULL AUTO_INCREMENT,
@@ -13,8 +13,10 @@ create table catalogs(
   tenantDomainName VARCHAR(100) NOT NULL,
   saml JSON,
   sap JSON,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NULL,
+  rdbms JSON,
+  nosql JSON,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY ( id ),
   UNIQUE (tenantId),
   UNIQUE (tenantName)
@@ -24,11 +26,10 @@ create table tenants(
   id INT NOT NULL AUTO_INCREMENT,
   catalogId INT NOT NULL,
   products JSON NOT NULL,
-  dbType VARCHAR(50) NOT NULL,
+  logDBType VARCHAR(50) NOT NULL,
   logLevel VARCHAR(50) NOT NULL,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY ( id ),
-  INDEX idx_tenant_catalog (catalogId),
   CONSTRAINT fk_tenant_catalog FOREIGN KEY (catalogId) REFERENCES catalogs(id)
 );

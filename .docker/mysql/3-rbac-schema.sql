@@ -6,53 +6,70 @@ create table users(
   email VARCHAR(100) NOT NULL,
   profileImage BLOB NOT NULL,
   isActive BOOLEAN default true,
-  isDeleted BOOLEAN default false,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NULL,
+  createdBy INT NOT NULL,
+  updatedBy INT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY ( id ),
-  UNIQUE (email)
+  UNIQUE (email),
+  CONSTRAINT fk_users_createdBy FOREIGN KEY (createdBy) REFERENCES users(id),
+  CONSTRAINT fk_users_updatedBy FOREIGN KEY (updatedBy) REFERENCES users(id)
 );
 
 create table roles(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NULL,
+  description VARCHAR(255) NOT NULL,
+  createdBy INT NOT NULL,
+  updatedBy INT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY ( id ),
-  UNIQUE (name)
+  UNIQUE (name),
+  CONSTRAINT fk_roles_users_createdBy FOREIGN KEY (createdBy) REFERENCES users(id),
+  CONSTRAINT fk_roles_users_updatedBy FOREIGN KEY (updatedBy) REFERENCES users(id)
 );
 
 create table permissions(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
   displayName VARCHAR(255) NOT NULL,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NULL,
+  moduleName VARCHAR(100) NOT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY ( id ),
   UNIQUE (name),
-  UNIQUE (displayName)
+  UNIQUE (displayName, moduleName)
 );
 
 create table users_roles(
   userId INT NOT NULL,
   roleId INT NOT NULL,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NOT NULL,
+  createdBy INT NOT NULL,
+  updatedBy INT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY (userId, roleId),
-  INDEX idx_rp_user (userId),
-  INDEX idx_rp_role (roleId),
-  CONSTRAINT fk_ur_user FOREIGN KEY (userId) REFERENCES users(id),
-  CONSTRAINT fk_ur_role FOREIGN KEY (roleId) REFERENCES roles(id)
+  INDEX idx_rp_users (userId),
+  INDEX idx_rp_roles (roleId),
+  CONSTRAINT fk_ur_users FOREIGN KEY (userId) REFERENCES users(id),
+  CONSTRAINT fk_ur_roles FOREIGN KEY (roleId) REFERENCES roles(id),
+  CONSTRAINT fk_ur_users_createdBy FOREIGN KEY (createdBy) REFERENCES users(id),
+  CONSTRAINT fk_ur_users_updatedBy FOREIGN KEY (updatedBy) REFERENCES users(id)
 );
 
 create table roles_permissions(
   roleId INT NOT NULL,
   permissionId INT NOT NULL,
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NOT NULL,
+  createdBy INT NOT NULL,
+  updatedBy INT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NULL,
   PRIMARY KEY (roleId,  permissionId),
-  INDEX idx_rp_role (roleId),
-  INDEX idx_rp_permission (permissionId),
-  CONSTRAINT fk_rp_role FOREIGN KEY (roleId) REFERENCES roles(id),
-  CONSTRAINT fk_rp_permission FOREIGN KEY (permissionId) REFERENCES permissions(id)
+  INDEX idx_rp_roles (roleId),
+  INDEX idx_rp_permissions (permissionId),
+  CONSTRAINT fk_rp_roles FOREIGN KEY (roleId) REFERENCES roles(id),
+  CONSTRAINT fk_rp_permissions FOREIGN KEY (permissionId) REFERENCES permissions(id),
+  CONSTRAINT fk_rp_users_createdBy FOREIGN KEY (createdBy) REFERENCES users(id),
+  CONSTRAINT fk_rp_users_updatedBy FOREIGN KEY (updatedBy) REFERENCES users(id)
 );

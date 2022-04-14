@@ -1,4 +1,4 @@
-use cwp_tenant;
+use CWPCatalog;
 
 insert into catalogs (
   tenantId,
@@ -12,10 +12,12 @@ insert into catalogs (
   tenantDomainName,
   saml,
   sap,
-  createdOn
+  rdbms,
+  nosql,
+  createdAt
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
-  "innovapptive",
+  "Innovapptive",
   "azure",
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
   "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0",
@@ -64,10 +66,24 @@ insert into catalogs (
     "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
     "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
     "username": "cwpuser",
-    "password": "123456",
+    "password": "U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=",
     "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
     "clientId": "cwpuser",
     "scope": "/INVCEC/RACE_SRV_0001"
+  }',
+  '{
+    "host": "cwp-tenant.cq5h22u2n8lu.us-east-1.rds.amazonaws.com",
+    "port": 3306,
+    "user": "admin",
+    "password": "U2FsdGVkX181Q5hUCdyiq0kXYu6HiRlwvsuy8rirjfU=",
+    "database": "Innovapptive"
+  }',
+  '{
+    "host": "10.0.0.27",
+    "port": 27017,
+    "user": "",
+    "password": "",
+    "database": "Innovapptive"
   }',
   "2022-04-11 10:00:00"
 );
@@ -75,7 +91,7 @@ insert into catalogs (
 insert into tenants (
   catalogId,
   products,
-  dbType,
+  logDBType,
   logLevel,
-  createdOn
+  createdAt
 ) values (1, '["dashboards", "mcc", "spcc", "wi"]', "nosql", "error", "2022-04-11 10:00:00");
