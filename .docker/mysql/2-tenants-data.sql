@@ -76,7 +76,8 @@ insert into catalogs (
     "port": 3306,
     "user": "admin",
     "password": "U2FsdGVkX181Q5hUCdyiq0kXYu6HiRlwvsuy8rirjfU=",
-    "database": "Innovapptive"
+    "database": "Innovapptive",
+    "dialect": "mysql"
   }',
   '{
     "host": "10.0.0.27",
