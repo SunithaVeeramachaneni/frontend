@@ -37,7 +37,7 @@ create table roles(
 create table permissions(
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
-  displayName VARCHAR(255) NOT NULL,
+  displayName VARCHAR(100) NOT NULL,
   moduleName VARCHAR(100) NOT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NULL,
