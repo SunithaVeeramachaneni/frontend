@@ -1,4 +1,4 @@
-# 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
+# 1. Update `BACKEND_HOME` environment variable(backend source code home path) & `SHARED_PACKAGES_HOME` environment variable(shared packages home path) in .docker/env/local.env file from CWP HOME
 
 # In Windows
 # 2. Run `docker compose --env-file .\.docker\env\local.env build`
@@ -10,9 +10,10 @@
 
 ################ OR ################
 
-# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Set BACKEND_HOME, SHARED_PACKAGES_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
 
 #    export BACKEND_HOME='backend home path comes here...'
+#    export SHARED_PACKAGES_HOME='shared packages home path comes here...'
 #    export NPM_AUTH_TOKEN='npm authentication token comes here...'
 #    export APP_ENV=development
 #    export DEPLOYMENT_ENV=development
@@ -23,6 +24,7 @@
 #    For Windows Powershell use `$env:APP_ENV = "value"`.
 
 #    $env:BACKEND_HOME="backend home path comes here..."
+#    $env:SHARED_PACKAGES_HOME="shared packages home path comes here..."
 #    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
 #    $env:APP_ENV="development"
 #    $env:DEPLOYMENT_ENV="development"
@@ -63,6 +65,9 @@ services:
     volumes:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi
       - /usr/src/wi/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/wi/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
@@ -71,13 +76,14 @@ services:
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8001:8001'
     depends_on:
       - mongo
       - mysql
-      - redis
+      - redis-cluster
+      - authentication-factory
     networks:
       - app-network
 
@@ -119,11 +125,11 @@ services:
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8003:8003'
     depends_on:
-      - redis
+      - redis-cluster
       - mongo
     networks:
       - app-network
@@ -139,6 +145,9 @@ services:
     volumes:
       - ${BACKEND_HOME}/Reports:/usr/src/dashboard
       - /usr/src/dashboard/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/dashboard/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
@@ -146,13 +155,14 @@ services:
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8004:8004'
     depends_on:
       - mongo
       - mysql
-      - redis
+      - redis-cluster
+      - authentication-factory
     networks:
       - app-network
 
@@ -180,6 +190,20 @@ services:
     networks:
       - app-network
 
+  authentication-factory:
+    container_name: authentication-factory-local
+    image: authentication-factory-local
+    build:
+      context: ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory
+      dockerfile: dockerfile
+    volumes:
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
+    environment:
+      - NODE_ENV=${APP_ENV}
+    networks:
+      - app-network
+
   mongo:
     container_name: mongo-local
     image: mongo:latest
@@ -191,14 +215,6 @@ services:
       - ./.docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - '27017:27017'
-    networks:
-      - app-network
-
-  redis:
-    container_name: redis-local
-    image: redis
-    ports:
-      - '6379:6379'
     networks:
       - app-network
 
@@ -219,10 +235,112 @@ services:
     networks:
       - app-network
 
+  redis-cluster:
+    container_name: redis-cluster-local
+    image: redis:6.2-alpine
+    command: redis-cli --cluster create 172.20.0.31:6373 172.20.0.32:6374 172.20.0.33:6375 172.20.0.34:6376 172.20.0.35:6377 172.20.0.36:6378 --cluster-replicas 1 --cluster-yes
+    networks:
+      - app-network
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+
+  redis-node-1:
+    container_name: redis-node-1-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6373:6373'
+    volumes:
+      - redis-node-1-data:/var/lib/redis
+      - ./.docker/redis/redis-node-1.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.31
+
+  redis-node-2:
+    container_name: redis-node-2-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6374:6374'
+    volumes:
+      - redis-node-2-data:/var/lib/redis
+      - ./.docker/redis/redis-node-2.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.32
+
+  redis-node-3:
+    container_name: redis-node-3-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6375:6375'
+    volumes:
+      - redis-node-3-data:/var/lib/redis
+      - ./.docker/redis/redis-node-3.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.33
+
+  redis-node-4:
+    container_name: redis-node-4-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6376:6376'
+    volumes:
+      - redis-node-4-data:/var/lib/redis
+      - ./.docker/redis/redis-node-4.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.34
+
+  redis-node-5:
+    container_name: redis-node-5-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6377:6377'
+    volumes:
+      - redis-node-5-data:/var/lib/redis
+      - ./.docker/redis/redis-node-5.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.35
+
+  redis-node-6:
+    container_name: redis-node-6-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6378:6378'
+    volumes:
+      - redis-node-6-data:/var/lib/redis
+      - ./.docker/redis/redis-node-6.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.36
+
 volumes:
   mongodata:
   mysqldata:
+  authentication-factory-modules:
+  redis-node-1-data:
+  redis-node-2-data:
+  redis-node-3-data:
+  redis-node-4-data:
+  redis-node-5-data:
+  redis-node-6-data:
 
 networks:
   app-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
