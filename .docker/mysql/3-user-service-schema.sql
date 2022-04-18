@@ -1,3 +1,7 @@
+create database Innovapptive;
+
+use Innovapptive;
+
 create table users(
   id INT NOT NULL AUTO_INCREMENT,
   firstName VARCHAR(100) NOT NULL,

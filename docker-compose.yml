@@ -230,6 +230,7 @@ services:
       - mysqldata:/var/lib/mysql
       - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
+      - ./.docker/mysql/3-user-service-schema.sql:/docker-entrypoint-initdb.d/3-user-service-schema.sql:ro
     ports:
       - '3306:3306'
     networks:
