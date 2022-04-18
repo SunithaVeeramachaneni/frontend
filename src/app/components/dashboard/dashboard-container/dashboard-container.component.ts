@@ -14,13 +14,8 @@ import { BreadcrumbService } from 'xng-breadcrumb';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardContainerComponent implements OnInit {
-  headerTitle = 'Dashboard';
-  dashboardTab: FormControl;
-  dashboardTab$: Observable<string>;
-  selectedDashboard: Dashboard;
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
-  dashboards$: Observable<Dashboard[]>;
   headerTitle$: Observable<string>;
 
   constructor(
