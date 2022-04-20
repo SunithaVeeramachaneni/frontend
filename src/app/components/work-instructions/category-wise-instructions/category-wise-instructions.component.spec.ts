@@ -116,24 +116,14 @@ const instructions = [
   }
 ];
 const categoryId = defaultCategoryId;
-const users: User[] = [
+const users = [
   {
-    id: '1',
     first_name: 'Tester',
-    last_name: 'One',
-    email: 'tester.one@innovapptive.com',
-    password: '5000353tes',
-    role: 'admin',
-    empId: '5000353'
+    last_name: 'One'
   },
   {
-    id: '2',
     first_name: 'Tester',
-    last_name: 'Two',
-    email: 'tester.two@innovapptive.com',
-    password: '5000392tes',
-    role: 'user',
-    empId: '5000392'
+    last_name: 'Two'
   }
 ];
 
@@ -151,69 +141,67 @@ describe('CategoryWiseInstructionsComponent', () => {
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getInstructionsByCategoryId',
-        'getSelectedCategory',
-        'setFavoriteInstructions',
-        'getUsers',
-        'deleteWorkInstruction$',
-        'copyWorkInstruction'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
-      commonServiceSpy = jasmine.createSpyObj(
-        'CommonService',
-        ['setHeaderTitle'],
-        {
-          currentRouteUrlAction$: of(
-            `/work-instructions/category/${defaultCategoryId}`
-          )
-        }
-      );
-      breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
+  beforeEach(waitForAsync(() => {
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getInstructionsByCategoryId',
+      'getSelectedCategory',
+      'setFavoriteInstructions',
+      'getUsers',
+      'deleteWorkInstruction$',
+      'copyWorkInstruction'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setHeaderTitle'],
+      {
+        currentRouteUrlAction$: of(
+          `/work-instructions/category/${defaultCategoryId}`
+        )
+      }
+    );
+    breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
 
-      TestBed.configureTestingModule({
-        declarations: [
-          CategoryWiseInstructionsComponent,
-          TimeAgoPipe,
-          DropDownFilterPipe
-        ],
-        imports: [
-          AppMaterialModules,
-          BrowserAnimationsModule,
-          FormsModule,
-          NgxPaginationModule,
-          SharedModule,
-          Ng2SearchPipeModule,
-          OrderModule,
-          RouterTestingModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          {
-            provide: ActivatedRoute,
-            useValue: {
-              snapshot: { paramMap: convertToParamMap({ cid: categoryId }) }
-            }
-          },
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: CommonService, useValue: commonServiceSpy },
-          { provide: BreadcrumbService, useValue: breadcrumbServiceSpy }
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [
+        CategoryWiseInstructionsComponent,
+        TimeAgoPipe,
+        DropDownFilterPipe
+      ],
+      imports: [
+        AppMaterialModules,
+        BrowserAnimationsModule,
+        FormsModule,
+        NgxPaginationModule,
+        SharedModule,
+        Ng2SearchPipeModule,
+        OrderModule,
+        RouterTestingModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { paramMap: convertToParamMap({ cid: categoryId }) }
+          }
+        },
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy }
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CategoryWiseInstructionsComponent);

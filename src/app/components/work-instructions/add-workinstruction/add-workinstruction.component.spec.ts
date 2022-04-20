@@ -122,13 +122,8 @@ const editWI = {
 };
 
 const loggedInUser = {
-  id: '57',
   first_name: 'Tester',
-  last_name: 'One',
-  email: 'tester.one@innovapptive.com',
-  password: '1000111tes',
-  role: 'user',
-  empId: '1000111'
+  last_name: 'One'
 };
 
 const steps = [
@@ -174,80 +169,78 @@ describe('AddWorkinstructionComponent', () => {
   let mockInstructionSelector;
   let mockStepsSelector;
 
-  beforeEach(
-    waitForAsync(() => {
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
-      wiCommonServiceSpy = jasmine.createSpyObj(
-        'WiCommonService',
-        ['stepDetailsSave'],
-        {
-          stepDetailsSaveAction$: of('All Changes Saved')
-        }
-      );
-      commonServiceSpy = jasmine.createSpyObj(
-        'CommonService',
-        ['minimizeSidebar', 'setHeaderTitle'],
-        {
-          minimizeSidebarAction$: of(false),
-          currentRouteUrlAction$: of('work-instructions/create')
-        }
-      );
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getInstructionsById',
-        'getInstructionsByName',
-        'updateWorkInstruction',
-        'getCategoriesByName',
-        'addWorkInstruction',
-        'setFavoriteInstructions',
-        'editWorkInstructionTitle',
-        'addWorkInstructionTitle',
-        'publishInstruction',
-        'deleteWorkInstruction$',
-        'updateGatewayFavWorkInstruction',
-        'copyWorkInstruction'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-        snapshot: {
-          paramMap: convertToParamMap({
-            id: ''
-          })
-        }
-      });
-      breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
-      locationSpy = jasmine.createSpyObj('Location', ['back']);
+  beforeEach(waitForAsync(() => {
+    spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
+    wiCommonServiceSpy = jasmine.createSpyObj(
+      'WiCommonService',
+      ['stepDetailsSave'],
+      {
+        stepDetailsSaveAction$: of('All Changes Saved')
+      }
+    );
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['minimizeSidebar', 'setHeaderTitle'],
+      {
+        minimizeSidebarAction$: of(false),
+        currentRouteUrlAction$: of('work-instructions/create')
+      }
+    );
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getInstructionsById',
+      'getInstructionsByName',
+      'updateWorkInstruction',
+      'getCategoriesByName',
+      'addWorkInstruction',
+      'setFavoriteInstructions',
+      'editWorkInstructionTitle',
+      'addWorkInstructionTitle',
+      'publishInstruction',
+      'deleteWorkInstruction$',
+      'updateGatewayFavWorkInstruction',
+      'copyWorkInstruction'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      snapshot: {
+        paramMap: convertToParamMap({
+          id: ''
+        })
+      }
+    });
+    breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
+    locationSpy = jasmine.createSpyObj('Location', ['back']);
 
-      TestBed.configureTestingModule({
-        declarations: [
-          AddWorkinstructionComponent,
-          MockComponent(OverviewComponent),
-          MockComponent(NgxSpinnerComponent)
-        ],
-        imports: [
-          RouterTestingModule,
-          AppMaterialModules,
-          FormsModule,
-          BrowserAnimationsModule,
-          SharedModule
-        ],
-        providers: [
-          { provide: NgxSpinnerService, useValue: spinnerSpy },
-          { provide: WiCommonService, useValue: wiCommonServiceSpy },
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: ActivatedRoute, useValue: activatedRouteSpy },
-          { provide: CommonService, useValue: commonServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
-          { provide: Location, useValue: locationSpy },
-          provideMockStore()
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [
+        AddWorkinstructionComponent,
+        MockComponent(OverviewComponent),
+        MockComponent(NgxSpinnerComponent)
+      ],
+      imports: [
+        RouterTestingModule,
+        AppMaterialModules,
+        FormsModule,
+        BrowserAnimationsModule,
+        SharedModule
+      ],
+      providers: [
+        { provide: NgxSpinnerService, useValue: spinnerSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
+        { provide: Location, useValue: locationSpy },
+        provideMockStore()
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);
