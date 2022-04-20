@@ -43,7 +43,7 @@ db.tenants.insertOne({
       baseUrl: 'https://3.213.12.206/sap/opu/odata/INVCEC/RACE_SRV/',
       oauth2Url: 'https://3.213.12.206/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: '123456',
+      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -64,7 +64,7 @@ db.tenants.insertOne({
         'https://nts.innovapptive.com:8080/sap/opu/odata/INVCEC/RACE_SRV/',
       oauth2Url: 'https://nts.innovapptive.com:8080/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: '123456',
+      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -86,7 +86,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: '123456',
+      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -108,7 +108,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: '123456',
+      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -130,7 +130,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: '123456',
+      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
