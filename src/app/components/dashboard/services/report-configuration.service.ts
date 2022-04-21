@@ -278,7 +278,6 @@ export class ReportConfigurationService {
       newCountFields[0].visible = true;
       newCountFieldName = newCountFields[0].name;
     }
-
     for (const groupField of groupBy) {
       const column = tableColumns.find(
         (tableColumn) => tableColumn.name === groupField
@@ -302,19 +301,18 @@ export class ReportConfigurationService {
     if (setDatasetField && newDatasetFields.length && !newDatasetFieldName) {
       newDatasetFields[0].visible = true;
       newDatasetFieldName = newDatasetFields[0].name;
-      if (!stackFieldName) newStackFieldName = newDatasetFields[1].name;
-      else newStackFieldName = stackFieldName;
     }
 
-    reportConfiguration.chartDetails.datasetFieldName = newDatasetFieldName;
-    reportConfiguration.chartDetails.countFieldName = newCountFieldName;
+    if (!stackFieldName && newDatasetFields.length > 1) {
+      newStackFieldName = newDatasetFields[1].name;
+    } else newStackFieldName = stackFieldName;
 
     return {
       ...chartConfig,
       ...chartDetails,
       datasetFields: newDatasetFields,
       datasetFieldName: newDatasetFieldName,
-      stackFieldName,
+      stackFieldName: newStackFieldName,
       countFields: newCountFields,
       countFieldName: newCountFieldName,
       renderChart
