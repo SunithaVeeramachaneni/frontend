@@ -20,7 +20,7 @@
     </mat-button-toggle>
     <mat-button-toggle
       value="stacked_bar_y"
-      [disabled]="report.groupBy?.length < 1"
+      [disabled]="report.groupBy?.length < 2"
     >
       <img
         [src]="
@@ -34,7 +34,7 @@
     </mat-button-toggle>
     <mat-button-toggle
       value="stacked_bar_x"
-      [disabled]="report.groupBy?.length < 1"
+      [disabled]="report.groupBy?.length < 2"
     >
       <img
         [src]="
