@@ -4,6 +4,8 @@
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+
 ### Approch 1: Access application from angular development server
 
 Run the following commads from CWP HOME
@@ -56,6 +58,8 @@ Access the application using `http://localhost`. This will be served from nginx 
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/development.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+
 Run the following commads from CWP HOME
 
 Open Terminal
@@ -75,6 +79,8 @@ Linux
 ## To deploy application in testing server using docker
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/testing.env file from CWP HOME
+
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 Run the following commads from CWP HOME
 
@@ -96,6 +102,8 @@ Linux
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/staging.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+
 Run the following commads from CWP HOME
 
 Open Terminal
@@ -115,6 +123,8 @@ Linux
 ## To deploy application in production server using docker
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/production.env file from CWP HOME
+
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 Run the following commads from CWP HOME
 

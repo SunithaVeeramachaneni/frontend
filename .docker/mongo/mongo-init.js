@@ -26,7 +26,11 @@ db.tenants.insertOne({
     scope: 'api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access'
   },
   nodeProtectedResources: {
-    urls: ['http://localhost:8001/', 'http://localhost:8004/'],
+    urls: [
+      'http://localhost:8001/',
+      'http://localhost:8004/',
+      'http://localhost:8007/'
+    ],
     scope: 'api://9d93f9da-6989-4aea-b59f-c26e06a2ef91/access_as_user'
   },
   nsb100: {

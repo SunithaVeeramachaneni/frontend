@@ -1,22 +1,26 @@
 # 1. Update `BACKEND_HOME` environment variable(backend source code home path) & `SHARED_PACKAGES_HOME` environment variable(shared packages home path) in .docker/env/local.env file from CWP HOME
+# 2. Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 # In Windows
-# 2. Run `docker compose --env-file .\.docker\env\local.env build`
-# 3. Run `docker compose --env-file .\.docker\env\local.env up`
+# 3. Run `docker compose --env-file .\.docker\env\local.env build`
+# 4. Run `docker compose --env-file .\.docker\env\local.env up`
 
 # In Linux
-# 2. Run `docker compose --env-file .docker/env/local.env build`
-# 3. Run `docker compose --env-file .docker/env/local.env up`
+# 3. Run `docker compose --env-file .docker/env/local.env build`
+# 4. Run `docker compose --env-file .docker/env/local.env up`
 
 ################ OR ################
 
-# 1. Set BACKEND_HOME, SHARED_PACKAGES_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Set BACKEND_HOME, SHARED_PACKAGES_HOME, APP_ENV, DEPLOYMENT_ENV, NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment variable by running the following command in your commnand window (see the notes below if on Windows).
 
 #    export BACKEND_HOME='backend home path comes here...'
 #    export SHARED_PACKAGES_HOME='shared packages home path comes here...'
-#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
 #    export APP_ENV=development
 #    export DEPLOYMENT_ENV=development
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export MYSQL_PASSWORD='MySQL password for database comes here...'
+#    export MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    export ENCRYPTION_KEY='Encryption key comes here...'
 
 #    NOTE: If you're on Windows use one of the following commands to create the environment variables.
 
@@ -25,9 +29,12 @@
 
 #    $env:BACKEND_HOME="backend home path comes here..."
 #    $env:SHARED_PACKAGES_HOME="shared packages home path comes here..."
-#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
 #    $env:APP_ENV="development"
 #    $env:DEPLOYMENT_ENV="development"
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:MYSQL_PASSWORD='MySQL password for database comes here...'
+#    $env:MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    $env:ENCRYPTION_KEY='Encryption key comes here...'
 
 # 2. Run docker compose build
 # 3. Run docker compose up
@@ -190,6 +197,40 @@ services:
     networks:
       - app-network
 
+  user-service:
+    container_name: user-service-local
+    image: user-service-local
+    build:
+      context: ${BACKEND_HOME}/UserService
+      dockerfile: .docker/user-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/UserService:/usr/src/user-service
+      - /usr/src/user-service/node_modules
+    command: sh -c "cd /usr/src/user-service && npm i && nodemon src/server.js"
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    ports:
+      - '8007:8007'
+    depends_on:
+      - mysql
+      - redis-cluster
+    networks:
+      - app-network
+
   authentication-factory:
     container_name: authentication-factory-local
     image: authentication-factory-local
@@ -208,8 +249,8 @@ services:
     container_name: mongo-local
     image: mongo:latest
     #environment:
-    #  MONGO_INITDB_ROOT_USERNAME: root
-    #  MONGO_INITDB_ROOT_PASSWORD: password
+    #  MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+    #  MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodata:/data/db
       - ./.docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -222,15 +263,14 @@ services:
     container_name: mysql-local
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: CWPCatalog
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Innovation54321
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER_NAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - mysqldata:/var/lib/mysql
       - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
-      - ./.docker/mysql/3-user-service-schema.sql:/docker-entrypoint-initdb.d/3-user-service-schema.sql:ro
     ports:
       - '3306:3306'
     networks:

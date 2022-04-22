@@ -75,7 +75,7 @@ insert into catalogs (
     "scope": "/INVCEC/RACE_SRV_0001"
   }',
   '{
-    "host": "cwp-tenant.cq5h22u2n8lu.us-east-1.rds.amazonaws.com",
+    "host": "mysql-local",
     "port": 3306,
     "user": "admin",
     "password": "U2FsdGVkX181Q5hUCdyiq0kXYu6HiRlwvsuy8rirjfU=",
@@ -83,7 +83,7 @@ insert into catalogs (
     "dialect": "mysql"
   }',
   '{
-    "host": "10.0.0.27",
+    "host": "mongo-local",
     "port": 27017,
     "user": "",
     "password": "",
@@ -98,4 +98,7 @@ insert into tenants (
   logDBType,
   logLevel,
   createdAt
-) values (1, '["dashboards", "mcc", "spcc", "wi"]', "nosql", "error", "2022-04-11 10:00:00");
+) values (1, '["Dashboard", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]', "nosql", "error", "2022-04-11 10:00:00");
+
+
+create database Innovapptive;
