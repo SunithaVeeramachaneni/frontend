@@ -102,3 +102,5 @@ insert into tenants (
 
 
 create database Innovapptive;
+
+GRANT ALL PRIVILEGES ON Innovapptive.* TO 'admin'@'%';
