@@ -7,6 +7,7 @@ export const environment = {
   dashboardApiUrl: 'http://localhost:8004/dashboardapi/',
   mccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',
   spccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',
+  rolesApiUrl: 'http://localhost:8007/',
   wiApiUrl: 'http://localhost:8001/wiapi/',
   wiAbapApiUrl: 'http://localhost:8002/wiabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
