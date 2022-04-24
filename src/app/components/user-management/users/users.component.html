@@ -1,1 +1,52 @@
-<p>users</p>
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.userManagement.url">
+    <div class="main-container">
+      <div class="roles-header">
+        <div class="width-60 custom-mat-form-field-gray-color">
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input matInput type="text" placeholder="Search Users" />
+          </mat-form-field>
+        </div>
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <span>Deactivate</span>
+          </button>
+        </mat-menu>
+        <span class="roles-count">
+          <span
+            class="no-of-records"
+            *ngIf="userCount$ | async as userCount; else loadingUsers"
+          >
+            {{ userCount.count }}
+          </span>
+          <span class="roles-text">Users</span>
+        </span>
+        <button
+          mat-raised-button
+          class="add-role-btn"
+          (click)="openEditAddUserModal()"
+        >
+          Add User
+        </button>
+      </div>
+      <div
+        *ngIf="users$ | async as reports; else loadingUsers"
+        class="p-l-10 p-r-10"
+      >
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+          (rowLevelActionHandler)="rowLevelActionHandler($event)"
+          (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+  </div>
+  <ng-template #loadingUsers>loading</ng-template>
+  <router-outlet></router-outlet>
+</ng-container>
