@@ -25,10 +25,12 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { RolesPermissionsComponent } from './roles-permissions/roles-permissions.component';
+import { PermissionsComponent } from './permissions/permissions.component';
 import { UsersComponent } from './users/users.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 export const customTranslateLoader = (http: HttpClient) =>
-  new TranslateHttpLoader(http, './assets/i18n/spare-parts/', '.json');
+  new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
 
 @NgModule({
   imports: [
@@ -41,6 +43,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     AppMaterialModules,
     NgxShimmerLoadingModule,
+    NgxSpinnerModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -56,7 +59,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     RolesPermissionsComponent,
     RolesPopUpComponent,
     UsersComponent,
-    AddEditUserModalComponent
+    AddEditUserModalComponent,
+    PermissionsComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   providers: [],

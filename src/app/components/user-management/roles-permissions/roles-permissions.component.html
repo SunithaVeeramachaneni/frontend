@@ -1,6 +1,13 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
-    <div class="main-container">
+    <div class="main-container" style="position: relative">
+      <ngx-spinner
+        size="medium"
+        bdColor="rgba(0, 0, 0, 0.8)"
+        type="ball-clip-rotate-pulse"
+        [fullScreen]="false"
+      >
+      </ngx-spinner>
       <div class="roles-header">
         <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
           <mat-icon>more_horiz</mat-icon>
@@ -10,8 +17,8 @@
             <span>Delete</span>
           </button>
         </mat-menu>
-        <span class="count-of-roles">
-          <span class="roles-count">3</span>
+        <span class="count-of-roles" *ngIf="rolesList$ | async as roles">
+          <span class="roles-count">{{ roles ? roles.length : 0 }}</span>
           <span class="roles-text">Roles</span>
         </span>
         <button mat-raised-button class="add-role-btn" (click)="addRole()">
@@ -22,24 +29,36 @@
         <div class="width-30 custom-mat-form-field-gray-color roles-left-panel">
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
-            <input matInput type="text" placeholder="Search" />
+            <input matInput type="text" placeholder="Search" disabled />
           </mat-form-field>
-          <mat-list role="list" class="roles">
+          <mat-list
+            role="list"
+            class="roles"
+            *ngIf="rolesList$ | async as roles; else loadingRolesList"
+          >
             <mat-list-item
-              *ngFor="let roles of rolesList"
+              *ngFor="let role of roles"
               class="roles-list"
-              (click)="showSelectedRole(roles)"
+              (click)="showSelectedRole(role)"
               [ngClass]="{
-                'selected-roles-list': roles.id === this.selectedRole.id
+                'selected-roles-list': this.selectedRole
+                  ? role.id === this.selectedRole.id
+                  : ''
               }"
             >
               <mat-checkbox></mat-checkbox>
               <span class="role-name">
-                {{ roles.role }}
+                {{ role.name }}
               </span>
-              <span class="role-count">
-                {{ roles.countOfPermissions }} of 5
-              </span>
+              <img
+                src="assets/user-management-icons/super-admin-icon.svg"
+                alt="super admin"
+                class="super-admin-icon"
+                *ngIf="role.name === 'Super Admin'"
+              />
+              <!-- <span class="role-count">
+                {{ roles.permissionIds.length }} of 5
+              </span> -->
               <button
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"
@@ -49,22 +68,128 @@
               </button>
               <mat-menu #submenu="matMenu">
                 <button mat-menu-item>
-                  <span>Delete</span>
+                  <span>Copy</span>
+                </button>
+                <button
+                  mat-menu-item
+                  *ngIf="role.name !== 'Super Admin'"
+                  (click)="deleteRole(role)"
+                >
+                  <span style="color: #f44336">Delete</span>
                 </button>
               </mat-menu>
             </mat-list-item>
+            <div *ngIf="addingRole$ | async as addnewrole">
+              <mat-list-item
+                *ngIf="addnewrole === true"
+                class="selected-roles-list"
+              >
+                <mat-checkbox disabled=""></mat-checkbox>
+                <span class="role-name"> Adding Role </span>
+                <span class="role-count"> 0 of 5 </span>
+                <button disabled mat-icon-button class="more-items">
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+              </mat-list-item>
+            </div>
           </mat-list>
         </div>
-        <div
-          class="width-70 custom-mat-form-field-white-color"
-          [formGroup]="roleForm"
-        >
-          <div class="roles-right-panel">
-            <mat-form-field appearance="outline" class="roles-title">
-              <mat-label>Role</mat-label>
-              <input matInput formControlName="role" />
-            </mat-form-field>
-            <button mat-stroked-button class="copy-role-btn">Copy Role</button>
+        <div class="width-70 custom-mat-form-field-white-color">
+          <div
+            class="roles-right-panel"
+            *ngIf="this.selectedRole !== undefined"
+          >
+            <form
+              [formGroup]="roleForm"
+              (ngSubmit)="saveRole(roleForm.value, this.selectedRole.id)"
+            >
+              <mat-form-field appearance="outline" class="roles-title">
+                <mat-label>Role</mat-label>
+                <input matInput formControlName="name" />
+              </mat-form-field>
+              <div class="mat-error-name">
+                <mat-error *ngIf="f.name.errors?.required && f.name.touched">
+                  Role Name is required
+                </mat-error>
+                <mat-error *ngIf="f.name.errors?.minlength">
+                  Role Name must be at least 3 characters
+                </mat-error>
+                <mat-error *ngIf="f.name.errors?.maxlength">
+                  Role Name must be at the max of 20 characters
+                </mat-error>
+              </div>
+              <mat-form-field appearance="outline" class="roles-title">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description" />
+              </mat-form-field>
+              <div class="mat-error-description">
+                <mat-error
+                  *ngIf="
+                    f.description.errors?.required && f.description.touched
+                  "
+                >
+                  Role Description is required
+                </mat-error>
+                <mat-error *ngIf="f.description.errors?.minlength">
+                  Role Description must be at least 3 characters
+                </mat-error>
+              </div>
+
+              <button
+                mat-raised-button
+                type="submit"
+                class="save-role-btn"
+                [disabled]="
+                  roleForm.invalid || this.rolePermissions.length === 0
+                    ? true
+                    : false
+                "
+              >
+                Save
+              </button>
+
+              <button
+                mat-stroked-button
+                type="button"
+                class="copy-role-btn"
+                [ngClass]="{
+                  'show-cancel-btn': showCancelBtn === true,
+                  'hide-cancel-btn': showCancelBtn === false
+                }"
+                (click)="cancelRole()"
+              >
+                Cancel
+              </button>
+              <button
+                mat-stroked-button
+                type="button"
+                class="copy-role-btn"
+                [disabled]="copyDisabled"
+              >
+                Copy
+              </button>
+            </form>
+          </div>
+
+          <div
+            *ngIf="this.selectedRole === undefined"
+            style="
+              text-align: center;
+              position: relative;
+              top: 40%;
+              line-height: 30px;
+              color: #757575;
+              letter-spacing: 0.15px;
+            "
+          >
+            Select any default role from the <br />left to view here.
+          </div>
+          <div *ngIf="this.selectedRole !== undefined">
+            <app-permissions
+              [rolePermissions]="rolePermissions"
+              (customerChange)="update($event)"
+            >
+            </app-permissions>
           </div>
         </div>
       </div>
@@ -72,3 +197,14 @@
   </div>
   <router-outlet></router-outlet>
 </ng-container>
+
+<ng-template #loadingRolesList>
+  <div class="p-10">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
