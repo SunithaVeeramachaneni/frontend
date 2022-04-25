@@ -11,6 +11,7 @@ export const environment = {
   wiApiUrl: 'http://localhost:8001/wiapi/',
   wiAbapApiUrl: 'http://localhost:8002/wiabapapi/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
+  usersAndPermissionsUrl: 'http://localhost:8007/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5
 };

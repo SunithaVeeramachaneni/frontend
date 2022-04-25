@@ -62,5 +62,9 @@
   "title": "Title",
   "saveReportAs": "Save Report As",
   "stackBy": "Stack By",
-  "copy": "Copy"
+  "copy": "Copy",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "addUser": "Add User",
+  "editUser": "Edit User"
 }
