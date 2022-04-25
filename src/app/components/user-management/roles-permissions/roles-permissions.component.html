@@ -1,6 +1,6 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
-    <div class="main-container" style="position: relative">
+    <div class="main-container">
       <ngx-spinner
         size="medium"
         bdColor="rgba(0, 0, 0, 0.8)"
@@ -73,7 +73,7 @@
                   *ngIf="role.name !== 'Super Admin'"
                   (click)="deleteRole(role)"
                 >
-                  <span style="color: #f44336">Delete</span>
+                  <span class="text-red-color">Delete</span>
                 </button>
               </mat-menu>
             </mat-list-item>
@@ -167,14 +167,7 @@
 
           <div
             *ngIf="this.selectedRole === undefined"
-            style="
-              text-align: center;
-              position: relative;
-              top: 40%;
-              line-height: 30px;
-              color: #757575;
-              letter-spacing: 0.15px;
-            "
+            class="unselcted-role-text"
           >
             Select any default role from the <br />left to view here.
           </div>
@@ -188,7 +181,6 @@
           >
             <app-permissions
               [selectedRolePermissions]="data.selectedRolePermissions"
-              [permissionsList]="data.permissionsList"
               (customerChange)="update($event)"
             >
             </app-permissions>
