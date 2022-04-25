@@ -51,7 +51,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
 
   selectedRole;
   roleForm: FormGroup;
-  selectedRoles: FormControl;
 
   copyDisabled = true;
   showCancelBtn = false;
@@ -86,8 +85,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
       ])
     });
 
-    this.selectedRoles = new FormControl('');
-
     this.getRoles();
     this.getAllPermissions();
   }
@@ -97,15 +94,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
   compareRole(role1, role2) {
     return role1 && role2 && role1.id === role2.id;
-  }
-
-  deleteRoles() {
-    const deletedRoles = this.selectedRoles.value;
-
-    deletedRoles.forEach((role) => {
-      this.deleteRole(role);
-    });
-    this.selectedRoles.setValue([]);
   }
 
   getRoles() {

@@ -1,5 +1,5 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div>
+  <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
     <div class="main-container">
       <ngx-spinner
         size="medium"
@@ -35,59 +35,7 @@
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input matInput type="text" placeholder="Search" disabled />
           </mat-form-field>
-          <mat-selection-list
-            [compareWith]="compareRole"
-            [formControl]="selectedRoles"
-            multiple
-            *ngIf="rolesList$ | async as roles; else loadingRolesList"
-          >
-            <mat-list-option
-              checkboxPosition="before"
-              [value]="role"
-              *ngFor="let role of roles"
-              class="roles-list"
-              (click)="showSelectedRole(role)"
-              [ngClass]="{
-                'selected-roles-list': this.selectedRole
-                  ? role.id === this.selectedRole.id
-                  : ''
-              }"
-            >
-              <span class="role-name">
-                {{ role.name }}
-              </span>
-              <!-- <img
-                src="assets/user-management-icons/super-admin-icon.svg"
-                alt="super admin"
-                class="super-admin-icon"
-                *ngIf="role.name === 'Super Admin'"
-              /> -->
-              <span class="role-count">
-                {{ role.permissionIds.length }} of 4
-              </span>
-              <button
-                mat-icon-button
-                [matMenuTriggerFor]="submenu"
-                class="more-items"
-              >
-                <mat-icon>more_horiz</mat-icon>
-              </button>
-              <mat-menu #submenu="matMenu">
-                <button mat-menu-item disabled>
-                  <span>Copy</span>
-                </button>
-                <button
-                  mat-menu-item
-                  *ngIf="role.name !== 'Super Admin'"
-                  (click)="deleteRole(role)"
-                >
-                  <span class="text-red-color">Delete</span>
-                </button>
-              </mat-menu>
-            </mat-list-option>
-          </mat-selection-list>
-
-          <!-- <mat-list
+          <mat-list
             role="list"
             class="roles"
             *ngIf="rolesList$ | async as roles; else loadingRolesList"
@@ -148,7 +96,7 @@
                 </button>
               </mat-list-item>
             </div>
-          </mat-list> -->
+          </mat-list>
         </div>
         <div class="width-70 custom-mat-form-field-white-color">
           <div
@@ -247,6 +195,7 @@
       </div>
     </div>
   </div>
+  <router-outlet></router-outlet>
 </ng-container>
 
 <ng-template #loadingRolesList>
