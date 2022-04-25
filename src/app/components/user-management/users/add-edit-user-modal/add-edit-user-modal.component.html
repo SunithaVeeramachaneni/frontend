@@ -1,23 +1,19 @@
-<div class="widget-delete-modal dashboard-formfield" [formGroup]="userForm">
+<div class="user-modal" [formGroup]="userForm">
   <p *ngIf="dialogType === 'edit'" class="title" translate>editUser</p>
-  <p *ngIf="dialogType === 'add'" class="title" translate>addUser</p>
+  <p *ngIf="dialogType !== 'edit'" class="title" translate>addUser</p>
   <img [src]="profileImage" height="100" />
   <input
     type="file"
     (change)="onFileChange($event.target?.files)"
     accept="image/*"
   />
-  <div>
+  <div class="input-container">
     <mat-form-field appearance="outline" class="width-50">
       <mat-label>First Name</mat-label>
       <input matInput formControlName="firstName" />
       <mat-error *ngIf="userForm.controls.firstName.errors?.required">
         {{
-          'fieldRequired'
-            | translate
-              : {
-                  name: 'name' | translate
-                }
+          'fieldRequired' | translate: { name: 'dashboardLabel' | translate }
         }}
       </mat-error>
     </mat-form-field>
@@ -36,7 +32,7 @@
     </mat-form-field>
   </div>
 
-  <mat-form-field appearance="outline" class="width-100">
+  <mat-form-field appearance="outline" class="input-container">
     <mat-label>Title</mat-label>
     <input matInput formControlName="title" />
     <mat-error *ngIf="userForm.controls.title.errors?.required">
@@ -99,7 +95,7 @@
           cdkConnectedOverlayWidth="400px"
           (backdropClick)="isfilterTooltipOpen[i] = false"
         >
-          <div class="widgets-modal">
+          <div class="s-modal">
             <div class="header custom-mat-form-field-gray-color">
               <span class="widgets-heading">Permisions</span>
               <button

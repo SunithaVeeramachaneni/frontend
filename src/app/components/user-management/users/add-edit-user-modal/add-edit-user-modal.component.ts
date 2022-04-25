@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
@@ -51,8 +52,14 @@ export class AddEditUserModalComponent implements OnInit {
 
   ngOnInit() {
     const userDetails = this.data.user;
-    const base64 = Buffer.from(this.data.user.profileImage).toString('base64');
-    this.profileImage = this.getImageSrc(base64) as string;
+    console.log('profileimage is', this.data.user.profileImage);
+    const base64 = Buffer.from(this.data.user.profileImage.data).toString(
+      'base64'
+    );
+    // const base64 = this.arrayBufferToBase64(this.data.user.profileImage);
+    console.log('base64 is', base64);
+    const base64DataString = this.getImageSrc(base64) as string;
+    this.profileImage = base64DataString;
     // this.profileImage = this.getImageSrc(this.data.user.profileImage) as string;
     this.rolesInput = this.data.roles;
     if (Object.keys(userDetails).length === 0) {
@@ -73,6 +80,24 @@ export class AddEditUserModalComponent implements OnInit {
   objectComparisonFunction(option, value): boolean {
     return option.id === value.id;
   }
+  dataURItoBlob = (dataURI) => {
+    // convert base64 to raw binary data held in a string
+    const byteString = atob(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to an ArrayBuffer
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const _ia = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      _ia[i] = byteString.charCodeAt(i);
+    }
+
+    const dataView = new DataView(arrayBuffer);
+    const blob = new Blob([dataView], { type: mimeString });
+    return blob;
+  };
 
   arrayBufferToBase64(buffer) {
     let binary = '';
@@ -94,8 +119,12 @@ export class AddEditUserModalComponent implements OnInit {
     reader.readAsDataURL(selectedFile as Blob);
     reader.onloadend = () => {
       base64 = reader.result as string;
+      console.log('base64 is', base64);
+      const onlyBase64 = base64.split(',')[1];
+      console.log('only is', onlyBase64);
+      // const blob = this.dataURItoBlob(base64)
       this.userForm.patchValue({
-        profileImage: base64
+        profileImage: onlyBase64
       });
     };
   }
@@ -110,6 +139,7 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    console.log('Saving', this.userForm.value);
     this.dialogRef.close({
       user: { ...this.data.user, ...this.userForm.value },
       action: this.dialogType

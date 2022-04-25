@@ -71,11 +71,12 @@ export class UsersService {
       .pipe(
         mergeMap((users: UserDetails[]) =>
           from(users).pipe(
-            mergeMap((user) =>
-              this.getRoleByUserID$(user.id).pipe(
+            mergeMap((user) => {
+              console.log('User ID is', user.id);
+              return this.getRoleByUserID$(user.id).pipe(
                 map((roles) => ({ roles, userID: user.id }))
-              )
-            ),
+              );
+            }),
             toArray(),
             map((resp) =>
               resp.map(({ roles, userID }) => {
@@ -142,8 +143,8 @@ export class UsersService {
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
-    const roleIDs = user.roles.map((role) => role.id);
-    const createUser = { ...user, roleIDs, profileImage: '' };
+    const roleIds = user.roles.map((role) => role.id);
+    const createUser = { ...user, roleIds };
     return this.appService._postData(
       environment.usersAndPermissionsUrl,
       `users`,
@@ -152,8 +153,8 @@ export class UsersService {
     );
   };
   updateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
-    const roleIDs = user.roles.map((role) => role.id);
-    const patchUser = { ...user, roleIDs };
+    const roleIds = user.roles.map((role) => role.id);
+    const patchUser = { ...user, roleIds };
     return this.appService.patchData(
       environment.usersAndPermissionsUrl,
       `users/${user.id}`,

@@ -8,13 +8,8 @@ import { routingUrls } from 'src/app/app.constants';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
-import {
-  addUserMock,
-  rolesMock,
-  updateUserMock,
-  usersMock
-} from './users.mock';
 import { update } from 'lodash';
+import { Buffer } from 'buffer';
 import { MatDialog } from '@angular/material/dialog';
 import { ReportDeleteModalComponent } from '../../dashboard/report-delete-modal/report-delete-modal.component';
 import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
@@ -102,7 +97,7 @@ export class UsersComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: '300px',
+    tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: []
   };
   dataSource: MatTableDataSource<any>;
@@ -135,7 +130,6 @@ export class UsersComponent implements OnInit {
     this.usersService.getRoles$().subscribe((roles) => {
       this.roles = roles;
     });
-    this.dataSource = new MatTableDataSource(usersMock.data);
   }
 
   openEditAddUserModal(user = {} as UserDetails) {
@@ -260,6 +254,7 @@ export class UsersComponent implements OnInit {
   };
 
   rowLevelActionHandler = (event) => {
+    console.log('event.action');
     switch (event.action) {
       case 'deactivate':
         this.userTableUpdate$.next({
@@ -279,12 +274,5 @@ export class UsersComponent implements OnInit {
   };
   configOptionsChangeHandler = (event) => {
     console.log('event', event);
-  };
-
-  addUser = () => {
-    this.userTableUpdate$.next({
-      action: 'add',
-      user: addUserMock as UserDetails
-    });
   };
 }

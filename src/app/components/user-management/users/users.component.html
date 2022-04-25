@@ -33,10 +33,7 @@
           Add User
         </button>
       </div>
-      <div
-        *ngIf="users$ | async as reports; else loadingUsers"
-        class="p-l-10 p-r-10"
-      >
+      <div *ngIf="users$ | async as reports; else loadingUsers" class="">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"

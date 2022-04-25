@@ -1,4 +1,4 @@
-.report-delete-modal {
+.user-modal {
   width: auto;
   height: auto;
   overflow: hidden;
@@ -57,6 +57,16 @@
   overflow-y: scroll;
   height: auto;
   max-height: 250px;
+}
+
+.name-input {
+  width: 40%;
+  height: 20px;
+}
+
+.input-container {
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .widgets-heading {
