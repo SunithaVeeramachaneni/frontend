@@ -5,10 +5,10 @@
     (opened)="panelOpenState = true"
     (closed)="panelOpenState = false"
     hideToggle
-    style="width: auto; box-shadow: none"
+    class="permissions-expand"
     *ngFor="let per of permission"
   >
-    <mat-expansion-panel-header style="height: 40px">
+    <mat-expansion-panel-header class="h-40">
       <mat-panel-title>
         <mat-checkbox
           [disabled]="isEditable"
@@ -20,14 +20,13 @@
           {{ per.name }}
         </mat-checkbox>
         <span *ngIf="per.countOfChecked !== 0" class="permission-count">
-          {{ per.countOfChecked }} of
-          <!-- {{ this.permissionsList ? this.permissionsList.length : 0 }} -->
+          {{ per.countOfChecked }} of 4
         </span>
 
         <mat-icon>arrow_drop_down</mat-icon>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <ul style="margin: 0">
+    <ul class="m-0">
       <li *ngFor="let subper of per.permissions">
         <mat-checkbox
           color="primary"

@@ -1,6 +1,7 @@
 .main-container {
   background-color: #ffffff;
   margin: 14px;
+  position: relative;
 }
 
 .roles-header {
@@ -16,6 +17,15 @@
 
 .count-of-roles {
   margin: 0 15px;
+}
+
+.unselected-role-text {
+  text-align: center;
+  position: relative;
+  top: 40%;
+  line-height: 30px;
+  color: #757575;
+  letter-spacing: 0.15px;
 }
 
 .roles-count {
@@ -155,23 +165,6 @@
     transform: translateY(-1.1em) scale(0.75);
     width: 133.33333%;
   }
-
-  // .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-  //   opacity: 0;
-  // }
-
-  // .mat-form-field-appearance-outline .mat-form-field-outline-start,
-  // .mat-form-field-appearance-outline .mat-form-field-outline-end {
-  //   border: none !important;
-  //   min-width: 0;
-  // }
-}
-
-::ng-deep .mat-expansion-panel-body {
-  padding: 0 !important;
-}
-::ng-deep .mat-expansion-panel-spacing {
-  margin: 0 !important;
 }
 
 .mat-error-name {
@@ -191,4 +184,8 @@
 .confirm-btn {
   background-color: red;
   color: yellow;
+}
+
+.text-red-color {
+  color: #f44336;
 }

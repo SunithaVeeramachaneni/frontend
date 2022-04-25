@@ -32,9 +32,6 @@ export class PermissionsComponent implements OnInit {
     this.rolesBasedPermissions = selectedRolePermissions;
     this.getAllPermissions(selectedRolePermissions);
   }
-  @Input() set permissionsList(permissionsList) {
-    this.allPermissions = permissionsList.length;
-  }
 
   @Output() customerChange: EventEmitter<any> = new EventEmitter<any>();
 
