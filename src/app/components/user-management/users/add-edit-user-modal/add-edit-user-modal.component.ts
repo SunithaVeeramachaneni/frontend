@@ -55,13 +55,8 @@ export class AddEditUserModalComponent implements OnInit {
   ngOnInit() {
     const userDetails = this.data.user;
     console.log('profileimage is', this.data.user.profileImage);
-    // const base64 = Buffer.from(this.data.user.profileImage.data).toString(
-    //   'base64'
-    // );
-    // const base64 = this.arrayBufferToBase64(this.data.user.profileImage);
-    // console.log('base64 is', base64);
-    // const base64DataString = this.getImageSrc(base64) as string;
-    // this.profileImage = base64DataString;
+    const base64 = Buffer.from(this.data.user.profileImage.data).toString();
+    this.profileImage = this.getImageSrc(base64) as string;
     // this.profileImage = this.getImageSrc(this.data.user.profileImage) as string;
     this.rolesInput = this.data.roles;
     if (Object.keys(userDetails).length === 0) {
