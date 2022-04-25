@@ -19,8 +19,12 @@
         >
           {{ per.name }}
         </mat-checkbox>
-        <mat-icon *ngIf="!panelOpenState">arrow_right</mat-icon>
-        <mat-icon *ngIf="panelOpenState">arrow_drop_down</mat-icon>
+        <span *ngIf="per.countOfChecked !== 0" class="permission-count">
+          {{ per.countOfChecked }} of
+          <!-- {{ this.permissionsList ? this.permissionsList.length : 0 }} -->
+        </span>
+
+        <mat-icon>arrow_drop_down</mat-icon>
       </mat-panel-title>
     </mat-expansion-panel-header>
     <ul style="margin: 0">
@@ -40,14 +44,6 @@
 
 <ng-template #loadingPermissionList>
   <div class="p-10">
-    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
-    </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
     </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">

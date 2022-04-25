@@ -28,17 +28,21 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PermissionsComponent implements OnInit {
-  @Input() set rolePermissions(rolePermissions) {
-    this.rolesBasedPermissions = rolePermissions;
-    this.getAllPermissions(rolePermissions);
+  @Input() set selectedRolePermissions(selectedRolePermissions) {
+    this.rolesBasedPermissions = selectedRolePermissions;
+    this.getAllPermissions(selectedRolePermissions);
   }
+  @Input() set permissionsList(permissionsList) {
+    this.allPermissions = permissionsList.length;
+  }
+
   @Output() customerChange: EventEmitter<any> = new EventEmitter<any>();
 
   rolesBasedPermissions = [];
-  permissionsList;
   permissions$: Observable<any>;
   panelOpenState = false;
   isEditable = false;
+  allPermissions;
 
   constructor(private roleService: RolesPermissionsService) {}
 
@@ -47,11 +51,11 @@ export class PermissionsComponent implements OnInit {
   getAllPermissions(selctedRoleBasedPermissionsList) {
     this.permissions$ = this.roleService.getPermissions$().pipe(
       map((resp) => {
-        this.permissionsList = resp;
         const reports = [];
         let reportChecked = true;
-        if (this.permissionsList) {
-          this.permissionsList.forEach((allpermission) => {
+        let countOfReportsChecked = 0;
+        if (resp) {
+          resp.forEach((allpermission) => {
             if (allpermission.moduleName === 'Reports') {
               if (selctedRoleBasedPermissionsList) {
                 let successObject = false;
@@ -59,6 +63,7 @@ export class PermissionsComponent implements OnInit {
                   (selectedPermission) => {
                     if (selectedPermission.id === allpermission.id) {
                       successObject = true;
+                      countOfReportsChecked = countOfReportsChecked + 1;
                       reports.push({ ...allpermission, checked: true });
                     }
                   }
@@ -77,11 +82,12 @@ export class PermissionsComponent implements OnInit {
             {
               name: 'Reports',
               checked: reportChecked,
+              countOfChecked: countOfReportsChecked,
               permissions: reports
             }
           ];
           return newPermissionsArray;
-        } else return [];
+        }
       })
     );
   }
