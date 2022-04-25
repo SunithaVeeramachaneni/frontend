@@ -1,0 +1,133 @@
+<div class="user-modal" [formGroup]="userForm">
+  <p *ngIf="dialogType === 'edit'" class="title" translate>editUser</p>
+  <p *ngIf="dialogType !== 'edit'" class="title" translate>addUser</p>
+  <img [src]="profileImage" height="100" />
+  <input
+    type="file"
+    (change)="onFileChange($event.target?.files)"
+    accept="image/*"
+  />
+  <div class="input-container">
+    <mat-form-field appearance="outline" class="width-50">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" />
+      <mat-error *ngIf="userForm.controls.firstName.errors?.required">
+        {{
+          'fieldRequired' | translate: { name: 'dashboardLabel' | translate }
+        }}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="width-50">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" />
+      <mat-error *ngIf="userForm.controls.lastName.errors?.required">
+        {{
+          'fieldRequired'
+            | translate
+              : {
+                  name: 'lastName' | translate
+                }
+        }}
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="input-container">
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" />
+    <mat-error *ngIf="userForm.controls.title.errors?.required">
+      {{
+        'fieldRequired'
+          | translate
+            : {
+                name: 'title' | translate
+              }
+      }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="width-100">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" />
+    <mat-error *ngIf="userForm.controls.email.errors?.required">
+      {{
+        'fieldRequired'
+          | translate
+            : {
+                name: 'email' | translate
+              }
+      }}
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="width-100">
+    <mat-label>Roles</mat-label>
+    <mat-select
+      name="priority"
+      multiple
+      [compareWith]="objectComparisonFunction"
+      formControlName="roles"
+    >
+      <mat-select-trigger>
+        {{ roles.value[0]?.name }}
+        <span
+          *ngIf="roles.value?.length > 1"
+          class="example-additional-selection"
+        >
+          (+{{ roles.value.length - 1 }}
+          {{ roles.value?.length === 2 ? 'more' : 'more' }})
+        </span>
+      </mat-select-trigger>
+      <mat-option *ngFor="let role of rolesInput; let i = index" [value]="role"
+        >{{ role.name }}
+        <mat-icon
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin"
+          (click)="isfilterTooltipOpen[i] = true"
+        >
+          info_border
+        </mat-icon>
+        <ng-template
+          cdkConnectedOverlay
+          cdkConnectedOverlayPanelClass="custom-popover"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayOpen]="isfilterTooltipOpen[i]"
+          [cdkConnectedOverlayOrigin]="trigger"
+          cdkConnectedOverlayWidth="400px"
+          (backdropClick)="isfilterTooltipOpen[i] = false"
+        >
+          <div class="s-modal">
+            <div class="header custom-mat-form-field-gray-color">
+              <span class="widgets-heading">Permisions</span>
+              <button
+                (click)="isfilterTooltipOpen[i] = false"
+                class="widgets-cancel"
+              >
+                <img src="../../../../../assets/img/svg/cancel-icon.svg" />
+              </button>
+              <app-roles-pop-up-modal></app-roles-pop-up-modal>
+            </div>
+            <div class="dashboard-widgets-list"></div>
+          </div>
+        </ng-template>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br />
+  <button
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="save()"
+    type="submit"
+    [disabled]="userForm.invalid"
+    translate="save"
+  ></button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+    translate="cancel"
+  ></button>
+</div>

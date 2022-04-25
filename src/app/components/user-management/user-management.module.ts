@@ -5,9 +5,12 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { CdkTreeModule } from '@angular/cdk/tree';
 
 import { UserManagementRoutingModule } from './user-management-routing.module';
 import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
+import { RolesPopUpComponent } from './users/roles-pop-up-modal/roles-pop-up-modal.component';
+import { AddEditUserModalComponent } from './users/add-edit-user-modal/add-edit-user-modal.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
 import {
@@ -16,6 +19,7 @@ import {
   TranslateService
 } from '@ngx-translate/core';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { HttpClient } from '@angular/common/http';
 import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -32,9 +36,11 @@ export const customTranslateLoader = (http: HttpClient) =>
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    CdkTreeModule,
     UserManagementRoutingModule,
     CommonModule,
     SharedModule,
+    DynamictableModule,
     AppMaterialModules,
     NgxShimmerLoadingModule,
     NgxSpinnerModule,
@@ -51,7 +57,9 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [
     UserManagementContainerComponent,
     RolesPermissionsComponent,
+    RolesPopUpComponent,
     UsersComponent,
+    AddEditUserModalComponent,
     PermissionsComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
