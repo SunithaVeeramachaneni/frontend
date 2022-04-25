@@ -51,6 +51,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
 
   selectedRole;
   roleForm: FormGroup;
+  selectedRoles: FormControl;
 
   copyDisabled = true;
   showCancelBtn = false;
@@ -84,12 +85,27 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
         Validators.minLength(3)
       ])
     });
+
+    this.selectedRoles = new FormControl('');
+
     this.getRoles();
     this.getAllPermissions();
   }
 
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
+  }
+  compareRole(role1, role2) {
+    return role1 && role2 && role1.id === role2.id;
+  }
+
+  deleteRoles() {
+    const deletedRoles = this.selectedRoles.value;
+
+    deletedRoles.forEach((role) => {
+      this.deleteRole(role);
+    });
+    this.selectedRoles.setValue([]);
   }
 
   getRoles() {
