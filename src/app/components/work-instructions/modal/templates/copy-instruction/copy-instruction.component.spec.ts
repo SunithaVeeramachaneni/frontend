@@ -57,22 +57,12 @@ const image = 'assets/work-instructions-icons/img/brand/doc-placeholder.png';
 
 const users = [
   {
-    id: 1,
     first_name: 'Tester',
-    last_name: 'One',
-    email: 'tester.one@innovapptive.com',
-    password: '5000353tes',
-    role: 'admin',
-    empId: '5000353'
+    last_name: 'One'
   },
   {
-    id: 2,
     first_name: 'Tester',
-    last_name: 'Two',
-    email: 'tester.two@innovapptive.com',
-    password: '5000392tes',
-    role: 'user',
-    empId: '5000392'
+    last_name: 'Two'
   }
 ];
 
@@ -139,47 +129,45 @@ describe('CopyInstructionComponent', () => {
   const title = 'sample1';
   const user = 'author';
 
-  beforeEach(
-    waitForAsync(() => {
-      myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
-        data: {}
-      });
-      spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'close']);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'copyWorkInstruction',
-        'getUsers'
-      ]);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
+  beforeEach(waitForAsync(() => {
+    myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
+      data: {}
+    });
+    spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'close']);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'copyWorkInstruction',
+      'getUsers'
+    ]);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [
-          CopyInstructionComponent,
-          CustomPaginationControlsComponent,
-          DummyComponent,
-          DropDownFilterPipe,
-          MockComponent(NgxSpinnerComponent)
-        ],
-        imports: [
-          NgxPaginationModule,
-          NgpSortModule,
-          Ng2SearchPipeModule,
-          AppMaterialModules,
-          BrowserAnimationsModule,
-          FormsModule
-        ],
-        providers: [
-          { provide: MyOverlayRef, useValue: myOverlayRefSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy }
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [
+        CopyInstructionComponent,
+        CustomPaginationControlsComponent,
+        DummyComponent,
+        DropDownFilterPipe,
+        MockComponent(NgxSpinnerComponent)
+      ],
+      imports: [
+        NgxPaginationModule,
+        NgpSortModule,
+        Ng2SearchPipeModule,
+        AppMaterialModules,
+        BrowserAnimationsModule,
+        FormsModule
+      ],
+      providers: [
+        { provide: MyOverlayRef, useValue: myOverlayRefSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy }
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CopyInstructionComponent);

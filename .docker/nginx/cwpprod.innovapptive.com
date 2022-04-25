@@ -97,6 +97,14 @@ server {
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
+    location /userrolemanagementapi {
+        proxy_pass http://user-service-production:8007/userrolemanagementapi;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
     error_page 404 /404.html;
     location = /404.html {
     }
