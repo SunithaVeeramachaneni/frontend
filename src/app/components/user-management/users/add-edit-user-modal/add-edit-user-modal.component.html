@@ -119,6 +119,7 @@
           <span>{{ role.name }}</span>
           <mat-icon
             cdkOverlayOrigin
+            (click)="getPermissions(role)"
             #trigger="cdkOverlayOrigin"
             class="material-icons-outlined"
             style="

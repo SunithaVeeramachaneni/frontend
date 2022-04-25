@@ -138,6 +138,9 @@ export class AddEditUserModalComponent implements OnInit {
     ).permissions;
 
     // this.dynamicFilterModalTopPosition = el.y - 85 + 'px';
+  }
+
+  getPermissions(role) {
     this.roleService.getRolePermissionsById$(role.id).subscribe((resp) => {
       if (resp && resp.length !== 0) {
         resp.forEach((e) => {
