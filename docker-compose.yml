@@ -184,7 +184,6 @@ services:
     volumes:
       - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector
       - /usr/src/data-collector/node_modules
-    command: sh -c "cd /usr/src/data-collector && npm i && nodemon src/server.js"
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
@@ -208,7 +207,9 @@ services:
     volumes:
       - ${BACKEND_HOME}/UserService:/usr/src/user-service
       - /usr/src/user-service/node_modules
-    command: sh -c "cd /usr/src/user-service && npm i && nodemon src/server.js"
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/user-service/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}

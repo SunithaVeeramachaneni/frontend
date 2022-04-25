@@ -49,10 +49,10 @@ insert into catalogs (
       "http://localhost:8007/",
       "http://cwpdev.innovapptive.com/wiapi/",
       "http://cwpdev.innovapptive.com/dashboardapi/",
-      "http://cwpdev.innovapptive.com/userserviceapi/",
+      "http://cwpdev.innovapptive.com/userrolemanagementapi/",
       "http://cwpqa.innovapptive.com/wiapi/",
       "http://cwpqa.innovapptive.com/dashboardapi/",
-      "http://cwpqa.innovapptive.com/userserviceapi/"
+      "http://cwpqa.innovapptive.com/userrolemanagementapi/"
     ]
   }',
   "innovapptive.com",
