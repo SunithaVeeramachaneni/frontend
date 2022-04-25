@@ -56,7 +56,9 @@
                 class="super-admin-icon"
                 *ngIf="role.name === 'Super Admin'"
               />
-              <span class="role-count"> {{ role.permissionIds }} of 4 </span>
+              <span class="role-count">
+                {{ role.permissionIds.length }} of 4
+              </span>
               <button
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"

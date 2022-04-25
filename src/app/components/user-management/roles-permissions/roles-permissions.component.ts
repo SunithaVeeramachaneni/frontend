@@ -23,6 +23,11 @@ import Swal from 'sweetalert2';
 import { AlertModalComponent } from '../alert-modal/alert-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
+interface RolesListUpdate {
+  action: 'add' | 'edit' | 'delete' | null;
+  role: Role;
+}
+
 @Component({
   selector: 'app-roles-permissions',
   templateUrl: './roles-permissions.component.html',
@@ -38,6 +43,11 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
 
   permissionsList$: Observable<any>;
   selectedRolePermissions$: Observable<Permission[]>;
+  rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
+    new BehaviorSubject<RolesListUpdate>({
+      action: null,
+      role: {} as Role
+    });
 
   selectedRole;
   roleForm: FormGroup;
@@ -83,7 +93,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   getRoles() {
-    this.rolesList$ = this.roleService.getRoles$().pipe(
+    const initialRolesList$ = this.roleService.getRoles$().pipe(
       mergeMap((roles: Role[]) => {
         const newArray = [];
         return from(roles).pipe(
@@ -94,7 +104,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
                   id: role.id,
                   name: role.name,
                   description: role.description,
-                  permissionIds: permissions.length
+                  permissionIds: permissions
                 };
                 newArray.push(newRoleArray);
                 return newArray;
@@ -104,6 +114,30 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
         );
       })
     );
+    const updatedRoles$ = combineLatest([
+      initialRolesList$,
+      this.rolesListUpdate$
+    ]).pipe(
+      map(([roles, update]) => {
+        const { role, action } = update;
+        switch (action) {
+          case 'add':
+            roles.push(role);
+            break;
+          case 'edit':
+            const index = roles.findIndex((r) => r.id === role.id);
+            roles[index] = role;
+            break;
+          case 'delete':
+            const indexToDelete = roles.findIndex((r) => r.id === role.id);
+            roles.splice(indexToDelete, 1);
+            break;
+        }
+        return roles;
+      })
+    );
+
+    this.rolesList$ = updatedRoles$;
   }
 
   getAllPermissions() {
@@ -131,7 +165,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   saveRole(formData, roleId) {
-    this.spinner.show();
+    // this.spinner.show();
     const permissionId = [];
     this.selectedRolePermissions$.subscribe((resp) => {
       resp.forEach((e) => permissionId.push(e.id));
@@ -149,12 +183,18 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     };
     if (roleId === undefined) {
       this.roleService.createRole$(postNewRoleData).subscribe((resp) => {
-        this.getRoles();
+        // this.getRoles();
+        console.log('Resp is', resp);
+        console.log('post new role data is', postNewRoleData);
+        this.rolesListUpdate$.next({
+          action: 'add',
+          role: { ...resp, permissionIds: permissionId }
+        });
         this.addingRole$.next(false);
         this.showCancelBtn = false;
         this.copyDisabled = true;
         this.selectedRole = resp;
-        this.spinner.hide();
+        // this.spinner.hide();
 
         this.toast.show({
           text: 'Role saved successfully',
@@ -164,8 +204,11 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     } else {
       this.roleService.updateRole$(updateRoleData).subscribe((resp) => {
         this.addingRole$.next(false);
-        this.getRoles();
-        this.spinner.hide();
+        this.rolesListUpdate$.next({
+          action: 'edit',
+          role: { ...resp, permissionIds: permissionId }
+        });
+        // this.spinner.hide();
         this.toast.show({
           text: 'Role Updated successfully',
           type: 'success'
@@ -189,7 +232,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
 
   deleteRole(role) {
     this.roleService.deleteRole$(role).subscribe((resp) => {
-      this.getRoles();
+      this.rolesListUpdate$.next({ action: 'delete', role: resp });
     });
   }
 
