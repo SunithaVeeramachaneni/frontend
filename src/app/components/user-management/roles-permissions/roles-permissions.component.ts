@@ -40,7 +40,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   readonly routingUrls = routingUrls;
 
   rolesList$: Observable<Role[]>;
-
+  selectedRoleList = [];
   permissionsList$: Observable<any>;
   selectedRolePermissions$: Observable<Permission[]>;
   rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
@@ -147,6 +147,22 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   get f() {
     return this.roleForm.controls;
   }
+
+  roleChecked = (role, event) => {
+    if (event.checked === true) {
+      this.selectedRoleList.push(role);
+    } else {
+      const index = this.selectedRoleList.findIndex((r) => r.id === role.id);
+      this.selectedRoleList.splice(index, 1);
+    }
+  };
+
+  deleteRoles = () => {
+    this.selectedRoleList.forEach((role) => {
+      this.deleteRole(role);
+    });
+    this.selectedRoleList = [];
+  };
 
   addRole() {
     this.copyDisabled = true;

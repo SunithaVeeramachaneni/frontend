@@ -13,7 +13,11 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item>
+          <button
+            mat-menu-item
+            (click)="deleteRoles()"
+            [disabled]="!selectedRoleList.length"
+          >
             <span>Delete</span>
           </button>
         </mat-menu>
@@ -46,7 +50,7 @@
                   : ''
               }"
             >
-              <mat-checkbox></mat-checkbox>
+              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
