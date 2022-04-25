@@ -122,7 +122,7 @@ export class UsersComponent implements OnInit {
   ngOnInit() {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
-        this.commonService.setHeaderTitle(routingUrls.rolesPermissions.title)
+        this.commonService.setHeaderTitle(routingUrls.userManagement.title)
       )
     );
     this.getDisplayedUsers();

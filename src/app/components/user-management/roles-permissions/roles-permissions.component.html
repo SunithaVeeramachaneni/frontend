@@ -1,5 +1,5 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div *ngIf="currentRouteUrl === routingUrls.rolesPermissions.url">
+  <div>
     <div class="main-container">
       <ngx-spinner
         size="medium"
@@ -247,7 +247,6 @@
       </div>
     </div>
   </div>
-  <router-outlet></router-outlet>
 </ng-container>
 
 <ng-template #loadingRolesList>

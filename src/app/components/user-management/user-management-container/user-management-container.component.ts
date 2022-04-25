@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-user-management-container',
@@ -15,13 +16,26 @@ export class UserManagementContainerComponent implements OnInit {
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
 
-  constructor(private commonService: CommonService) {}
+  constructor(
+    private commonService: CommonService,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() =>
-        this.commonService.setHeaderTitle(routingUrls.userManagement.title)
-      )
+      tap((currentRouteUrl) => {
+        if (currentRouteUrl === routingUrls.userManagement.url) {
+          this.commonService.setHeaderTitle(routingUrls.userManagement.title);
+          this.breadcrumbService.set(routingUrls.userManagement.url, {
+            skip: true
+          });
+        } else {
+          this.breadcrumbService.set(routingUrls.userManagement.url, {
+            skip: false
+          });
+        }
+      })
     );
+    this.headerTitle$ = this.commonService.headerTitleAction$;
   }
 }

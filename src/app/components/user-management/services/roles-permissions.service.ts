@@ -13,30 +13,48 @@ export class RolesPermissionsService {
 
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> => {
     const { displayToast, failureResponse = {} } = info;
-    return this.appService._getResp(environment.rolesApiUrl, 'roles', {
-      displayToast,
-      failureResponse
-    });
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'roles',
+      {
+        displayToast,
+        failureResponse
+      }
+    );
   };
 
   getRoleById$ = (
     id: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Role> =>
-    this.appService._getResp(environment.rolesApiUrl, `roles/${id}`, info);
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `roles/${id}`,
+      info
+    );
 
   createRole$ = (
     role: Role,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Role> =>
-    this.appService._postData(environment.rolesApiUrl, 'roles', role, info);
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      'roles',
+      role,
+      info
+    );
 
   updateRole$ = (
     role: Role,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Role> =>
     this.appService
-      .patchData(environment.rolesApiUrl, `roles/${role.id}`, role, info)
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `roles/${role.id}`,
+        role,
+        info
+      )
       .pipe(map((response) => (response === null ? role : response)));
 
   deleteRole$ = (
@@ -44,17 +62,25 @@ export class RolesPermissionsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Role> =>
     this.appService
-      ._removeData(environment.rolesApiUrl, `roles/${role.id}`, info)
+      ._removeData(
+        environment.userRoleManagementApiUrl,
+        `roles/${role.id}`,
+        info
+      )
       .pipe(map((response) => (response === null ? role : response)));
 
   getPermissions$ = (
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Permission[]> => {
     const { displayToast, failureResponse = {} } = info;
-    return this.appService._getResp(environment.rolesApiUrl, 'permissions', {
-      displayToast,
-      failureResponse
-    });
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'permissions',
+      {
+        displayToast,
+        failureResponse
+      }
+    );
   };
 
   getRolePermissionsById$ = (
@@ -62,7 +88,7 @@ export class RolesPermissionsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Permission[]> =>
     this.appService._getResp(
-      environment.rolesApiUrl,
+      environment.userRoleManagementApiUrl,
       `roles/${id}/permissions`,
       info
     );

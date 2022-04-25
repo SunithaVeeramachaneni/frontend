@@ -19,8 +19,7 @@ import {
   Report,
   Count,
   Widget,
-  UserDetails,
-  UserTable
+  UserDetails
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
@@ -49,7 +48,7 @@ export class UsersService {
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
     const { displayToast, failureResponse = {} } = info;
     return this.appService._getResp(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       'roles',
       { displayToast, failureResponse }
     );
@@ -63,7 +62,7 @@ export class UsersService {
     // queryParams = {};
     return this.appService
       ._getResp(
-        environment.usersAndPermissionsUrl,
+        environment.userRoleManagementApiUrl,
         'users',
         { displayToast, failureResponse },
         queryParams
@@ -91,7 +90,7 @@ export class UsersService {
 
   getUsersCount$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Count> =>
     this.appService._getResp(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       `users/count`,
       info
     );
@@ -101,7 +100,7 @@ export class UsersService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._getResp(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       `users/${userID}/roles`,
       info
     );
@@ -135,7 +134,7 @@ export class UsersService {
     const userID = user.id;
     const deactivateUser = { isActive: false };
     return this.appService.patchData(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       `users/${userID}`,
       deactivateUser,
       info
@@ -146,7 +145,7 @@ export class UsersService {
     const roleIds = user.roles.map((role) => role.id);
     const createUser = { ...user, roleIds };
     return this.appService._postData(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       `users`,
       createUser,
       info
@@ -156,7 +155,7 @@ export class UsersService {
     const roleIds = user.roles.map((role) => role.id);
     const patchUser = { ...user, roleIds };
     return this.appService.patchData(
-      environment.usersAndPermissionsUrl,
+      environment.userRoleManagementApiUrl,
       `users/${user.id}`,
       patchUser,
       info
