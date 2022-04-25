@@ -60,7 +60,7 @@ insert into catalogs (
     "oauth2Url":
       "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
     "grantType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    "clientSecret": "L2y7Q~SiOSKHJmmgiokIaL8PFl~gA8kTDvR74",
+    "clientSecret": "",
     "resource": "https://NSB100",
     "tokenUse": "on_behalf_of",
     "tokenType": "urn:ietf:params:oauth:token-type:saml2"
@@ -69,7 +69,7 @@ insert into catalogs (
     "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
     "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
     "username": "cwpuser",
-    "password": "U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=",
+    "password": "",
     "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
     "clientId": "cwpuser",
     "scope": "/INVCEC/RACE_SRV_0001"
@@ -78,7 +78,7 @@ insert into catalogs (
     "host": "mysql-local",
     "port": 3306,
     "user": "admin",
-    "password": "U2FsdGVkX181Q5hUCdyiq0kXYu6HiRlwvsuy8rirjfU=",
+    "password": "",
     "database": "Innovapptive",
     "dialect": "mysql"
   }',

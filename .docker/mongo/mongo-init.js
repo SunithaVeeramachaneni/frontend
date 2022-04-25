@@ -38,7 +38,7 @@ db.tenants.insertOne({
       oauth2Url:
         'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token',
       grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      clientSecret: 'nR78QGa15.d6C8dOh1_coeG.ECDB.I_VJh',
+      clientSecret: '',
       resource: 'https://NSB100',
       tokenUse: 'on_behalf_of',
       tokenType: 'urn:ietf:params:oauth:token-type:saml2'
@@ -47,7 +47,7 @@ db.tenants.insertOne({
       baseUrl: 'https://3.213.12.206/sap/opu/odata/INVCEC/RACE_SRV/',
       oauth2Url: 'https://3.213.12.206/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
+      password: '',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -58,7 +58,7 @@ db.tenants.insertOne({
       oauth2Url:
         'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token',
       grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      clientSecret: 'nR78QGa15.d6C8dOh1_coeG.ECDB.I_VJh',
+      clientSecret: '',
       resource: 'https://NTS100',
       tokenUse: 'on_behalf_of',
       tokenType: 'urn:ietf:params:oauth:token-type:saml2'
@@ -68,7 +68,7 @@ db.tenants.insertOne({
         'https://nts.innovapptive.com:8080/sap/opu/odata/INVCEC/RACE_SRV/',
       oauth2Url: 'https://nts.innovapptive.com:8080/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
+      password: '',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -79,7 +79,7 @@ db.tenants.insertOne({
       oauth2Url:
         'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token',
       grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      clientSecret: 'nR78QGa15.d6C8dOh1_coeG.ECDB.I_VJh',
+      clientSecret: '',
       resource: 'https://NSB100',
       tokenUse: 'on_behalf_of',
       tokenType: 'urn:ietf:params:oauth:token-type:saml2'
@@ -90,7 +90,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
+      password: '',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -101,7 +101,7 @@ db.tenants.insertOne({
       oauth2Url:
         'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token',
       grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      clientSecret: 'nR78QGa15.d6C8dOh1_coeG.ECDB.I_VJh',
+      clientSecret: '',
       resource: 'https://NSB100',
       tokenUse: 'on_behalf_of',
       tokenType: 'urn:ietf:params:oauth:token-type:saml2'
@@ -112,7 +112,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
+      password: '',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
@@ -123,7 +123,7 @@ db.tenants.insertOne({
       oauth2Url:
         'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token',
       grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      clientSecret: 'nR78QGa15.d6C8dOh1_coeG.ECDB.I_VJh',
+      clientSecret: '',
       resource: 'https://NSB100',
       tokenUse: 'on_behalf_of',
       tokenType: 'urn:ietf:params:oauth:token-type:saml2'
@@ -134,7 +134,7 @@ db.tenants.insertOne({
       oauth2Url:
         'http://innongwtst.internal.innovapptive.com:8000/sap/bc/sec/oauth2/token',
       username: 'cwpuser',
-      password: 'U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=',
+      password: '',
       grantType: 'urn:ietf:params:oauth:grant-type:saml2-bearer',
       clientId: 'cwpuser',
       scope: '/INVCEC/RACE_SRV_0001'
