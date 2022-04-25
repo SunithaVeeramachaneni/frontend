@@ -1,7 +1,16 @@
 {
   "roleLabel": "Role name",
   "roleDescriptionLabel": "Role Description",
+  "name": "Name",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "title": "Title",
+  "email": "Email",
   "fieldRequired": "{name} is required",
   "fieldMinimumLength": "{name} must be at least {length} characters",
-  "fieldMaximumLength": "{name} must be at the max of {length} characters"
+  "fieldMaximumLength": "{name} must be at the max of {length} characters",
+  "addUser": "Add User",
+  "editUser": "Edit User",
+  "addUserBtn": "ADD USER",
+  "cancelBtn": "CANCEL"
 }

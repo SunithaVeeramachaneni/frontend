@@ -13,9 +13,9 @@ import {
   ValidatorFn
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { UserDetails } from 'src/app/interfaces';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
+import { RolesPermissionsService } from '../../services/roles-permissions.service';
 
 @Component({
   selector: 'app-report-delete-modal',
@@ -41,11 +41,13 @@ export class AddEditUserModalComponent implements OnInit {
   get roles() {
     return this.userForm.get('roles');
   }
+  rolePermissions = [];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
+    private roleService: RolesPermissionsService,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
@@ -136,6 +138,13 @@ export class AddEditUserModalComponent implements OnInit {
     ).permissions;
 
     // this.dynamicFilterModalTopPosition = el.y - 85 + 'px';
+    this.roleService.getRolePermissionsById$(role.id).subscribe((resp) => {
+      if (resp && resp.length !== 0) {
+        resp.forEach((e) => {
+          this.rolePermissions = resp;
+        });
+      }
+    });
   }
 
   save() {
@@ -144,5 +153,9 @@ export class AddEditUserModalComponent implements OnInit {
       user: { ...this.data.user, ...this.userForm.value },
       action: this.dialogType
     });
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 }
