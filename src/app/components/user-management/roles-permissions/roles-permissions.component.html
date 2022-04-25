@@ -56,9 +56,7 @@
                 class="super-admin-icon"
                 *ngIf="role.name === 'Super Admin'"
               />
-              <!-- <span class="role-count">
-                {{ roles.permissionIds.length }} of 5
-              </span> -->
+              <span class="role-count"> {{ role.permissionIds }} of 4 </span>
               <button
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"
@@ -67,7 +65,7 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item>
+                <button mat-menu-item disabled>
                   <span>Copy</span>
                 </button>
                 <button
@@ -85,8 +83,8 @@
                 class="selected-roles-list"
               >
                 <mat-checkbox disabled=""></mat-checkbox>
-                <span class="role-name"> Adding Role </span>
-                <span class="role-count"> 0 of 5 </span>
+                <span class="role-name"> Adding Role... </span>
+                <span class="role-count"> 0 of 4 </span>
                 <button disabled mat-icon-button class="more-items">
                   <mat-icon>more_horiz</mat-icon>
                 </button>
@@ -139,11 +137,7 @@
                 mat-raised-button
                 type="submit"
                 class="save-role-btn"
-                [disabled]="
-                  roleForm.invalid || this.rolePermissions.length === 0
-                    ? true
-                    : false
-                "
+                [disabled]="roleForm.invalid || this.enableSaveButon"
               >
                 Save
               </button>
@@ -184,9 +178,17 @@
           >
             Select any default role from the <br />left to view here.
           </div>
-          <div *ngIf="this.selectedRole !== undefined">
+          <div
+            *ngIf="
+              this.selectedRole !== undefined && {
+                selectedRolePermissions: selectedRolePermissions$ | async,
+                permissionsList: permissionsList$ | async
+              } as data
+            "
+          >
             <app-permissions
-              [rolePermissions]="rolePermissions"
+              [selectedRolePermissions]="data.selectedRolePermissions"
+              [permissionsList]="data.permissionsList"
               (customerChange)="update($event)"
             >
             </app-permissions>

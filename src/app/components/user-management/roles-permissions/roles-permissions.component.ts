@@ -11,13 +11,16 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
 import { mergeMap, tap, map } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { ToastService } from 'src/app/shared/toast';
 import Swal from 'sweetalert2';
+import { AlertModalComponent } from '../alert-modal/alert-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 @Component({
@@ -32,22 +35,26 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   readonly routingUrls = routingUrls;
 
   rolesList$: Observable<Role[]>;
-  selectedRole;
 
+  permissionsList$: Observable<any>;
+  selectedRolePermissions$: Observable<Permission[]>;
+
+  selectedRole;
   roleForm: FormGroup;
 
-  copyDisabled = false;
+  copyDisabled = true;
   showCancelBtn = false;
+  enableSaveButon: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
-
-  rolePermissions = [];
 
   constructor(
     private commonService: CommonService,
     private fb: FormBuilder,
     private roleService: RolesPermissionsService,
     private cdrf: ChangeDetectorRef,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    public dialog: MatDialog,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +75,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
       ])
     });
     this.getRoles();
+    this.getAllPermissions();
   }
 
   ngAfterViewChecked(): void {
@@ -75,7 +83,31 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   getRoles() {
-    this.rolesList$ = this.roleService.getRoles$();
+    this.rolesList$ = this.roleService.getRoles$().pipe(
+      mergeMap((roles: Role[]) => {
+        const newArray = [];
+        return from(roles).pipe(
+          mergeMap((role) =>
+            this.roleService.getRolePermissionsById$(role.id).pipe(
+              map((permissions) => {
+                const newRoleArray = {
+                  id: role.id,
+                  name: role.name,
+                  description: role.description,
+                  permissionIds: permissions.length
+                };
+                newArray.push(newRoleArray);
+                return newArray;
+              })
+            )
+          )
+        );
+      })
+    );
+  }
+
+  getAllPermissions() {
+    this.permissionsList$ = this.roleService.getPermissions$();
   }
 
   get f() {
@@ -86,24 +118,24 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     this.copyDisabled = true;
     this.showCancelBtn = true;
     this.addingRole$.next(true);
-    this.rolePermissions = [];
+    this.selectedRolePermissions$ = of([]);
     this.f.name.setValue('New Role');
     this.f.description.setValue('');
-    this.selectedRole = {
-      name: '',
-      description: ''
-    };
+    this.enableSaveButon = true;
+    this.selectedRole = [];
   }
 
   update(data) {
-    this.rolePermissions = data;
+    this.selectedRolePermissions$ = of(data);
+    this.enableSaveButon = data.length !== 0 ? false : true;
   }
 
   saveRole(formData, roleId) {
     this.spinner.show();
     const permissionId = [];
-    this.rolePermissions.forEach((e) => permissionId.push(e.id));
-
+    this.selectedRolePermissions$.subscribe((resp) => {
+      resp.forEach((e) => permissionId.push(e.id));
+    });
     const postNewRoleData = {
       name: formData.name,
       description: formData.description,
@@ -120,29 +152,43 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
         this.getRoles();
         this.addingRole$.next(false);
         this.showCancelBtn = false;
-        this.copyDisabled = false;
+        this.copyDisabled = true;
         this.selectedRole = resp;
         this.spinner.hide();
+
+        this.toast.show({
+          text: 'Role saved successfully',
+          type: 'success'
+        });
       });
     } else {
       this.roleService.updateRole$(updateRoleData).subscribe((resp) => {
-        console.log(resp);
         this.addingRole$.next(false);
         this.getRoles();
         this.spinner.hide();
+        this.toast.show({
+          text: 'Role Updated successfully',
+          type: 'success'
+        });
       });
     }
   }
 
   cancelRole() {
-    this.getRoles();
-    this.selectedRole = undefined;
-    this.addingRole$.next(false);
+    const deleteReportRef = this.dialog.open(AlertModalComponent);
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res === 'yes') {
+        this.getRoles();
+        this.selectedRole = undefined;
+        this.addingRole$.next(false);
+      } else {
+        this.addingRole$.next(true);
+      }
+    });
   }
 
   deleteRole(role) {
     this.roleService.deleteRole$(role).subscribe((resp) => {
-      console.log(resp);
       this.getRoles();
     });
   }
@@ -152,12 +198,14 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
 
-    this.roleService.getRolePermissionsById$(role.id).subscribe((resp) => {
-      if (resp && resp.length !== 0) {
-        resp.forEach((e) => {
-          this.rolePermissions = resp;
-        });
-      }
-    });
+    this.selectedRolePermissions$ = this.roleService
+      .getRolePermissionsById$(role.id)
+      .pipe(
+        map((resp) => {
+          const selectedPermission = resp;
+          this.enableSaveButon = false;
+          return selectedPermission;
+        })
+      );
   }
 }

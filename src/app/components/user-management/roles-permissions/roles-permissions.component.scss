@@ -88,8 +88,6 @@
 .role-count {
   padding: 3px 7px;
   font-size: 12px;
-  background: pink;
-  border-radius: 27px;
   background: rgba(61, 90, 254, 0.08);
   border-radius: 20px;
   position: absolute;
@@ -178,16 +176,16 @@
 
 .mat-error-name {
   position: absolute;
-  top: 190px;
   z-index: 10;
-  left: 375px;
+  left: 365px;
+  margin-top: -10px;
 }
 
 .mat-error-description {
   position: absolute;
-  top: 190px;
   z-index: 10;
-  left: 600px;
+  left: 590px;
+  margin-top: -10px;
 }
 
 .confirm-btn {
