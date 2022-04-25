@@ -16,7 +16,7 @@
           <button
             mat-menu-item
             (click)="deleteRoles()"
-            [disabled]="!selectedRoles.value.length"
+            [disabled]="!selectedRoleList.length"
           >
             <span>Delete</span>
           </button>
@@ -102,7 +102,7 @@
                   : ''
               }"
             >
-              <mat-checkbox></mat-checkbox>
+              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
