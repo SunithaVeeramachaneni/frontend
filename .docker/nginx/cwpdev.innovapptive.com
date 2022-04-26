@@ -89,8 +89,22 @@ server {
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
-    location /datacollectorapi {
-        proxy_pass http://data-collector-development:8005/datacollectorapi;
+    location = /datacollectorapi {
+        return 302 /datacollectorapi/;
+    }
+    location /datacollectorapi/ {
+        proxy_pass http://data-collector-development:8005/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    location = /userrolemanagementapi {
+        return 302 /userrolemanagementapi/;
+    }
+    location /userrolemanagementapi/ {
+        proxy_pass http://user-service-development:8007/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

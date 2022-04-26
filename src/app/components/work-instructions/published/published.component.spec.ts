@@ -113,22 +113,12 @@ const published = [
 
 const users: User[] = [
   {
-    id: '1',
     first_name: 'Tester',
-    last_name: 'One',
-    email: 'tester.one@innovapptive.com',
-    password: '5000353tes',
-    role: 'admin',
-    empId: '5000353'
+    last_name: 'One'
   },
   {
-    id: '2',
     first_name: 'Tester',
-    last_name: 'Two',
-    email: 'tester.two@innovapptive.com',
-    password: '5000392tes',
-    role: 'user',
-    empId: '5000392'
+    last_name: 'Two'
   }
 ];
 
@@ -145,54 +135,52 @@ describe('PublishedComponent', () => {
   let publishedDe: DebugElement;
   let publishedEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getPublishedInstructions',
-        'setFavoriteInstructions',
-        'getUsers',
-        'deleteWorkInstruction$',
-        'copyWorkInstruction'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
-      commonServiceSpy = jasmine.createSpyObj(
-        'CommonService',
-        ['setHeaderTitle'],
-        {
-          currentRouteUrlAction$: of('/work-instructions/published')
-        }
-      );
+  beforeEach(waitForAsync(() => {
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getPublishedInstructions',
+      'setFavoriteInstructions',
+      'getUsers',
+      'deleteWorkInstruction$',
+      'copyWorkInstruction'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setHeaderTitle'],
+      {
+        currentRouteUrlAction$: of('/work-instructions/published')
+      }
+    );
 
-      TestBed.configureTestingModule({
-        declarations: [PublishedComponent, DropDownFilterPipe, TimeAgoPipe],
-        imports: [
-          NgxPaginationModule,
-          OrderModule,
-          Ng2SearchPipeModule,
-          AppMaterialModules,
-          RouterTestingModule,
-          SharedModule,
-          FormsModule,
-          BrowserAnimationsModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: CommonService, useValue: commonServiceSpy }
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [PublishedComponent, DropDownFilterPipe, TimeAgoPipe],
+      imports: [
+        NgxPaginationModule,
+        OrderModule,
+        Ng2SearchPipeModule,
+        AppMaterialModules,
+        RouterTestingModule,
+        SharedModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy }
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PublishedComponent);

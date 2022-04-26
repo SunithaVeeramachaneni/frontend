@@ -1,21 +1,32 @@
 # 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/[development|testing|staging|production].env file from CWP HOME
+# 2. Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 # In Windows
-# 2. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env build`
-# 3. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env up`
+# 3. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env build`
+# 4. Run `docker compose --env-file .\.docker\env\[development|testing|staging|production].env up`
 
 # In Linux
-# 2. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env build`
-# 3. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env up`
+# 3. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env build`
+# 4. Run `docker compose --env-file .docker/env/[development|testing|staging|production].env up`
 
 ################ OR ################
 
-# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Set BACKEND_HOME, APP_ENV, DEPLOYMENT_ENV,MYSQL_HOST_NAME, MYSQL_PORT, MYSQL_USER_NAME, MYSQL_DATABASE, REDIS_HOST_NAME, REDIS_PORT, REDIS_TTL, NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment variable by running the following command in your commnand window (see the notes below if on Windows).
 
 #    export BACKEND_HOME='backend home path comes here...'
-#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
 #    export APP_ENV=development or export APP_ENV=production
 #    export DEPLOYMENT_ENV=development or DEPLOYMENT_ENV=testing or DEPLOYMENT_ENV=staging or DEPLOYMENT_ENV=production
+#    export MYSQL_HOST_NAME='MySQL hostname comes here...'
+#    export MYSQL_PORT='MySQL port comes here...'
+#    export MYSQL_USER_NAME='MySQL database username comes here...'
+#    export MYSQL_DATABASE='MySQL database for catalog DB comes here...'
+#    export REDIS_HOST_NAME='Redis hostname comes here...'
+#    export REDIS_PORT='Redis port comes here...'
+#    export REDIS_TTL='Redis TTL for tenants data comes here...'
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export MYSQL_PASSWORD='MySQL password for database comes here...'
+#    export MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    export ENCRYPTION_KEY='Encryption key comes here...'
 
 #    NOTE: If you're on Windows use one of the following commands to create the environment variables.
 
@@ -23,9 +34,19 @@
 #    For Windows Powershell use `$env:APP_ENV = "value"`.
 
 #    $env:BACKEND_HOME="backend home path comes here..."
-#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
 #    $env:APP_ENV="development" or $env:APP_ENV="production"
 #    $env:DEPLOYMENT_ENV="development"
+#    $env:MYSQL_HOST_NAME='MySQL hostname comes here...'
+#    $env:MYSQL_PORT='MySQL port comes here...'
+#    $env:MYSQL_USER_NAME='MySQL database username comes here...'
+#    $env:MYSQL_DATABASE='MySQL database for catalog DB comes here...'
+#    $env:REDIS_HOST_NAME='Redis hostname comes here...'
+#    $env:REDIS_PORT='Redis port comes here...'
+#    $env:REDIS_TTL='Redis TTL for tenants data comes here...'
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:MYSQL_PASSWORD='MySQL password for database comes here...'
+#    $env:MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    $env:ENCRYPTION_KEY='Encryption key comes here...'
 
 # 2. Run docker compose -f docker-compose.deployment.yml build
 # 3. Run docker compose -f docker-compose.deployment.yml up -d
@@ -140,6 +161,32 @@ services:
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8005:8005'
+    networks:
+      - app-network
+
+  user-service:
+    container_name: user-service-${DEPLOYMENT_ENV}
+    image: user-service-${DEPLOYMENT_ENV}
+    build:
+      context: ${BACKEND_HOME}/UserService
+      dockerfile: .docker/user-service.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    restart: always
+    environment:
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    ports:
+      - '8007:8007'
     networks:
       - app-network
 
