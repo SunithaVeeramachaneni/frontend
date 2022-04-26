@@ -1,6 +1,8 @@
 <div class="user-modal" [formGroup]="userForm">
-  <span *ngIf="dialogType === 'edit'" class="title" translate>editUser</span>
-  <span *ngIf="dialogType !== 'edit'" class="title" translate>addUser</span>
+  <span *ngIf="dialogText === 'editUser'" class="title" translate
+    >editUser</span
+  >
+  <span *ngIf="dialogText === 'addUser'" class="title" translate>addUser</span>
   <span class="dialog-close-btn" (click)="close()">
     <mat-icon class="dialog-close">close</mat-icon>
   </span>
@@ -163,6 +165,7 @@
     </mat-form-field>
   </div>
   <button
+    *ngIf="dialogText === 'addUser'"
     mat-raised-button
     color="primary"
     class="add-user-btn"
@@ -170,6 +173,16 @@
     type="submit"
     [disabled]="userForm.invalid"
     translate="addUserBtn"
+  ></button>
+  <button
+    *ngIf="dialogText === 'editUser'"
+    mat-raised-button
+    color="primary"
+    class="add-user-btn"
+    (click)="save()"
+    type="submit"
+    [disabled]="userForm.invalid"
+    translate="editUserBtn"
   ></button>
   <button
     mat-button

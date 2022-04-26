@@ -31,9 +31,9 @@ export const usersMock: UserTable = {
       visible: true
     },
     {
-      displayName: 'Created On',
+      displayName: 'Created At',
       type: 'string',
-      name: 'createdOn',
+      name: 'createdAt',
       filterType: 'date',
       order: 4,
       sticky: false,
@@ -50,7 +50,7 @@ export const usersMock: UserTable = {
       isActive: true,
       roles: ['Admin'],
       email: 'arthur@gmail.com',
-      createdOn: new Date()
+      createdAt: new Date()
     },
     {
       id: '2',
@@ -61,7 +61,7 @@ export const usersMock: UserTable = {
       isActive: true,
       roles: ['Maintenance Manager'],
       email: 'ford@gmail.com',
-      createdOn: new Date()
+      createdAt: new Date()
     },
     {
       id: '3',
@@ -72,7 +72,7 @@ export const usersMock: UserTable = {
       title: 'Engineer',
       isActive: true,
       email: 'trillian@gmail.com',
-      createdOn: new Date()
+      createdAt: new Date()
     }
   ]
 };
@@ -86,7 +86,7 @@ export const addUserMock: UserDetails = {
   title: 'Manager',
   isActive: true,
   email: 'android@gmail.com',
-  createdOn: new Date()
+  createdAt: new Date()
 };
 
 export const updateUserMock: UserDetails = {
@@ -98,7 +98,7 @@ export const updateUserMock: UserDetails = {
   title: 'Head of Human Resources',
   isActive: true,
   email: 'beeblebrox@gmail.com',
-  createdOn: new Date()
+  createdAt: new Date()
 };
 
 const role1 = {

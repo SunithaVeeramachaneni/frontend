@@ -42,7 +42,8 @@ export class UsersService {
     const roleNames = roles.map((role) => role.name);
     if (roleNames.length) user.displayRoles = roleNames.join(', ');
     user.roles = roles;
-    if (!user.createdOn) user.createdOn = new Date();
+    if (!user.createdAt) user.createdAt = new Date();
+    else user.createdAt = new Date(user.createdAt);
     return user;
   };
 
@@ -72,16 +73,15 @@ export class UsersService {
         mergeMap((users: UserDetails[]) =>
           from(users).pipe(
             mergeMap((user) => {
-              console.log('User ID is', user.id);
               return this.getRoleByUserID$(user.id).pipe(
                 map((roles) => ({ roles, userID: user.id }))
               );
             }),
             toArray(),
             map((resp) =>
-              resp.map(({ roles, userID }) => {
-                const user = users.find((userFind) => userFind.id === userID);
-                return this.prepareUser(user, roles);
+              users.map((user) => {
+                const find = resp.find((r) => r.userID === user.id);
+                return this.prepareUser(user, find.roles);
               })
             )
           )
@@ -145,6 +145,7 @@ export class UsersService {
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
     const createUser = { ...user, roleIds };
+    createUser.profileImage = createUser.profileImage.split(',')[1];
     return this.appService._postData(
       environment.usersAndPermissionsUrl,
       `users`,
@@ -155,6 +156,7 @@ export class UsersService {
   updateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
     const patchUser = { ...user, roleIds };
+    patchUser.profileImage = patchUser.profileImage.split(',')[1];
     return this.appService.patchData(
       environment.usersAndPermissionsUrl,
       `users/${user.id}`,

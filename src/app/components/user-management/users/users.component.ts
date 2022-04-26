@@ -4,16 +4,14 @@ import { Count, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
 import { UsersService } from './users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
+import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { update } from 'lodash';
-import { Buffer } from 'buffer';
 import { MatDialog } from '@angular/material/dialog';
-import { ReportDeleteModalComponent } from '../../dashboard/report-delete-modal/report-delete-modal.component';
+import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
-import { UserService } from 'angular-auth-oidc-client/lib/user-data/user.service';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
@@ -61,9 +59,9 @@ export class UsersComponent implements OnInit {
       visible: true
     },
     {
-      displayName: 'Created On',
-      type: 'string',
-      name: 'createdOn',
+      displayName: 'Created At',
+      type: 'date',
+      name: 'createdAt',
       filterType: 'date',
       order: 4,
       sticky: false,
@@ -116,7 +114,8 @@ export class UsersComponent implements OnInit {
   constructor(
     private usersService: UsersService,
     private commonService: CommonService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -143,10 +142,51 @@ export class UsersComponent implements OnInit {
       }
     );
     openEditAddUserModalRef.afterClosed().subscribe((resp) => {
-      if (!resp.user) return;
-      this.userTableUpdate$.next({
-        action: resp.action,
-        user: this.usersService.prepareUser(resp.user, resp.user.roles)
+      if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
+      if (resp.action === 'edit') {
+        this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
+          this.userTableUpdate$.next({
+            action: 'edit',
+            user: this.usersService.prepareUser(resp.user, resp.user.roles)
+          });
+          this.toast.show({
+            text: 'User updated successfully!',
+            type: 'success'
+          });
+        });
+      }
+      if (resp.action === 'add') {
+        this.usersService.createUser$(resp.user).subscribe((createdUser) => {
+          this.userTableUpdate$.next({
+            action: 'add',
+            user: this.usersService.prepareUser(createdUser, resp.user.roles)
+          });
+          this.toast.show({
+            text: 'User created successfully!',
+            type: 'success'
+          });
+        });
+      }
+    });
+  }
+
+  openDeleteUserModal(user: UserDetails) {
+    const openDeleteUserModalRef = this.dialog.open(UserDeleteModalComponent, {
+      data: {
+        user
+      }
+    });
+    openDeleteUserModalRef.afterClosed().subscribe((resp) => {
+      if (!resp) return;
+      this.usersService.deactivateUser$(user).subscribe((deletedUser) => {
+        this.userTableUpdate$.next({
+          action: 'deactivate',
+          user
+        });
+        this.toast.show({
+          text: 'User deactivated successfully!',
+          type: 'success'
+        });
       });
     });
   }
@@ -176,14 +216,12 @@ export class UsersComponent implements OnInit {
         const { user, action } = update;
         switch (action) {
           case 'add':
-            this.usersService.createUser$(user).subscribe();
             this.skip += 1;
             this.userCountUpdate$.next(+1);
             users.unshift(user);
             this.dataSource = new MatTableDataSource(users);
             break;
           case 'deactivate':
-            this.usersService.deactivateUser$(user).subscribe();
             this.skip -= 1;
             this.userCountUpdate$.next(-1);
             if (user.id) {
@@ -198,6 +236,7 @@ export class UsersComponent implements OnInit {
             break;
           case 'edit':
             if (user.id) {
+              console.log('user is', user);
               this.usersService.updateUser$(user).subscribe();
               const index = users.findIndex(
                 (iteratedUser) => iteratedUser.id === user.id
@@ -254,13 +293,9 @@ export class UsersComponent implements OnInit {
   };
 
   rowLevelActionHandler = (event) => {
-    console.log('event.action');
     switch (event.action) {
       case 'deactivate':
-        this.userTableUpdate$.next({
-          action: event.action,
-          user: event.data
-        });
+        this.openDeleteUserModal(event.data);
         break;
       case 'edit':
         this.openEditAddUserModal(event.data);
@@ -270,9 +305,9 @@ export class UsersComponent implements OnInit {
     }
   };
   handleTableEvent = (event) => {
-    console.log('event', event);
+    // console.log('event', event);
   };
   configOptionsChangeHandler = (event) => {
-    console.log('event', event);
+    // console.log('event', event);
   };
 }

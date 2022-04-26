@@ -28,6 +28,7 @@ import { RolesPermissionsComponent } from './roles-permissions/roles-permissions
 import { PermissionsComponent } from './permissions/permissions.component';
 import { UsersComponent } from './users/users.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UserDeleteModalComponent } from './users/user-delete-modal/user-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -56,6 +57,7 @@ export const customTranslateLoader = (http: HttpClient) =>
   ],
   declarations: [
     UserManagementContainerComponent,
+    UserDeleteModalComponent,
     RolesPermissionsComponent,
     RolesPopUpComponent,
     UsersComponent,
