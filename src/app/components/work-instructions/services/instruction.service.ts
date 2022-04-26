@@ -53,7 +53,7 @@ export class InstructionService {
     }, {});
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
-    return this._appService._getResp(environment.wiApiUrl, 'wiusers', info);
+    return of([]); // TODO - Need to fetch actual users from RDBMS
   }
 
   getAllCategories(info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
