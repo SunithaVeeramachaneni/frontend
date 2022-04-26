@@ -13,5 +13,7 @@
   "editUser": "Edit User",
   "addUserBtn": "ADD USER",
   "editUserBtn": "EDIT USER",
-  "cancelBtn": "CANCEL"
+  "cancelBtn": "CANCEL",
+  "validEmail": "Please enter a valid email address",
+  "rolesEmpty": "Roles can't be empty"
 }

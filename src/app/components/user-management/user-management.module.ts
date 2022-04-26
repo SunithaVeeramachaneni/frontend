@@ -14,6 +14,7 @@ import { AddEditUserModalComponent } from './users/add-edit-user-modal/add-edit-
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
 import {
+  TranslateCompiler,
   TranslateLoader,
   TranslateModule,
   TranslateService
@@ -29,6 +30,7 @@ import { PermissionsComponent } from './permissions/permissions.component';
 import { UsersComponent } from './users/users.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserDeleteModalComponent } from './users/user-delete-modal/user-delete-modal.component';
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -52,7 +54,11 @@ export const customTranslateLoader = (http: HttpClient) =>
         deps: [HttpClient]
       },
       isolate: true,
-      defaultLanguage
+      defaultLanguage,
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
+      }
     })
   ],
   declarations: [

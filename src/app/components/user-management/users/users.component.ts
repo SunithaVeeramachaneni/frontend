@@ -280,7 +280,7 @@ export class UsersComponent implements OnInit {
     });
 
   getUserCount = () => {
-    this.userCount$ = this.usersService.getUsersCount$();
+    this.userCount$ = this.usersService.getUsersCount$({ isActive: true });
     this.userCount$ = combineLatest([
       this.userCount$,
       this.userCountUpdate$

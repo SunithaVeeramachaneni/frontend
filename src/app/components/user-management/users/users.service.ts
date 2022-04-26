@@ -60,6 +60,7 @@ export class UsersService {
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
+    queryParams = { ...queryParams, isActive: true };
     const { displayToast, failureResponse = {} } = info;
     // queryParams = {};
     return this.appService
@@ -89,11 +90,15 @@ export class UsersService {
       );
   };
 
-  getUsersCount$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Count> =>
+  getUsersCount$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Count> =>
     this.appService._getResp(
       environment.usersAndPermissionsUrl,
       `users/count`,
-      info
+      info,
+      queryParams
     );
 
   getRoleByUserID$ = (

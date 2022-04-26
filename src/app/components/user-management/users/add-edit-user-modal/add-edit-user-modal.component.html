@@ -93,6 +93,12 @@
                 }
         }}
       </mat-error>
+      <mat-error
+        *ngIf="userForm.controls.email.errors?.email"
+        style="margin-top: 7px"
+      >
+        {{ 'validEmail' | translate }}
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10">
@@ -155,6 +161,7 @@
                 </button>
                 <app-permissions
                   [rolePermissions]="rolePermissions"
+                  [isEditable]="false"
                 ></app-permissions>
               </div>
               <div class="dashboard-widgets-list"></div>
@@ -162,6 +169,12 @@
           </ng-template>
         </mat-option>
       </mat-select>
+      <mat-error
+        *ngIf="userForm.controls.roles.errors?.selectOne"
+        style="margin-top: 7px"
+      >
+        {{ 'rolesEmpty' | translate }}
+      </mat-error>
     </mat-form-field>
   </div>
   <button

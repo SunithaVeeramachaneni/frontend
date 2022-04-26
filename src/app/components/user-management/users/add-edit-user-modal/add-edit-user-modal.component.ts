@@ -10,7 +10,9 @@ import {
   FormBuilder,
   Validators,
   FormArray,
-  ValidatorFn
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -28,8 +30,8 @@ export class AddEditUserModalComponent implements OnInit {
     firstName: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
     title: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required]),
-    roles: new FormControl([]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
   rolesInput: any;
@@ -53,6 +55,15 @@ export class AddEditUserModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
+
+  matSelectValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      console.log('control value is', control.value);
+      return !control.value.length
+        ? { selectOne: { value: control.value } }
+        : null;
+    };
+  }
 
   ngOnInit() {
     const userDetails = this.data.user;
