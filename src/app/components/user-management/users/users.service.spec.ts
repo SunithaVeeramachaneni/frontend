@@ -31,20 +31,20 @@ describe('User service', () => {
 
     (appServiceSpy._getResp as jasmine.Spy)
       .withArgs(
-        environment.usersAndPermissionsUrl,
+        environment.userRoleManagementApiUrl,
         `users/1/roles`,
         {} as ErrorInfo
       )
       .and.returnValue(of(rolesByID1Mock));
     (appServiceSpy._getResp as jasmine.Spy)
-      .withArgs(environment.usersAndPermissionsUrl, `users/2/roles`, {})
+      .withArgs(environment.userRoleManagementApiUrl, `users/2/roles`, {})
       .and.returnValue(of(rolesByID2Mock));
     (appServiceSpy._getResp as jasmine.Spy)
-      .withArgs(environment.usersAndPermissionsUrl, `users/3/roles`, {})
+      .withArgs(environment.userRoleManagementApiUrl, `users/3/roles`, {})
       .and.returnValue(of(rolesByID3Mock));
     (appServiceSpy._getResp as jasmine.Spy)
       .withArgs(
-        environment.usersAndPermissionsUrl,
+        environment.userRoleManagementApiUrl,
         'users',
         { displayToast: undefined, failureResponse: {} },
         {}
@@ -56,14 +56,14 @@ describe('User service', () => {
     expect(service).toBeTruthy();
   });
 
-  fit('needs to get roles by user ID', () => {
+  it('needs to get roles by user ID', () => {
     const roles$ = service.getRoleByUserID$(1);
     roles$.subscribe((res) => {
       expect(isEqual(res, rolesByID1Mock)).toBeTrue();
     });
   });
 
-  fit('needs to get all users and their respective roles', () => {
+  it('needs to get all users and their respective roles', () => {
     const users$ = service.getUsers$({});
     users$.subscribe((res) => {
       console.log('Res is', JSON.stringify(res));

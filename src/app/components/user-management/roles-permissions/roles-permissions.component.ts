@@ -124,6 +124,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     ]).pipe(
       map(([roles, update]) => {
         const { role, action } = update;
+        console.log(role);
         switch (action) {
           case 'add':
             roles.push(role);
@@ -134,6 +135,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
             break;
           case 'delete':
             const indexToDelete = roles.findIndex((r) => r.id === role.id);
+            console.log(indexToDelete);
             roles.splice(indexToDelete, 1);
             break;
         }
@@ -203,9 +205,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     };
     if (roleId === undefined) {
       this.roleService.createRole$(postNewRoleData).subscribe((resp) => {
-        // this.getRoles();
-        console.log('Resp is', resp);
-        console.log('post new role data is', postNewRoleData);
         this.rolesListUpdate$.next({
           action: 'add',
           role: { ...resp, permissionIds: permissionId }
@@ -214,8 +213,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
         this.showCancelBtn = false;
         this.copyDisabled = true;
         this.selectedRole = resp;
-        // this.spinner.hide();
-
         this.toast.show({
           text: 'Role saved successfully',
           type: 'success'
@@ -228,7 +225,6 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
           action: 'edit',
           role: { ...resp, permissionIds: permissionId }
         });
-        // this.spinner.hide();
         this.toast.show({
           text: 'Role Updated successfully',
           type: 'success'
@@ -241,9 +237,8 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
     const deleteReportRef = this.dialog.open(AlertModalComponent);
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
-        this.getRoles();
-        this.selectedRole = undefined;
         this.addingRole$.next(false);
+        this.selectedRole = undefined;
       } else {
         this.addingRole$.next(true);
       }
@@ -251,9 +246,24 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   deleteRole(role) {
-    this.roleService.deleteRole$(role).subscribe((resp) => {
-      this.rolesListUpdate$.next({ action: 'delete', role: resp });
-    });
+    this.roleService.deleteRole$(role).subscribe(
+      (resp) => {
+        if (resp) {
+          console.log(resp);
+          this.rolesListUpdate$.next({ action: 'delete', role });
+          this.toast.show({
+            text: 'Role Deleted successfully',
+            type: 'success'
+          });
+        }
+      },
+      (error) => {
+        this.toast.show({
+          text: 'Unable to delete the role',
+          type: 'success'
+        });
+      }
+    );
   }
 
   showSelectedRole(role) {
