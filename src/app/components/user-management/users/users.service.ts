@@ -73,11 +73,11 @@ export class UsersService {
       .pipe(
         mergeMap((users: UserDetails[]) =>
           from(users).pipe(
-            mergeMap((user) => {
-              return this.getRoleByUserID$(user.id).pipe(
+            mergeMap((user) =>
+              this.getRoleByUserID$(user.id).pipe(
                 map((roles) => ({ roles, userID: user.id }))
-              );
-            }),
+              )
+            ),
             toArray(),
             map((resp) =>
               users.map((user) => {

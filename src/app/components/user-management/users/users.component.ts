@@ -236,7 +236,6 @@ export class UsersComponent implements OnInit {
             break;
           case 'edit':
             if (user.id) {
-              console.log('user is', user);
               this.usersService.updateUser$(user).subscribe();
               const index = users.findIndex(
                 (iteratedUser) => iteratedUser.id === user.id
