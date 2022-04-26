@@ -53,7 +53,7 @@ export class InstructionService {
     }, {});
 
   getUsers(info: ErrorInfo = {} as ErrorInfo): Observable<User[]> {
-    return of([]); // TODO - Need to fetch actual users from RDBMS
+    return of([]); // TODO - Need to call actual users endpoint from UserService
   }
 
   getAllCategories(info: ErrorInfo = {} as ErrorInfo): Observable<Category[]> {
