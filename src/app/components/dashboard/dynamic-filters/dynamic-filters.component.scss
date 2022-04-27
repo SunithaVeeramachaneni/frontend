@@ -131,3 +131,12 @@
   .mat-list-item-content {
   padding: 0 !important;
 }
+
+.dynamic-filters-div {
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -24px !important;
+  }
+  ::ng-deep.mat-form-field-flex > .mat-form-field-infix {
+    padding: 1px 0px 11px 0px !important;
+  }
+}
