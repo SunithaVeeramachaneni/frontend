@@ -12,11 +12,11 @@ export interface UserDetails {
   lastName?: string;
   title: string;
   email: string;
-  profilePicture?: string;
+  profileImage?: string;
   isActive: boolean;
   createdBy?: string;
   updatedBy?: string;
-  createdOn: Date;
+  createdAt: Date;
   updatedOn?: Date;
   roles: any[];
   displayRoles?: string;

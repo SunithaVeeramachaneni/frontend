@@ -10,13 +10,15 @@ import {
   FormBuilder,
   Validators,
   FormArray,
-  ValidatorFn
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../../services/roles-permissions.service';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -28,16 +30,17 @@ export class AddEditUserModalComponent implements OnInit {
     firstName: new FormControl('', [Validators.required]),
     lastName: new FormControl('', [Validators.required]),
     title: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required]),
-    roles: new FormControl([]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
   rolesInput: any;
-  dialogType: 'add' | 'edit';
+  dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
   displayedPermissions;
   isPopoverOpen = false;
-  profileImage = '../../../../../assets/users-icons/Vector.png';
+  profileImageURI = '../../../../../assets/users-icons/Vector.png';
+  profileImage;
   get roles() {
     return this.userForm.get('roles');
   }
@@ -48,29 +51,58 @@ export class AddEditUserModalComponent implements OnInit {
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
     private roleService: RolesPermissionsService,
+    private http: HttpClient,
     @Inject(MAT_DIALOG_DATA)
     public data: any
   ) {}
 
+  matSelectValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      console.log('control value is', control.value);
+      return !control.value.length
+        ? { selectOne: { value: control.value } }
+        : null;
+    };
+  }
+
   ngOnInit() {
     const userDetails = this.data.user;
-    console.log('profileimage is', this.data.user.profileImage);
-    // const base64 = Buffer.from(this.data.user.profileImage.data).toString(
-    //   'base64'
-    // );
-    // const base64 = this.arrayBufferToBase64(this.data.user.profileImage);
-    // console.log('base64 is', base64);
-    // const base64DataString = this.getImageSrc(base64) as string;
-    // this.profileImage = base64DataString;
-    // this.profileImage = this.getImageSrc(this.data.user.profileImage) as string;
+    console.log('userdetails', userDetails);
     this.rolesInput = this.data.roles;
     if (Object.keys(userDetails).length === 0) {
-      this.dialogType = 'add';
+      this.dialogText = 'addUser';
+      this.getBase64FromImageURI(this.profileImageURI);
     } else {
-      this.dialogType = 'edit';
+      this.dialogText = 'editUser';
+      let base64;
+      console.log(
+        'object.keys(userDetails).length',
+        Object.keys(userDetails.profileImage).length
+      );
+      if (typeof userDetails.profileImage === 'string')
+        base64 = this.data.user.profileImage;
+      else base64 = Buffer.from(this.data.user.profileImage.data).toString();
+      this.profileImage = this.getImageSrc(base64) as string;
       this.userForm.patchValue(userDetails);
     }
   }
+
+  getBase64FromImageURI = (uri) => {
+    this.http.get(uri, { responseType: 'blob' }).subscribe((res) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        this.profileImage =
+          this.sant.bypassSecurityTrustResourceUrl(base64data);
+        this.userForm.patchValue({
+          profileImage: base64data
+        });
+      };
+
+      reader.readAsDataURL(res);
+      return res;
+    });
+  };
 
   getImageSrc = (source: string) => {
     if (source) {
@@ -82,24 +114,6 @@ export class AddEditUserModalComponent implements OnInit {
   objectComparisonFunction(option, value): boolean {
     return option.id === value.id;
   }
-  dataURItoBlob = (dataURI) => {
-    // convert base64 to raw binary data held in a string
-    const byteString = atob(dataURI.split(',')[1]);
-
-    // separate out the mime component
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-
-    // write the bytes of the string to an ArrayBuffer
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const _ia = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++) {
-      _ia[i] = byteString.charCodeAt(i);
-    }
-
-    const dataView = new DataView(arrayBuffer);
-    const blob = new Blob([dataView], { type: mimeString });
-    return blob;
-  };
 
   arrayBufferToBase64(buffer) {
     let binary = '';
@@ -111,24 +125,25 @@ export class AddEditUserModalComponent implements OnInit {
     return window.btoa(binary);
   }
 
+  getBase64(file) {
+    const reader = new FileReader();
+    let base64;
+    reader.readAsDataURL(file as Blob);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      return base64;
+    };
+  }
   onFileChange(files: FileList) {
     const selectedFile = files[0];
     this.profileImage = this.sant.bypassSecurityTrustUrl(
       window.URL.createObjectURL(selectedFile)
     ) as string;
-    const reader = new FileReader();
-    let base64;
-    reader.readAsDataURL(selectedFile as Blob);
-    reader.onloadend = () => {
-      base64 = reader.result as string;
-      console.log('base64 is', base64);
-      const onlyBase64 = base64.split(',')[1];
-      console.log('only is', onlyBase64);
-      // const blob = this.dataURItoBlob(base64)
-      this.userForm.patchValue({
-        profileImage: onlyBase64
-      });
-    };
+    const base64 = this.getBase64(selectedFile);
+    // const blob = this.dataURItoBlob(base64)
+    this.userForm.patchValue({
+      profileImage: base64
+    });
   }
 
   openPermissionsModal(role, index, el) {
@@ -138,6 +153,9 @@ export class AddEditUserModalComponent implements OnInit {
     ).permissions;
 
     // this.dynamicFilterModalTopPosition = el.y - 85 + 'px';
+  }
+
+  getPermissions(role) {
     this.roleService.getRolePermissionsById$(role.id).subscribe((resp) => {
       if (resp && resp.length !== 0) {
         resp.forEach((e) => {
@@ -148,10 +166,9 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
-    console.log('Saving', this.userForm.value);
     this.dialogRef.close({
       user: { ...this.data.user, ...this.userForm.value },
-      action: this.dialogType
+      action: this.dialogText === 'addUser' ? 'add' : 'edit'
     });
   }
 
