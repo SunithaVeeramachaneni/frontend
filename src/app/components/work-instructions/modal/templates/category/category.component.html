@@ -14,7 +14,7 @@
     </button>
   </h1>
   <form [formGroup]="frmSubscribe" (ngSubmit)="onSubmit()">
-    <div mat-dialog-content class="category-body">
+    <mat-dialog-content class="category-body">
       <div style="padding: 0 20px">
         <div class="mat-error">{{ categoryValidatedMsg }}</div>
         <input type="text" formControlName="cid" type="hidden" />
@@ -138,9 +138,9 @@
           </div>
         </ng-container>
       </div>
-    </div>
-    <div mat-dialog-actions>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
       <button type="submit" class="save-btn">SAVE</button>
-    </div>
+    </mat-dialog-actions>
   </form>
 </div>
