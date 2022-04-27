@@ -149,7 +149,6 @@ export class UsersService {
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
     const createUser = { ...user, roleIds };
-    createUser.profileImage = createUser.profileImage.split(',')[1];
     return this.appService._postData(
       environment.userRoleManagementApiUrl,
       `users`,
@@ -160,7 +159,6 @@ export class UsersService {
   updateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
     const patchUser = { ...user, roleIds };
-    patchUser.profileImage = patchUser.profileImage.split(',')[1];
     return this.appService.patchData(
       environment.userRoleManagementApiUrl,
       `users/${user.id}`,

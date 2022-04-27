@@ -57,32 +57,29 @@ export class AddEditUserModalComponent implements OnInit {
   ) {}
 
   matSelectValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      console.log('control value is', control.value);
-      return !control.value.length
-        ? { selectOne: { value: control.value } }
-        : null;
-    };
+    return (control: AbstractControl): ValidationErrors | null =>
+      !control.value.length ? { selectOne: { value: control.value } } : null;
   }
 
   ngOnInit() {
     const userDetails = this.data.user;
-    console.log('userdetails', userDetails);
     this.rolesInput = this.data.roles;
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
+      this.profileImage = this.profileImageURI;
       this.getBase64FromImageURI(this.profileImageURI);
     } else {
       this.dialogText = 'editUser';
       let base64;
-      console.log(
-        'object.keys(userDetails).length',
-        Object.keys(userDetails.profileImage).length
-      );
-      if (typeof userDetails.profileImage === 'string')
+      if (typeof userDetails.profileImage === 'string') {
         base64 = this.data.user.profileImage;
-      else base64 = Buffer.from(this.data.user.profileImage.data).toString();
+      } else {
+        base64 = Buffer.from(this.data.user.profileImage).toString();
+      }
       this.profileImage = this.getImageSrc(base64) as string;
+      this.userForm.patchValue({
+        profileImage: base64
+      });
       this.userForm.patchValue(userDetails);
     }
   }
@@ -94,11 +91,11 @@ export class AddEditUserModalComponent implements OnInit {
         const base64data = reader.result as string;
         this.profileImage =
           this.sant.bypassSecurityTrustResourceUrl(base64data);
+        const onlybase64 = base64data.split(',')[1];
         this.userForm.patchValue({
-          profileImage: base64data
+          profileImage: onlybase64
         });
       };
-
       reader.readAsDataURL(res);
       return res;
     });
@@ -131,7 +128,10 @@ export class AddEditUserModalComponent implements OnInit {
     reader.readAsDataURL(file as Blob);
     reader.onloadend = () => {
       base64 = reader.result as string;
-      return base64;
+      const onlybase64 = base64.split(',')[1];
+      this.userForm.patchValue({
+        profileImage: onlybase64
+      });
     };
   }
   onFileChange(files: FileList) {
@@ -139,11 +139,9 @@ export class AddEditUserModalComponent implements OnInit {
     this.profileImage = this.sant.bypassSecurityTrustUrl(
       window.URL.createObjectURL(selectedFile)
     ) as string;
-    const base64 = this.getBase64(selectedFile);
+    this.userForm.markAsDirty();
+    this.getBase64(selectedFile);
     // const blob = this.dataURItoBlob(base64)
-    this.userForm.patchValue({
-      profileImage: base64
-    });
   }
 
   openPermissionsModal(role, index, el) {
