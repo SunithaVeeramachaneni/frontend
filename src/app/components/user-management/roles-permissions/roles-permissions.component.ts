@@ -248,7 +248,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   deleteRole(role) {
     this.roleService.deleteRole$(role).subscribe(
       (resp) => {
-        if (resp) {
+        if (Object.keys(resp).length && resp.id) {
           console.log(resp);
           this.rolesListUpdate$.next({ action: 'delete', role });
           this.toast.show({
