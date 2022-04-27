@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
@@ -18,7 +23,8 @@ export class UserManagementContainerComponent implements OnInit {
 
   constructor(
     private commonService: CommonService,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -29,6 +35,7 @@ export class UserManagementContainerComponent implements OnInit {
           this.breadcrumbService.set(routingUrls.userManagement.url, {
             skip: true
           });
+          this.cdrf.detectChanges();
         } else {
           this.breadcrumbService.set(routingUrls.userManagement.url, {
             skip: false
