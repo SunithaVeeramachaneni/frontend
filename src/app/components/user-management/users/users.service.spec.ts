@@ -19,7 +19,7 @@ import {
 
 import { UsersService } from './users.service';
 
-fdescribe('User service', () => {
+describe('User service', () => {
   let service: UsersService;
   let appServiceSpy: AppService;
 
