@@ -157,10 +157,30 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8005:8005'
+    networks:
+      - app-network
+
+  logging-service:
+    container_name: logging-service-${DEPLOYMENT_ENV}
+    image: logging-service-${DEPLOYMENT_ENV}
+    build:
+      context: ${BACKEND_HOME}/LoggingService
+      dockerfile: .docker/logging-service.deployment.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    restart: always
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+    ports:
+      - '8006:8006'
+    depends_on:
+      - rabbitmq
     networks:
       - app-network
 
@@ -175,7 +195,7 @@ services:
     restart: always
     environment:
       - NODE_ENV=${APP_ENV}
-      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - MYSQL_HOST_NAME=mysql-local
       - MYSQL_PORT=3306
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
@@ -189,6 +209,20 @@ services:
       - '8007:8007'
     networks:
       - app-network
+
+  rabbitmq:
+    container_name: rabbitmq-local
+    image: rabbitmq:3.9-management-alpine
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq/
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - app-network
+
+volumes:
+  rabbitmqdata:
 
 networks:
   app-network:

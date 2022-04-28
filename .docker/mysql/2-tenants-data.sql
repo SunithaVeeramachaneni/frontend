@@ -49,10 +49,14 @@ insert into catalogs (
       "http://localhost:8007/",
       "http://cwpdev.innovapptive.com/wiapi/",
       "http://cwpdev.innovapptive.com/dashboardapi/",
-      "http://cwpdev.innovapptive.com/userrolemanagementapi/",
+      "http://cwpdev.innovapptive.com/users",
+      "http://cwpdev.innovapptive.com/roles",
+      "http://cwpdev.innovapptive.com/permissions",
       "http://cwpqa.innovapptive.com/wiapi/",
       "http://cwpqa.innovapptive.com/dashboardapi/",
-      "http://cwpqa.innovapptive.com/userrolemanagementapi/"
+      "http://cwpqa.innovapptive.com/users",
+      "http://cwpqa.innovapptive.com/roles",
+      "http://cwpqa.innovapptive.com/permissions"
     ]
   }',
   "innovapptive.com",
@@ -101,6 +105,4 @@ insert into tenants (
 ) values (1, '["Dashboard", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]', "nosql", "error", "2022-04-11 10:00:00");
 
 
-create database Innovapptive;
-
-GRANT ALL PRIVILEGES ON Innovapptive.* TO 'admin'@'%';
+CREATE DATABASE Innovapptive;

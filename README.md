@@ -4,7 +4,7 @@
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
 
-Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, ENCRYPTION_KEY, SAML_CLIENT_SECRET, SAP_PASSWORD & RDBMS_PASSWORD environment varibles in your commnand window.
 
 ### Approch 1: Access application from angular development server
 
@@ -53,6 +53,8 @@ Linux
 > docker compose --env-file .docker/env/local.env up
 
 Access the application using `http://localhost`. This will be served from nginx service running in docker.
+
+## Copy ssl_certificate.pem & ssl_certificate_key.key files to .docker/certs/ folder in CWP HOME before buildig images for development, testing, staging & production environments
 
 ## To deploy application in development server using docker
 
