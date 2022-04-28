@@ -25,7 +25,7 @@ import { HttpClient } from '@angular/common/http';
 import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
-import { RolesPermissionsComponent } from './roles-permissions/roles-permissions.component';
+import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { UsersComponent } from './users/users.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -64,7 +64,7 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [
     UserManagementContainerComponent,
     UserDeleteModalComponent,
-    RolesPermissionsComponent,
+    RolesComponent,
     RolesPopUpComponent,
     UsersComponent,
     AddEditUserModalComponent,

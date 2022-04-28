@@ -1,0 +1,11 @@
+<div class="widget-delete-modal">
+  <p class="cancel-title">Are you surely want to delete?</p>
+  <p class="cancel-subtitle">
+    Deleted roles cannot be gained back. Do you still wish to delete?
+  </p>
+
+  <button mat-raised-button class="yes-btn" (click)="cancelRole('yes')">
+    Yes
+  </button>
+  <button mat-button class="no-btn" (click)="cancelRole('no')">No</button>
+</div>

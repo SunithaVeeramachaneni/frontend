@@ -58,6 +58,17 @@ export class AppComponent implements OnInit, AfterViewChecked {
       disable: false
     },
     {
+      title: userManagement.title,
+      url: userManagement.url,
+      image: '../assets/sidebar-icons/user-management.svg',
+      showSubMenu: false,
+      subPages: [
+        { title: rolesPermissions.title, url: rolesPermissions.url },
+        { title: inActiveUsers.title, url: inActiveUsers.url }
+      ],
+      disable: false
+    },
+    {
       title: workInstructions.title,
       url: workInstructions.url,
       image: '../assets/sidebar-icons/work-instructions-gray.svg',
@@ -70,17 +81,6 @@ export class AppComponent implements OnInit, AfterViewChecked {
         { title: recents.title, url: recents.url },
         { title: files.title, url: files.url }
       ]
-    },
-    {
-      title: userManagement.title,
-      url: userManagement.url,
-      image: '../assets/sidebar-icons/user-management.svg',
-      showSubMenu: false,
-      subPages: [
-        { title: rolesPermissions.title, url: rolesPermissions.url },
-        { title: inActiveUsers.title, url: inActiveUsers.url }
-      ],
-      disable: false
     }
   ];
   loggedIn = false;

@@ -7,13 +7,13 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-alert-modal',
-  templateUrl: './alert-modal.component.html',
-  styleUrls: ['./alert-modal.component.scss'],
+  selector: 'app-role-delete-modal',
+  templateUrl: './role-delete-modal.component.html',
+  styleUrls: ['./role-delete-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AlertModalComponent implements OnInit {
-  constructor(private dialogRef: MatDialogRef<AlertModalComponent>) {}
+export class RoleDeleteModalComponent implements OnInit {
+  constructor(private dialogRef: MatDialogRef<RoleDeleteModalComponent>) {}
 
   ngOnInit(): void {}
 

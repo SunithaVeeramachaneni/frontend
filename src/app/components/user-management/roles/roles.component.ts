@@ -6,21 +6,30 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import { mergeMap, tap, map } from 'rxjs/operators';
+import {
+  mergeMap,
+  tap,
+  map,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import Swal from 'sweetalert2';
-import { AlertModalComponent } from '../alert-modal/alert-modal.component';
+import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
+import { RoleDeleteModalComponent } from '../role-delete-modal/role-delete-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 interface RolesListUpdate {
@@ -29,12 +38,12 @@ interface RolesListUpdate {
 }
 
 @Component({
-  selector: 'app-roles-permissions',
-  templateUrl: './roles-permissions.component.html',
-  styleUrls: ['./roles-permissions.component.scss'],
+  selector: 'app-roles',
+  templateUrl: './roles.component.html',
+  styleUrls: ['./roles.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
+export class RolesComponent implements OnInit, AfterViewChecked {
   currentRouteUrl$: Observable<string>;
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
@@ -234,7 +243,7 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   cancelRole() {
-    const deleteReportRef = this.dialog.open(AlertModalComponent);
+    const deleteReportRef = this.dialog.open(CancelModalComponent);
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
         this.addingRole$.next(false);
@@ -246,24 +255,30 @@ export class RolesPermissionsComponent implements OnInit, AfterViewChecked {
   }
 
   deleteRole(role) {
-    this.roleService.deleteRole$(role).subscribe(
-      (resp) => {
-        if (Object.keys(resp).length && resp.id) {
-          console.log(resp);
-          this.rolesListUpdate$.next({ action: 'delete', role });
-          this.toast.show({
-            text: 'Role Deleted successfully',
-            type: 'success'
-          });
-        }
-      },
-      (error) => {
-        this.toast.show({
-          text: 'Unable to delete the role',
-          type: 'success'
-        });
+    const deleteReportRef = this.dialog.open(RoleDeleteModalComponent);
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res === 'yes') {
+        this.roleService.deleteRole$(role).subscribe(
+          (resp) => {
+            if (Object.keys(resp).length && resp.id) {
+              console.log(resp);
+              this.rolesListUpdate$.next({ action: 'delete', role });
+              this.selectedRole = undefined;
+              this.toast.show({
+                text: 'Role Deleted successfully',
+                type: 'success'
+              });
+            }
+          },
+          (error) => {
+            this.toast.show({
+              text: 'Unable to delete the role',
+              type: 'success'
+            });
+          }
+        );
       }
-    );
+    });
   }
 
   showSelectedRole(role) {
