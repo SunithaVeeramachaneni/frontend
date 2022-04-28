@@ -22,7 +22,10 @@ import {
   UserDetails
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
-import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
 import { addUserMock, updateUserMock, usersMock } from './users.mock';
 import { query } from '@angular/animations';
 
@@ -111,11 +114,13 @@ export class UsersService {
     );
 
   updateConfigOptionsFromColumns(
-    columns: TableColumn[],
+    columns: Column[],
     configOptions: ConfigOptions
   ) {
     const allColumns = columns.map((column, index) => {
-      const { name: id, displayName, type } = column;
+      const { id, displayName, type } = column;
+      let groupable = false;
+      if (displayName === 'Role') groupable = true;
       return {
         id,
         displayName,
@@ -126,7 +131,7 @@ export class UsersService {
         sortable: true,
         movable: false,
         order: index + 1,
-        groupable: false,
+        groupable,
         hasSubtitle: false,
         subtitleColumn: ''
       };

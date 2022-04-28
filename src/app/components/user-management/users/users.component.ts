@@ -7,7 +7,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
@@ -30,42 +33,58 @@ interface ModalInput {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
-  columns = [
+  columns: Column[] = [
     {
+      id: 'user',
       displayName: 'User',
       type: 'string',
-      name: 'user',
-      filterType: 'string',
+      groupable: false,
       order: 1,
       sticky: false,
-      visible: true
+      visible: true,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      movable: false
     },
     {
+      id: 'displayRoles',
       displayName: 'Role',
       type: 'string',
-      name: 'displayRoles',
-      filterType: 'string',
       order: 2,
+      groupable: true,
       sticky: false,
-      visible: true
+      visible: true,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      movable: false
     },
     {
+      id: 'email',
       displayName: 'Email',
       type: 'string',
-      name: 'email',
-      filterType: 'string',
+      groupable: false,
       order: 3,
       sticky: false,
-      visible: true
+      visible: true,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      movable: false
     },
     {
       displayName: 'Created At',
       type: 'date',
-      name: 'createdAt',
-      filterType: 'date',
+      id: 'createdAt',
+      groupable: false,
       order: 4,
       sticky: false,
-      visible: true
+      visible: true,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      movable: false
     }
   ];
   readonly routingUrls = routingUrls;

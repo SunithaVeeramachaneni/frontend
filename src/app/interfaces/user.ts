@@ -1,3 +1,4 @@
+import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { TableColumn } from './report-details';
 
 export interface User {
@@ -23,6 +24,6 @@ export interface UserDetails {
 }
 
 export interface UserTable {
-  columns: TableColumn[];
+  columns: Column[];
   data: UserDetails[];
 }
