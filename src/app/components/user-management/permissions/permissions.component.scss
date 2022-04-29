@@ -1,0 +1,23 @@
+.permissions-expand {
+  width: auto;
+  box-shadow: none;
+}
+
+.permission-count {
+  padding: 3px 7px;
+  font-size: 12px;
+  background: rgba(61, 90, 254, 0.08);
+  border-radius: 20px;
+  margin-left: 5px;
+}
+
+.h-40 {
+  height: 40px;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+::ng-deep .mat-expansion-panel-spacing {
+  margin: 0 !important;
+}

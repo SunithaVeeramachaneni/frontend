@@ -340,7 +340,7 @@ button.mat-menu-item {
   }
 
   .mat-form-field-flex > .mat-form-field-infix {
-    padding: 1px 0px 10px 0px;
+    padding: 1px 0px 8px 0px;
   }
 
   .mat-form-field-appearance-outline .mat-form-field-wrapper {
@@ -661,4 +661,8 @@ button.mat-menu-item {
 
 .mat-dialog-container {
   padding: 0 !important;
+}
+
+.tableMain {
+  width: 100%;
 }

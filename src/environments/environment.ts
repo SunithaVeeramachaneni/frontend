@@ -9,6 +9,7 @@ export const environment = {
   spccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',
   wiApiUrl: 'http://localhost:8001/wiapi/',
   wiAbapApiUrl: 'http://localhost:8002/wiabapapi/',
+  userRoleManagementApiUrl: 'http://localhost:8007/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5

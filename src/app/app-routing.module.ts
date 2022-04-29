@@ -38,6 +38,14 @@ export const routes: Routes = [
         (m) => m.SparePartsModule
       ),
     canActivate: [AutoLoginAllRoutesGuard]
+  },
+  {
+    path: 'user-management',
+    loadChildren: () =>
+      import('./components/user-management/user-management.module').then(
+        (m) => m.UserManagementModule
+      ),
+    canActivate: [AutoLoginAllRoutesGuard]
   }
 ];
 

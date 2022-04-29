@@ -1,0 +1,25 @@
+<div class="report-delete-modal">
+  <p class="title">{{ 'deactivateUser' | translate }}</p>
+  <p class="warning-body">
+    {{ 'deactivateUserWarning' | translate }}
+    <b>{{ firstName + ' ' + lastName }}</b
+    >?
+  </p>
+  <button
+    mat-raised-button
+    color="warn"
+    class="yes-no-btn"
+    (click)="deleteUser()"
+  >
+    Yes
+  </button>
+  <button
+    mat-button
+    color="primary"
+    class="yes-no-btn"
+    autofocus="false"
+    mat-dialog-close
+  >
+    No
+  </button>
+</div>
