@@ -72,7 +72,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CancelModalComponent,
     RoleDeleteModalComponent
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+  schemas: [],
   providers: [],
   exports: [],
   entryComponents: []
