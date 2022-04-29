@@ -11,7 +11,6 @@ import {
   Column,
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
@@ -132,17 +131,11 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private usersService: UsersService,
-    private commonService: CommonService,
     public dialog: MatDialog,
     private toast: ToastService
   ) {}
 
   ngOnInit() {
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() =>
-        this.commonService.setHeaderTitle(routingUrls.userManagement.title)
-      )
-    );
     this.getDisplayedUsers();
     this.getUserCount();
     this.usersService.getRoles$().subscribe((roles) => {
