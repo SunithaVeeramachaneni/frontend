@@ -1,7 +1,18 @@
 {
+  "deleteBtn": "Delete",
+  "roles": "Roles",
+  "addRoleBtn": "Add Role",
+  "copyBtn": "Copy",
+  "addingRoleText": "Adding Role...",
+  "roleCount": "0 of 4",
+  "roleName": "Role",
+  "noRoles": " Select any default role from the left to view here.",
+  "roleDescription": "Description",
   "roleLabel": "Role name",
   "roleDescriptionLabel": "Role Description",
   "name": "Name",
+  "saveBtn": "Save",
+  "cancel": "Cancel",
   "firstName": "First Name",
   "lastName": "Last Name",
   "title": "Title",
@@ -15,5 +26,11 @@
   "editUserBtn": "SAVE",
   "cancelBtn": "CANCEL",
   "validEmail": "Enter a valid email address",
-  "rolesEmpty": "Role is required"
+  "rolesEmpty": "Role is required",
+  "cancelModalHeading": "Exit from New Role creation?",
+  "cancelModalSubHeading": "Upon exit this New Role cannot be created, do you still wish to exit?",
+  "deleteModalHeading": "Are you surely want to delete?",
+  "deleteModalSubHeading": "Deleted roles cannot be gained back. Do you still wish to delete?",
+  "yesBtn": "Yes",
+  "noBtn": "No"
 }

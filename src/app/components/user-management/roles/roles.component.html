@@ -17,17 +17,19 @@
             mat-menu-item
             (click)="deleteRoles()"
             [disabled]="!selectedRoleList.length"
-          >
-            <span>Delete</span>
-          </button>
+            translate="deleteBtn"
+          ></button>
         </mat-menu>
         <span class="count-of-roles" *ngIf="rolesList$ | async as roles">
           <span class="roles-count">{{ roles ? roles.length : 0 }}</span>
-          <span class="roles-text">Roles</span>
+          <span class="roles-text" translate="roles"></span>
         </span>
-        <button mat-raised-button class="add-role-btn" (click)="addRole()">
-          Add Role
-        </button>
+        <button
+          mat-raised-button
+          class="add-role-btn"
+          (click)="addRole()"
+          translate="addRoleBtn"
+        ></button>
       </div>
       <div class="dis-flex roles-content">
         <div class="width-30 custom-mat-form-field-gray-color roles-left-panel">
@@ -74,15 +76,13 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item disabled>
-                  <span>Copy</span>
-                </button>
+                <button mat-menu-item disabled translate="copyBtn"></button>
                 <button
                   mat-menu-item
                   *ngIf="role.name !== 'Super Admin'"
                   (click)="deleteRole(role)"
                 >
-                  <span class="text-red-color">Delete</span>
+                  <span class="text-red-color" translate="deleteBtn"></span>
                 </button>
               </mat-menu>
             </mat-list-item>
@@ -92,8 +92,8 @@
                 class="selected-roles-list"
               >
                 <mat-checkbox disabled=""></mat-checkbox>
-                <span class="role-name"> Adding Role... </span>
-                <span class="role-count"> 0 of 4 </span>
+                <span class="role-name" translate="addingRoleText"></span>
+                <span class="role-count" translate="roleCount"></span>
                 <button disabled mat-icon-button class="more-items">
                   <mat-icon>more_horiz</mat-icon>
                 </button>
@@ -109,30 +109,47 @@
             <form
               [formGroup]="roleForm"
               (ngSubmit)="saveRole(roleForm.value, this.selectedRole.id)"
-              style="display: flex"
+              class="dis-flex"
             >
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
-                  <mat-label>Role</mat-label>
+                  <mat-label translate="roleName"></mat-label>
                   <input matInput formControlName="name" />
                 </mat-form-field>
 
                 <div class="mat-error-name">
                   <mat-error *ngIf="f.name.errors?.required && f.name.touched">
-                    Role Name is required
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'roleLabel' | translate }
+                    }}
                   </mat-error>
                   <mat-error *ngIf="f.name.errors?.minlength">
-                    Role Name must be at least 3 characters
+                    {{
+                      'fieldMinimumLength'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate,
+                              length: f.name.errors?.minlength.requiredLength
+                            }
+                    }}
                   </mat-error>
                   <mat-error *ngIf="f.name.errors?.maxlength">
-                    Role Name must be at the max of 20 characters
+                    {{
+                      'fieldMaximumLength'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate,
+                              length: f.name.errors?.maxlength.requiredLength
+                            }
+                    }}
                   </mat-error>
                 </div>
               </div>
 
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title">
-                  <mat-label>Description</mat-label>
+                  <mat-label translate="roleDescription"></mat-label>
                   <input matInput formControlName="description" />
                 </mat-form-field>
                 <div class="mat-error-description">
@@ -141,23 +158,34 @@
                       f.description.errors?.required && f.description.touched
                     "
                   >
-                    Role Description is required
+                    {{
+                      'fieldRequired'
+                        | translate
+                          : { name: 'roleDescriptionLabel' | translate }
+                    }}
                   </mat-error>
                   <mat-error *ngIf="f.description.errors?.minlength">
-                    Role Description must be at least 3 characters
+                    {{
+                      'fieldMinimumLength'
+                        | translate
+                          : {
+                              name: 'roleDescriptionLabel' | translate,
+                              length:
+                                f.description.errors?.minlength.requiredLength
+                            }
+                    }}
                   </mat-error>
                 </div>
               </div>
 
-              <div class="width-40" style="justify-content: flex-end">
+              <div class="width-40">
                 <button
                   mat-raised-button
                   type="submit"
                   class="save-role-btn"
                   [disabled]="roleForm.invalid || this.enableSaveButon"
-                >
-                  Save
-                </button>
+                  translate="saveBtn"
+                ></button>
 
                 <button
                   mat-stroked-button
@@ -168,18 +196,16 @@
                     'hide-cancel-btn': showCancelBtn === false
                   }"
                   (click)="cancelRole()"
-                >
-                  Cancel
-                </button>
+                  translate="cancel"
+                ></button>
 
                 <button
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
                   [disabled]="copyDisabled"
-                >
-                  Copy
-                </button>
+                  translate="copyBtn"
+                ></button>
               </div>
             </form>
           </div>
@@ -188,7 +214,7 @@
             *ngIf="this.selectedRole === undefined"
             class="unselected-role-text"
           >
-            Select any default role from the <br />left to view here.
+            <span translate="noRoles"></span>
           </div>
           <div
             *ngIf="
@@ -201,7 +227,7 @@
             <app-permissions
               [selectedRolePermissions]="data.selectedRolePermissions"
               [permissionsList]="data.permissionsList"
-              (customerChange)="update($event)"
+              (permissionsChange)="update($event)"
             >
             </app-permissions>
           </div>

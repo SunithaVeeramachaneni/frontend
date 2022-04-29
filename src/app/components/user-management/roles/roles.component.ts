@@ -283,6 +283,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   showSelectedRole(role) {
     this.selectedRole = role;
+    this.showCancelBtn = false;
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
 

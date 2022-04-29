@@ -33,7 +33,7 @@ export class PermissionsComponent implements OnInit {
     this.getAllPermissions(selectedRolePermissions);
   }
 
-  @Output() customerChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
 
   rolesBasedPermissions = [];
   permissions$: Observable<any>;
@@ -101,7 +101,7 @@ export class PermissionsComponent implements OnInit {
       );
       this.rolesBasedPermissions = result;
     }
-    this.customerChange.emit(this.rolesBasedPermissions);
+    this.permissionsChange.emit(this.rolesBasedPermissions);
   }
 
   fewComplete(per): boolean {
@@ -125,6 +125,6 @@ export class PermissionsComponent implements OnInit {
         (o1) => !per.permissions.some((o2) => o1.id === o2.id)
       );
     }
-    this.customerChange.emit(this.rolesBasedPermissions);
+    this.permissionsChange.emit(this.rolesBasedPermissions);
   }
 }

@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { CancelModalComponent } from './cancel-modal.component';
 
-describe('WidgetDeleteModalComponent', () => {
+describe('CancelModalComponent', () => {
   let component: CancelModalComponent;
   let fixture: ComponentFixture<CancelModalComponent>;
   let dialogRefSpy: MatDialogRef<CancelModalComponent>;

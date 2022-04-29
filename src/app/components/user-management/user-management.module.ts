@@ -31,6 +31,8 @@ import { UsersComponent } from './users/users.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserDeleteModalComponent } from './users/user-delete-modal/user-delete-modal.component';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { CancelModalComponent } from './cancel-modal/cancel-modal.component';
+import { RoleDeleteModalComponent } from './role-delete-modal/role-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -68,7 +70,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     RolesPopUpComponent,
     UsersComponent,
     AddEditUserModalComponent,
-    PermissionsComponent
+    PermissionsComponent,
+    CancelModalComponent,
+    RoleDeleteModalComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
   providers: [],
