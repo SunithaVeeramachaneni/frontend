@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { RolesComponent } from './roles/roles.component';
 
@@ -27,7 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes), ReactiveFormsModule],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class UserManagementRoutingModule {}

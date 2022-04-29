@@ -14,8 +14,8 @@ server {
     server_name cwpdev.innovapptive.com;
     client_max_body_size 100m;
     # root         /usr/share/nginx/html/cwp;
-    ssl_certificate     "/etc/nginx/cwp-keys/inv_21_22_SSLChain_key.pem";
-    ssl_certificate_key "/etc/nginx/cwp-keys/inv_21_22_SSLPrivate_key.pem";
+    ssl_certificate     "/etc/nginx/cwp-certs/ssl_certificate.pem";
+    ssl_certificate_key "/etc/nginx/cwp-certs/ssl_certificate_key.key";
     ssl_session_cache shared:SSL:1m;
     ssl_session_timeout  10m;
     ssl_ciphers HIGH:!aNULL:!MD5;

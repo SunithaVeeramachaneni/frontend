@@ -1,5 +1,5 @@
 # 1. Update `BACKEND_HOME` environment variable(backend source code home path) & `SHARED_PACKAGES_HOME` environment variable(shared packages home path) in .docker/env/local.env file from CWP HOME
-# 2. Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+# 2. Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, ENCRYPTION_KEY, SAML_CLIENT_SECRET, SAP_PASSWORD & RDBMS_PASSWORD environment varibles in your commnand window.
 
 # In Windows
 # 3. Run `docker compose --env-file .\.docker\env\local.env build`
@@ -196,6 +196,28 @@ services:
     networks:
       - app-network
 
+  logging-service:
+    container_name: logging-service-local
+    image: logging-service-local
+    build:
+      context: ${BACKEND_HOME}/LoggingService
+      dockerfile: .docker/logging-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/LoggingService:/usr/src/logging-service
+      - /usr/src/logging-service/node_modules
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+    ports:
+      - '8006:8006'
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
   user-service:
     container_name: user-service-local
     image: user-service-local
@@ -250,8 +272,8 @@ services:
     container_name: mongo-local
     image: mongo:latest
     #environment:
-    #  MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-    #  MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    #  - MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+    #  - MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodata:/data/db
       - ./.docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -268,10 +290,15 @@ services:
       MYSQL_USER: ${MYSQL_USER_NAME}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SAML_CLIENT_SECRET: ${SAML_CLIENT_SECRET}
+      SAP_PASSWORD: ${SAP_PASSWORD}
+      RDBMS_PASSWORD: ${RDBMS_PASSWORD}
+      NOSQL_PASSWORD: ${NOSQL_PASSWORD}
     volumes:
       - mysqldata:/var/lib/mysql
       - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
+      - ./.docker/mysql/3-tenants-data.sh:/docker-entrypoint-initdb.d/3-tenants-data.sh:ro
     ports:
       - '3306:3306'
     networks:
@@ -369,6 +396,20 @@ services:
       app-network:
         ipv4_address: 172.20.0.36
 
+  rabbitmq:
+    container_name: rabbitmq-local
+    image: rabbitmq:3.9-management-alpine
+    #environment:
+    #  - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+    #  - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq/
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - app-network
+
 volumes:
   mongodata:
   mysqldata:
@@ -379,6 +420,7 @@ volumes:
   redis-node-4-data:
   redis-node-5-data:
   redis-node-6-data:
+  rabbitmqdata:
 
 networks:
   app-network:

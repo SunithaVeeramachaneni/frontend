@@ -133,7 +133,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     ]).pipe(
       map(([roles, update]) => {
         const { role, action } = update;
-        console.log(role);
         switch (action) {
           case 'add':
             roles.push(role);
@@ -144,7 +143,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             break;
           case 'delete':
             const indexToDelete = roles.findIndex((r) => r.id === role.id);
-            console.log(indexToDelete);
             roles.splice(indexToDelete, 1);
             break;
         }
@@ -261,7 +259,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.roleService.deleteRole$(role).subscribe(
           (resp) => {
             if (Object.keys(resp).length && resp.id) {
-              console.log(resp);
               this.rolesListUpdate$.next({ action: 'delete', role });
               this.selectedRole = undefined;
               this.toast.show({
