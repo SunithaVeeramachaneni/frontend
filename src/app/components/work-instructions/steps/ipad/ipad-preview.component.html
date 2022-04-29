@@ -88,13 +88,19 @@
                   aria-label="Select an option"
                   *ngIf="selectedInstructionData.selectedTools.length !== 1"
                 >
-                  <mat-radio-button [value]="tool">{{ tool }}</mat-radio-button>
+                  <mat-radio-button [value]="tool">
+                    <a class="ellipsis-tools">
+                      {{ tool }}
+                    </a>
+                  </mat-radio-button>
                 </mat-radio-group>
                 <div
                   class="header-tab-data-pos pb-2"
                   *ngIf="selectedInstructionData.selectedTools.length === 1"
                 >
-                  {{ tool }}
+                  <a class="ellipsis-tools">
+                    {{ tool }}
+                  </a>
                 </div>
                 <hr
                   class="header-tab-hr-m0"
@@ -129,9 +135,11 @@
                     selectedInstructionData.selectedSafetyKits.length !== 1
                   "
                 >
-                  <mat-radio-button [value]="safetyKit">{{
-                    safetyKit
-                  }}</mat-radio-button>
+                  <mat-radio-button [value]="safetyKit">
+                    <a class="ellipsis-tools">
+                      {{ safetyKit }}
+                    </a>
+                  </mat-radio-button>
                 </mat-radio-group>
                 <div
                   class="header-tab-data-pos pb-2"
@@ -139,7 +147,9 @@
                     selectedInstructionData.selectedSafetyKits.length === 1
                   "
                 >
-                  {{ safetyKit }}
+                  <a class="ellipsis-tools">
+                    {{ safetyKit }}
+                  </a>
                 </div>
                 <hr
                   class="header-tab-hr-m0"
@@ -176,9 +186,11 @@
                     selectedInstructionData.selectedSpareParts.length !== 1
                   "
                 >
-                  <mat-radio-button [value]="sparePart">{{
-                    sparePart
-                  }}</mat-radio-button>
+                  <mat-radio-button [value]="sparePart">
+                    <a class="ellipsis-tools">
+                      {{ sparePart }}
+                    </a>
+                  </mat-radio-button>
                 </mat-radio-group>
                 <div
                   class="header-tab-data-pos pb-2"
@@ -186,7 +198,9 @@
                     selectedInstructionData.selectedSpareParts.length === 1
                   "
                 >
-                  {{ sparePart }}
+                  <a class="ellipsis-tools">
+                    {{ sparePart }}
+                  </a>
                 </div>
                 <hr
                   class="header-tab-hr-m0"
