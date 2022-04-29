@@ -24,12 +24,9 @@ export class UserDeleteModalComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('this.data', this.data);
     const { firstName, lastName } = this.data.user;
     this.firstName = firstName;
     this.lastName = lastName;
-    console.log('this.firstName iss', this.firstName);
-    console.log('this.lastName iss', this.lastName);
   }
 
   deleteUser() {

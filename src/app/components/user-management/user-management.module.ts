@@ -9,7 +9,6 @@ import { CdkTreeModule } from '@angular/cdk/tree';
 
 import { UserManagementRoutingModule } from './user-management-routing.module';
 import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
-import { RolesPopUpComponent } from './users/roles-pop-up-modal/roles-pop-up-modal.component';
 import { AddEditUserModalComponent } from './users/add-edit-user-modal/add-edit-user-modal.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
@@ -67,7 +66,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     UserManagementContainerComponent,
     UserDeleteModalComponent,
     RolesComponent,
-    RolesPopUpComponent,
     UsersComponent,
     AddEditUserModalComponent,
     PermissionsComponent,

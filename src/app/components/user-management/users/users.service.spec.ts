@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { isEqual } from 'lodash';
 import { of } from 'rxjs';
@@ -20,7 +21,7 @@ import {
 
 import { UsersService } from './users.service';
 
-describe('User service', () => {
+fdescribe('User service', () => {
   let service: UsersService;
   let appServiceSpy: AppService;
 
@@ -31,7 +32,7 @@ describe('User service', () => {
       '_postData'
     ]);
     TestBed.configureTestingModule({
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, HttpClientTestingModule],
       providers: [{ provide: AppService, useValue: appServiceSpy }]
     });
     service = TestBed.inject(UsersService);
