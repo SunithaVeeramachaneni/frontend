@@ -134,7 +134,8 @@ export class AddEditUserModalComponent implements OnInit {
       });
     };
   }
-  onFileChange(files: FileList) {
+  onFileChange(event: any) {
+    const { files } = event.target as HTMLInputElement;
     const selectedFile = files[0];
     this.profileImage = this.sant.bypassSecurityTrustUrl(
       window.URL.createObjectURL(selectedFile)
