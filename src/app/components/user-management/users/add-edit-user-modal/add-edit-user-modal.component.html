@@ -18,7 +18,7 @@
     <input
       id="file-input"
       type="file"
-      (change)="onFileChange($event.target?.files)"
+      (change)="onFileChange($event)"
       accept="image/*"
     />
   </div>
@@ -155,7 +155,6 @@
                 </button>
                 <app-permissions
                   [selectedRolePermissions]="rolePermissions"
-                  [isEditable]="false"
                 ></app-permissions>
               </div>
               <div class="dashboard-widgets-list"></div>
