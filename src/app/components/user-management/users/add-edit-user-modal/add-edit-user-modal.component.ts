@@ -39,7 +39,7 @@ export class AddEditUserModalComponent implements OnInit {
   isfilterTooltipOpen = [];
   displayedPermissions;
   isPopoverOpen = false;
-  profileImageURI = '@assets/user-management-icons/Vector.png';
+  profileImageURI = 'assets/user-management-icons/Vector.png';
   profileImage;
   get roles() {
     return this.userForm.get('roles');
