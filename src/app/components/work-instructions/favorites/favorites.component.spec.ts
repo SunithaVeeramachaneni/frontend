@@ -114,22 +114,12 @@ const favorites = [
 
 const users: User[] = [
   {
-    id: '1',
     first_name: 'Tester',
-    last_name: 'One',
-    email: 'tester.one@innovapptive.com',
-    password: '5000353tes',
-    role: 'admin',
-    empId: '5000353'
+    last_name: 'One'
   },
   {
-    id: '2',
     first_name: 'Tester',
-    last_name: 'Two',
-    email: 'tester.two@innovapptive.com',
-    password: '5000392tes',
-    role: 'user',
-    empId: '5000392'
+    last_name: 'Two'
   }
 ];
 
@@ -147,58 +137,56 @@ describe('FavoritesComponent', () => {
   let favoritesDe: DebugElement;
   let favoritesEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getFavInstructions',
-        'setFavoriteInstructions',
-        'getUsers',
-        'deleteWorkInstruction$',
-        'copyWorkInstruction'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
-      commonServiceSpy = jasmine.createSpyObj(
-        'CommonService',
-        ['setHeaderTitle'],
-        {
-          currentRouteUrlAction$: of('/work-instructions/favorites')
-        }
-      );
-      activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-        queryParamMap: of(convertToParamMap({}))
-      });
+  beforeEach(waitForAsync(() => {
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getFavInstructions',
+      'setFavoriteInstructions',
+      'getUsers',
+      'deleteWorkInstruction$',
+      'copyWorkInstruction'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setHeaderTitle'],
+      {
+        currentRouteUrlAction$: of('/work-instructions/favorites')
+      }
+    );
+    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      queryParamMap: of(convertToParamMap({}))
+    });
 
-      TestBed.configureTestingModule({
-        declarations: [FavoritesComponent, DropDownFilterPipe, TimeAgoPipe],
-        imports: [
-          NgxPaginationModule,
-          OrderModule,
-          Ng2SearchPipeModule,
-          AppMaterialModules,
-          RouterTestingModule,
-          SharedModule,
-          FormsModule,
-          BrowserAnimationsModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: CommonService, useValue: commonServiceSpy },
-          { provide: ActivatedRoute, useValue: activatedRouteSpy }
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [FavoritesComponent, DropDownFilterPipe, TimeAgoPipe],
+      imports: [
+        NgxPaginationModule,
+        OrderModule,
+        Ng2SearchPipeModule,
+        AppMaterialModules,
+        RouterTestingModule,
+        SharedModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: ActivatedRoute, useValue: activatedRouteSpy }
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FavoritesComponent);

@@ -4,6 +4,8 @@
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, ENCRYPTION_KEY, SAML_CLIENT_SECRET, SAP_PASSWORD & RDBMS_PASSWORD environment varibles in your commnand window.
+
 ### Approch 1: Access application from angular development server
 
 Run the following commads from CWP HOME
@@ -52,9 +54,13 @@ Linux
 
 Access the application using `http://localhost`. This will be served from nginx service running in docker.
 
+## Copy ssl_certificate.pem & ssl_certificate_key.key files to .docker/certs/ folder in CWP HOME before buildig images for development, testing, staging & production environments
+
 ## To deploy application in development server using docker
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/development.env file from CWP HOME
+
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 Run the following commads from CWP HOME
 
@@ -76,6 +82,8 @@ Linux
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/testing.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+
 Run the following commads from CWP HOME
 
 Open Terminal
@@ -96,6 +104,8 @@ Linux
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/staging.env file from CWP HOME
 
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
+
 Run the following commads from CWP HOME
 
 Open Terminal
@@ -115,6 +125,8 @@ Linux
 ## To deploy application in production server using docker
 
 Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/production.env file from CWP HOME
+
+Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment varibles in your commnand window.
 
 Run the following commads from CWP HOME
 

@@ -46,10 +46,17 @@ insert into catalogs (
     "urls": [
       "http://localhost:8001/",
       "http://localhost:8004/",
+      "http://localhost:8007/",
       "http://cwpdev.innovapptive.com/wiapi/",
       "http://cwpdev.innovapptive.com/dashboardapi/",
+      "http://cwpdev.innovapptive.com/users",
+      "http://cwpdev.innovapptive.com/roles",
+      "http://cwpdev.innovapptive.com/permissions",
       "http://cwpqa.innovapptive.com/wiapi/",
-      "http://cwpqa.innovapptive.com/dashboardapi/"
+      "http://cwpqa.innovapptive.com/dashboardapi/",
+      "http://cwpqa.innovapptive.com/users",
+      "http://cwpqa.innovapptive.com/roles",
+      "http://cwpqa.innovapptive.com/permissions"
     ]
   }',
   "innovapptive.com",
@@ -57,7 +64,7 @@ insert into catalogs (
     "oauth2Url":
       "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
     "grantType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    "clientSecret": "L2y7Q~SiOSKHJmmgiokIaL8PFl~gA8kTDvR74",
+    "clientSecret": "",
     "resource": "https://NSB100",
     "tokenUse": "on_behalf_of",
     "tokenType": "urn:ietf:params:oauth:token-type:saml2"
@@ -66,21 +73,21 @@ insert into catalogs (
     "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
     "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
     "username": "cwpuser",
-    "password": "U2FsdGVkX191+esL7KaKroQwIBfmBFbPEXyKLiJbDqs=",
+    "password": "",
     "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
     "clientId": "cwpuser",
     "scope": "/INVCEC/RACE_SRV_0001"
   }',
   '{
-    "host": "cwp-tenant.cq5h22u2n8lu.us-east-1.rds.amazonaws.com",
+    "host": "mysql-local",
     "port": 3306,
     "user": "admin",
-    "password": "U2FsdGVkX181Q5hUCdyiq0kXYu6HiRlwvsuy8rirjfU=",
+    "password": "",
     "database": "Innovapptive",
     "dialect": "mysql"
   }',
   '{
-    "host": "10.0.0.27",
+    "host": "mongo-local",
     "port": 27017,
     "user": "",
     "password": "",
@@ -95,4 +102,7 @@ insert into tenants (
   logDBType,
   logLevel,
   createdAt
-) values (1, '["dashboards", "mcc", "spcc", "wi"]', "nosql", "error", "2022-04-11 10:00:00");
+) values (1, '["Dashboard", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]', "nosql", "error", "2022-04-11 10:00:00");
+
+
+CREATE DATABASE Innovapptive;
