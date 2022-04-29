@@ -20,6 +20,11 @@ export const routingUrls = {
   inActiveUsers: {
     url: '/user-management/inactive-users',
     title: 'Inactive Users'
+  },
+  tenantManagement: { url: '/tenant-management', title: 'Tenant Management' },
+  inActiveTenants: {
+    url: '/tenant-management/inactive-tenants',
+    title: 'Inactive Tenants'
   }
 };
 
