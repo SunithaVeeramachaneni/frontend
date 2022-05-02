@@ -1,7 +1,18 @@
 /* eslint-disable no-underscore-dangle */
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subscription
+} from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -26,7 +37,7 @@ interface DashboardData {
   styleUrls: ['./dashboards.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardsComponent implements OnInit {
+export class DashboardsComponent implements OnInit, OnDestroy {
   displayAllDashboards = false;
   dashboardMode = 'SINGLE';
   selectedGlobalDashboard: Dashboard;
@@ -46,6 +57,8 @@ export class DashboardsComponent implements OnInit {
     isDefault: false,
     createdBy: 'dummy'
   } as Dashboard;
+
+  private dashboardSelectionChangedSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -165,20 +178,21 @@ export class DashboardsComponent implements OnInit {
       })
     );
 
-    this.dashboardService.dashboardSelectionChanged$.subscribe((event) => {
-      if (event.name === 'VIEW_ALL_DASHBOARDS') {
-        this.displayAllDashboards = true;
-        this.dashboardMode = 'ALL';
-        this.selectedGlobalDashboard = { ...event };
-        this.setSelectedDashboard(this.defaultDashboard);
-      } else if (event.name === 'CREATE_DASHBOARD') {
-        this.openCreateDashboardDialog();
-      } else {
-        this.selectedGlobalDashboard = event;
-        this.selectedDashboard = event;
-        this.displayAllDashboards = false;
-      }
-    });
+    this.dashboardSelectionChangedSubscription =
+      this.dashboardService.dashboardSelectionChanged$.subscribe((event) => {
+        if (event.name === 'VIEW_ALL_DASHBOARDS') {
+          this.displayAllDashboards = true;
+          this.dashboardMode = 'ALL';
+          this.selectedGlobalDashboard = { ...event };
+          this.setSelectedDashboard(this.defaultDashboard);
+        } else if (event.name === 'CREATE_DASHBOARD') {
+          this.openCreateDashboardDialog();
+        } else {
+          this.selectedGlobalDashboard = event;
+          this.selectedDashboard = event;
+          this.displayAllDashboards = false;
+        }
+      });
   }
 
   setDefaultDashboard(dashboard: Dashboard) {
@@ -374,5 +388,11 @@ export class DashboardsComponent implements OnInit {
 
   compareFn(option1: Dashboard, option2: Dashboard) {
     return option1.name === option2.name;
+  }
+
+  ngOnDestroy(): void {
+    if (this.dashboardSelectionChangedSubscription) {
+      this.dashboardSelectionChangedSubscription.unsubscribe();
+    }
   }
 }
