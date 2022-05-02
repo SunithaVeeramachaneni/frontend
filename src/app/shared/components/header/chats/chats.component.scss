@@ -1,0 +1,137 @@
+.chatsBody {
+  display: flex;
+}
+.conversationContent {
+  display: flex;
+  width: 60%;
+  flex-direction: column;
+  margin-left: 10px;
+  background: #ffffff !important;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+    0 1px 3px 0 rgb(116 116 116);
+  .conversationHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 20px;
+    height: 50px;
+    .iconButton {
+      background: none;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+      width: 40px;
+      border-radius: 45px;
+      // margin-top: 15px;
+    }
+    .iconButton .icon {
+      width: 40px;
+      border-radius: 45px;
+    }
+    .userTitle {
+      margin-left: 15px;
+      .userName {
+        width: 175px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .userDescription {
+        width: 175px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .conversationBody {
+    width: 100%;
+    height: 275px;
+  }
+  .chatBottom {
+    .messageInputBar {
+      display: flex;
+      padding: 10px 0px;
+      .messageInputGroup {
+        display: flex;
+        align-items: center;
+        background: #eeeeee;
+        margin-left: 24px;
+        border: 1px solid #eeeeee;
+        border-radius: 5px;
+        padding: 0px 10px;
+      }
+      .messageInput {
+        border: 1px solid #e1dcdc;
+        padding: 10px;
+        background: #eeeeee;
+        margin-left: 5px;
+        border-left: none;
+        border-right: none;
+      }
+      .audioRecord {
+        color: #ffffff;
+        border-radius: 8px;
+        font-size: 8pt;
+        background: #1a66ff;
+        margin-left: 5px;
+      }
+    }
+  }
+}
+.conversationsList {
+  width: 40%;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+    0 1px 3px 0 rgb(116 116 116);
+  .searchBar {
+    display: flex;
+    .searchInput {
+      border: 1px solid #e1dcdc;
+      border-radius: 45px;
+      padding: 10px;
+      background: #eeeeee;
+    }
+    .searchMore {
+      color: #1a66ff;
+    }
+  }
+  .userList {
+    height: 375px;
+    overflow: auto;
+  }
+}
+.userIcon {
+  font-size: 50px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add application styles & imports to this file! */
+
+.icon-button {
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  border-radius: 45px;
+  margin-top: -15px;
+}
+
+.icon-button .icon {
+  width: 40px;
+  border-radius: 45px;
+}
+
+.displayFlex {
+  display: flex;
+}
+.horiz-divider {
+  margin: 5px 25px;
+}

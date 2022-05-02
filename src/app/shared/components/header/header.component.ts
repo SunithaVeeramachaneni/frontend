@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { CommonService } from '../../services/common.service';
 import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
@@ -6,6 +13,8 @@ import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 
 import { LogonUserDetails } from '../../../interfaces';
 import { tap } from 'rxjs/operators';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { CollabDialogComponent } from './CollabDialog';
 
 @Component({
   selector: 'app-header',
@@ -13,11 +22,15 @@ import { tap } from 'rxjs/operators';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  @ViewChild('collabButton', { read: ElementRef })
+  public collabButtonRef: ElementRef;
+
   public username: string;
   public userImage: string;
   public sidebarMinimize = false;
   logonUserDetails$: Observable<LogonUserDetails>;
   @Input() title;
+
   private minimizeSidebarActionSubscription: Subscription;
 
   isAuthenticated = false;
@@ -26,8 +39,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private _headerSvc: HeaderService,
     private commonService: CommonService,
-    public oidcSecurityService: OidcSecurityService
+    public oidcSecurityService: OidcSecurityService,
+    public dialog: MatDialog
   ) {}
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CollabDialogComponent, {
+      hasBackdrop: true,
+      width: '750px',
+      disableClose: true,
+      data: { positionRelativeToElement: this.collabButtonRef }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('The dialog was closed');
+    });
+  }
 
   ngOnInit() {
     this.minimizeSidebarActionSubscription =

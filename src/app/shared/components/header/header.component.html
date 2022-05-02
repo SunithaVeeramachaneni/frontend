@@ -19,8 +19,18 @@
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
-
   <div class="header-cols" *ngIf="userData$ | async as userDetails">
+    <button
+      #collabButton
+      mat-icon-button
+      color="primary"
+      aria-label="Example icon button with a home icon"
+      matBadge="15"
+      matBadgeColor="warn"
+      (click)="openDialog()"
+    >
+      <mat-icon>mark_chat_unread</mat-icon>
+    </button>
     <div class="width-auto displayGrid">
       <span class="loggedin-user-name"
         >{{ this.username[0] }} {{ this.username[1] }}</span

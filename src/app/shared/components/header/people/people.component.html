@@ -1,0 +1,43 @@
+<div ngClass="peoplesTabBody">
+  <div ngClass="searchBar">
+    <input matInput placeholder="Search Users" disabled ngClass="searchInput" />
+    <button mat-icon-button ngClass="searchMore">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+  <div ngClass="userList">
+    <mat-list>
+      <mat-list-item *ngFor="let user of activeUsers; let i = index">
+        <div class="icon-button" mat-list-icon>
+          <img class="icon" src="{{ user.profile.image_original }}" />
+        </div>
+        <div mat-line>
+          <b>{{ user.real_name }}</b>
+        </div>
+        <div mat-line>{{ user.profile?.title }}</div>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="onTextMessageClick(user)"
+        >
+          <mat-icon>chat</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="onAudioMessageClick(user)"
+        >
+          <mat-icon>phone</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="onVideoMessageClick(user)"
+        >
+          <mat-icon>videocam</mat-icon>
+        </button>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div ngClass="chatsBody">
+  <div ngClass="conversationsList">
+    <div ngClass="searchBar">
+      <input
+        matInput
+        placeholder="Search Users"
+        disabled
+        ngClass="searchInput"
+      />
+      <button mat-icon-button ngClass="searchMore">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+    <div ngClass="userList">
+      <mat-list>
+        <mat-list-item *ngFor="let user of activeUsers; let i = index">
+          <div class="icon-button" mat-list-icon>
+            <img class="icon" src="{{ user.profile.image_original }}" />
+          </div>
+          <div mat-line>
+            <b>{{ user.real_name }}</b>
+          </div>
+          <div mat-line>{{ user.profile?.title }}</div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+  <div ngClass="conversationContent">
+    <div ngClass="conversationHead">
+      <div ngClass="displayFlex">
+        <div ngClass="iconButton">
+          <img class="icon" src="{{ targetUser.profile.image_original }}" />
+        </div>
+        <div ngClass="userTitle">
+          <b ngClass="userName">{{ targetUser.real_name }}</b>
+          <div mat-line ngClass="userDescription">
+            {{ targetUser.profile?.title }}
+          </div>
+        </div>
+      </div>
+      <div>
+        <button mat-icon-button color="primary">
+          <mat-icon>phone</mat-icon>
+        </button>
+        <button mat-icon-button color="primary">
+          <mat-icon>videocam</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-divider ngClass="horiz-divider"></mat-divider>
+    <div ngClass="conversationBody"></div>
+    <mat-divider ngClass="horiz-divider"></mat-divider>
+    <div ngClass="chatBottom">
+      <div ngClass="messageInputBar">
+        <div ngClass="messageInputGroup">
+          <mat-icon matPrefix>attach_file</mat-icon>
+          <input
+            matInput
+            ngClass="messageInput"
+            placeholder="Enter Message.."
+          />
+          <mat-icon matSuffix>photo_camera</mat-icon>
+        </div>
+
+        <button mat-mini-fab ngClass="audioRecord">
+          <mat-icon>mic</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

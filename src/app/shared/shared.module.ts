@@ -13,6 +13,11 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
+import { CollabDialogComponent } from './components/header/CollabDialog';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PeopleComponent } from './components/header/people/people.component';
+import { ChatsComponent } from './components/header/chats/chats.component';
+import { CallsComponent } from './components/header/calls/calls.component';
 
 @NgModule({
   declarations: [
@@ -24,12 +29,17 @@ import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
+    CollabDialogComponent,
+    PeopleComponent,
+    ChatsComponent,
+    CallsComponent,
     NumberToKMPipe
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    DragDropModule,
     AppMaterialModules,
     BreadcrumbModule,
     TranslateModule.forChild({})
