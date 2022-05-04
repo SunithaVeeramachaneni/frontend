@@ -1,5 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { routingUrls } from 'src/app/app.constants';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-tenant',
@@ -8,11 +17,23 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantComponent implements OnInit {
+  currentRouteUrl$: Observable<string>;
+  headerTitle$: Observable<string>;
+  readonly routingUrls = routingUrls;
+
+  public firstButton = true;
+  public lastButton = false;
+  public selectedID = new FormControl(0);
+  public noOfTabs = 5;
   tenantForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private commonService: CommonService) {}
 
   ngOnInit(): void {
+    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
+      tap(() => this.commonService.setHeaderTitle(routingUrls.addTenant.title))
+    );
+
     this.tenantForm = this.fb.group({
       tenantId: ['', [Validators.required, Validators.maxLength(100)]],
       tenantName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -93,5 +114,57 @@ export class TenantComponent implements OnInit {
       scope: ['', [Validators.required]],
       urls: this.fb.array([], [Validators.required])
     });
+  }
+
+  buttonActionsInHeader(noOfSteps) {
+    this.selectedID.setValue(0);
+    if (this.selectedID.value === 0) {
+      this.firstButton = true;
+    } else {
+      this.firstButton = false;
+    }
+
+    if (this.selectedID.value === noOfSteps - 1) {
+      this.lastButton = true;
+    } else {
+      this.lastButton = false;
+    }
+  }
+
+  buttonActionsInSteps(index, noOfSteps) {
+    this.selectedID.setValue(index);
+    if (this.selectedID.value === 0) {
+      this.firstButton = true;
+    } else {
+      this.firstButton = false;
+    }
+
+    if (this.selectedID.value === noOfSteps - 1) {
+      this.lastButton = true;
+    } else {
+      this.lastButton = false;
+    }
+  }
+
+  onTabsChange(index: number, noOfSteps) {
+    if (this.selectedID.value === 0) {
+      this.firstButton = true;
+    } else {
+      this.firstButton = false;
+    }
+
+    if (this.selectedID.value === noOfSteps - 1) {
+      this.lastButton = true;
+    } else {
+      this.lastButton = false;
+    }
+  }
+
+  moveNext(selectedID) {
+    this.selectedID.setValue(selectedID.value + 1);
+  }
+
+  get f() {
+    return this.tenantForm.controls;
   }
 }

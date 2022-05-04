@@ -1,1 +1,610 @@
-<p>tenant works!</p>
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.addTenant.url">
+    <form class="main-tenant-container" [formGroup]="tenantForm">
+      <div class="tenant-header">
+        <span class="adding-tenant-text">Adding Tenant...</span>
+        <button
+          mat-raised-button
+          translate="nextBtn"
+          class="next-btn"
+          *ngIf="this.selectedID.value !== 4"
+          (click)="moveNext(this.selectedID)"
+        ></button>
+        <button
+          mat-raised-button
+          translate="saveBtn"
+          class="save-btn"
+          *ngIf="this.selectedID.value === 4"
+        ></button>
+        <button
+          mat-raised-button
+          translate="cancelBtn"
+          class="cancel-btn"
+        ></button>
+      </div>
+      <div class="dis-flex width-100" style="padding: 5px 0">
+        <div class="prevbtn p-0">
+          <button
+            (click)="buttonActionsInHeader(noOfTabs)"
+            [disabled]="firstButton"
+            class="prevnextbtns m-l-10"
+          >
+            <mat-icon>first_page</mat-icon>
+          </button>
+          <button
+            (click)="buttonActionsInSteps(selectedID.value - 1, noOfTabs)"
+            [disabled]="firstButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+        </div>
+        <div class="p-0 main-content">
+          <mat-tab-group
+            [selectedIndex]="selectedID.value"
+            (selectedIndexChange)="selectedID.setValue($event)"
+            (selectedTabChange)="onTabsChange(selectedID.value, noOfTabs)"
+          >
+            <mat-tab label="1. PRIMARY"></mat-tab>
+            <mat-tab label="2. ERPs"></mat-tab>
+            <mat-tab label="3. PROTECTED RESOURCES"></mat-tab>
+            <mat-tab label="4. DB CONFIGURATIONS"></mat-tab>
+            <mat-tab label="5. CONFIGURATIONS"></mat-tab>
+          </mat-tab-group>
+        </div>
+        <div class="nextbtn p-0">
+          <button
+            (click)="buttonActionsInSteps(selectedID.value + 1, noOfTabs)"
+            [disabled]="lastButton"
+            class="prevnextbtns"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+          <button
+            (click)="buttonActionsInSteps(noOfTabs - 1, noOfTabs)"
+            [disabled]="lastButton"
+            class="prevnextbtns m-r-10"
+          >
+            <mat-icon>last_page</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="dis-flex scroll-content">
+        <div class="width-30"></div>
+        <div class="custom-mat-form-field-white-color width-40">
+          <div *ngIf="selectedID.value === 0">
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Tenant ID</mat-label>
+                <input
+                  matInput
+                  placeholder="Tenant ID"
+                  formControlName="tenantId"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.tenantId.errors?.required && f.tenantId.touched"
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'tenantId' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Tenant Name</mat-label>
+                <input
+                  matInput
+                  placeholder="Tenant Name"
+                  formControlName="tenantName"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.tenantName.errors?.required && f.tenantName.touched"
+              >
+                {{
+                  'fieldRequired'
+                    | translate: { name: 'tenantName' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Tenant IDP</mat-label>
+                <!-- <input
+              matInput
+              placeholder="Tenant IDP"
+              formControlName="tenantIdp"
+            /> -->
+                <mat-select formControlName="tenantIdp">
+                  <mat-option value="azure">Azure</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.tenantIdp.errors?.required && f.tenantIdp.touched"
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'tenantIdp' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Client ID</mat-label>
+                <input
+                  matInput
+                  placeholder="Client ID"
+                  formControlName="clientId"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.clientId.errors?.required && f.clientId.touched"
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'clientId' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Authority</mat-label>
+                <input
+                  matInput
+                  placeholder="Authority"
+                  formControlName="authority"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.authority.errors?.required && f.authority.touched"
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'Authority' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Redirect URI</mat-label>
+                <input
+                  matInput
+                  placeholder="Redirect URI"
+                  formControlName="redirectUri"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="f.redirectUri.errors?.required && f.redirectUri.touched"
+              >
+                {{
+                  'fieldRequired'
+                    | translate: { name: 'redirectUri' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Tenant Domain Name</mat-label>
+                <input
+                  matInput
+                  placeholder="Tenant Domain Name"
+                  formControlName="tenantDomainName"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  f.tenantDomainName.errors?.required &&
+                  f.tenantDomainName.touched
+                "
+              >
+                {{
+                  'fieldRequired'
+                    | translate: { name: 'tenantDomainName' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="sub-headings">Tenant Admin Details</p>
+
+            <div formGroupName="tenantAdmin">
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label>Tenant Admin First Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Tenant Admin First Name"
+                    formControlName="firstName"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    tenantForm.get('tenantAdmin.firstName').errors?.required &&
+                    tenantForm.get('tenantAdmin.firstName').touched
+                  "
+                >
+                  {{
+                    'fieldRequired'
+                      | translate: { name: 'firstName' | translate }
+                  }}
+                </mat-error>
+              </p>
+
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label>Tenant Admin Last Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Tenant Admin Last Name"
+                    formControlName="lastName"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    tenantForm.get('tenantAdmin.lastName').errors?.required &&
+                    tenantForm.get('tenantAdmin.lastName').touched
+                  "
+                >
+                  {{
+                    'fieldRequired'
+                      | translate: { name: 'lastName' | translate }
+                  }}
+                </mat-error>
+              </p>
+
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label>Tenant Admin Title</mat-label>
+                  <input
+                    matInput
+                    placeholder="Tenant Admin Title"
+                    formControlName="title"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    tenantForm.get('tenantAdmin.title').errors?.required &&
+                    tenantForm.get('tenantAdmin.title').touched
+                  "
+                >
+                  {{
+                    'fieldRequired' | translate: { name: 'title' | translate }
+                  }}
+                </mat-error>
+              </p>
+
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label>Tenant Admin Email</mat-label>
+                  <input
+                    matInput
+                    placeholder="Tenant Admin Email"
+                    formControlName="email"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                    tenantForm.get('tenantAdmin.email').errors?.required &&
+                    tenantForm.get('tenantAdmin.email').touched
+                  "
+                >
+                  {{
+                    'fieldRequired' | translate: { name: 'email' | translate }
+                  }}
+                </mat-error>
+              </p>
+            </div>
+          </div>
+
+          <div *ngIf="selectedID.value === 1">
+            <div formGroupName="erps">
+              <div formGroupName="sap">
+                <p class="sub-headings">SAP Details</p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Base URL</mat-label>
+                    <input
+                      matInput
+                      placeholder="Base URL"
+                      formControlName="baseUrl"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.baseUrl').errors?.required &&
+                      tenantForm.get('erps.sap.baseUrl').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'baseUrl' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Authentication URL</mat-label>
+                    <input
+                      matInput
+                      placeholder="Authentication URL"
+                      formControlName="oauth2Url"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.oauth2Url').errors?.required &&
+                      tenantForm.get('erps.sap.oauth2Url').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'oauth2Url' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>User Name</mat-label>
+                    <input
+                      matInput
+                      placeholder="User Name"
+                      formControlName="username"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.username').errors?.required &&
+                      tenantForm.get('erps.sap.username').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'username' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Password</mat-label>
+                    <input
+                      matInput
+                      placeholder="Password"
+                      type="password"
+                      formControlName="password"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.password').errors?.required &&
+                      tenantForm.get('erps.sap.password').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'password' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Grant Type</mat-label>
+                    <input
+                      matInput
+                      placeholder="Grant Type"
+                      formControlName="grantType"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.grantType').errors?.required &&
+                      tenantForm.get('erps.sap.grantType').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'grantType' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Client ID</mat-label>
+                    <input
+                      matInput
+                      placeholder="Client ID"
+                      formControlName="clientId"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.clientId').errors?.required &&
+                      tenantForm.get('erps.sap.clientId').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired'
+                        | translate: { name: 'clientId' | translate }
+                    }}
+                  </mat-error>
+                </p>
+
+                <p class="m-0">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>Scope</mat-label>
+                    <input
+                      matInput
+                      placeholder="Scope"
+                      formControlName="scope"
+                    />
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      tenantForm.get('erps.sap.scope').errors?.required &&
+                      tenantForm.get('erps.sap.scope').touched
+                    "
+                  >
+                    {{
+                      'fieldRequired' | translate: { name: 'scope' | translate }
+                    }}
+                  </mat-error>
+                </p>
+                <p class="sub-headings">SAML Details</p>
+
+                <div formGroupName="saml">
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Authentication URL</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Authentication URL"
+                        formControlName="oauth2Url"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.oauth2Url').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.oauth2Url').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'oauth2Url' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Grant Type</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Grant Type"
+                        formControlName="grantType"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.grantType').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.grantType').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'grantType' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Client Secret</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Clent Secret"
+                        formControlName="clientSecret"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.clientSecret').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.clientSecret').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'clientSecret' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Resource</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Resource"
+                        formControlName="resource"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.resource').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.resource').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'resource' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Token Use</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Token Use"
+                        formControlName="tokenUse"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.tokenUse').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.tokenUse').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'tokenUse' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+
+                  <p class="m-0">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>SAML Token Type</mat-label>
+                      <input
+                        matInput
+                        placeholder="SAML Token Type"
+                        formControlName="tokenType"
+                      />
+                    </mat-form-field>
+                    <mat-error
+                      *ngIf="
+                        tenantForm.get('erps.sap.saml.tokenType').errors
+                          ?.required &&
+                        tenantForm.get('erps.sap.saml.tokenType').touched
+                      "
+                    >
+                      {{
+                        'fieldRequired'
+                          | translate: { name: 'tokenType' | translate }
+                      }}
+                    </mat-error>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="width-30"></div>
+      </div>
+    </form>
+  </div>
+</ng-container>
