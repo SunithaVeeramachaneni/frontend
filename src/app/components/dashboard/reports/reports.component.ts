@@ -12,7 +12,7 @@ import {
   ErrorInfo,
   Report,
   ReportConfiguration,
-  ReportsRowActionEvent,
+  RowLevelActionEvent,
   TableEvent
 } from 'src/app/interfaces';
 import { ReportConfigurationListModalComponent } from '../report-configuration-list-modal/report-configuration-list-modal.component';
@@ -276,7 +276,7 @@ export class ReportsComponent implements OnInit {
     this.addReport$.next({} as ReportConfiguration);
   }
 
-  rowLevelActionHandler(event: ReportsRowActionEvent) {
+  rowLevelActionHandler(event: RowLevelActionEvent) {
     const {
       action,
       data: { id, name, isFavorite }

@@ -20,14 +20,24 @@
       mat-raised-button
       class="add-tenant-btn"
       translate="addTenantBtn"
-      [routerLink]="['/tenant-management/add-tenant']"
+      [routerLink]="['/tenant-management/create']"
     ></button>
     <span class="count-of-tenants">
       <span class="tenant-count">0</span>
       <span class="tenant-text" translate="tenants"></span>
     </span>
   </div>
-  <div class="dis-flex tenant-content">table</div>
+  <div
+    *ngIf="tenantsData$ | async; else loadingTenants"
+    class="dis-flex tenant-content"
+  >
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+    ></cwp-dynamictable>
+  </div>
 </div>
 
-<router-outlet></router-outlet>
+<ng-template #loadingTenants>Loading Tenants...</ng-template>
