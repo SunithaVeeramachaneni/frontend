@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -22,6 +23,8 @@ export class TenantComponent implements OnInit {
   public selectedID = new FormControl(0);
   public noOfTabs = 5;
   tenantForm: FormGroup;
+  products = ['MWORKORDER', 'MINVENTORY'];
+  modules = ['ABC', 'DEF'];
 
   constructor(private fb: FormBuilder, private commonService: CommonService) {}
 
@@ -112,6 +115,10 @@ export class TenantComponent implements OnInit {
       scope: ['', [Validators.required]],
       urls: this.fb.array([], [Validators.required])
     });
+  }
+
+  get urls(): FormArray {
+    return this.tenantForm.get('protectedResources.sap.urls') as FormArray;
   }
 
   buttonActionsInHeader(noOfSteps) {

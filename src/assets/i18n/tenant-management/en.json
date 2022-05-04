@@ -26,5 +26,21 @@
   "clientSecret": "Client Secret",
   "resource": "Resource",
   "tokenUse": "Token Use",
-  "tokenType": "Token Type"
+  "tokenType": "Token Type",
+  "identityMetadata": "Identity Metadata",
+  "issuer": "Issuer",
+  "audience": "Audience",
+  "urls": "URLs",
+  "host": "Host",
+  "port": "Port",
+  "user": "User",
+  "database": "Database",
+  "dialect": "Dialect",
+  "start": "License Start",
+  "end": "License End",
+  "count": "License Count",
+  "products": "Products",
+  "modules": "Modules",
+  "logDBType": "Log DB Type",
+  "logLevel": "Log Level"
 }
