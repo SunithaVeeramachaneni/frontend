@@ -1,1 +1,20 @@
-{}
+{
+  "tenants": "Tenants",
+  "addTenantBtn": "Add Tenant",
+  "cancelBtn": "Cancel",
+  "nextBtn": "Next",
+  "saveBtn": "Save",
+  "name": "Name",
+  "fieldRequired": "{name} is required",
+  "tenantId": "Tenant ID",
+  "tenantName": "Tenant Name",
+  "tenantIdp": "Tenant IDP",
+  "clientId": "Client ID",
+  "authority": "Auhority",
+  "redirectUri": "Redirect URI",
+  "tenantDomainName": "Tenant Domain Name",
+  "firstName": "Tenant Admin First Name",
+  "lastName": "Tenant Admin Last Name",
+  "title": "Tenant Admin Title",
+  "email": "Tenant Admin Email"
+}

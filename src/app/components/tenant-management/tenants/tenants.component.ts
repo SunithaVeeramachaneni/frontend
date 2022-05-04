@@ -7,6 +7,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantsComponent implements OnInit {
+  selectedProduct = 'allproducts';
   constructor() {}
 
   ngOnInit(): void {}

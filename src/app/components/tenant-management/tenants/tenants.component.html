@@ -1,1 +1,33 @@
-<p>tenants works!</p>
+<div class="main-tenant-container">
+  <div class="tenant-header">
+    <span class="mat-select-products select-products">
+      <mat-form-field appearance="outline">
+        <mat-label>Product</mat-label>
+        <mat-select [(value)]="selectedProduct" multiple>
+          <mat-option value="allproducts">All Products</mat-option>
+          <mat-option value="mworkorder">MWorkOrder</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </span>
+    <span class="custom-mat-form-field-gray-color search-field">
+      <mat-form-field appearance="outline">
+        <mat-icon matPrefix class="searchIcon">search</mat-icon>
+        <input matInput type="text" placeholder="Search" disabled />
+      </mat-form-field>
+    </span>
+
+    <button
+      mat-raised-button
+      class="add-tenant-btn"
+      translate="addTenantBtn"
+      [routerLink]="['/tenant-management/add-tenant']"
+    ></button>
+    <span class="count-of-tenants">
+      <span class="tenant-count">0</span>
+      <span class="tenant-text" translate="tenants"></span>
+    </span>
+  </div>
+  <div class="dis-flex tenant-content">table</div>
+</div>
+
+<router-outlet></router-outlet>
