@@ -1,0 +1,103 @@
+.main-tenant-container {
+  background-color: #ffffff;
+  margin: 14px;
+  position: relative;
+}
+
+.tenant-header {
+  border-bottom: 1px solid #e7e7e7;
+  padding: 12px 12px 20px 12px;
+}
+
+.adding-tenant-text {
+  font-weight: 500;
+  font-size: 24px;
+  color: #000000;
+  position: relative;
+  top: 5px;
+}
+
+.cancel-btn {
+  float: right;
+  color: #3d5afe;
+  border: 1px solid #3d5afe;
+  background-color: #ffffff;
+  box-shadow: none;
+  margin-right: 14px;
+}
+
+.next-btn {
+  float: right;
+  background-color: #3d5afe;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.save-btn {
+  float: right;
+  background-color: #3d5afe;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.scroll-content {
+  overflow-y: scroll;
+  height: 65vh;
+}
+
+.sub-headings {
+  margin: 10px 0 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.main-content {
+  width: 87%;
+  ::ng-deep .mat-tab-label {
+    width: 20%;
+  }
+}
+
+.prevbtn {
+  display: flex;
+  border-bottom: 1px solid #cccccc;
+}
+
+.prevnextbtns {
+  border: none;
+  background-color: white;
+}
+
+.nextbtn {
+  display: flex;
+  border-bottom: 1px solid #cccccc;
+}
+
+.custom-mat-form-field-white-color {
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -24px !important;
+  }
+  ::ng-deep.mat-form-field-flex > .mat-form-field-infix {
+    padding: 2px 0px 10px 0px !important;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  ::ng-deep .mat-select-arrow {
+    margin-top: 10px;
+  }
+}

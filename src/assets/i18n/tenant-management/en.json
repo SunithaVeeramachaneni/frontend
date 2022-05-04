@@ -16,5 +16,15 @@
   "firstName": "Tenant Admin First Name",
   "lastName": "Tenant Admin Last Name",
   "title": "Tenant Admin Title",
-  "email": "Tenant Admin Email"
+  "email": "Tenant Admin Email",
+  "baseUrl": "Base URL",
+  "oauth2Url": "OAUTH2 URL",
+  "username": "User Name",
+  "password": "Password",
+  "grantType": "Grant Type",
+  "scope": "Scope",
+  "clientSecret": "Client Secret",
+  "resource": "Resource",
+  "tokenUse": "Token Use",
+  "tokenType": "Token Type"
 }
