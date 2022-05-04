@@ -5,8 +5,6 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 
@@ -17,8 +15,6 @@ import { CommonService } from 'src/app/shared/services/common.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantComponent implements OnInit {
-  currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
 
   public firstButton = true;
@@ -30,10 +26,6 @@ export class TenantComponent implements OnInit {
   constructor(private fb: FormBuilder, private commonService: CommonService) {}
 
   ngOnInit(): void {
-    this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.addTenant.title))
-    );
-
     this.tenantForm = this.fb.group({
       tenantId: ['', [Validators.required, Validators.maxLength(100)]],
       tenantName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -83,6 +75,12 @@ export class TenantComponent implements OnInit {
       logDBType: ['', [Validators.required]],
       logLevel: ['', [Validators.required]]
     });
+
+    this.commonService.setHeaderTitle(
+      this.tenantForm.get('tenantName').value
+        ? this.tenantForm.get('tenantName').value
+        : `Addding Tenant...`
+    );
   }
 
   buildErps(): FormGroup {

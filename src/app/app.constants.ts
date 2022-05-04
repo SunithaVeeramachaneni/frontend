@@ -25,8 +25,7 @@ export const routingUrls = {
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',
     title: 'Inactive Tenants'
-  },
-  addTenant: { url: '/tenant-management/add-tenant', title: 'Adding Tenant...' }
+  }
 };
 
 export const defaultCategoryId = '_UnassignedCategory_';
