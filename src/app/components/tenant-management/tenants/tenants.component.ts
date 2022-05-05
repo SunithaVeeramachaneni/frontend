@@ -6,6 +6,8 @@ import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
 import {
+  Count,
+  DeactivateTenant,
   RowLevelActionEvent,
   TableColumn,
   TableEvent,
@@ -24,10 +26,10 @@ export class TenantsComponent implements OnInit {
   selectedProduct = 'allproducts';
   tenantsOnLoad$: Observable<Tenant[]>;
   tenantsOnScroll$: Observable<Tenant[]>;
-  tenantDeactivate$: BehaviorSubject<Tenant> = new BehaviorSubject<Tenant>(
-    {} as Tenant
-  );
+  deactivateTenant$: BehaviorSubject<DeactivateTenant> =
+    new BehaviorSubject<DeactivateTenant>({} as DeactivateTenant);
   tenantsData$: Observable<TenantData>;
+  tenantsCount$: Observable<Count>;
   columns = [
     {
       name: 'tenantName',
@@ -100,9 +102,9 @@ export class TenantsComponent implements OnInit {
     this.tenantsData$ = combineLatest([
       this.tenantsOnLoad$,
       this.tenantsOnScroll$,
-      this.tenantDeactivate$
+      this.deactivateTenant$
     ]).pipe(
-      map(([tenants, scrollData, deactiveTenant]) => {
+      map(([tenants, scrollData, { deactivate, id }]) => {
         const initial: TenantData = {
           data: tenants
         };
@@ -112,9 +114,14 @@ export class TenantsComponent implements OnInit {
               this.columns,
               this.configOptions
             );
-          console.log(this.configOptions);
         } else {
-          initial.data = initial.data.concat(scrollData);
+          this.deactivate = deactivate;
+          if (this.deactivate) {
+            initial.data = initial.data.filter((tenant) => tenant.id !== id);
+            this.deactivate = false;
+          } else {
+            initial.data = initial.data.concat(scrollData);
+          }
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
@@ -122,12 +129,31 @@ export class TenantsComponent implements OnInit {
         return initial;
       })
     );
+
+    this.tenantsCount$ = combineLatest([
+      this.getTenantsCount(),
+      this.deactivateTenant$
+    ]).pipe(
+      map(([tenantsCount, { deactivate }]) => {
+        if (deactivate) {
+          tenantsCount.count = tenantsCount.count - 1;
+        }
+        return tenantsCount;
+      })
+    );
   }
 
   getTenants = () =>
     this.tenantService.getTenants$({
       skip: this.skip,
-      limit: this.limit
+      limit: this.limit,
+      isActive: true
+      // searchKey: this.searchValue
+    });
+
+  getTenantsCount = () =>
+    this.tenantService.getTenantsCount$({
+      isActive: true
       // searchKey: this.searchValue
     });
 

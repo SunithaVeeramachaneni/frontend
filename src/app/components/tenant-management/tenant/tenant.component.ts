@@ -28,16 +28,44 @@ export class TenantComponent implements OnInit {
   ngOnInit(): void {
     this.tenantForm = this.fb.group({
       tenantId: ['', [Validators.required, Validators.maxLength(100)]],
-      tenantName: ['', [Validators.required, Validators.maxLength(100)]],
+      tenantName: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100)
+        ]
+      ],
       tenantIdp: ['', [Validators.required]],
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
       authority: ['', [Validators.required, Validators.maxLength(255)]],
       redirectUri: ['', [Validators.required, Validators.maxLength(100)]],
       tenantDomainName: ['', [Validators.required, Validators.maxLength(100)]],
       tenantAdmin: this.fb.group({
-        firstName: ['', [Validators.required, , Validators.maxLength(100)]],
-        lastName: ['', [Validators.required, Validators.maxLength(100)]],
-        title: ['', [Validators.required, Validators.maxLength(100)]],
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100)
+          ]
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100)
+          ]
+        ],
+        title: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100)
+          ]
+        ],
         email: [
           '',
           [Validators.required, Validators.maxLength(100), Validators.email]
@@ -51,27 +79,27 @@ export class TenantComponent implements OnInit {
         node: this.buildProtectedResources()
       }),
       rdbms: this.fb.group({
-        host: ['', [Validators.required]],
-        port: ['', [Validators.required]],
-        user: ['', [Validators.required]],
-        password: ['', [Validators.required]],
-        database: ['', [Validators.required]],
+        host: ['', [Validators.required, Validators.maxLength(100)]],
+        port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
+        user: ['', [Validators.required, Validators.maxLength(100)]],
+        password: ['', [Validators.required, Validators.maxLength(100)]],
+        database: ['', [Validators.required, Validators.maxLength(100)]],
         dialect: ['', [Validators.required]]
       }),
       nosql: this.fb.group({
-        host: ['', [Validators.required]],
-        port: ['', [Validators.required]],
-        user: ['', [Validators.required]],
-        password: ['', [Validators.required]],
-        database: ['', [Validators.required]]
+        host: ['', [Validators.required, Validators.maxLength(100)]],
+        port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
+        user: ['', [Validators.required, Validators.maxLength(100)]],
+        password: ['', [Validators.required, Validators.maxLength(100)]],
+        database: ['', [Validators.required, Validators.maxLength(100)]]
       }),
       licenseInfo: this.fb.group({
         start: ['', [Validators.required]],
         end: ['', [Validators.required]],
-        count: ['', [Validators.required]]
+        count: ['', [Validators.required, Validators.pattern('^[0-9]*$')]]
       }),
-      products: this.fb.array([], [Validators.required]),
-      modules: this.fb.array([], [Validators.required]),
+      products: [[], [Validators.required]],
+      modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
       logLevel: ['', [Validators.required]]
     });
@@ -85,32 +113,32 @@ export class TenantComponent implements OnInit {
 
   buildErps(): FormGroup {
     return this.fb.group({
-      baseUrl: ['', [Validators.required]],
-      oauth2Url: ['', [Validators.required]],
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      grantType: ['', [Validators.required]],
-      clientId: ['', [Validators.required]],
-      scope: ['', [Validators.required]],
+      baseUrl: ['', [Validators.required, Validators.maxLength(255)]],
+      oauth2Url: ['', [Validators.required, Validators.maxLength(255)]],
+      username: ['', [Validators.required, Validators.maxLength(100)]],
+      password: ['', [Validators.required, Validators.maxLength(100)]],
+      grantType: ['', [Validators.required, Validators.maxLength(100)]],
+      clientId: ['', [Validators.required, Validators.maxLength(100)]],
+      scope: ['', [Validators.required, Validators.maxLength(100)]],
       saml: this.fb.group({
-        oauth2Url: ['', [Validators.required]],
-        grantType: ['', [Validators.required]],
-        clientSecret: ['', [Validators.required]],
-        resource: ['', [Validators.required]],
-        tokenUse: ['', [Validators.required]],
-        tokenType: ['', [Validators.required]]
+        oauth2Url: ['', [Validators.required, Validators.maxLength(255)]],
+        grantType: ['', [Validators.required, Validators.maxLength(100)]],
+        clientSecret: ['', [Validators.required, Validators.maxLength(100)]],
+        resource: ['', [Validators.required, Validators.maxLength(100)]],
+        tokenUse: ['', [Validators.required, Validators.maxLength(100)]],
+        tokenType: ['', [Validators.required, Validators.maxLength(100)]]
       })
     });
   }
 
   buildProtectedResources(): FormGroup {
     return this.fb.group({
-      identityMetadata: ['', [Validators.required]],
-      issuer: ['', [Validators.required]],
-      clientId: ['', [Validators.required]],
-      audience: ['', [Validators.required]],
-      scope: ['', [Validators.required]],
-      urls: this.fb.array([], [Validators.required])
+      identityMetadata: ['', [Validators.required, Validators.maxLength(255)]],
+      issuer: ['', [Validators.required, Validators.maxLength(100)]],
+      clientId: ['', [Validators.required, Validators.maxLength(100)]],
+      audience: ['', [Validators.required, Validators.maxLength(100)]],
+      scope: ['', [Validators.required, Validators.maxLength(100)]],
+      urls: this.fb.array([], [Validators.required, Validators.maxLength(100)])
     });
   }
 

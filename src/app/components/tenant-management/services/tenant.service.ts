@@ -37,11 +37,15 @@ export class TenantService {
       )
       .pipe(map(() => this.formatTenants(mockTenants)));
 
-  getTenantsCount$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Count> =>
+  getTenantsCount$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Count> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `catalogs/count`,
-      info
+      info,
+      queryParams
     );
 
   updateConfigOptionsFromColumns(

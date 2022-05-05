@@ -22,9 +22,20 @@
       translate="addTenantBtn"
       [routerLink]="['/tenant-management/create']"
     ></button>
-    <span class="count-of-tenants">
-      <span class="tenant-count">0</span>
-      <span class="tenant-text" translate="tenants"></span>
+    <span
+      class="count-of-tenants"
+      *ngIf="tenantsCount$ | async as tenantsCount; else loadingTenantsCount"
+    >
+      <span class="tenant-count">{{ tenantsCount.count }}</span>
+      <span class="tenant-text">{{
+        'tenantsPlural'
+          | translate
+            : {
+                count: tenantsCount.count
+                  ? (tenantsCount.count | numberToKM)
+                  : 0
+              }
+      }}</span>
     </span>
   </div>
   <div
@@ -41,3 +52,4 @@
 </div>
 
 <ng-template #loadingTenants>Loading Tenants...</ng-template>
+<ng-template #loadingTenantsCount>Loading Tenants Count...</ng-template>

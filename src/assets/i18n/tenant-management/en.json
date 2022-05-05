@@ -26,5 +26,6 @@
   "clientSecret": "Client Secret",
   "resource": "Resource",
   "tokenUse": "Token Use",
-  "tokenType": "Token Type"
+  "tokenType": "Token Type",
+  "tenantsPlural": "{count, plural, =0{Tenant} one{Tenant} other{Tenants}}"
 }

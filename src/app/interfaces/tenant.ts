@@ -76,3 +76,8 @@ export interface LicenseInfo {
 export interface TenantData {
   data: Tenant[];
 }
+
+export interface DeactivateTenant {
+  deactivate: boolean;
+  id: number;
+}
