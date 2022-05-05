@@ -663,16 +663,32 @@
               </mat-error>
             </p>
 
-            <p class="m-0">
-              <ng-template formArrayName="urls">
-                <div *ngFor="let obj of this.urls.controls; let i = index">
+            <!-- <div class="m-0">
+              <div formArrayName="urls" class="m-t-minus-25">
+                <mat-icon
+                  (click)="addUrls()"
+                  class="add-url-icon"
+                >
+                  add
+                </mat-icon>
+                <div
+                  *ngFor="let url of urls().controls; let i = index"
+                  [formGroupName]="i"
+                >
                   <mat-form-field appearance="outline" class="width-100">
                     <mat-label>URLs</mat-label>
                     <input matInput placeholder="URLs" formControlName="urls" />
+                    <mat-icon
+                      matSuffix
+                      (click)="removeUrl(i)"
+                      *ngIf="urls().length !== 1"
+                    >
+                      delete
+                    </mat-icon>
                   </mat-form-field>
                 </div>
-              </ng-template>
-            </p>
+              </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -943,7 +959,7 @@
             </mat-error>
           </p>
         </div>
-        <p class="m-0" formArrayName="products">
+        <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label>Products</mat-label>
             <mat-select formControlName="products" multiple>
@@ -952,16 +968,9 @@
               }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- <mat-error
-            *ngIf="productsList.errors?.required && productsList.touched"
-          >
-            {{
-              'fieldRequired' | translate: { name: 'products' | translate }
-            }}
-          </mat-error> -->
         </p>
 
-        <p class="m-0" formArrayName="modules">
+        <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label>Modules</mat-label>
             <mat-select formControlName="modules" multiple>
@@ -970,16 +979,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- <mat-error
-            *ngIf="
-              tenantForm.get('modules').errors?.required &&
-              tenantForm.get('modules').touched
-            "
-          >
-            {{
-              'fieldRequired' | translate: { name: 'modules' | translate }
-            }}
-          </mat-error> -->
         </p>
 
         <p class="m-0">

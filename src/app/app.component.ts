@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
-      image: 'assets/sidebar-icons/tenant-management.svg',
+      image: 'assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
       subPages: [{ title: inActiveTenants.title, url: inActiveTenants.url }],
       disable: false

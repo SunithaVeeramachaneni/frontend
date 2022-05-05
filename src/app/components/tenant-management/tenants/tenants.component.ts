@@ -23,7 +23,8 @@ import { TenantService } from '../services/tenant.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantsComponent implements OnInit {
-  selectedProduct = 'allproducts';
+  selectedProduct = ['All Products'];
+  products = ['All Products', 'MWorkOrder', 'MInventory'];
   tenantsOnLoad$: Observable<Tenant[]>;
   tenantsOnScroll$: Observable<Tenant[]>;
   deactivateTenant$: BehaviorSubject<DeactivateTenant> =
@@ -75,7 +76,7 @@ export class TenantsComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 173px)',
+    tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: []
   };
   dataSource: MatTableDataSource<any>;

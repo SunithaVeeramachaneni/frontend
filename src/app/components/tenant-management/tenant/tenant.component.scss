@@ -1,3 +1,7 @@
+.m-t-minus-25 {
+  margin-top: -25px;
+}
+
 .main-tenant-container {
   background-color: #ffffff;
   margin: 14px;
@@ -100,4 +104,11 @@
   ::ng-deep .mat-select-arrow {
     margin-top: 10px;
   }
+}
+
+.add-url-icon {
+  float: right;
+  position: relative;
+  top: 35px;
+  left: 30px;
 }
