@@ -39,10 +39,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
   tenantForm: FormGroup;
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = ['ABC', 'DEF'];
-  validationErrors$: Observable<{
-    [key: string]: { name: string; length: number };
-  }>;
+  validationErrors$: Observable<any>;
   private genericValidator: GenericValidator;
+
+  get sapUrls(): FormArray {
+    return this.tenantForm.get('protectedResources.sap.urls') as FormArray;
+  }
+
+  get nodeUrls(): FormArray {
+    return this.tenantForm.get('protectedResources.node.urls') as FormArray;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -192,8 +198,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
   }
 
-  get urls(): FormArray {
-    return this.tenantForm.get('protectedResources.sap.urls') as FormArray;
+  addUrl(type: string): void {
+    if (type === 'sap') {
+      this.sapUrls.push(new FormControl());
+    } else {
+      this.nodeUrls.push(new FormControl());
+    }
+  }
+
+  deleteUrl(index: number, type: string): void {
+    if (type === 'sap') {
+      this.sapUrls.removeAt(index);
+      this.sapUrls.markAsDirty();
+    } else {
+      this.nodeUrls.removeAt(index);
+      this.nodeUrls.markAsDirty();
+    }
   }
 
   buttonActionsInHeader(noOfSteps) {
@@ -246,5 +266,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   get f() {
     return this.tenantForm.controls;
+  }
+
+  saveTenant() {
+    if (this.tenantForm.valid && this.tenantForm.dirty) {
+      console.log(this.tenantForm.value);
+    }
   }
 }

@@ -1,4 +1,8 @@
-<form class="main-tenant-container" [formGroup]="tenantForm">
+<form
+  class="main-tenant-container"
+  [formGroup]="tenantForm"
+  (ngSubmit)="saveTenant()"
+>
   <div class="tenant-header">
     <span class="adding-tenant-text">Adding Tenant...</span>
     <button
@@ -13,6 +17,7 @@
       translate="saveBtn"
       class="save-btn"
       *ngIf="this.selectedID.value === 4"
+      [disabled]="tenantForm.invalid || tenantForm.pristine"
     ></button>
     <button mat-raised-button translate="cancelBtn" class="cancel-btn"></button>
   </div>
@@ -66,7 +71,7 @@
   <div class="dis-flex scroll-content">
     <div class="width-30"></div>
     <div class="custom-mat-form-field-white-color width-40">
-      <div *ngIf="selectedID.value === 0">
+      <div [hidden]="selectedID.value !== 0">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label translate>tenantId</mat-label>
@@ -277,7 +282,7 @@
         </div>
       </div>
 
-      <div *ngIf="selectedID.value === 1">
+      <div [hidden]="selectedID.value !== 1">
         <div formGroupName="erps">
           <div formGroupName="sap">
             <p class="sub-headings">SAP Details</p>
@@ -566,7 +571,7 @@
         </div>
       </div>
 
-      <div *ngIf="selectedID.value === 2">
+      <div [hidden]="selectedID.value !== 2">
         <div formGroupName="protectedResources">
           <div formGroupName="sap">
             <p class="sub-headings">SAP Details</p>
@@ -673,16 +678,13 @@
               </mat-error>
             </p>
 
-            <!-- <div class="m-0">
+            <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
-                <mat-icon
-                  (click)="addUrls()"
-                  class="add-url-icon"
-                >
+                <mat-icon (click)="addUrl('sap')" class="add-url-icon">
                   add
                 </mat-icon>
                 <div
-                  *ngFor="let url of urls().controls; let i = index"
+                  *ngFor="let url of sapUrls.controls; let i = index"
                   [formGroupName]="i"
                 >
                   <mat-form-field appearance="outline" class="width-100">
@@ -690,20 +692,20 @@
                     <input matInput placeholder="URLs" formControlName="urls" />
                     <mat-icon
                       matSuffix
-                      (click)="removeUrl(i)"
-                      *ngIf="urls().length !== 1"
+                      (click)="deleteUrl(i, 'sap')"
+                      *ngIf="sapUrls.length !== 1"
                     >
                       delete
                     </mat-icon>
                   </mat-form-field>
                 </div>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="selectedID.value === 3">
+      <div [hidden]="selectedID.value !== 3">
         <div formGroupName="rdbms">
           <p class="sub-headings">RDBMS</p>
           <p class="m-0">
@@ -913,7 +915,7 @@
         </div>
       </div>
 
-      <div *ngIf="selectedID.value === 4">
+      <div [hidden]="selectedID.value !== 4">
         <div formGroupName="licenseInfo">
           <p class="sub-headings">License Info</p>
           <p class="m-0">
