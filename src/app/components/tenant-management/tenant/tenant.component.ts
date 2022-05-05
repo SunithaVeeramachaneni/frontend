@@ -15,10 +15,11 @@ import {
   Validators
 } from '@angular/forms';
 import { fromEvent, merge, Observable } from 'rxjs';
-import { debounceTime, map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
   selector: 'app-tenant',
@@ -38,12 +39,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
   tenantForm: FormGroup;
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = ['ABC', 'DEF'];
-  displayMessage$: Observable<{
+  validationErrors$: Observable<{
     [key: string]: { name: string; length: number };
   }>;
   private genericValidator: GenericValidator;
 
-  constructor(private fb: FormBuilder, private commonService: CommonService) {}
+  constructor(
+    private fb: FormBuilder,
+    private commonService: CommonService,
+    private breadcrumbService: BreadcrumbService
+  ) {}
 
   ngOnInit(): void {
     this.genericValidator = new GenericValidator();
@@ -130,6 +135,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ? this.tenantForm.get('tenantName').value
         : `Addding Tenant...`
     );
+
+    this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
+      this.breadcrumbService.set('@tenantName', { label: tenantName });
+      this.commonService.setHeaderTitle(tenantName);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -141,12 +151,12 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     // Merge the blur event observable with the valueChanges observable
     // so we only need to subscribe once.
-    this.displayMessage$ = merge(
+    this.validationErrors$ = merge(
       this.tenantForm.valueChanges,
       ...controlBlurs
     ).pipe(
-      debounceTime(100),
-      map(() => this.genericValidator.processMessages(this.tenantForm)),
+      map(() => this.genericValidator.processValidations(this.tenantForm)),
+      tap(console.log),
       shareReplay(1)
     );
   }

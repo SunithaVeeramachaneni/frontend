@@ -16,14 +16,14 @@ const routes: Routes = [
         data: {
           breadcrumb: {
             label: 'Adding Tenant...',
-            alias: 'tenant'
+            alias: 'tenantName'
           }
         }
       },
       {
         path: 'edit/:id',
         component: TenantComponent,
-        data: { breadcrumb: { label: 'Edit Tenant', alias: 'tenant' } }
+        data: { breadcrumb: { label: 'Edit Tenant', alias: 'tenantName' } }
       },
       {
         path: 'inactive-tenants',

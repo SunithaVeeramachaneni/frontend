@@ -7,22 +7,22 @@ export class GenericValidator {
   constructor() {}
 
   // Processes each control within a FormGroup
-  processMessages(container: FormGroup): {
+  processValidations(container: FormGroup): {
     [key: string]: { name: string; length: number };
   } {
-    const messages = {};
+    const validations = {};
     for (const controlKey in container.controls) {
       if (container.controls.hasOwnProperty(controlKey)) {
         const c = container.controls[controlKey];
         // If it is a FormGroup, process its child controls.
         if (c instanceof FormGroup) {
-          const childMessages = this.processMessages(c);
-          Object.assign(messages, childMessages);
+          const childValidations = this.processValidations(c);
+          Object.assign(validations, { [controlKey]: childValidations });
         } else {
-          messages[controlKey] = {};
+          validations[controlKey] = {};
           if (c.touched && c.errors) {
             Object.keys(c.errors).map((messageKey) => {
-              messages[controlKey] = {
+              validations[controlKey] = {
                 name: messageKey,
                 length: c.errors[messageKey]?.requiredLength
               };
@@ -31,6 +31,6 @@ export class GenericValidator {
         }
       }
     }
-    return messages;
+    return validations;
   }
 }

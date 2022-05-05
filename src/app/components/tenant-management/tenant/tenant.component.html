@@ -76,13 +76,13 @@
               formControlName="tenantId"
             />
           </mat-form-field>
-          <mat-error *ngIf="this.displayMessage$ | async as displayMessage">
+          <mat-error *ngIf="validationErrors$ | async as errors">
             {{
-              displayMessage.tenantId.name
+              errors.tenantId.name
                 | translate
                   : {
                       name: 'tenantId' | translate,
-                      length: displayMessage.tenantId.length
+                      length: errors.tenantId.length
                     }
             }}
           </mat-error>
@@ -97,13 +97,13 @@
               formControlName="tenantName"
             />
           </mat-form-field>
-          <mat-error *ngIf="this.displayMessage$ | async as displayMessage">
+          <mat-error *ngIf="validationErrors$ | async as errors">
             {{
-              displayMessage.tenantName.name
+              errors.tenantName.name
                 | translate
                   : {
                       name: 'tenantName' | translate,
-                      length: displayMessage.tenantName.length
+                      length: errors.tenantName.length
                     }
             }}
           </mat-error>
