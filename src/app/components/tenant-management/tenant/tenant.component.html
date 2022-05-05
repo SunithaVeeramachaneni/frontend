@@ -102,11 +102,6 @@
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label>Tenant IDP</mat-label>
-            <!-- <input
-              matInput
-              placeholder="Tenant IDP"
-              formControlName="tenantIdp"
-            /> -->
             <mat-select formControlName="tenantIdp">
               <mat-option value="azure">Azure</mat-option>
             </mat-select>
@@ -559,6 +554,467 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div *ngIf="selectedID.value === 2">
+        <div formGroupName="protectedResources">
+          <div formGroupName="sap">
+            <p class="sub-headings">SAP Details</p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Identity Metadata</mat-label>
+                <input
+                  matInput
+                  placeholder="Identity Metadata"
+                  formControlName="identityMetadata"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.identityMetadata')
+                    .errors?.required &&
+                  tenantForm.get('protectedResources.sap.identityMetadata')
+                    .touched
+                "
+              >
+                {{
+                  'fieldRequired'
+                    | translate: { name: 'identityMetadata' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Issuer</mat-label>
+                <input matInput placeholder="Issuer" formControlName="issuer" />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.issuer').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.issuer').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'issuer' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Client ID</mat-label>
+                <input
+                  matInput
+                  placeholder="Client ID"
+                  formControlName="clientId"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.clientId').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.clientId').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'clientId' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Audience</mat-label>
+                <input
+                  matInput
+                  placeholder="Audience"
+                  formControlName="audience"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.audience').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.audience').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'audience' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Scope</mat-label>
+                <input matInput placeholder="Scope" formControlName="scope" />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.scope').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.scope').touched
+                "
+              >
+                {{ 'fieldRequired' | translate: { name: 'scope' | translate } }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <ng-template formArrayName="urls">
+                <div *ngFor="let obj of this.urls.controls; let i = index">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>URLs</mat-label>
+                    <input matInput placeholder="URLs" formControlName="urls" />
+                  </mat-form-field>
+                </div>
+              </ng-template>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="selectedID.value === 3">
+        <div formGroupName="rdbms">
+          <p class="sub-headings">RDBMS</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Host</mat-label>
+              <input matInput placeholder="Host" formControlName="host" />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.host').errors?.required &&
+                tenantForm.get('rdbms.host').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'host' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Port</mat-label>
+              <input
+                matInput
+                placeholder="Port"
+                formControlName="port"
+                type="number"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.port').errors?.required &&
+                tenantForm.get('rdbms.port').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'port' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>User</mat-label>
+              <input matInput placeholder="User" formControlName="user" />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.user').errors?.required &&
+                tenantForm.get('rdbms.user').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'user' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                placeholder="Password"
+                type="password"
+                formControlName="password"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.password').errors?.required &&
+                tenantForm.get('rdbms.password').touched
+              "
+            >
+              {{
+                'fieldRequired' | translate: { name: 'password' | translate }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Database</mat-label>
+              <input
+                matInput
+                placeholder="Database"
+                formControlName="database"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.database').errors?.required &&
+                tenantForm.get('rdbms.database').touched
+              "
+            >
+              {{
+                'fieldRequired' | translate: { name: 'database' | translate }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Dialect</mat-label>
+              <mat-select formControlName="dialect">
+                <mat-option value="dialect">dialect</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.dialect').errors?.required &&
+                tenantForm.get('rdbms.dialect').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'dialect' | translate } }}
+            </mat-error>
+          </p>
+        </div>
+        <div formGroupName="nosql">
+          <p class="sub-headings">NoSQL</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Host</mat-label>
+              <input matInput placeholder="Host" formControlName="host" />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.host').errors?.required &&
+                tenantForm.get('nosql.host').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'host' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Port</mat-label>
+              <input
+                matInput
+                placeholder="Port"
+                formControlName="port"
+                type="number"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.port').errors?.required &&
+                tenantForm.get('nosql.port').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'port' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>User</mat-label>
+              <input matInput placeholder="User" formControlName="user" />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.user').errors?.required &&
+                tenantForm.get('nosql.user').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'user' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                placeholder="Password"
+                type="password"
+                formControlName="password"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.password').errors?.required &&
+                tenantForm.get('nosql.password').touched
+              "
+            >
+              {{
+                'fieldRequired' | translate: { name: 'password' | translate }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>Database</mat-label>
+              <input
+                matInput
+                placeholder="Database"
+                formControlName="database"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.database').errors?.required &&
+                tenantForm.get('nosql.database').touched
+              "
+            >
+              {{
+                'fieldRequired' | translate: { name: 'database' | translate }
+              }}
+            </mat-error>
+          </p>
+        </div>
+      </div>
+
+      <div *ngIf="selectedID.value === 4">
+        <div formGroupName="licenseInfo">
+          <p class="sub-headings">License Info</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>License Start</mat-label>
+              <input
+                matInput
+                placeholder="License Start"
+                formControlName="start"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('licenseInfo.start').errors?.required &&
+                tenantForm.get('licenseInfo.start').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'start' | translate } }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>License End</mat-label>
+              <input matInput placeholder="License End" formControlName="end" />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('licenseInfo.end').errors?.required &&
+                tenantForm.get('licenseInfo.end').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'end' | translate } }}
+            </mat-error>
+          </p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label>License Count</mat-label>
+              <input
+                matInput
+                placeholder="License Count"
+                type="number"
+                formControlName="count"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('licenseInfo.count').errors?.required &&
+                tenantForm.get('licenseInfo.count').touched
+              "
+            >
+              {{ 'fieldRequired' | translate: { name: 'count' | translate } }}
+            </mat-error>
+          </p>
+        </div>
+        <p class="m-0" formArrayName="products">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Products</mat-label>
+            <mat-select formControlName="products" multiple>
+              <mat-option *ngFor="let product of products" [value]="product">{{
+                product
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- <mat-error
+            *ngIf="productsList.errors?.required && productsList.touched"
+          >
+            {{
+              'fieldRequired' | translate: { name: 'products' | translate }
+            }}
+          </mat-error> -->
+        </p>
+
+        <p class="m-0" formArrayName="modules">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Modules</mat-label>
+            <mat-select formControlName="modules" multiple>
+              <mat-option *ngFor="let module of modules" [value]="module">
+                {{ module }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- <mat-error
+            *ngIf="
+              tenantForm.get('modules').errors?.required &&
+              tenantForm.get('modules').touched
+            "
+          >
+            {{
+              'fieldRequired' | translate: { name: 'modules' | translate }
+            }}
+          </mat-error> -->
+        </p>
+
+        <p class="m-0">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Log DB Type</mat-label>
+            <mat-select formControlName="logDBType">
+              <mat-option value="logDBType"> logDBType </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-error
+            *ngIf="
+              tenantForm.get('logDBType').errors?.required &&
+              tenantForm.get('logDBType').touched
+            "
+          >
+            {{ 'fieldRequired' | translate: { name: 'logDBType' | translate } }}
+          </mat-error>
+        </p>
+
+        <p class="m-0">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label>Log Level</mat-label>
+            <mat-select formControlName="logLevel">
+              <mat-option value="logLevel"> logLevel </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-error
+            *ngIf="
+              tenantForm.get('logLevel').errors?.required &&
+              tenantForm.get('logLevel').touched
+            "
+          >
+            {{ 'fieldRequired' | translate: { name: 'logLevel' | translate } }}
+          </mat-error>
+        </p>
       </div>
     </div>
 

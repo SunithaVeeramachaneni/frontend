@@ -1,5 +1,6 @@
 {
   "tenants": "Tenants",
+  "tenantsPlural": "{count, plural, =0{Tenant} one{Tenant} other{Tenants}}",
   "addTenantBtn": "Add Tenant",
   "cancelBtn": "Cancel",
   "nextBtn": "Next",
@@ -27,5 +28,20 @@
   "resource": "Resource",
   "tokenUse": "Token Use",
   "tokenType": "Token Type",
-  "tenantsPlural": "{count, plural, =0{Tenant} one{Tenant} other{Tenants}}"
+  "identityMetadata": "Identity Metadata",
+  "issuer": "Issuer",
+  "audience": "Audience",
+  "urls": "URLs",
+  "host": "Host",
+  "port": "Port",
+  "user": "User",
+  "database": "Database",
+  "dialect": "Dialect",
+  "start": "License Start",
+  "end": "License End",
+  "count": "License Count",
+  "products": "Products",
+  "modules": "Modules",
+  "logDBType": "Log DB Type",
+  "logLevel": "Log Level"
 }
