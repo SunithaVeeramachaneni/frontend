@@ -31,6 +31,7 @@
     justify-content: space-between;
     padding: 5px 20px;
     height: 50px;
+    // box-shadow: 0px 15px 10px -15px #111;
     .iconButton {
       background: none;
       padding: 0;
@@ -63,7 +64,31 @@
   .conversationBody {
     width: 100%;
     height: 275px;
+    overflow-y: auto;
   }
+  .conversationMessage {
+    // border: 1px solid #1552af2e;
+    width: 375px;
+    margin: 10px 0px;
+    display: flex;
+    align-items: center;
+    word-break: break-all;
+  }
+  .conv-user-icon {
+    background: none;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    width: 40px;
+    border-radius: 45px;
+    margin-right: 5px;
+    // margin-top: -15px;
+  }
+  .conv-user-icon .icon {
+    width: 40px;
+    border-radius: 45px;
+  }
+
   .chatBottom {
     .messageInputBar {
       display: flex;
@@ -153,4 +178,36 @@
 .horiz-dividerConv {
   margin: 0px 25px !important;
   width: 80% !important;
+}
+
+.timeAgoLabel {
+  margin-left: 5px;
+  color: gray;
+  font-size: 8pt;
+  background: #f0f0f0;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+.shadow {
+  width: 100px;
+  margin: 0 auto;
+  height: 100px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px;
+  &.top {
+    box-shadow: 0px -15px 10px -15px #111;
+  }
+  &.bottom {
+    box-shadow: 0px 15px 10px -15px #111;
+  }
+  &.left {
+    box-shadow: -15px 0px 10px -15px #111;
+  }
+  &.right {
+    box-shadow: 15px 0px 10px -15px #111;
+  }
 }

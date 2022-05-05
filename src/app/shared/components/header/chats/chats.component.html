@@ -14,35 +14,43 @@
     <div ngClass="userList">
       <mat-list>
         <mat-list-item
-          *ngFor="let user of activeUsers; let i = index"
-          (click)="setSelectedConversation(user)"
+          *ngFor="let conversation of conversations; let i = index"
+          (click)="setSelectedConversation(conversation)"
           class="conversationListItem"
           [ngClass]="{
-            active: targetUser.id === user.id
+            active: selectedConversation.id === conversation.id
           }"
         >
           <div class="icon-button" mat-list-icon>
-            <img class="icon" src="{{ user.profile.image_original }}" />
+            <img
+              class="icon"
+              src="{{ conversation.userInfo.profile.image_original }}"
+            />
           </div>
           <div mat-line>
-            <b>{{ user.real_name }}</b>
+            <b>{{ conversation.userInfo.real_name }}</b>
           </div>
-          <div mat-line>{{ user.profile?.title }}</div>
+          <div mat-line>{{ conversation.info.latest?.text }}</div>
           <mat-divider ngClass="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
     </div>
   </div>
-  <div ngClass="conversationContent">
+  <div ngClass="conversationContent" *ngIf="selectedConversation">
     <div ngClass="conversationHead">
       <div ngClass="displayFlex">
         <div ngClass="iconButton">
-          <img class="icon" src="{{ targetUser.profile.image_original }}" />
+          <img
+            class="icon"
+            src="{{ selectedConversation.userInfo.profile.image_original }}"
+          />
         </div>
         <div ngClass="userTitle">
-          <b ngClass="userName">{{ targetUser.real_name }}</b>
+          <b ngClass="userName">{{
+            selectedConversation.userInfo.real_name
+          }}</b>
           <div mat-line ngClass="userDescription">
-            {{ targetUser.profile?.title }}
+            {{ selectedConversation.userInfo.profile?.title }}
           </div>
         </div>
       </div>
@@ -56,7 +64,30 @@
       </div>
     </div>
     <mat-divider ngClass="horiz-divider"></mat-divider>
-    <div ngClass="conversationBody"></div>
+    <div ngClass="conversationBody" id="conversationHistory">
+      <div *ngIf="conversationHistory">
+        <div
+          *ngFor="let message of conversationHistory"
+          ngClass="conversationMessage"
+        >
+          <div class="conv-user-icon">
+            <img
+              class="icon"
+              src="{{ userMaps[message.user].profile.image_original }}"
+            />
+          </div>
+          <div ngClass="nameAndMessage">
+            <div>
+              <b>{{ userMaps[message.user].real_name }}</b>
+              <span ngClass="timeAgoLabel">{{
+                getLocalDateFromEpoch(message.ts)
+              }}</span>
+            </div>
+            <div mat-line>{{ message.text }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <mat-divider ngClass="horiz-divider"></mat-divider>
     <div ngClass="chatBottom">
       <div ngClass="messageInputBar">
@@ -72,7 +103,9 @@
           <div matSuffix>
             <button
               mat-icon-button
-              (click)="sendMessageToUser(targetUser, messageText)"
+              (click)="
+                sendMessageToUser(selectedConversation.userInfo, messageText)
+              "
             >
               <mat-icon color="primary">send</mat-icon>
             </button>
@@ -84,5 +117,8 @@
         </button>
       </div>
     </div>
+  </div>
+  <div ngClass="conversationContent" *ngIf="!selectedConversation">
+    <h6>Please select a conversation to send message</h6>
   </div>
 </div>
