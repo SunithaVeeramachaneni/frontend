@@ -1,4 +1,4 @@
-use cwp_tenant;
+use CWPCatalog;
 
 insert into catalogs (
   tenantId,
@@ -12,10 +12,12 @@ insert into catalogs (
   tenantDomainName,
   saml,
   sap,
-  createdOn
+  rdbms,
+  nosql,
+  createdAt
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
-  "innovapptive",
+  "Innovapptive",
   "azure",
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
   "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0",
@@ -44,10 +46,17 @@ insert into catalogs (
     "urls": [
       "http://localhost:8001/",
       "http://localhost:8004/",
+      "http://localhost:8007/",
       "http://cwpdev.innovapptive.com/wiapi/",
       "http://cwpdev.innovapptive.com/dashboardapi/",
+      "http://cwpdev.innovapptive.com/users",
+      "http://cwpdev.innovapptive.com/roles",
+      "http://cwpdev.innovapptive.com/permissions",
       "http://cwpqa.innovapptive.com/wiapi/",
-      "http://cwpqa.innovapptive.com/dashboardapi/"
+      "http://cwpqa.innovapptive.com/dashboardapi/",
+      "http://cwpqa.innovapptive.com/users",
+      "http://cwpqa.innovapptive.com/roles",
+      "http://cwpqa.innovapptive.com/permissions"
     ]
   }',
   "innovapptive.com",
@@ -55,7 +64,7 @@ insert into catalogs (
     "oauth2Url":
       "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
     "grantType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    "clientSecret": "L2y7Q~SiOSKHJmmgiokIaL8PFl~gA8kTDvR74",
+    "clientSecret": "",
     "resource": "https://NSB100",
     "tokenUse": "on_behalf_of",
     "tokenType": "urn:ietf:params:oauth:token-type:saml2"
@@ -64,10 +73,25 @@ insert into catalogs (
     "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
     "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
     "username": "cwpuser",
-    "password": "123456",
+    "password": "",
     "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
     "clientId": "cwpuser",
     "scope": "/INVCEC/RACE_SRV_0001"
+  }',
+  '{
+    "host": "mysql-local",
+    "port": 3306,
+    "user": "admin",
+    "password": "",
+    "database": "Innovapptive",
+    "dialect": "mysql"
+  }',
+  '{
+    "host": "mongo-local",
+    "port": 27017,
+    "user": "",
+    "password": "",
+    "database": "Innovapptive"
   }',
   "2022-04-11 10:00:00"
 );
@@ -75,7 +99,10 @@ insert into catalogs (
 insert into tenants (
   catalogId,
   products,
-  dbType,
+  logDBType,
   logLevel,
-  createdOn
-) values (1, '["dashboards", "mcc", "spcc", "wi"]', "nosql", "error", "2022-04-11 10:00:00");
+  createdAt
+) values (1, '["Dashboard", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]', "nosql", "error", "2022-04-11 10:00:00");
+
+
+CREATE DATABASE Innovapptive;

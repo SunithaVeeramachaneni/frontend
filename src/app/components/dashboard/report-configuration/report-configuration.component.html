@@ -8,7 +8,7 @@
       [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
     >
       <div class="report-name-col dis-flex">
-        <div class="width-85 m-t-14">
+        <div class="width-80 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
             <mat-icon
@@ -59,7 +59,7 @@
           </mat-form-field>
         </div>
 
-        <a (click)="favoriteToggle()" class="favorite-toggle width-10">
+        <a (click)="favoriteToggle()" class="favorite-toggle width-20">
           <span
             *ngIf="!reportDetails.report?.isFavorite"
             matTooltip="Mark as Favorite"
@@ -214,7 +214,6 @@
 
           <mat-button-toggle-group class="save-btn-toggle">
             <mat-button-toggle
-              *ngIf="reportDetails.report?.id"
               matTooltip="Save"
               class="save-button"
               [disabled]="

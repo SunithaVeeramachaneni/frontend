@@ -1,0 +1,58 @@
+<mat-accordion
+  *ngIf="permissions$ | async as permission; else loadingPermissionList"
+>
+  <mat-expansion-panel
+    (opened)="panelOpenState = true"
+    (closed)="panelOpenState = false"
+    hideToggle
+    class="permissions-expand"
+    *ngFor="let per of permission"
+  >
+    <mat-expansion-panel-header class="h-40">
+      <mat-panel-title>
+        <mat-checkbox
+          [disabled]="isEditable"
+          [checked]="per.checked"
+          color="primary"
+          [indeterminate]="fewComplete(per)"
+          (change)="setAllChecked($event.checked, per)"
+        >
+          {{ per.name }}
+        </mat-checkbox>
+        <span *ngIf="per.countOfChecked !== 0" class="permission-count">
+          {{ per.countOfChecked }} of 4
+        </span>
+
+        <mat-icon>arrow_drop_down</mat-icon>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ul class="m-0">
+      <li *ngFor="let subper of per.permissions">
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="subper.checked"
+          (ngModelChange)="updateAllChecked(per, subper)"
+          [ngModelOptions]="{ standalone: true }"
+        >
+          {{ subper.displayName }}
+        </mat-checkbox>
+      </li>
+    </ul>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<ng-template #loadingPermissionList>
+  <div class="p-10">
+    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <br />
+    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <br />
+    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+    <br />
+    <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

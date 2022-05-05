@@ -20,7 +20,10 @@ const {
   favorites,
   recents,
   published,
-  files
+  files,
+  userManagement,
+  rolesPermissions,
+  inActiveUsers
 } = routingUrls;
 
 @Component({
@@ -52,6 +55,17 @@ export class AppComponent implements OnInit, AfterViewChecked {
       image: '../assets/sidebar-icons/spare-parts-gray.svg',
       showSubMenu: false,
       subPages: null,
+      disable: false
+    },
+    {
+      title: userManagement.title,
+      url: userManagement.url,
+      image: '../assets/sidebar-icons/user-management.svg',
+      showSubMenu: false,
+      subPages: [
+        { title: rolesPermissions.title, url: rolesPermissions.url },
+        { title: inActiveUsers.title, url: inActiveUsers.url }
+      ],
       disable: false
     },
     {

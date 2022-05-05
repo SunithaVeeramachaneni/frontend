@@ -127,7 +127,7 @@ export class ReportsComponent implements OnInit {
       this.changeReportCount$
     ]).pipe(
       map(([reportsCount, changeCountAction]) => {
-        if (changeCountAction === 'reduce') {
+        if (changeCountAction === 'decrease') {
           reportsCount.count = reportsCount.count - 1;
         }
         if (changeCountAction === 'increase') {
@@ -196,6 +196,7 @@ export class ReportsComponent implements OnInit {
           );
           if (index > -1) {
             data.splice(index, 1);
+            this.skip -= 1;
             this.dataSource = new MatTableDataSource(data);
           }
         }
@@ -247,8 +248,8 @@ export class ReportsComponent implements OnInit {
       if (deleteReportID) {
         this.reportService.deleteReport$(deleteReportID).subscribe((resp) => {
           this.removeReport(deleteReportID);
+          this.changeReportCount$.next('decrease');
         });
-        this.changeReportCount$.next('reduce');
       }
     });
   }
@@ -338,12 +339,12 @@ export class ReportsComponent implements OnInit {
 
         this.reportService.copyReport$(report).subscribe((res) => {
           this.addReport(res);
+          this.changeReportCount$.next('increase');
           this.toast.show({
             text: 'Report copied successfully',
             type: 'success'
           });
         });
-        this.changeReportCount$.next('increase');
         break;
       default:
       // do nothing;

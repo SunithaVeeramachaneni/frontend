@@ -1,21 +1,26 @@
-# 1. Update `BACKEND_HOME` environment variable(backend source code home path) in .docker/env/local.env file from CWP HOME
+# 1. Update `BACKEND_HOME` environment variable(backend source code home path) & `SHARED_PACKAGES_HOME` environment variable(shared packages home path) in .docker/env/local.env file from CWP HOME
+# 2. Set NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD, ENCRYPTION_KEY, SAML_CLIENT_SECRET, SAP_PASSWORD & RDBMS_PASSWORD environment varibles in your commnand window.
 
 # In Windows
-# 2. Run `docker compose --env-file .\.docker\env\local.env build`
-# 3. Run `docker compose --env-file .\.docker\env\local.env up`
+# 3. Run `docker compose --env-file .\.docker\env\local.env build`
+# 4. Run `docker compose --env-file .\.docker\env\local.env up`
 
 # In Linux
-# 2. Run `docker compose --env-file .docker/env/local.env build`
-# 3. Run `docker compose --env-file .docker/env/local.env up`
+# 3. Run `docker compose --env-file .docker/env/local.env build`
+# 4. Run `docker compose --env-file .docker/env/local.env up`
 
 ################ OR ################
 
-# 1. Set BACKEND_HOME, NPM_AUTH_TOKEN, APP_ENV & DEPLOYMENT_ENV environment variable by running the following command in your commnand window (see the notes below if on Windows).
+# 1. Set BACKEND_HOME, SHARED_PACKAGES_HOME, APP_ENV, DEPLOYMENT_ENV, NPM_AUTH_TOKEN, MYSQL_PASSWORD, MYSQL_ROOT_PASSWORD & ENCRYPTION_KEY environment variable by running the following command in your commnand window (see the notes below if on Windows).
 
 #    export BACKEND_HOME='backend home path comes here...'
-#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export SHARED_PACKAGES_HOME='shared packages home path comes here...'
 #    export APP_ENV=development
 #    export DEPLOYMENT_ENV=development
+#    export NPM_AUTH_TOKEN='npm authentication token comes here...'
+#    export MYSQL_PASSWORD='MySQL password for database comes here...'
+#    export MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    export ENCRYPTION_KEY='Encryption key comes here...'
 
 #    NOTE: If you're on Windows use one of the following commands to create the environment variables.
 
@@ -23,9 +28,13 @@
 #    For Windows Powershell use `$env:APP_ENV = "value"`.
 
 #    $env:BACKEND_HOME="backend home path comes here..."
-#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:SHARED_PACKAGES_HOME="shared packages home path comes here..."
 #    $env:APP_ENV="development"
 #    $env:DEPLOYMENT_ENV="development"
+#    $env:NPM_AUTH_TOKEN="npm authentication token comes here..."
+#    $env:MYSQL_PASSWORD='MySQL password for database comes here...'
+#    $env:MYSQL_ROOT_PASSWORD='MySQL root password for databases comes here...'
+#    $env:ENCRYPTION_KEY='Encryption key comes here...'
 
 # 2. Run docker compose build
 # 3. Run docker compose up
@@ -63,6 +72,9 @@ services:
     volumes:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi
       - /usr/src/wi/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/wi/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
@@ -71,13 +83,14 @@ services:
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8001:8001'
     depends_on:
       - mongo
       - mysql
-      - redis
+      - redis-cluster
+      - authentication-factory
     networks:
       - app-network
 
@@ -119,11 +132,11 @@ services:
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8003:8003'
     depends_on:
-      - redis
+      - redis-cluster
       - mongo
     networks:
       - app-network
@@ -139,6 +152,9 @@ services:
     volumes:
       - ${BACKEND_HOME}/Reports:/usr/src/dashboard
       - /usr/src/dashboard/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/dashboard/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
@@ -146,13 +162,14 @@ services:
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
-      - REDIS_HOST_NAME=redis-local
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
     ports:
       - '8004:8004'
     depends_on:
       - mongo
       - mysql
-      - redis
+      - redis-cluster
+      - authentication-factory
     networks:
       - app-network
 
@@ -167,7 +184,6 @@ services:
     volumes:
       - ${BACKEND_HOME}/DataCollectorService:/usr/src/data-collector
       - /usr/src/data-collector/node_modules
-    command: sh -c "cd /usr/src/data-collector && npm i && nodemon src/server.js"
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
@@ -180,12 +196,84 @@ services:
     networks:
       - app-network
 
+  logging-service:
+    container_name: logging-service-local
+    image: logging-service-local
+    build:
+      context: ${BACKEND_HOME}/LoggingService
+      dockerfile: .docker/logging-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/LoggingService:/usr/src/logging-service
+      - /usr/src/logging-service/node_modules
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+    ports:
+      - '8006:8006'
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  user-service:
+    container_name: user-service-local
+    image: user-service-local
+    build:
+      context: ${BACKEND_HOME}/UserService
+      dockerfile: .docker/user-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/UserService:/usr/src/user-service
+      - /usr/src/user-service/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/user-service/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    ports:
+      - '8007:8007'
+    depends_on:
+      - mysql
+      - redis-cluster
+    networks:
+      - app-network
+
+  authentication-factory:
+    container_name: authentication-factory-local
+    image: authentication-factory-local
+    build:
+      context: ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory
+      dockerfile: dockerfile
+    volumes:
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
+    environment:
+      - NODE_ENV=${APP_ENV}
+    networks:
+      - app-network
+
   mongo:
     container_name: mongo-local
     image: mongo:latest
     #environment:
-    #  MONGO_INITDB_ROOT_USERNAME: root
-    #  MONGO_INITDB_ROOT_PASSWORD: password
+    #  - MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+    #  - MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodata:/data/db
       - ./.docker/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -194,35 +282,149 @@ services:
     networks:
       - app-network
 
-  redis:
-    container_name: redis-local
-    image: redis
-    ports:
-      - '6379:6379'
-    networks:
-      - app-network
-
   mysql:
     container_name: mysql-local
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: cwp_tenant
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: Innovation54321
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER_NAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SAML_CLIENT_SECRET: ${SAML_CLIENT_SECRET}
+      SAP_PASSWORD: ${SAP_PASSWORD}
+      RDBMS_PASSWORD: ${RDBMS_PASSWORD}
+      NOSQL_PASSWORD: ${NOSQL_PASSWORD}
     volumes:
       - mysqldata:/var/lib/mysql
       - ./.docker/mysql/1-tenants-schema.sql:/docker-entrypoint-initdb.d/1-tenants-schema.sql:ro
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
+      - ./.docker/mysql/3-tenants-data.sh:/docker-entrypoint-initdb.d/3-tenants-data.sh:ro
     ports:
       - '3306:3306'
+    networks:
+      - app-network
+
+  redis-cluster:
+    container_name: redis-cluster-local
+    image: redis:6.2-alpine
+    command: redis-cli --cluster create 172.20.0.31:6373 172.20.0.32:6374 172.20.0.33:6375 172.20.0.34:6376 172.20.0.35:6377 172.20.0.36:6378 --cluster-replicas 1 --cluster-yes
+    networks:
+      - app-network
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+
+  redis-node-1:
+    container_name: redis-node-1-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6373:6373'
+    volumes:
+      - redis-node-1-data:/var/lib/redis
+      - ./.docker/redis/redis-node-1.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.31
+
+  redis-node-2:
+    container_name: redis-node-2-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6374:6374'
+    volumes:
+      - redis-node-2-data:/var/lib/redis
+      - ./.docker/redis/redis-node-2.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.32
+
+  redis-node-3:
+    container_name: redis-node-3-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6375:6375'
+    volumes:
+      - redis-node-3-data:/var/lib/redis
+      - ./.docker/redis/redis-node-3.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.33
+
+  redis-node-4:
+    container_name: redis-node-4-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6376:6376'
+    volumes:
+      - redis-node-4-data:/var/lib/redis
+      - ./.docker/redis/redis-node-4.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.34
+
+  redis-node-5:
+    container_name: redis-node-5-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6377:6377'
+    volumes:
+      - redis-node-5-data:/var/lib/redis
+      - ./.docker/redis/redis-node-5.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.35
+
+  redis-node-6:
+    container_name: redis-node-6-local
+    image: redis:6.2-alpine
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6378:6378'
+    volumes:
+      - redis-node-6-data:/var/lib/redis
+      - ./.docker/redis/redis-node-6.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      app-network:
+        ipv4_address: 172.20.0.36
+
+  rabbitmq:
+    container_name: rabbitmq-local
+    image: rabbitmq:3.9-management-alpine
+    #environment:
+    #  - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+    #  - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq/
+    ports:
+      - '5672:5672'
+      - '15672:15672'
     networks:
       - app-network
 
 volumes:
   mongodata:
   mysqldata:
+  authentication-factory-modules:
+  redis-node-1-data:
+  redis-node-2-data:
+  redis-node-3-data:
+  redis-node-4-data:
+  redis-node-5-data:
+  redis-node-6-data:
+  rabbitmqdata:
 
 networks:
   app-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

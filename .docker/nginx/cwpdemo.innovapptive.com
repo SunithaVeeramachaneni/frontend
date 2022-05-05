@@ -14,8 +14,8 @@ server {
     server_name cwpdemo.innovapptive.com;
     client_max_body_size 100m;
     # root         /usr/share/nginx/html/cwp;
-    ssl_certificate     "/etc/nginx/cwp-keys/inv_21_22_SSLChain_key.pem";
-    ssl_certificate_key "/etc/nginx/cwp-keys/inv_21_22_SSLPrivate_key.pem";
+    ssl_certificate     "/etc/nginx/cwp-certs/ssl_certificate.pem";
+    ssl_certificate_key "/etc/nginx/cwp-certs/ssl_certificate_key.key";
     ssl_session_cache shared:SSL:1m;
     ssl_session_timeout  10m;
     ssl_ciphers HIGH:!aNULL:!MD5;
@@ -89,8 +89,22 @@ server {
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
-    location /datacollectorapi {
-        proxy_pass http://data-collector-staging:8005/datacollectorapi;
+    location = /datacollectorapi {
+        return 302 /datacollectorapi/;
+    }
+    location /datacollectorapi/ {
+        proxy_pass http://data-collector-staging:8005/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+    location = /userrolemanagementapi {
+        return 302 /userrolemanagementapi/;
+    }
+    location /userrolemanagementapi/ {
+        proxy_pass http://user-service-staging:8007/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
