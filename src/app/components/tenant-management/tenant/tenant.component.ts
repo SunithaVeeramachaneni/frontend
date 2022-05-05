@@ -194,15 +194,21 @@ export class TenantComponent implements OnInit, AfterViewInit {
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
       audience: ['', [Validators.required, Validators.maxLength(100)]],
       scope: ['', [Validators.required, Validators.maxLength(100)]],
-      urls: this.fb.array([], [Validators.required, Validators.maxLength(100)])
+      urls: this.fb.array([
+        new FormControl('', [Validators.required, Validators.maxLength(100)])
+      ])
     });
   }
 
   addUrl(type: string): void {
     if (type === 'sap') {
-      this.sapUrls.push(new FormControl());
+      this.sapUrls.push(
+        new FormControl('', [Validators.required, Validators.maxLength(100)])
+      );
     } else {
-      this.nodeUrls.push(new FormControl());
+      this.nodeUrls.push(
+        new FormControl('', [Validators.required, Validators.maxLength(100)])
+      );
     }
   }
 

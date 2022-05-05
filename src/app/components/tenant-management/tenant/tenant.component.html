@@ -683,13 +683,10 @@
                 <mat-icon (click)="addUrl('sap')" class="add-url-icon">
                   add
                 </mat-icon>
-                <div
-                  *ngFor="let url of sapUrls.controls; let i = index"
-                  [formGroupName]="i"
-                >
+                <div *ngFor="let url of sapUrls.controls; let i = index">
                   <mat-form-field appearance="outline" class="width-100">
                     <mat-label>URLs</mat-label>
-                    <input matInput placeholder="URLs" formControlName="urls" />
+                    <input matInput placeholder="URL" [formControlName]="i" />
                     <mat-icon
                       matSuffix
                       (click)="deleteUrl(i, 'sap')"
