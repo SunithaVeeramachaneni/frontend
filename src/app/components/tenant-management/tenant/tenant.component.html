@@ -699,6 +699,132 @@
               </div>
             </div>
           </div>
+          <div formGroupName="sap">
+            <p class="sub-headings">Node Details</p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Identity Metadata</mat-label>
+                <input
+                  matInput
+                  placeholder="Identity Metadata"
+                  formControlName="identityMetadata"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.identityMetadata')
+                    .errors?.required &&
+                  tenantForm.get('protectedResources.sap.identityMetadata')
+                    .touched
+                "
+              >
+                {{
+                  'fieldRequired'
+                    | translate: { name: 'identityMetadata' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Issuer</mat-label>
+                <input matInput placeholder="Issuer" formControlName="issuer" />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.issuer').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.issuer').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'issuer' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Client ID</mat-label>
+                <input
+                  matInput
+                  placeholder="Client ID"
+                  formControlName="clientId"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.clientId').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.clientId').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'clientId' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Audience</mat-label>
+                <input
+                  matInput
+                  placeholder="Audience"
+                  formControlName="audience"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.audience').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.audience').touched
+                "
+              >
+                {{
+                  'fieldRequired' | translate: { name: 'audience' | translate }
+                }}
+              </mat-error>
+            </p>
+
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label>Scope</mat-label>
+                <input matInput placeholder="Scope" formControlName="scope" />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  tenantForm.get('protectedResources.sap.scope').errors
+                    ?.required &&
+                  tenantForm.get('protectedResources.sap.scope').touched
+                "
+              >
+                {{ 'fieldRequired' | translate: { name: 'scope' | translate } }}
+              </mat-error>
+            </p>
+
+            <div class="m-0">
+              <div formArrayName="urls" class="m-t-minus-25">
+                <mat-icon (click)="addUrl('node')" class="add-url-icon">
+                  add
+                </mat-icon>
+                <div *ngFor="let url of nodeUrls.controls; let i = index">
+                  <mat-form-field appearance="outline" class="width-100">
+                    <mat-label>URLs</mat-label>
+                    <input matInput placeholder="URL" [formControlName]="i" />
+                    <mat-icon
+                      matSuffix
+                      (click)="deleteUrl(i, 'node')"
+                      *ngIf="nodeUrls.length !== 1"
+                    >
+                      delete
+                    </mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
