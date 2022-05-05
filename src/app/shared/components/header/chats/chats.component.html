@@ -13,7 +13,14 @@
     </div>
     <div ngClass="userList">
       <mat-list>
-        <mat-list-item *ngFor="let user of activeUsers; let i = index">
+        <mat-list-item
+          *ngFor="let user of activeUsers; let i = index"
+          (click)="setSelectedConversation(user)"
+          class="conversationListItem"
+          [ngClass]="{
+            active: targetUser.id === user.id
+          }"
+        >
           <div class="icon-button" mat-list-icon>
             <img class="icon" src="{{ user.profile.image_original }}" />
           </div>
@@ -21,7 +28,7 @@
             <b>{{ user.real_name }}</b>
           </div>
           <div mat-line>{{ user.profile?.title }}</div>
-          <mat-divider></mat-divider>
+          <mat-divider ngClass="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
     </div>
@@ -59,8 +66,17 @@
             matInput
             ngClass="messageInput"
             placeholder="Enter Message.."
+            autocomplete="off"
+            [(ngModel)]="messageText"
           />
-          <mat-icon matSuffix>photo_camera</mat-icon>
+          <div matSuffix>
+            <button
+              mat-icon-button
+              (click)="sendMessageToUser(targetUser, messageText)"
+            >
+              <mat-icon color="primary">send</mat-icon>
+            </button>
+          </div>
         </div>
 
         <button mat-mini-fab ngClass="audioRecord">

@@ -37,6 +37,7 @@
     "@ngx-translate/http-loader": "^6.0.0",
     "angular-auth-oidc-client": "^12.0.3",
     "angular-gridster2": "^13.1.1",
+    "axios": "^0.27.2",
     "bootstrap": "^5.1.3",
     "chart.js": "^3.7.0",
     "chartjs-plugin-datalabels": "^2.0.0",

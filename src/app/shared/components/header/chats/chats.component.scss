@@ -1,6 +1,20 @@
 .chatsBody {
   display: flex;
 }
+.active {
+  border-left: 5px solid #7dbef6;
+  cursor: pointer;
+  border-radius: 15px;
+  background: #b7b9bc2e;
+}
+.conversationListItem {
+  cursor: pointer;
+  border-radius: 15px;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
 .conversationContent {
   display: flex;
   width: 60%;
@@ -103,6 +117,7 @@
   .userList {
     height: 375px;
     overflow: auto;
+    overflow-x: hidden;
   }
 }
 .userIcon {
@@ -134,4 +149,8 @@
 }
 .horiz-divider {
   margin: 5px 25px;
+}
+.horiz-dividerConv {
+  margin: 0px 25px !important;
+  width: 80% !important;
 }

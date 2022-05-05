@@ -21,6 +21,13 @@
     overflow: auto;
   }
 }
+.peopleList {
+  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
 .userIcon {
   font-size: 50px !important;
   display: flex;

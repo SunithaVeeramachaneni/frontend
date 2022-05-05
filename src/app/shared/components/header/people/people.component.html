@@ -7,7 +7,11 @@
   </div>
   <div ngClass="userList">
     <mat-list>
-      <mat-list-item *ngFor="let user of activeUsers; let i = index">
+      <mat-list-item
+        *ngFor="let user of activeUsers; let i = index"
+        ngClass="peopleList"
+        (click)="onTextMessageClick(user)"
+      >
         <div class="icon-button" mat-list-icon>
           <img class="icon" src="{{ user.profile.image_original }}" />
         </div>
