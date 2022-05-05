@@ -1,13 +1,24 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChildren
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormControl,
+  FormControlName,
   FormGroup,
   Validators
 } from '@angular/forms';
+import { fromEvent, merge, Observable } from 'rxjs';
+import { debounceTime, map, shareReplay } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
 
 @Component({
   selector: 'app-tenant',
@@ -15,20 +26,27 @@ import { CommonService } from 'src/app/shared/services/common.service';
   styleUrls: ['./tenant.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TenantComponent implements OnInit {
+export class TenantComponent implements OnInit, AfterViewInit {
+  @ViewChildren(FormControlName, { read: ElementRef })
+  formInputElements: ElementRef[];
   readonly routingUrls = routingUrls;
 
-  public firstButton = true;
-  public lastButton = false;
-  public selectedID = new FormControl(0);
-  public noOfTabs = 5;
+  firstButton = true;
+  lastButton = false;
+  selectedID = new FormControl(0);
+  noOfTabs = 5;
   tenantForm: FormGroup;
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = ['ABC', 'DEF'];
+  displayMessage$: Observable<{
+    [key: string]: { name: string; length: number };
+  }>;
+  private genericValidator: GenericValidator;
 
   constructor(private fb: FormBuilder, private commonService: CommonService) {}
 
   ngOnInit(): void {
+    this.genericValidator = new GenericValidator();
     this.tenantForm = this.fb.group({
       tenantId: ['', [Validators.required, Validators.maxLength(100)]],
       tenantName: [
@@ -111,6 +129,25 @@ export class TenantComponent implements OnInit {
       this.tenantForm.get('tenantName').value
         ? this.tenantForm.get('tenantName').value
         : `Addding Tenant...`
+    );
+  }
+
+  ngAfterViewInit(): void {
+    // Watch for the blur event from any input element on the form.
+    // This is required because the valueChanges does not provide notification on blur
+    const controlBlurs: Observable<any>[] = this.formInputElements.map(
+      (formControl: ElementRef) => fromEvent(formControl.nativeElement, 'blur')
+    );
+
+    // Merge the blur event observable with the valueChanges observable
+    // so we only need to subscribe once.
+    this.displayMessage$ = merge(
+      this.tenantForm.valueChanges,
+      ...controlBlurs
+    ).pipe(
+      debounceTime(100),
+      map(() => this.genericValidator.processMessages(this.tenantForm)),
+      shareReplay(1)
     );
   }
 

@@ -34,7 +34,9 @@ insert into catalogs (
       "http://cwpdev.innovapptive.com/wiabapapi/",
       "http://cwpdev.innovapptive.com/mccspccabapapi/",
       "http://cwpqa.innovapptive.com/wiabapapi/",
-      "http://cwpqa.innovapptive.com/mccspccabapapi/"
+      "http://cwpqa.innovapptive.com/mccspccabapapi/",
+      "http://cwpdemo.innovapptive.com/wiabapapi/",
+      "http://cwpdemo.innovapptive.com/mccspccabapapi/"
     ]
   }',
   '{
@@ -56,7 +58,12 @@ insert into catalogs (
       "http://cwpqa.innovapptive.com/dashboardapi/",
       "http://cwpqa.innovapptive.com/users",
       "http://cwpqa.innovapptive.com/roles",
-      "http://cwpqa.innovapptive.com/permissions"
+      "http://cwpqa.innovapptive.com/permissions",
+      "http://cwpdemo.innovapptive.com/wiapi/",
+      "http://cwpdemo.innovapptive.com/dashboardapi/",
+      "http://cwpdemo.innovapptive.com/users",
+      "http://cwpdemo.innovapptive.com/roles",
+      "http://cwpdemo.innovapptive.com/permissions"
     ]
   }',
   "innovapptive.com",

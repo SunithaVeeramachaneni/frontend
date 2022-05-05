@@ -69,32 +69,42 @@
       <div *ngIf="selectedID.value === 0">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
-            <mat-label>Tenant ID</mat-label>
+            <mat-label translate>tenantId</mat-label>
             <input
               matInput
-              placeholder="Tenant ID"
+              [placeholder]="'tenantId' | translate"
               formControlName="tenantId"
             />
           </mat-form-field>
-          <mat-error *ngIf="f.tenantId.errors?.required && f.tenantId.touched">
-            {{ 'fieldRequired' | translate: { name: 'tenantId' | translate } }}
+          <mat-error *ngIf="this.displayMessage$ | async as displayMessage">
+            {{
+              displayMessage.tenantId.name
+                | translate
+                  : {
+                      name: 'tenantId' | translate,
+                      length: displayMessage.tenantId.length
+                    }
+            }}
           </mat-error>
         </p>
 
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
-            <mat-label>Tenant Name</mat-label>
+            <mat-label translate>tenantName</mat-label>
             <input
               matInput
-              placeholder="Tenant Name"
+              [placeholder]="'tenantName' | translate"
               formControlName="tenantName"
             />
           </mat-form-field>
-          <mat-error
-            *ngIf="f.tenantName.errors?.required && f.tenantName.touched"
-          >
+          <mat-error *ngIf="this.displayMessage$ | async as displayMessage">
             {{
-              'fieldRequired' | translate: { name: 'tenantName' | translate }
+              displayMessage.tenantName.name
+                | translate
+                  : {
+                      name: 'tenantName' | translate,
+                      length: displayMessage.tenantName.length
+                    }
             }}
           </mat-error>
         </p>
