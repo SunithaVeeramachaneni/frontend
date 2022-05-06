@@ -17,7 +17,6 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
-import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
@@ -33,15 +32,24 @@ import { TenantService } from '../services/tenant.service';
 export class TenantComponent implements OnInit, AfterViewInit {
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[];
-  readonly routingUrls = routingUrls;
-
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
   noOfTabs = 5;
   tenantForm: FormGroup;
   products = ['MWORKORDER', 'MINVENTORY'];
-  modules = ['ABC', 'DEF'];
+  modules = [
+    'Dashboard',
+    'Tenant Management',
+    'Maintenance Control Center',
+    'Spare Parts Control Center',
+    'User Management',
+    'Work Instructions Authoring'
+  ];
+  idps = ['azure'];
+  dialects = ['mysql'];
+  logDbTypes = ['rdbms', 'nosql'];
+  logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   validationErrors$: Observable<any>;
   private genericValidator: GenericValidator;
 
