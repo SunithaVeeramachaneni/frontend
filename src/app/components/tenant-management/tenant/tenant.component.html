@@ -4,7 +4,7 @@
   (ngSubmit)="saveTenant()"
 >
   <div class="tenant-header">
-    <span class="adding-tenant-text" translate>addingTenant</span>
+    <span class="adding-tenant-text">{{ tenantHeader }}</span>
     <button
       mat-raised-button
       translate="nextBtn"
@@ -128,17 +128,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.tenantIdp.name">
-              {{
-                errors.tenantIdp.name
-                  | translate
-                    : {
-                        name: 'tenantIdp' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error
+            *ngIf="
+              tenantForm.get('tenantIdp').errors?.required &&
+              tenantForm.get('tenantIdp').touched
+            "
+          >
+            {{ 'required' | translate: { name: 'tenantIdp' | translate } }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -307,10 +304,10 @@
 
           <p class="m-0">
             <mat-form-field appearance="outline" class="width-100">
-              <mat-label translate>email</mat-label>
+              <mat-label translate>emailLabel</mat-label>
               <input
                 matInput
-                [placeholder]="'email' | translate"
+                [placeholder]="'emailLabel' | translate"
                 formControlName="email"
               />
             </mat-form-field>
@@ -320,7 +317,7 @@
                   errors.tenantAdmin.email.name
                     | translate
                       : {
-                          name: 'email' | translate,
+                          name: 'emailLabel' | translate,
                           length: errors.tenantAdmin.email.length
                         }
                 }}
@@ -788,6 +785,19 @@
                       delete
                     </mat-icon>
                   </mat-form-field>
+                  <mat-error *ngIf="url.errors?.required && url.touched">
+                    {{ 'required' | translate: { name: 'urls' | translate } }}
+                  </mat-error>
+                  <mat-error *ngIf="url.errors?.maxlength && url.touched">
+                    {{
+                      'maxlength'
+                        | translate
+                          : {
+                              name: 'urls' | translate,
+                              length: url.errors?.maxlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
                 </div>
               </div>
             </div>
@@ -1074,17 +1084,14 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.dialect.name">
-                {{
-                  errors.rdbms.dialect.name
-                    | translate
-                      : {
-                          name: 'dialect' | translate
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error
+              *ngIf="
+                tenantForm.get('rdbms.dialect').errors?.required &&
+                tenantForm.get('rdbms.dialect').touched
+              "
+            >
+              {{ 'required' | translate: { name: 'dialect' | translate } }}
+            </mat-error>
           </p>
         </div>
         <div formGroupName="nosql">
@@ -1242,17 +1249,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.products.name">
-              {{
-                errors.products.name
-                  | translate
-                    : {
-                        name: 'products' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error
+            *ngIf="
+              tenantForm.get('products').errors?.required &&
+              tenantForm.get('products').touched
+            "
+          >
+            {{ 'required' | translate: { name: 'products' | translate } }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -1264,17 +1268,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.modules.name">
-              {{
-                errors.modules.name
-                  | translate
-                    : {
-                        name: 'modules' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error
+            *ngIf="
+              tenantForm.get('modules').errors?.required &&
+              tenantForm.get('modules').touched
+            "
+          >
+            {{ 'required' | translate: { name: 'modules' | translate } }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -1289,17 +1290,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.logDBType.name">
-              {{
-                errors.logDBType.name
-                  | translate
-                    : {
-                        name: 'logDBType' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error
+            *ngIf="
+              tenantForm.get('logDBType').errors?.required &&
+              tenantForm.get('logDBType').touched
+            "
+          >
+            {{ 'required' | translate: { name: 'logDBType' | translate } }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -1311,17 +1309,14 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.logLevel.name">
-              {{
-                errors.logLevel.name
-                  | translate
-                    : {
-                        name: 'logLevel' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error
+            *ngIf="
+              tenantForm.get('logLevel').errors?.required &&
+              tenantForm.get('logLevel').touched
+            "
+          >
+            {{ 'required' | translate: { name: 'logLevel' | translate } }}
+          </mat-error>
         </p>
       </div>
     </div>

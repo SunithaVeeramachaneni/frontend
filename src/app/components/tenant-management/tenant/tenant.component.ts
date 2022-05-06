@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -50,7 +51,13 @@ export class TenantComponent implements OnInit, AfterViewInit {
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
-  validationErrors$: Observable<any>;
+  validationErrors$: Observable<{
+    [key: string]:
+      | { name: string; length: number }
+      | { [key: string]: { name: string; length: number } }
+      | any;
+  }>;
+  tenantHeader = 'Adding Tenant...';
   private genericValidator: GenericValidator;
 
   get sapUrls(): FormArray {
@@ -67,7 +74,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private breadcrumbService: BreadcrumbService,
     private tenantService: TenantService,
     private toast: ToastService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private titleCase: TitleCasePipe
   ) {}
 
   ngOnInit(): void {
@@ -130,7 +138,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
         port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
         user: ['', [Validators.required, Validators.maxLength(100)]],
         password: ['', [Validators.required, Validators.maxLength(100)]],
-        database: ['', [Validators.required, Validators.maxLength(100)]],
+        database: [
+          { value: '', disabled: true },
+          [Validators.required, Validators.maxLength(100)]
+        ],
         dialect: ['', [Validators.required]]
       }),
       nosql: this.fb.group({
@@ -138,7 +149,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
         port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
         user: ['', [Validators.required, Validators.maxLength(100)]],
         password: ['', [Validators.required, Validators.maxLength(100)]],
-        database: ['', [Validators.required, Validators.maxLength(100)]]
+        database: [
+          { value: '', disabled: true },
+          [Validators.required, Validators.maxLength(100)]
+        ]
       }),
       noOfLicenses: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       products: [[], [Validators.required]],
@@ -154,8 +168,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
     );
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
-      this.breadcrumbService.set('@tenantName', { label: tenantName });
-      this.commonService.setHeaderTitle(tenantName);
+      const displayName = tenantName ? tenantName : 'Addding Tenant...';
+      this.tenantHeader = displayName;
+      this.breadcrumbService.set('@tenantName', { label: displayName });
+      this.commonService.setHeaderTitle(displayName);
+      const database = this.titleCase.transform(tenantName).replace(/\s+/g, '');
+      this.tenantForm.patchValue({
+        rdbms: { database },
+        nosql: { database }
+      });
     });
   }
 
@@ -205,21 +226,18 @@ export class TenantComponent implements OnInit, AfterViewInit {
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
       audience: ['', [Validators.required, Validators.maxLength(100)]],
       scope: ['', [Validators.required, Validators.maxLength(100)]],
-      urls: this.fb.array([
-        new FormControl('', [Validators.required, Validators.maxLength(100)])
-      ])
+      urls: this.fb.array([this.initUrl()])
     });
   }
 
+  initUrl = () =>
+    this.fb.control('', [Validators.required, Validators.maxLength(100)]);
+
   addUrl(type: string): void {
     if (type === 'sap') {
-      this.sapUrls.push(
-        new FormControl('', [Validators.required, Validators.maxLength(100)])
-      );
+      this.sapUrls.push(this.initUrl());
     } else {
-      this.nodeUrls.push(
-        new FormControl('', [Validators.required, Validators.maxLength(100)])
-      );
+      this.nodeUrls.push(this.initUrl());
     }
   }
 
@@ -298,7 +316,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           this.spinner.hide();
           if (Object.keys(response).length) {
             const { id: createdId, tenantName } = response;
-            this.tenantForm.controls.id.setValue(createdId);
+            this.tenantForm.setValue({ id: createdId });
             this.toast.show({
               text: `Tenant ${tenantName} successfully`,
               type: 'success'

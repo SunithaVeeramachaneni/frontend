@@ -7,7 +7,12 @@ export class GenericValidator {
   constructor() {}
 
   // Processes each control within a FormGroup
-  processValidations(container: FormGroup): any {
+  processValidations(container: FormGroup): {
+    [key: string]:
+      | { name: string; length: number }
+      | { [key: string]: { name: string; length: number } }
+      | any;
+  } {
     const validations = {};
     for (const controlKey in container.controls) {
       if (container.controls.hasOwnProperty(controlKey)) {

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 
 import { TenantManagementRoutingModule } from './tenant-management-routing.module';
 import { TenantManagementContainerComponent } from './tenant-management-container/tenant-management-container.component';
@@ -55,7 +55,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule
-  ]
+  ],
+  providers: [TitleCasePipe]
 })
 export class TenantManagementModule {
   constructor(

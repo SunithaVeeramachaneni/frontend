@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { Count, ErrorInfo, TableColumn, Tenant } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
-import { mockTenants } from './tenant.service.mock';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +34,7 @@ export class TenantService {
         info,
         queryParams
       )
-      .pipe(map(() => this.formatTenants(mockTenants)));
+      .pipe(map((resp) => this.formatTenants(resp)));
 
   getTenantsCount$ = (
     queryParams: any,
