@@ -13,7 +13,7 @@
   "configurations": "5. CONFIGURATIONS",
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
-  "samlDetails": "SAML Details",
+  "sapsamlDetails": "SAP SAML Details",
   "nodeDetails": "Node Details",
   "rdbms": "RDBMS",
   "nosql": "NoSQL",
