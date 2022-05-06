@@ -14,12 +14,15 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { TenantService } from '../services/tenant.service';
 
 @Component({
   selector: 'app-tenant',
@@ -53,12 +56,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private tenantService: TenantService,
+    private toast: ToastService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
     this.genericValidator = new GenericValidator();
     this.tenantForm = this.fb.group({
+      id: [''],
       tenantId: ['', [Validators.required, Validators.maxLength(100)]],
       tenantName: [
         '',
@@ -125,11 +132,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         password: ['', [Validators.required, Validators.maxLength(100)]],
         database: ['', [Validators.required, Validators.maxLength(100)]]
       }),
-      licenseInfo: this.fb.group({
-        start: ['', [Validators.required]],
-        end: ['', [Validators.required]],
-        count: ['', [Validators.required, Validators.pattern('^[0-9]*$')]]
-      }),
+      noOfLicenses: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       products: [[], [Validators.required]],
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
@@ -275,8 +278,26 @@ export class TenantComponent implements OnInit, AfterViewInit {
   }
 
   saveTenant() {
+    console.log(this.tenantForm);
     if (this.tenantForm.valid && this.tenantForm.dirty) {
       console.log(this.tenantForm.value);
+      const { id, ...tenat } = this.tenantForm.value;
+      this.spinner.show();
+
+      if (id) {
+      } else {
+        this.tenantService.createTenant$(tenat).subscribe((response) => {
+          this.spinner.hide();
+          if (Object.keys(response).length) {
+            const { id: createdId, tenantName } = response;
+            this.tenantForm.controls.id.setValue(createdId);
+            this.toast.show({
+              text: `Tenant ${tenantName} successfully`,
+              type: 'success'
+            });
+          }
+        });
+      }
     }
   }
 }
