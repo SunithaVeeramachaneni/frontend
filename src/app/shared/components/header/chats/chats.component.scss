@@ -65,13 +65,15 @@
     width: 100%;
     height: 275px;
     overflow-y: auto;
+    overflow-x: hidden;
+    word-break: break-all;
   }
   .conversationMessage {
     // border: 1px solid #1552af2e;
     width: 375px;
     margin: 10px 0px;
     display: flex;
-    align-items: center;
+    // align-items: center;
     word-break: break-all;
   }
   .conv-user-icon {
@@ -81,8 +83,40 @@
     cursor: pointer;
     width: 40px;
     border-radius: 45px;
-    margin-right: 5px;
+    margin-right: 10px;
     // margin-top: -15px;
+  }
+  .attachmentItem {
+    font-size: 10pt;
+    background: #ebf5f8;
+    border-radius: 5px;
+    width: 300px;
+    .attachmentTitle {
+      font-size: 10pt;
+      font-weight: 450;
+    }
+    .attachmentSubTitle {
+      font-size: 8pt;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .downloadBtn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0px 5px;
+        background: #0391fd;
+        border-radius: 5px;
+        color: white;
+
+        &:hover {
+          background: #7dbef6;
+        }
+        .downloadLabel {
+          margin-left: 5px;
+        }
+      }
+    }
   }
   .conv-user-icon .icon {
     width: 40px;

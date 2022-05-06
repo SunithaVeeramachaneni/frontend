@@ -1,18 +1,11 @@
-import {
-  Component,
-  Input,
-  NgZone,
-  OnChanges,
-  OnInit,
-  SimpleChanges
-} from '@angular/core';
+import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ChatService } from './chat.service';
-import { async } from '@angular/core/testing';
 import * as moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
 
 import { SSEService } from './sse.service';
-
+import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 @Component({
   selector: 'app-chats',
   templateUrl: 'chats.component.html',
@@ -31,6 +24,7 @@ export class ChatsComponent implements OnInit {
   userMaps: any = [];
 
   constructor(
+    public uploadDialog: MatDialog,
     private httpClient: HttpClient,
     private zone: NgZone,
     private chatService: ChatService,
@@ -40,10 +34,6 @@ export class ChatsComponent implements OnInit {
   ngOnInit() {
     const userId = 'U02R5D4SREU';
     const ref = this;
-
-    // this.sseService
-    //   .getServerSentEvent(`http://localhost:8005/slack/sse/${userId}`)
-    //   .subscribe((data) => console.log(data));
     const evtSource = new EventSource(
       `http://localhost:8005/slack/sse/${userId}`
     );
@@ -88,6 +78,42 @@ export class ChatsComponent implements OnInit {
       text: message,
       user: targetUser.id,
       ts: dateToday
+    });
+  };
+
+  openUploadDialog = (selectedConversation: any) => {
+    const dialogRef = this.uploadDialog.open(UploadDialogComponent, {
+      disableClose: true,
+      hasBackdrop: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const conversationId = selectedConversation.id;
+        const formData = new FormData();
+        formData.append('attachment', result);
+        this.httpClient
+          .post<any>(
+            `http://localhost:8005/slack/conversations/${conversationId}/files`,
+            formData
+          )
+          .subscribe(
+            (res) => {
+              const filesArr = [];
+              filesArr.push(result);
+              const dateToday = moment().unix();
+              this.conversationHistory.push({
+                type: 'message',
+                text: '',
+                user: selectedConversation.user,
+                files: filesArr,
+                ts: dateToday
+              });
+            },
+            (err) => console.log(err)
+          );
+      }
+      console.log('The upload dialog was closed');
     });
   };
 

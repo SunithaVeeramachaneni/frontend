@@ -18,6 +18,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PeopleComponent } from './components/header/people/people.component';
 import { ChatsComponent } from './components/header/chats/chats.component';
 import { CallsComponent } from './components/header/calls/calls.component';
+import { UploadDialogComponent } from './components/header/chats/upload-dialog/upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { CallsComponent } from './components/header/calls/calls.component';
     CommonFilterComponent,
     HeaderComponent,
     CollabDialogComponent,
+    UploadDialogComponent,
     PeopleComponent,
     ChatsComponent,
     CallsComponent,
