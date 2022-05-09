@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Count, ErrorInfo, TableColumn, Tenant } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';

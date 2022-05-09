@@ -8,17 +8,25 @@ import {
   ViewChildren
 } from '@angular/core';
 import {
+  AbstractControl,
+  AsyncValidatorFn,
   FormArray,
   FormBuilder,
   FormControl,
   FormControlName,
   FormGroup,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  shareReplay
+} from 'rxjs/operators';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
@@ -85,14 +93,19 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.genericValidator = new GenericValidator();
     this.tenantForm = this.fb.group({
       id: [''],
-      tenantId: ['', [Validators.required, Validators.maxLength(100)]],
+      tenantId: [
+        '',
+        [Validators.required, Validators.maxLength(100)],
+        this.validateUnique.bind(this)('tenantId')
+      ],
       tenantName: [
         '',
         [
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(100)
-        ]
+        ],
+        this.validateUnique.bind(this)('tenantName')
       ],
       tenantIdp: ['', [Validators.required]],
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
@@ -365,8 +378,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
           .subscribe((response) => {
             this.spinner.hide();
             if (Object.keys(response).length) {
+              this.tenantForm.reset(this.tenantForm.getRawValue());
               this.toast.show({
-                text: `Tenant ${tenant.tenantName} updated successfully`,
+                text: `Tenant ${tenantName} updated successfully`,
                 type: 'success'
               });
             }
@@ -377,13 +391,33 @@ export class TenantComponent implements OnInit, AfterViewInit {
           if (Object.keys(response).length) {
             const { id: createdId, tenantName } = response;
             this.tenantForm.patchValue({ id: createdId });
+            this.tenantForm.reset(this.tenantForm.getRawValue());
             this.toast.show({
-              text: `Tenant ${tenantName} created successfully`,
+              text: `Tenant ${tenantName} onboarded successfully`,
               type: 'success'
             });
           }
         });
       }
     }
+  }
+
+  getTenantsCount = (key: string, value: string) =>
+    this.tenantService.getTenantsCount$({
+      [key]: value
+    });
+
+  validateUnique(field: string): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> =>
+      this.getTenantsCount(field, control.value).pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        map((tenants) => {
+          if (control.value !== '' && tenants.count) {
+            return { exists: true };
+          }
+          return null;
+        })
+      );
   }
 }

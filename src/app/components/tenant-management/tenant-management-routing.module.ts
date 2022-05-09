@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { TenantResolverService } from './services/tenant-resolver.service';
 import { TenantManagementContainerComponent } from './tenant-management-container/tenant-management-container.component';
 import { TenantComponent } from './tenant/tenant.component';
 import { TenantsComponent } from './tenants/tenants.component';
@@ -23,6 +24,7 @@ const routes: Routes = [
       {
         path: 'edit/:id',
         component: TenantComponent,
+        resolve: { tenant: TenantResolverService },
         data: { breadcrumb: { label: 'Edit Tenant', alias: 'tenantName' } }
       },
       {

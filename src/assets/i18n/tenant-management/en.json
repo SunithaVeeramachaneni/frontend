@@ -24,6 +24,7 @@
   "maxlength": "{name} must be at the max of {length} characters",
   "email": "Enter a valid email address",
   "pattern": "{message}",
+  "exists": "{name} already exists",
   "min": "{message}",
   "max": "{message}",
   "invalidPort": "Enter a valid port",
