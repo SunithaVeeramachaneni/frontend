@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   OnInit,
+  ViewChild,
   ViewChildren
 } from '@angular/core';
 import {
@@ -40,8 +41,12 @@ import { TenantService } from '../services/tenant.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantComponent implements OnInit, AfterViewInit {
+  @ViewChild('inputClientSecret') inputClientSecret: ElementRef;
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[];
+  hidePasswordDBMS = true;
+  hidePasswordNoSQL = true;
+  hidePasswordERPS = true;
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
@@ -419,5 +424,20 @@ export class TenantComponent implements OnInit, AfterViewInit {
           return null;
         })
       );
+  }
+
+  maskClientSecret(e) {
+    const maskedValue = e.target.value;
+    if (maskedValue.length > 4) {
+      const data =
+        maskedValue.substr(0, 4) + 'X'.repeat(maskedValue.length - 4);
+      this.inputClientSecret.nativeElement.value = data;
+    }
+  }
+
+  unMaskClientSecret() {
+    this.inputClientSecret.nativeElement.value = this.tenantForm.get(
+      'erps.sap.saml.clientSecret'
+    ).value;
   }
 }
