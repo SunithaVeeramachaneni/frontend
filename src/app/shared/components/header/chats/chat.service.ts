@@ -21,4 +21,8 @@ export class ChatService {
     axios.get(
       `http://localhost:8005/slack/conversations/${conversationId}/history`
     );
+  triggerCall = async (user) =>
+    axios.post(`http://localhost:8005/slack/calls`, {
+      user
+    });
 }

@@ -145,4 +145,8 @@ export class ChatsComponent implements OnInit {
     d.setUTCSeconds(epochTS);
     return moment(d).fromNow();
   };
+
+  triggerCall = async (conv) => {
+    await this.chatService.triggerCall(conv);
+  };
 }
