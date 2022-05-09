@@ -3,7 +3,7 @@
     <span class="mat-select-products select-products">
       <mat-form-field appearance="outline">
         <mat-label>Product</mat-label>
-        <mat-select [(value)]="selectedProduct" multiple>
+        <mat-select [(value)]="selectedProduct" multiple disabled>
           <mat-option *ngFor="let product of products" [value]="product">
             {{ product }}
           </mat-option>

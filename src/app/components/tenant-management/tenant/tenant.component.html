@@ -764,6 +764,8 @@
               </ng-container>
             </p>
 
+            <p class="sub-headings" translate>sapUrls</p>
+
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
                 <mat-icon (click)="addUrl('sap')" class="add-url-icon">
@@ -771,10 +773,10 @@
                 </mat-icon>
                 <div *ngFor="let url of sapUrls.controls; let i = index">
                   <mat-form-field appearance="outline" class="width-100">
-                    <mat-label translate>urls</mat-label>
+                    <mat-label translate>url</mat-label>
                     <input
                       matInput
-                      [placeholder]="'urls' | translate"
+                      [placeholder]="'url' | translate"
                       [formControlName]="i"
                     />
                     <mat-icon
@@ -786,14 +788,14 @@
                     </mat-icon>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
-                    {{ 'required' | translate: { name: 'urls' | translate } }}
+                    {{ 'required' | translate: { name: 'url' | translate } }}
                   </mat-error>
                   <mat-error *ngIf="url.errors?.maxlength && url.touched">
                     {{
                       'maxlength'
                         | translate
                           : {
-                              name: 'urls' | translate,
+                              name: 'url' | translate,
                               length: url.errors?.maxlength.requiredLength
                             }
                     }}
@@ -926,6 +928,8 @@
               </ng-container>
             </p>
 
+            <p class="sub-headings" translate>nodeUrls</p>
+
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
                 <mat-icon (click)="addUrl('node')" class="add-url-icon">
@@ -933,10 +937,10 @@
                 </mat-icon>
                 <div *ngFor="let url of nodeUrls.controls; let i = index">
                   <mat-form-field appearance="outline" class="width-100">
-                    <mat-label translate>urls</mat-label>
+                    <mat-label translate>url</mat-label>
                     <input
                       matInput
-                      [placeholder]="'urls' | translate"
+                      [placeholder]="'url' | translate"
                       [formControlName]="i"
                     />
                     <mat-icon
@@ -947,6 +951,19 @@
                       delete
                     </mat-icon>
                   </mat-form-field>
+                  <mat-error *ngIf="url.errors?.required && url.touched">
+                    {{ 'required' | translate: { name: 'url' | translate } }}
+                  </mat-error>
+                  <mat-error *ngIf="url.errors?.maxlength && url.touched">
+                    {{
+                      'maxlength'
+                        | translate
+                          : {
+                              name: 'url' | translate,
+                              length: url.errors?.maxlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
                 </div>
               </div>
             </div>
