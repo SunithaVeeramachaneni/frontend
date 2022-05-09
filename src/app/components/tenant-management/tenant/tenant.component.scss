@@ -47,6 +47,7 @@
 .scroll-content {
   overflow-y: scroll;
   height: 65vh;
+  margin: 10px 0;
 }
 
 .sub-headings {
@@ -111,4 +112,9 @@
   position: relative;
   top: 35px;
   left: 30px;
+  cursor: pointer;
+}
+
+.delete-icon {
+  cursor: pointer;
 }

@@ -1,15 +1,15 @@
-<ngx-spinner
-  size="medium"
-  bdColor="rgba(0, 0, 0, 0.8)"
-  type="ball-clip-rotate-pulse"
-  [fullScreen]="false"
->
-</ngx-spinner>
 <form
   class="main-tenant-container"
   [formGroup]="tenantForm"
   (ngSubmit)="saveTenant()"
 >
+  <ngx-spinner
+    size="medium"
+    bdColor="#BBBBBB"
+    type="ball-clip-rotate-pulse"
+    [fullScreen]="false"
+  >
+  </ngx-spinner>
   <div class="tenant-header">
     <span class="adding-tenant-text">{{ tenantHeader }}</span>
     <button
@@ -419,9 +419,20 @@
                 <input
                   matInput
                   [placeholder]="'password' | translate"
-                  type="password"
+                  [type]="hidePasswordERPS ? 'password' : 'text'"
                   formControlName="password"
                 />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  (click)="hidePasswordERPS = !hidePasswordERPS"
+                  [attr.aria-label]="'Hide password ERPS'"
+                  [attr.aria-pressed]="hidePasswordERPS"
+                >
+                  <mat-icon>
+                    {{ hidePasswordERPS ? 'visibility_off' : 'visibility' }}
+                  </mat-icon>
+                </button>
               </mat-form-field>
               <ng-container *ngIf="validationErrors$ | async as errors">
                 <mat-error *ngIf="errors.erps.sap.password.name">
@@ -561,6 +572,9 @@
                     matInput
                     [placeholder]="'clientSecret' | translate"
                     formControlName="clientSecret"
+                    #inputClientSecret
+                    (focus)="unMaskClientSecret()"
+                    (blur)="maskClientSecret($event)"
                   />
                 </mat-form-field>
                 <ng-container *ngIf="validationErrors$ | async as errors">
@@ -795,6 +809,7 @@
                       matSuffix
                       (click)="deleteUrl(i, 'sap')"
                       *ngIf="sapUrls.length !== 1"
+                      class="delete-icon"
                     >
                       delete
                     </mat-icon>
@@ -959,6 +974,7 @@
                       matSuffix
                       (click)="deleteUrl(i, 'node')"
                       *ngIf="nodeUrls.length !== 1"
+                      class="delete-icon"
                     >
                       delete
                     </mat-icon>
@@ -1063,9 +1079,20 @@
               <input
                 matInput
                 [placeholder]="'password' | translate"
-                type="password"
+                [type]="hidePasswordDBMS ? 'password' : 'text'"
                 formControlName="password"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hidePasswordDBMS = !hidePasswordDBMS"
+                [attr.aria-label]="'Hide password DBMS'"
+                [attr.aria-pressed]="hidePasswordDBMS"
+              >
+                <mat-icon>
+                  {{ hidePasswordDBMS ? 'visibility_off' : 'visibility' }}
+                </mat-icon>
+              </button>
             </mat-form-field>
             <ng-container *ngIf="validationErrors$ | async as errors">
               <mat-error *ngIf="errors.rdbms.password.name">
@@ -1202,9 +1229,20 @@
               <input
                 matInput
                 [placeholder]="'password' | translate"
-                type="password"
+                [type]="hidePasswordNoSQL ? 'password' : 'text'"
                 formControlName="password"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hidePasswordNoSQL = !hidePasswordNoSQL"
+                [attr.aria-label]="'Hide password NoSQL'"
+                [attr.aria-pressed]="hidePasswordNoSQL"
+              >
+                <mat-icon>
+                  {{ hidePasswordNoSQL ? 'visibility_off' : 'visibility' }}
+                </mat-icon>
+              </button>
             </mat-form-field>
             <ng-container *ngIf="validationErrors$ | async as errors">
               <mat-error *ngIf="errors.nosql.password.name">
