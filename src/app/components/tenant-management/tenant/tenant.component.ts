@@ -15,9 +15,10 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
@@ -58,6 +59,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       | any;
   }>;
   tenantHeader = 'Adding Tenant...';
+  encryptionKey = 'Innovation@5';
   private genericValidator: GenericValidator;
 
   get sapUrls(): FormArray {
@@ -75,7 +77,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private tenantService: TenantService,
     private toast: ToastService,
     private spinner: NgxSpinnerService,
-    private titleCase: TitleCasePipe
+    private titleCase: TitleCasePipe,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +149,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       }),
       nosql: this.fb.group({
         host: ['', [Validators.required, Validators.maxLength(100)]],
-        port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
+        port: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
         user: ['', [Validators.required, Validators.maxLength(100)]],
         password: ['', [Validators.required, Validators.maxLength(100)]],
         database: [
@@ -154,18 +157,28 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [Validators.required, Validators.maxLength(100)]
         ]
       }),
-      noOfLicenses: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      noOfLicenses: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]*$'),
+          Validators.min(1),
+          Validators.max(100000)
+        ]
+      ],
       products: [[], [Validators.required]],
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
       logLevel: ['', [Validators.required]]
     });
 
-    this.commonService.setHeaderTitle(
-      this.tenantForm.get('tenantName').value
-        ? this.tenantForm.get('tenantName').value
-        : `Addding Tenant...`
-    );
+    const headerTitle = this.tenantForm.get('tenantName').value
+      ? this.tenantForm.get('tenantName').value
+      : `Addding Tenant...`;
+    this.commonService.setHeaderTitle(headerTitle);
+    this.breadcrumbService.set('@tenantName', {
+      label: headerTitle
+    });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
       const displayName = tenantName ? tenantName : 'Addding Tenant...';
@@ -177,6 +190,42 @@ export class TenantComponent implements OnInit, AfterViewInit {
         rdbms: { database },
         nosql: { database }
       });
+    });
+
+    this.route.data.subscribe(({ tenant }) => {
+      if (tenant && Object.keys(tenant).length) {
+        const { sap, node } = tenant.protectedResources;
+        const { urls: sapUrls } = sap;
+        const { urls: nodeUrls } = node;
+
+        tenant.rdbms.password = this.commonService.decrypt(
+          tenant.rdbms.password,
+          this.encryptionKey
+        );
+        tenant.nosql.password = this.commonService.decrypt(
+          tenant.nosql.password,
+          this.encryptionKey
+        );
+        tenant.erps.sap.password = this.commonService.decrypt(
+          tenant.erps.sap.password,
+          this.encryptionKey
+        );
+        tenant.erps.sap.saml.clientSecret = this.commonService.decrypt(
+          tenant.erps.sap.saml.clientSecret,
+          this.encryptionKey
+        );
+
+        this.tenantForm.patchValue(tenant);
+        (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
+          'urls',
+          this.fb.array(sapUrls)
+        );
+        (
+          this.tenantForm.get('protectedResources.node') as FormGroup
+        ).setControl('urls', this.fb.array(nodeUrls));
+        this.tenantForm.get('tenantId').disable();
+        this.tenantForm.get('tenantName').disable();
+      }
     });
   }
 
@@ -194,7 +243,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
       ...controlBlurs
     ).pipe(
       map(() => this.genericValidator.processValidations(this.tenantForm)),
-      tap(console.log),
       shareReplay(1)
     );
   }
@@ -304,21 +352,33 @@ export class TenantComponent implements OnInit, AfterViewInit {
   }
 
   saveTenant() {
-    console.log(this.tenantForm);
     if (this.tenantForm.valid && this.tenantForm.dirty) {
-      console.log(this.tenantForm.value);
-      const { id, ...tenat } = this.tenantForm.value;
+      const { id, ...tenant } = this.tenantForm.getRawValue();
       this.spinner.show();
 
       if (id) {
+        const { tenantId, tenantName, rdbms, nosql, ...rest } = tenant;
+        const { database: rdbmsDatabase, ...restRdbms } = rdbms;
+        const { database: nosqlDatabase, ...restNosql } = nosql;
+        this.tenantService
+          .updateTenant$(id, { ...rest, rdbms: restRdbms, nosql: restNosql })
+          .subscribe((response) => {
+            this.spinner.hide();
+            if (Object.keys(response).length) {
+              this.toast.show({
+                text: `Tenant ${tenant.tenantName} updated successfully`,
+                type: 'success'
+              });
+            }
+          });
       } else {
-        this.tenantService.createTenant$(tenat).subscribe((response) => {
+        this.tenantService.createTenant$(tenant).subscribe((response) => {
           this.spinner.hide();
           if (Object.keys(response).length) {
             const { id: createdId, tenantName } = response;
-            this.tenantForm.setValue({ id: createdId });
+            this.tenantForm.patchValue({ id: createdId });
             this.toast.show({
-              text: `Tenant ${tenantName} successfully`,
+              text: `Tenant ${tenantName} created successfully`,
               type: 'success'
             });
           }

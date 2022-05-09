@@ -27,14 +27,15 @@
       class="count-of-tenants"
       *ngIf="tenantsCount$ | async as tenantsCount; else loadingTenantsCount"
     >
-      <span class="tenant-count">{{ tenantsCount.count }}</span>
+      <span class="tenant-count" *ngIf="tenantsCount.count">{{
+        tenantsCount.count
+      }}</span>
+      <span class="tenant-count" *ngIf="!tenantsCount.count">0</span>
       <span class="tenant-text">{{
         'tenantsPlural'
           | translate
             : {
-                count: tenantsCount.count
-                  ? (tenantsCount.count | numberToKM)
-                  : 0
+                count: tenantsCount.count ? tenantsCount.count : 0
               }
       }}</span>
     </span>

@@ -1,3 +1,10 @@
+<ngx-spinner
+  size="medium"
+  bdColor="rgba(0, 0, 0, 0.8)"
+  type="ball-clip-rotate-pulse"
+  [fullScreen]="false"
+>
+</ngx-spinner>
 <form
   class="main-tenant-container"
   [formGroup]="tenantForm"
@@ -20,7 +27,12 @@
       *ngIf="this.selectedID.value === 4"
       [disabled]="tenantForm.invalid || tenantForm.pristine"
     ></button>
-    <button mat-raised-button translate="cancelBtn" class="cancel-btn"></button>
+    <button
+      mat-raised-button
+      translate="cancelBtn"
+      class="cancel-btn"
+      [routerLink]="['/tenant-management']"
+    ></button>
   </div>
   <div class="dis-flex width-100" style="padding: 5px 0">
     <div class="prevbtn p-0">
@@ -998,7 +1010,7 @@
                     | translate
                       : {
                           name: 'port' | translate,
-                          length: errors.rdbms.port.length
+                          message: 'invalidPort' | translate
                         }
                 }}
               </mat-error>
@@ -1137,7 +1149,7 @@
                     | translate
                       : {
                           name: 'port' | translate,
-                          length: errors.nosql.port.length
+                          message: 'invalidPort' | translate
                         }
                 }}
               </mat-error>
@@ -1234,7 +1246,7 @@
                   | translate
                     : {
                         name: 'noOfLicenses' | translate,
-                        length: errors.noOfLicenses.length
+                        message: 'invalidLicenceCount' | translate
                       }
               }}
             </mat-error>

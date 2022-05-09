@@ -23,6 +23,20 @@ export class TenantService {
       info
     );
 
+  updateTenant$ = (
+    tenantId: number,
+    tenant: Tenant,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Tenant> =>
+    this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `catalogs/${tenantId}`,
+        tenant,
+        info
+      )
+      .pipe(map((response) => (response === null ? tenant : response)));
+
   getTenants$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -45,6 +59,17 @@ export class TenantService {
       `catalogs/count`,
       info,
       queryParams
+    );
+
+  getTenantById$ = (
+    id: number,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Tenant> =>
+    this.appService._getRespById(
+      environment.userRoleManagementApiUrl,
+      'catalogs/',
+      id,
+      info
     );
 
   updateConfigOptionsFromColumns(
@@ -75,9 +100,7 @@ export class TenantService {
   formatTenants = (tenants: Tenant[]) =>
     tenants.map((tenant) => {
       const {
-        tenantAdmin: { firstName, lastName },
-        modules,
-        products
+        tenantAdmin: { firstName, lastName }
       } = tenant;
       const adminInfo = `${firstName} ${lastName}`;
       return { ...tenant, adminInfo };

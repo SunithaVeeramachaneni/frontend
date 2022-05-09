@@ -7,7 +7,7 @@ import { ErrorInfo } from '../../interfaces';
   providedIn: 'root'
 })
 export class AppService {
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Will prepare http header data and returns
@@ -71,7 +71,7 @@ export class AppService {
   _getRespById(
     apiUrl: string,
     urlStr: string,
-    id: string,
+    id: string | number,
     info: ErrorInfo = {} as ErrorInfo,
     queryParams: any = {}
   ): Observable<any> {
@@ -98,10 +98,10 @@ export class AppService {
       displayToast,
       failureResponse
     });
-    return this.http.get<any>(
-      url,
-      { ...httpOptions, responseType: 'blob' as 'json', }
-    );
+    return this.http.get<any>(url, {
+      ...httpOptions,
+      responseType: 'blob' as 'json'
+    });
   }
 
   _getRespByName(
