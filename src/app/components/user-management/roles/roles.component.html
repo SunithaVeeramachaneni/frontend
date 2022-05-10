@@ -118,13 +118,19 @@
                 </mat-form-field>
 
                 <div class="mat-error-name">
-                  <mat-error *ngIf="f.name.errors?.required && f.name.touched">
+                  <mat-error
+                    *ngIf="f.name.errors?.required && f.name.touched"
+                    class="role-errors"
+                  >
                     {{
                       'fieldRequired'
                         | translate: { name: 'roleLabel' | translate }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.name.errors?.minlength">
+                  <mat-error
+                    *ngIf="f.name.errors?.minlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMinimumLength'
                         | translate
@@ -134,7 +140,10 @@
                             }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.name.errors?.maxlength">
+                  <mat-error
+                    *ngIf="f.name.errors?.maxlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMaximumLength'
                         | translate
@@ -157,6 +166,7 @@
                     *ngIf="
                       f.description.errors?.required && f.description.touched
                     "
+                    class="role-errors"
                   >
                     {{
                       'fieldRequired'
@@ -164,7 +174,10 @@
                           : { name: 'roleDescriptionLabel' | translate }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.description.errors?.minlength">
+                  <mat-error
+                    *ngIf="f.description.errors?.minlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMinimumLength'
                         | translate

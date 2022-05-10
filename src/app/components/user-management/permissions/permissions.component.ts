@@ -37,7 +37,7 @@ export class PermissionsComponent implements OnInit {
 
   rolesBasedPermissions = [];
   permissions$: Observable<any>;
-  panelOpenState = false;
+  panelOpenState = true;
   isEditable = false;
   allPermissions;
 
