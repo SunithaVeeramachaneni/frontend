@@ -2,6 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   OnInit,
@@ -19,7 +20,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
 import {
@@ -30,7 +31,7 @@ import {
 } from 'rxjs/operators';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
-import { GenericValidator } from 'src/app/shared/validators/genaric-validator';
+import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 
@@ -73,6 +74,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
   }>;
   tenantHeader = 'Adding Tenant...';
   encryptionKey = 'Innovation@5';
+  editTenant = true;
+  editQueryParam = true;
   private genericValidator: GenericValidator;
 
   get sapUrls(): FormArray {
@@ -91,7 +94,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private toast: ToastService,
     private spinner: NgxSpinnerService,
     private titleCase: TitleCasePipe,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdrf: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -245,6 +250,20 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.tenantForm.get('tenantName').disable();
       }
     });
+
+    this.route.queryParams.subscribe((params) => {
+      if (Object.keys(params).length) {
+        this.editTenant =
+          params.edit === 'true' || params.edit === 'false'
+            ? JSON.parse(params.edit)
+            : params.edit;
+        this.editQueryParam = this.editTenant;
+        this.cdrf.markForCheck();
+        if (!this.editTenant) {
+          this.tenantForm.disable();
+        }
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -263,6 +282,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       map(() => this.genericValidator.processValidations(this.tenantForm)),
       shareReplay(1)
     );
+    this.maskClientSecret();
   }
 
   buildErps(): FormGroup {
@@ -317,37 +337,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
     }
   }
 
-  buttonActionsInHeader(noOfSteps) {
-    this.selectedID.setValue(0);
-    if (this.selectedID.value === 0) {
-      this.firstButton = true;
-    } else {
-      this.firstButton = false;
-    }
-
-    if (this.selectedID.value === noOfSteps - 1) {
-      this.lastButton = true;
-    } else {
-      this.lastButton = false;
-    }
-  }
-
-  buttonActionsInSteps(index, noOfSteps) {
+  setTabIndex(index: number) {
     this.selectedID.setValue(index);
-    if (this.selectedID.value === 0) {
-      this.firstButton = true;
-    } else {
-      this.firstButton = false;
-    }
-
-    if (this.selectedID.value === noOfSteps - 1) {
-      this.lastButton = true;
-    } else {
-      this.lastButton = false;
-    }
   }
 
-  onTabsChange(index: number, noOfSteps) {
+  onTabsChange(noOfSteps: number) {
     if (this.selectedID.value === 0) {
       this.firstButton = true;
     } else {
@@ -363,10 +357,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   moveNext(selectedID) {
     this.selectedID.setValue(selectedID.value + 1);
-  }
-
-  get f() {
-    return this.tenantForm.controls;
   }
 
   saveTenant() {
@@ -385,7 +375,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             if (Object.keys(response).length) {
               this.tenantForm.reset(this.tenantForm.getRawValue());
               this.toast.show({
-                text: `Tenant ${tenantName} updated successfully`,
+                text: `Tenant '${tenantName}' updated successfully`,
                 type: 'success'
               });
             }
@@ -398,7 +388,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             this.tenantForm.patchValue({ id: createdId });
             this.tenantForm.reset(this.tenantForm.getRawValue());
             this.toast.show({
-              text: `Tenant ${tenantName} onboarded successfully`,
+              text: `Tenant '${tenantName}' onboarded successfully`,
               type: 'success'
             });
           }
@@ -418,7 +408,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         debounceTime(500),
         distinctUntilChanged(),
         map((tenants) => {
-          if (control.value !== '' && tenants.count) {
+          if (tenants.count) {
             return { exists: true };
           }
           return null;
@@ -426,11 +416,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
       );
   }
 
-  maskClientSecret(e) {
-    const maskedValue = e.target.value;
-    if (maskedValue.length > 4) {
+  maskClientSecret() {
+    const maskedValue = this.tenantForm.get('erps.sap.saml.clientSecret').value;
+    if (maskedValue.length > 3) {
       const data =
-        maskedValue.substr(0, 4) + 'X'.repeat(maskedValue.length - 4);
+        maskedValue.substr(0, 3) + 'X'.repeat(maskedValue.length - 3);
       this.inputClientSecret.nativeElement.value = data;
     }
   }
@@ -439,5 +429,23 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.inputClientSecret.nativeElement.value = this.tenantForm.get(
       'erps.sap.saml.clientSecret'
     ).value;
+  }
+
+  cancel() {
+    if (this.editQueryParam) {
+      this.router.navigate(['/tenant-management']);
+    } else {
+      this.tenantForm.disable();
+      this.editTenant = false;
+    }
+  }
+
+  editTenantForm() {
+    this.tenantForm.enable();
+    this.editTenant = true;
+    this.tenantForm.get('tenantId').disable();
+    this.tenantForm.get('tenantName').disable();
+    this.tenantForm.get('rdbms.database').disable();
+    this.tenantForm.get('nosql.database').disable();
   }
 }

@@ -21,7 +21,6 @@ export class TenantResolverService implements Resolve<Tenant> {
     state: RouterStateSnapshot
   ): Observable<Tenant> {
     const id = +route.params.id;
-    console.log(id);
     return this.tenantService.getTenantById$(id).pipe(
       tap((tenant) => {
         if (tenant === null || Object.keys(tenant).length === 0) {

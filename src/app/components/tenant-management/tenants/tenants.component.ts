@@ -169,7 +169,9 @@ export class TenantsComponent implements OnInit {
     } = event;
     switch (action) {
       case 'edit':
-        this.router.navigate(['tenant-management/edit', id]);
+        this.router.navigate(['tenant-management/edit', id], {
+          queryParams: { edit: true }
+        });
         break;
       default:
       // do nothing

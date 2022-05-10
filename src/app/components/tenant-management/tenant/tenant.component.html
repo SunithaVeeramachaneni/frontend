@@ -14,37 +14,39 @@
     <span class="adding-tenant-text">{{ tenantHeader }}</span>
     <button
       mat-raised-button
-      translate="nextBtn"
-      type="button"
-      class="next-btn"
-      *ngIf="this.selectedID.value !== 4"
-      (click)="moveNext(this.selectedID)"
-    ></button>
-    <button
-      mat-raised-button
       translate="saveBtn"
       class="save-btn"
-      *ngIf="this.selectedID.value === 4"
+      *ngIf="editTenant"
       [disabled]="tenantForm.invalid || tenantForm.pristine"
     ></button>
     <button
       mat-raised-button
       translate="cancelBtn"
       class="cancel-btn"
-      [routerLink]="['/tenant-management']"
+      *ngIf="editTenant"
+      (click)="cancel()"
+    ></button>
+    <button
+      mat-raised-button
+      translate="editBtn"
+      class="save-btn"
+      *ngIf="!editTenant"
+      (click)="editTenantForm()"
     ></button>
   </div>
   <div class="dis-flex width-100" style="padding: 5px 0">
     <div class="prevbtn p-0">
       <button
-        (click)="buttonActionsInHeader(noOfTabs)"
+        type="button"
+        (click)="setTabIndex(0)"
         [disabled]="firstButton"
         class="prevnextbtns m-l-10"
       >
         <mat-icon>first_page</mat-icon>
       </button>
       <button
-        (click)="buttonActionsInSteps(selectedID.value - 1, noOfTabs)"
+        type="button"
+        (click)="setTabIndex(selectedID.value - 1)"
         [disabled]="firstButton"
         class="prevnextbtns"
       >
@@ -55,7 +57,7 @@
       <mat-tab-group
         [selectedIndex]="selectedID.value"
         (selectedIndexChange)="selectedID.setValue($event)"
-        (selectedTabChange)="onTabsChange(selectedID.value, noOfTabs)"
+        (selectedTabChange)="onTabsChange(noOfTabs)"
       >
         <mat-tab label="{{ 'primary' | translate }}"></mat-tab>
         <mat-tab label="{{ 'erps' | translate }}"></mat-tab>
@@ -66,14 +68,16 @@
     </div>
     <div class="nextbtn p-0">
       <button
-        (click)="buttonActionsInSteps(selectedID.value + 1, noOfTabs)"
+        type="button"
+        (click)="setTabIndex(selectedID.value + 1)"
         [disabled]="lastButton"
         class="prevnextbtns"
       >
         <mat-icon>chevron_right</mat-icon>
       </button>
       <button
-        (click)="buttonActionsInSteps(noOfTabs - 1, noOfTabs)"
+        type="button"
+        (click)="setTabIndex(noOfTabs - 1)"
         [disabled]="lastButton"
         class="prevnextbtns m-r-10"
       >
@@ -423,6 +427,7 @@
                   formControlName="password"
                 />
                 <button
+                  type="button"
                   mat-icon-button
                   matSuffix
                   (click)="hidePasswordERPS = !hidePasswordERPS"
@@ -574,7 +579,7 @@
                     formControlName="clientSecret"
                     #inputClientSecret
                     (focus)="unMaskClientSecret()"
-                    (blur)="maskClientSecret($event)"
+                    (blur)="maskClientSecret()"
                   />
                 </mat-form-field>
                 <ng-container *ngIf="validationErrors$ | async as errors">
@@ -1083,6 +1088,7 @@
                 formControlName="password"
               />
               <button
+                type="button"
                 mat-icon-button
                 matSuffix
                 (click)="hidePasswordDBMS = !hidePasswordDBMS"
@@ -1215,7 +1221,7 @@
                   errors.nosql.user.name
                     | translate
                       : {
-                          name: 'host' | translate,
+                          name: 'user' | translate,
                           length: errors.nosql.user.length
                         }
                 }}
@@ -1233,6 +1239,7 @@
                 formControlName="password"
               />
               <button
+                type="button"
                 mat-icon-button
                 matSuffix
                 (click)="hidePasswordNoSQL = !hidePasswordNoSQL"
