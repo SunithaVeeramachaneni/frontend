@@ -21,7 +21,9 @@ import {
   tap,
   map,
   debounceTime,
-  distinctUntilChanged
+  distinctUntilChanged,
+  toArray,
+  filter
 } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
@@ -106,27 +108,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   getRoles() {
-    const initialRolesList$ = this.roleService.getRoles$().pipe(
-      mergeMap((roles: Role[]) => {
-        const newArray = [];
-        return from(roles).pipe(
-          mergeMap((role) =>
-            this.roleService.getRolePermissionsById$(role.id).pipe(
-              map((permissions) => {
-                const newRoleArray = {
-                  id: role.id,
-                  name: role.name,
-                  description: role.description,
-                  permissionIds: permissions
-                };
-                newArray.push(newRoleArray);
-                return newArray;
-              })
-            )
-          )
-        );
-      })
-    );
+    const initialRolesList$ = this.roleService.getRolesWithPermissions$();
     const updatedRoles$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
@@ -278,20 +260,17 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  showSelectedRole(role) {
+  showSelectedRole(role: Role) {
     this.selectedRole = role;
     this.showCancelBtn = false;
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
 
-    this.selectedRolePermissions$ = this.roleService
-      .getRolePermissionsById$(role.id)
-      .pipe(
-        map((resp) => {
-          const selectedPermission = resp;
-          this.enableSaveButon = false;
-          return selectedPermission;
-        })
-      );
+    this.selectedRolePermissions$ = this.rolesList$.pipe(
+      map((roles) => {
+        const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        return permissions.map((perm) => perm.id);
+      })
+    );
   }
 }

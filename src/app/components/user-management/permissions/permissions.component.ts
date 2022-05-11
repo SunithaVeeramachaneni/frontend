@@ -4,8 +4,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
-  Output
+  Output,
+  SimpleChanges
 } from '@angular/core';
 import {
   FormBuilder,
@@ -13,7 +15,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { mergeMap, tap, map } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
@@ -27,11 +29,9 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
   styleUrls: ['./permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PermissionsComponent implements OnInit {
-  @Input() set selectedRolePermissions(selectedRolePermissions) {
-    this.rolesBasedPermissions = selectedRolePermissions;
-    this.getAllPermissions(selectedRolePermissions);
-  }
+export class PermissionsComponent implements OnChanges {
+  @Input() selectedRolePermissions$: Observable<any[]>;
+  @Input() allPermissions$: Observable<any[]>;
 
   @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -39,53 +39,44 @@ export class PermissionsComponent implements OnInit {
   permissions$: Observable<any>;
   panelOpenState = true;
   isEditable = false;
-  allPermissions;
 
   constructor(private roleService: RolesPermissionsService) {}
 
-  ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges) {
+    let selectedRolePermissions$: Observable<any>;
+    let allPermissions$: Observable<any[]>;
+    if (changes.selectedRolePermissions$) {
+      this.selectedRolePermissions$ =
+        changes.selectedRolePermissions$.currentValue;
+    }
+    if (changes.allPermissions$) {
+      this.allPermissions$ = changes.allPermissions$.currentValue;
+    }
 
-  getAllPermissions(selctedRoleBasedPermissionsList) {
-    this.permissions$ = this.roleService.getPermissions$().pipe(
-      map((resp) => {
-        const reports = [];
-        let reportChecked = true;
-        let countOfReportsChecked = 0;
-        if (resp) {
-          resp.forEach((allpermission) => {
-            if (allpermission.moduleName === 'Reports') {
-              if (selctedRoleBasedPermissionsList) {
-                let successObject = false;
-                selctedRoleBasedPermissionsList.forEach(
-                  (selectedPermission) => {
-                    if (selectedPermission.id === allpermission.id) {
-                      successObject = true;
-                      countOfReportsChecked = countOfReportsChecked + 1;
-                      reports.push({ ...allpermission, checked: true });
-                    }
-                  }
-                );
-                if (successObject === false) {
-                  reportChecked = false;
-                  reports.push({ ...allpermission, checked: false });
-                }
-              } else {
-                reportChecked = false;
-                reports.push({ ...allpermission, checked: false });
+    this.permissions$ = combineLatest([
+      this.selectedRolePermissions$,
+      this.allPermissions$
+    ]).pipe(
+      map(([permissionIDs, allPermissions]) =>
+        allPermissions.map((modulePermissions) => {
+          let activePermissionCount = 0;
+          const newPermissions = modulePermissions.permissions.map(
+            (permission) => {
+              permission.checked = false;
+              if (permissionIDs.includes(permission.id)) {
+                permission.checked = true;
+                activePermissionCount += 1;
               }
+              return permission;
             }
-          });
-          const newPermissionsArray = [
-            {
-              name: 'Reports',
-              checked: reportChecked,
-              countOfChecked: countOfReportsChecked,
-              permissions: reports
-            }
-          ];
-          return newPermissionsArray;
-        }
-      })
+          );
+          return {
+            ...modulePermissions,
+            permissions: newPermissions,
+            countOfChecked: activePermissionCount
+          };
+        })
+      )
     );
   }
 
