@@ -35,6 +35,9 @@ import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 
+const regUrl =
+  '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$';
+
 @Component({
   selector: 'app-tenant',
   templateUrl: './tenant.component.html',
@@ -119,8 +122,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
       ],
       tenantIdp: ['', [Validators.required]],
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
-      authority: ['', [Validators.required, Validators.maxLength(255)]],
-      redirectUri: ['', [Validators.required, Validators.maxLength(100)]],
+      authority: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(255),
+          Validators.pattern(regUrl)
+        ]
+      ],
+      redirectUri: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(regUrl)
+        ]
+      ],
       tenantDomainName: ['', [Validators.required, Validators.maxLength(100)]],
       tenantAdmin: this.fb.group({
         firstName: [
@@ -287,15 +304,36 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   buildErps(): FormGroup {
     return this.fb.group({
-      baseUrl: ['', [Validators.required, Validators.maxLength(255)]],
-      oauth2Url: ['', [Validators.required, Validators.maxLength(255)]],
+      baseUrl: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(255),
+          Validators.pattern(regUrl)
+        ]
+      ],
+      oauth2Url: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(255),
+          Validators.pattern(regUrl)
+        ]
+      ],
       username: ['', [Validators.required, Validators.maxLength(100)]],
       password: ['', [Validators.required, Validators.maxLength(100)]],
       grantType: ['', [Validators.required, Validators.maxLength(100)]],
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
       scope: ['', [Validators.required, Validators.maxLength(100)]],
       saml: this.fb.group({
-        oauth2Url: ['', [Validators.required, Validators.maxLength(255)]],
+        oauth2Url: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(255),
+            Validators.pattern(regUrl)
+          ]
+        ],
         grantType: ['', [Validators.required, Validators.maxLength(100)]],
         clientSecret: ['', [Validators.required, Validators.maxLength(100)]],
         resource: ['', [Validators.required, Validators.maxLength(100)]],
@@ -307,8 +345,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   buildProtectedResources(): FormGroup {
     return this.fb.group({
-      identityMetadata: ['', [Validators.required, Validators.maxLength(255)]],
-      issuer: ['', [Validators.required, Validators.maxLength(100)]],
+      identityMetadata: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(255),
+          Validators.pattern(regUrl)
+        ]
+      ],
+      issuer: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(regUrl)
+        ]
+      ],
       clientId: ['', [Validators.required, Validators.maxLength(100)]],
       audience: ['', [Validators.required, Validators.maxLength(100)]],
       scope: ['', [Validators.required, Validators.maxLength(100)]],
@@ -317,7 +369,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
   }
 
   initUrl = () =>
-    this.fb.control('', [Validators.required, Validators.maxLength(100)]);
+    this.fb.control('', [
+      Validators.required,
+      Validators.maxLength(100),
+      Validators.pattern(regUrl)
+    ]);
 
   addUrl(type: string): void {
     if (type === 'sap') {
@@ -353,10 +409,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
     } else {
       this.lastButton = false;
     }
-  }
-
-  moveNext(selectedID) {
-    this.selectedID.setValue(selectedID.value + 1);
   }
 
   saveTenant() {

@@ -1,6 +1,7 @@
+import { of } from 'rxjs';
 import { Tenant, UserDetails } from 'src/app/interfaces';
 
-export const mockTenants: Tenant[] = [
+export const tenants: Tenant[] = [
   {
     id: 1,
     tenantId: 'tenantId',
@@ -80,3 +81,14 @@ export const mockTenants: Tenant[] = [
     createdAt: '2022-05-04 12:00:00'
   }
 ];
+
+export const formatedTenants = tenants.map((tenant) => {
+  const {
+    tenantAdmin: { firstName, lastName }
+  } = tenant;
+  const adminInfo = `${firstName} ${lastName}`;
+  return { ...tenant, adminInfo };
+});
+
+export const tenants$ = of(tenants);
+export const formatedTenants$ = of(formatedTenants);

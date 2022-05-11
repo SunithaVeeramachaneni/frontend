@@ -193,7 +193,10 @@
                   | translate
                     : {
                         name: 'authority' | translate,
-                        length: errors.authority.length
+                        length: errors.authority.length,
+                        message:
+                          'invalidUrl'
+                          | translate: { name: 'authority' | translate }
                       }
               }}
             </mat-error>
@@ -216,7 +219,10 @@
                   | translate
                     : {
                         name: 'redirectUri' | translate,
-                        length: errors.redirectUri.length
+                        length: errors.redirectUri.length,
+                        message:
+                          'invalidUrl'
+                          | translate: { name: 'redirectUri' | translate }
                       }
               }}
             </mat-error>
@@ -364,7 +370,10 @@
                       | translate
                         : {
                             name: 'baseUrl' | translate,
-                            length: errors.erps.sap.baseUrl.length
+                            length: errors.erps.sap.baseUrl.length,
+                            message:
+                              'invalidUrl'
+                              | translate: { name: 'baseUrl' | translate }
                           }
                   }}
                 </mat-error>
@@ -387,7 +396,10 @@
                       | translate
                         : {
                             name: 'oauth2Url' | translate,
-                            length: errors.erps.sap.oauth2Url.length
+                            length: errors.erps.sap.oauth2Url.length,
+                            message:
+                              'invalidUrl'
+                              | translate: { name: 'oauth2Url' | translate }
                           }
                   }}
                 </mat-error>
@@ -540,7 +552,10 @@
                         | translate
                           : {
                               name: 'oauth2Url' | translate,
-                              length: errors.erps.sap.saml.oauth2Url.length
+                              length: errors.erps.sap.saml.oauth2Url.length,
+                              message:
+                                'invalidUrl'
+                                | translate: { name: 'oauth2Url' | translate }
                             }
                     }}
                   </mat-error>
@@ -694,7 +709,11 @@
                             name: 'identityMetadata' | translate,
                             length:
                               errors.protectedResources.sap.identityMetadata
-                                .length
+                                .length,
+                            message:
+                              'invalidUrl'
+                              | translate
+                                : { name: 'identityMetadata' | translate }
                           }
                   }}
                 </mat-error>
@@ -717,7 +736,10 @@
                       | translate
                         : {
                             name: 'issuer' | translate,
-                            length: errors.protectedResources.sap.issuer.length
+                            length: errors.protectedResources.sap.issuer.length,
+                            message:
+                              'invalidUrl'
+                              | translate: { name: 'issuer' | translate }
                           }
                   }}
                 </mat-error>
@@ -829,6 +851,16 @@
                           : {
                               name: 'url' | translate,
                               length: url.errors?.maxlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
+                  {{ url.errors | json }}
+                  <mat-error *ngIf="url.errors?.pattern && url.touched">
+                    {{
+                      'invalidUrl'
+                        | translate
+                          : {
+                              name: 'url' | translate
                             }
                     }}
                   </mat-error>
@@ -994,6 +1026,15 @@
                           : {
                               name: 'url' | translate,
                               length: url.errors?.maxlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error *ngIf="url.errors?.pattern && url.touched">
+                    {{
+                      'invalidUrl'
+                        | translate
+                          : {
+                              name: 'url' | translate
                             }
                     }}
                   </mat-error>

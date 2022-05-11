@@ -16,10 +16,7 @@ import { TenantService } from './tenant.service';
 export class TenantResolverService implements Resolve<Tenant> {
   constructor(private tenantService: TenantService, private router: Router) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<Tenant> {
+  resolve(route: ActivatedRouteSnapshot): Observable<Tenant> {
     const id = +route.params.id;
     return this.tenantService.getTenantById$(id).pipe(
       tap((tenant) => {
