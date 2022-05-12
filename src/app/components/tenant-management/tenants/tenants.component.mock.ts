@@ -1,4 +1,33 @@
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { TableColumn } from 'src/app/interfaces';
+
+export const columns = [
+  {
+    name: 'tenantName',
+    displayName: 'Tenant',
+    type: 'string'
+  },
+  {
+    name: 'products',
+    displayName: 'Products',
+    type: 'string'
+  },
+  {
+    name: 'modules',
+    displayName: 'Modules',
+    type: 'string'
+  },
+  {
+    name: 'adminInfo',
+    displayName: 'Admin',
+    type: 'string'
+  },
+  {
+    name: 'createdAt',
+    displayName: 'Created On',
+    type: 'date'
+  }
+] as TableColumn[];
 
 export const configOptions: ConfigOptions = {
   tableID: 'tenantsTable',

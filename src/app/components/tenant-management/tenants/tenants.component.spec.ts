@@ -23,7 +23,7 @@ import {
 } from '../services/tenant.service.mock';
 
 import { TenantsComponent } from './tenants.component';
-import { configOptions } from './tenants.component.mock';
+import { columns, configOptions } from './tenants.component.mock';
 
 describe('TenantsComponent', () => {
   let component: TenantsComponent;
@@ -81,7 +81,7 @@ describe('TenantsComponent', () => {
       .withArgs({ isActive: true })
       .and.returnValue(of({ count: formatedTenants.length }));
     (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
-      .withArgs(component.columns, component.configOptions)
+      .withArgs(columns, { ...configOptions, allColumns: [] })
       .and.returnValue(configOptions);
     fixture.detectChanges();
   });
@@ -99,6 +99,14 @@ describe('TenantsComponent', () => {
       component.tenantsData$.subscribe((response) => {
         expect(response).toEqual({ data: formatedTenants });
         expect(component.configOptions).toEqual(configOptions);
+        expect(
+          tenantServiceSpy.updateConfigOptionsFromColumns
+        ).toHaveBeenCalledWith(columns, { ...configOptions, allColumns: [] });
+        expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
+          skip: 0,
+          limit: defaultLimit,
+          isActive: true
+        });
       });
     });
 
