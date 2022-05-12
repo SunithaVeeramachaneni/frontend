@@ -96,9 +96,10 @@ describe('TenantsComponent', () => {
     });
 
     it('should get tenants data', () => {
-      component.tenantsData$.subscribe((response) =>
-        expect(response).toEqual({ data: formatedTenants })
-      );
+      component.tenantsData$.subscribe((response) => {
+        expect(response).toEqual({ data: formatedTenants });
+        expect(component.configOptions).toEqual(configOptions);
+      });
     });
 
     it('should get tenants count', () => {

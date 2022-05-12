@@ -2,7 +2,7 @@
   <div class="tenant-header">
     <span class="mat-select-products select-products">
       <mat-form-field appearance="outline">
-        <mat-label>Product</mat-label>
+        <mat-label translate>product</mat-label>
         <mat-select [(value)]="selectedProduct" multiple disabled>
           <mat-option *ngFor="let product of products" [value]="product">
             {{ product }}
