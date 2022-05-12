@@ -32,6 +32,7 @@ import {
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/generic-validator';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 
@@ -108,7 +109,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
       id: [''],
       tenantId: [
         '',
-        [Validators.required, Validators.maxLength(100)],
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ],
         this.validateUnique.bind(this)('tenantId')
       ],
       tenantName: [
@@ -116,18 +121,27 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(100)
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
         ],
         this.validateUnique.bind(this)('tenantName')
       ],
       tenantIdp: ['', [Validators.required]],
-      clientId: ['', [Validators.required, Validators.maxLength(100)]],
+      clientId: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
       authority: [
         '',
         [
           Validators.required,
           Validators.maxLength(255),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
       redirectUri: [
@@ -135,17 +149,26 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
-      tenantDomainName: ['', [Validators.required, Validators.maxLength(100)]],
+      tenantDomainName: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
       tenantAdmin: this.fb.group({
         firstName: [
           '',
           [
             Validators.required,
             Validators.minLength(3),
-            Validators.maxLength(100)
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
           ]
         ],
         lastName: [
@@ -153,7 +176,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(3),
-            Validators.maxLength(100)
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
           ]
         ],
         title: [
@@ -161,12 +185,18 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.minLength(3),
-            Validators.maxLength(100)
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
           ]
         ],
         email: [
           '',
-          [Validators.required, Validators.maxLength(100), Validators.email]
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            Validators.email,
+            WhiteSpaceValidator.noWhiteSpace
+          ]
         ]
       }),
       erps: this.fb.group({
@@ -177,24 +207,74 @@ export class TenantComponent implements OnInit, AfterViewInit {
         node: this.buildProtectedResources()
       }),
       rdbms: this.fb.group({
-        host: ['', [Validators.required, Validators.maxLength(100)]],
+        host: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
         port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
-        user: ['', [Validators.required, Validators.maxLength(100)]],
-        password: ['', [Validators.required, Validators.maxLength(100)]],
+        user: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
         database: [
           { value: '', disabled: true },
-          [Validators.required, Validators.maxLength(100)]
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
         ],
         dialect: ['', [Validators.required]]
       }),
       nosql: this.fb.group({
-        host: ['', [Validators.required, Validators.maxLength(100)]],
+        host: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
         port: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
-        user: ['', [Validators.required, Validators.maxLength(100)]],
-        password: ['', [Validators.required, Validators.maxLength(100)]],
+        user: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
         database: [
           { value: '', disabled: true },
-          [Validators.required, Validators.maxLength(100)]
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
         ]
       }),
       noOfLicenses: [
@@ -309,7 +389,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(255),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
       oauth2Url: [
@@ -317,28 +398,100 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(255),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
-      username: ['', [Validators.required, Validators.maxLength(100)]],
-      password: ['', [Validators.required, Validators.maxLength(100)]],
-      grantType: ['', [Validators.required, Validators.maxLength(100)]],
-      clientId: ['', [Validators.required, Validators.maxLength(100)]],
-      scope: ['', [Validators.required, Validators.maxLength(100)]],
+      username: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      grantType: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      clientId: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      scope: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
       saml: this.fb.group({
         oauth2Url: [
           '',
           [
             Validators.required,
             Validators.maxLength(255),
-            Validators.pattern(regUrl)
+            Validators.pattern(regUrl),
+            WhiteSpaceValidator.noWhiteSpace
           ]
         ],
-        grantType: ['', [Validators.required, Validators.maxLength(100)]],
-        clientSecret: ['', [Validators.required, Validators.maxLength(100)]],
-        resource: ['', [Validators.required, Validators.maxLength(100)]],
-        tokenUse: ['', [Validators.required, Validators.maxLength(100)]],
-        tokenType: ['', [Validators.required, Validators.maxLength(100)]]
+        grantType: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        clientSecret: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        resource: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        tokenUse: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        tokenType: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ]
       })
     });
   }
@@ -350,7 +503,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(255),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
       issuer: [
@@ -358,12 +512,34 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          Validators.pattern(regUrl)
+          Validators.pattern(regUrl),
+          WhiteSpaceValidator.noWhiteSpace
         ]
       ],
-      clientId: ['', [Validators.required, Validators.maxLength(100)]],
-      audience: ['', [Validators.required, Validators.maxLength(100)]],
-      scope: ['', [Validators.required, Validators.maxLength(100)]],
+      clientId: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      audience: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
+      scope: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.noWhiteSpace
+        ]
+      ],
       urls: this.fb.array([this.initUrl()])
     });
   }
@@ -372,7 +548,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.fb.control('', [
       Validators.required,
       Validators.maxLength(100),
-      Validators.pattern(regUrl)
+      Validators.pattern(regUrl),
+      WhiteSpaceValidator.noWhiteSpace
     ]);
 
   addUrl(type: string): void {

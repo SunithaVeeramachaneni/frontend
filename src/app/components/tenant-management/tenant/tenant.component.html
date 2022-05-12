@@ -854,8 +854,22 @@
                             }
                     }}
                   </mat-error>
-                  {{ url.errors | json }}
-                  <mat-error *ngIf="url.errors?.pattern && url.touched">
+                  <mat-error *ngIf="url.errors?.noWhiteSpace && url.touched">
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'url' | translate
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      !url.errors?.noWhiteSpace &&
+                      url.errors?.pattern &&
+                      url.touched
+                    "
+                  >
                     {{
                       'invalidUrl'
                         | translate
@@ -1029,7 +1043,22 @@
                             }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="url.errors?.pattern && url.touched">
+                  <mat-error *ngIf="url.errors?.noWhiteSpace && url.touched">
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'url' | translate
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      !url.errors?.noWhiteSpace &&
+                      url.errors?.pattern &&
+                      url.touched
+                    "
+                  >
                     {{
                       'invalidUrl'
                         | translate
