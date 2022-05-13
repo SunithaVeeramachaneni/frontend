@@ -36,6 +36,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 
+declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$';
 
@@ -77,7 +78,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       | any;
   }>;
   tenantHeader = 'Adding Tenant...';
-  encryptionKey = 'Innovation@5';
+  encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
   private genericValidator: GenericValidator;

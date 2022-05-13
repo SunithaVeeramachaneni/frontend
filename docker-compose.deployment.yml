@@ -62,6 +62,8 @@ services:
       args:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
+    environment:
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     ports:
       - '80:80'
       - '443:443'
