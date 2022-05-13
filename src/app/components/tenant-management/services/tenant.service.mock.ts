@@ -6,30 +6,30 @@ export const tenants: Tenant[] = [
     id: 1,
     tenantId: 'tenantId',
     tenantName: 'tenantName',
-    tenantIdp: 'tenantIdp',
+    tenantIdp: 'azure',
     clientId: 'clientId',
-    authority: 'authority',
-    redirectUri: 'redirectUri',
+    authority: 'https://authoritytest.com',
+    redirectUri: 'https://redirecturitest.com',
     tenantDomainName: 'tenantDomainName',
     tenantAdmin: {
       firstName: 'firstName',
       lastName: 'lastName',
       title: 'title',
-      email: 'email'
+      email: 'email@innovapptive.com'
     } as UserDetails,
     erps: {
       sap: {
-        baseUrl: 'baseUrl',
-        oauth2Url: 'oauth2Url',
+        baseUrl: 'https://baseurltest.com',
+        oauth2Url: 'https://oauth2urltest.com',
         username: 'username',
-        password: '', // AES encrypted string
+        password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
         grantType: 'grantType',
         clientId: 'clientId',
         scope: 'scope',
         saml: {
-          oauth2Url: 'oauth2Url',
-          grantType: 'grantType',
-          clientSecret: '', // AES encrypted string
+          oauth2Url: 'https://oauth2urltest.com',
+          grantType: 'https://granttypetest.com',
+          clientSecret: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
           resource: 'resource',
           tokenUse: 'tokenUse',
           tokenType: 'tokenType'
@@ -38,27 +38,27 @@ export const tenants: Tenant[] = [
     },
     protectedResources: {
       sap: {
-        identityMetadata: 'identityMetadata',
-        issuer: 'issuer',
+        identityMetadata: 'https://identitymetadatatest.com',
+        issuer: 'https://issuertest.com',
         clientId: 'clientId',
         audience: 'audience',
         scope: 'scope',
-        urls: ['urls']
+        urls: ['https://urltest.com']
       },
       node: {
-        identityMetadata: 'identityMetadata',
-        issuer: 'issuer',
+        identityMetadata: 'https://identitymetadatatest.com',
+        issuer: 'https://issuertest.com',
         clientId: 'clientId',
         audience: 'audience',
         scope: 'scope',
-        urls: ['urls']
+        urls: ['https://urltest.com']
       }
     },
     rdbms: {
       host: 'host',
       port: 1234,
       user: 'user',
-      password: '', // AES encrypted string
+      password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
       database: 'database',
       dialect: 'dialect'
     },
@@ -66,12 +66,12 @@ export const tenants: Tenant[] = [
       host: 'host',
       port: 1234,
       user: 'user',
-      password: '', // AES encrypted string
+      password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
       database: 'database'
     },
     noOfLicenses: 20,
-    products: ['products', 'products1'],
-    modules: ['modules'],
+    products: ['MWORKORDER', 'MINVENTORY'],
+    modules: ['Dashboard'],
     logDBType: 'logDBType',
     logLevel: 'logLevel',
     createdAt: '2022-05-04 12:00:00'
