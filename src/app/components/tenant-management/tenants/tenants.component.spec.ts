@@ -124,12 +124,13 @@ describe('TenantsComponent', () => {
 
     it('should call getTenants from tenant service', () => {
       component.skip = 0;
-      component.getTenants();
-
-      expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
-        skip: 0,
-        limit: defaultLimit,
-        isActive: true
+      component.getTenants().subscribe((response) => {
+        expect(response).toEqual(formatedTenants);
+        expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
+          skip: 0,
+          limit: defaultLimit,
+          isActive: true
+        });
       });
     });
   });
@@ -140,10 +141,11 @@ describe('TenantsComponent', () => {
     });
 
     it('should call getTenantsCount from tenant service', () => {
-      component.getTenantsCount();
-
-      expect(tenantServiceSpy.getTenantsCount$).toHaveBeenCalledWith({
-        isActive: true
+      component.getTenantsCount().subscribe((response) => {
+        expect(response).toEqual({ count: formatedTenants.length });
+        expect(tenantServiceSpy.getTenantsCount$).toHaveBeenCalledWith({
+          isActive: true
+        });
       });
     });
   });

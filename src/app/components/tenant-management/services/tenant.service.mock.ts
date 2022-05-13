@@ -64,7 +64,7 @@ export const tenants: Tenant[] = [
     },
     nosql: {
       host: 'host',
-      port: 1234,
+      port: 12345,
       user: 'user',
       password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
       database: 'database'
@@ -74,7 +74,10 @@ export const tenants: Tenant[] = [
     modules: ['Dashboard'],
     logDBType: 'logDBType',
     logLevel: 'logLevel',
-    createdAt: '2022-05-04 12:00:00'
+    isActive: true,
+    createdBy: 'admin@innovapptive.com',
+    createdAt: '2022-05-04 12:00:00',
+    updatedAt: '2022-05-04 12:00:00'
   }
 ];
 
