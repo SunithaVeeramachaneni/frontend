@@ -103,9 +103,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
   }
-  compareRole(role1, role2) {
-    return role1 && role2 && role1.id === role2.id;
-  }
 
   getRoles() {
     const initialRolesList$ = this.roleService.getRolesWithPermissions$();
@@ -235,28 +232,36 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   deleteRole(role) {
-    const deleteReportRef = this.dialog.open(RoleDeleteModalComponent);
-    deleteReportRef.afterClosed().subscribe((res) => {
-      if (res === 'yes') {
-        this.roleService.deleteRole$(role).subscribe(
-          (resp) => {
-            if (Object.keys(resp).length && resp.id) {
-              this.rolesListUpdate$.next({ action: 'delete', role });
-              this.selectedRole = undefined;
+    console.log(role);
+    this.roleService.getUsersByRoleId$(role.id).subscribe((usersData) => {
+      console.log(usersData);
+      const deleteReportRef = this.dialog.open(RoleDeleteModalComponent, {
+        data: {
+          data: usersData
+        }
+      });
+      deleteReportRef.afterClosed().subscribe((res) => {
+        if (res === 'yes') {
+          this.roleService.deleteRole$(role).subscribe(
+            (resp) => {
+              if (Object.keys(resp).length && resp.id) {
+                this.rolesListUpdate$.next({ action: 'delete', role });
+                this.selectedRole = undefined;
+                this.toast.show({
+                  text: 'Role Deleted successfully',
+                  type: 'success'
+                });
+              }
+            },
+            (error) => {
               this.toast.show({
-                text: 'Role Deleted successfully',
+                text: 'Unable to delete the role',
                 type: 'success'
               });
             }
-          },
-          (error) => {
-            this.toast.show({
-              text: 'Unable to delete the role',
-              type: 'success'
-            });
-          }
-        );
-      }
+          );
+        }
+      });
     });
   }
 

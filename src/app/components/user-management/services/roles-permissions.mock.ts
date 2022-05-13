@@ -97,13 +97,13 @@ export const roleIdByPermissionMock: Permission[] = [
   }
 ];
 
-export const addRoleMock: Role = {
+export const addRoleMock = {
   name: 'New Role',
   description: 'New Role Description',
   permissionIds: ['1', '2']
 };
 
-export const updateRoleMock: Role = {
+export const updateRoleMock = {
   id: '2',
   name: 'Update Role',
   description: 'Update Role Description',

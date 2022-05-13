@@ -50,6 +50,16 @@ export class RolesPermissionsService {
       info
     );
 
+  getUsersByRoleId$ = (
+    id: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `roles/${id}/users`,
+      info
+    );
+
   createRole$ = (
     role: RoleWithoutID,
     info: ErrorInfo = {} as ErrorInfo
