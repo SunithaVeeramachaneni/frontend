@@ -339,11 +339,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
           'urls',
-          this.fb.array(sapUrls)
+          this.fb.array(this.setUrls(sapUrls))
         );
         (
           this.tenantForm.get('protectedResources.node') as FormGroup
-        ).setControl('urls', this.fb.array(nodeUrls));
+        ).setControl('urls', this.fb.array(this.setUrls(nodeUrls)));
         this.tenantForm.get('tenantId').disable();
         this.tenantForm.get('tenantName').disable();
       }
@@ -545,13 +545,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
   }
 
-  initUrl = () =>
-    this.fb.control('', [
+  initUrl = (url = '') =>
+    this.fb.control(url, [
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(regUrl),
       WhiteSpaceValidator.noWhiteSpace
     ]);
+
+  setUrls = (urls: string[]) => urls.map((url) => this.initUrl(url));
 
   addUrl(type: string): void {
     if (type === 'sap') {
