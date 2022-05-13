@@ -14,7 +14,7 @@ export interface Tenant {
   protectedResources: { [key: string]: ProtectedResourceLatest };
   rdbms: Rdbms;
   nosql: Nosql;
-  licenseInfo: LicenseInfo;
+  noOfLicenses: number;
   products: string[];
   modules: string[];
   logDBType: string;

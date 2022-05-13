@@ -22,14 +22,14 @@ export const tenants: Tenant[] = [
         baseUrl: 'baseUrl',
         oauth2Url: 'oauth2Url',
         username: 'username',
-        password: 'password', // AES encrypted string
+        password: '', // AES encrypted string
         grantType: 'grantType',
         clientId: 'clientId',
         scope: 'scope',
         saml: {
           oauth2Url: 'oauth2Url',
           grantType: 'grantType',
-          clientSecret: 'clientSecret', // AES encrypted string
+          clientSecret: '', // AES encrypted string
           resource: 'resource',
           tokenUse: 'tokenUse',
           tokenType: 'tokenType'
@@ -58,7 +58,7 @@ export const tenants: Tenant[] = [
       host: 'host',
       port: 1234,
       user: 'user',
-      password: 'password', // AES encrypted string
+      password: '', // AES encrypted string
       database: 'database',
       dialect: 'dialect'
     },
@@ -66,14 +66,10 @@ export const tenants: Tenant[] = [
       host: 'host',
       port: 1234,
       user: 'user',
-      password: 'password', // AES encrypted string
+      password: '', // AES encrypted string
       database: 'database'
     },
-    licenseInfo: {
-      start: '2022-05-04 12:00:00',
-      end: '2022-05-04 12:00:00',
-      count: 20
-    },
+    noOfLicenses: 20,
     products: ['products', 'products1'],
     modules: ['modules'],
     logDBType: 'logDBType',
