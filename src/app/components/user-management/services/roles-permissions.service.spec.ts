@@ -18,7 +18,7 @@ import {
 
 import { RolesPermissionsService } from './roles-permissions.service';
 
-describe('Roles Permissions service', () => {
+fdescribe('Roles Permissions service', () => {
   let service: RolesPermissionsService;
   let appServiceSpy: AppService;
 
