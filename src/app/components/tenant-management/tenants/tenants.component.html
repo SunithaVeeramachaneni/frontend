@@ -49,13 +49,13 @@
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
-      style="width: 100%"
+      class="width-100"
     ></cwp-dynamictable>
   </div>
 </div>
 
 <ng-template #loadingTenants>
-  <div style="padding: 0 20px">
+  <div class="padding">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
