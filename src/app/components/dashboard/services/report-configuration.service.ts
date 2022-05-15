@@ -169,15 +169,22 @@ export class ReportConfigurationService {
         id,
         displayName,
         type,
-        visible,
-        sticky,
         order,
+        hasSubtitle: false,
+        showMenuOptions: true,
+        subtitleColumn: '',
         searchable: true,
         sortable: true,
+        hideable: true,
+        visible,
         movable: true,
+        stickable: true,
+        sticky,
         groupable: isGroupable,
-        hasSubtitle: false,
-        subtitleColumn: ''
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false,
       };
     });
     return { ...configOptions, allColumns, groupByColumns };

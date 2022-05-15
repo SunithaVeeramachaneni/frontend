@@ -31,13 +31,14 @@
       Add User
     </button>
   </div>
-  <div *ngIf="users$ | async as reports; else loadingUsers" class="">
+  <div *ngIf="users$ | async as users; else loadingUsers" class="">
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
       (fetchDataCallback)="handleTableEvent($event)"
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
       (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+      (cellClickActionHandler)="cellClickActionHandler($event)"
     ></cwp-dynamictable>
   </div>
 </div>
