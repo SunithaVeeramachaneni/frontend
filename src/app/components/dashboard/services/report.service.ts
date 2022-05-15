@@ -87,7 +87,14 @@ export class ReportService {
         order: index + 1,
         groupable: false,
         hasSubtitle: false,
-        subtitleColumn: ''
+        subtitleColumn: '',
+        showMenuOptions: true,
+        hideable: false,
+        stickable: false,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPostTextImage: false,
+        hasPreTextImage: false
       };
     });
     configOptions = { ...configOptions, allColumns };
