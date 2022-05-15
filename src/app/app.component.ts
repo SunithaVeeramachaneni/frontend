@@ -22,7 +22,10 @@ const {
   published,
   files,
   userManagement,
-  rolesPermissions
+  rolesPermissions,
+  inActiveUsers,
+  tenantManagement,
+  inActiveTenants
 } = routingUrls;
 
 @Component({
@@ -39,6 +42,14 @@ export class AppComponent implements OnInit, AfterViewChecked {
       showSubMenu: false,
       disable: false,
       subPages: [{ title: reports.title, url: reports.url }]
+    },
+    {
+      title: tenantManagement.title,
+      url: tenantManagement.url,
+      image: 'assets/sidebar-icons/user-management.svg',
+      showSubMenu: false,
+      subPages: [],
+      disable: false
     },
     {
       title: maintenance.title,

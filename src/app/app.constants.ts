@@ -16,11 +16,16 @@ export const routingUrls = {
   rolesPermissions: {
     url: '/user-management/roles-permissions',
     title: 'Roles & Permissions'
-  }
+  },
   // inActiveUsers: {
   //   url: '/user-management/inactive-users',
   //   title: 'Inactive Users'
-  // }
+  // },
+  tenantManagement: { url: '/tenant-management', title: 'Tenant Management' },
+  inActiveTenants: {
+    url: '/tenant-management/inactive-tenants',
+    title: 'Inactive Tenants'
+  }
 };
 
 export const defaultCategoryId = '_UnassignedCategory_';

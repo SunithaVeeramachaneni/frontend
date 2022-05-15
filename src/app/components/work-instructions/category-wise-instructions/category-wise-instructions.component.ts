@@ -245,10 +245,12 @@ export class CategoryWiseInstructionsComponent
       this.instructionSvc.getSelectedCategory(cid)
     ]).pipe(
       map(([currentRouteUrl, category]) => {
-        const { Category_Name } = category;
-        this.selectedCategory = Category_Name;
-        this.commonService.setHeaderTitle(this.selectedCategory);
-        this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+        if (category && Object.keys(category).length) {
+          const { Category_Name } = category;
+          this.selectedCategory = Category_Name;
+          this.commonService.setHeaderTitle(this.selectedCategory);
+          this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
+        }
         return currentRouteUrl;
       })
     );

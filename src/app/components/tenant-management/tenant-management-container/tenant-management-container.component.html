@@ -1,0 +1,12 @@
+<div class="tenant-management-header">
+  <app-header [title]="headerTitle$ | async"></app-header>
+</div>
+<div
+  class="tenant-management-body"
+  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
+>
+  <ng-container *ngIf="currentRouteUrl === routingUrls.tenantManagement.url">
+    <app-tenants></app-tenants>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>
