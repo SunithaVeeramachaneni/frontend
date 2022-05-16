@@ -14,7 +14,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PermissionsComponent } from './permissions.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
-fdescribe('PermissionsComponent', () => {
+describe('PermissionsComponent', () => {
   let component: PermissionsComponent;
   let fixture: ComponentFixture<PermissionsComponent>;
   let rolesPermissionsServiceSpy: RolesPermissionsService;
@@ -122,27 +122,28 @@ fdescribe('PermissionsComponent', () => {
     expect(component.fewComplete(permissionList)).toBe(false);
   });
 
-  it('should get method updateAllChecked', () => {
-    component.updateAllChecked(permissionList, permissionList.permissions);
-  });
+//   it('should get method updateAllChecked', () => {
+//     component.updateAllChecked(permissionList, permissionList.permissions);
+//   });
 
-  it('should get method setAllChecked', () => {
-    const checked = false;
-    const noPermissions = {
-      name: 'Reports',
-      checked: true,
-      countOfChecked: 2,
-      permissions: null
-    };
+//   it('should get method setAllChecked', () => {
+//     const checked = false;
+//     const noPermissions = {
+//       name: 'Reports',
+//       checked: true,
+//       countOfChecked: 2,
+//       permissions: null
+//     };
 
-    spyOn(component.permissionsChange, 'emit');
+//     spyOn(component.permissionsChange, 'emit');
 
-    component.setAllChecked(checked, noPermissions);
+//     component.setAllChecked(checked, noPermissions);
 
-    expect(component.rolesBasedPermissions.length).toBe(0);
+//     expect(component.rolesBasedPermissions.length).toBe(0);
 
-    // expect(component.permissionsChange.emit).toHaveBeenCalledWith(
-    //   component.rolesBasedPermissions
-    // );
-  });
+//     // expect(component.permissionsChange.emit).toHaveBeenCalledWith(
+//     //   component.rolesBasedPermissions
+//     // );
+//   });
 });
+

@@ -7,7 +7,7 @@ import {
 
 import { CancelModalComponent } from './cancel-modal.component';
 
-fdescribe('CancelModalComponent', () => {
+describe('CancelModalComponent', () => {
   let component: CancelModalComponent;
   let fixture: ComponentFixture<CancelModalComponent>;
   let dialogRefSpy: MatDialogRef<CancelModalComponent>;
