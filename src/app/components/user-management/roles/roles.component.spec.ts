@@ -24,7 +24,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-fdescribe('RolesComponent', () => {
+describe('RolesComponent', () => {
   let component: RolesComponent;
   let fixture: ComponentFixture<RolesComponent>;
   let rolesPermissionsServiceSpy: RolesPermissionsService;
