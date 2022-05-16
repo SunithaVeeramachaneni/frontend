@@ -59,7 +59,7 @@ export const tenants: Tenant[] = [
       port: 1234,
       user: 'user',
       password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
-      database: 'database',
+      database: 'Tenantname',
       dialect: 'dialect'
     },
     nosql: {
@@ -67,7 +67,7 @@ export const tenants: Tenant[] = [
       port: 12345,
       user: 'user',
       password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
-      database: 'database'
+      database: 'Tenantname'
     },
     noOfLicenses: 20,
     products: ['MWORKORDER', 'MINVENTORY'],
