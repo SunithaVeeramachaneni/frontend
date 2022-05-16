@@ -1,0 +1,104 @@
+<div class="main-tenant-container">
+  <div class="tenant-header">
+    <span class="mat-select-products select-products">
+      <mat-form-field appearance="outline">
+        <mat-label translate>product</mat-label>
+        <mat-select [(value)]="selectedProduct" multiple disabled>
+          <mat-option *ngFor="let product of products" [value]="product">
+            {{ product }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </span>
+    <span class="custom-mat-form-field-gray-color search-field">
+      <mat-form-field appearance="outline">
+        <mat-icon matPrefix class="searchIcon">search</mat-icon>
+        <input matInput type="text" placeholder="Search" disabled />
+      </mat-form-field>
+    </span>
+
+    <button
+      mat-raised-button
+      class="add-tenant-btn"
+      translate="addTenantBtn"
+      [routerLink]="['/tenant-management/create']"
+    ></button>
+    <span
+      class="count-of-tenants"
+      *ngIf="tenantsCount$ | async as tenantsCount; else loadingTenantsCount"
+    >
+      <span class="tenant-count" *ngIf="tenantsCount.count">{{
+        tenantsCount.count
+      }}</span>
+      <span class="tenant-count" *ngIf="!tenantsCount.count">0</span>
+      <span class="tenant-text">{{
+        'tenantsPlural'
+          | translate
+            : {
+                count: tenantsCount.count ? tenantsCount.count : 0
+              }
+      }}</span>
+    </span>
+  </div>
+  <div
+    *ngIf="tenantsData$ | async; else loadingTenants"
+    class="dis-flex tenant-content"
+  >
+    <cwp-dynamictable
+      [dataSource]="dataSource"
+      [configOptions]="configOptions"
+      (fetchDataCallback)="handleTableEvent($event)"
+      (rowLevelActionHandler)="rowLevelActionHandler($event)"
+      class="width-100"
+    ></cwp-dynamictable>
+  </div>
+</div>
+
+<ng-template #loadingTenants>
+  <div class="padding">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
+<ng-template #loadingTenantsCount>
+  <div class="count-loading">
+    <ngx-shimmer-loading [width]="'15%'" [height]="'30px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

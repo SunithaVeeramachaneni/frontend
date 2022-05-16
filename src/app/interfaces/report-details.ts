@@ -78,7 +78,7 @@ export interface Filter {
   operation: string;
   operand: string | number;
 }
-export interface ReportsRowActionEvent {
+export interface RowLevelActionEvent {
   action: string;
   data: any;
 }
