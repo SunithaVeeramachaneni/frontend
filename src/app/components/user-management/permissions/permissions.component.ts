@@ -15,7 +15,7 @@ import {
   FormGroup,
   Validators
 } from '@angular/forms';
-import { combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { mergeMap, tap, map } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
@@ -27,7 +27,6 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
   selector: 'app-permissions',
   templateUrl: './permissions.component.html',
   styleUrls: ['./permissions.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PermissionsComponent implements OnChanges {
   @Input() selectedRolePermissions$: Observable<any[]>;
@@ -36,29 +35,31 @@ export class PermissionsComponent implements OnChanges {
   @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
 
   rolesBasedPermissions = [];
-  permissions$: Observable<any>;
+  permissions$: BehaviorSubject<any>;;
   panelOpenState = true;
   isEditable = false;
 
   constructor(private roleService: RolesPermissionsService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    let selectedRolePermissions$: Observable<any>;
-    let allPermissions$: Observable<any[]>;
     if (changes.selectedRolePermissions$) {
+      if(changes.selectedRolePermissions$.firstChange){
+        this.permissions$ = new BehaviorSubject([]);
+      }
+      }
       this.selectedRolePermissions$ =
         changes.selectedRolePermissions$.currentValue;
-    }
+  
     if (changes.allPermissions$) {
       this.allPermissions$ = changes.allPermissions$.currentValue;
     }
 
-    this.permissions$ = combineLatest([
+    const permissionObservable = combineLatest([
       this.selectedRolePermissions$,
       this.allPermissions$
     ]).pipe(
-      map(([permissionIDs, allPermissions]) =>
-        allPermissions.map((modulePermissions) => {
+      map(([permissionIDs, allPermissions]) =>{        
+        return allPermissions.map((modulePermissions) => {
           let activePermissionCount = 0;
           const newPermissions = modulePermissions.permissions.map(
             (permission) => {
@@ -70,52 +71,69 @@ export class PermissionsComponent implements OnChanges {
               return permission;
             }
           );
+          if(activePermissionCount === newPermissions.length)
+          modulePermissions.checked = true;
           return {
             ...modulePermissions,
             permissions: newPermissions,
             countOfChecked: activePermissionCount
           };
         })
-      )
-    );
+      }))
+    permissionObservable.subscribe(this.permissions$)
   }
 
-  updateAllChecked(per, subper) {
-    per.checked =
-      per.permissions != null && per.permissions.every((t) => t.checked);
+  updateAllChecked(checked, permission) {
+    const newPermissions = this.permissions$.value.map((module) => {
+      if (module.name === permission.moduleName) {
+        module.permissions = module.permissions.map((per) => {
+          if(per.id === permission.id){
+          per.checked = checked;
+          }
+          return per
+        })
+        
+      }
+      module.countOfChecked = module.permissions.filter((per) => per.checked).length;
+      if(module.countOfChecked === 0)
+      module.checked = false;
+      if(module.countOfChecked === module.permissions.length)
+      module.checked = true;
+        return module;
+    });
+    this.permissions$.next(newPermissions);
+    this.permissionsChange.emit(newPermissions);
+      }
 
-    if (subper.checked === true) {
-      this.rolesBasedPermissions.push(subper);
-    } else {
-      const result = this.rolesBasedPermissions.filter(
-        (item) => item.id !== subper.id
-      );
-      this.rolesBasedPermissions = result;
-    }
-    this.permissionsChange.emit(this.rolesBasedPermissions);
-  }
 
   fewComplete(per): boolean {
     if (per.permissions == null) {
       return false;
     }
-    return per.permissions.filter((t) => t.checked).length > 0 && !per.checked;
+    const permissionCheckedCount = per.permissions.filter((p) => p.checked).length;
+    return permissionCheckedCount > 0 && permissionCheckedCount != per.permissions.length;
   }
 
-  setAllChecked(checked: boolean, per) {
-    per.checked = checked;
-    if (per.permissions == null) {
-      return;
+  setAllChecked(checked: boolean, module) {
+    const moduleName = module.name;
+    const newPermissions = 
+    this.permissions$.value.map((module) => {
+      if (module.name === moduleName) {
+        module.checked = checked;
+        module.permissions = module.permissions.map((per) => {
+          per.checked = checked;
+          return per;
+        }
+        );
+      }
+      
+      module.countOfChecked = checked ? module.permissions.length : 0;
+      return module;
     }
-    per.permissions.forEach((t) => (t.checked = checked));
 
-    if (per.checked === true) {
-      per.permissions.forEach((e) => this.rolesBasedPermissions.push(e));
-    } else {
-      this.rolesBasedPermissions = this.rolesBasedPermissions.filter(
-        (o1) => !per.permissions.some((o2) => o1.id === o2.id)
-      );
-    }
-    this.permissionsChange.emit(this.rolesBasedPermissions);
+  )
+    this.permissions$.next(newPermissions);
+  this.permissionsChange.emit(newPermissions);
   }
+
 }

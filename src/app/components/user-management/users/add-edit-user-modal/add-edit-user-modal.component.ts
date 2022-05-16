@@ -44,7 +44,7 @@ export class AddEditUserModalComponent implements OnInit {
   get roles() {
     return this.userForm.get('roles');
   }
-  rolePermissions = [];
+  rolePermissions : any;
 
   constructor(
     private fb: FormBuilder,

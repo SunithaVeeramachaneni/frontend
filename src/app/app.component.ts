@@ -23,9 +23,10 @@ const {
   files,
   userManagement,
   rolesPermissions,
-  inActiveUsers,
-  tenantManagement,
-  inActiveTenants
+  inActiveTenants,
+  //inActiveUsers,
+  tenantManagement, 
+  //inActiveTenants
 } = routingUrls;
 
 @Component({

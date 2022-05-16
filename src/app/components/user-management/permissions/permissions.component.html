@@ -1,8 +1,8 @@
 <div
-  *ngIf="permissions$ | async as permission; else loadingPermissionList"
+  *ngIf="permissions$ | async as permissions; else loadingPermissionList"
   class="m-t-5 permission-container"
 >
-  <mat-accordion *ngFor="let per of permission">
+  <mat-accordion *ngFor="let module of permissions">
     <mat-expansion-panel
       (opened)="panelOpenState = true"
       (closed)="panelOpenState = false"
@@ -14,37 +14,34 @@
         <mat-panel-title>
           <mat-checkbox
             [disabled]="isEditable"
-            [checked]="per.checked"
+            [checked]="module.checked"
             color="primary"
-            [indeterminate]="fewComplete(per)"
-            (change)="setAllChecked($event.checked, per)"
+            [indeterminate]="fewComplete(module)"
+            (change)="setAllChecked($event.checked, module)"
           >
-            {{ per.name }}
+            {{ module.name }}
           </mat-checkbox>
-          <span *ngIf="per.countOfChecked !== 0" class="permission-count">
-            {{ per.countOfChecked }} of 4
+          <span *ngIf="module.countOfChecked !== 0" class="permission-count">
+            {{ module.countOfChecked }} of {{module.permissions.length}}
           </span>
-
           <mat-icon *ngIf="panelOpenState === false"> arrow_right </mat-icon>
           <mat-icon *ngIf="panelOpenState === true">arrow_drop_down</mat-icon>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ul class="m-0">
-        <li *ngFor="let subper of per.permissions">
+        <li *ngFor="let permission of module.permissions">
           <mat-checkbox
             color="primary"
-            [(ngModel)]="subper.checked"
-            (ngModelChange)="updateAllChecked(per, subper)"
-            [ngModelOptions]="{ standalone: true }"
+            [checked]="permission.checked"
+            (change)="updateAllChecked($event.checked, permission)"
           >
-            {{ subper.displayName }}
+            {{ permission.displayName }}
           </mat-checkbox>
         </li>
       </ul>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
-
 <ng-template #loadingPermissionList>
   <div class="p-10">
     <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">

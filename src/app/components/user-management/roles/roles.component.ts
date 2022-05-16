@@ -21,6 +21,7 @@ import {
   tap,
   map,
   debounceTime,
+  shareReplay,
   distinctUntilChanged,
   toArray,
   filter
@@ -53,7 +54,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   rolesList$: Observable<Role[]>;
   selectedRoleList = [];
   permissionsList$: Observable<any>;
-  selectedRolePermissions$: Observable<Permission[]>;
+  selectedRolePermissions$: Observable<any[]>;
   rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
     new BehaviorSubject<RolesListUpdate>({
       action: null,
@@ -62,10 +63,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   selectedRole;
   roleForm: FormGroup;
-
+  updatedPermissions = [];
   copyDisabled = true;
   showCancelBtn = false;
-  enableSaveButon: boolean;
+  disableSaveButon: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -105,7 +106,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   getRoles() {
-    const initialRolesList$ = this.roleService.getRolesWithPermissions$();
+    const initialRolesList$ = this.roleService.getRolesWithPermissions$().pipe(shareReplay(1));
+    initialRolesList$.subscribe((roles) => {
+    });
     const updatedRoles$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
@@ -163,42 +166,51 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = of([]);
     this.f.name.setValue('New Role');
     this.f.description.setValue('');
-    this.enableSaveButon = true;
+    this.disableSaveButon = true;
     this.selectedRole = [];
   }
 
   update(data) {
-    this.selectedRolePermissions$ = of(data);
-    this.enableSaveButon = data.length !== 0 ? false : true;
+    
+    this.updatedPermissions = data;
+    this.disableSaveButon = false;
   }
 
   saveRole(formData, roleId) {
+    const updatedPermissionIDs = []
+    const updatedPermissions = [];
+    for (let module of this.updatedPermissions){
+      for (let permission of module.permissions) {
+          if(permission.checked === true) 
+        updatedPermissionIDs.push(permission.id)
+        updatedPermissions.push(permission);
+      }
+  }
+    
+    
     // this.spinner.show();
-    const permissionId = [];
-    this.selectedRolePermissions$.subscribe((resp) => {
-      resp.forEach((e) => permissionId.push(e.id));
-    });
     const postNewRoleData = {
       name: formData.name,
       description: formData.description,
-      permissionIds: permissionId
+      permissionIds: updatedPermissionIDs
     };
     const updateRoleData = {
       id: roleId,
       name: formData.name,
       description: formData.description,
-      permissionIds: permissionId
+      permissionIds: updatedPermissionIDs
     };
     if (roleId === undefined) {
       this.roleService.createRole$(postNewRoleData).subscribe((resp) => {
         this.rolesListUpdate$.next({
           action: 'add',
-          role: { ...resp, permissionIds: permissionId }
+          role: resp
         });
         this.addingRole$.next(false);
         this.showCancelBtn = false;
         this.copyDisabled = true;
         this.selectedRole = resp;
+        this.selectedRolePermissions$ = of(resp.permissionIds)
         this.toast.show({
           text: 'Role saved successfully',
           type: 'success'
@@ -209,8 +221,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.addingRole$.next(false);
         this.rolesListUpdate$.next({
           action: 'edit',
-          role: { ...resp, permissionIds: permissionId }
+          role: resp
         });
+        this.selectedRolePermissions$ = of(resp.permissionIds)
         this.toast.show({
           text: 'Role Updated successfully',
           type: 'success'
@@ -268,14 +281,18 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   showSelectedRole(role: Role) {
     this.selectedRole = role;
     this.showCancelBtn = false;
+    this.disableSaveButon = true;
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
+    this.updatedPermissions = [];
 
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
         const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        this.disableSaveButon = true;
         return permissions.map((perm) => perm.id);
       })
+      
     );
-  }
+    }
 }
