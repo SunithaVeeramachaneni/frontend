@@ -14,6 +14,8 @@ export interface UserDetails {
   title: string;
   email: string;
   profileImage?: string;
+  preTextImage?: any;
+  postTextImage?: any;
   isActive: boolean;
   createdBy?: string;
   updatedBy?: string;

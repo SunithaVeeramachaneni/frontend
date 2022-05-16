@@ -19,6 +19,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
+import { Permission } from 'src/app/interfaces';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -44,7 +45,7 @@ export class AddEditUserModalComponent implements OnInit {
   get roles() {
     return this.userForm.get('roles');
   }
-  rolePermissions = [];
+  rolePermissions : Permission[];
 
   constructor(
     private fb: FormBuilder,

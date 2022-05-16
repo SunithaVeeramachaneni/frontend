@@ -31,8 +31,10 @@
   "cancelModalSubHeading": "Upon exit this New Role cannot be created, do you still wish to exit?",
   "deleteModalHeading": "Are you surely want to delete?",
   "deleteModalSubHeading": "Deleted roles cannot be gained back. Do you still wish to delete?",
+  "deleteRoleHavingUsersHeading": "You cannot delete this role because user is assigned to this role",
   "yesBtn": "Yes",
   "noBtn": "No",
+  "okBtn": "Ok",
   "deactivateUser": "Deactivate User?",
   "deactivateUserWarning": "Do you want to deactivate the user profile of"
 }

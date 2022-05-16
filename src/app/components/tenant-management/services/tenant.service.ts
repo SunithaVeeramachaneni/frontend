@@ -90,7 +90,14 @@ export class TenantService {
         order: index + 1,
         groupable: false,
         hasSubtitle: false,
-        subtitleColumn: ''
+        subtitleColumn: '',
+        showMenuOptions: true,
+        hideable: true,
+        stickable: true,
+        titleStyle: {},
+        subtitleStyle: {},
+        hasPreTextImage: false,
+        hasPostTextImage: false
       };
     });
     configOptions = { ...configOptions, allColumns };

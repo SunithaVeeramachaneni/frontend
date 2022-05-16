@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
+import { Buffer } from 'buffer';
 import {
   map,
   mergeAll,
@@ -28,25 +29,63 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { addUserMock, updateUserMock, usersMock } from './users.mock';
 import { query } from '@angular/animations';
+import { DomSanitizer } from '@angular/platform-browser';
+import { superAdminIcon } from 'src/app/app.constants';
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private reportDefinitionNameSubject = new BehaviorSubject<string>('');
   private clickNewReportSubject = new BehaviorSubject<boolean>(false);
+  superAdminIcon = superAdminIcon
 
   reportDefinitionAction$ = this.reportDefinitionNameSubject.asObservable();
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
 
-  constructor(private appService: AppService) {}
+  constructor(private appService: AppService,private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {
     user.user = user.firstName + ' ' + user.lastName;
     const roleNames = roles.map((role) => role.name);
-    if (roleNames.length) user.displayRoles = roleNames.join(', ');
+    if (roleNames.length) user.displayRoles = roleNames;
     user.roles = roles;
     if (!user.createdAt) user.createdAt = new Date();
     else user.createdAt = new Date(user.createdAt);
-    return user;
+    user.postTextImage = {
+      style: {
+        width: '20px',
+        height: '20px',
+        'border-radius': '50%',
+        display: 'block',
+        padding: '0px 10px'
+      },
+      image:
+        this.superAdminIcon,
+      condition: {
+        operation: 'contains',
+        fieldName: 'displayRoles',
+        operand: 'Tenant Admin'
+      }
+    }
+    user.preTextImage ={
+      style: {
+        width: '30px',
+        height: '30px',
+        'border-radius': '50%',
+        display: 'block',
+        padding: '0px 10px'
+      },
+      image:
+        this.getImageSrc(Buffer.from(user.profileImage).toString()),
+      condition: true
+    }
+  return user;
+  };
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sant.bypassSecurityTrustResourceUrl(base64Image);
+    }
   };
 
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
@@ -57,6 +96,16 @@ export class UsersService {
       { displayToast, failureResponse }
     );
   };
+
+  getBase64(file) {
+    const reader = new FileReader();
+    let base64;
+    reader.readAsDataURL(file as Blob);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      return base64;
+    };
+  }
 
   getUsers$ = (
     queryParams: any,
@@ -113,32 +162,6 @@ export class UsersService {
       info
     );
 
-  updateConfigOptionsFromColumns(
-    columns: Column[],
-    configOptions: ConfigOptions
-  ) {
-    const allColumns = columns.map((column, index) => {
-      const { id, displayName, type } = column;
-      let groupable = false;
-      if (displayName === 'Role') groupable = true;
-      return {
-        id,
-        displayName,
-        type,
-        visible: true,
-        sticky: false,
-        searchable: true,
-        sortable: true,
-        movable: false,
-        order: index + 1,
-        groupable,
-        hasSubtitle: false,
-        subtitleColumn: ''
-      };
-    });
-    configOptions = { ...configOptions, allColumns };
-    return configOptions;
-  }
 
   deactivateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const userID = user.id;
@@ -169,6 +192,6 @@ export class UsersService {
       `users/${user.id}`,
       patchUser,
       info
-    );
+    ).pipe(map((response) => (response === null ? user : response)));
   };
 }
