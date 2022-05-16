@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { Count, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
 import { UsersService } from './users.service';
 import { defaultLimit } from 'src/app/app.constants';
@@ -172,8 +171,7 @@ export class UsersComponent implements OnInit {
   constructor(
     private usersService: UsersService,
     public dialog: MatDialog,
-    private toast: ToastService,
-    private http: HttpClient,
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -203,6 +201,7 @@ export class UsersComponent implements OnInit {
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
+          if(Object.keys(updatedUser).length) {
           this.userTableUpdate$.next({
             action: 'edit',
             user: this.usersService.prepareUser(resp.user, resp.user.roles)
@@ -211,10 +210,13 @@ export class UsersComponent implements OnInit {
             text: 'User updated successfully!',
             type: 'success'
           });
+        }
         });
       }
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
+          if(Object.keys(createdUser).length) {
+
           this.userTableUpdate$.next({
             action: 'add',
             user: this.usersService.prepareUser(createdUser, resp.user.roles)
@@ -223,6 +225,7 @@ export class UsersComponent implements OnInit {
             text: 'User created successfully!',
             type: 'success'
           });
+        }
         });
       }
     });
@@ -320,8 +323,7 @@ export class UsersComponent implements OnInit {
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
-        this.dataSource = new MatTableDataSource(initial.data);
-        console.log("Initial is", initial)
+        this.dataSource = new MatTableDataSource(initial.data); 
         return initial;
       })
     );
