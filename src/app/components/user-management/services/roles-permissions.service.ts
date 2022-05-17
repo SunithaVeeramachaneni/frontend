@@ -13,13 +13,9 @@ export class RolesPermissionsService {
 
   getRolesWithPermissions$ = (
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Role[]> => {
-    const { displayToast, failureResponse = {} } = info;
-    return this.appService
-      ._getResp(environment.userRoleManagementApiUrl, 'roles', {
-        displayToast,
-        failureResponse
-      })
+  ): Observable<Role[]> =>
+    this.appService
+      ._getResp(environment.userRoleManagementApiUrl, 'roles', info)
       .pipe(
         mergeMap((roles: Role[]) =>
           from(roles).pipe(
@@ -38,7 +34,6 @@ export class RolesPermissionsService {
           )
         )
       );
-  };
 
   getRoleById$ = (
     id: string,
@@ -96,21 +91,15 @@ export class RolesPermissionsService {
       )
       .pipe(map((response) => (response === null ? role : response)));
 
-  getPermissions$ = (info: ErrorInfo = {} as ErrorInfo): any => {
-    //Observable<Permission[]>
-    const { displayToast, failureResponse = {} } = info;
-    return this.appService
-      ._getResp(environment.userRoleManagementApiUrl, 'permissions', {
-        displayToast,
-        failureResponse
-      })
+  getPermissions$ = (info: ErrorInfo = {} as ErrorInfo): any =>
+    this.appService
+      ._getResp(environment.userRoleManagementApiUrl, 'permissions', info)
       .pipe(
         map((permissions) =>
           this.groupToArray(this.groupPermissions(permissions))
         ),
         shareReplay(1)
       );
-  };
 
   groupPermissions = (ungroupedPermissions) =>
     ungroupedPermissions.reduce((acc, cur) => {

@@ -78,24 +78,35 @@ export class TenantService {
   ) {
     const allColumns = columns.map((column, index) => {
       const { name: id, displayName, type } = column;
+      let hasSubtitle = false;
+      let visible = true;
+      let subtitleColumn = '';
+
+      if (id === 'adminInfo') {
+        hasSubtitle = true;
+        subtitleColumn = 'adminEmail';
+      }
+      if (id === 'adminEmail') {
+        visible = false;
+      }
       return {
         id,
         displayName,
         type,
-        visible: true,
+        visible,
         sticky: false,
         searchable: true,
         sortable: true,
         movable: false,
         order: index + 1,
         groupable: false,
-        hasSubtitle: false,
-        subtitleColumn: '',
+        hasSubtitle,
+        subtitleColumn,
         showMenuOptions: true,
         hideable: true,
         stickable: true,
         titleStyle: {},
-        subtitleStyle: {},
+        subtitleStyle: { 'font-size': '8pt', color: 'darkgray' },
         hasPreTextImage: false,
         hasPostTextImage: false
       };
@@ -107,9 +118,10 @@ export class TenantService {
   formatTenants = (tenants: Tenant[]) =>
     tenants.map((tenant) => {
       const {
-        tenantAdmin: { firstName, lastName }
+        tenantAdmin: { firstName, lastName, email }
       } = tenant;
       const adminInfo = `${firstName} ${lastName}`;
-      return { ...tenant, adminInfo };
+      const adminEmail = email;
+      return { ...tenant, adminInfo, adminEmail };
     });
 }

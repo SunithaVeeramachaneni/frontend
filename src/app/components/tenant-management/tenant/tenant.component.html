@@ -29,7 +29,7 @@
     <button
       mat-raised-button
       translate="editBtn"
-      class="save-btn"
+      class="edit-btn"
       *ngIf="!editTenant"
       (click)="editTenantForm()"
     ></button>
@@ -1200,18 +1200,6 @@
                 formControlName="database"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.database.name">
-                {{
-                  errors.rdbms.database.name
-                    | translate
-                      : {
-                          name: 'database' | translate,
-                          length: errors.rdbms.database.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
           </p>
 
           <p class="m-0">
@@ -1351,18 +1339,6 @@
                 formControlName="database"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.nosql.database.name">
-                {{
-                  errors.nosql.database.name
-                    | translate
-                      : {
-                          name: 'host' | translate,
-                          length: errors.nosql.database.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
           </p>
         </div>
       </div>

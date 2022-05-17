@@ -195,4 +195,27 @@ describe('TenantsComponent', () => {
       );
     });
   });
+
+  describe('cellClickActionHandler', () => {
+    it('should define function', () => {
+      expect(component.cellClickActionHandler).toBeDefined();
+    });
+
+    it("should handle 'edit' row level action from context menu", () => {
+      const navigateSpy = spyOn(router, 'navigate');
+
+      // TODO: better if we raise this event from UI
+      component.cellClickActionHandler({
+        columnId: 'tenantName',
+        row: formatedTenants[0]
+      });
+
+      expect(navigateSpy).toHaveBeenCalledWith(
+        ['tenant-management/edit', formatedTenants[0].id],
+        {
+          queryParams: { edit: false }
+        }
+      );
+    });
+  });
 });
