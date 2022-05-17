@@ -6,6 +6,7 @@ import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
 import {
+  CellClickActionEvent,
   Count,
   DeactivateTenant,
   RowLevelActionEvent,
@@ -56,6 +57,11 @@ export class TenantsComponent implements OnInit {
       name: 'createdAt',
       displayName: 'Created On',
       type: 'date'
+    },
+    {
+      name: 'adminEmail',
+      displayName: 'Admin',
+      type: 'string'
     }
   ] as TableColumn[];
   configOptions: ConfigOptions = {
@@ -171,6 +177,26 @@ export class TenantsComponent implements OnInit {
       case 'edit':
         this.router.navigate(['tenant-management/edit', id], {
           queryParams: { edit: true }
+        });
+        break;
+      default:
+      // do nothing
+    }
+  };
+
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'tenantName':
+      case 'products':
+      case 'modules':
+      case 'adminInfo':
+      case 'createdAt':
+        this.router.navigate(['tenant-management/edit', id], {
+          queryParams: { edit: false }
         });
         break;
       default:

@@ -52,7 +52,8 @@ export const usersMock: UserDetails[] = [
     isActive: true,
     roles: [role1],
     email: 'arthur@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z')
+    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    profileImage: 'image,123'
   },
   {
     id: '2',
@@ -63,7 +64,8 @@ export const usersMock: UserDetails[] = [
     isActive: true,
     roles: [role2, role3],
     email: 'ford@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z')
+    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    profileImage: 'image,123'
   },
   {
     id: '3',
@@ -74,7 +76,8 @@ export const usersMock: UserDetails[] = [
     title: 'Engineer',
     isActive: true,
     email: 'trillian@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z')
+    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    profileImage: 'image,123'
   }
 ];
 

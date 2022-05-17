@@ -83,10 +83,11 @@ export const tenants: Tenant[] = [
 
 export const formatedTenants = tenants.map((tenant) => {
   const {
-    tenantAdmin: { firstName, lastName }
+    tenantAdmin: { firstName, lastName, email }
   } = tenant;
   const adminInfo = `${firstName} ${lastName}`;
-  return { ...tenant, adminInfo };
+  const adminEmail = email;
+  return { ...tenant, adminInfo, adminEmail };
 });
 
 export const tenants$ = of(tenants);

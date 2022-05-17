@@ -26,6 +26,11 @@ export const columns = [
     name: 'createdAt',
     displayName: 'Created On',
     type: 'date'
+  },
+  {
+    name: 'adminEmail',
+    displayName: 'Admin',
+    type: 'string'
   }
 ] as TableColumn[];
 
@@ -61,12 +66,15 @@ export const configOptions: ConfigOptions = {
       hasSubtitle: false,
       subtitleColumn: '',
       showMenuOptions: true,
-       hideable: true, 
-       stickable: true,
-        titleStyle: {},
-         subtitleStyle: {}, 
-         hasPreTextImage: false,
-          hasPostTextImage: false
+      hideable: true,
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'products',
@@ -82,12 +90,15 @@ export const configOptions: ConfigOptions = {
       hasSubtitle: false,
       subtitleColumn: '',
       showMenuOptions: true,
-      hideable: true, 
+      hideable: true,
       stickable: true,
-       titleStyle: {},
-        subtitleStyle: {}, 
-        hasPreTextImage: false,
-         hasPostTextImage: false
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'modules',
@@ -103,12 +114,15 @@ export const configOptions: ConfigOptions = {
       hasSubtitle: false,
       subtitleColumn: '',
       showMenuOptions: true,
-      hideable: true, 
+      hideable: true,
       stickable: true,
-       titleStyle: {},
-        subtitleStyle: {}, 
-        hasPreTextImage: false,
-         hasPostTextImage: false
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'adminInfo',
@@ -121,15 +135,18 @@ export const configOptions: ConfigOptions = {
       movable: false,
       order: 4,
       groupable: false,
-      hasSubtitle: false,
-      subtitleColumn: '',
+      hasSubtitle: true,
+      subtitleColumn: 'adminEmail',
       showMenuOptions: true,
-      hideable: true, 
+      hideable: true,
       stickable: true,
-       titleStyle: {},
-        subtitleStyle: {}, 
-        hasPreTextImage: false,
-         hasPostTextImage: false
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'createdAt',
@@ -145,12 +162,39 @@ export const configOptions: ConfigOptions = {
       hasSubtitle: false,
       subtitleColumn: '',
       showMenuOptions: true,
-      hideable: true, 
+      hideable: true,
       stickable: true,
-       titleStyle: {},
-        subtitleStyle: {}, 
-        hasPreTextImage: false,
-         hasPostTextImage: false
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'adminEmail',
+      displayName: 'Admin',
+      type: 'string',
+      visible: false,
+      sticky: false,
+      searchable: true,
+      sortable: true,
+      movable: false,
+      order: 6,
+      groupable: false,
+      hasSubtitle: false,
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true,
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
+      hasPreTextImage: false,
+      hasPostTextImage: false
     }
   ],
   tableHeight: 'calc(100vh - 150px)',

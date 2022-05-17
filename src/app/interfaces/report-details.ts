@@ -83,6 +83,12 @@ export interface RowLevelActionEvent {
   data: any;
 }
 
+export interface CellClickActionEvent {
+  row: any;
+  columnId: string;
+  element?: string;
+}
+
 export interface Count {
   count: number;
 }

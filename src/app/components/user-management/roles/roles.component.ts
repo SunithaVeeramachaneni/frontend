@@ -106,9 +106,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   getRoles() {
-    const initialRolesList$ = this.roleService.getRolesWithPermissions$().pipe(shareReplay(1));
-    initialRolesList$.subscribe((roles) => {
-    });
+    const initialRolesList$ = this.roleService
+      .getRolesWithPermissions$()
+      .pipe(shareReplay(1));
+    initialRolesList$.subscribe((roles) => {});
     const updatedRoles$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
@@ -171,23 +172,21 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   update(data) {
-    
     this.updatedPermissions = data;
     this.disableSaveButon = false;
   }
 
   saveRole(formData, roleId) {
-    const updatedPermissionIDs = []
+    const updatedPermissionIDs = [];
     const updatedPermissions = [];
-    for (let module of this.updatedPermissions){
-      for (let permission of module.permissions) {
-          if(permission.checked === true) 
-        updatedPermissionIDs.push(permission.id)
+    for (const module of this.updatedPermissions) {
+      for (const permission of module.permissions) {
+        if (permission.checked === true)
+          updatedPermissionIDs.push(permission.id);
         updatedPermissions.push(permission);
       }
-  }
-    
-    
+    }
+
     // this.spinner.show();
     const postNewRoleData = {
       name: formData.name,
@@ -210,7 +209,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.showCancelBtn = false;
         this.copyDisabled = true;
         this.selectedRole = resp;
-        this.selectedRolePermissions$ = of(resp.permissionIds)
+        this.selectedRolePermissions$ = of(resp.permissionIds);
         this.toast.show({
           text: 'Role saved successfully',
           type: 'success'
@@ -223,7 +222,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           action: 'edit',
           role: resp
         });
-        this.selectedRolePermissions$ = of(resp.permissionIds)
+        this.selectedRolePermissions$ = of(resp.permissionIds);
         this.toast.show({
           text: 'Role Updated successfully',
           type: 'success'
@@ -245,9 +244,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   deleteRole(role) {
-    console.log(role);
     this.roleService.getUsersByRoleId$(role.id).subscribe((usersData) => {
-      console.log(usersData);
       const deleteReportRef = this.dialog.open(RoleDeleteModalComponent, {
         data: {
           data: usersData
@@ -292,7 +289,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.disableSaveButon = true;
         return permissions.map((perm) => perm.id);
       })
-      
     );
-    }
+  }
 }

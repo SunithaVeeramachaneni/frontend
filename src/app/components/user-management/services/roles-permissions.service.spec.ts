@@ -18,6 +18,8 @@ import {
 
 import { RolesPermissionsService } from './roles-permissions.service';
 
+const info = {} as ErrorInfo;
+
 describe('Roles Permissions service', () => {
   let service: RolesPermissionsService;
   let appServiceSpy: AppService;
@@ -36,22 +38,12 @@ describe('Roles Permissions service', () => {
     service = TestBed.inject(RolesPermissionsService);
 
     (appServiceSpy._getResp as jasmine.Spy)
-      .withArgs(
-        environment.userRoleManagementApiUrl,
-        'roles',
-        { displayToast: undefined, failureResponse: {} },
-        { isActive: true }
-      )
+      .withArgs(environment.userRoleManagementApiUrl, 'roles', info)
       .and.returnValue(of(allRolesMock))
       .and.callThrough();
 
     (appServiceSpy._getResp as jasmine.Spy)
-      .withArgs(
-        environment.userRoleManagementApiUrl,
-        'permissions',
-        { displayToast: undefined, failureResponse: {} },
-        { isActive: true }
-      )
+      .withArgs(environment.userRoleManagementApiUrl, 'permissions', info)
       .and.returnValue(of(allPermissionsMock))
       .and.callThrough();
 
