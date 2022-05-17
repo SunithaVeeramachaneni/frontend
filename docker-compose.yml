@@ -315,7 +315,7 @@ services:
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
       - ./.docker/mysql/3-tenants-data.sh:/docker-entrypoint-initdb.d/3-tenants-data.sh:ro
     ports:
-      - '3306:3306'
+      - '3307:3306'
     networks:
       - app-network
 

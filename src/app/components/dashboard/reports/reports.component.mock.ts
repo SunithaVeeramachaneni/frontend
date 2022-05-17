@@ -283,7 +283,14 @@ export const configOptions: ConfigOptions = {
       order: 1,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {}, 
+      hasPreTextImage: false,
+       hasPostTextImage: false
     },
     {
       id: 'description',
@@ -297,7 +304,14 @@ export const configOptions: ConfigOptions = {
       order: 2,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {}, 
+      hasPreTextImage: false,
+       hasPostTextImage: false
     },
     {
       id: 'createdBy',
@@ -311,7 +325,14 @@ export const configOptions: ConfigOptions = {
       order: 3,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {}, 
+      hasPreTextImage: false,
+       hasPostTextImage: false
     },
     {
       id: 'createdTime',
@@ -325,7 +346,14 @@ export const configOptions: ConfigOptions = {
       order: 4,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {}, 
+      hasPreTextImage: false,
+       hasPostTextImage: false
     }
   ],
   tableHeight: 'calc(100vh - 200px)',

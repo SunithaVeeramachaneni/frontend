@@ -21,7 +21,10 @@ import {
   tap,
   map,
   debounceTime,
-  distinctUntilChanged
+  shareReplay,
+  distinctUntilChanged,
+  toArray,
+  filter
 } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
@@ -51,7 +54,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   rolesList$: Observable<Role[]>;
   selectedRoleList = [];
   permissionsList$: Observable<any>;
-  selectedRolePermissions$: Observable<Permission[]>;
+  selectedRolePermissions$: Observable<any[]>;
   rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
     new BehaviorSubject<RolesListUpdate>({
       action: null,
@@ -60,10 +63,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   selectedRole;
   roleForm: FormGroup;
-
+  updatedPermissions = [];
   copyDisabled = true;
   showCancelBtn = false;
-  enableSaveButon: boolean;
+  disableSaveButon: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -101,32 +104,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
   }
-  compareRole(role1, role2) {
-    return role1 && role2 && role1.id === role2.id;
-  }
 
   getRoles() {
-    const initialRolesList$ = this.roleService.getRoles$().pipe(
-      mergeMap((roles: Role[]) => {
-        const newArray = [];
-        return from(roles).pipe(
-          mergeMap((role) =>
-            this.roleService.getRolePermissionsById$(role.id).pipe(
-              map((permissions) => {
-                const newRoleArray = {
-                  id: role.id,
-                  name: role.name,
-                  description: role.description,
-                  permissionIds: permissions
-                };
-                newArray.push(newRoleArray);
-                return newArray;
-              })
-            )
-          )
-        );
-      })
-    );
+    const initialRolesList$ = this.roleService.getRolesWithPermissions$().pipe(shareReplay(1));
+    initialRolesList$.subscribe((roles) => {
+    });
     const updatedRoles$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
@@ -184,42 +166,51 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = of([]);
     this.f.name.setValue('New Role');
     this.f.description.setValue('');
-    this.enableSaveButon = true;
+    this.disableSaveButon = true;
     this.selectedRole = [];
   }
 
   update(data) {
-    this.selectedRolePermissions$ = of(data);
-    this.enableSaveButon = data.length !== 0 ? false : true;
+    
+    this.updatedPermissions = data;
+    this.disableSaveButon = false;
   }
 
   saveRole(formData, roleId) {
+    const updatedPermissionIDs = []
+    const updatedPermissions = [];
+    for (let module of this.updatedPermissions){
+      for (let permission of module.permissions) {
+          if(permission.checked === true) 
+        updatedPermissionIDs.push(permission.id)
+        updatedPermissions.push(permission);
+      }
+  }
+    
+    
     // this.spinner.show();
-    const permissionId = [];
-    this.selectedRolePermissions$.subscribe((resp) => {
-      resp.forEach((e) => permissionId.push(e.id));
-    });
     const postNewRoleData = {
       name: formData.name,
       description: formData.description,
-      permissionIds: permissionId
+      permissionIds: updatedPermissionIDs
     };
     const updateRoleData = {
       id: roleId,
       name: formData.name,
       description: formData.description,
-      permissionIds: permissionId
+      permissionIds: updatedPermissionIDs
     };
     if (roleId === undefined) {
       this.roleService.createRole$(postNewRoleData).subscribe((resp) => {
         this.rolesListUpdate$.next({
           action: 'add',
-          role: { ...resp, permissionIds: permissionId }
+          role: resp
         });
         this.addingRole$.next(false);
         this.showCancelBtn = false;
         this.copyDisabled = true;
         this.selectedRole = resp;
+        this.selectedRolePermissions$ = of(resp.permissionIds)
         this.toast.show({
           text: 'Role saved successfully',
           type: 'success'
@@ -230,8 +221,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.addingRole$.next(false);
         this.rolesListUpdate$.next({
           action: 'edit',
-          role: { ...resp, permissionIds: permissionId }
+          role: resp
         });
+        this.selectedRolePermissions$ = of(resp.permissionIds)
         this.toast.show({
           text: 'Role Updated successfully',
           type: 'success'
@@ -253,45 +245,54 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   deleteRole(role) {
-    const deleteReportRef = this.dialog.open(RoleDeleteModalComponent);
-    deleteReportRef.afterClosed().subscribe((res) => {
-      if (res === 'yes') {
-        this.roleService.deleteRole$(role).subscribe(
-          (resp) => {
-            if (Object.keys(resp).length && resp.id) {
-              this.rolesListUpdate$.next({ action: 'delete', role });
-              this.selectedRole = undefined;
+    console.log(role);
+    this.roleService.getUsersByRoleId$(role.id).subscribe((usersData) => {
+      console.log(usersData);
+      const deleteReportRef = this.dialog.open(RoleDeleteModalComponent, {
+        data: {
+          data: usersData
+        }
+      });
+      deleteReportRef.afterClosed().subscribe((res) => {
+        if (res === 'yes') {
+          this.roleService.deleteRole$(role).subscribe(
+            (resp) => {
+              if (Object.keys(resp).length && resp.id) {
+                this.rolesListUpdate$.next({ action: 'delete', role });
+                this.selectedRole = undefined;
+                this.toast.show({
+                  text: 'Role Deleted successfully',
+                  type: 'success'
+                });
+              }
+            },
+            (error) => {
               this.toast.show({
-                text: 'Role Deleted successfully',
+                text: 'Unable to delete the role',
                 type: 'success'
               });
             }
-          },
-          (error) => {
-            this.toast.show({
-              text: 'Unable to delete the role',
-              type: 'success'
-            });
-          }
-        );
-      }
+          );
+        }
+      });
     });
   }
 
-  showSelectedRole(role) {
+  showSelectedRole(role: Role) {
     this.selectedRole = role;
     this.showCancelBtn = false;
+    this.disableSaveButon = true;
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
+    this.updatedPermissions = [];
 
-    this.selectedRolePermissions$ = this.roleService
-      .getRolePermissionsById$(role.id)
-      .pipe(
-        map((resp) => {
-          const selectedPermission = resp;
-          this.enableSaveButon = false;
-          return selectedPermission;
-        })
-      );
-  }
+    this.selectedRolePermissions$ = this.rolesList$.pipe(
+      map((roles) => {
+        const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        this.disableSaveButon = true;
+        return permissions.map((perm) => perm.id);
+      })
+      
+    );
+    }
 }
