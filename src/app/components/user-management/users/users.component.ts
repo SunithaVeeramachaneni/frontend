@@ -139,15 +139,15 @@ export class UsersComponent implements OnInit {
           title: 'Edit',
           action: 'edit'
         },
-        {
-          title: 'Deactivate',
-          action: 'deactivate',
-          condition: {
-            operand: 'Tenant Admin',
-            operation: 'notContains',
-            fieldName: 'displayRoles'
-          }
-        }
+        // {
+        //   title: 'Deactivate',
+        //   action: 'deactivate',
+        //   condition: {
+        //     operand: 'Tenant Admin',
+        //     operation: 'notContains',
+        //     fieldName: 'displayRoles'
+        //   }
+        // }
       ]
     },
     groupByColumns: [],
