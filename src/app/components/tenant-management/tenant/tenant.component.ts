@@ -233,14 +233,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             WhiteSpaceValidator.noWhiteSpace
           ]
         ],
-        database: [
-          { value: '', disabled: true },
-          [
-            Validators.required,
-            Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
-          ]
-        ],
+        database: [{ value: '', disabled: true }],
         dialect: ['', [Validators.required]]
       }),
       nosql: this.fb.group({
@@ -269,14 +262,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             WhiteSpaceValidator.noWhiteSpace
           ]
         ],
-        database: [
-          { value: '', disabled: true },
-          [
-            Validators.required,
-            Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
-          ]
-        ]
+        database: [{ value: '', disabled: true }]
       }),
       noOfLicenses: [
         '',
@@ -302,7 +288,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
-      const displayName = tenantName ? tenantName : 'Addding Tenant...';
+      const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
       this.tenantHeader = displayName;
       this.breadcrumbService.set('@tenantName', { label: displayName });
       this.commonService.setHeaderTitle(displayName);

@@ -36,12 +36,11 @@ import { superAdminIcon } from 'src/app/app.constants';
 export class UsersService {
   private reportDefinitionNameSubject = new BehaviorSubject<string>('');
   private clickNewReportSubject = new BehaviorSubject<boolean>(false);
-  superAdminIcon = superAdminIcon
 
   reportDefinitionAction$ = this.reportDefinitionNameSubject.asObservable();
   clickNewReportAction$ = this.clickNewReportSubject.asObservable();
 
-  constructor(private appService: AppService,private sant: DomSanitizer) {}
+  constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {
     user.user = user.firstName + ' ' + user.lastName;
@@ -58,15 +57,14 @@ export class UsersService {
         display: 'block',
         padding: '0px 10px'
       },
-      image:
-        this.superAdminIcon,
+      image: superAdminIcon,
       condition: {
         operation: 'contains',
         fieldName: 'displayRoles',
         operand: 'Tenant Admin'
       }
-    }
-    user.preTextImage ={
+    };
+    user.preTextImage = {
       style: {
         width: '30px',
         height: '30px',
@@ -74,11 +72,10 @@ export class UsersService {
         display: 'block',
         padding: '0px 10px'
       },
-      image:
-        this.getImageSrc(Buffer.from(user.profileImage).toString()),
+      image: this.getImageSrc(Buffer.from(user.profileImage).toString()),
       condition: true
-    }
-  return user;
+    };
+    return user;
   };
 
   getImageSrc = (source: string) => {
@@ -88,14 +85,12 @@ export class UsersService {
     }
   };
 
-  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
-    const { displayToast, failureResponse = {} } = info;
-    return this.appService._getResp(
+  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+    this.appService._getResp(
       environment.userRoleManagementApiUrl,
       'roles',
-      { displayToast, failureResponse }
+      info
     );
-  };
 
   getBase64(file) {
     const reader = new FileReader();
@@ -112,13 +107,12 @@ export class UsersService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
     queryParams = { ...queryParams, isActive: true };
-    const { displayToast, failureResponse = {} } = info;
     // queryParams = {};
     return this.appService
       ._getResp(
         environment.userRoleManagementApiUrl,
         'users',
-        { displayToast, failureResponse },
+        info,
         queryParams
       )
       .pipe(
@@ -162,7 +156,6 @@ export class UsersService {
       info
     );
 
-
   deactivateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const userID = user.id;
     const deactivateUser = { isActive: false };
@@ -187,11 +180,13 @@ export class UsersService {
   updateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
     const roleIds = user.roles.map((role) => role.id);
     const patchUser = { ...user, roleIds };
-    return this.appService.patchData(
-      environment.userRoleManagementApiUrl,
-      `users/${user.id}`,
-      patchUser,
-      info
-    ).pipe(map((response) => (response === null ? user : response)));
+    return this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/${user.id}`,
+        patchUser,
+        info
+      )
+      .pipe(map((response) => (response === null ? user : response)));
   };
 }
