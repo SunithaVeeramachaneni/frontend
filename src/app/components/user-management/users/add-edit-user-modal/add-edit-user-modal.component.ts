@@ -19,7 +19,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
-import { Permission } from 'src/app/interfaces';
+import { Permission, Role } from 'src/app/interfaces';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -42,6 +44,9 @@ export class AddEditUserModalComponent implements OnInit {
   isPopoverOpen = false;
   profileImageURI = 'assets/user-management-icons/Vector.png';
   profileImage;
+  permissionsList$: Observable<any>;
+  rolesList$: Observable<Role[]>
+  selectedRolePermissions$: Observable<any[]>
   get roles() {
     return this.userForm.get('roles');
   }
@@ -64,7 +69,9 @@ export class AddEditUserModalComponent implements OnInit {
 
   ngOnInit() {
     const userDetails = this.data.user;
+    this.permissionsList$ = this.data.permissionsList$;
     this.rolesInput = this.data.roles;
+    this.rolesList$ = this.data.rolesList$;
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
       this.profileImage = this.profileImageURI;
@@ -156,13 +163,12 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   getPermissions(role) {
-    this.roleService.getRolePermissionsById$(role.id).subscribe((resp) => {
-      if (resp && resp.length !== 0) {
-        resp.forEach((e) => {
-          this.rolePermissions = resp;
-        });
-      }
-    });
+    this.selectedRolePermissions$ = this.rolesList$.pipe(
+      map((roles) => {
+        const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        return permissions.map((perm) => perm.id);
+      })
+    );
   }
 
   save() {
