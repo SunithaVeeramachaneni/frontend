@@ -16,6 +16,14 @@ export const routes: Routes = [
     canActivate: [AutoLoginAllRoutesGuard]
   },
   {
+    path: 'tenant-management',
+    loadChildren: () =>
+      import('./components/tenant-management/tenant-management.module').then(
+        (m) => m.TenantManagementModule
+      ),
+    canActivate: [AutoLoginAllRoutesGuard]
+  },
+  {
     path: 'work-instructions',
     loadChildren: () =>
       import('./components/work-instructions/work-instructions.module').then(

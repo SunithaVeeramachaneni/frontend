@@ -15,12 +15,12 @@ const routes: Routes = [
         path: 'roles-permissions',
         component: RolesComponent,
         data: { breadcrumb: { label: 'Roles & Permissions' } }
-      },
-      {
-        path: 'inactive-users',
-        component: UsersComponent,
-        data: { breadcrumb: { label: 'Inactive Users' } }
       }
+      // {
+      //   path: 'inactive-users',
+      //   component: UsersComponent,
+      //   data: { breadcrumb: { label: 'Inactive Users' } }
+      // }
     ]
   }
 ];

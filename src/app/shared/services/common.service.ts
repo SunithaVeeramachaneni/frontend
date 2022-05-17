@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import * as CryptoJS from 'crypto-js';
 import {
   LoggedInUserInfo,
   ProtectedResource,
@@ -74,5 +75,10 @@ export class CommonService {
     const { userData = {} } = this.userInfo;
     const { name = '' } = userData;
     return name.split('.').join(' ');
+  }
+
+  decrypt(value: string, key: string) {
+    const bytes = CryptoJS.AES.decrypt(value.toString(), key);
+    return bytes.toString(CryptoJS.enc.Utf8);
   }
 }

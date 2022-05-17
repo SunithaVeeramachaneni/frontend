@@ -1,0 +1,85 @@
+.padding {
+  padding: 0 20px;
+}
+
+.main-tenant-container {
+  background-color: #ffffff;
+  margin: 14px;
+  position: relative;
+}
+
+.tenant-header {
+  border-bottom: 1px solid #e7e7e7;
+  padding-bottom: 2px;
+}
+
+.select-products {
+  margin: 14px;
+  position: relative;
+  top: 4px;
+}
+
+.search-field {
+  position: relative;
+  top: 5px;
+}
+
+.count-of-tenants {
+  margin: 22px 0;
+  float: right;
+}
+
+.tenant-count {
+  font-weight: 500;
+  font-size: 16px;
+  color: #212121;
+  position: relative;
+  right: 7px;
+}
+
+.tenant-text {
+  font-weight: 500;
+  font-size: 16px;
+  color: #9e9e9e;
+}
+
+.add-tenant-btn {
+  background: #3d5afe;
+  color: #ffffff;
+  box-shadow: none;
+  float: right;
+  margin: 14px;
+}
+
+.tenant-content {
+  height: 75vh;
+  width: 100%;
+}
+
+.mat-select-products {
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 2px 0 8px 0 !important;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  ::ng-deep .mat-select-arrow {
+    margin-top: 10px !important;
+  }
+}
+
+.count-loading {
+  text-align: right;
+  position: relative;
+  top: -7px;
+  margin-top: -35px;
+}

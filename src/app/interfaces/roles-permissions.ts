@@ -1,8 +1,18 @@
 export interface Role {
-  id?: string;
+  id: string;
   name: string;
   description: string;
-  permissionIds?: any[];
+  permissionIds: any[];
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+}
+
+export interface RoleWithoutID {
+  name: string;
+  description: string;
+  permissionIds: any[];
   createdAt?: string;
   createdBy?: string;
   updatedAt?: string;

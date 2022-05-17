@@ -32,58 +32,91 @@ interface ModalInput {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
+  
   columns: Column[] = [
     {
       id: 'user',
       displayName: 'User',
       type: 'string',
-      groupable: false,
       order: 1,
-      sticky: false,
-      visible: true,
-      subtitleColumn: '',
+      hasSubtitle: true,
+      showMenuOptions: true,
+      subtitleColumn: '',//'displayRoles',
       searchable: false,
       sortable: true,
-      movable: false
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {'font-weight': '500'},
+      subtitleStyle: {},// { 'font-size': '8pt', color: 'darkgray' },
+      hasPreTextImage: true,
+      hasPostTextImage: false,
     },
     {
       id: 'displayRoles',
       displayName: 'Role',
       type: 'string',
       order: 2,
-      groupable: true,
-      sticky: false,
-      visible: true,
+      hasSubtitle: false,
+      showMenuOptions: true,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
-      movable: false
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {'color': '#3D5AFE'},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: true,
     },
     {
       id: 'email',
       displayName: 'Email',
       type: 'string',
-      groupable: false,
       order: 3,
-      sticky: false,
-      visible: true,
+      hasSubtitle: false,
+      showMenuOptions: true,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
-      movable: false
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
     },
     {
+      id: 'createdAt',
       displayName: 'Created At',
       type: 'date',
-      id: 'createdAt',
-      groupable: false,
       order: 4,
-      sticky: false,
-      visible: true,
+      hasSubtitle: false,
+      showMenuOptions: true,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
-      movable: false
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false,
     }
   ];
   readonly routingUrls = routingUrls;
@@ -106,7 +139,12 @@ export class UsersComponent implements OnInit {
         },
         {
           title: 'Deactivate',
-          action: 'deactivate'
+          action: 'deactivate',
+          condition: {
+            operand: 'Tenant Admin',
+            operation: 'notContains',
+            fieldName: 'displayRoles'
+          }
         }
       ]
     },
@@ -114,8 +152,9 @@ export class UsersComponent implements OnInit {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: []
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
+
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
@@ -141,6 +180,11 @@ export class UsersComponent implements OnInit {
     this.usersService.getRoles$().subscribe((roles) => {
       this.roles = roles;
     });
+    this.configOptions.allColumns = this.columns;
+  }
+
+  cellClickActionHandler(event: any) {
+    console.log("event is", event);
   }
 
   openEditAddUserModal(user = {} as UserDetails) {
@@ -157,6 +201,7 @@ export class UsersComponent implements OnInit {
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
+          if(Object.keys(updatedUser).length) {
           this.userTableUpdate$.next({
             action: 'edit',
             user: this.usersService.prepareUser(resp.user, resp.user.roles)
@@ -165,10 +210,13 @@ export class UsersComponent implements OnInit {
             text: 'User updated successfully!',
             type: 'success'
           });
+        }
         });
       }
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
+          if(Object.keys(createdUser).length) {
+
           this.userTableUpdate$.next({
             action: 'add',
             user: this.usersService.prepareUser(createdUser, resp.user.roles)
@@ -177,6 +225,7 @@ export class UsersComponent implements OnInit {
             text: 'User created successfully!',
             type: 'success'
           });
+        }
         });
       }
     });
@@ -202,6 +251,7 @@ export class UsersComponent implements OnInit {
       });
     });
   }
+
 
   getDisplayedUsers() {
     const initialUsers$ = this.usersService.getUsers$({
@@ -263,21 +313,17 @@ export class UsersComponent implements OnInit {
     );
     this.users$ = combineLatest([updatedUsers$, onScrollUsers$]).pipe(
       map(([users, scrollData]) => {
-        const initial: UserTable = {
+        const initial = {
           columns: this.columns,
           data: users
         };
         if (this.skip === 0) {
-          this.configOptions = this.usersService.updateConfigOptionsFromColumns(
-            this.columns,
-            this.configOptions
-          );
         } else {
           initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
-        this.dataSource = new MatTableDataSource(initial.data);
+        this.dataSource = new MatTableDataSource(initial.data); 
         return initial;
       })
     );

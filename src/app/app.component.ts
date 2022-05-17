@@ -23,7 +23,10 @@ const {
   files,
   userManagement,
   rolesPermissions,
-  inActiveUsers
+  inActiveTenants,
+  //inActiveUsers,
+  tenantManagement, 
+  //inActiveTenants
 } = routingUrls;
 
 @Component({
@@ -40,6 +43,14 @@ export class AppComponent implements OnInit, AfterViewChecked {
       showSubMenu: false,
       disable: false,
       subPages: [{ title: reports.title, url: reports.url }]
+    },
+    {
+      title: tenantManagement.title,
+      url: tenantManagement.url,
+      image: 'assets/sidebar-icons/user-management.svg',
+      showSubMenu: false,
+      subPages: [],
+      disable: false
     },
     {
       title: maintenance.title,
@@ -63,8 +74,8 @@ export class AppComponent implements OnInit, AfterViewChecked {
       image: '../assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
       subPages: [
-        { title: rolesPermissions.title, url: rolesPermissions.url },
-        { title: inActiveUsers.title, url: inActiveUsers.url }
+        { title: rolesPermissions.title, url: rolesPermissions.url }
+        // { title: inActiveUsers.title, url: inActiveUsers.url }
       ],
       disable: false
     },

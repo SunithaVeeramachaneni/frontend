@@ -300,7 +300,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'actionTakenBy',
@@ -314,7 +321,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+      titleStyle: {},
+      subtitleStyle: {}, 
+      hasPreTextImage: false,
+       hasPostTextImage: false
     },
     {
       id: 'objectType',
@@ -328,7 +342,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'action',
@@ -342,7 +363,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'documentCreatedDate',
@@ -356,7 +384,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'moduleName',
@@ -370,7 +405,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'userLocation',
@@ -384,7 +426,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'actionTakenDate',
@@ -398,7 +447,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'duration',
@@ -412,7 +468,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'timeZoneText',
@@ -426,7 +489,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'itemNumber',
@@ -440,7 +510,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'time',
@@ -454,7 +531,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'roles',
@@ -468,7 +552,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'objectNumber',
@@ -482,7 +573,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'workCenterID',
@@ -496,7 +594,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false  
     },
     {
       id: 'workCenterName',
@@ -510,7 +615,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+      showMenuOptions: true,
+      hideable: true, 
+      stickable: true,
+       titleStyle: {},
+        subtitleStyle: {}, 
+        hasPreTextImage: false,
+         hasPostTextImage: false
     },
     {
       id: 'plantID',
@@ -524,7 +636,14 @@ export const configOptions: ConfigOptions = {
       movable: true,
       groupable: false,
       hasSubtitle: false,
-      subtitleColumn: ''
+      subtitleColumn: '',
+            showMenuOptions: true,
+       hideable: true, 
+       stickable: true,
+        titleStyle: {},
+         subtitleStyle: {}, 
+         hasPreTextImage: false,
+          hasPostTextImage: false
     }
   ],
   tableHeight: 'calc(100vh - 173px)',

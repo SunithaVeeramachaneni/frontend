@@ -1122,10 +1122,7 @@ export class InstructionService {
       (catgry) => catgry.Category_Id !== category.Category_Id
     );
     const categoriesObject = this.getCategoriesObject(categoriesUpdated);
-    return this.getSelectedCategory(category.Category_Id, info).pipe(
-      mergeMap(() =>
-        this.getInstructionsByCategoryId(category.Category_Id, info)
-      ),
+    return this.getInstructionsByCategoryId(category.Category_Id, info).pipe(
       mergeMap((workInstructions) =>
         from(workInstructions).pipe(
           mergeMap((workInstruction: any) => {
