@@ -302,7 +302,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (assignedObjets && assignedObjets.length >= 0) {
+    if (assignedObjets && assignedObjets.length) {
       this.assignedObjectsSelected = assignedObjets;
       this.assignedObjectsList.forEach((assignedObjet: any, index: number) => {
         const indexObj = assignedObjets.findIndex((assignedObjetTmp) => {
