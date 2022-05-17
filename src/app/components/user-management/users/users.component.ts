@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { Count, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
+import { BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
+import { Count, Role, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
 import { UsersService } from './users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +15,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
+import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
@@ -158,6 +160,8 @@ export class UsersComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
+  permissionsList$: Observable<any>;
+  rolesList$: Observable<Role[]>;
   userTableUpdate$: BehaviorSubject<UserTableUpdate> =
     new BehaviorSubject<UserTableUpdate>({
       action: null,
@@ -170,6 +174,7 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private usersService: UsersService,
+    private roleService: RolesPermissionsService,
     public dialog: MatDialog,
     private toast: ToastService
   ) {}
@@ -181,6 +186,11 @@ export class UsersComponent implements OnInit {
       this.roles = roles;
     });
     this.configOptions.allColumns = this.columns;
+    this.permissionsList$ = this.roleService.getPermissions$();
+    this.rolesList$ = this.roleService
+    .getRolesWithPermissions$()
+    .pipe(shareReplay(1));
+
   }
 
   cellClickActionHandler(event: any) {
@@ -193,7 +203,9 @@ export class UsersComponent implements OnInit {
       {
         data: {
           user,
-          roles: this.roles
+          roles: this.roles,
+          permissionsList$: this.permissionsList$,
+          rolesList$: this.rolesList$
         }
       }
     );
