@@ -24,7 +24,7 @@ export class GenericValidator {
         } else {
           validations[controlKey] = {};
           if (c.touched && c.errors) {
-            Object.keys(c.errors).map((messageKey) => {
+            Object.keys(c.errors).forEach((messageKey) => {
               validations[controlKey] = {
                 name: messageKey,
                 length: c.errors[messageKey]?.requiredLength
