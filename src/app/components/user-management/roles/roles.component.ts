@@ -201,32 +201,36 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     };
     if (roleId === undefined) {
       this.roleService.createRole$(postNewRoleData).subscribe((resp) => {
-        this.rolesListUpdate$.next({
-          action: 'add',
-          role: resp
-        });
-        this.addingRole$.next(false);
-        this.showCancelBtn = false;
-        this.copyDisabled = true;
-        this.selectedRole = resp;
-        this.selectedRolePermissions$ = of(resp.permissionIds);
-        this.toast.show({
-          text: 'Role saved successfully',
-          type: 'success'
-        });
+        if (Object.keys(resp).length) {
+          this.rolesListUpdate$.next({
+            action: 'add',
+            role: resp
+          });
+          this.addingRole$.next(false);
+          this.showCancelBtn = false;
+          this.copyDisabled = true;
+          this.selectedRole = resp;
+          this.selectedRolePermissions$ = of(resp.permissionIds);
+          this.toast.show({
+            text: 'Role saved successfully',
+            type: 'success'
+          });
+        }
       });
     } else {
       this.roleService.updateRole$(updateRoleData).subscribe((resp) => {
-        this.addingRole$.next(false);
-        this.rolesListUpdate$.next({
-          action: 'edit',
-          role: resp
-        });
-        this.selectedRolePermissions$ = of(resp.permissionIds);
-        this.toast.show({
-          text: 'Role Updated successfully',
-          type: 'success'
-        });
+        if (Object.keys(resp).length) {
+          this.addingRole$.next(false);
+          this.rolesListUpdate$.next({
+            action: 'edit',
+            role: resp
+          });
+          this.selectedRolePermissions$ = of(resp.permissionIds);
+          this.toast.show({
+            text: 'Role Updated successfully',
+            type: 'success'
+          });
+        }
       });
     }
   }
