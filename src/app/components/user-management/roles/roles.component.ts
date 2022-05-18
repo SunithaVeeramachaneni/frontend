@@ -66,7 +66,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   updatedPermissions = [];
   copyDisabled = true;
   showCancelBtn = false;
-  disableSaveButon: boolean;
+  disableSaveButton: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
 
   constructor(
@@ -167,13 +167,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = of([]);
     this.f.name.setValue('New Role');
     this.f.description.setValue('');
-    this.disableSaveButon = true;
+    this.disableSaveButton = true;
     this.selectedRole = [];
   }
 
   update(data) {
     this.updatedPermissions = data;
-    this.disableSaveButon = false;
+    this.disableSaveButton = false;
   }
 
   saveRole(formData, roleId) {
@@ -282,7 +282,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   showSelectedRole(role: Role) {
     this.selectedRole = role;
     this.showCancelBtn = false;
-    this.disableSaveButon = true;
+    this.disableSaveButton = true;
     this.f.name.setValue(role.name);
     this.f.description.setValue(role.description);
     this.updatedPermissions = [];
@@ -290,7 +290,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
         const permissions = roles.find((r) => r.id === role.id).permissionIds;
-        this.disableSaveButon = true;
+        this.disableSaveButton = true;
         return permissions.map((perm) => perm.id);
       })
     );
