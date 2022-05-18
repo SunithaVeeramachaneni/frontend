@@ -87,16 +87,19 @@ insert into catalogs (
         "http://cwpdev.innovapptive.com/users",
         "http://cwpdev.innovapptive.com/roles",
         "http://cwpdev.innovapptive.com/permissions",
+        "http://cwpdev.innovapptive.com/catalogs",
         "http://cwpqa.innovapptive.com/wiapi/",
         "http://cwpqa.innovapptive.com/dashboardapi/",
         "http://cwpqa.innovapptive.com/users",
         "http://cwpqa.innovapptive.com/roles",
         "http://cwpqa.innovapptive.com/permissions",
+        "http://cwpqa.innovapptive.com/catalogs",
         "http://cwpdemo.innovapptive.com/wiapi/",
         "http://cwpdemo.innovapptive.com/dashboardapi/",
         "http://cwpdemo.innovapptive.com/users",
         "http://cwpdemo.innovapptive.com/roles",
-        "http://cwpdemo.innovapptive.com/permissions"
+        "http://cwpdemo.innovapptive.com/permissions",
+        "http://cwpdemo.innovapptive.com/catalogs"
       ]
     }
   }',
@@ -111,7 +114,7 @@ insert into catalogs (
   '{
     "host": "mongo-local",
     "port": 27017,
-    "user": "",
+    "user": "admin",
     "password": "",
     "database": "Innovapptive"
   }',
