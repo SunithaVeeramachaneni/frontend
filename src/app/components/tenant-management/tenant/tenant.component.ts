@@ -605,6 +605,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             const { id: createdId, tenantName } = response;
             this.tenantForm.patchValue({ id: createdId });
             this.tenantForm.reset(this.tenantForm.getRawValue());
+            this.tenantForm.get('tenantId').disable();
+            this.tenantForm.get('tenantName').disable();
             this.toast.show({
               text: `Tenant '${tenantName}' onboarded successfully`,
               type: 'success'

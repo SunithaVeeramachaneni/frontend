@@ -21,12 +21,13 @@ import { ToastService } from 'src/app/shared/toast';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 import { tenants } from '../services/tenant.service.mock';
+import { cloneDeep } from 'lodash';
 
 import { TenantComponent } from './tenant.component';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
-  tenant;
+  cloneDeep(tenant);
 createTenant.rdbms.password = 'password';
 createTenant.nosql.password = 'password';
 createTenant.erps.sap.password = 'password';
@@ -39,6 +40,7 @@ const updateTenant = {
   rdbms: restRdbms,
   nosql: restNosql
 } as Tenant;
+declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$';
 
@@ -2411,18 +2413,22 @@ describe('TenantComponent', () => {
       );
     });
 
-    xit('should patch form with tenant data', () => {
+    it('should patch form with tenant data', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));
-
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantName: 'tenantName' })
         .and.returnValue(of({ count: 0 }));
+
+      (commonServiceSpy.decrypt as jasmine.Spy)
+        .withArgs(tenant.rdbms.password, ENCRYPTION_KEY)
+        .and.returnValue('password');
       (
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')
           .get as jasmine.Spy
       ).and.returnValue(of({ tenant }));
+
       component.ngOnInit();
 
       expect(component.tenantForm.getRawValue()).toEqual({
@@ -2576,6 +2582,8 @@ describe('TenantComponent', () => {
         type: 'success'
       });
       expect(component.tenantForm.get('id').value).toBe(tenant.id);
+      expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
       expect(component.tenantForm.pristine).toBeTrue();
     });
 
