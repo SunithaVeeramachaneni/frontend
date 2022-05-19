@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  slackAPIUrl: 'http://localhost:8005/slack/',
+  slackAPIUrl: 'http://localhost:8007/slack/',
   dashboardApiUrl: 'https://cwpdev.innovapptive.com/dashboardapi/',
   mccAbapApiUrl: 'https://cwpdev.innovapptive.com/mccspccabapapi/',
   // mccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',

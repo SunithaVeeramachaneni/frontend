@@ -46,7 +46,7 @@ export class ChatsComponent implements OnInit {
     const userId = 'U02R5D4SREU';
     const ref = this;
     const evtSource = new EventSource(
-      `http://localhost:8005/slack/sse/${userId}`
+      `http://localhost:8007/slack/sse/${userId}`
     );
     // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     evtSource.onmessage = function (event) {

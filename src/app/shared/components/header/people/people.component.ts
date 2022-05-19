@@ -41,7 +41,7 @@ export class PeopleComponent implements OnInit {
     );
 
     this.slackInstallationURL$ = this.peopleService.getInstallationURL$().pipe(
-      mergeMap((url) => {
+      map((url) => {
         console.log(url);
         return url;
       })
