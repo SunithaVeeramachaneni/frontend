@@ -30,6 +30,7 @@
           routerDirection="root"
           detail="false"
           (click)="selectedListElement(menuitem.title)"
+          title="{{ menuitem.title }}"
         >
           <span *ngIf="this.sidebar === false">
             <img src="{{ menuitem.image }}" class="sidebar-icons" />

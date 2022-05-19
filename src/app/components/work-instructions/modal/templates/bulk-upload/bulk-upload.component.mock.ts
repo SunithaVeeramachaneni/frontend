@@ -1,3 +1,5 @@
+import { Instruction } from 'src/app/interfaces';
+
 export const businessObjects = [
   {
     OBJECTCATEGORY: 'WORKORDER',
@@ -74,7 +76,6 @@ export const inst1Details = {
     '[{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"AUART","FIELDDESCRIPTION":"ORDER TYPE","Value":"Test Order"},{"OBJECTCATEGORY":"WORKORDER","FILEDNAME":"EQUNR","FIELDDESCRIPTION":"EQUIPMENT NUMBER","Value":"12345"}]',
   Categories: '["ighqwdf"]',
   CreatedBy: 'Test User',
-  created_at: '',
   EditedBy: 'Test User',
   IsFavorite: false,
   IsPublishedTillSave: false,
@@ -89,7 +90,6 @@ export const inst1Details = {
   WI_Desc: null,
   WI_Id: null,
   WI_Name: 'Sample WorkInstruction1',
-  updated_at: '',
   Equipements: null,
   Locations: null,
   IsAudioOrVideoFileDeleted: false,
@@ -97,13 +97,12 @@ export const inst1Details = {
   FilePath: null,
   FileType: null,
   Id: null
-};
+} as Instruction;
 
 export const inst2Details = {
   AssignedObjects: null,
   Categories: '["dggqwgh"]',
   CreatedBy: 'Test User',
-  created_at: '',
   EditedBy: 'Test User',
   IsFavorite: false,
   IsPublishedTillSave: false,
@@ -118,7 +117,6 @@ export const inst2Details = {
   WI_Desc: null,
   WI_Id: null,
   WI_Name: 'Sample WorkInstruction2',
-  updated_at: '',
   Equipements: null,
   Locations: null,
   IsAudioOrVideoFileDeleted: false,
@@ -126,13 +124,12 @@ export const inst2Details = {
   FilePath: null,
   FileType: null,
   Id: null
-};
+} as Instruction;
 
 export const inst3Details = {
   AssignedObjects: null,
   Categories: '["rtyjukl"]',
   CreatedBy: 'Test User',
-  created_at: '',
   EditedBy: 'Test User',
   IsFavorite: false,
   IsPublishedTillSave: false,
@@ -147,7 +144,6 @@ export const inst3Details = {
   WI_Desc: null,
   WI_Id: null,
   WI_Name: 'Sample WorkInstruction3',
-  updated_at: '',
   Equipements: null,
   Locations: null,
   IsAudioOrVideoFileDeleted: false,
@@ -155,7 +151,7 @@ export const inst3Details = {
   FilePath: null,
   FileType: null,
   Id: null
-};
+} as Instruction;
 
 export const inst1Resp = {
   ...inst1Details,

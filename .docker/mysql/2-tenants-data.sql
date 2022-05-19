@@ -7,13 +7,18 @@ insert into catalogs (
   clientId,
   authority,
   redirectUri,
-  sapProtectedResources,
-  nodeProtectedResources,
   tenantDomainName,
-  saml,
-  sap,
+  tenantAdmin,
+  erps,
+  protectedResources,
   rdbms,
   nosql,
+  noOfLicenses,
+  products,
+  modules,
+  logDBType,
+  logLevel,
+  createdBy,
   createdAt
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
@@ -22,61 +27,81 @@ insert into catalogs (
   "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
   "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0",
   "http://localhost:4200/",
-  '{
-    "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
-    "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
-    "clientID": "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
-    "audience": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
-    "scope": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access",
-    "urls": [
-      "http://localhost:8002/",
-      "http://localhost:8003/",
-      "http://cwpdev.innovapptive.com/wiabapapi/",
-      "http://cwpdev.innovapptive.com/mccspccabapapi/",
-      "http://cwpqa.innovapptive.com/wiabapapi/",
-      "http://cwpqa.innovapptive.com/mccspccabapapi/"
-    ]
-  }',
-  '{
-    "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
-    "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
-    "clientID": "9d93f9da-6989-4aea-b59f-c26e06a2ef91",
-    "audience": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91",
-    "scope": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91/access_as_user",
-    "urls": [
-      "http://localhost:8001/",
-      "http://localhost:8004/",
-      "http://localhost:8007/",
-      "http://cwpdev.innovapptive.com/wiapi/",
-      "http://cwpdev.innovapptive.com/dashboardapi/",
-      "http://cwpdev.innovapptive.com/users",
-      "http://cwpdev.innovapptive.com/roles",
-      "http://cwpdev.innovapptive.com/permissions",
-      "http://cwpqa.innovapptive.com/wiapi/",
-      "http://cwpqa.innovapptive.com/dashboardapi/",
-      "http://cwpqa.innovapptive.com/users",
-      "http://cwpqa.innovapptive.com/roles",
-      "http://cwpqa.innovapptive.com/permissions"
-    ]
-  }',
   "innovapptive.com",
   '{
-    "oauth2Url":
-      "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
-    "grantType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-    "clientSecret": "",
-    "resource": "https://NSB100",
-    "tokenUse": "on_behalf_of",
-    "tokenType": "urn:ietf:params:oauth:token-type:saml2"
+    "firstName": "tenant",
+    "lastName": "admin",
+    "title": "Super Admin",
+    "email": "tenant.admin@innovapptive.com"
   }',
   '{
-    "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
-    "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
-    "username": "cwpuser",
-    "password": "",
-    "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
-    "clientId": "cwpuser",
-    "scope": "/INVCEC/RACE_SRV_0001"
+    "sap": {
+      "baseUrl": "https://10.0.0.111/sap/opu/odata/INVCEC/RACE_SRV/",
+      "oauth2Url": "https://10.0.0.111/sap/bc/sec/oauth2/token",
+      "username": "cwpuser",
+      "password": "",
+      "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
+      "clientId": "cwpuser",
+      "scope": "/INVCEC/RACE_SRV_0001",
+      "saml": {
+        "oauth2Url":
+        "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
+        "grantType": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        "clientSecret": "",
+        "resource": "https://NSB100",
+        "tokenUse": "on_behalf_of",
+        "tokenType": "urn:ietf:params:oauth:token-type:saml2"
+      }
+    }
+  }',
+  '{
+    "sap": {
+      "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
+      "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
+      "clientId": "06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
+      "audience": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc",
+      "scope": "api://06a96c09-45cc-4120-8f96-9c0a0d89d6bc/scp.access",
+      "urls": [
+        "http://localhost:8002/",
+        "http://localhost:8003/",
+        "http://cwpdev.innovapptive.com/wiabapapi/",
+        "http://cwpdev.innovapptive.com/mccspccabapapi/",
+        "http://cwpqa.innovapptive.com/wiabapapi/",
+        "http://cwpqa.innovapptive.com/mccspccabapapi/",
+        "http://cwpdemo.innovapptive.com/wiabapapi/",
+        "http://cwpdemo.innovapptive.com/mccspccabapapi/"
+      ]
+    },
+    "node": {
+      "identityMetadata": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/.well-known/openid-configuration",
+      "issuer": "https://sts.windows.net/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/",
+      "clientId": "9d93f9da-6989-4aea-b59f-c26e06a2ef91",
+      "audience": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91",
+      "scope": "api://9d93f9da-6989-4aea-b59f-c26e06a2ef91/access_as_user",
+      "urls": [
+        "http://localhost:8001/",
+        "http://localhost:8004/",
+        "http://localhost:8007/",
+        "http://cwpdev.innovapptive.com/wiapi/",
+        "http://cwpdev.innovapptive.com/dashboardapi/",
+        "http://cwpdev.innovapptive.com/users",
+        "http://cwpdev.innovapptive.com/roles",
+        "http://cwpdev.innovapptive.com/permissions",
+        "http://cwpdev.innovapptive.com/catalogs",
+        "http://cwpqa.innovapptive.com/wiapi/",
+        "http://cwpqa.innovapptive.com/dashboardapi/",
+        "http://cwpqa.innovapptive.com/users",
+        "http://cwpqa.innovapptive.com/roles",
+        "http://cwpqa.innovapptive.com/permissions",
+        "http://cwpqa.innovapptive.com/catalogs",
+        "http://cwpdemo.innovapptive.com/wiapi/",
+        "http://cwpdemo.innovapptive.com/dashboardapi/",
+        "http://cwpdemo.innovapptive.com/users",
+        "http://cwpdemo.innovapptive.com/roles",
+        "http://cwpdemo.innovapptive.com/permissions",
+        "http://cwpdemo.innovapptive.com/catalogs"
+      ]
+    }
   }',
   '{
     "host": "mysql-local",
@@ -89,20 +114,17 @@ insert into catalogs (
   '{
     "host": "mongo-local",
     "port": 27017,
-    "user": "",
+    "user": "admin",
     "password": "",
     "database": "Innovapptive"
   }',
-  "2022-04-11 10:00:00"
+  20,
+  '["MWORKORDER", "MINVENTORY"]',
+  '["Dashboard"]',
+  "rdbms",
+  "off",
+  "admin@innovapptive.com",
+  "2022-05-10 12:00:00"
 );
-
-insert into tenants (
-  catalogId,
-  products,
-  logDBType,
-  logLevel,
-  createdAt
-) values (1, '["Dashboard", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]', "nosql", "error", "2022-04-11 10:00:00");
-
 
 CREATE DATABASE Innovapptive;

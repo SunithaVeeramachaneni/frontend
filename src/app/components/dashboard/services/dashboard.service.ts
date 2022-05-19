@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
@@ -15,7 +15,7 @@ export interface UpdateGridOptions {
   providedIn: 'root'
 })
 export class DashboardService {
-  private dashboardSelectionChangedSubject = new BehaviorSubject<any>({});
+  private dashboardSelectionChangedSubject = new Subject<any>();
 
   private dashboardsSubject = new BehaviorSubject<Dashboard[]>([]);
   private updateGridOptionsSubject = new BehaviorSubject<UpdateGridOptions>({

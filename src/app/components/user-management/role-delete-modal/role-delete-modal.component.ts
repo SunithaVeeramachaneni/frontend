@@ -13,7 +13,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RoleDeleteModalComponent implements OnInit {
-  constructor(private dialogRef: MatDialogRef<RoleDeleteModalComponent>) {}
+  constructor(
+    private dialogRef: MatDialogRef<RoleDeleteModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data
+  ) {}
 
   ngOnInit(): void {}
 

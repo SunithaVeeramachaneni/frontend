@@ -66,7 +66,7 @@
                 *ngIf="role.name === 'Super Admin'"
               />
               <span class="role-count">
-                {{ role.permissionIds.length }} of 4
+                {{ role.permissionIds?.length }} of 4
               </span>
               <button
                 mat-icon-button
@@ -118,13 +118,19 @@
                 </mat-form-field>
 
                 <div class="mat-error-name">
-                  <mat-error *ngIf="f.name.errors?.required && f.name.touched">
+                  <mat-error
+                    *ngIf="f.name.errors?.required && f.name.touched"
+                    class="role-errors"
+                  >
                     {{
                       'fieldRequired'
                         | translate: { name: 'roleLabel' | translate }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.name.errors?.minlength">
+                  <mat-error
+                    *ngIf="f.name.errors?.minlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMinimumLength'
                         | translate
@@ -134,7 +140,10 @@
                             }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.name.errors?.maxlength">
+                  <mat-error
+                    *ngIf="f.name.errors?.maxlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMaximumLength'
                         | translate
@@ -157,6 +166,7 @@
                     *ngIf="
                       f.description.errors?.required && f.description.touched
                     "
+                    class="role-errors"
                   >
                     {{
                       'fieldRequired'
@@ -164,7 +174,10 @@
                           : { name: 'roleDescriptionLabel' | translate }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="f.description.errors?.minlength">
+                  <mat-error
+                    *ngIf="f.description.errors?.minlength"
+                    class="role-errors"
+                  >
                     {{
                       'fieldMinimumLength'
                         | translate
@@ -183,7 +196,7 @@
                   mat-raised-button
                   type="submit"
                   class="save-role-btn"
-                  [disabled]="roleForm.invalid || this.enableSaveButon"
+                  [disabled]="roleForm.invalid || this.disableSaveButton"
                   translate="saveBtn"
                 ></button>
 
@@ -216,16 +229,10 @@
           >
             <span translate="noRoles"></span>
           </div>
-          <div
-            *ngIf="
-              this.selectedRole !== undefined && {
-                selectedRolePermissions: selectedRolePermissions$ | async,
-                permissionsList: permissionsList$ | async
-              } as data
-            "
-          >
+          <div *ngIf="this.selectedRole !== undefined">
             <app-permissions
-              [selectedRolePermissions]="data.selectedRolePermissions"
+              [selectedRolePermissions$]="selectedRolePermissions$"
+              [allPermissions$]="permissionsList$"
               (permissionsChange)="update($event)"
             >
             </app-permissions>
