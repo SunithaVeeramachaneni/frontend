@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { VideoCallDialogComponent } from '../chats/video-call-dialog/video-call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AppService } from 'src/app/shared/services/app.services';
+import { combineLatest, Observable, of } from 'rxjs';
+import { PeopleService } from './people.service';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-people',
@@ -14,20 +17,35 @@ export class PeopleComponent implements OnInit {
   @Output() handleAudioMessaging = new EventEmitter<any>();
   @Output() handleVideoMessaging = new EventEmitter<any>();
 
-  activeUsers: any = [];
+  activeUsersInitial$: Observable<any>;
+  activeUsers$: Observable<any[]>;
+
+  slackInstallationURL$: Observable<any>;
+
   constructor(
-    private httpClient: HttpClient,
     public uploadDialog: MatDialog,
-    private appService: AppService
+    private peopleService: PeopleService
   ) {}
 
   ngOnInit() {
-    // this.appService._getResp()
-    this.httpClient
-      .get('http://localhost:8005/slack/users')
-      .subscribe((data) => {
-        this.activeUsers = data;
-      });
+    this.activeUsersInitial$ = this.peopleService.getWorkspaceUsers$().pipe(
+      mergeMap((users) => {
+        if (users.length) {
+          return of({ data: users });
+        }
+      }),
+      catchError(() => of({ data: [] }))
+    );
+    this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
+      map(([initial]) => initial.data)
+    );
+
+    this.slackInstallationURL$ = this.peopleService.getInstallationURL$().pipe(
+      mergeMap((url) => {
+        console.log(url);
+        return url;
+      })
+    );
   }
   onTextMessageClick(targetUser) {
     this.handleTextMessaging.emit({ ...targetUser });

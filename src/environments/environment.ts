@@ -1,7 +1,10 @@
 export const environment = {
   production: false,
+  slackAPIUrl: 'http://localhost:8005/slack/',
   dashboardApiUrl: 'https://cwpdev.innovapptive.com/dashboardapi/',
   mccAbapApiUrl: 'https://cwpdev.innovapptive.com/mccspccabapapi/',
+  // mccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',
+  // spccAbapApiUrl: 'http://localhost:8003/mccspccabapapi/',
   spccAbapApiUrl: 'https://cwpdev.innovapptive.com/mccspccabapapi/',
   wiApiUrl: 'https://cwpdev.innovapptive.com/wiapi/',
   wiAbapApiUrl: 'https://cwpdev.innovapptive.com/wiabapapi/',

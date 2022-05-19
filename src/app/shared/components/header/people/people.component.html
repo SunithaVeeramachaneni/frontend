@@ -4,11 +4,12 @@
     <button mat-icon-button ngClass="searchMore">
       <mat-icon>more_vert</mat-icon>
     </button>
+    <span *ngIf="slackInstallationURL$ | async"></span>
   </div>
   <div ngClass="userList">
     <mat-list>
       <mat-list-item
-        *ngFor="let user of activeUsers; let i = index"
+        *ngFor="let user of activeUsers$ | async; let i = index"
         ngClass="peopleList"
         (click)="onTextMessageClick(user)"
       >
