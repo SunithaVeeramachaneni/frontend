@@ -19,6 +19,7 @@ import { PeopleComponent } from './components/header/people/people.component';
 import { ChatsComponent } from './components/header/chats/chats.component';
 import { CallsComponent } from './components/header/calls/calls.component';
 import { UploadDialogComponent } from './components/header/chats/upload-dialog/upload-dialog.component';
+import { VideoCallDialogComponent } from './components/header/chats/video-call-dialog/video-call-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { UploadDialogComponent } from './components/header/chats/upload-dialog/u
     HeaderComponent,
     CollabDialogComponent,
     UploadDialogComponent,
+    VideoCallDialogComponent,
     PeopleComponent,
     ChatsComponent,
     CallsComponent,

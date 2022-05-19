@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { SSEService } from './sse.service';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
+import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
+import { EmitterService } from '../EmitterService';
 @Component({
   selector: 'app-chats',
   templateUrl: 'chats.component.html',
@@ -28,10 +30,19 @@ export class ChatsComponent implements OnInit {
     private httpClient: HttpClient,
     private zone: NgZone,
     private chatService: ChatService,
-    private sseService: SSEService
+    private sseService: SSEService,
+    private emitterService: EmitterService
   ) {}
 
   ngOnInit() {
+    this.emitterService.chatMessageAdded.subscribe((data) => {
+      console.log(data);
+      this.sendMessageToUser(data.data.conversation.userInfo, {
+        type: 'meeting_request',
+        link: data.meetingLink
+      });
+    });
+
     const userId = 'U02R5D4SREU';
     const ref = this;
     const evtSource = new EventSource(
@@ -63,6 +74,20 @@ export class ChatsComponent implements OnInit {
       conversation.id
     );
     this.conversationHistory = conversationHistory.data.messages;
+    this.conversationHistory.forEach((message) => {
+      message.isMeeting = false;
+      if (message.text.indexOf('meeting_request')) {
+        try {
+          message.jsonObj = JSON.parse(message.text);
+          if (message.jsonObj.link) {
+            message.isMeeting = true;
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
+    });
+
     const objDiv = document.getElementById('conversationHistory');
     objDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
@@ -78,6 +103,24 @@ export class ChatsComponent implements OnInit {
       text: message,
       user: targetUser.id,
       ts: dateToday
+    });
+  };
+
+  openVideoCallDialog = (selectedConversation: any) => {
+    const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
+      disableClose: true,
+      hasBackdrop: true,
+      width: '100%',
+      data: {
+        conversation: selectedConversation
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        //
+      }
+      console.log('The video call dialog was closed');
     });
   };
 
@@ -119,6 +162,16 @@ export class ChatsComponent implements OnInit {
 
   addMessageToConversation = (message) => {
     if (message.channel === this.selectedConversation.id) {
+      if (message.text.indexOf('meeting_request')) {
+        try {
+          message.jsonObj = JSON.parse(message.text);
+          if (message.jsonObj.link) {
+            message.isMeeting = true;
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      }
       this.conversationHistory.push(message);
     } else {
       // Find the conversation and push it as latest..
@@ -128,6 +181,7 @@ export class ChatsComponent implements OnInit {
   getConversationsByUser = async (targetUser) => {
     const conversations = await this.chatService.getConversations();
     this.conversations = conversations.data;
+
     if (targetUser) {
       const targetConversation = this.conversations.find(
         (c) => c.user === this.targetUser.id
@@ -148,5 +202,11 @@ export class ChatsComponent implements OnInit {
 
   triggerCall = async (conv) => {
     await this.chatService.triggerCall(conv);
+  };
+
+  openMeetingLink = (message) => {
+    let url = message.jsonObj.link;
+    url = url.slice(1, -1);
+    window.open(url, '_blank');
   };
 }

@@ -62,7 +62,11 @@
         >
           <mat-icon>phone</mat-icon>
         </button>
-        <button mat-icon-button color="primary">
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="openVideoCallDialog(selectedConversation)"
+        >
           <mat-icon>videocam</mat-icon>
         </button>
       </div>
@@ -87,24 +91,45 @@
                 getLocalDateFromEpoch(message.ts)
               }}</span>
             </div>
-            <div mat-line>{{ message.text }}</div>
-            <div *ngIf="message.files && message.files.length">
-              <mat-list>
-                <mat-list-item
-                  *ngFor="let file of message.files"
-                  ngClass="attachmentItem"
-                >
-                  <mat-icon mat-list-icon>folder</mat-icon>
-                  <div mat-line ngClass="attachmentTitle">{{ file.name }}</div>
-                  <div mat-line ngClass="attachmentSubTitle">
-                    <div>Size: {{ file.size / 1024 | number: '1.0-0' }} KB</div>
-                    <div ngClass="downloadBtn">
-                      <mat-icon>cloud_download</mat-icon
-                      ><span ngClass="downloadLabel">Download</span>
-                    </div>
+            <div *ngIf="message.isMeeting === true">
+              <div ngClass="attachmentItemMeeting">
+                <!-- <div mat-line>{{ message.text }}</div> -->
+                <mat-icon mat-list-icon>videocam</mat-icon>
+                <div mat-line ngClass="attachmentTitle">
+                  {{ message.user }} is Inviting you for a meeting.
+                </div>
+                <div mat-line ngClass="attachmentSubTitle">
+                  <div ngClass="downloadBtn" (click)="openMeetingLink(message)">
+                    <mat-icon>videocam</mat-icon
+                    ><span ngClass="downloadLabel">Join the meeting</span>
                   </div>
-                </mat-list-item>
-              </mat-list>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="message.isMeeting === false">
+              <div mat-line>{{ message.text }}</div>
+              <div *ngIf="message.files && message.files.length">
+                <mat-list>
+                  <mat-list-item
+                    *ngFor="let file of message.files"
+                    ngClass="attachmentItem"
+                  >
+                    <mat-icon mat-list-icon>folder</mat-icon>
+                    <div mat-line ngClass="attachmentTitle">
+                      {{ file.name }}
+                    </div>
+                    <div mat-line ngClass="attachmentSubTitle">
+                      <div>
+                        Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                      </div>
+                      <div ngClass="downloadBtn">
+                        <mat-icon>cloud_download</mat-icon
+                        ><span ngClass="downloadLabel">Download</span>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                </mat-list>
+              </div>
             </div>
           </div>
         </div>

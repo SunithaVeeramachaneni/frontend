@@ -245,3 +245,39 @@
     box-shadow: 15px 0px 10px -15px #111;
   }
 }
+
+.attachmentItemMeeting {
+  font-size: 10pt;
+  display: flex;
+  background: #cde7d9;
+  border-radius: 5px;
+  width: 300px;
+  padding: 15px 12px;
+  .attachmentTitle {
+    font-size: 10pt;
+    font-weight: 450;
+  }
+  .attachmentSubTitle {
+    font-size: 8pt;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .downloadBtn {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0px 5px;
+      background: #0391fd;
+      border-radius: 5px;
+      color: white;
+
+      &:hover {
+        background: #7dbef6;
+      }
+      .downloadLabel {
+        margin-left: 5px;
+        padding: 5px;
+      }
+    }
+  }
+}

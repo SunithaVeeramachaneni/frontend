@@ -1,0 +1,22 @@
+<div
+  class="uploadHead"
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+>
+  <h4>
+    Video Calling with
+    <b *ngIf="data.conversation.userInfo">{{
+      data.conversation.userInfo.real_name
+    }}</b>
+    <b *ngIf="data.conversation.profile">{{
+      data.conversation.profile.real_name
+    }}</b>
+  </h4>
+  <button mat-icon-button ngClass="closeBtn" (click)="closeUploadDialog()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div class="uploadContainer">
+  <div id="jaas-container"></div>
+</div>

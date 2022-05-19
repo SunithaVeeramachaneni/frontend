@@ -45,7 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CollabDialogComponent, {
-      hasBackdrop: true,
+      hasBackdrop: false,
       width: '750px',
       disableClose: true,
       data: { positionRelativeToElement: this.collabButtonRef }
