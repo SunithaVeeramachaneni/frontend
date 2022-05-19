@@ -15,25 +15,34 @@ export class RolesPermissionsService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Role[]> =>
     this.appService
-      ._getResp(environment.userRoleManagementApiUrl, 'roles', info)
+      ._getResp(
+        environment.userRoleManagementApiUrl,
+        'roles',
+         info
+      )
       .pipe(
         mergeMap((roles: Role[]) =>
           from(roles).pipe(
             mergeMap((role) =>
               this.getRolePermissionsById$(role.id).pipe(
-                map((permissions) => ({
-                  id: role.id,
-                  name: role.name,
-                  description: role.description,
-                  permissionIds: permissions
-                }))
+                map((permissions) => ({permissions, roleID: role.id}
+                ))
               )
             ),
             toArray(),
-            shareReplay(1)
+            map((resp) =>
+              roles.map((role) => {
+                const find = resp.find((r) => r.roleID === role.id);
+                return {
+                  id: role.id,
+                  name: role.name,
+                  description: role.description,
+                  permissionIds: find.permissions
+                }
+            })
           )
         )
-      );
+      ));
 
   getRoleById$ = (
     id: string,
@@ -122,7 +131,7 @@ export class RolesPermissionsService {
   };
 
   getRolePermissionsById$ = (
-    id: string,
+    id: number,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Permission[]> =>
     this.appService
