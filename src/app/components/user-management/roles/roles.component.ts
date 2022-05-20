@@ -72,6 +72,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   disableSaveButton: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
   permissionsTotalLength$ : Observable<number>;
+  rolesList : Role[] = [];
 
   constructor(
     private commonService: CommonService,
@@ -94,9 +95,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20)
-      ],
-      this.roleNameValidator()
+        Validators.maxLength(20),
+        this.roleNameValidator()
+      ]
       ),
       description: new FormControl('', [
         Validators.required,
@@ -105,6 +106,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
     this.getRoles();
     this.getAllPermissions();
+
   }
 
   ngAfterViewChecked(): void {
@@ -136,7 +138,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             break;
         }
         return roles;
-      }), shareReplay(1)
+      }), tap(rolesList => this.rolesList = rolesList), shareReplay(1)
     )
   }
 
@@ -295,14 +297,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
   }
 
-
-  roleNameValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => {
-      return  this.rolesList$.pipe(map(rolesList =>{
-        const find = rolesList.findIndex(role => role.name === control.value);
+  roleNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null =>
+      { 
+        if(this.selectedRole && this.selectedRole.name === control.value)  return null;
+        const find = this.rolesList.findIndex(role => role.name === control.value);
         return find === -1 ? null : {'duplicateName': true};
-       }))
-    };
+      }
   }
 
   showSelectedRole(role: Role) {

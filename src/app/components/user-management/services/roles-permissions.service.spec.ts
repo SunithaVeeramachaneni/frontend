@@ -91,7 +91,7 @@ describe('Roles Permissions service', () => {
       expect(isEqual(res, rolesByID1Mock)).toBeTrue();
     });
 
-    const permissions$ = service.getRolePermissionsById$('1');
+    const permissions$ = service.getRolePermissionsById$(1);
     permissions$.subscribe((res) => {
       expect(isEqual(res, roleIdByPermissionMock)).toBeTrue();
     });

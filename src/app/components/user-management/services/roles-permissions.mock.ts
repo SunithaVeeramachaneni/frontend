@@ -104,7 +104,7 @@ export const addRoleMock = {
 };
 
 export const updateRoleMock = {
-  id: '2',
+  id: 2,
   name: 'Update Role',
   description: 'Update Role Description',
   permissionIds: ['3', '4']
