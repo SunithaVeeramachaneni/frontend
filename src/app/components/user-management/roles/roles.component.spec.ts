@@ -34,7 +34,7 @@ describe('RolesComponent', () => {
   let toastServiceSpy: ToastService;
 
   const role = {
-    id: '1',
+    id: 1,
     name: 'New Role',
     description: 'New Role Description',
     permissionIds: [1, 2]

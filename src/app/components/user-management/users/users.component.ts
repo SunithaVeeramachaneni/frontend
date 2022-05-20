@@ -1,8 +1,14 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { Count, Role, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
-import { UsersService } from './users.service';
+import {
+  Count,
+  Role,
+  TableEvent,
+  UserDetails,
+  UserTable
+} from 'src/app/interfaces';
+import { UsersService } from '../services/users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
@@ -13,8 +19,8 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatDialog } from '@angular/material/dialog';
-import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
-import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
+import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
+import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 interface UserTableUpdate {
@@ -34,7 +40,6 @@ interface ModalInput {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
-  
   columns: Column[] = [
     {
       id: 'user',
@@ -43,7 +48,7 @@ export class UsersComponent implements OnInit {
       order: 1,
       hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: '',//'displayRoles',
+      subtitleColumn: '', //'displayRoles',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -52,10 +57,10 @@ export class UsersComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {'font-weight': '500'},
-      subtitleStyle: {},// { 'font-size': '8pt', color: 'darkgray' },
+      titleStyle: { 'font-weight': '500' },
+      subtitleStyle: {}, // { 'font-size': '8pt', color: 'darkgray' },
       hasPreTextImage: true,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'displayRoles',
@@ -73,10 +78,10 @@ export class UsersComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {'color': '#3D5AFE'},
+      titleStyle: { color: '#3D5AFE' },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: true,
+      hasPostTextImage: true
     },
     {
       id: 'email',
@@ -97,7 +102,7 @@ export class UsersComponent implements OnInit {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'createdAt',
@@ -118,7 +123,7 @@ export class UsersComponent implements OnInit {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     }
   ];
   readonly routingUrls = routingUrls;
@@ -139,15 +144,15 @@ export class UsersComponent implements OnInit {
           title: 'Edit',
           action: 'edit'
         },
-        // {
-        //   title: 'Deactivate',
-        //   action: 'deactivate',
-        //   condition: {
-        //     operand: 'Tenant Admin',
-        //     operation: 'notContains',
-        //     fieldName: 'displayRoles'
-        //   }
-        // }
+        {
+          title: 'Deactivate',
+          action: 'deactivate',
+          condition: {
+            operand: 'Tenant Admin',
+            operation: 'notContains',
+            fieldName: 'displayRoles'
+          }
+        }
       ]
     },
     groupByColumns: [],
@@ -188,13 +193,12 @@ export class UsersComponent implements OnInit {
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService
-    .getRolesWithPermissions$()
-    .pipe(shareReplay(1));
-
+      .getRolesWithPermissions$()
+      .pipe(shareReplay(1));
   }
 
   cellClickActionHandler(event: any) {
-    console.log("event is", event);
+    console.log('event is', event);
   }
 
   openEditAddUserModal(user = {} as UserDetails) {
@@ -213,31 +217,30 @@ export class UsersComponent implements OnInit {
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
-          if(Object.keys(updatedUser).length) {
-          this.userTableUpdate$.next({
-            action: 'edit',
-            user: this.usersService.prepareUser(resp.user, resp.user.roles)
-          });
-          this.toast.show({
-            text: 'User updated successfully!',
-            type: 'success'
-          });
-        }
+          if (Object.keys(updatedUser).length) {
+            this.userTableUpdate$.next({
+              action: 'edit',
+              user: this.usersService.prepareUser(resp.user, resp.user.roles)
+            });
+            this.toast.show({
+              text: 'User updated successfully!',
+              type: 'success'
+            });
+          }
         });
       }
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
-          if(Object.keys(createdUser).length) {
-
-          this.userTableUpdate$.next({
-            action: 'add',
-            user: this.usersService.prepareUser(createdUser, resp.user.roles)
-          });
-          this.toast.show({
-            text: 'User created successfully!',
-            type: 'success'
-          });
-        }
+          if (Object.keys(createdUser).length) {
+            this.userTableUpdate$.next({
+              action: 'add',
+              user: this.usersService.prepareUser(createdUser, resp.user.roles)
+            });
+            this.toast.show({
+              text: 'User created successfully!',
+              type: 'success'
+            });
+          }
         });
       }
     });
@@ -264,11 +267,11 @@ export class UsersComponent implements OnInit {
     });
   }
 
-
   getDisplayedUsers() {
     const initialUsers$ = this.usersService.getUsers$({
       skip: this.skip,
-      limit: this.limit
+      limit: this.limit,
+      isActive: true
       // searchKey: this.searchValue
     });
 
@@ -335,7 +338,7 @@ export class UsersComponent implements OnInit {
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
-        this.dataSource = new MatTableDataSource(initial.data); 
+        this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
@@ -344,7 +347,8 @@ export class UsersComponent implements OnInit {
   getUsers = () =>
     this.usersService.getUsers$({
       skip: this.skip,
-      limit: this.limit
+      limit: this.limit,
+      isActive: true
       // searchKey: this.searchValue
     });
 
@@ -374,7 +378,7 @@ export class UsersComponent implements OnInit {
     }
   };
   handleTableEvent = (event) => {
-    // console.log('event', event);
+    this.fetchUsers$.next(event);
   };
   configOptionsChangeHandler = (event) => {
     // console.log('event', event);

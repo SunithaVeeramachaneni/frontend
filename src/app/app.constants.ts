@@ -17,10 +17,10 @@ export const routingUrls = {
     url: '/user-management/roles-permissions',
     title: 'Roles & Permissions'
   },
-  // inActiveUsers: {
-  //   url: '/user-management/inactive-users',
-  //   title: 'Inactive Users'
-  // },
+  inActiveUsers: {
+    url: '/user-management/inactive-users',
+    title: 'Inactive Users'
+  },
   tenantManagement: { url: '/tenant-management', title: 'Tenant Management' },
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',

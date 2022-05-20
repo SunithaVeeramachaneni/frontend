@@ -17,7 +17,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ToastService } from 'src/app/shared/toast';
 
 import { UsersComponent } from './users.component';
-import { UsersService } from './users.service';
+import { UsersService } from '../services/users.service';
 
 describe('UsersComponent', () => {
   let component: UsersComponent;

@@ -1,6 +1,6 @@
 import { DataRowOutlet } from '@angular/cdk/table';
 import { of } from 'rxjs';
-import { UserDetails, UserTable } from 'src/app/interfaces';
+import { UserDetails, UserTable } from '../../../interfaces';
 
 const role1 = {
   id: 4,
@@ -222,5 +222,153 @@ export const allUsersWithRolesMock = [
     email: 'trillian@gmail.com',
     createdAt: '2022-04-21T11:03:59.000Z',
     displayRoles: 'New Role'
+  }
+];
+
+export const columns = [
+  {
+    id: 'user',
+    displayName: 'User',
+    type: 'string',
+    order: 1,
+    hasSubtitle: true,
+    showMenuOptions: true,
+    subtitleColumn: '',
+    searchable: false,
+    sortable: true,
+    hideable: false,
+    visible: true,
+    movable: false,
+    stickable: false,
+    sticky: false,
+    groupable: true,
+    titleStyle: { 'font-weight': '500' },
+    subtitleStyle: '',
+    hasPreTextImage: true,
+    hasPostTextImage: false
+  },
+  {
+    id: 'displayRoles',
+    displayName: 'Role',
+    type: 'string',
+    order: 2,
+    hasSubtitle: false,
+    showMenuOptions: true,
+    subtitleColumn: '',
+    searchable: false,
+    sortable: true,
+    hideable: false,
+    visible: true,
+    movable: false,
+    stickable: false,
+    sticky: false,
+    groupable: true,
+    titleStyle: { color: '#3D5AFE' },
+    subtitleStyle: '',
+    hasPreTextImage: false,
+    hasPostTextImage: true
+  },
+  {
+    id: 'email',
+    displayName: 'Email',
+    type: 'string',
+    order: 3,
+    hasSubtitle: false,
+    showMenuOptions: true,
+    subtitleColumn: '',
+    searchable: false,
+    sortable: true,
+    hideable: false,
+    visible: true,
+    movable: false,
+    stickable: false,
+    sticky: false,
+    groupable: true,
+    titleStyle: '',
+    subtitleStyle: '',
+    hasPreTextImage: false,
+    hasPostTextImage: false
+  },
+  {
+    id: 'updatedAt',
+    displayName: 'Inactive Since',
+    type: 'date',
+    order: 4,
+    hasSubtitle: false,
+    showMenuOptions: true,
+    subtitleColumn: '',
+    searchable: false,
+    sortable: true,
+    hideable: false,
+    visible: true,
+    movable: false,
+    stickable: false,
+    sticky: false,
+    groupable: true,
+    titleStyle: '',
+    subtitleStyle: '',
+    hasPreTextImage: false,
+    hasPostTextImage: false
+  },
+  {
+    id: 'createdAt',
+    displayName: 'Created At',
+    type: 'date',
+    order: 5,
+    hasSubtitle: false,
+    showMenuOptions: true,
+    subtitleColumn: '',
+    searchable: false,
+    sortable: true,
+    hideable: false,
+    visible: true,
+    movable: false,
+    stickable: false,
+    sticky: false,
+    groupable: true,
+    titleStyle: '',
+    subtitleStyle: '',
+    hasPreTextImage: false,
+    hasPostTextImage: false
+  }
+];
+
+export const data = [
+  {
+    createdAt: '2022-04-26T11:59:39.000Z',
+    createdBy: 1,
+    displayRoles: ['Tenant Admin', 'Maintenance45'],
+    email: 'default@email.com',
+    firstName: 'default',
+    id: 12,
+    isActive: false,
+    lastName: 'profile',
+    postTextImage: '',
+    preTextImage: '',
+    profileImage: '',
+    roles: [
+      {
+        id: 4,
+        name: 'Super Admin',
+        description: 'Super admin description',
+        createdBy: 1,
+        updatedBy: null,
+        createdAt: '2022-04-21T06:37:07.000Z',
+        updatedAt: '2022-04-21T06:37:07.000Z'
+      },
+      {
+        id: 5,
+        name: 'Maintenance Manager',
+        description: 'desc',
+        createdBy: 1,
+        updatedBy: 1,
+        createdAt: '2022-04-21T06:44:44.000Z',
+        updatedAt: '2022-04-21T13:54:22.000Z'
+      }
+    ],
+    title: 'picture',
+    updatedAt: '2022-04-26T11:59:39.000Z',
+    updatedBy: 1,
+    user: 'default profile'
   }
 ];

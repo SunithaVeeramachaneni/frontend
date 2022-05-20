@@ -1,0 +1,73 @@
+<ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <div *ngIf="currentRouteUrl === routingUrls.inActiveUsers.url">
+    <div class="main-container">
+      <div class="inactive-users-header">
+        <div class="width-60 custom-mat-form-field-gray-color">
+          <mat-form-field appearance="outline" class="search-form-field">
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
+            <input matInput type="text" placeholder="Search Users" disabled />
+          </mat-form-field>
+        </div>
+        <span
+          class="inactive-users-count"
+          *ngIf="userCount$ | async as userCount"
+        >
+          <span class="no-of-records">
+            {{ userCount.count }}
+          </span>
+          <span class="inactive-users-text">Inactive Users</span>
+        </span>
+      </div>
+      <div *ngIf="users$ | async as users; else loadingInactiveUsers">
+        <cwp-dynamictable
+          [dataSource]="dataSource"
+          [configOptions]="configOptions"
+          (fetchDataCallback)="handleTableEvent($event)"
+        ></cwp-dynamictable>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #loadingInactiveUsers>
+  <div style="padding: 0 20px">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

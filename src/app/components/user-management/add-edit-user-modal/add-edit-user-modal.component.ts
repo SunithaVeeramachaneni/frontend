@@ -17,7 +17,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
-import { RolesPermissionsService } from '../../services/roles-permissions.service';
+import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
 import { Observable } from 'rxjs';
@@ -45,12 +45,12 @@ export class AddEditUserModalComponent implements OnInit {
   profileImageURI = 'assets/user-management-icons/Vector.png';
   profileImage;
   permissionsList$: Observable<any>;
-  rolesList$: Observable<Role[]>
-  selectedRolePermissions$: Observable<any[]>
+  rolesList$: Observable<Role[]>;
+  selectedRolePermissions$: Observable<any[]>;
   get roles() {
     return this.userForm.get('roles');
   }
-  rolePermissions : Permission[];
+  rolePermissions: Permission[];
 
   constructor(
     private fb: FormBuilder,
