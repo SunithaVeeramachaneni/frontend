@@ -1,6 +1,6 @@
 <div
   *ngIf="permissions$ | async as permissions; else loadingPermissionList"
-  class="m-t-5 permission-container"
+  class="permissions-container"
 >
   <mat-accordion *ngFor="let module of permissions; let i = index">
     <mat-expansion-panel
@@ -19,8 +19,8 @@
             [indeterminate]="fewComplete(module)"
             (change)="setAllChecked($event.checked, module)"
           >
-            {{ module.name }}
           </mat-checkbox>
+          <span class="module-name">{{ module.name }}</span>
           <span class="permission-count">
             {{ module.countOfChecked }} of {{module.permissions.length}}
           </span>

@@ -93,7 +93,8 @@ export class PermissionsComponent implements OnChanges {
           }
           return per
         })
-          
+        
+  
       module.countOfChecked = module.permissions.filter((per) => per.checked).length;
       if(module.countOfChecked === 0)
       module.checked = false;
