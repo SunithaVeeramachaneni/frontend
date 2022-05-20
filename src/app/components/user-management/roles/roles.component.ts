@@ -138,7 +138,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             break;
         }
         return roles;
-      }), tap(rolesList => this.rolesList = rolesList), shareReplay(1)
+      }), tap(rolesList => {this.rolesList = rolesList}), shareReplay(1)
     )
   }
 
@@ -201,9 +201,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         updatedPermissions.push(permission);
       }
     }
-    this.f.desc.markAsPristine();
+    this.f.description.markAsPristine();
     this.f.name.markAsPristine();
-
     // this.spinner.show();
     const postNewRoleData = {
       name: formData.name,
@@ -221,7 +220,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         if (Object.keys(resp).length) {
           this.rolesListUpdate$.next({
             action: 'add',
-            role: {...resp, permissionIds: updatedPermissions}
+            role: {...resp, permissionIds: updatedPermissions.filter(p => p.checked === true)}
           });
           this.addingRole$.next(false);
           this.showCancelBtn = false;
@@ -240,7 +239,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           this.addingRole$.next(false);
           this.rolesListUpdate$.next({
             action: 'edit',
-            role: {...updateRoleData, permissionIds: updatedPermissions}
+            role: {...updateRoleData, permissionIds: updatedPermissions.filter(p => p.checked === true)}
           });
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.toast.show({
