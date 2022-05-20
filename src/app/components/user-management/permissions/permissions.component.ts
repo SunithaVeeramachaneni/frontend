@@ -93,13 +93,13 @@ export class PermissionsComponent implements OnChanges {
           }
           return per
         })
-        
-      }
+          
       module.countOfChecked = module.permissions.filter((per) => per.checked).length;
       if(module.countOfChecked === 0)
       module.checked = false;
       if(module.countOfChecked === module.permissions.length)
       module.checked = true;
+    }
         return module;
     });
     this.permissions$.next(newPermissions);
@@ -126,9 +126,9 @@ export class PermissionsComponent implements OnChanges {
           return per;
         }
         );
-      }
       
       module.countOfChecked = checked ? module.permissions.length : 0;
+    }
       return module;
     }
 
