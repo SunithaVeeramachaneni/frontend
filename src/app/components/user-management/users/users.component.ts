@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import {
+  CellClickActionEvent,
   Count,
   Role,
   TableEvent,
@@ -160,8 +161,9 @@ export class UsersComponent implements OnInit {
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+   
   };
-
+  selectedUsers = [];
   dataSource: MatTableDataSource<any>;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
@@ -197,9 +199,22 @@ export class UsersComponent implements OnInit {
       .pipe(shareReplay(1));
   }
 
-  cellClickActionHandler(event: any) {
-    console.log('event is', event);
-  }
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'user':
+      case 'roles':
+      case 'email':
+      case 'createdAt':
+        this.openEditAddUserModal(event.row)
+        break;
+      default:
+      // do nothing
+    }
+  };
 
   openEditAddUserModal(user = {} as UserDetails) {
     const openEditAddUserModalRef = this.dialog.open(
@@ -254,7 +269,7 @@ export class UsersComponent implements OnInit {
     });
     openDeleteUserModalRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
-      this.usersService.deactivateUser$(user).subscribe((deletedUser) => {
+      this.usersService.deactivateUser$(user.id).subscribe((deletedUser) => {
         this.userTableUpdate$.next({
           action: 'deactivate',
           user
@@ -366,17 +381,41 @@ export class UsersComponent implements OnInit {
   };
 
   rowLevelActionHandler = (event) => {
-    switch (event.action) {
+    const {data, action} = event;
+    switch (action) {
       case 'deactivate':
-        this.openDeleteUserModal(event.data);
+        this.openDeleteUserModal(data);
         break;
       case 'edit':
-        this.openEditAddUserModal(event.data);
+        this.openEditAddUserModal(data);
+        break;
+      case 'toggleRowSelect':
+        if(this.selectedUsers.includes(data.id)) 
+          this.selectedUsers = this.selectedUsers.filter(userId => userId !== data.id)
+          else{
+            this.selectedUsers.push(data.id)
+          }
         break;
       default:
       // do nothing
     }
   };
+
+  deactivateUsers = () =>{
+    this.selectedUsers.forEach(id =>{
+      this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
+        this.userTableUpdate$.next({
+          action: 'deactivate',
+          user: {id, title: '', email: '', isActive: false, createdAt : new Date(), roles : []}
+        });
+        this.toast.show({
+          text: 'User deactivated successfully!',
+          type: 'success'
+        });
+        this.selectedUsers = [];
+      });
+    })
+  }
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };

@@ -157,8 +157,7 @@ export class UsersService {
       info
     );
 
-  deactivateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
-    const userID = user.id;
+  deactivateUser$ = (userID , info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };
     return this.appService.patchData(
       environment.userRoleManagementApiUrl,
