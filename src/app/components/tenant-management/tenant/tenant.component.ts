@@ -115,7 +115,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.maxLength(100),
           WhiteSpaceValidator.noWhiteSpace
         ],
-        this.validateUnique.bind(this)('tenantId')
+        this.validateUnique('tenantId')
       ],
       tenantName: [
         '',
@@ -125,7 +125,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.maxLength(100),
           WhiteSpaceValidator.noWhiteSpace
         ],
-        this.validateUnique.bind(this)('tenantName')
+        this.validateUnique('tenantName')
       ],
       tenantIdp: ['', [Validators.required]],
       clientId: [
@@ -332,6 +332,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ).setControl('urls', this.fb.array(this.setUrls(nodeUrls)));
         this.tenantForm.get('tenantId').disable();
         this.tenantForm.get('tenantName').disable();
+        this.tenantForm.get('tenantAdmin').disable();
       }
     });
 
@@ -607,6 +608,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             this.tenantForm.reset(this.tenantForm.getRawValue());
             this.tenantForm.get('tenantId').disable();
             this.tenantForm.get('tenantName').disable();
+            this.tenantForm.get('tenantAdmin').disable();
             this.toast.show({
               text: `Tenant '${tenantName}' onboarded successfully`,
               type: 'success'
@@ -665,6 +667,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.editTenant = true;
     this.tenantForm.get('tenantId').disable();
     this.tenantForm.get('tenantName').disable();
+    this.tenantForm.get('tenantAdmin').disable();
     this.tenantForm.get('rdbms.database').disable();
     this.tenantForm.get('nosql.database').disable();
   }
