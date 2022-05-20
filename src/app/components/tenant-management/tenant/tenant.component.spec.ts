@@ -2437,6 +2437,14 @@ describe('TenantComponent', () => {
       });
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.firstName').disabled
+      ).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.lastName').disabled
+      ).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.title').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
     });
 
     it('should not disable from, if edit query param is true', () => {
@@ -2584,6 +2592,14 @@ describe('TenantComponent', () => {
       expect(component.tenantForm.get('id').value).toBe(tenant.id);
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.firstName').disabled
+      ).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.lastName').disabled
+      ).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.title').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
       expect(component.tenantForm.pristine).toBeTrue();
     });
 
@@ -2736,6 +2752,14 @@ describe('TenantComponent', () => {
       expect(component.editTenant).toBeTrue();
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.firstName').disabled
+      ).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.lastName').disabled
+      ).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.title').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
       expect(component.tenantForm.get('rdbms.database').disabled).toBeTrue();
       expect(component.tenantForm.get('nosql.database').disabled).toBeTrue();
     });
