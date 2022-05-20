@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { Count, Role, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
+import { CellClickActionEvent, Count, Role, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
 import { UsersService } from './users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
@@ -193,9 +193,22 @@ export class UsersComponent implements OnInit {
 
   }
 
-  cellClickActionHandler(event: any) {
-    console.log("event is", event);
-  }
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'user':
+      case 'roles':
+      case 'email':
+      case 'createdAt':
+        this.openEditAddUserModal(event.row)
+        break;
+      default:
+      // do nothing
+    }
+  };
 
   openEditAddUserModal(user = {} as UserDetails) {
     const openEditAddUserModalRef = this.dialog.open(
