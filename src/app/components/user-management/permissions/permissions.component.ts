@@ -9,12 +9,6 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { mergeMap, tap, map } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
@@ -49,7 +43,7 @@ export class PermissionsComponent implements OnChanges {
       }
       this.selectedRolePermissions$ =
         changes.selectedRolePermissions$.currentValue;
-  
+
     if (changes.allPermissions$) {
       this.allPermissions$ = changes.allPermissions$.currentValue;
     }
@@ -60,6 +54,7 @@ export class PermissionsComponent implements OnChanges {
     ]).pipe(
       map(([permissionIDs, allPermissions]) =>{        
         return allPermissions.map((modulePermissions) => {
+          modulePermissions.checked = false;
           let activePermissionCount = 0;
           const newPermissions = modulePermissions.permissions.map(
             (permission) => {
