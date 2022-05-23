@@ -106,6 +106,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
     this.getRoles();
     this.getAllPermissions();
+    this.roleForm.valueChanges.pipe(
+      tap(resp =>{
+        console.log("changed")
+        this.disableSaveButton = false
+      }
+      )
+    ).subscribe();
 
   }
 
