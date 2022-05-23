@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface UserDetails {
-  id: string;
+  id: number;
   user?: string;
   firstName?: string;
   lastName?: string;
