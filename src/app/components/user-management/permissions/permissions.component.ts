@@ -30,7 +30,7 @@ export class PermissionsComponent implements OnChanges {
 
   rolesBasedPermissions = [];
   permissions$: BehaviorSubject<any>;;
-  panelOpenState = true;
+  panelOpenState : boolean[] = [];
   isEditable = false;
 
   constructor(private roleService: RolesPermissionsService) {}
@@ -46,13 +46,19 @@ export class PermissionsComponent implements OnChanges {
 
     if (changes.allPermissions$) {
       this.allPermissions$ = changes.allPermissions$.currentValue;
+      if(changes.allPermissions$.firstChange){
+        this.allPermissions$.pipe(tap(allPermissions => {
+          this.panelOpenState = Array(allPermissions.length).fill(true);
+        }
+          ))
+      }
     }
 
     const permissionObservable = combineLatest([
       this.selectedRolePermissions$,
       this.allPermissions$
     ]).pipe(
-      map(([permissionIDs, allPermissions]) =>{        
+      map(([permissionIDs, allPermissions]) =>{      
         return allPermissions.map((modulePermissions) => {
           modulePermissions.checked = false;
           let activePermissionCount = 0;
@@ -88,12 +94,13 @@ export class PermissionsComponent implements OnChanges {
           return per
         })
         
-      }
+  
       module.countOfChecked = module.permissions.filter((per) => per.checked).length;
       if(module.countOfChecked === 0)
       module.checked = false;
       if(module.countOfChecked === module.permissions.length)
       module.checked = true;
+    }
         return module;
     });
     this.permissions$.next(newPermissions);
@@ -120,9 +127,9 @@ export class PermissionsComponent implements OnChanges {
           return per;
         }
         );
-      }
       
       module.countOfChecked = checked ? module.permissions.length : 0;
+    }
       return module;
     }
 

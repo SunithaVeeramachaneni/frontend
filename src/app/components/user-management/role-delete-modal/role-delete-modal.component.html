@@ -1,28 +1,28 @@
-<div class="widget-delete-modal" *ngIf="this.data.data.length === 0">
+<div class="widget-delete-modal" *ngIf="this.userdata.data.length === 0">
   <p class="cancel-title" translate="deleteModalHeading"></p>
   <p class="cancel-subtitle" translate="deleteModalSubHeading"></p>
 
   <button
     mat-raised-button
     class="yes-btn"
-    (click)="cancelRole('yes')"
+    (click)="deleteRole('yes')"
     translate="yesBtn"
   ></button>
   <button
     mat-button
     class="no-btn"
-    (click)="cancelRole('no')"
+    (click)="deleteRole('no')"
     translate="noBtn"
   ></button>
 </div>
 
-<div class="widget-delete-modal" *ngIf="this.data.data.length !== 0">
+<div class="widget-delete-modal" *ngIf="this.userdata.data.length !== 0">
   <p class="cancel-title" translate="deleteRoleHavingUsersHeading"></p>
 
   <button
     mat-raised-button
     class="ok-btn"
-    (click)="cancelRole('ok')"
+    (click)="deleteRole('ok')"
     translate="okBtn"
   ></button>
 </div>

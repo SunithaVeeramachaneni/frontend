@@ -1,4 +1,6 @@
 {
+  "searchUsers": "Search Users",
+  "inactiveUsers": "Inactive Users",
   "deleteBtn": "Delete",
   "roles": "Roles",
   "addRoleBtn": "Add Role",

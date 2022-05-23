@@ -9,7 +9,7 @@ import { CdkTreeModule } from '@angular/cdk/tree';
 
 import { UserManagementRoutingModule } from './user-management-routing.module';
 import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
-import { AddEditUserModalComponent } from './users/add-edit-user-modal/add-edit-user-modal.component';
+import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AppMaterialModules } from '../../material.module';
 import {
@@ -28,10 +28,11 @@ import { RolesComponent } from './roles/roles.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { UsersComponent } from './users/users.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { UserDeleteModalComponent } from './users/user-delete-modal/user-delete-modal.component';
+import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { CancelModalComponent } from './cancel-modal/cancel-modal.component';
 import { RoleDeleteModalComponent } from './role-delete-modal/role-delete-modal.component';
+import { InactiveUsersComponent } from './inactive-users/inactive-users.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-management/', '.json');
@@ -70,7 +71,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddEditUserModalComponent,
     PermissionsComponent,
     CancelModalComponent,
-    RoleDeleteModalComponent
+    RoleDeleteModalComponent,
+    InactiveUsersComponent
   ],
   schemas: [],
   providers: [],
