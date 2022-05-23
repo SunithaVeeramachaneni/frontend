@@ -82,7 +82,7 @@ export const usersMock: UserDetails[] = [
 ];
 
 export const addUserMock: UserDetails = {
-  id: 4,
+  id: '4',
   firstName: 'Marvin',
   lastName: 'A.',
   user: 'Marvin A.',
@@ -95,7 +95,7 @@ export const addUserMock: UserDetails = {
 };
 
 export const updateUserMock: UserDetails = {
-  id: 5,
+  id: '5',
   firstName: 'Zaphod',
   lastName: 'B.',
   user: 'Zaphod B.',
@@ -116,7 +116,7 @@ export const rolesByID2Mock = [role3];
 export const rolesByID3Mock = [role4];
 
 export const preparedUserMock = {
-  id: 1,
+  id: '1',
   firstName: 'Arthur',
   lastName: 'Dent',
   user: 'Arthur Dent',
@@ -149,7 +149,7 @@ export const preparedUserMock = {
 
 export const allUsersWithRolesMock = [
   {
-    id: 1,
+    id: '1',
     firstName: 'Arthur',
     lastName: 'Dent',
     user: 'Arthur Dent',
@@ -180,7 +180,7 @@ export const allUsersWithRolesMock = [
     displayRoles: 'Super Admin, Maintenance Manager'
   },
   {
-    id: 2,
+    id: '2',
     firstName: 'Ford',
     lastName: 'Prefect',
     user: 'Ford Prefect',
@@ -202,7 +202,7 @@ export const allUsersWithRolesMock = [
     displayRoles: 'Supervisor'
   },
   {
-    id: 3,
+    id: '3',
     firstName: 'Tricia',
     lastName: 'McMillan',
     user: 'Tricia McMillan',
