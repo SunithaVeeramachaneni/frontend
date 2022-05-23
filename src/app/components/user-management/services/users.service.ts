@@ -62,7 +62,7 @@ export class UsersService {
       condition: {
         operation: 'contains',
         fieldName: 'displayRoles',
-        operand: 'Tenant Admin'
+        operand: 'Super Admin'
       }
     };
     user.preTextImage = {
