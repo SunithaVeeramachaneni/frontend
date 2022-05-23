@@ -10,8 +10,11 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormArray,
+  ValidatorFn,
   ValidationErrors,
-  Validators
+  Validators,
+  AsyncValidatorFn
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -51,7 +54,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
 
-  rolesList$: Observable<Role[]>;
+  rolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
   permissionsList$: Observable<any>;
   selectedRolePermissions$: Observable<any[]>;
@@ -68,6 +71,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   showCancelBtn = false;
   disableSaveButton: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
+  permissionsTotalLength$ : Observable<number>;
+  rolesList : Role[] = [];
 
   constructor(
     private commonService: CommonService,
@@ -86,19 +91,22 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       )
     );
     this.roleForm = this.fb.group({
-      name: new FormControl('', [
+      name: new FormControl('', 
+      [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20)
-      ]),
+        Validators.maxLength(20),
+        this.roleNameValidator()
+      ]
+      ),
       description: new FormControl('', [
         Validators.required,
         Validators.minLength(3)
       ])
     });
-
     this.getRoles();
     this.getAllPermissions();
+
   }
 
   ngAfterViewChecked(): void {
@@ -108,9 +116,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   getRoles() {
     const initialRolesList$ = this.roleService
       .getRolesWithPermissions$()
-      .pipe(shareReplay(1));
-    initialRolesList$.subscribe((roles) => {});
-    const updatedRoles$ = combineLatest([
+      .pipe(shareReplay(1)).pipe(tap((roles => this.showSelectedRole(roles[0]) ))
+        );
+    this.rolesList$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
     ]).pipe(
@@ -130,15 +138,22 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             break;
         }
         return roles;
-      })
-    );
-
-    this.rolesList$ = updatedRoles$;
+      }), tap(rolesList => {this.rolesList = rolesList}), shareReplay(1)
+    )
   }
 
   getAllPermissions() {
-    this.permissionsList$ = this.roleService.getPermissions$();
-  }
+    this.permissionsList$ = this.roleService.getPermissions$().pipe();
+    this.permissionsTotalLength$ = this.permissionsList$.pipe(
+      map((permissionsList) => {
+        let length = 0;
+        permissionsList.forEach((module) => {
+          length += module.permissions.length;
+        }
+      )
+      return length;
+  }))
+}
 
   get f() {
     return this.roleForm.controls;
@@ -186,7 +201,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         updatedPermissions.push(permission);
       }
     }
-
+    this.f.description.markAsPristine();
+    this.f.name.markAsPristine();
     // this.spinner.show();
     const postNewRoleData = {
       name: formData.name,
@@ -204,13 +220,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         if (Object.keys(resp).length) {
           this.rolesListUpdate$.next({
             action: 'add',
-            role: resp
+            role: {...resp, permissionIds: updatedPermissions.filter(p => p.checked === true)}
           });
           this.addingRole$.next(false);
           this.showCancelBtn = false;
           this.copyDisabled = true;
           this.selectedRole = resp;
-          this.selectedRolePermissions$ = of(resp.permissionIds);
+          this.selectedRolePermissions$ = of(updatedPermissionIDs);
           this.toast.show({
             text: 'Role saved successfully',
             type: 'success'
@@ -223,7 +239,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           this.addingRole$.next(false);
           this.rolesListUpdate$.next({
             action: 'edit',
-            role: resp
+            role: {...updateRoleData, permissionIds: updatedPermissions.filter(p => p.checked === true)}
           });
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.toast.show({
@@ -236,11 +252,12 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   cancelRole() {
-    const deleteReportRef = this.dialog.open(CancelModalComponent);
-    deleteReportRef.afterClosed().subscribe((res) => {
+    const cancelReportRef = this.dialog.open(CancelModalComponent);
+    cancelReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
         this.addingRole$.next(false);
-        this.selectedRole = undefined;
+        this.rolesList$.pipe(tap((roles => this.showSelectedRole(roles[0]) )))
+        this.showCancelBtn = false;
       } else {
         this.addingRole$.next(true);
       }
@@ -279,7 +296,17 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
   }
 
+  roleNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null =>
+      { 
+        if(this.selectedRole && this.selectedRole.name === control.value)  return null;
+        const find = this.rolesList.findIndex(role => role.name === control.value);
+        return find === -1 ? null : {'duplicateName': true};
+      }
+  }
+
   showSelectedRole(role: Role) {
+    this.addingRole$.next(false);
     this.selectedRole = role;
     this.showCancelBtn = false;
     this.disableSaveButton = true;
@@ -292,7 +319,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         const permissions = roles.find((r) => r.id === role.id).permissionIds;
         this.disableSaveButton = true;
         return permissions.map((perm) => perm.id);
-      })
+      }), shareReplay(1)
     );
   }
 }

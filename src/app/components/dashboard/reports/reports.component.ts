@@ -8,6 +8,7 @@ import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, startWith, switchMap, tap } from 'rxjs/operators';
 import { defaultLimit } from 'src/app/app.constants';
 import {
+  CellClickActionEvent,
   Count,
   ErrorInfo,
   Report,
@@ -275,6 +276,24 @@ export class ReportsComponent implements OnInit {
     this.addReport$.next(report);
     this.addReport$.next({} as ReportConfiguration);
   }
+
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'name':
+      case 'description':
+      case 'createdBy':
+      case 'createdOn':
+        this.router.navigate(['dashboard/reports/editreport', id]);
+        
+        break;
+      default:
+      // do nothing
+    }
+  };
 
   rowLevelActionHandler(event: RowLevelActionEvent) {
     const {

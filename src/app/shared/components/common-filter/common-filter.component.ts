@@ -254,6 +254,12 @@ export class CommonFilterComponent implements OnChanges {
       this.resetdynamicFiltersBtnDisable = true;
       this.applydynamicFiltersBtnDisable = true;
     }
+    if (this.filtersApplied.length == 0){
+      this.appliedFilters.emit({
+        filters: this.filtersApplied,
+        searchKey: this.searchValue
+      });
+    }
   }
 
   openFilterModal(column: TableColumn, index) {

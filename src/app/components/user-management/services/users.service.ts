@@ -20,7 +20,8 @@ import {
   Report,
   Count,
   Widget,
-  UserDetails
+  UserDetails,
+  Role
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import {
@@ -85,7 +86,7 @@ export class UsersService {
     }
   };
 
-  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       'roles',
@@ -106,7 +107,7 @@ export class UsersService {
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
-    queryParams = { ...queryParams, isActive: true };
+    queryParams = { ...queryParams };
     // queryParams = {};
     return this.appService
       ._getResp(
@@ -156,15 +157,14 @@ export class UsersService {
       info
     );
 
-  deactivateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
-    const userID = user.id;
+  deactivateUser$ = (userID , info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };
     return this.appService.patchData(
       environment.userRoleManagementApiUrl,
       `users/${userID}`,
       deactivateUser,
       info
-    );
+    ).pipe(map((response) => (response === null ? deactivateUser : response)));
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {

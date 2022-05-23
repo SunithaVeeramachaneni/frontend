@@ -1,78 +1,40 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
-  <div *ngIf="currentRouteUrl === routingUrls.reports.url">
-    <div class="reports-body">
-      <div class="dis-flex">
-        <div class="width-40 toggle-btns">
-          <mat-button-toggle-group [formControl]="selectedReportSegmentControl">
-            <mat-button-toggle value="recent" class="toogle-btn-text">
-              Recent
-            </mat-button-toggle>
-            <mat-button-toggle value="favorite" class="toogle-btn-text">
-              Favorite
-            </mat-button-toggle>
-            <mat-button-toggle value="all" class="toogle-btn-text">
-              All
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-          <span
-            class="no-of-records"
-            *ngIf="
-              reportsCount$ | async as reportsCount;
-              else loadingReportsCount
-            "
-          >
-            {{
-              'reportPlural'
-                | translate
-                  : {
-                      totalCount: reportsCount.count
-                        ? (reportsCount.count | numberToKM)
-                        : 0,
-                      count: this.skip ? this.skip : 0
-                    }
-            }}
-          </span>
-        </div>
+  <div *ngIf="currentRouteUrl === routingUrls.inActiveUsers.url">
+    <div class="main-container">
+      <div class="inactive-users-header">
         <div class="width-60 custom-mat-form-field-gray-color">
-          <button
-            class="new-report-btn"
-            (click)="openDialog()"
-            translate="newReport"
-          ></button>
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input
               matInput
               type="text"
-              placeholder="Search Reports"
-              [(ngModel)]="searchValue"
-              (keyup.enter)="debouncedSearchReports()"
+              [placeholder]="'searchUsers' | translate"
+              disabled
             />
           </mat-form-field>
         </div>
+        <span
+          class="inactive-users-count"
+          *ngIf="userCount$ | async as userCount"
+        >
+          <span class="no-of-records">
+            {{ userCount.count }}
+          </span>
+          <span class="inactive-users-text" translate="inactiveUsers"></span>
+        </span>
       </div>
-      <div
-        class="p-l-10 p-r-10"
-        *ngIf="reports$ | async as reports; else loadingReports"
-      >
+      <div *ngIf="users$ | async as users; else loadingInactiveUsers">
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"
           (fetchDataCallback)="handleTableEvent($event)"
-          (rowLevelActionHandler)="rowLevelActionHandler($event)"
-          (cellClickActionHandler)="cellClickActionHandler($event)"
         ></cwp-dynamictable>
       </div>
     </div>
   </div>
-  <router-outlet></router-outlet>
 </ng-container>
 
-<ng-template #loadingReportsCount>
-  <ngx-shimmer-loading [width]="'100%'" [height]="'30px'">
-  </ngx-shimmer-loading>
-</ng-template>
-<ng-template #loadingReports>
+<ng-template #loadingInactiveUsers>
   <div style="padding: 0 20px">
     <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
     </ngx-shimmer-loading>
@@ -114,4 +76,3 @@
     </ngx-shimmer-loading>
   </div>
 </ng-template>
-<ng-template #loadingReportsCount>Loading Reports Count...</ng-template>

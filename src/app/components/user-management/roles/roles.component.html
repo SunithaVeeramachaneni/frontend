@@ -66,7 +66,7 @@
                 *ngIf="role.name === 'Super Admin'"
               />
               <span class="role-count">
-                {{ role.permissionIds?.length }} of 4
+                {{ role.permissionIds?.length }} of {{ ( permissionsTotalLength$ | async )}}
               </span>
               <button
                 mat-icon-button
@@ -141,6 +141,18 @@
                     }}
                   </mat-error>
                   <mat-error
+                  *ngIf="f.name.hasError('duplicateName')"
+                  class="role-errors"
+                >
+                  {{
+                    'alreadyExists'
+                      | translate
+                        : {
+                            name: 'roleLabel' | translate
+                          }
+                  }}
+                </mat-error>
+                  <mat-error
                     *ngIf="f.name.errors?.maxlength"
                     class="role-errors"
                   >
@@ -164,7 +176,7 @@
                 <div class="mat-error-description">
                   <mat-error
                     *ngIf="
-                      f.description.errors?.required && f.description.touched
+                      f.description.errors?.required && !f.description.pristine
                     "
                     class="role-errors"
                   >

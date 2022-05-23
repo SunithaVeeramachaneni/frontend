@@ -11,6 +11,7 @@ describe('RoleDeleteModalComponent', () => {
   let component: RoleDeleteModalComponent;
   let fixture: ComponentFixture<RoleDeleteModalComponent>;
   let dialogRefSpy: MatDialogRef<RoleDeleteModalComponent>;
+  const data = {};
 
   beforeEach(async () => {
     dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
@@ -19,7 +20,7 @@ describe('RoleDeleteModalComponent', () => {
       declarations: [RoleDeleteModalComponent],
       imports: [MatDialogModule],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: {} },
+        { provide: MAT_DIALOG_DATA, useValue: { data } },
         { provide: MatDialogRef, useValue: dialogRefSpy }
       ]
     }).compileComponents();
@@ -31,12 +32,12 @@ describe('RoleDeleteModalComponent', () => {
     fixture.detectChanges();
   });
 
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 
-  // it('it should close modal', () => {
-  //   component.cancelRole('yes');
-  //   //expect(dialogRefSpy.close).toHaveBeenCalled();
-  // });
+  it('it should close modal', () => {
+    component.deleteRole('yes');
+    expect(dialogRefSpy.close).toHaveBeenCalled();
+  });
 });

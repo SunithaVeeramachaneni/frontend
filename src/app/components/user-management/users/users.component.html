@@ -10,7 +10,7 @@
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item disabled class="text-red">
+      <button mat-menu-item [disabled]="!selectedUsers.length" (click)="deactivateUsers()" class="text-red">
         <span>Deactivate</span>
       </button>
     </mat-menu>
