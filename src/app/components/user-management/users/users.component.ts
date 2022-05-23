@@ -149,7 +149,7 @@ export class UsersComponent implements OnInit {
           title: 'Deactivate',
           action: 'deactivate',
           condition: {
-            operand: 'Tenant Admin',
+            operand: 'Super Admin',
             operation: 'notContains',
             fieldName: 'displayRoles'
           }
@@ -404,6 +404,7 @@ export class UsersComponent implements OnInit {
   deactivateUsers = () =>{
     this.selectedUsers.forEach(id =>{
       this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
+        if (Object.keys(deactivatedUser).length) {
         this.userTableUpdate$.next({
           action: 'deactivate',
           user: {id, title: '', email: '', isActive: false, createdAt : new Date(), roles : []}
@@ -413,6 +414,7 @@ export class UsersComponent implements OnInit {
           type: 'success'
         });
         this.selectedUsers = [];
+      }
       });
     })
   }
