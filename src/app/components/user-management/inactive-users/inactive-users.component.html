@@ -5,7 +5,12 @@
         <div class="width-60 custom-mat-form-field-gray-color">
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
-            <input matInput type="text" placeholder="Search Users" disabled />
+            <input
+              matInput
+              type="text"
+              [placeholder]="'searchUsers' | translate"
+              disabled
+            />
           </mat-form-field>
         </div>
         <span
@@ -15,7 +20,7 @@
           <span class="no-of-records">
             {{ userCount.count }}
           </span>
-          <span class="inactive-users-text">Inactive Users</span>
+          <span class="inactive-users-text" translate="inactiveUsers"></span>
         </span>
       </div>
       <div *ngIf="users$ | async as users; else loadingInactiveUsers">

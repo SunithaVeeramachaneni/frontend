@@ -123,30 +123,6 @@ describe('InactiveUsersComponent', () => {
       expect(component.getDisplayedUsers).toBeDefined();
     });
     it('should get users data', () => {
-      const mockData = [
-        {
-          id: '3',
-          firstName: 'Tricia',
-          lastName: 'McMillan',
-          user: 'Tricia McMillan',
-          roles: [
-            {
-              id: 6,
-              name: 'Supervisor',
-              description: 'Supervisor Description',
-              createdBy: 1,
-              updatedBy: null,
-              createdAt: new Date('2022-04-21T11:03:59.000Z'),
-              updatedAt: new Date('2022-04-21T11:03:59.000Z')
-            }
-          ],
-          title: 'Engineer',
-          isActive: true,
-          email: 'trillian@gmail.com',
-          createdAt: new Date('2022-04-21T11:03:59.000Z'),
-          profileImage: 'image,123'
-        }
-      ];
       spyOn(component, 'getUsers');
       expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith({
         skip: 0,

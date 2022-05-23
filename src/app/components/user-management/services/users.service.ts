@@ -175,7 +175,7 @@ export class UsersService {
       `users/${userID}`,
       deactivateUser,
       info
-    );
+    ).pipe(map((response) => (response === null ? deactivateUser : response)));
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
