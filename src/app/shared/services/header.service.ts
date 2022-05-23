@@ -1,29 +1,37 @@
-import { Injectable } from "@angular/core"
-import { Observable } from "rxjs";
-import { ErrorInfo } from "../../interfaces/error-info";
-import { AppService } from "../../shared/services/app.services"
-import { environment } from "../../../environments/environment";
-import { map, shareReplay } from "rxjs/operators";
-import { LogonUserDetails } from "../../interfaces";
+/* eslint-disable no-underscore-dangle */
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ErrorInfo } from '../../interfaces/error-info';
+import { AppService } from '../../shared/services/app.services';
+import { environment } from '../../../environments/environment';
+import { map, shareReplay } from 'rxjs/operators';
+import { LogonUserDetails } from '../../interfaces';
 
-@Injectable({providedIn: "root"})
-
+@Injectable({ providedIn: 'root' })
 export class HeaderService {
-
   logonUserDetails: Observable<LogonUserDetails>;
 
-  constructor(private _appService: AppService) {}
+  constructor(private appService: AppService) {}
 
-  getLogonUserDetails(info: ErrorInfo = {} as ErrorInfo): Observable<any>{
+  getInstallationURL$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+    this.appService._getResp(environment.slackAPIUrl, 'install/verify', info);
+
+  getLogonUserDetails(info: ErrorInfo = {} as ErrorInfo): Observable<any> {
     if (!this.logonUserDetails) {
-      this.logonUserDetails = this._appService._getRespFromGateway(environment.mccAbapApiUrl, 'logonUserDetails', info)
+      this.logonUserDetails = this.appService
+        ._getRespFromGateway(
+          environment.mccAbapApiUrl,
+          'logonUserDetails',
+          info
+        )
         .pipe(
-          map(data => {
-            let userImage = '', userName = '';
+          map((data) => {
+            let userImage = '';
+            let userName = '';
             if (data.length) {
               const { FILECONTENT, SHORT } = data[0];
-              userImage =  `data:image/jpeg;base64,${FILECONTENT}`;
-              userName =  SHORT;
+              userImage = `data:image/jpeg;base64,${FILECONTENT}`;
+              userName = SHORT;
             }
             return { userImage, userName };
           }),

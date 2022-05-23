@@ -2,8 +2,10 @@
 import { Injectable } from '@angular/core';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from '../../../services/app.services';
+import { environment } from '../../../../../environments/environment';
 
 import axios from 'axios';
+import { Observable } from 'rxjs';
 
 const baseURL = 'http://localhost:8007/slack';
 
@@ -13,16 +15,34 @@ const baseURL = 'http://localhost:8007/slack';
 export class ChatService {
   constructor(private appService: AppService) {}
 
-  sendMessage = async (message: string, userId: string) =>
-    axios.post(`${baseURL}/users/${userId}/messages`, {
-      message
-    });
+  getConversations$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
+    this.appService._getResp(
+      environment.slackAPIUrl,
+      'conversations/U02R5D4SREU',
+      info
+    );
+  getConversationHistory$ = (
+    conversationId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.slackAPIUrl,
+      `conversations/${conversationId}/history`,
+      info
+    );
 
-  getConversations = async () =>
-    axios.get(`${baseURL}/conversations/U0139U8LUMV`);
+  sendMessage$ = (
+    message: string,
+    userId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.slackAPIUrl,
+      `users/${userId}/messages`,
+      { message },
+      info
+    );
 
-  getConversationHistory = async (conversationId) =>
-    axios.get(`${baseURL}/conversations/${conversationId}/history`);
   triggerCall = async (user) =>
     axios.post(`${baseURL}calls`, {
       user

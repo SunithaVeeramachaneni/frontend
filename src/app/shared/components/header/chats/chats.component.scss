@@ -42,7 +42,8 @@
       // margin-top: 15px;
     }
     .iconButton .icon {
-      width: 40px;
+      width: 45px !important;
+      height: 45px !important;
       border-radius: 45px;
     }
     .userTitle {
@@ -69,12 +70,10 @@
     word-break: break-all;
   }
   .conversationMessage {
-    // border: 1px solid #1552af2e;
     width: 375px;
     margin: 10px 0px;
     display: flex;
-    // align-items: center;
-    word-break: break-all;
+    word-break: break-word;
   }
   .conv-user-icon {
     background: none;
@@ -119,7 +118,8 @@
     }
   }
   .conv-user-icon .icon {
-    width: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 45px;
   }
 
@@ -196,10 +196,12 @@
   width: 40px;
   border-radius: 45px;
   margin-top: -15px;
+  margin-right: 10px;
 }
 
 .icon-button .icon {
-  width: 40px;
+  width: 45px !important;
+  height: 45px !important;
   border-radius: 45px;
 }
 
@@ -253,6 +255,8 @@
   border-radius: 5px;
   width: 300px;
   padding: 15px 12px;
+  margin-top: 5px;
+
   .attachmentTitle {
     font-size: 10pt;
     font-weight: 450;

@@ -12,9 +12,10 @@ import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 
 import { LogonUserDetails } from '../../../interfaces';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CollabDialogComponent } from './CollabDialog';
+import { PeopleService } from './people/people.service';
 
 @Component({
   selector: 'app-header',
@@ -29,6 +30,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public userImage: string;
   public sidebarMinimize = false;
   logonUserDetails$: Observable<LogonUserDetails>;
+
+  slackVerification$: Observable<any>;
+
   @Input() title;
 
   private minimizeSidebarActionSubscription: Subscription;
@@ -37,7 +41,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userData$: Observable<UserDataResult>;
 
   constructor(
-    private _headerSvc: HeaderService,
+    private headerService: HeaderService,
     private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
     public dialog: MatDialog
@@ -56,12 +60,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
+  connectToSlack(slackVerification): void {
+    console.log(slackVerification);
+  }
+
   ngOnInit() {
+    this.slackVerification$ = this.headerService
+      .getInstallationURL$()
+      .pipe(map((url) => url));
     this.minimizeSidebarActionSubscription =
       this.commonService.minimizeSidebarAction$.subscribe((data) => {
         this.sidebarMinimize = data;
       });
-    this.logonUserDetails$ = this._headerSvc.getLogonUserDetails();
+    this.logonUserDetails$ = this.headerService.getLogonUserDetails();
     this.userData$ = this.oidcSecurityService.userData$.pipe(
       tap((res) => {
         this.commonService.setUserInfo(res);

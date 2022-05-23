@@ -4,7 +4,6 @@
     <button mat-icon-button ngClass="searchMore">
       <mat-icon>more_vert</mat-icon>
     </button>
-    <span *ngIf="slackInstallationURL$ | async"></span>
   </div>
   <div ngClass="userList">
     <mat-list>
@@ -14,19 +13,28 @@
         (click)="onTextMessageClick(user)"
       >
         <div class="icon-button" mat-list-icon>
-          <img class="icon" src="{{ user.profile.image_original }}" />
+          <img class="icon" [src]="user.profileImage" />
         </div>
         <div mat-line>
-          <b>{{ user.real_name }}</b>
+          <b>{{ user.firstName }} {{ user.lastName }}</b>
         </div>
-        <div mat-line>{{ user.profile?.title }}</div>
+        <div mat-line>{{ user.title }}</div>
         <button
+          [disabled]="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
           mat-icon-button
           color="primary"
           (click)="onTextMessageClick(user)"
         >
-          <mat-icon>chat</mat-icon>
+          <mat-icon *ngIf="user.UserSlackDetail && user.UserSlackDetail.slackID"
+            >chat</mat-icon
+          >
+          <mat-icon
+            *ngIf="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
+            title="This user is not connected to Slack"
+            >comments_disabled</mat-icon
+          >
         </button>
+
         <button
           mat-icon-button
           color="primary"

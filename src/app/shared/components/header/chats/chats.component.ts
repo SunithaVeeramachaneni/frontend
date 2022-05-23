@@ -1,4 +1,4 @@
-import { Component, Input, NgZone, OnInit } from '@angular/core';
+import { Component, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ChatService } from './chat.service';
 import * as moment from 'moment';
@@ -8,6 +8,16 @@ import { SSEService } from './sse.service';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
 import { EmitterService } from '../EmitterService';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Buffer } from 'buffer';
+
+interface SendReceiveMessages {
+  action: 'send' | 'receive';
+  message: any;
+}
+
 @Component({
   selector: 'app-chats',
   templateUrl: 'chats.component.html',
@@ -15,6 +25,7 @@ import { EmitterService } from '../EmitterService';
 })
 export class ChatsComponent implements OnInit {
   @Input() targetUser: any;
+  // @ViewChild('window') window;
 
   messageText = '';
   conversations: any = [];
@@ -25,78 +36,174 @@ export class ChatsComponent implements OnInit {
 
   userMaps: any = [];
 
+  conversationsInitial$: Observable<any>;
+  conversations$: Observable<any[]>;
+
+  conversationHistoryInit$: Observable<any>;
+  conversationHistory$: Observable<any[]>;
+
+  sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
+    action: 'send',
+    message: {} as any
+  });
+
   constructor(
     public uploadDialog: MatDialog,
     private httpClient: HttpClient,
     private zone: NgZone,
     private chatService: ChatService,
     private sseService: SSEService,
-    private emitterService: EmitterService
+    private emitterService: EmitterService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
     this.emitterService.chatMessageAdded.subscribe((data) => {
-      console.log(data);
       this.sendMessageToUser(data.data.conversation.userInfo, {
         type: 'meeting_request',
         link: data.meetingLink
       });
     });
 
-    const userId = 'U02R5D4SREU';
-    const ref = this;
-    const evtSource = new EventSource(
-      `http://localhost:8007/slack/sse/${userId}`
-    );
-    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-    evtSource.onmessage = function (event) {
-      // console.log(event.data);
-      const eventData = JSON.parse(event.data);
-      console.log(eventData);
-      if (!eventData.isHeartbeat && eventData.eventType === 'message') {
-        ref.addMessageToConversation(eventData);
-      }
-    };
+    // const userId = 'U02R5D4SREU';
+    // const ref = this;
+    // const evtSource = new EventSource(
+    //   `http://localhost:8007/slack/sse/${userId}`
+    // );
+    // // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+    // evtSource.onmessage = function (event) {
+    //   const eventData = JSON.parse(event.data);
+    //   console.log(eventData);
+    //   if (!eventData.isHeartbeat && eventData.eventType === 'message') {
+    //     ref.addMessageToConversation(eventData);
+    //   }
+    // };
 
-    this.httpClient.get('assets/slackUsers.json').subscribe((data) => {
-      this.activeUsers = data;
-      this.activeUsers.forEach((user) => {
-        this.userMaps[user.id] = user;
-      });
-    });
-    this.getConversationsByUser(this.targetUser);
+    this.conversationsInitial$ = this.chatService.getConversations$().pipe(
+      mergeMap((conversations) => {
+        if (conversations.length) {
+          conversations.forEach((conv) => {
+            conv.userInfo.profileImage = this.getImageSrc(
+              Buffer.from(conv.userInfo.profileImage).toString()
+            );
+          });
+          return of({ data: conversations });
+        }
+      }),
+      catchError(() => of({ data: [] }))
+    );
+    this.conversations$ = combineLatest([this.conversationsInitial$]).pipe(
+      map(([initial]) => {
+        this.setSelectedConversation(initial.data[0]);
+        return initial.data;
+      }),
+      tap((conversations) => {
+        this.conversations = conversations;
+      })
+    );
   }
+
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
 
   setSelectedConversation = async (conversation: any) => {
     this.conversationHistory = [];
     this.selectedConversation = conversation;
-    const conversationHistory = await this.chatService.getConversationHistory(
-      conversation.id
-    );
-    this.conversationHistory = conversationHistory.data.messages;
-    this.conversationHistory.forEach((message) => {
-      message.isMeeting = false;
-      if (message.text.indexOf('meeting_request')) {
-        try {
-          message.jsonObj = JSON.parse(message.text);
-          if (message.jsonObj.link) {
-            message.isMeeting = true;
+    this.conversationHistoryInit$ = this.chatService
+      .getConversationHistory$(conversation.id)
+      .pipe(
+        // eslint-disable-next-line arrow-body-style
+        mergeMap((history) => {
+          // console.log(history);
+          if (history.length) {
+            history.forEach((message) => {
+              message.userInfo.profileImage = this.getImageSrc(
+                Buffer.from(message.userInfo.profileImage).toString()
+              );
+              message.isMeeting = false;
+              if (message.text.indexOf('meeting_request')) {
+                try {
+                  message.jsonObj = JSON.parse(message.text);
+                  if (message.jsonObj.link) {
+                    message.isMeeting = true;
+                  }
+                } catch (err) {
+                  console.log(err.message);
+                }
+              }
+            });
+            return of({ data: history });
           }
-        } catch (err) {
-          console.log(err.message);
-        }
-      }
-    });
+          return of({ data: history });
+        }),
+        catchError(() => of({ data: [] }))
+      );
 
-    const objDiv = document.getElementById('conversationHistory');
-    objDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    this.conversationHistory$ = combineLatest([
+      this.conversationHistoryInit$,
+      this.sendReceiveMessages$
+    ]).pipe(
+      map(([initial, messageAction]) => {
+        const { action, message } = messageAction;
+        if (action === 'send') {
+          let userInfo;
+          initial.data.forEach((msg) => {
+            if (message.user === msg.user) {
+              userInfo = msg.userInfo;
+            }
+          });
+          message.userInfo = userInfo;
+          message.isMeeting = false;
+          initial.data = initial.data.concat(message);
+          return initial.data;
+        } else if (action === 'receive') {
+          //
+        } else {
+          return initial.data;
+        }
+        return initial.data;
+      })
+    );
   };
 
+  // scrollToBottom() {
+  //   try {
+  //     console.log('scrollToBottom called');
+  //     this.window.nativeElement.scrollTop =
+  //       this.window.nativeElement.scrollHeight;
+  //   } catch (err) {}
+  // }
+
   sendMessageToUser = async (targetUser, message) => {
-    const sendMessageResponse = await this.chatService.sendMessage(
-      message,
-      targetUser.id
+    console.log(targetUser);
+    this.chatService.sendMessage$(message, targetUser.id).subscribe(
+      (response) => {
+        if (response && Object.keys(response).length) {
+          console.log(response);
+          if (response.ok) {
+            this.sendReceiveMessages$.next({
+              action: 'send',
+              message: response.message
+            });
+          }
+        }
+      },
+      (err) => {
+        // this.toast.show({
+        //   text: 'Error occured while creating dashboard',
+        //   type: 'warning'
+        // });
+      }
     );
+
+    // const sendMessageResponse = await this.chatService.sendMessage(
+    //   message,
+    //   targetUser.id
+    // );
     const dateToday = moment().unix();
     this.conversationHistory.push({
       type: 'message',
@@ -179,8 +286,8 @@ export class ChatsComponent implements OnInit {
   };
 
   getConversationsByUser = async (targetUser) => {
-    const conversations = await this.chatService.getConversations();
-    this.conversations = conversations.data;
+    // const conversations = await this.chatService.getConversations();
+    // this.conversations = conversations; //.data;
 
     if (targetUser) {
       const targetConversation = this.conversations.find(
@@ -190,7 +297,7 @@ export class ChatsComponent implements OnInit {
         this.setSelectedConversation(targetConversation);
       }
     } else {
-      this.setSelectedConversation(conversations.data[0]);
+      // this.setSelectedConversation(conversations[0]);
     }
   };
 

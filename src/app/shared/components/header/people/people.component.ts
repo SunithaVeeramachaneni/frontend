@@ -6,6 +6,8 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { combineLatest, Observable, of } from 'rxjs';
 import { PeopleService } from './people.service';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Buffer } from 'buffer';
 
 @Component({
   selector: 'app-people',
@@ -20,17 +22,29 @@ export class PeopleComponent implements OnInit {
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
 
-  slackInstallationURL$: Observable<any>;
-
   constructor(
     public uploadDialog: MatDialog,
-    private peopleService: PeopleService
+    private peopleService: PeopleService,
+    private sanitizer: DomSanitizer
   ) {}
 
+  getImageSrc = (source: string) => {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
+  };
+
   ngOnInit() {
-    this.activeUsersInitial$ = this.peopleService.getWorkspaceUsers$().pipe(
+    this.activeUsersInitial$ = this.peopleService.getUsers$().pipe(
       mergeMap((users) => {
+        console.log(users);
         if (users.length) {
+          users.forEach((user) => {
+            user.profileImage = this.getImageSrc(
+              Buffer.from(user.profileImage).toString()
+            );
+          });
           return of({ data: users });
         }
       }),
@@ -38,13 +52,6 @@ export class PeopleComponent implements OnInit {
     );
     this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
       map(([initial]) => initial.data)
-    );
-
-    this.slackInstallationURL$ = this.peopleService.getInstallationURL$().pipe(
-      map((url) => {
-        console.log(url);
-        return url;
-      })
     );
   }
   onTextMessageClick(targetUser) {

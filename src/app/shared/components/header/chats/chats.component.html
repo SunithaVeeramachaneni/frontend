@@ -14,7 +14,7 @@
     <div ngClass="userList">
       <mat-list>
         <mat-list-item
-          *ngFor="let conversation of conversations; let i = index"
+          *ngFor="let conversation of conversations$ | async; let i = index"
           (click)="setSelectedConversation(conversation)"
           class="conversationListItem"
           [ngClass]="{
@@ -22,13 +22,13 @@
           }"
         >
           <div class="icon-button" mat-list-icon>
-            <img
-              class="icon"
-              src="{{ conversation.userInfo.profile.image_original }}"
-            />
+            <img class="icon" [src]="conversation.userInfo.profileImage" />
           </div>
           <div mat-line>
-            <b>{{ conversation.userInfo.real_name }}</b>
+            <b
+              >{{ conversation.userInfo.firstName }}
+              {{ conversation.userInfo.lastName }}</b
+            >
           </div>
           <div mat-line>{{ conversation.info.latest?.text }}</div>
           <mat-divider ngClass="horiz-dividerConv"></mat-divider>
@@ -42,15 +42,16 @@
         <div ngClass="iconButton">
           <img
             class="icon"
-            src="{{ selectedConversation.userInfo.profile.image_original }}"
+            [src]="selectedConversation.userInfo.profileImage"
           />
         </div>
         <div ngClass="userTitle">
-          <b ngClass="userName">{{
-            selectedConversation.userInfo.real_name
-          }}</b>
+          <b ngClass="userName"
+            >{{ selectedConversation.userInfo.firstName }}
+            {{ selectedConversation.userInfo.lastName }}
+          </b>
           <div mat-line ngClass="userDescription">
-            {{ selectedConversation.userInfo.profile?.title }}
+            {{ selectedConversation.userInfo.title }}
           </div>
         </div>
       </div>
@@ -72,21 +73,23 @@
       </div>
     </div>
     <mat-divider ngClass="horiz-divider"></mat-divider>
-    <div ngClass="conversationBody" id="conversationHistory">
-      <div *ngIf="conversationHistory">
-        <div
-          *ngFor="let message of conversationHistory"
-          ngClass="conversationMessage"
-        >
+    <div
+      ngClass="conversationBody"
+      id="conversationHistory"
+      #scrollMe
+      [scrollTop]="scrollMe.scrollHeight"
+    >
+      <div *ngFor="let message of conversationHistory$ | async">
+        <div *ngIf="message.user" ngClass="conversationMessage">
           <div class="conv-user-icon">
-            <img
-              class="icon"
-              src="{{ userMaps[message.user].profile.image_original }}"
-            />
+            <img class="icon" [src]="message.userInfo.profileImage" />
           </div>
           <div ngClass="nameAndMessage">
             <div>
-              <b>{{ userMaps[message.user].real_name }}</b>
+              <b
+                >{{ message.userInfo.firstName }}
+                {{ message.userInfo.lastName }}</b
+              >
               <span ngClass="timeAgoLabel">{{
                 getLocalDateFromEpoch(message.ts)
               }}</span>
@@ -96,7 +99,8 @@
                 <!-- <div mat-line>{{ message.text }}</div> -->
                 <mat-icon mat-list-icon>videocam</mat-icon>
                 <div mat-line ngClass="attachmentTitle">
-                  {{ message.user }} is Inviting you for a meeting.
+                  {{ message.userInfo.firstName }}
+                  {{ message.userInfo.lastName }} is Inviting you for a meeting.
                 </div>
                 <div mat-line ngClass="attachmentSubTitle">
                   <div ngClass="downloadBtn" (click)="openMeetingLink(message)">
@@ -152,9 +156,7 @@
           <div matSuffix>
             <button
               mat-icon-button
-              (click)="
-                sendMessageToUser(selectedConversation.userInfo, messageText)
-              "
+              (click)="sendMessageToUser(selectedConversation, messageText)"
             >
               <mat-icon color="primary">send</mat-icon>
             </button>
