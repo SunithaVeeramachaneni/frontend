@@ -16,6 +16,7 @@
           <button
             mat-menu-item
             (click)="deleteRoles()"
+            class="text-red"
             [disabled]="!selectedRoleList.length"
             translate="deleteBtn"
           ></button>
@@ -52,10 +53,7 @@
                   : ''
               }"
             >
-              <mat-checkbox
-                (change)="roleChecked(role, $event)"
-                color="primary"
-              ></mat-checkbox>
+              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
@@ -66,7 +64,8 @@
                 *ngIf="role.name === 'Super Admin'"
               />
               <span class="role-count">
-                {{ role.permissionIds?.length }} of {{ ( permissionsTotalLength$ | async )}}
+                {{ role.permissionIds?.length }} of
+                {{ permissionsTotalLength$ | async }}
               </span>
               <button
                 mat-icon-button
@@ -141,17 +140,17 @@
                     }}
                   </mat-error>
                   <mat-error
-                  *ngIf="f.name.hasError('duplicateName')"
-                  class="role-errors"
-                >
-                  {{
-                    'alreadyExists'
-                      | translate
-                        : {
-                            name: 'roleLabel' | translate
-                          }
-                  }}
-                </mat-error>
+                    *ngIf="f.name.hasError('duplicateName')"
+                    class="role-errors"
+                  >
+                    {{
+                      'alreadyExists'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate
+                            }
+                    }}
+                  </mat-error>
                   <mat-error
                     *ngIf="f.name.errors?.maxlength"
                     class="role-errors"
