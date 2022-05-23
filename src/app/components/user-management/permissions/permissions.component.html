@@ -15,14 +15,13 @@
           <mat-checkbox
             [disabled]="isEditable"
             [checked]="module.checked"
-            color="primary"
             [indeterminate]="fewComplete(module)"
             (change)="setAllChecked($event.checked, module)"
           >
           </mat-checkbox>
           <span class="module-name">{{ module.name }}</span>
           <span class="permission-count">
-            {{ module.countOfChecked }} of {{module.permissions.length}}
+            {{ module.countOfChecked }} of {{ module.permissions.length }}
           </span>
           <mat-icon *ngIf="!panelOpenState[i]"> arrow_right </mat-icon>
           <mat-icon *ngIf="panelOpenState[i]">arrow_drop_down</mat-icon>
@@ -31,7 +30,6 @@
       <ul class="m-0">
         <li *ngFor="let permission of module.permissions">
           <mat-checkbox
-            color="primary"
             [checked]="permission.checked"
             (change)="updateAllChecked($event.checked, permission)"
           >
