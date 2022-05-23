@@ -161,6 +161,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             return initial.data;
           } else if (type === 'copy') {
             initial.data.push(dashboard);
+            this.skipSetDefaultDashboard = true;
+            this.selectedDashboard = { ...dashboard }
             return initial.data;
           }
         } else {
@@ -343,6 +345,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         text: 'Dashboard copied successfully',
         type: 'success'
       });
+      
     });
   }
 
