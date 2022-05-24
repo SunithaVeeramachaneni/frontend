@@ -17,7 +17,7 @@
       translate="saveBtn"
       class="save-btn"
       *ngIf="editTenant"
-      [disabled]="tenantForm.invalid || tenantForm.pristine"
+      [disabled]="!tenantForm.valid || tenantForm.pristine"
     ></button>
     <button
       mat-raised-button
