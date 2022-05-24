@@ -110,6 +110,23 @@ export class ChatsComponent implements OnInit {
     }
   };
 
+  downloadFile = (file: any) => {
+    this.chatService.downloadFileSlack$(file.url_private).subscribe(
+      (data) => {
+        const url = window.URL.createObjectURL(data);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      },
+      (err) => {
+        //
+      }
+    );
+  };
+
   setSelectedConversation = async (conversation: any) => {
     this.conversationHistory = [];
     this.selectedConversation = conversation;
@@ -170,20 +187,10 @@ export class ChatsComponent implements OnInit {
     );
   };
 
-  // scrollToBottom() {
-  //   try {
-  //     console.log('scrollToBottom called');
-  //     this.window.nativeElement.scrollTop =
-  //       this.window.nativeElement.scrollHeight;
-  //   } catch (err) {}
-  // }
-
   sendMessageToUser = async (targetUser, message) => {
-    console.log(targetUser);
     this.chatService.sendMessage$(message, targetUser.id).subscribe(
       (response) => {
         if (response && Object.keys(response).length) {
-          console.log(response);
           if (response.ok) {
             this.sendReceiveMessages$.next({
               action: 'send',
@@ -244,7 +251,7 @@ export class ChatsComponent implements OnInit {
         formData.append('attachment', result);
         this.httpClient
           .post<any>(
-            `http://localhost:8005/slack/conversations/${conversationId}/files`,
+            `http://localhost:8007/slack/conversations/${conversationId}/files`,
             formData
           )
           .subscribe(

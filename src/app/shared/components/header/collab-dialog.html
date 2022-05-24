@@ -4,6 +4,7 @@
   cdkDrag
   cdkDragRootElement=".cdk-overlay-pane"
   cdkDragHandle
+  cdkDragBoundary="body"
 >
   <div ngClass="dialogHeader">
     <mat-button-toggle-group
@@ -24,9 +25,28 @@
         >People</mat-button-toggle
       >
     </mat-button-toggle-group>
-    <button mat-icon-button ngClass="closeBtn" (click)="closeCollabDialog()">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div>
+      <button
+        mat-icon-button
+        ngClass="closeBtn rotate45"
+        (click)="minimizeCollabDialog()"
+        *ngIf="isMaximized"
+      >
+        <mat-icon>unfold_less</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        ngClass="closeBtn rotate45"
+        (click)="maximizeCollabDialog()"
+        *ngIf="!isMaximized"
+      >
+        <mat-icon>unfold_more</mat-icon>
+      </button>
+
+      <button mat-icon-button ngClass="closeBtn" (click)="closeCollabDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
 </div>
 <div mat-dialog-content ngClass="dialogContent">

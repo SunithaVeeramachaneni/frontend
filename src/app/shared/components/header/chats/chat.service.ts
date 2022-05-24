@@ -43,6 +43,16 @@ export class ChatService {
       info
     );
 
+  downloadFileSlack$ = (
+    fileId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Blob> =>
+    this.appService._downloadFile(
+      environment.slackAPIUrl,
+      `files/download?url=${fileId}`,
+      info
+    );
+
   triggerCall = async (user) =>
     axios.post(`${baseURL}calls`, {
       user

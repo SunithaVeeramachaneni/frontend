@@ -126,7 +126,7 @@
                       <div>
                         Size: {{ file.size / 1024 | number: '1.0-0' }} KB
                       </div>
-                      <div ngClass="downloadBtn">
+                      <div ngClass="downloadBtn" (click)="downloadFile(file)">
                         <mat-icon>cloud_download</mat-icon
                         ><span ngClass="downloadLabel">Download</span>
                       </div>

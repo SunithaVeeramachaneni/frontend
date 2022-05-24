@@ -21,6 +21,8 @@ export class CollabDialogComponent implements OnInit {
   public selectedUser: any;
   public callType: string;
 
+  isMaximized: boolean;
+
   private positionRelativeToElement: ElementRef;
 
   constructor(
@@ -38,6 +40,7 @@ export class CollabDialogComponent implements OnInit {
     matDialogConfig.position = { right: `180px`, top: `${rect.bottom + 2}px` };
     this.dialogRef.updatePosition(matDialogConfig.position);
     this.selectedTab = 'peoples';
+    this.isMaximized = false;
   }
 
   handleTextMessaging(targetUser: any) {
@@ -64,5 +67,17 @@ export class CollabDialogComponent implements OnInit {
   }
   closeCollabDialog(): void {
     this.dialogRef.close();
+  }
+  maximizeCollabDialog(): void {
+    this.isMaximized = true;
+    this.dialogRef.updateSize('100vw', '90%');
+    this.dialogRef.removePanelClass('overlay-min');
+    this.dialogRef.addPanelClass('overlay-max');
+  }
+  minimizeCollabDialog(): void {
+    this.isMaximized = false;
+    this.dialogRef.updateSize('750px', 'auto');
+    this.dialogRef.removePanelClass('overlay-max');
+    this.dialogRef.addPanelClass('overlay-min');
   }
 }

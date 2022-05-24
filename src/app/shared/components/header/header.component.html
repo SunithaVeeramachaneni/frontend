@@ -20,18 +20,6 @@
     </div>
   </div>
   <div class="header-cols" *ngIf="userData$ | async as userDetails">
-    <!-- <button
-      #collabButton
-      ngClass="collabButton"
-      mat-icon-button
-      color="primary"
-      aria-label="Collaboration Dialog trigger button"
-      matBadge="15"
-      matBadgeColor="warn"
-      (click)="openDialog()"
-    >
-      <mat-icon>mark_chat_unread</mat-icon>
-    </button> -->
     <div *ngIf="slackVerification$ | async as slackVerification">
       <div
         *ngIf="!slackVerification.slackInstalled"
