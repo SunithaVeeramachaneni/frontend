@@ -45,7 +45,7 @@ export class UsersService {
 
   prepareUser = (user: UserDetails, roles) => {
     if(user.firstName && user.lastName) {
-      user.user = user.firstName + ' ' + user.lastName || '';
+      user.user = user.firstName + ' ' + user.lastName;
     }
     else {
       user.user = ''
