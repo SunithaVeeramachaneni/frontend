@@ -1,4 +1,4 @@
-<div ngClass="chatsBody">
+<div ngClass="chatsBody" *ngIf="selectedView === 'CHAT'">
   <div ngClass="conversationsList">
     <div ngClass="searchBar">
       <input
@@ -7,9 +7,14 @@
         disabled
         ngClass="searchInput"
       />
-      <button mat-icon-button ngClass="searchMore">
+      <button mat-icon-button ngClass="searchMore" [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
       </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="createGroup()">Create Group</button>
+        <button mat-menu-item>Mute Messages</button>
+        <button mat-menu-item>Delete Conversations</button>
+      </mat-menu>
     </div>
     <div ngClass="userList">
       <mat-list>
@@ -57,6 +62,7 @@
       </div>
       <div>
         <button
+          disabled
           mat-icon-button
           color="primary"
           (click)="triggerCall(selectedConversation)"
@@ -64,6 +70,7 @@
           <mat-icon>phone</mat-icon>
         </button>
         <button
+          disabled
           mat-icon-button
           color="primary"
           (click)="openVideoCallDialog(selectedConversation)"
@@ -126,9 +133,20 @@
                       <div>
                         Size: {{ file.size / 1024 | number: '1.0-0' }} KB
                       </div>
-                      <div ngClass="downloadBtn" (click)="downloadFile(file)">
+                      <div
+                        *ngIf="!downloadInProgress"
+                        ngClass="downloadBtn"
+                        (click)="downloadFile(file)"
+                      >
                         <mat-icon>cloud_download</mat-icon
                         ><span ngClass="downloadLabel">Download</span>
+                      </div>
+                      <div *ngIf="downloadInProgress" ngClass="downloadBtn">
+                        <mat-spinner
+                          strokeWidth="5"
+                          diameter="25"
+                        ></mat-spinner>
+                        <span ngClass="downloadLabel">Downloading...</span>
                       </div>
                     </div>
                   </mat-list-item>
@@ -152,18 +170,27 @@
             placeholder="Enter Message.."
             autocomplete="off"
             [(ngModel)]="messageText"
+            (keyup.enter)="onMessageEnter(selectedConversation, messageText)"
           />
           <div matSuffix>
             <button
               mat-icon-button
+              [disabled]="!messageText.length"
               (click)="sendMessageToUser(selectedConversation, messageText)"
             >
-              <mat-icon color="primary">send</mat-icon>
+              <mat-spinner
+                *ngIf="messageDeliveryProgress"
+                strokeWidth="5"
+                diameter="25"
+              ></mat-spinner>
+              <mat-icon *ngIf="!messageDeliveryProgress" color="primary"
+                >send</mat-icon
+              >
             </button>
           </div>
         </div>
 
-        <button mat-mini-fab ngClass="audioRecord">
+        <button mat-mini-fab ngClass="audioRecord" disabled>
           <mat-icon>mic</mat-icon>
         </button>
       </div>
@@ -172,4 +199,7 @@
   <div ngClass="conversationContent" *ngIf="!selectedConversation">
     <h6>Please select a conversation to send message</h6>
   </div>
+</div>
+<div *ngIf="selectedView === 'CREATE_GROUP'">
+  <app-create-group></app-create-group>
 </div>

@@ -20,6 +20,7 @@ import { ChatsComponent } from './components/header/chats/chats.component';
 import { CallsComponent } from './components/header/calls/calls.component';
 import { UploadDialogComponent } from './components/header/chats/upload-dialog/upload-dialog.component';
 import { VideoCallDialogComponent } from './components/header/chats/video-call-dialog/video-call-dialog.component';
+import { CreateGroupComponent } from './components/header/chats/create-group/create-group.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { VideoCallDialogComponent } from './components/header/chats/video-call-d
     VideoCallDialogComponent,
     PeopleComponent,
     ChatsComponent,
+    CreateGroupComponent,
     CallsComponent,
     NumberToKMPipe
   ],

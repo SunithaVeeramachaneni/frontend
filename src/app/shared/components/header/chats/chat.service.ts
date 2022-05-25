@@ -43,6 +43,17 @@ export class ChatService {
       info
     );
 
+  uploadFileToConversation$ = (
+    conversationId,
+    formData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.uploadFile(
+      environment.slackAPIUrl,
+      `conversations/${conversationId}/files`,
+      formData
+    );
+
   downloadFileSlack$ = (
     fileId: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -53,7 +64,18 @@ export class ChatService {
       info
     );
 
-  triggerCall = async (user) =>
+  processSSEMessages$ = (
+    messageIds: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService.patchData(
+      environment.slackAPIUrl,
+      `sse/events`,
+      { messageIds },
+      info
+    );
+
+  triggerCall = (user) =>
     axios.post(`${baseURL}calls`, {
       user
     });

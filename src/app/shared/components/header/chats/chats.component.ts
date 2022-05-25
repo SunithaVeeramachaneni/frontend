@@ -25,9 +25,11 @@ interface SendReceiveMessages {
 })
 export class ChatsComponent implements OnInit {
   @Input() targetUser: any;
-  // @ViewChild('window') window;
 
+  selectedView = 'CHAT';
   messageText = '';
+  messageDeliveryProgress = false;
+  downloadInProgress = false;
   conversations: any = [];
   selectedConversation: any;
   conversationHistory: any = [];
@@ -58,6 +60,7 @@ export class ChatsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.selectedView = 'CHAT';
     this.emitterService.chatMessageAdded.subscribe((data) => {
       this.sendMessageToUser(data.data.conversation.userInfo, {
         type: 'meeting_request',
@@ -65,19 +68,29 @@ export class ChatsComponent implements OnInit {
       });
     });
 
-    // const userId = 'U02R5D4SREU';
-    // const ref = this;
-    // const evtSource = new EventSource(
-    //   `http://localhost:8007/slack/sse/${userId}`
-    // );
-    // // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-    // evtSource.onmessage = function (event) {
-    //   const eventData = JSON.parse(event.data);
-    //   console.log(eventData);
-    //   if (!eventData.isHeartbeat && eventData.eventType === 'message') {
-    //     ref.addMessageToConversation(eventData);
-    //   }
-    // };
+    const userId = 'U02R5D4SREU';
+    const ref = this;
+    const evtSource = new EventSource(
+      `http://localhost:8007/slack/sse/${userId}`
+    );
+    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+    evtSource.onmessage = async function (event) {
+      const eventData = JSON.parse(event.data);
+      if (!eventData.isHeartbeat) {
+        const processedMessageIds = [];
+        eventData.forEach((evt) => {
+          const { message } = evt;
+          if (!message.isHeartbeat && message.eventType === 'message') {
+            processedMessageIds.push(evt.id);
+            ref.addMessageToConversation(message);
+          }
+        });
+        ref.chatService.processSSEMessages$(processedMessageIds).subscribe(
+          (response) => console.log(response),
+          (err) => console.log(err)
+        );
+      }
+    };
 
     this.conversationsInitial$ = this.chatService.getConversations$().pipe(
       mergeMap((conversations) => {
@@ -103,6 +116,10 @@ export class ChatsComponent implements OnInit {
     );
   }
 
+  createGroup = () => {
+    this.selectedView = 'CREATE_GROUP';
+  };
+
   getImageSrc = (source: string) => {
     if (source) {
       const base64Image = 'data:image/jpeg;base64,' + source;
@@ -111,6 +128,10 @@ export class ChatsComponent implements OnInit {
   };
 
   downloadFile = (file: any) => {
+    if (this.downloadInProgress) {
+      return;
+    }
+    this.downloadInProgress = true;
     this.chatService.downloadFileSlack$(file.url_private).subscribe(
       (data) => {
         const url = window.URL.createObjectURL(data);
@@ -120,9 +141,11 @@ export class ChatsComponent implements OnInit {
         document.body.appendChild(a);
         a.click();
         a.remove();
+        this.downloadInProgress = false;
       },
       (err) => {
         //
+        this.downloadInProgress = false;
       }
     );
   };
@@ -178,7 +201,16 @@ export class ChatsComponent implements OnInit {
           initial.data = initial.data.concat(message);
           return initial.data;
         } else if (action === 'receive') {
-          //
+          let userInfo;
+          initial.data.forEach((msg) => {
+            if (message.user === msg.user) {
+              userInfo = msg.userInfo;
+            }
+          });
+          message.userInfo = userInfo;
+          message.isMeeting = false;
+          initial.data = initial.data.concat(message);
+          return initial.data;
         } else {
           return initial.data;
         }
@@ -187,7 +219,14 @@ export class ChatsComponent implements OnInit {
     );
   };
 
+  onMessageEnter = (targetUser, message) => {
+    if (message && message.length) {
+      this.sendMessageToUser(targetUser, message);
+    }
+  };
+
   sendMessageToUser = async (targetUser, message) => {
+    this.messageDeliveryProgress = true;
     this.chatService.sendMessage$(message, targetUser.id).subscribe(
       (response) => {
         if (response && Object.keys(response).length) {
@@ -196,10 +235,13 @@ export class ChatsComponent implements OnInit {
               action: 'send',
               message: response.message
             });
+            this.messageText = '';
+            this.messageDeliveryProgress = false;
           }
         }
       },
       (err) => {
+        this.messageDeliveryProgress = false;
         // this.toast.show({
         //   text: 'Error occured while creating dashboard',
         //   type: 'warning'
@@ -249,11 +291,8 @@ export class ChatsComponent implements OnInit {
         const conversationId = selectedConversation.id;
         const formData = new FormData();
         formData.append('attachment', result);
-        this.httpClient
-          .post<any>(
-            `http://localhost:8007/slack/conversations/${conversationId}/files`,
-            formData
-          )
+        this.chatService
+          .uploadFileToConversation$(conversationId, formData)
           .subscribe(
             (res) => {
               const filesArr = [];
@@ -267,7 +306,9 @@ export class ChatsComponent implements OnInit {
                 ts: dateToday
               });
             },
-            (err) => console.log(err)
+            (err) => {
+              console.log(err);
+            }
           );
       }
       console.log('The upload dialog was closed');
@@ -276,6 +317,7 @@ export class ChatsComponent implements OnInit {
 
   addMessageToConversation = (message) => {
     if (message.channel === this.selectedConversation.id) {
+      console.log(message, this.selectedConversation);
       if (message.text.indexOf('meeting_request')) {
         try {
           message.jsonObj = JSON.parse(message.text);
@@ -286,7 +328,11 @@ export class ChatsComponent implements OnInit {
           console.log(err.message);
         }
       }
-      this.conversationHistory.push(message);
+      this.sendReceiveMessages$.next({
+        action: 'receive',
+        message
+      });
+      // this.conversationHistory.push(message);
     } else {
       // Find the conversation and push it as latest..
     }
