@@ -152,12 +152,12 @@ describe('User service', () => {
   //   });
   // });
 
-  it('should be able to deactivate user', () => {
-    const users$ = service.deactivateUser$(addUserMock);
-    users$.subscribe((res) => {
-      expect(
-        isEqual(JSON.stringify(res), JSON.stringify(addUserMock))
-      ).toBeTrue();
-    });
-  });
+  // fit('should be able to deactivate user', () => {
+  //   const users$ = service.deactivateUser$(addUserMock);
+  //   users$.subscribe((res) => {
+  //     expect(
+  //       isEqual(JSON.stringify(res), JSON.stringify(addUserMock))
+  //     ).toBeTrue();
+  //   });
+  // });
 });

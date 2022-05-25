@@ -670,3 +670,17 @@ button.mat-menu-item {
 .mat-menu-panel {
   min-height: 0 !important;
 }
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-ripple .mat-ripple-element {
+  opacity: 0.03 !important;
+  background-color: #637bfe !important;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #637bfe;
+}
+
+.actions-column {
+  min-width: 2% !important;
+}

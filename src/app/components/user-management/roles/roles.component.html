@@ -21,6 +21,7 @@
           <button
             mat-menu-item
             (click)="deleteRoles()"
+            class="text-red"
             [disabled]="!selectedRoleList.length"
             translate="deleteBtn"
           ></button>
@@ -58,10 +59,7 @@
                   : ''
               }"
             >
-              <mat-checkbox
-                (change)="roleChecked(role, $event)"
-                color="primary"
-              ></mat-checkbox>
+              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
