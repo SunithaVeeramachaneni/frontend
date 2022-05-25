@@ -140,13 +140,15 @@ export class UsersService {
   getUsersCount$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Count> =>
-    this.appService._getResp(
+  ): Observable<Count> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `users/count`,
-      info,
+      { displayToast, failureResponse },
       queryParams
     );
+  };
 
   getRolesByUserID$ = (
     userID,
@@ -170,12 +172,14 @@ export class UsersService {
 
   deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };
-    return this.appService.patchData(
-      environment.userRoleManagementApiUrl,
-      `users/${userID}`,
-      deactivateUser,
-      info
-    ).pipe(map((response) => (response === null ? deactivateUser : response)));
+    return this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/${userID}`,
+        deactivateUser,
+        info
+      )
+      .pipe(map((response) => (response === null ? deactivateUser : response)));
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {

@@ -341,11 +341,13 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.editTenant =
           params.edit === 'true' || params.edit === 'false'
             ? JSON.parse(params.edit)
-            : params.edit;
+            : false;
         this.editQueryParam = this.editTenant;
         this.cdrf.markForCheck();
         if (!this.editTenant) {
           this.tenantForm.disable();
+        } else {
+          this.editTenantForm();
         }
       }
     });

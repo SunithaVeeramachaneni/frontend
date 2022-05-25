@@ -1,4 +1,4 @@
-<div class="main-tenant-container">
+<div class="main-tenant-container" *ngIf="permissions$ | async">
   <div class="tenant-header">
     <span class="mat-select-products select-products">
       <mat-form-field appearance="outline">
@@ -22,6 +22,7 @@
       class="add-tenant-btn"
       translate="addTenantBtn"
       [routerLink]="['/tenant-management/create']"
+      *appCheckUserHasPermission="'CREATE_TENANT'"
     ></button>
     <span
       class="count-of-tenants"

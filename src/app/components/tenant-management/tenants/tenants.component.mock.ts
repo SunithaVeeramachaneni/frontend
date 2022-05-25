@@ -40,14 +40,9 @@ export const configOptions: ConfigOptions = {
   enableRowsSelection: false,
   enablePagination: false,
   displayFilterPanel: false,
-  displayActionsColumn: true,
+  displayActionsColumn: false,
   rowLevelActions: {
-    menuActions: [
-      {
-        title: 'Edit',
-        action: 'edit'
-      }
-    ]
+    menuActions: []
   },
   groupByColumns: [],
   pageSizeOptions: [10, 25, 50, 75, 100],

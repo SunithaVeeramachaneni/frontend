@@ -175,6 +175,9 @@
                       mat-icon-button
                       [matMenuTriggerFor]="menu"
                       aria-label="Example icon-button with a menu"
+                      *appCheckUserHasPermission="
+                        'UPDATE_WORK_INSTRUCTION,COPY_WORK_INSTRUCTION,DELETE_WORK_INSTRUCTION'
+                      "
                     >
                       <mat-icon>more_horiz</mat-icon>
                     </button>
@@ -187,6 +190,7 @@
                           obj.Id
                         ]"
                         id="editWorkInstruction"
+                        *appCheckUserHasPermission="'UPDATE_WORK_INSTRUCTION'"
                       >
                         <span class="menu-text">Edit Work Instruction</span>
                       </button>
@@ -194,6 +198,7 @@
                         mat-menu-item
                         (click)="copyWI(obj)"
                         id="copyWorkInstruction"
+                        *appCheckUserHasPermission="'COPY_WORK_INSTRUCTION'"
                       >
                         <span class="menu-text"> Copy Work Instruction </span>
                       </button>
@@ -201,6 +206,7 @@
                         mat-menu-item
                         (click)="removeWI(obj)"
                         id="deleteWorkInstruction"
+                        *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
                       >
                         <span class="menu-text text-red">
                           Delete Work Instruction
@@ -398,6 +404,9 @@
                       mat-icon-button
                       [matMenuTriggerFor]="menu"
                       aria-label="Example icon-button with a menu"
+                      *appCheckUserHasPermission="
+                        'UPDATE_WORK_INSTRUCTION,COPY_WORK_INSTRUCTION,DELETE_WORK_INSTRUCTION'
+                      "
                     >
                       <mat-icon>more_horiz</mat-icon>
                     </button>
@@ -410,6 +419,7 @@
                           obj.Id
                         ]"
                         id="editWorkInstruction"
+                        *appCheckUserHasPermission="'UPDATE_WORK_INSTRUCTION'"
                       >
                         <span class="menu-text">Edit Work Instruction</span>
                       </button>
@@ -417,6 +427,7 @@
                         mat-menu-item
                         (click)="removeWI(obj)"
                         id="deleteWorkInstruction"
+                        *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
                       >
                         <span class="menu-text text-red"
                           >Delete Work Instruction</span

@@ -35,6 +35,7 @@
                 mat-icon-button
                 color="primary"
                 (click)="openCreateDashboardDialog('CREATE')"
+                *appCheckUserHasPermission="'CREATE_DASHBOARD'"
               >
                 <mat-icon>add</mat-icon>
               </button>
@@ -66,6 +67,9 @@
                     color="primary"
                     [matMenuTriggerFor]="menu"
                     class="more-icon"
+                    *appCheckUserHasPermission="
+                      'UPDATE_DASHBOARD,COPY_DASHBOARD,DELETE_DASHBOARD'
+                    "
                   >
                     <mat-icon>more_horiz</mat-icon>
                   </button>
@@ -73,6 +77,7 @@
                     <button
                       mat-menu-item
                       (click)="openCreateDashboardDialog('EDIT', dashboard)"
+                      *appCheckUserHasPermission="'UPDATE_DASHBOARD'"
                       translate
                     >
                       edit
@@ -80,22 +85,28 @@
                     <button
                       mat-menu-item
                       (click)="copyDashboard(dashboard)"
+                      *appCheckUserHasPermission="'COPY_DASHBOARD'"
                       translate
                     >
                       copy
                     </button>
-                    <button
-                      mat-menu-item
-                      (click)="markDashboardDefault(dashboard)"
-                      *ngIf="!dashboard.isDefault"
-                      translate
+                    <ng-container
+                      *appCheckUserHasPermission="'UPDATE_DASHBOARD'"
                     >
-                      markDefault
-                    </button>
+                      <button
+                        mat-menu-item
+                        (click)="markDashboardDefault(dashboard)"
+                        *ngIf="!dashboard.isDefault"
+                        translate
+                      >
+                        markDefault
+                      </button>
+                    </ng-container>
                     <button
                       mat-menu-item
                       class="delete-menu-item"
                       (click)="deleteDashboard(dashboard)"
+                      *appCheckUserHasPermission="'DELETE_DASHBOARD'"
                       translate
                     >
                       delete

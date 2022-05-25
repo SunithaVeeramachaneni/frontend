@@ -194,10 +194,12 @@ export class ReportConfigurationComponent implements OnInit {
       map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
+        const preview =
+          queryParams.preview === 'true' || queryParams.preview === 'false'
+            ? JSON.parse(queryParams.preview)
+            : false;
         this.showPreview =
-          this.showPreview === undefined
-            ? queryParams.preview
-            : this.showPreview;
+          this.showPreview === undefined ? preview : this.showPreview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();

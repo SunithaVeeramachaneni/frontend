@@ -98,6 +98,7 @@
                 type="button"
                 class="delete-file"
                 (click)="deleteAttachment(i)"
+                *appCheckUserHasPermission="'DELETE_CATEGORY'"
               >
                 <mat-icon>close</mat-icon>
               </button>
@@ -140,7 +141,13 @@
       </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button type="submit" class="save-btn">SAVE</button>
+      <button
+        type="submit"
+        class="save-btn"
+        *appCheckUserHasPermission="'CREATE_CATEGORY,UPDATE_CATEGORY'"
+      >
+        SAVE
+      </button>
     </mat-dialog-actions>
   </form>
 </div>

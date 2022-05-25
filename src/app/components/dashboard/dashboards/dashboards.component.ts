@@ -52,7 +52,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       dashboard: {} as Dashboard
     });
   staticDropDownOption: Dashboard = {
-    id: 'CREATE_DASHBOARD',
+    id: 'VIEW_ALL_DASHBOARDS',
     name: 'VIEW_ALL_DASHBOARDS',
     isDefault: false,
     createdBy: 'dummy'

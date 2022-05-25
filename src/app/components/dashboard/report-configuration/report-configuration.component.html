@@ -186,6 +186,7 @@
             class="report-button"
             [ngClass]="{ 'highlight-btn': showPreview }"
             (click)="togglePreview()"
+            *appCheckUserHasPermission="'CREATE_REPORT,UPDATE_REPORT'"
           >
             <img [src]="getImage('preview', showPreview)" />
           </button>
@@ -196,6 +197,7 @@
             matTooltip="Export to Excel"
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
+            *appCheckUserHasPermission="'REPORT_EXPORT_TO_EXCEL'"
           >
             <img src="assets/dashboard-icons/export.svg" />
             <mat-icon class="export-btn-loader" *ngIf="isExportInProgress">
@@ -212,31 +214,58 @@
             translate="cancel"
           ></button>
 
-          <mat-button-toggle-group class="save-btn-toggle">
-            <mat-button-toggle
-              matTooltip="Save"
-              class="save-button"
-              [disabled]="
-                !reportDetails.report || reportNameAndDescForm.invalid
-              "
-              (click)="
-                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                  saveReport({ saveAs: false })
-              "
+          <ng-container
+            *ngIf="reportDetails.report?.id === undefined; else updateButton"
+          >
+            <mat-button-toggle-group
+              class="save-btn-toggle"
+              *appCheckUserHasPermission="'CREATE_REPORT'"
             >
-              <span>Save</span>
-            </mat-button-toggle>
-            <mat-button-toggle
-              *ngIf="reportDetails.report?.id"
-              [disabled]="
-                !reportDetails.report || reportNameAndDescForm.invalid
-              "
-              [matMenuTriggerFor]="menu"
-              class="save-button-arrow"
+              <mat-button-toggle
+                matTooltip="Save"
+                class="save-button"
+                [disabled]="
+                  !reportDetails.report || reportNameAndDescForm.invalid
+                "
+                (click)="
+                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                    saveReport({ saveAs: false })
+                "
+              >
+                <span>Save</span>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </ng-container>
+          <ng-template #updateButton>
+            <mat-button-toggle-group
+              class="save-btn-toggle"
+              *appCheckUserHasPermission="'UPDATE_REPORT'"
             >
-              <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
-            </mat-button-toggle>
-          </mat-button-toggle-group>
+              <mat-button-toggle
+                matTooltip="Save"
+                class="save-button"
+                [disabled]="
+                  !reportDetails.report || reportNameAndDescForm.invalid
+                "
+                (click)="
+                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
+                    saveReport({ saveAs: false })
+                "
+              >
+                <span>Save</span>
+              </mat-button-toggle>
+              <mat-button-toggle
+                *ngIf="reportDetails.report?.id"
+                [disabled]="
+                  !reportDetails.report || reportNameAndDescForm.invalid
+                "
+                [matMenuTriggerFor]="menu"
+                class="save-button-arrow"
+              >
+                <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </ng-template>
           <mat-menu #menu="matMenu">
             <button
               mat-menu-item

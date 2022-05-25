@@ -48,12 +48,14 @@ export class ReportService {
     this.reportDefinitionNameSubject.next(reportDefinitionName);
   }
 
-  getReportsCount$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Count> =>
-    this.appService._getResp(
+  getReportsCount$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Count> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
       environment.dashboardApiUrl,
       `reports/count`,
-      info
+      { displayToast, failureResponse }
     );
+  };
 
   getWidgets$ = (
     reportId: string,

@@ -1,4 +1,4 @@
-<div class="main-container">
+<div class="main-container" *ngIf="permissions$ | async">
   <div class="roles-header">
     <div class="width-60 custom-mat-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-form-field">
@@ -6,11 +6,21 @@
         <input matInput type="text" placeholder="Search Users" disabled />
       </mat-form-field>
     </div>
-    <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      class="more-roles"
+      *appCheckUserHasPermission="'DEACTIVATE_USER'"
+    >
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item [disabled]="!selectedUsers.length" (click)="deactivateUsers()" class="text-red">
+      <button
+        mat-menu-item
+        [disabled]="!selectedUsers.length"
+        (click)="deactivateUsers()"
+        class="text-red"
+      >
         <span>Deactivate</span>
       </button>
     </mat-menu>
@@ -27,6 +37,7 @@
       mat-raised-button
       class="add-role-btn"
       (click)="openEditAddUserModal()"
+      *appCheckUserHasPermission="'CREATE_USER'"
     >
       Add User
     </button>

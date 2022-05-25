@@ -131,7 +131,7 @@ describe('TenantService', () => {
         .withArgs(
           environment.userRoleManagementApiUrl,
           'catalogs/count',
-          info,
+          { displayToast: undefined, failureResponse: {} },
           queryParams
         )
         .and.returnValue(of({ count: tenants.length }));

@@ -698,6 +698,7 @@ export class CustomStepperComponent
   public formFactors: FormGroup;
   public shownPreview = true;
   public selectedID = new FormControl(0);
+  stepTabs = Array.from({ length: 30 }, (_, index) => index + 1);
   private currentStepTitleSubscription: Subscription;
   private currentTabsSubscription: Subscription;
   private currentPreviousStatusSubscription: Subscription;

@@ -31,6 +31,7 @@
           detail="false"
           (click)="selectedListElement(menuitem.title)"
           title="{{ menuitem.title }}"
+          *appCheckUserHasPermission="menuitem.permission"
         >
           <span *ngIf="this.sidebar === false">
             <img src="{{ menuitem.image }}" class="sidebar-icons" />
@@ -49,37 +50,63 @@
           *ngIf="menuitem.showSubMenu && menuitem.subPages !== null"
           class="m-l-60"
         >
-          <ul
-            lines="none"
-            class="p-0 submenu"
-            *ngFor="let submenuitem of menuitem.subPages"
-          >
-            <li
-              [routerLink]="submenuitem.url"
-              routerLinkActive="subSelected"
-              routerDirection="root"
-              detail="false"
+          <ng-container *ngIf="permissions$ | async as permissions">
+            <ng-container
+              *ngIf="
+                checkUserHasSubMenusPermissions(
+                  permissions,
+                  menuitem.subPages,
+                  menuitem.permission
+                )
+              "
             >
-              <span>{{ submenuitem.title }}</span>
-            </li>
-          </ul>
+              <ul
+                lines="none"
+                class="p-0 submenu"
+                *ngFor="let submenuitem of menuitem.subPages"
+              >
+                <li
+                  [routerLink]="submenuitem.url"
+                  routerLinkActive="subSelected"
+                  routerDirection="root"
+                  detail="false"
+                  *appCheckUserHasPermission="submenuitem.permission"
+                >
+                  <span>{{ submenuitem.title }}</span>
+                </li>
+              </ul>
+            </ng-container>
+          </ng-container>
         </div>
 
         <mat-menu #menu="matMenu" class="sidebar-menu-panel">
           <span *ngIf="menuitem.subPages !== null && this.sidebar === true">
-            <ul
-              class="p-0 submenu"
-              *ngFor="let submenuitem of menuitem.subPages"
-            >
-              <li
-                [routerLink]="submenuitem.url"
-                routerLinkActive="subSelected"
-                routerDirection="root"
-                detail="false"
+            <ng-container *ngIf="permissions$ | async as permissions">
+              <ng-container
+                *ngIf="
+                  checkUserHasSubMenusPermissions(
+                    permissions,
+                    menuitem.subPages,
+                    menuitem.permission
+                  )
+                "
               >
-                {{ submenuitem.title }}
-              </li>
-            </ul>
+                <ul
+                  class="p-0 submenu"
+                  *ngFor="let submenuitem of menuitem.subPages"
+                >
+                  <li
+                    [routerLink]="submenuitem.url"
+                    routerLinkActive="subSelected"
+                    routerDirection="root"
+                    detail="false"
+                    *appCheckUserHasPermission="submenuitem.permission"
+                  >
+                    {{ submenuitem.title }}
+                  </li>
+                </ul>
+              </ng-container>
+            </ng-container>
           </span>
         </mat-menu>
       </ul>

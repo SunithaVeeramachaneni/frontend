@@ -20,7 +20,7 @@ export interface RoleWithoutID {
 }
 
 export interface Permission {
-  id?: string;
+  id?: number;
   name: string;
   displayName: string;
   moduleName: string;

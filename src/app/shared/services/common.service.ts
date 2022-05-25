@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
 import {
   LoggedInUserInfo,
+  Permission,
   ProtectedResource,
   TenantConfig
 } from 'src/app/interfaces';
@@ -15,16 +16,19 @@ export class CommonService {
   private protectedResources: ProtectedResource[] = [];
   private tenantConfig: TenantConfig = {} as TenantConfig;
   private userInfo = {} as LoggedInUserInfo;
+  private permissions: Permission[] = [];
 
   private minimizeSidebarSubject = new BehaviorSubject<boolean>(true);
   private currentRouteUrlSubject = new BehaviorSubject<string>('');
   private headerTitleSubject = new BehaviorSubject<string>('');
   private translateLanguageSubject = new BehaviorSubject<string>('');
+  private permissionsSubject = new BehaviorSubject<Permission[]>([]);
 
   minimizeSidebarAction$ = this.minimizeSidebarSubject.asObservable();
   currentRouteUrlAction$ = this.currentRouteUrlSubject.asObservable();
   headerTitleAction$ = this.headerTitleSubject.asObservable();
   translateLanguageAction$ = this.translateLanguageSubject.asObservable();
+  permissionsAction$ = this.permissionsSubject.asObservable();
 
   constructor() {}
 
@@ -80,5 +84,24 @@ export class CommonService {
   decrypt(value: string, key: string) {
     const bytes = CryptoJS.AES.decrypt(value.toString(), key);
     return bytes.toString(CryptoJS.enc.Utf8);
+  }
+
+  setPermissions(permissions: Permission[]) {
+    this.permissionsSubject.next(permissions);
+    this.permissions = permissions;
+  }
+
+  getPermissions(): Permission[] {
+    return this.permissions;
+  }
+
+  checkUserHasPermission(permissions: Permission[], checkPermissions: string) {
+    if (checkPermissions) {
+      const hasPermission = permissions.find((per) =>
+        checkPermissions.includes(per.name)
+      );
+      return hasPermission ? true : false;
+    }
+    return true;
   }
 }

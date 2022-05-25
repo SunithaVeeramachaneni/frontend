@@ -12,13 +12,15 @@
   </ngx-spinner>
   <div class="tenant-header">
     <span class="adding-tenant-text">{{ tenantHeader }}</span>
-    <button
-      mat-raised-button
-      translate="saveBtn"
-      class="save-btn"
-      *ngIf="editTenant"
-      [disabled]="tenantForm.invalid || tenantForm.pristine"
-    ></button>
+    <ng-container *appCheckUserHasPermission="'CREATE_TENANT,UPDATE_TENANT'">
+      <button
+        mat-raised-button
+        translate="saveBtn"
+        class="save-btn"
+        *ngIf="editTenant"
+        [disabled]="!tenantForm.valid || tenantForm.pristine"
+      ></button>
+    </ng-container>
     <button
       mat-raised-button
       translate="cancelBtn"
@@ -26,13 +28,15 @@
       *ngIf="editTenant"
       (click)="cancel()"
     ></button>
-    <button
-      mat-raised-button
-      translate="editBtn"
-      class="edit-btn"
-      *ngIf="!editTenant"
-      (click)="editTenantForm()"
-    ></button>
+    <ng-container *appCheckUserHasPermission="'UPDATE_TENANT'">
+      <button
+        mat-raised-button
+        translate="editBtn"
+        class="edit-btn"
+        *ngIf="!editTenant"
+        (click)="editTenantForm()"
+      ></button>
+    </ng-container>
   </div>
   <div class="dis-flex width-100 padding">
     <div class="prevbtn p-0">

@@ -11,6 +11,7 @@ import {
   CellClickActionEvent,
   Count,
   ErrorInfo,
+  Permission,
   Report,
   ReportConfiguration,
   RowLevelActionEvent,
@@ -70,22 +71,6 @@ export class ReportsComponent implements OnInit {
         {
           title: 'Preview',
           action: 'preview'
-        },
-        {
-          title: 'Edit',
-          action: 'edit'
-        },
-        {
-          title: 'Export to Excel',
-          action: 'export'
-        },
-        {
-          title: 'Copy',
-          action: 'copy'
-        },
-        {
-          title: 'Delete',
-          action: 'delete'
         }
       ],
       iconAction: {
@@ -108,6 +93,7 @@ export class ReportsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   debouncedSearchReports = debounce(() => this.fetchReports(), 1);
+  permissions$: Observable<Permission[]>;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 
@@ -228,6 +214,10 @@ export class ReportsComponent implements OnInit {
       tap(() => this.commonService.setHeaderTitle(routingUrls.reports.title))
     );
     this.fetchReports();
+
+    this.permissions$ = this.commonService.permissionsAction$.pipe(
+      tap((permissions) => this.prepareMenuActions(permissions))
+    );
   }
 
   openDialog() {
@@ -287,8 +277,10 @@ export class ReportsComponent implements OnInit {
       case 'description':
       case 'createdBy':
       case 'createdOn':
-        this.router.navigate(['dashboard/reports/editreport', id]);
-        
+        this.router.navigate(['dashboard/reports/editreport', id], {
+          queryParams: { preview: true }
+        });
+
         break;
       default:
       // do nothing
@@ -368,5 +360,52 @@ export class ReportsComponent implements OnInit {
       default:
       // do nothing;
     }
+  }
+
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (
+      this.commonService.checkUserHasPermission(permissions, 'UPDATE_REPORT')
+    ) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    if (
+      this.commonService.checkUserHasPermission(
+        permissions,
+        'REPORT_EXPORT_TO_EXCEL'
+      )
+    ) {
+      menuActions.push({
+        title: 'Export to Excel',
+        action: 'export'
+      });
+    }
+
+    if (this.commonService.checkUserHasPermission(permissions, 'COPY_REPORT')) {
+      menuActions.push({
+        title: 'Copy',
+        action: 'copy'
+      });
+    }
+
+    if (
+      this.commonService.checkUserHasPermission(permissions, 'DELETE_REPORT')
+    ) {
+      menuActions.push({
+        title: 'Delete',
+        action: 'delete'
+      });
+    }
+
+    this.configOptions.rowLevelActions.menuActions = [
+      ...this.configOptions.rowLevelActions.menuActions,
+      ...menuActions
+    ];
+    this.configOptions = { ...this.configOptions };
   }
 }
