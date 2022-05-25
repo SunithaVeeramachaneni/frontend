@@ -4,7 +4,12 @@
 </div>
 
 <mat-drawer-container class="app-container main-app">
-  <mat-drawer mode="side" opened class="sidenav-drawer">
+  <mat-drawer
+    mode="side"
+    opened
+    class="sidenav-drawer"
+    *ngIf="this.currentRouteUrl !== '/login'"
+  >
     <div
       [ngClass]="{
         'maximized-sidebar-container': this.sidebar === false,
@@ -87,6 +92,7 @@
   </mat-drawer>
   <mat-drawer-content
     [ngClass]="{
+      'hide-sidebar': this.currentRouteUrl === '/login',
       'max-drawer-content': this.sidebar === false,
       'min-drawer-content': this.sidebar === true
     }"

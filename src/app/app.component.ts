@@ -107,6 +107,9 @@ export class AppComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit() {
+    this.commonService.currentRouteUrlAction$.subscribe((currentRouteUrl) => {
+      this.currentRouteUrl = currentRouteUrl;
+    });
     this.commonService.minimizeSidebarAction$.subscribe((data) => {
       this.sidebar = data;
       if (this.currentRouteUrl) {
