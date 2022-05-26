@@ -70,7 +70,7 @@ export class CollabDialogComponent implements OnInit {
   }
   maximizeCollabDialog(): void {
     this.isMaximized = true;
-    this.dialogRef.updateSize('100vw', '90%');
+    this.dialogRef.updateSize('100vw', '100vh');
     this.dialogRef.removePanelClass('overlay-min');
     this.dialogRef.addPanelClass('overlay-max');
   }

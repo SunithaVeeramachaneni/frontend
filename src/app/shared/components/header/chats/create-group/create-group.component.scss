@@ -1,13 +1,16 @@
 .chatsBody {
   display: flex;
+  height: 85vh;
+  // box-shadow: 0 2px 1px -1px #747474, 0 1px 1px 0 #747474, 0 1px 3px 0 #747474;
 }
 .conversationsList {
   width: 40%;
   background: #ffffff;
   padding: 10px;
-  border-radius: 15px;
+  border-radius: 15px 0px 0px 15px;
   box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
     0 1px 3px 0 rgb(116 116 116);
+  max-width: 400px;
   .searchBar {
     display: flex;
     .searchInput {
@@ -20,8 +23,16 @@
       color: #1a66ff;
     }
   }
+  .participants {
+    display: flex;
+    align-items: center;
+    padding: 10px 0px;
+  }
+  .participantsTitle {
+    margin-left: 10px;
+  }
   .userList {
-    height: 375px;
+    height: 68vh;
     overflow: auto;
     overflow-x: hidden;
   }
@@ -58,11 +69,11 @@
 
 .conversationContent {
   display: flex;
-  width: 60%;
+  width: 100%;
   flex-direction: column;
-  margin-left: 10px;
+  // margin-left: 10px;
   background: #ffffff !important;
-  border-radius: 15px;
+  border-radius: 0px 15px 15px 0px;
   padding: 10px;
   box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
     0 1px 3px 0 rgb(116 116 116);
@@ -166,7 +177,11 @@
     height: 45px;
     border-radius: 45px;
   }
-
+  .userList {
+    height: 74vh;
+    overflow: auto;
+    overflow-x: hidden;
+  }
   .chatBottom {
     .messageInputBar {
       display: flex;
@@ -174,19 +189,15 @@
       .messageInputGroup {
         display: flex;
         align-items: center;
-        background: #eeeeee;
-        margin-left: 24px;
-        border: 1px solid #eeeeee;
-        border-radius: 5px;
-        padding: 0px 10px;
       }
       .messageInput {
-        border: 1px solid #e1dcdc;
         padding: 10px;
         background: #eeeeee;
-        margin-left: 5px;
-        border-left: none;
-        border-right: none;
+        margin-right: 5px;
+        border-radius: 5px;
+      }
+      .convBtn {
+        width: 225px;
       }
       .audioRecord {
         color: #ffffff;

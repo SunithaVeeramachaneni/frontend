@@ -43,6 +43,18 @@ export class ChatService {
       info
     );
 
+  createConversation$ = (
+    groupName: string,
+    invitedUsers: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.slackAPIUrl,
+      `conversations`,
+      { groupName, invitedUsers },
+      info
+    );
+
   uploadFileToConversation$ = (
     conversationId,
     formData,

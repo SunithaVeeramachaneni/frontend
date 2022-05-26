@@ -12,8 +12,8 @@
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="createGroup()">Create Group</button>
-        <button mat-menu-item>Mute Messages</button>
-        <button mat-menu-item>Delete Conversations</button>
+        <button mat-menu-item disabled>Mute Messages</button>
+        <button mat-menu-item disabled>Delete Conversations</button>
       </mat-menu>
     </div>
     <div ngClass="userList">
@@ -201,5 +201,8 @@
   </div>
 </div>
 <div *ngIf="selectedView === 'CREATE_GROUP'">
-  <app-create-group></app-create-group>
+  <app-create-group
+    (handleGroupCreation)="handleGroupCreation($event)"
+    (viewChangeListener)="handleViewChange($event)"
+  ></app-create-group>
 </div>

@@ -120,6 +120,13 @@ export class ChatsComponent implements OnInit {
     this.selectedView = 'CREATE_GROUP';
   };
 
+  handleGroupCreation = ($event) => {
+    // TODO: Add the created group to the existing groups/conversations...
+  };
+  handleViewChange = ($event) => {
+    this.selectedView = $event.view;
+  };
+
   getImageSrc = (source: string) => {
     if (source) {
       const base64Image = 'data:image/jpeg;base64,' + source;
@@ -332,9 +339,8 @@ export class ChatsComponent implements OnInit {
         action: 'receive',
         message
       });
-      // this.conversationHistory.push(message);
     } else {
-      // Find the conversation and push it as latest..
+      // TODO: Find the conversation and push it as latest..
     }
   };
 

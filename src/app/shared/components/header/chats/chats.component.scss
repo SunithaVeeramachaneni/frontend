@@ -20,7 +20,7 @@
 }
 .conversationContent {
   display: flex;
-  width: 60%;
+  width: 100%;
   flex-direction: column;
   margin-left: 10px;
   background: #ffffff !important;
@@ -67,13 +67,12 @@
   }
   .conversationBody {
     width: 100%;
-    height: 275px;
+    height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
     word-break: break-all;
   }
   .conversationMessage {
-    width: 375px;
     margin: 10px 0px;
     display: flex;
     word-break: break-word;
@@ -133,6 +132,7 @@
     .messageInputBar {
       display: flex;
       padding: 10px 0px;
+      justify-content: space-between;
       .messageInputGroup {
         display: flex;
         align-items: center;
@@ -141,6 +141,7 @@
         border: 1px solid #eeeeee;
         border-radius: 5px;
         padding: 0px 10px;
+        width: 100%;
       }
       .messageInput {
         border: 1px solid #e1dcdc;
@@ -154,7 +155,7 @@
         color: #ffffff;
         border-radius: 8px;
         font-size: 8pt;
-        background: #1a66ff;
+        // background: #1a66ff;
         margin-left: 5px;
       }
     }
@@ -167,6 +168,7 @@
   border-radius: 15px;
   box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
     0 1px 3px 0 rgb(116 116 116);
+  max-width: 400px;
   .searchBar {
     display: flex;
     .searchInput {
@@ -180,7 +182,7 @@
     }
   }
   .userList {
-    height: 375px;
+    height: 71vh;
     overflow: auto;
     overflow-x: hidden;
   }
