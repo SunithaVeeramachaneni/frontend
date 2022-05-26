@@ -13,14 +13,15 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
-import { CollabDialogComponent } from './components/header/CollabDialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { PeopleComponent } from './components/header/people/people.component';
-import { ChatsComponent } from './components/header/chats/chats.component';
-import { CallsComponent } from './components/header/calls/calls.component';
-import { UploadDialogComponent } from './components/header/chats/upload-dialog/upload-dialog.component';
-import { VideoCallDialogComponent } from './components/header/chats/video-call-dialog/video-call-dialog.component';
-import { CreateGroupComponent } from './components/header/chats/create-group/create-group.component';
+
+import { CollabDialogComponent } from './components/collaboration/CollabDialog';
+import { UploadDialogComponent } from './components/collaboration/chats/upload-dialog/upload-dialog.component';
+import { VideoCallDialogComponent } from './components/collaboration/chats/video-call-dialog/video-call-dialog.component';
+import { PeopleComponent } from './components/collaboration/people/people.component';
+import { ChatsComponent } from './components/collaboration/chats/chats.component';
+import { CreateGroupComponent } from './components/collaboration/chats/create-group/create-group.component';
+import { CallsComponent } from './components/collaboration/calls/calls.component';
 
 @NgModule({
   declarations: [

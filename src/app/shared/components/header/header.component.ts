@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   Component,
   ElementRef,
@@ -14,8 +15,7 @@ import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { LogonUserDetails } from '../../../interfaces';
 import { map, tap } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CollabDialogComponent } from './CollabDialog';
-import { PeopleService } from './people/people.service';
+import { CollabDialogComponent } from '../collaboration/CollabDialog';
 
 @Component({
   selector: 'app-header',

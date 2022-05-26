@@ -70,8 +70,10 @@ export class CreateGroupComponent implements OnInit {
     groupName = groupName.replaceAll(/\s/g, '');
     this.chatService.createConversation$(groupName, invitedUsers).subscribe(
       (resp) => {
-        this.handleGroupCreation.emit(resp);
-        console.log(resp);
+        if (resp.ok) {
+          this.handleGroupCreation.emit(resp);
+          console.log(resp);
+        }
       },
       (err) => {
         console.log(err);

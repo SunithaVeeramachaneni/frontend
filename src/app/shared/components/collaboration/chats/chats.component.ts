@@ -122,6 +122,7 @@ export class ChatsComponent implements OnInit {
 
   handleGroupCreation = ($event) => {
     // TODO: Add the created group to the existing groups/conversations...
+    this.selectedView = 'CHAT';
   };
   handleViewChange = ($event) => {
     this.selectedView = $event.view;
@@ -221,7 +222,6 @@ export class ChatsComponent implements OnInit {
         } else {
           return initial.data;
         }
-        return initial.data;
       })
     );
   };
@@ -255,18 +255,6 @@ export class ChatsComponent implements OnInit {
         // });
       }
     );
-
-    // const sendMessageResponse = await this.chatService.sendMessage(
-    //   message,
-    //   targetUser.id
-    // );
-    const dateToday = moment().unix();
-    this.conversationHistory.push({
-      type: 'message',
-      text: message,
-      user: targetUser.id,
-      ts: dateToday
-    });
   };
 
   openVideoCallDialog = (selectedConversation: any) => {
@@ -305,12 +293,16 @@ export class ChatsComponent implements OnInit {
               const filesArr = [];
               filesArr.push(result);
               const dateToday = moment().unix();
-              this.conversationHistory.push({
-                type: 'message',
-                text: '',
-                user: selectedConversation.user,
-                files: filesArr,
-                ts: dateToday
+
+              this.sendReceiveMessages$.next({
+                action: 'send',
+                message: {
+                  type: 'message',
+                  text: '',
+                  user: selectedConversation.user,
+                  files: filesArr,
+                  ts: dateToday
+                }
               });
             },
             (err) => {
@@ -345,9 +337,6 @@ export class ChatsComponent implements OnInit {
   };
 
   getConversationsByUser = async (targetUser) => {
-    // const conversations = await this.chatService.getConversations();
-    // this.conversations = conversations; //.data;
-
     if (targetUser) {
       const targetConversation = this.conversations.find(
         (c) => c.user === this.targetUser.id
