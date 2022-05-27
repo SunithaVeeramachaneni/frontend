@@ -75,7 +75,7 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item disabled translate="copyBtn"></button>
+                <button mat-menu-item (click)="copyRole(role)" translate="copyBtn"></button>
                 <button
                   mat-menu-item
                   *ngIf="role.name !== 'Super Admin'"
@@ -227,6 +227,7 @@
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
+                  (click)="copyRoleClickHandler()"
                   [disabled]="copyDisabled"
                   translate="copyBtn"
                 ></button>

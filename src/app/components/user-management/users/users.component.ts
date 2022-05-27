@@ -165,6 +165,7 @@ export class UsersComponent implements OnInit {
   };
   selectedUsers = [];
   dataSource: MatTableDataSource<any>;
+  disableDeactivate: boolean = false;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
@@ -310,7 +311,7 @@ export class UsersComponent implements OnInit {
           case 'add':
             this.skip += 1;
             this.userCountUpdate$.next(+1);
-            users.unshift(user);
+            users.push(user);
             this.dataSource = new MatTableDataSource(users);
             break;
           case 'deactivate':
@@ -390,11 +391,22 @@ export class UsersComponent implements OnInit {
         this.openEditAddUserModal(data);
         break;
       case 'toggleRowSelect':
-        if(this.selectedUsers.includes(data.id)) 
-          this.selectedUsers = this.selectedUsers.filter(userId => userId !== data.id)
-          else{
-            this.selectedUsers.push(data.id)
-          }
+        const index = this.selectedUsers.findIndex(
+          (user) => user.id === data.id
+        );
+        console.log("data is", data)
+        console.log("cond", data.displayRoles.includes('Super Admin'))
+        if(index !== -1) {
+          this.selectedUsers = this.selectedUsers.filter(user => user.id !== data.id)
+
+          if(data.displayRoles.includes('Super Admin'))
+            this.disableDeactivate = false;
+        }
+        else{
+            this.selectedUsers.push(data)
+            if(data.displayRoles.includes('Super Admin'))
+            this.disableDeactivate = true;
+        }
         break;
       default:
       // do nothing
@@ -402,7 +414,8 @@ export class UsersComponent implements OnInit {
   };
 
   deactivateUsers = () =>{
-    this.selectedUsers.forEach(id =>{
+    this.selectedUsers.forEach(selectUser =>{
+      const id = selectUser.id;
       this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
         if (Object.keys(deactivatedUser).length) {
         this.userTableUpdate$.next({
