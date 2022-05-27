@@ -1,14 +1,18 @@
-import { Component, Input, NgZone, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ChatService } from './chat.service';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 
-import { SSEService } from './sse.service';
 import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
 import { EmitterService } from '../EmitterService';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  Subscription
+} from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
@@ -23,7 +27,7 @@ interface SendReceiveMessages {
   templateUrl: 'chats.component.html',
   styleUrls: ['./chats.component.scss']
 })
-export class ChatsComponent implements OnInit {
+export class ChatsComponent implements OnInit, OnDestroy {
   @Input() targetUser: any;
 
   selectedView = 'CHAT';
@@ -49,12 +53,11 @@ export class ChatsComponent implements OnInit {
     message: {} as any
   });
 
+  private newMessageReceivedSubscription: Subscription;
+
   constructor(
     public uploadDialog: MatDialog,
-    private httpClient: HttpClient,
-    private zone: NgZone,
     private chatService: ChatService,
-    private sseService: SSEService,
     private emitterService: EmitterService,
     private sanitizer: DomSanitizer
   ) {}
@@ -68,29 +71,10 @@ export class ChatsComponent implements OnInit {
       });
     });
 
-    const userId = 'U02R5D4SREU';
-    const ref = this;
-    const evtSource = new EventSource(
-      `http://localhost:8007/slack/sse/${userId}`
-    );
-    // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-    evtSource.onmessage = async function (event) {
-      const eventData = JSON.parse(event.data);
-      if (!eventData.isHeartbeat) {
-        const processedMessageIds = [];
-        eventData.forEach((evt) => {
-          const { message } = evt;
-          if (!message.isHeartbeat && message.eventType === 'message') {
-            processedMessageIds.push(evt.id);
-            ref.addMessageToConversation(message);
-          }
-        });
-        ref.chatService.processSSEMessages$(processedMessageIds).subscribe(
-          (response) => console.log(response),
-          (err) => console.log(err)
-        );
-      }
-    };
+    this.newMessageReceivedSubscription =
+      this.chatService.newMessageReceivedAction$.subscribe((event) => {
+        this.addMessageToConversation(event);
+      });
 
     this.conversationsInitial$ = this.chatService.getConversations$().pipe(
       mergeMap((conversations) => {
@@ -315,6 +299,12 @@ export class ChatsComponent implements OnInit {
   };
 
   addMessageToConversation = (message) => {
+    // check if collaboration dialog is open and chat window is open,
+    // if open insert the messgae in conversation,
+    // if not increase the unread message count in badge...
+    // and display a toast in bottom right of the screen....
+    console.log(message, this.selectedConversation);
+    return;
     if (message.channel === this.selectedConversation.id) {
       console.log(message, this.selectedConversation);
       if (message.text.indexOf('meeting_request')) {
@@ -364,4 +354,10 @@ export class ChatsComponent implements OnInit {
     url = url.slice(1, -1);
     window.open(url, '_blank');
   };
+
+  ngOnDestroy(): void {
+    if (this.newMessageReceivedSubscription) {
+      this.newMessageReceivedSubscription.unsubscribe();
+    }
+  }
 }

@@ -2,6 +2,7 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
@@ -9,6 +10,9 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { defaultLanguage, routingUrls } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
+import { UsersService } from './components/user-management/users/users.service';
+import { environment } from './../environments/environment';
 
 const {
   dashboard,
@@ -25,7 +29,7 @@ const {
   rolesPermissions,
   inActiveTenants,
   //inActiveUsers,
-  tenantManagement, 
+  tenantManagement
   //inActiveTenants
 } = routingUrls;
 
@@ -34,7 +38,7 @@ const {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, AfterViewChecked {
+export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   menus = [
     {
       title: dashboard.title,
@@ -99,15 +103,56 @@ export class AppComponent implements OnInit, AfterViewChecked {
   sidebar: boolean;
   currentRouteUrl: string;
   selectedMenu: string;
+  eventSource: any;
 
   constructor(
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private chatService: ChatService,
+    private usersService: UsersService
   ) {}
 
   ngOnInit() {
+    const ref = this;
+    this.usersService.getLoggedInUser$().subscribe((data) => {
+      if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
+        const userSlackDetail = data.UserSlackDetail;
+        const { slackID } = userSlackDetail;
+
+        this.eventSource = new EventSource(
+          `${environment.slackAPIUrl}sse/${slackID}`
+        );
+        this.eventSource.onmessage = async (event: any) => {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            const processedMessageIds = [];
+            eventData.forEach((evt: any) => {
+              const { message } = evt;
+              if (!message.isHeartbeat && message.eventType === 'message') {
+                processedMessageIds.push(evt.id);
+                // If collab window is not open, increment notification count...
+                const iscollabWindowOpen =
+                  ref.chatService.getCollaborationWindowStatus();
+                if (iscollabWindowOpen) {
+                  ref.chatService.newMessageReceived(message);
+                } else {
+                  let unreadCount = ref.chatService.getUnreadMessageCount();
+                  unreadCount = unreadCount + 1;
+                  ref.chatService.setUnreadMessageCount(unreadCount);
+                }
+              }
+            });
+            ref.chatService.processSSEMessages$(processedMessageIds).subscribe(
+              (response) => console.log(response),
+              (err) => console.log(err)
+            );
+          }
+        };
+      }
+    });
+
     this.commonService.minimizeSidebarAction$.subscribe((data) => {
       this.sidebar = data;
       if (this.currentRouteUrl) {
@@ -162,5 +207,10 @@ export class AppComponent implements OnInit, AfterViewChecked {
       }
       return { ...menuItem, showSubMenu };
     });
+  }
+  ngOnDestroy() {
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
   }
 }

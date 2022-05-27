@@ -85,6 +85,9 @@ export class UsersService {
     }
   };
 
+  getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+    this.appService._getResp(environment.userRoleManagementApiUrl, 'me', info);
+
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,

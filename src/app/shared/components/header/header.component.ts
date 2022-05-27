@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -16,6 +17,7 @@ import { LogonUserDetails } from '../../../interfaces';
 import { map, tap } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
+import { ChatService } from '../collaboration/chats/chat.service';
 
 @Component({
   selector: 'app-header',
@@ -29,6 +31,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public username: string;
   public userImage: string;
   public sidebarMinimize = false;
+
+  unreadMessageCount: number;
+
   logonUserDetails$: Observable<LogonUserDetails>;
 
   slackVerification$: Observable<any>;
@@ -37,6 +42,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private minimizeSidebarActionSubscription: Subscription;
 
+  private collabWindowSubscription: Subscription;
+  private unreadCountSubscription: Subscription;
+
   isAuthenticated = false;
   userData$: Observable<UserDataResult>;
 
@@ -44,7 +52,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
-    public dialog: MatDialog
+    private chatService: ChatService,
+    public dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   openDialog(): void {
@@ -55,8 +65,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
       data: { positionRelativeToElement: this.collabButtonRef }
     });
 
+    dialogRef.afterOpened().subscribe(() => {
+      this.chatService.collaborationWindowAction({
+        isOpen: true
+      });
+    });
+
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed');
+      this.chatService.collaborationWindowAction({
+        isOpen: false
+      });
     });
   }
 
@@ -65,6 +83,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
+      (unreadCount) => {
+        this.unreadMessageCount = unreadCount;
+        this.cdrf.markForCheck();
+      }
+    );
+
+    this.collabWindowSubscription =
+      this.chatService.openCollabWindow$.subscribe((event) => {
+        if (event.open) {
+          this.openDialog();
+        }
+      });
+
     this.slackVerification$ = this.headerService
       .getInstallationURL$()
       .pipe(map((url) => url));
@@ -96,6 +128,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.minimizeSidebarActionSubscription) {
       this.minimizeSidebarActionSubscription.unsubscribe();
+    }
+    if (this.collabWindowSubscription) {
+      this.collabWindowSubscription.unsubscribe();
+    }
+    if (this.unreadCountSubscription) {
+      this.unreadCountSubscription.unsubscribe();
     }
   }
 

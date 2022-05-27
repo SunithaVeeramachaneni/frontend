@@ -57,11 +57,14 @@
         mat-icon-button
         color="primary"
         aria-label="Collaboration Dialog trigger button"
-        matBadge="15"
-        matBadgeColor="warn"
         (click)="openDialog()"
+        [matBadge]="unreadMessageCount"
+        [matBadgeDisabled]="unreadMessageCount < 1"
+        matBadgePosition="after"
+        matBadgeColor="warn"
+        matBadgeOverlap="true"
       >
-        <mat-icon>mark_chat_unread</mat-icon>
+        <mat-icon>chat_bubble_outline</mat-icon>
       </button>
     </div>
     <div class="width-auto displayGrid">
