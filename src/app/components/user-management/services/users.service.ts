@@ -44,9 +44,14 @@ export class UsersService {
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {
-    user.user = user.firstName + ' ' + user.lastName;
+    if(user.firstName && user.lastName) {
+      user.user = user.firstName + ' ' + user.lastName;
+    }
+    else {
+      user.user = ''
+    }
     const roleNames = roles.map((role) => role.name);
-    if (roleNames.length) user.displayRoles = roleNames;
+    if (roleNames.length) user.displayRoles = roleNames || '';
     user.roles = roles;
     if (!user.createdAt) user.createdAt = new Date();
     else user.createdAt = new Date(user.createdAt);
