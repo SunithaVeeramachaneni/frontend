@@ -18,7 +18,13 @@
           placeholder="Search by title or author"
         />
       </mat-form-field>
-      <div>
+      <div
+        *appCheckUserHasPermission="[
+          permissions.createWorkInstruction,
+          permissions.importWorkInstruction,
+          permissions.copyWorkInstruction
+        ]"
+      >
         <mat-button-toggle-group>
           <mat-button-toggle
             routerLink="/work-instructions/create"
