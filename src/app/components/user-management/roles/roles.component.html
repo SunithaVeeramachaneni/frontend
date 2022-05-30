@@ -53,7 +53,10 @@
                   : ''
               }"
             >
-              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
+              <mat-checkbox
+                (change)="roleChecked(role, $event)"
+                [disabled]="role.name === 'Super Admin'"
+              ></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
