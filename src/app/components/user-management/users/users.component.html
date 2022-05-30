@@ -17,7 +17,7 @@
     <mat-menu #menu="matMenu">
       <button
         mat-menu-item
-        [disabled]="!selectedUsers.length"
+        [disabled]="!selectedUsers.length || disableDeactivate"
         (click)="deactivateUsers()"
         class="text-red"
       >

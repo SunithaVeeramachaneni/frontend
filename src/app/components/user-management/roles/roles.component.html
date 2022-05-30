@@ -84,7 +84,7 @@
               <mat-menu #submenu="matMenu">
                 <button
                   mat-menu-item
-                  disabled
+                  (click)="copyRole(role)"
                   translate="copyBtn"
                   *appCheckUserHasPermission="[perms.copyRole]"
                 ></button>
@@ -256,6 +256,7 @@
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
+                  (click)="copyRoleClickHandler()"
                   [disabled]="copyDisabled"
                   translate="copyBtn"
                   *appCheckUserHasPermission="[perms.copyRole]"

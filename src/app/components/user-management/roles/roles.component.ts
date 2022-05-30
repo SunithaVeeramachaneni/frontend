@@ -37,9 +37,10 @@ import Swal from 'sweetalert2';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { RoleDeleteModalComponent } from '../role-delete-modal/role-delete-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 
 interface RolesListUpdate {
-  action: 'add' | 'edit' | 'delete' | null;
+  action: 'add' | 'edit' | 'delete' | 'copy' | null;
   role: Role;
 }
 
@@ -67,7 +68,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   selectedRole;
   roleForm: FormGroup;
   updatedPermissions = [];
-  copyDisabled = true;
+  copyDisabled = false;
   showCancelBtn = false;
   disableSaveButton: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
@@ -141,6 +142,27 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             const indexToDelete = roles.findIndex((r) => r.id === role.id);
             roles.splice(indexToDelete, 1);
             break;
+          case 'copy':
+            const newRole = this.createDuplicateRole(roles, role);
+            const postRole = {
+              ...newRole,
+              permissionIds: newRole.permissionIds.map((p) => p.id)
+            };
+            this.roleService.createRole$(postRole).subscribe((resp) => {
+              if (Object.keys(resp).length) {
+                roles.push({ ...newRole, id: resp.id });
+                this.showSelectedRole(newRole);
+                this.toast.show({
+                  text: 'Role copied successfully',
+                  type: 'success'
+                });
+                this.selectedRole = resp;
+                this.selectedRolePermissions$ = of(postRole.permissionIds);
+              }
+            });
+
+            // roles.push(role);
+            break;
         }
         return roles;
       }),
@@ -195,6 +217,34 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRole = [];
   }
 
+  createDuplicateRole = (roles, copyRole) => {
+    const roleName = copyRole.name;
+    const regex = generateCopyRegex(roleName);
+    const roleCopyNumbers = [];
+    roles.forEach((role) => {
+      const matchObject = role.name.match(regex);
+      if (matchObject) {
+        roleCopyNumbers.push(parseInt(matchObject[1], 10));
+      }
+    });
+    const newIndex = generateCopyNumber(roleCopyNumbers);
+    const newRoleName = `${roleName} Copy(${newIndex})`;
+    const newRole = { ...copyRole, name: newRoleName };
+    delete newRole.id;
+    return newRole;
+  };
+
+  copyRole(role) {
+    this.rolesListUpdate$.next({
+      action: 'copy',
+      role
+    });
+  }
+
+  copyRoleClickHandler() {
+    this.copyRole(this.selectedRole);
+  }
+
   update(data) {
     this.updatedPermissions = data;
     this.disableSaveButton = false;
@@ -212,6 +262,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     }
     this.f.description.markAsPristine();
     this.f.name.markAsPristine();
+    this.copyDisabled = false;
     // this.spinner.show();
     const postNewRoleData = {
       name: formData.name,
@@ -238,7 +289,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           });
           this.addingRole$.next(false);
           this.showCancelBtn = false;
-          this.copyDisabled = true;
           this.selectedRole = resp;
           this.selectedRolePermissions$ = of(updatedPermissionIDs);
           this.toast.show({
@@ -275,8 +325,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     cancelReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
         this.addingRole$.next(false);
-        this.rolesList$.pipe(tap((roles) => this.showSelectedRole(roles[0])));
+        this.rolesList$
+          .pipe(tap((roles) => this.showSelectedRole(roles[0])))
+          .subscribe();
         this.showCancelBtn = false;
+        this.copyDisabled = false;
       } else {
         this.addingRole$.next(true);
       }
