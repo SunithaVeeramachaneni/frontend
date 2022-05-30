@@ -30,9 +30,21 @@ import { map } from 'rxjs/operators';
 })
 export class AddEditUserModalComponent implements OnInit {
   userForm = this.fb.group({
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
-    title: new FormControl('', [Validators.required]),
+    firstName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(30)
+    ]),
+    lastName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(30)
+    ]),
+    title: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(30)
+    ]),
     email: new FormControl('', [Validators.required, Validators.email]),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
