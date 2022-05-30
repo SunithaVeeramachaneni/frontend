@@ -16,6 +16,7 @@ import {
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
+import { getImageSrc } from '../../../../shared/utils/imageUtils';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive';
@@ -78,16 +79,22 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
     this.conversationsInitial$ = this.chatService.getConversations$().pipe(
       mergeMap((conversations) => {
+        console.log(conversations);
         if (conversations.length) {
           conversations.forEach((conv) => {
-            conv.userInfo.profileImage = this.getImageSrc(
-              Buffer.from(conv.userInfo.profileImage).toString()
+            conv.userInfo.profileImage = getImageSrc(
+              Buffer.from(conv.userInfo.profileImage).toString(),
+              this.sanitizer
             );
           });
+          console.log(conversations);
           return of({ data: conversations });
         }
       }),
-      catchError(() => of({ data: [] }))
+      catchError((err) => {
+        console.log('error', err);
+        return of({ data: [] });
+      })
     );
     this.conversations$ = combineLatest([this.conversationsInitial$]).pipe(
       map(([initial]) => {
@@ -110,13 +117,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
   handleViewChange = ($event) => {
     this.selectedView = $event.view;
-  };
-
-  getImageSrc = (source: string) => {
-    if (source) {
-      const base64Image = 'data:image/jpeg;base64,' + source;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-    }
   };
 
   downloadFile = (file: any) => {
@@ -145,6 +145,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   setSelectedConversation = async (conversation: any) => {
     this.conversationHistory = [];
     this.selectedConversation = conversation;
+    console.log(conversation);
     this.conversationHistoryInit$ = this.chatService
       .getConversationHistory$(conversation.id)
       .pipe(
@@ -152,8 +153,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
         mergeMap((history) => {
           if (history.length) {
             history.forEach((message) => {
-              message.userInfo.profileImage = this.getImageSrc(
-                Buffer.from(message.userInfo.profileImage).toString()
+              message.userInfo.profileImage = getImageSrc(
+                Buffer.from(message.userInfo.profileImage).toString(),
+                this.sanitizer
               );
               message.isMeeting = false;
               if (message.text.indexOf('meeting_request')) {

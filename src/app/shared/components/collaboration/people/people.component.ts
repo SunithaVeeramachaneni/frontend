@@ -1,13 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { VideoCallDialogComponent } from '../chats/video-call-dialog/video-call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AppService } from 'src/app/shared/services/app.services';
 import { combineLatest, Observable, of } from 'rxjs';
 import { PeopleService } from './people.service';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
+import { getImageSrc } from '../../../../shared/utils/imageUtils';
 
 @Component({
   selector: 'app-people',
@@ -28,21 +27,15 @@ export class PeopleComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
-  getImageSrc = (source: string) => {
-    if (source) {
-      const base64Image = 'data:image/jpeg;base64,' + source;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-    }
-  };
-
   ngOnInit() {
     this.activeUsersInitial$ = this.peopleService.getUsers$().pipe(
       mergeMap((users) => {
         console.log(users);
         if (users.length) {
           users.forEach((user) => {
-            user.profileImage = this.getImageSrc(
-              Buffer.from(user.profileImage).toString()
+            user.profileImage = getImageSrc(
+              Buffer.from(user.profileImage).toString(),
+              this.sanitizer
             );
           });
           return of({ data: users });

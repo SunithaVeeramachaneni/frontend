@@ -8,8 +8,6 @@ import { environment } from '../../../../../environments/environment';
 import axios from 'axios';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-const baseURL = 'http://localhost:8007/slack';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -51,11 +49,8 @@ export class ChatService {
   getUnreadMessageCount = () => this.unreadMessageCount;
 
   getConversations$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(
-      environment.slackAPIUrl,
-      'conversations/U02R5D4SREU',
-      info
-    );
+    this.appService._getResp(environment.slackAPIUrl, `conversations`, info);
+
   getConversationHistory$ = (
     conversationId: string,
     info: ErrorInfo = {} as ErrorInfo
@@ -123,7 +118,7 @@ export class ChatService {
     );
 
   triggerCall = (user) =>
-    axios.post(`${baseURL}calls`, {
+    axios.post(`${environment.slackAPIUrl}calls`, {
       user
     });
 }

@@ -5,6 +5,7 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { PeopleService } from '../../people/people.service';
 import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
+import { getImageSrc } from '../../../../../shared/utils/imageUtils';
 
 @Component({
   selector: 'app-create-group',
@@ -33,8 +34,9 @@ export class CreateGroupComponent implements OnInit {
         console.log(users);
         if (users.length) {
           users.forEach((user) => {
-            user.profileImage = this.getImageSrc(
-              Buffer.from(user.profileImage).toString()
+            user.profileImage = getImageSrc(
+              Buffer.from(user.profileImage).toString(),
+              this.sanitizer
             );
           });
           return of({ data: users });
@@ -79,12 +81,5 @@ export class CreateGroupComponent implements OnInit {
         console.log(err);
       }
     );
-  };
-
-  getImageSrc = (source: string) => {
-    if (source) {
-      const base64Image = 'data:image/jpeg;base64,' + source;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
-    }
   };
 }
