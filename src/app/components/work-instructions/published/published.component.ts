@@ -8,7 +8,7 @@ import { DummyComponent } from '../../../shared/components/dummy/dummy.component
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { CommonService } from '../../../shared/services/common.service';
 import { Observable } from 'rxjs';
-import { routingUrls } from '../../../app.constants';
+import { permissions, routingUrls } from '../../../app.constants';
 import { map, tap } from 'rxjs/operators';
 
 @Component({
@@ -33,6 +33,7 @@ export class PublishedComponent implements OnInit {
   published$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
   readonly routingUrls = routingUrls;
+  readonly permissions = permissions;
 
   @ViewChild('filteredResults', { static: false }) set published(
     published: DummyComponent

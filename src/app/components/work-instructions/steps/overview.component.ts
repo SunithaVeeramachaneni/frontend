@@ -28,7 +28,11 @@ import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { getInstruction, getSteps } from '../state/instruction.selectors';
-import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
+import {
+  defaultCategoryId,
+  defaultCategoryName,
+  permissions
+} from '../../../app.constants';
 
 interface Category {
   Category_Id: string;
@@ -699,6 +703,7 @@ export class CustomStepperComponent
   public shownPreview = true;
   public selectedID = new FormControl(0);
   stepTabs = Array.from({ length: 30 }, (_, index) => index + 1);
+  readonly permissions = permissions;
   private currentStepTitleSubscription: Subscription;
   private currentTabsSubscription: Subscription;
   private currentPreviousStatusSubscription: Subscription;

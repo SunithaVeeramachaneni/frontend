@@ -7,7 +7,7 @@ import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { Observable } from 'rxjs';
-import { routingUrls } from '../../../app.constants';
+import { permissions, routingUrls } from '../../../app.constants';
 import { CommonService } from '../../../shared/services/common.service';
 import { map, tap } from 'rxjs/operators';
 
@@ -33,6 +33,7 @@ export class RecentsComponent implements OnInit {
   recents$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
   readonly routingUrls = routingUrls;
+  readonly permissions = permissions;
 
   @ViewChild('filteredResults', { static: false }) set recentWIs(
     recents: DummyComponent

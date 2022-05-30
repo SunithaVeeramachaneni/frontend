@@ -5,13 +5,17 @@ import {
   OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { filter, mergeMap, tap } from 'rxjs/operators';
-import { defaultLanguage, routingUrls } from './app.constants';
+import {
+  defaultLanguage,
+  routingUrls,
+  permissions as perms
+} from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { Permission } from './interfaces';
 
 const {
@@ -44,9 +48,13 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: dashboard.url,
       image: '../assets/sidebar-icons/dashboard-gray.svg',
       showSubMenu: false,
-      permission: 'VIEW_DASHBOARDS',
+      permission: perms.viewDashboards,
       subPages: [
-        { title: reports.title, url: reports.url, permission: 'VIEW_REPORTS' }
+        {
+          title: reports.title,
+          url: reports.url,
+          permission: perms.viewReports
+        }
       ],
       disable: false
     },
@@ -55,7 +63,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: tenantManagement.url,
       image: 'assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
-      permission: 'VIEW_TENANTS',
+      permission: perms.viewTenants,
       subPages: [],
       disable: false
     },
@@ -64,7 +72,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: maintenance.url,
       image: '../assets/sidebar-icons/maintenance-gray.svg',
       showSubMenu: false,
-      permission: 'VIEW_MAINTENANCE_CONTROL_CENTER',
+      permission: perms.viewMaintenanceControlCenter,
       subPages: null,
       disable: false
     },
@@ -73,7 +81,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: spareParts.url,
       image: '../assets/sidebar-icons/spare-parts-gray.svg',
       showSubMenu: false,
-      permission: 'VIEW_SPARE_PARTS_CONTROL_CENTER',
+      permission: perms.viewSparePartsControlCenter,
       subPages: null,
       disable: false
     },
@@ -82,17 +90,17 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: userManagement.url,
       image: '../assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
-      permission: 'VIEW_USERS',
+      permission: perms.viewUsers,
       subPages: [
         {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
-          permission: 'VIEW_ROLES'
+          permission: perms.viewRoles
         },
         {
           title: inActiveUsers.title,
           url: inActiveUsers.url,
-          permission: 'VIEW_INACTIVE_USERS'
+          permission: perms.viewInactiveUsers
         }
       ],
       disable: false
@@ -102,29 +110,33 @@ export class AppComponent implements OnInit, AfterViewChecked {
       url: workInstructions.url,
       image: '../assets/sidebar-icons/work-instructions-gray.svg',
       showSubMenu: false,
-      permission: 'VIEW_WORK_INSTRUCTIONS',
+      permission: perms.viewWorkInstructions,
       subPages: [
         {
           title: favorites.title,
           url: favorites.url,
-          permission: 'VIEW_WORK_INSTRUCTIONS'
+          permission: perms.viewWorkInstructions
         },
         {
           title: drafts.title,
           url: drafts.url,
-          permission: 'VIEW_WORK_INSTRUCTIONS'
+          permission: perms.viewWorkInstructions
         },
         {
           title: published.title,
           url: published.url,
-          permission: 'VIEW_WORK_INSTRUCTIONS'
+          permission: perms.viewWorkInstructions
         },
         {
           title: recents.title,
           url: recents.url,
-          permission: 'VIEW_WORK_INSTRUCTIONS'
+          permission: perms.viewWorkInstructions
         },
-        { title: files.title, url: files.url, permission: 'VIEW_FILES' }
+        {
+          title: files.title,
+          url: files.url,
+          permission: perms.viewFiles
+        }
       ],
       disable: false
     }
@@ -136,6 +148,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
   selectedMenu: string;
   permissions$: Observable<Permission[]>;
   menuHasSubMenu = {};
+  isNavigated = false;
 
   constructor(
     private commonService: CommonService,
@@ -199,6 +212,52 @@ export class AppComponent implements OnInit, AfterViewChecked {
       .subscribe();
 
     this.permissions$ = this.commonService.permissionsAction$;
+
+    combineLatest([
+      this.commonService.permissionsAction$.pipe(
+        filter((permissions) => permissions.length !== 0)
+      ),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationStart)
+      )
+    ])
+      .pipe(
+        tap(([permissions, event]: [Permission[], NavigationStart]) => {
+          if (event.url === '/') {
+            this.navigateToModule(
+              permissions,
+              perms.viewDashboards,
+              'dashboards'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewTenants,
+              'tenant-management'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewMaintenanceControlCenter,
+              'maintenance'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewSparePartsControlCenter,
+              'spare-parts'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewUsers,
+              'user-management'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewWorkInstructions,
+              'work-instructions'
+            );
+          }
+        })
+      )
+      .subscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -244,5 +303,21 @@ export class AppComponent implements OnInit, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
+  }
+
+  navigateToModule(
+    permissions: Permission[],
+    permission: string,
+    routePath: string
+  ) {
+    if (!this.isNavigated && permissions.length) {
+      const found = permissions.find((perm) => perm.name === permission);
+      if (found) {
+        if (permission !== perms.viewDashboards) {
+          this.router.navigate([routePath]);
+        }
+        this.isNavigated = true;
+      }
+    }
   }
 }

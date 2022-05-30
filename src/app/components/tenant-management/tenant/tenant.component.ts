@@ -29,6 +29,7 @@ import {
   map,
   shareReplay
 } from 'rxjs/operators';
+import { permissions } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { GenericValidator } from 'src/app/shared/validators/generic-validator';
@@ -81,6 +82,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
+  readonly permissions = permissions;
   private genericValidator: GenericValidator;
 
   get sapUrls(): FormArray {

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, startWith, switchMap, tap } from 'rxjs/operators';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -39,7 +39,7 @@ export class ReportsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
-
+  readonly perms = perms;
   selectedReportSegmentControl = new FormControl('all');
   selectedReportSegment$ = this.selectedReportSegmentControl.valueChanges.pipe(
     startWith('all')

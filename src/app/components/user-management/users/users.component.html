@@ -10,7 +10,7 @@
       mat-icon-button
       [matMenuTriggerFor]="menu"
       class="more-roles"
-      *appCheckUserHasPermission="'DEACTIVATE_USER'"
+      *appCheckUserHasPermission="[perms.deactivateUser]"
     >
       <mat-icon>more_horiz</mat-icon>
     </button>
@@ -37,7 +37,7 @@
       mat-raised-button
       class="add-role-btn"
       (click)="openEditAddUserModal()"
-      *appCheckUserHasPermission="'CREATE_USER'"
+      *appCheckUserHasPermission="[perms.createUser]"
     >
       Add User
     </button>

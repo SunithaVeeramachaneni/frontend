@@ -11,7 +11,7 @@ import {
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
@@ -166,6 +166,7 @@ export class UsersComponent implements OnInit {
   limit = defaultLimit;
   roles;
   permissions$: Observable<Permission[]>;
+  readonly perms = perms;
 
   constructor(
     private usersService: UsersService,

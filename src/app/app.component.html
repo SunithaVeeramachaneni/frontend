@@ -31,7 +31,7 @@
           detail="false"
           (click)="selectedListElement(menuitem.title)"
           title="{{ menuitem.title }}"
-          *appCheckUserHasPermission="menuitem.permission"
+          *appCheckUserHasPermission="[menuitem.permission]"
         >
           <span *ngIf="this.sidebar === false">
             <img src="{{ menuitem.image }}" class="sidebar-icons" />
@@ -70,7 +70,7 @@
                   routerLinkActive="subSelected"
                   routerDirection="root"
                   detail="false"
-                  *appCheckUserHasPermission="submenuitem.permission"
+                  *appCheckUserHasPermission="[submenuitem.permission]"
                 >
                   <span>{{ submenuitem.title }}</span>
                 </li>
@@ -100,7 +100,7 @@
                     routerLinkActive="subSelected"
                     routerDirection="root"
                     detail="false"
-                    *appCheckUserHasPermission="submenuitem.permission"
+                    *appCheckUserHasPermission="[submenuitem.permission]"
                   >
                     {{ submenuitem.title }}
                   </li>

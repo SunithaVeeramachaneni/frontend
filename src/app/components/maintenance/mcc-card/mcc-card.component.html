@@ -159,7 +159,7 @@
     </div>
   </div>
   <div class="text-align-center">
-    <ng-container *appCheckUserHasPermission="'ASSIGN_WORK_ORDERS'">
+    <ng-container *appCheckUserHasPermission="[perms.assignWorkOrders]">
       <button
         *ngIf="workOrder.status === 'unassigned'"
         (click)="onAssignPress(workOrder)"

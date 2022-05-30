@@ -86,9 +86,10 @@
             [matMenuTriggerFor]="menu"
             aria-label="Example icon-button with a menu"
             class="more_horiz_btn"
-            *appCheckUserHasPermission="
-              'COPY_WORK_INSTRUCTION,DELETE_WORK_INSTRUCTION'
-            "
+            *appCheckUserHasPermission="[
+              permissions.copyWorkInstruction,
+              permissions.deleteWorkInstruction
+            ]"
           >
             <mat-icon class="more_horiz-icon">more_horiz</mat-icon>
           </button>
@@ -98,7 +99,7 @@
               mat-menu-item
               (click)="copyWI(selectedInstruction)"
               id="copyWorkInstruction"
-              *appCheckUserHasPermission="'COPY_WORK_INSTRUCTION'"
+              *appCheckUserHasPermission="[permissions.copyWorkInstruction]"
             >
               <span class="menu-text">Copy Work Instruction</span>
             </button>
@@ -106,7 +107,7 @@
               mat-menu-item
               (click)="removeWI(selectedInstruction)"
               id="deleteWorkInstruction"
-              *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
+              *appCheckUserHasPermission="[permissions.deleteWorkInstruction]"
             >
               <span class="menu-text text-red">Delete Work Instruction</span>
             </button>
@@ -130,7 +131,7 @@
             (click)="publishInstruction(selectedInstruction)"
             mat-raised-button
             class="b-r-8 publish-btn"
-            *appCheckUserHasPermission="'PUBLISH_WORK_INSTRUCTION'"
+            *appCheckUserHasPermission="[permissions.publishWorkInstruction]"
           >
             <span *ngIf="!receivedInstruction">
               <img

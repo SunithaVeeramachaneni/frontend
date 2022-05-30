@@ -41,7 +41,7 @@
               class="new-report-btn"
               (click)="openDialog()"
               translate="newReport"
-              *appCheckUserHasPermission="'CREATE_REPORT'"
+              *appCheckUserHasPermission="[perms.createReport]"
             ></button>
             <mat-form-field appearance="outline" class="search-form-field">
               <mat-icon matPrefix class="searchIcon">search</mat-icon>

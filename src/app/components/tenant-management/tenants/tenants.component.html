@@ -22,7 +22,7 @@
       class="add-tenant-btn"
       translate="addTenantBtn"
       [routerLink]="['/tenant-management/create']"
-      *appCheckUserHasPermission="'CREATE_TENANT'"
+      *appCheckUserHasPermission="[perms.createTenant]"
     ></button>
     <span
       class="count-of-tenants"

@@ -6,11 +6,11 @@ import { CommonService } from '../services/common.service';
 })
 export class CheckUserHasPermissionDirective {
   @Input()
-  set appCheckUserHasPermission(permissions: string) {
+  set appCheckUserHasPermission(permissions: string[]) {
     if (permissions) {
       this.commonService.permissionsAction$.subscribe((perms) => {
         const hasPermission = perms.find((per) =>
-          permissions.split(',').includes(per.name)
+          permissions.includes(per.name)
         );
         if (hasPermission && !this.hasView) {
           this.container.createEmbeddedView(this.templateRef);
@@ -20,9 +20,6 @@ export class CheckUserHasPermissionDirective {
           this.hasView = false;
         }
       });
-    } else {
-      this.container.createEmbeddedView(this.templateRef);
-      this.hasView = true;
     }
   }
   hasView = false;

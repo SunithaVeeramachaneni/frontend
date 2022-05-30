@@ -147,7 +147,10 @@
       [disabled]="
         !selectedReport || widgetConfigForm.invalid || !isChartVarientFormValid
       "
-      *appCheckUserHasPermission="'CREATE_DASHBOARD,UPDATE_DASHBOARD'"
+      *appCheckUserHasPermission="[
+        permissions.createDashboard,
+        permissions.updateDashboard
+      ]"
     >
       Save
     </button>

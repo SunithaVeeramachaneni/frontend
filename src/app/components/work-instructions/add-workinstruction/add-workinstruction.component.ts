@@ -35,6 +35,7 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
 import { MediaType } from 'plyr';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -87,6 +88,7 @@ export class AddWorkinstructionComponent
   titleErrors: any = { exists: false, required: false };
   addOrUpdateTitle = false;
   fileInfo: FileInfo;
+  readonly permissions = permissions;
   private titleChangeSubscription: Subscription;
   private stepDetailsSaveSubscription: Subscription;
   private publishInstructionSubscription: Subscription;

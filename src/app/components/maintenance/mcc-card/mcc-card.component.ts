@@ -13,6 +13,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { Observable } from 'rxjs';
 import { Permission } from 'src/app/interfaces';
 import { tap } from 'rxjs/operators';
+import { permissions as perms } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-mcc-card',
@@ -26,6 +27,7 @@ export class MCCCardComponent implements OnInit {
   isDropdownOpen = false;
   permissions$: Observable<Permission[]>;
   permissions: Permission[];
+  readonly perms = perms;
 
   constructor(
     public translateService: TranslateService,

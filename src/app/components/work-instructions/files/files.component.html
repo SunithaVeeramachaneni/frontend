@@ -94,7 +94,9 @@
                     }"
                     *ngIf="this.editRows[i] === false"
                   ></app-player>
-                  <ng-container *appCheckUserHasPermission="'UPDATE_FILE'">
+                  <ng-container
+                    *appCheckUserHasPermission="[permissions.updateFile]"
+                  >
                     <mat-icon
                       class="files-icons"
                       (click)="updateEditRow(i)"
@@ -102,7 +104,9 @@
                       >edit</mat-icon
                     >
                   </ng-container>
-                  <ng-container *appCheckUserHasPermission="'DELETE_FILE'">
+                  <ng-container
+                    *appCheckUserHasPermission="[permissions.deleteFile]"
+                  >
                     <mat-icon
                       class="files-icons"
                       (click)="removeFile(obj)"
@@ -112,7 +116,9 @@
                   </ng-container>
                 </span>
                 <ng-container
-                  *appCheckUserHasPermission="'CREATE_WORK_INSTRUCTION'"
+                  *appCheckUserHasPermission="[
+                    permissions.createWorkInstruction
+                  ]"
                 >
                   <button
                     class="create-wi-btn"
@@ -125,7 +131,9 @@
                     >
                   </button>
                 </ng-container>
-                <ng-container *appCheckUserHasPermission="'UPDATE_FILE'">
+                <ng-container
+                  *appCheckUserHasPermission="[permissions.updateFile]"
+                >
                   <button
                     class="save-files-btn"
                     *ngIf="this.editRows[i] === true"

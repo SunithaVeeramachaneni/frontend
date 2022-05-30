@@ -98,7 +98,7 @@
                 type="button"
                 class="delete-file"
                 (click)="deleteAttachment(i)"
-                *appCheckUserHasPermission="'DELETE_CATEGORY'"
+                *appCheckUserHasPermission="[permissions.deleteCategory]"
               >
                 <mat-icon>close</mat-icon>
               </button>
@@ -144,7 +144,10 @@
       <button
         type="submit"
         class="save-btn"
-        *appCheckUserHasPermission="'CREATE_CATEGORY,UPDATE_CATEGORY'"
+        *appCheckUserHasPermission="[
+          permissions.createCategory,
+          permissions.updateCategory
+        ]"
       >
         SAVE
       </button>

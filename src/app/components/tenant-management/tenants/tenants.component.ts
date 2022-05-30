@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -87,6 +87,7 @@ export class TenantsComponent implements OnInit {
   limit = defaultLimit;
   deactivate = false;
   permissions$: Observable<Permission[]>;
+  readonly perms = perms;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 

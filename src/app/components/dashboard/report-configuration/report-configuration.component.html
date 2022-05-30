@@ -186,7 +186,10 @@
             class="report-button"
             [ngClass]="{ 'highlight-btn': showPreview }"
             (click)="togglePreview()"
-            *appCheckUserHasPermission="'CREATE_REPORT,UPDATE_REPORT'"
+            *appCheckUserHasPermission="[
+              permissions.createReport,
+              permissions.updateReport
+            ]"
           >
             <img [src]="getImage('preview', showPreview)" />
           </button>
@@ -197,7 +200,7 @@
             matTooltip="Export to Excel"
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
-            *appCheckUserHasPermission="'REPORT_EXPORT_TO_EXCEL'"
+            *appCheckUserHasPermission="[permissions.reportExportToExcel]"
           >
             <img src="assets/dashboard-icons/export.svg" />
             <mat-icon class="export-btn-loader" *ngIf="isExportInProgress">
@@ -219,7 +222,7 @@
           >
             <mat-button-toggle-group
               class="save-btn-toggle"
-              *appCheckUserHasPermission="'CREATE_REPORT'"
+              *appCheckUserHasPermission="[permissions.createReport]"
             >
               <mat-button-toggle
                 matTooltip="Save"
@@ -239,7 +242,7 @@
           <ng-template #updateButton>
             <mat-button-toggle-group
               class="save-btn-toggle"
-              *appCheckUserHasPermission="'UPDATE_REPORT'"
+              *appCheckUserHasPermission="[permissions.updateReport]"
             >
               <mat-button-toggle
                 matTooltip="Save"

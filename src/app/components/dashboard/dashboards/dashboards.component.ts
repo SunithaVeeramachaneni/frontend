@@ -21,6 +21,7 @@ import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
 import { DashboardService } from '../services/dashboard.service';
 import { ToastService } from 'src/app/shared/toast';
 import { AlertDialog } from '../alert-dialog/alert-dialog.component';
+import { permissions } from 'src/app/app.constants';
 
 interface CreateUpdateDeleteDashboard {
   type: 'create' | 'update' | 'delete' | 'mark_default' | 'copy';
@@ -57,6 +58,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     isDefault: false,
     createdBy: 'dummy'
   } as Dashboard;
+  readonly permissions = permissions;
 
   private dashboardSelectionChangedSubscription: Subscription;
 
@@ -162,7 +164,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           } else if (type === 'copy') {
             initial.data.push(dashboard);
             this.skipSetDefaultDashboard = true;
-            this.selectedDashboard = { ...dashboard }
+            this.selectedDashboard = { ...dashboard };
             return initial.data;
           }
         } else {
@@ -345,7 +347,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         text: 'Dashboard copied successfully',
         type: 'success'
       });
-      
     });
   }
 

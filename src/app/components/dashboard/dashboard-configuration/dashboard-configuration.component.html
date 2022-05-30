@@ -21,7 +21,9 @@
         <ng-container
           *ngIf="dashboard.id === 'CREATE_DASHBOARD'; else displayOptions"
         >
-          <ng-container *appCheckUserHasPermission="'CREATE_DASHBOARD'">
+          <ng-container
+            *appCheckUserHasPermission="[permissions.createDashboard]"
+          >
             <mat-option [value]="dashboard">
               {{ dashboard.name | translate }}
             </mat-option>
@@ -44,9 +46,11 @@
     </span>
 
     <ng-container
-      *appCheckUserHasPermission="
-        'UPDATE_DASHBOARD,COPY_DASHBOARD,DELETE_DASHBOARD'
-      "
+      *appCheckUserHasPermission="[
+        permissions.updateDashboard,
+        permissions.copyDashboard,
+        permissions.deleteDashboard
+      ]"
     >
       <button
         [matMenuTriggerFor]="menu"
@@ -62,7 +66,7 @@
       <button
         mat-menu-item
         (click)="editDashboard(dashboard)"
-        *appCheckUserHasPermission="'UPDATE_DASHBOARD'"
+        *appCheckUserHasPermission="[permissions.updateDashboard]"
         translate
       >
         edit
@@ -70,12 +74,12 @@
       <button
         mat-menu-item
         (click)="copyDashboard(dashboard)"
-        *appCheckUserHasPermission="'COPY_DASHBOARD'"
+        *appCheckUserHasPermission="[permissions.copyDashboard]"
         translate
       >
         copy
       </button>
-      <ng-container *appCheckUserHasPermission="'UPDATE_DASHBOARD'">
+      <ng-container *appCheckUserHasPermission="[permissions.updateDashboard]">
         <button
           mat-menu-item
           (click)="markDashboardDefault(dashboard)"
@@ -89,7 +93,7 @@
         mat-menu-item
         class="delete-menu-item"
         (click)="deleteDashboard(dashboard)"
-        *appCheckUserHasPermission="'DELETE_DASHBOARD'"
+        *appCheckUserHasPermission="[permissions.deleteDashboard]"
         translate
       >
         delete
@@ -107,7 +111,7 @@
       translate="newWidget"
       [disabled]="!dashboard.id"
       (click)="createWidget()"
-      *appCheckUserHasPermission="'CREATE_DASHBOARD'"
+      *appCheckUserHasPermission="[permissions.createDashboard]"
     ></button>
   </div>
 </div>
@@ -132,9 +136,11 @@
           <button
             [matMenuTriggerFor]="widgetMenu"
             class="more-icon"
-            *appCheckUserHasPermission="
-              'UPDATE_DASHBOARD,COPY_DASHBOARD,DELETE_DASHBOARD'
-            "
+            *appCheckUserHasPermission="[
+              permissions.updateDashboard,
+              permissions.copyDashboard,
+              permissions.deleteDashboard
+            ]"
           >
             <mat-icon>more_horiz</mat-icon>
           </button>
@@ -142,14 +148,14 @@
             <button
               mat-menu-item
               (click)="editWidget(widget)"
-              *appCheckUserHasPermission="'UPDATE_DASHBOARD'"
+              *appCheckUserHasPermission="[permissions.updateDashboard]"
             >
               <span translate>editWidget</span>
             </button>
             <button
               mat-menu-item
               (click)="copyWidget(widget)"
-              *appCheckUserHasPermission="'COPY_DASHBOARD'"
+              *appCheckUserHasPermission="[permissions.copyDashboard]"
             >
               <span translate>copyWidget</span>
             </button>
@@ -157,7 +163,7 @@
               mat-menu-item
               (click)="deleteWidget(widget)"
               class="text-red"
-              *appCheckUserHasPermission="'DELETE_DASHBOARD'"
+              *appCheckUserHasPermission="[permissions.deleteDashboard]"
             >
               <span translate>deleteWidget</span>
             </button>

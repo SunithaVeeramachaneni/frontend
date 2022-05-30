@@ -32,14 +32,14 @@
         class="delete-forever-icon align-icon p-t-5 p-l-15 step-action"
         title="Delete Step"
         (click)="deleteStep(this.step)"
-        *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
+        *appCheckUserHasPermission="[permissions.deleteWorkInstruction]"
         >delete_forever</mat-icon
       >
       <mat-icon
         class="align-icon fa-pull-right p-l-0 p-t-5 step-action"
         title="Clone Step"
         (click)="cloneCurrentStep()"
-        *appCheckUserHasPermission="'CREATE_WORK_INSTRUCTION'"
+        *appCheckUserHasPermission="[permissions.createWorkInstruction]"
         >content_copy
       </mat-icon>
     </div>
@@ -105,7 +105,9 @@
                     <button
                       class="delete-file"
                       (click)="deleteAtt(file, i)"
-                      *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
+                      *appCheckUserHasPermission="[
+                        permissions.deleteWorkInstruction
+                      ]"
                     >
                       <mat-icon class="delete-forever-icon"
                         >delete_forever</mat-icon
@@ -240,7 +242,7 @@
               <button
                 class="delete-file"
                 (click)="deleteAtt(file, i)"
-                *appCheckUserHasPermission="'DELETE_WORK_INSTRUCTION'"
+                *appCheckUserHasPermission="[permissions.deleteWorkInstruction]"
               >
                 <mat-icon class="delete-forever-icon">delete_forever</mat-icon>
               </button>
@@ -249,9 +251,10 @@
                 class="customised-drop-zone"
                 [accept]="'image/*'"
                 (change)="uploadFile($event, i)"
-                *appCheckUserHasPermission="
-                  'CREATE_WORK_INSTRUCTION,UPDATE_WORK_INSTRUCTION'
-                "
+                *appCheckUserHasPermission="[
+                  permissions.createWorkInstruction,
+                  permissions.updateWorkInstruction
+                ]"
               >
                 <input
                   hidden

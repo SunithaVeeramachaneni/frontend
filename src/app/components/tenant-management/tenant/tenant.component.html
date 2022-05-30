@@ -12,7 +12,12 @@
   </ngx-spinner>
   <div class="tenant-header">
     <span class="adding-tenant-text">{{ tenantHeader }}</span>
-    <ng-container *appCheckUserHasPermission="'CREATE_TENANT,UPDATE_TENANT'">
+    <ng-container
+      *appCheckUserHasPermission="[
+        permissions.createTenant,
+        permissions.updateTenant
+      ]"
+    >
       <button
         mat-raised-button
         translate="saveBtn"
@@ -28,7 +33,7 @@
       *ngIf="editTenant"
       (click)="cancel()"
     ></button>
-    <ng-container *appCheckUserHasPermission="'UPDATE_TENANT'">
+    <ng-container *appCheckUserHasPermission="[permissions.updateTenant]">
       <button
         mat-raised-button
         translate="editBtn"

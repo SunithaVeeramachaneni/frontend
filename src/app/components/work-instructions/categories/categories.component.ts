@@ -24,7 +24,7 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { from, of, Subscription } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { WiCommonService } from '../services/wi-common.services';
-import { defaultCategoryId } from '../../../app.constants';
+import { defaultCategoryId, permissions } from '../../../app.constants';
 import * as InstructionActions from '../state/intruction.actions';
 import { Store } from '@ngrx/store';
 import { State } from '../../../state/app.state';
@@ -81,6 +81,7 @@ export class CategoriesComponent
   public workInstructionsDetailObject = null;
   public imageHeight = '';
   public isCategoriesLoading: boolean;
+  readonly permissions = permissions;
   private image: ElementRef;
   private fetchCategoriesSubscription: Subscription;
   @ViewChild('image', { static: false }) set content(content: ElementRef) {

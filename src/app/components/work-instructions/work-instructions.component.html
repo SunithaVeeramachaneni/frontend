@@ -22,16 +22,17 @@
         <mat-button-toggle-group>
           <mat-button-toggle
             routerLink="/work-instructions/create"
-            *appCheckUserHasPermission="'CREATE_WORK_INSTRUCTION'"
+            *appCheckUserHasPermission="[permissions.createWorkInstruction]"
           >
             <img src="assets/work-instructions-icons/svg/createwi.svg" alt="" />
             <span class="data"> CREATE WORK INSTRUCTION </span>
           </mat-button-toggle>
           <mat-button-toggle
             [matMenuTriggerFor]="menu"
-            *appCheckUserHasPermission="
-              'IMPORT_WORK_INSTRUCTION,COPY_WORK_INSTRUCTION'
-            "
+            *appCheckUserHasPermission="[
+              permissions.importWorkInstruction,
+              permissions.copyWorkInstruction
+            ]"
           >
             <img src="assets/work-instructions-icons/svg/dropdown.svg" alt="" />
           </mat-button-toggle>
@@ -41,7 +42,7 @@
             id="import"
             mat-menu-item
             (click)="uploader.click()"
-            *appCheckUserHasPermission="'IMPORT_WORK_INSTRUCTION'"
+            *appCheckUserHasPermission="[permissions.importWorkInstruction]"
           >
             <span class="dropdown-item-title">Import File</span>
           </button>
@@ -49,7 +50,7 @@
             id="copy"
             mat-menu-item
             (click)="copyWorkInstruction()"
-            *appCheckUserHasPermission="'COPY_WORK_INSTRUCTION'"
+            *appCheckUserHasPermission="[permissions.copyWorkInstruction]"
           >
             <span class="dropdown-item-title">Copy Existing</span>
           </button>
@@ -57,7 +58,7 @@
             id="export"
             mat-menu-item
             (click)="exportAsXLSX()"
-            *appCheckUserHasPermission="'IMPORT_WORK_INSTRUCTION'"
+            *appCheckUserHasPermission="[permissions.importWorkInstruction]"
           >
             <span class="dropdown-item-title">Download Template</span>
           </button>
