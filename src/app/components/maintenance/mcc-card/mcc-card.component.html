@@ -1,4 +1,4 @@
-<span>
+<span *ngIf="permissions$ | async">
   <div class="p-l-15 p-r-15">
     <span
       *ngIf="workOrder.priorityText === 'Very High'"
@@ -134,7 +134,11 @@
     <div
       *ngIf="workOrder.technician.length !== 0 && !workOrder.isLoading"
       class="m-t-10 display-flex"
-      [ngClass]="{ cursor: workOrder.status === 'assigned' }"
+      [ngClass]="{
+        cursor:
+          workOrder.status === 'assigned' &&
+          checkUserHasPermission('ASSIGN_WORK_ORDERS')
+      }"
       (click)="workOrder.status === 'assigned' && onAssignPress(workOrder)"
     >
       <img
@@ -155,17 +159,19 @@
     </div>
   </div>
   <div class="text-align-center">
-    <button
-      *ngIf="workOrder.status === 'unassigned'"
-      (click)="onAssignPress(workOrder)"
-      class="assign-btn"
-    >
-      <img
-        src="../../../assets/maintenance-icons/assignIcon.svg"
-        class="assign-btn-icon"
-      />
-      <span class="assign-btn-text">{{ 'assign' | translate }}</span>
-    </button>
+    <ng-container *appCheckUserHasPermission="[perms.assignWorkOrders]">
+      <button
+        *ngIf="workOrder.status === 'unassigned'"
+        (click)="onAssignPress(workOrder)"
+        class="assign-btn"
+      >
+        <img
+          src="../../../assets/maintenance-icons/assignIcon.svg"
+          class="assign-btn-icon"
+        />
+        <span class="assign-btn-text">{{ 'assign' | translate }}</span>
+      </button>
+    </ng-container>
   </div>
 
   <div class="text-align-center">

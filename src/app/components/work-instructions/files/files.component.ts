@@ -19,7 +19,7 @@ import { BulkUploadComponent } from '../modal/templates/bulk-upload/bulk-upload.
 import { WiCommonService } from '../services/wi-common.services';
 import { map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { from, Observable, of } from 'rxjs';
-import { routingUrls } from '../../../app.constants';
+import { permissions, routingUrls } from '../../../app.constants';
 import { CommonService } from '../../../shared/services/common.service';
 
 @Component({
@@ -46,6 +46,7 @@ export class MediaFilesComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   mediaFiles$: Observable<MediaFile[]>;
   readonly routingUrls = routingUrls;
+  readonly permissions = permissions;
 
   constructor(
     private instructionSvc: InstructionService,

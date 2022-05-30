@@ -175,6 +175,11 @@
                   mat-icon-button
                   [matMenuTriggerFor]="menu"
                   aria-label="Example icon-button with a menu"
+                  *appCheckUserHasPermission="[
+                    permissions.updateWorkInstruction,
+                    permissions.copyWorkInstruction,
+                    permissions.deleteWorkInstruction
+                  ]"
                 >
                   <mat-icon matTooltip="More" matTooltipClass=""
                     >more_horiz</mat-icon
@@ -185,6 +190,9 @@
                     mat-menu-item
                     [routerLink]="['/work-instructions/recents', obj.Id]"
                     id="editWorkInstruction"
+                    *appCheckUserHasPermission="[
+                      permissions.updateWorkInstruction
+                    ]"
                   >
                     <span class="menu-text">Edit Work Instruction</span>
                   </button>
@@ -192,6 +200,9 @@
                     mat-menu-item
                     (click)="copyWI(obj)"
                     id="copyWorkInstruction"
+                    *appCheckUserHasPermission="[
+                      permissions.copyWorkInstruction
+                    ]"
                   >
                     <span class="menu-text">Copy Work Instruction</span>
                   </button>
@@ -199,6 +210,9 @@
                     mat-menu-item
                     (click)="removeWI(obj)"
                     id="deleteWorkInstruction"
+                    *appCheckUserHasPermission="[
+                      permissions.deleteWorkInstruction
+                    ]"
                   >
                     <span class="menu-text text-red">
                       Delete Work Instruction

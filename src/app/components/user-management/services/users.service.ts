@@ -21,7 +21,8 @@ import {
   Count,
   Widget,
   UserDetails,
-  Role
+  Role,
+  Permission
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import {
@@ -125,7 +126,7 @@ export class UsersService {
         mergeMap((users: UserDetails[]) =>
           from(users).pipe(
             mergeMap((user) =>
-              this.getRoleByUserID$(user.id).pipe(
+              this.getRolesByUserID$(user.id).pipe(
                 map((roles) => ({ roles, userID: user.id }))
               )
             ),
@@ -144,32 +145,46 @@ export class UsersService {
   getUsersCount$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Count> =>
-    this.appService._getResp(
+  ): Observable<Count> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `users/count`,
-      info,
+      { displayToast, failureResponse },
       queryParams
     );
+  };
 
-  getRoleByUserID$ = (
+  getRolesByUserID$ = (
     userID,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
+  ): Observable<Role[]> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `users/${userID}/roles`,
       info
     );
 
-  deactivateUser$ = (userID , info: ErrorInfo = {} as ErrorInfo) => {
-    const deactivateUser = { isActive: false };
-    return this.appService.patchData(
+  getUserPermissionsByEmail$ = (
+    email: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Permission[]> =>
+    this.appService._getResp(
       environment.userRoleManagementApiUrl,
-      `users/${userID}`,
-      deactivateUser,
+      `users/${email}/permissions`,
       info
-    ).pipe(map((response) => (response === null ? deactivateUser : response)));
+    );
+
+  deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
+    const deactivateUser = { isActive: false };
+    return this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/${userID}`,
+        deactivateUser,
+        info
+      )
+      .pipe(map((response) => (response === null ? deactivateUser : response)));
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {

@@ -37,6 +37,7 @@ import {
   getUploadedFile
 } from '../../state/instruction.selectors';
 import { ErrorHandlerService } from '../../../../shared/error-handler/error-handler.service';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-step-content',
@@ -125,6 +126,7 @@ export class StepContentComponent implements OnInit, OnDestroy {
       }
     ]
   };
+  readonly permissions = permissions;
   private subscription: Subscription;
   private instSrvSubscription: Subscription;
   private instructionsSubscription: Subscription;

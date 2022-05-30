@@ -2,7 +2,7 @@ import { Permission } from '../../../interfaces';
 
 export const allRolesMock = [
   {
-    id: '1',
+    id: 1,
     name: 'Super Admin',
     description: 'Super admin description',
     createdBy: 1,
@@ -11,7 +11,7 @@ export const allRolesMock = [
     updatedAt: '2022-04-21T06:37:07.000Z'
   },
   {
-    id: '2',
+    id: 2,
     name: 'Supervisor',
     description: 'Supervisor Description',
     createdBy: 1,
@@ -20,7 +20,7 @@ export const allRolesMock = [
     updatedAt: '2022-04-21T08:29:17.000Z'
   },
   {
-    id: '3',
+    id: 3,
     name: 'Maintenance Manager',
     description: 'desc',
     createdBy: 1,
@@ -32,7 +32,7 @@ export const allRolesMock = [
 
 export const rolesByID1Mock = [
   {
-    id: '1',
+    id: 1,
     name: 'Super Admin',
     description: 'Super admin description',
     createdBy: 1,
@@ -46,7 +46,7 @@ export const allPermissionsMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Create Report',
-    id: '1',
+    id: 1,
     moduleName: 'Reports',
     name: 'CREATE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'
@@ -54,7 +54,7 @@ export const allPermissionsMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Edit Report',
-    id: '2',
+    id: 2,
     moduleName: 'Reports',
     name: 'UPDATE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'
@@ -62,7 +62,7 @@ export const allPermissionsMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Delete Report',
-    id: '3',
+    id: 3,
     moduleName: 'Reports',
     name: 'DELETE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'
@@ -70,7 +70,7 @@ export const allPermissionsMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Share Report',
-    id: '4',
+    id: 4,
     moduleName: 'Reports',
     name: 'SHARE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'
@@ -86,7 +86,7 @@ export const roleWithPermissionsMock = [
       {
         createdAt: '2022-04-19T10:38:41.000Z',
         displayName: 'Create Report',
-        id: '1',
+        id: 1,
         moduleName: 'Reports',
         name: 'CREATE_REPORT',
         updatedAt: '2022-04-19T10:38:41.000Z'
@@ -94,7 +94,7 @@ export const roleWithPermissionsMock = [
       {
         createdAt: '2022-04-19T10:38:41.000Z',
         displayName: 'Edit Report',
-        id: '2',
+        id: 2,
         moduleName: 'Reports',
         name: 'UPDATE_REPORT',
         updatedAt: '2022-04-19T10:38:41.000Z'
@@ -102,7 +102,7 @@ export const roleWithPermissionsMock = [
       {
         createdAt: '2022-04-19T10:38:41.000Z',
         displayName: 'Delete Report',
-        id: '3',
+        id: 3,
         moduleName: 'Reports',
         name: 'DELETE_REPORT',
         updatedAt: '2022-04-19T10:38:41.000Z'
@@ -110,7 +110,7 @@ export const roleWithPermissionsMock = [
       {
         createdAt: '2022-04-19T10:38:41.000Z',
         displayName: 'Share Report',
-        id: '4',
+        id: 4,
         moduleName: 'Reports',
         name: 'SHARE_REPORT',
         updatedAt: '2022-04-19T10:38:41.000Z'
@@ -123,7 +123,7 @@ export const roleIdByPermissionMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Create Report',
-    id: '1',
+    id: 1,
     moduleName: 'Reports',
     name: 'CREATE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'
@@ -131,7 +131,7 @@ export const roleIdByPermissionMock: Permission[] = [
   {
     createdAt: '2022-04-19T10:38:41.000Z',
     displayName: 'Edit Report',
-    id: '2',
+    id: 2,
     moduleName: 'Reports',
     name: 'UPDATE_REPORT',
     updatedAt: '2022-04-19T10:38:41.000Z'

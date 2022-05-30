@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-spcc-card',
@@ -17,6 +18,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SPCCCardComponent implements OnInit {
+  readonly permissions = permissions;
   constructor(private translateService: TranslateService) {}
 
   @Input('workOrder') workOrder;

@@ -18,24 +18,54 @@
           placeholder="Search by title or author"
         />
       </mat-form-field>
-      <div>
+      <div
+        *appCheckUserHasPermission="[
+          permissions.createWorkInstruction,
+          permissions.importWorkInstruction,
+          permissions.copyWorkInstruction
+        ]"
+      >
         <mat-button-toggle-group>
-          <mat-button-toggle routerLink="/work-instructions/create">
+          <mat-button-toggle
+            routerLink="/work-instructions/create"
+            *appCheckUserHasPermission="[permissions.createWorkInstruction]"
+          >
             <img src="assets/work-instructions-icons/svg/createwi.svg" alt="" />
             <span class="data"> CREATE WORK INSTRUCTION </span>
           </mat-button-toggle>
-          <mat-button-toggle [matMenuTriggerFor]="menu">
+          <mat-button-toggle
+            [matMenuTriggerFor]="menu"
+            *appCheckUserHasPermission="[
+              permissions.importWorkInstruction,
+              permissions.copyWorkInstruction
+            ]"
+          >
             <img src="assets/work-instructions-icons/svg/dropdown.svg" alt="" />
           </mat-button-toggle>
         </mat-button-toggle-group>
         <mat-menu #menu="matMenu">
-          <button id="import" mat-menu-item (click)="uploader.click()">
+          <button
+            id="import"
+            mat-menu-item
+            (click)="uploader.click()"
+            *appCheckUserHasPermission="[permissions.importWorkInstruction]"
+          >
             <span class="dropdown-item-title">Import File</span>
           </button>
-          <button id="copy" mat-menu-item (click)="copyWorkInstruction()">
+          <button
+            id="copy"
+            mat-menu-item
+            (click)="copyWorkInstruction()"
+            *appCheckUserHasPermission="[permissions.copyWorkInstruction]"
+          >
             <span class="dropdown-item-title">Copy Existing</span>
           </button>
-          <button id="export" mat-menu-item (click)="exportAsXLSX()">
+          <button
+            id="export"
+            mat-menu-item
+            (click)="exportAsXLSX()"
+            *appCheckUserHasPermission="[permissions.importWorkInstruction]"
+          >
             <span class="dropdown-item-title">Download Template</span>
           </button>
         </mat-menu>

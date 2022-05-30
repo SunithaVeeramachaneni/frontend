@@ -15,6 +15,11 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
 import { defaultLimit } from 'src/app/app.constants';
 import { AppMaterialModules } from 'src/app/material.module';
+import { CommonService } from 'src/app/shared/services/common.service';
+import {
+  permissions,
+  permissions$
+} from 'src/app/shared/services/common.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { TenantService } from '../services/tenant.service';
 import {
@@ -24,14 +29,19 @@ import {
 
 import { TenantsComponent } from './tenants.component';
 import { columns, configOptions } from './tenants.component.mock';
+import { cloneDeep } from 'lodash';
+import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 
 describe('TenantsComponent', () => {
   let component: TenantsComponent;
   let fixture: ComponentFixture<TenantsComponent>;
   let tenantServiceSpy: TenantService;
+  let commonServiceSpy: CommonService;
   let router: Router;
   let tenantsDe: DebugElement;
   let tenantsEl: HTMLElement;
+  let prepareMenuActionsSpy;
+  let configOptionsCopy: ConfigOptions;
 
   beforeEach(async () => {
     tenantServiceSpy = jasmine.createSpyObj('tenantServiceSpy', [
@@ -39,6 +49,13 @@ describe('TenantsComponent', () => {
       'getTenantsCount$',
       'updateConfigOptionsFromColumns'
     ]);
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['checkUserHasPermission'],
+      {
+        permissionsAction$: permissions$
+      }
+    );
     await TestBed.configureTestingModule({
       declarations: [TenantsComponent],
       imports: [
@@ -59,7 +76,8 @@ describe('TenantsComponent', () => {
       ],
       providers: [
         TranslateService,
-        { provide: TenantService, useValue: tenantServiceSpy }
+        { provide: TenantService, useValue: tenantServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy }
       ]
     }).compileComponents();
   });
@@ -70,6 +88,8 @@ describe('TenantsComponent', () => {
     component = fixture.componentInstance;
     tenantsDe = fixture.debugElement;
     tenantsEl = tenantsDe.nativeElement;
+    prepareMenuActionsSpy = spyOn(component, 'prepareMenuActions');
+    configOptionsCopy = cloneDeep(configOptions);
     (tenantServiceSpy.getTenants$ as jasmine.Spy)
       .withArgs({
         skip: 0,
@@ -81,8 +101,11 @@ describe('TenantsComponent', () => {
       .withArgs({ isActive: true })
       .and.returnValue(of({ count: formatedTenants.length }));
     (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
-      .withArgs(columns, { ...configOptions, allColumns: [] })
-      .and.returnValue(configOptions);
+      .withArgs(columns, { ...configOptionsCopy, allColumns: [] })
+      .and.returnValue(configOptionsCopy);
+    (commonServiceSpy.checkUserHasPermission as jasmine.Spy)
+      .withArgs(permissions, 'UPDATE_TENANT')
+      .and.returnValue(true);
     fixture.detectChanges();
   });
 
@@ -98,10 +121,13 @@ describe('TenantsComponent', () => {
     it('should get tenants data', () => {
       component.tenantsData$.subscribe((response) => {
         expect(response).toEqual({ data: formatedTenants });
-        expect(component.configOptions).toEqual(configOptions);
+        expect(component.configOptions).toEqual(configOptionsCopy);
         expect(
           tenantServiceSpy.updateConfigOptionsFromColumns
-        ).toHaveBeenCalledWith(columns, { ...configOptions, allColumns: [] });
+        ).toHaveBeenCalledWith(columns, {
+          ...configOptionsCopy,
+          allColumns: []
+        });
         expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
           skip: 0,
           limit: defaultLimit,
@@ -114,6 +140,13 @@ describe('TenantsComponent', () => {
       component.tenantsCount$.subscribe((response) =>
         expect(response).toEqual({ count: formatedTenants.length })
       );
+    });
+
+    it('should prepare config options menu actions', () => {
+      component.permissions$.subscribe((response) => {
+        expect(response).toEqual(permissions);
+        expect(prepareMenuActionsSpy).toHaveBeenCalledWith(response);
+      });
     });
   });
 
@@ -216,6 +249,41 @@ describe('TenantsComponent', () => {
           queryParams: { edit: false }
         }
       );
+    });
+  });
+
+  describe('prepareMenuActions', () => {
+    it('should define function', () => {
+      expect(component.prepareMenuActions).toBeDefined();
+    });
+
+    it('should update config options, if user has update tenant permission', () => {
+      (prepareMenuActionsSpy as jasmine.Spy).and.callThrough();
+      component.prepareMenuActions(permissions);
+
+      expect(component.configOptions).toEqual({
+        ...configOptionsCopy,
+        rowLevelActions: {
+          menuActions: [
+            {
+              title: 'Edit',
+              action: 'edit'
+            }
+          ]
+        },
+        displayActionsColumn: true
+      });
+    });
+
+    it('should not update config options, if user doesnt have update tenant permission', () => {
+      (prepareMenuActionsSpy as jasmine.Spy).and.callThrough();
+      (commonServiceSpy.checkUserHasPermission as jasmine.Spy)
+        .withArgs(permissions, 'UPDATE_TENANT')
+        .and.returnValue(false);
+
+      component.prepareMenuActions(permissions);
+
+      expect(component.configOptions).toEqual(configOptionsCopy);
     });
   });
 });

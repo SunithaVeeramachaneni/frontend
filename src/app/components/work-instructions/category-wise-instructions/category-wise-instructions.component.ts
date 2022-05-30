@@ -19,7 +19,7 @@ import { Base64HelperService } from '../services/base64-helper.service';
 import { DummyComponent } from '../../../shared/components/dummy/dummy.component';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { CommonService } from '../../../shared/services/common.service';
-import { routingUrls } from '../../../app.constants';
+import { permissions, routingUrls } from '../../../app.constants';
 import { BreadcrumbService } from 'xng-breadcrumb';
 
 const { workInstructions: workInstructionsInfo } = routingUrls;
@@ -61,6 +61,7 @@ export class CategoryWiseInstructionsComponent
   }>;
   authors$: Observable<string[]>;
   routeUrl: string;
+  readonly permissions = permissions;
 
   @ViewChild('publishedFilteredResults', { static: false }) set published(
     published: DummyComponent

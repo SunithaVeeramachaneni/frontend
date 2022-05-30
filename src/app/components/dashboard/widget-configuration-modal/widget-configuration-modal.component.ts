@@ -25,7 +25,11 @@ import {
   Subject
 } from 'rxjs';
 import { filter, map, startWith, switchMap, take, tap } from 'rxjs/operators';
-import { defaultCountFieldName, defaultLimit } from 'src/app/app.constants';
+import {
+  defaultCountFieldName,
+  defaultLimit,
+  permissions
+} from 'src/app/app.constants';
 import {
   AppChartConfig,
   AppChartData,
@@ -112,6 +116,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   countField: string;
   setSearchReport$ = new Subject<boolean>();
   updateWidget$: Observable<boolean>;
+  readonly permissions = permissions;
 
   constructor(
     private reportService: ReportService,

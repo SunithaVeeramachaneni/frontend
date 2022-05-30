@@ -29,6 +29,7 @@ import {
   routingUrls
 } from '../../../app.constants';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -157,7 +158,8 @@ describe('DraftsComponent', () => {
       'CommonService',
       ['setHeaderTitle'],
       {
-        currentRouteUrlAction$: of('/work-instructions/drafts')
+        currentRouteUrlAction$: of('/work-instructions/drafts'),
+        permissionsAction$: permissions$
       }
     );
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {

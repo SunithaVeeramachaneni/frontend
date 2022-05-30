@@ -19,6 +19,7 @@ import {
   OverviewComponent
 } from './overview.component';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 const categoryDetails = [
   {
@@ -168,48 +169,44 @@ describe('OverviewComponent', () => {
   let store: MockStore<State>;
   let mockInstructionSelector;
 
-  beforeEach(
-    waitForAsync(() => {
-      activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-        snapshot: {
-          paramMap: convertToParamMap({
-            id: wid
-          })
-        }
-      });
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getAllCategories',
-        'getAllBusinessObjects',
-        'getStepsByWID',
-        'getInstructionsById'
-      ]);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getImageContents',
-        'getBase64ImageData',
-        'getBase64Image',
-        'resetBase64ImageDetails'
-      ]);
+  beforeEach(waitForAsync(() => {
+    activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
+      snapshot: {
+        paramMap: convertToParamMap({
+          id: wid
+        })
+      }
+    });
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getAllCategories',
+      'getAllBusinessObjects',
+      'getStepsByWID',
+      'getInstructionsById'
+    ]);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getImageContents',
+      'getBase64ImageData',
+      'getBase64Image',
+      'resetBase64ImageDetails'
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [
-          OverviewComponent,
-          MockComponent(CustomStepperComponent)
-        ],
-        imports: [
-          ReactiveFormsModule,
-          AppMaterialModules,
-          CdkStepperModule,
-          BrowserAnimationsModule
-        ],
-        providers: [
-          { provide: ActivatedRoute, useValue: activatedRouteSpy },
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          provideMockStore()
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [OverviewComponent, MockComponent(CustomStepperComponent)],
+      imports: [
+        ReactiveFormsModule,
+        AppMaterialModules,
+        CdkStepperModule,
+        BrowserAnimationsModule,
+        SharedModule
+      ],
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        provideMockStore()
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);

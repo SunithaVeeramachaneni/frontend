@@ -4,13 +4,14 @@ import { shareReplay } from 'rxjs/operators';
 import {
   CellClickActionEvent,
   Count,
+  Permission,
   Role,
   TableEvent,
   UserDetails,
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
@@ -23,6 +24,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
@@ -138,30 +140,15 @@ export class UsersComponent implements OnInit {
     enableRowsSelection: true,
     enablePagination: false,
     displayFilterPanel: false,
-    displayActionsColumn: true,
+    displayActionsColumn: false,
     rowLevelActions: {
-      menuActions: [
-        {
-          title: 'Edit',
-          action: 'edit'
-        },
-        {
-          title: 'Deactivate',
-          action: 'deactivate',
-          condition: {
-            operand: 'Super Admin',
-            operation: 'notContains',
-            fieldName: 'displayRoles'
-          }
-        }
-      ]
+      menuActions: []
     },
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
-   
   };
   selectedUsers = [];
   dataSource: MatTableDataSource<any>;
@@ -179,12 +166,15 @@ export class UsersComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   roles;
+  permissions$: Observable<Permission[]>;
+  readonly perms = perms;
 
   constructor(
     private usersService: UsersService,
     private roleService: RolesPermissionsService,
     public dialog: MatDialog,
-    private toast: ToastService
+    private toast: ToastService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit() {
@@ -198,6 +188,9 @@ export class UsersComponent implements OnInit {
     this.rolesList$ = this.roleService
       .getRolesWithPermissions$()
       .pipe(shareReplay(1));
+    this.permissions$ = this.commonService.permissionsAction$.pipe(
+      tap((permissions) => this.prepareMenuActions(permissions))
+    );
   }
 
   cellClickActionHandler = (event: CellClickActionEvent) => {
@@ -210,7 +203,7 @@ export class UsersComponent implements OnInit {
       case 'roles':
       case 'email':
       case 'createdAt':
-        this.openEditAddUserModal(event.row)
+        this.openEditAddUserModal(event.row);
         break;
       default:
       // do nothing
@@ -382,7 +375,7 @@ export class UsersComponent implements OnInit {
   };
 
   rowLevelActionHandler = (event) => {
-    const {data, action} = event;
+    const { data, action } = event;
     switch (action) {
       case 'deactivate':
         this.openDeleteUserModal(data);
@@ -394,17 +387,16 @@ export class UsersComponent implements OnInit {
         const index = this.selectedUsers.findIndex(
           (user) => user.id === data.id
         );
-        console.log("data is", data)
-        console.log("cond", data.displayRoles.includes('Super Admin'))
-        if(index !== -1) {
-          this.selectedUsers = this.selectedUsers.filter(user => user.id !== data.id)
+        if (index !== -1) {
+          this.selectedUsers = this.selectedUsers.filter(
+            (user) => user.id !== data.id
+          );
 
-          if(data.displayRoles.includes('Super Admin'))
+          if (data.displayRoles.includes('Super Admin'))
             this.disableDeactivate = false;
-        }
-        else{
-            this.selectedUsers.push(data)
-            if(data.displayRoles.includes('Super Admin'))
+        } else {
+          this.selectedUsers.push(data);
+          if (data.displayRoles.includes('Super Admin'))
             this.disableDeactivate = true;
         }
         break;
@@ -413,28 +405,70 @@ export class UsersComponent implements OnInit {
     }
   };
 
-  deactivateUsers = () =>{
-    this.selectedUsers.forEach(selectUser =>{
+  deactivateUsers = () => {
+    this.selectedUsers.forEach((selectUser) => {
       const id = selectUser.id;
       this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
         if (Object.keys(deactivatedUser).length) {
-        this.userTableUpdate$.next({
-          action: 'deactivate',
-          user: {id, title: '', email: '', isActive: false, createdAt : new Date(), roles : []}
-        });
-        this.toast.show({
-          text: 'User deactivated successfully!',
-          type: 'success'
-        });
-        this.selectedUsers = [];
-      }
+          this.userTableUpdate$.next({
+            action: 'deactivate',
+            user: {
+              id,
+              title: '',
+              email: '',
+              isActive: false,
+              createdAt: new Date(),
+              roles: []
+            }
+          });
+          this.toast.show({
+            text: 'User deactivated successfully!',
+            type: 'success'
+          });
+          this.selectedUsers = [];
+        }
       });
-    })
-  }
+    });
+  };
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
   configOptionsChangeHandler = (event) => {
     // console.log('event', event);
   };
+
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (this.commonService.checkUserHasPermission(permissions, 'UPDATE_USER')) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    if (
+      this.commonService.checkUserHasPermission(permissions, 'DEACTIVATE_USER')
+    ) {
+      menuActions.push({
+        title: 'Deactivate',
+        action: 'deactivate',
+        condition: {
+          operand: 'Super Admin',
+          operation: 'notContains',
+          fieldName: 'displayRoles'
+        }
+      });
+    }
+
+    this.configOptions.rowLevelActions.menuActions = [
+      ...this.configOptions.rowLevelActions.menuActions,
+      ...menuActions
+    ];
+    this.configOptions.displayActionsColumn = this.configOptions.rowLevelActions
+      .menuActions.length
+      ? true
+      : false;
+    this.configOptions = { ...this.configOptions };
+  }
 }
