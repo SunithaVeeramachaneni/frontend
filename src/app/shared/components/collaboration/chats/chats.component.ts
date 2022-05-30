@@ -150,7 +150,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .pipe(
         // eslint-disable-next-line arrow-body-style
         mergeMap((history) => {
-          // console.log(history);
           if (history.length) {
             history.forEach((message) => {
               message.userInfo.profileImage = this.getImageSrc(
@@ -294,7 +293,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
             }
           );
       }
-      console.log('The upload dialog was closed');
     });
   };
 
@@ -303,10 +301,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
     // if open insert the messgae in conversation,
     // if not increase the unread message count in badge...
     // and display a toast in bottom right of the screen....
-    console.log(message, this.selectedConversation);
-    return;
-    if (message.channel === this.selectedConversation.id) {
-      console.log(message, this.selectedConversation);
+    // return;
+    if (
+      this.selectedConversation &&
+      message.channel === this.selectedConversation.id
+    ) {
       if (message.text.indexOf('meeting_request')) {
         try {
           message.jsonObj = JSON.parse(message.text);
