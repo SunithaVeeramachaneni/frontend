@@ -16,6 +16,7 @@
           <button
             mat-menu-item
             (click)="deleteRoles()"
+            class="text-red"
             [disabled]="!selectedRoleList.length"
             translate="deleteBtn"
           ></button>
@@ -52,10 +53,7 @@
                   : ''
               }"
             >
-              <mat-checkbox
-                (change)="roleChecked(role, $event)"
-                color="primary"
-              ></mat-checkbox>
+              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
@@ -66,7 +64,8 @@
                 *ngIf="role.name === 'Super Admin'"
               />
               <span class="role-count">
-                {{ role.permissionIds?.length }} of 4
+                {{ role.permissionIds?.length }} of
+                {{ permissionsTotalLength$ | async }}
               </span>
               <button
                 mat-icon-button
@@ -76,7 +75,7 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item disabled translate="copyBtn"></button>
+                <button mat-menu-item (click)="copyRole(role)" translate="copyBtn"></button>
                 <button
                   mat-menu-item
                   *ngIf="role.name !== 'Super Admin'"
@@ -141,6 +140,18 @@
                     }}
                   </mat-error>
                   <mat-error
+                    *ngIf="f.name.hasError('duplicateName')"
+                    class="role-errors"
+                  >
+                    {{
+                      'alreadyExists'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error
                     *ngIf="f.name.errors?.maxlength"
                     class="role-errors"
                   >
@@ -164,7 +175,7 @@
                 <div class="mat-error-description">
                   <mat-error
                     *ngIf="
-                      f.description.errors?.required && f.description.touched
+                      f.description.errors?.required && !f.description.pristine
                     "
                     class="role-errors"
                   >
@@ -216,6 +227,7 @@
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
+                  (click)="copyRoleClickHandler()"
                   [disabled]="copyDisabled"
                   translate="copyBtn"
                 ></button>

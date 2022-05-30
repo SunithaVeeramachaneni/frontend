@@ -1,37 +1,35 @@
 <div
   *ngIf="permissions$ | async as permissions; else loadingPermissionList"
-  class="m-t-5 permission-container"
+  class="permissions-container"
 >
-  <mat-accordion *ngFor="let module of permissions">
+  <mat-accordion *ngFor="let module of permissions; let i = index">
     <mat-expansion-panel
-      (opened)="panelOpenState = true"
-      (closed)="panelOpenState = false"
+      (opened)="panelOpenState[i] = true"
+      (closed)="panelOpenState[i] = false"
       hideToggle
       class="permissions-expand"
-      [(expanded)]="panelOpenState"
+      [(expanded)]="panelOpenState[i]"
     >
       <mat-expansion-panel-header class="h-40 expansion-header">
         <mat-panel-title>
           <mat-checkbox
             [disabled]="isEditable"
             [checked]="module.checked"
-            color="primary"
             [indeterminate]="fewComplete(module)"
             (change)="setAllChecked($event.checked, module)"
           >
-            {{ module.name }}
           </mat-checkbox>
-          <span *ngIf="module.countOfChecked !== 0" class="permission-count">
-            {{ module.countOfChecked }} of {{module.permissions.length}}
+          <span class="module-name">{{ module.name }}</span>
+          <span class="permission-count">
+            {{ module.countOfChecked }} of {{ module.permissions.length }}
           </span>
-          <mat-icon *ngIf="panelOpenState === false"> arrow_right </mat-icon>
-          <mat-icon *ngIf="panelOpenState === true">arrow_drop_down</mat-icon>
+          <mat-icon *ngIf="!panelOpenState[i]"> arrow_right </mat-icon>
+          <mat-icon *ngIf="panelOpenState[i]">arrow_drop_down</mat-icon>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ul class="m-0">
         <li *ngFor="let permission of module.permissions">
           <mat-checkbox
-            color="primary"
             [checked]="permission.checked"
             (change)="updateAllChecked($event.checked, permission)"
           >

@@ -15,12 +15,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class RoleDeleteModalComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<RoleDeleteModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
+    @Inject(MAT_DIALOG_DATA) public userdata
   ) {}
 
   ngOnInit(): void {}
 
-  cancelRole = (data) => {
+  deleteRole = (data) => {
     this.dialogRef.close(data);
   };
 }

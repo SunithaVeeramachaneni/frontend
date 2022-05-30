@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { RolesComponent } from './roles/roles.component';
 
 import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
-import { UsersComponent } from './users/users.component';
+import { InactiveUsersComponent } from './inactive-users/inactive-users.component';
 
 const routes: Routes = [
   {
@@ -15,12 +15,12 @@ const routes: Routes = [
         path: 'roles-permissions',
         component: RolesComponent,
         data: { breadcrumb: { label: 'Roles & Permissions' } }
+      },
+      {
+        path: 'inactive-users',
+        component: InactiveUsersComponent,
+        data: { breadcrumb: { label: 'Inactive Users' } }
       }
-      // {
-      //   path: 'inactive-users',
-      //   component: UsersComponent,
-      //   data: { breadcrumb: { label: 'Inactive Users' } }
-      // }
     ]
   }
 ];

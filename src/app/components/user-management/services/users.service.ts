@@ -20,7 +20,8 @@ import {
   Report,
   Count,
   Widget,
-  UserDetails
+  UserDetails,
+  Role
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import {
@@ -43,9 +44,13 @@ export class UsersService {
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {
-    user.user = user.firstName + ' ' + user.lastName;
+    if (user.firstName && user.lastName) {
+      user.user = user.firstName + ' ' + user.lastName;
+    } else {
+      user.user = '';
+    }
     const roleNames = roles.map((role) => role.name);
-    if (roleNames.length) user.displayRoles = roleNames;
+    if (roleNames.length) user.displayRoles = roleNames || '';
     user.roles = roles;
     if (!user.createdAt) user.createdAt = new Date();
     else user.createdAt = new Date(user.createdAt);
@@ -61,7 +66,7 @@ export class UsersService {
       condition: {
         operation: 'contains',
         fieldName: 'displayRoles',
-        operand: 'Tenant Admin'
+        operand: 'Super Admin'
       }
     };
     user.preTextImage = {
@@ -88,7 +93,7 @@ export class UsersService {
   getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
     this.appService._getResp(environment.userRoleManagementApiUrl, 'me', info);
 
-  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+  getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       'roles',
@@ -109,7 +114,7 @@ export class UsersService {
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
-    queryParams = { ...queryParams, isActive: true };
+    queryParams = { ...queryParams };
     // queryParams = {};
     return this.appService
       ._getResp(
@@ -159,15 +164,16 @@ export class UsersService {
       info
     );
 
-  deactivateUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {
-    const userID = user.id;
+  deactivateUser$ = (userID, info: ErrorInfo = {} as ErrorInfo) => {
     const deactivateUser = { isActive: false };
-    return this.appService.patchData(
-      environment.userRoleManagementApiUrl,
-      `users/${userID}`,
-      deactivateUser,
-      info
-    );
+    return this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/${userID}`,
+        deactivateUser,
+        info
+      )
+      .pipe(map((response) => (response === null ? deactivateUser : response)));
   };
 
   createUser$ = (user: UserDetails, info: ErrorInfo = {} as ErrorInfo) => {

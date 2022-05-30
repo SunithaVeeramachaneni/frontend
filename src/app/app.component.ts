@@ -29,6 +29,7 @@ const {
   rolesPermissions,
   inActiveTenants,
   //inActiveUsers,
+  inActiveUsers,
   tenantManagement
   //inActiveTenants
 } = routingUrls;
@@ -78,8 +79,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       image: '../assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
       subPages: [
-        { title: rolesPermissions.title, url: rolesPermissions.url }
-        // { title: inActiveUsers.title, url: inActiveUsers.url }
+        { title: rolesPermissions.title, url: rolesPermissions.url },
+        { title: inActiveUsers.title, url: inActiveUsers.url }
       ],
       disable: false
     },

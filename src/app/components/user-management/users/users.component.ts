@@ -1,8 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { Count, Role, TableEvent, UserDetails, UserTable } from 'src/app/interfaces';
-import { UsersService } from './users.service';
+import {
+  CellClickActionEvent,
+  Count,
+  Role,
+  TableEvent,
+  UserDetails,
+  UserTable
+} from 'src/app/interfaces';
+import { UsersService } from '../services/users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
@@ -13,8 +20,8 @@ import {
   ConfigOptions
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatDialog } from '@angular/material/dialog';
-import { UserDeleteModalComponent } from './user-delete-modal/user-delete-modal.component';
-import { AddEditUserModalComponent } from './add-edit-user-modal/add-edit-user-modal.component';
+import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
+import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 interface UserTableUpdate {
@@ -34,7 +41,6 @@ interface ModalInput {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UsersComponent implements OnInit {
-  
   columns: Column[] = [
     {
       id: 'user',
@@ -42,8 +48,8 @@ export class UsersComponent implements OnInit {
       type: 'string',
       order: 1,
       hasSubtitle: true,
-      showMenuOptions: true,
-      subtitleColumn: '',//'displayRoles',
+      showMenuOptions: false,
+      subtitleColumn: '', //'displayRoles',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -52,10 +58,10 @@ export class UsersComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {'font-weight': '500'},
-      subtitleStyle: {},// { 'font-size': '8pt', color: 'darkgray' },
+      titleStyle: { 'font-weight': '500' },
+      subtitleStyle: {}, // { 'font-size': '8pt', color: 'darkgray' },
       hasPreTextImage: true,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'displayRoles',
@@ -73,10 +79,10 @@ export class UsersComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: {'color': '#3D5AFE'},
+      titleStyle: { color: '#3D5AFE' },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: true,
+      hasPostTextImage: true
     },
     {
       id: 'email',
@@ -84,7 +90,7 @@ export class UsersComponent implements OnInit {
       type: 'string',
       order: 3,
       hasSubtitle: false,
-      showMenuOptions: true,
+      showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
@@ -97,7 +103,7 @@ export class UsersComponent implements OnInit {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     },
     {
       id: 'createdAt',
@@ -105,7 +111,7 @@ export class UsersComponent implements OnInit {
       type: 'date',
       order: 4,
       hasSubtitle: false,
-      showMenuOptions: true,
+      showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
       sortable: true,
@@ -118,7 +124,7 @@ export class UsersComponent implements OnInit {
       titleStyle: {},
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false,
+      hasPostTextImage: false
     }
   ];
   readonly routingUrls = routingUrls;
@@ -139,15 +145,15 @@ export class UsersComponent implements OnInit {
           title: 'Edit',
           action: 'edit'
         },
-        // {
-        //   title: 'Deactivate',
-        //   action: 'deactivate',
-        //   condition: {
-        //     operand: 'Tenant Admin',
-        //     operation: 'notContains',
-        //     fieldName: 'displayRoles'
-        //   }
-        // }
+        {
+          title: 'Deactivate',
+          action: 'deactivate',
+          condition: {
+            operand: 'Super Admin',
+            operation: 'notContains',
+            fieldName: 'displayRoles'
+          }
+        }
       ]
     },
     groupByColumns: [],
@@ -155,9 +161,11 @@ export class UsersComponent implements OnInit {
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+   
   };
-
+  selectedUsers = [];
   dataSource: MatTableDataSource<any>;
+  disableDeactivate: boolean = false;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
@@ -188,14 +196,26 @@ export class UsersComponent implements OnInit {
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService
-    .getRolesWithPermissions$()
-    .pipe(shareReplay(1));
-
+      .getRolesWithPermissions$()
+      .pipe(shareReplay(1));
   }
 
-  cellClickActionHandler(event: any) {
-    console.log("event is", event);
-  }
+  cellClickActionHandler = (event: CellClickActionEvent) => {
+    const {
+      columnId,
+      row: { id }
+    } = event;
+    switch (columnId) {
+      case 'user':
+      case 'roles':
+      case 'email':
+      case 'createdAt':
+        this.openEditAddUserModal(event.row)
+        break;
+      default:
+      // do nothing
+    }
+  };
 
   openEditAddUserModal(user = {} as UserDetails) {
     const openEditAddUserModalRef = this.dialog.open(
@@ -213,31 +233,30 @@ export class UsersComponent implements OnInit {
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
         this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
-          if(Object.keys(updatedUser).length) {
-          this.userTableUpdate$.next({
-            action: 'edit',
-            user: this.usersService.prepareUser(resp.user, resp.user.roles)
-          });
-          this.toast.show({
-            text: 'User updated successfully!',
-            type: 'success'
-          });
-        }
+          if (Object.keys(updatedUser).length) {
+            this.userTableUpdate$.next({
+              action: 'edit',
+              user: this.usersService.prepareUser(resp.user, resp.user.roles)
+            });
+            this.toast.show({
+              text: 'User updated successfully!',
+              type: 'success'
+            });
+          }
         });
       }
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
-          if(Object.keys(createdUser).length) {
-
-          this.userTableUpdate$.next({
-            action: 'add',
-            user: this.usersService.prepareUser(createdUser, resp.user.roles)
-          });
-          this.toast.show({
-            text: 'User created successfully!',
-            type: 'success'
-          });
-        }
+          if (Object.keys(createdUser).length) {
+            this.userTableUpdate$.next({
+              action: 'add',
+              user: this.usersService.prepareUser(createdUser, resp.user.roles)
+            });
+            this.toast.show({
+              text: 'User created successfully!',
+              type: 'success'
+            });
+          }
         });
       }
     });
@@ -251,7 +270,7 @@ export class UsersComponent implements OnInit {
     });
     openDeleteUserModalRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
-      this.usersService.deactivateUser$(user).subscribe((deletedUser) => {
+      this.usersService.deactivateUser$(user.id).subscribe((deletedUser) => {
         this.userTableUpdate$.next({
           action: 'deactivate',
           user
@@ -264,11 +283,11 @@ export class UsersComponent implements OnInit {
     });
   }
 
-
   getDisplayedUsers() {
     const initialUsers$ = this.usersService.getUsers$({
       skip: this.skip,
-      limit: this.limit
+      limit: this.limit,
+      isActive: true
       // searchKey: this.searchValue
     });
 
@@ -292,7 +311,7 @@ export class UsersComponent implements OnInit {
           case 'add':
             this.skip += 1;
             this.userCountUpdate$.next(+1);
-            users.unshift(user);
+            users.push(user);
             this.dataSource = new MatTableDataSource(users);
             break;
           case 'deactivate':
@@ -335,7 +354,7 @@ export class UsersComponent implements OnInit {
         }
 
         this.skip = initial.data ? initial.data.length : this.skip;
-        this.dataSource = new MatTableDataSource(initial.data); 
+        this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
@@ -344,7 +363,8 @@ export class UsersComponent implements OnInit {
   getUsers = () =>
     this.usersService.getUsers$({
       skip: this.skip,
-      limit: this.limit
+      limit: this.limit,
+      isActive: true
       // searchKey: this.searchValue
     });
 
@@ -362,19 +382,57 @@ export class UsersComponent implements OnInit {
   };
 
   rowLevelActionHandler = (event) => {
-    switch (event.action) {
+    const {data, action} = event;
+    switch (action) {
       case 'deactivate':
-        this.openDeleteUserModal(event.data);
+        this.openDeleteUserModal(data);
         break;
       case 'edit':
-        this.openEditAddUserModal(event.data);
+        this.openEditAddUserModal(data);
+        break;
+      case 'toggleRowSelect':
+        const index = this.selectedUsers.findIndex(
+          (user) => user.id === data.id
+        );
+        console.log("data is", data)
+        console.log("cond", data.displayRoles.includes('Super Admin'))
+        if(index !== -1) {
+          this.selectedUsers = this.selectedUsers.filter(user => user.id !== data.id)
+
+          if(data.displayRoles.includes('Super Admin'))
+            this.disableDeactivate = false;
+        }
+        else{
+            this.selectedUsers.push(data)
+            if(data.displayRoles.includes('Super Admin'))
+            this.disableDeactivate = true;
+        }
         break;
       default:
       // do nothing
     }
   };
+
+  deactivateUsers = () =>{
+    this.selectedUsers.forEach(selectUser =>{
+      const id = selectUser.id;
+      this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
+        if (Object.keys(deactivatedUser).length) {
+        this.userTableUpdate$.next({
+          action: 'deactivate',
+          user: {id, title: '', email: '', isActive: false, createdAt : new Date(), roles : []}
+        });
+        this.toast.show({
+          text: 'User deactivated successfully!',
+          type: 'success'
+        });
+        this.selectedUsers = [];
+      }
+      });
+    })
+  }
   handleTableEvent = (event) => {
-    // console.log('event', event);
+    this.fetchUsers$.next(event);
   };
   configOptionsChangeHandler = (event) => {
     // console.log('event', event);
