@@ -79,7 +79,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   connectToSlack(slackVerification): void {
-    console.log(slackVerification);
+    window.open(slackVerification.installationURL, '_self');
   }
 
   ngOnInit() {
