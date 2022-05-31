@@ -1,15 +1,15 @@
-<div ngClass="peoplesTabBody">
-  <div ngClass="searchBar">
-    <input matInput placeholder="Search Users" disabled ngClass="searchInput" />
-    <button mat-icon-button ngClass="searchMore">
+<div class="peoplesTabBody">
+  <div class="searchBar">
+    <input matInput placeholder="Search Users" disabled class="searchInput" />
+    <button mat-icon-button class="searchMore">
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
-  <div ngClass="userList">
+  <div class="userList">
     <mat-list>
       <mat-list-item
         *ngFor="let user of activeUsers$ | async; let i = index"
-        ngClass="peopleList"
+        class="peopleList"
         (click)="onTextMessageClick(user)"
       >
         <div class="icon-button" mat-list-icon>

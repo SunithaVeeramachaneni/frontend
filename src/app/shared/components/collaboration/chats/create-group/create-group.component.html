@@ -1,25 +1,20 @@
-<div ngClass="chatsBody">
-  <div ngClass="conversationsList">
-    <div ngClass="participants">
+<div class="chatsBody">
+  <div class="conversationsList">
+    <div class="participants">
       <button mat-icon-button (click)="switchToConversationsView()">
         <mat-icon>arrow_back</mat-icon>
       </button>
 
-      <span ngClass="participantsTitle">Add Participants</span>
+      <span class="participantsTitle">Add Participants</span>
     </div>
-    <div ngClass="searchBar">
-      <input
-        matInput
-        placeholder="Search Users"
-        disabled
-        ngClass="searchInput"
-      />
+    <div class="searchBar">
+      <input matInput placeholder="Search Users" disabled class="searchInput" />
     </div>
-    <div ngClass="userList">
+    <div class="userList">
       <mat-list>
         <mat-list-item
           *ngFor="let user of activeUsers$ | async; let i = index"
-          ngClass="peopleList"
+          class="peopleList"
           (click)="selectUser(user)"
         >
           <div class="icon-button" mat-list-icon>
@@ -34,12 +29,12 @@
       </mat-list>
     </div>
   </div>
-  <div ngClass="conversationContent">
-    <div ngClass="userList">
+  <div class="conversationContent">
+    <div class="userList">
       <mat-list>
         <mat-list-item
           *ngFor="let user of selectedUsers; let i = index"
-          ngClass="peopleList"
+          class="peopleList"
         >
           <div class="icon-button" mat-list-icon>
             <img class="icon" [src]="user.profileImage" />
@@ -55,20 +50,20 @@
         </mat-list-item>
       </mat-list>
     </div>
-    <mat-divider ngClass="horiz-divider"></mat-divider>
-    <div ngClass="chatBottom">
-      <div ngClass="messageInputBar">
-        <div ngClass="messageInputGroup">
+    <mat-divider class="horiz-divider"></mat-divider>
+    <div class="chatBottom">
+      <div class="messageInputBar">
+        <div class="messageInputGroup">
           <input
             matInput
-            ngClass="messageInput"
+            class="messageInput"
             placeholder="Group Name"
             [(ngModel)]="groupName"
             autocomplete="off"
           />
           <button
             mat-flat-button
-            ngClass="convBtn"
+            class="convBtn"
             color="primary"
             [disabled]="!(groupName.length && selectedUsers.length)"
             (click)="startConversation(groupName, selectedUsers)"
