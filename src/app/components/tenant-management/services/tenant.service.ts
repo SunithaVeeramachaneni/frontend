@@ -53,13 +53,15 @@ export class TenantService {
   getTenantsCount$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Count> =>
-    this.appService._getResp(
+  ): Observable<Count> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `catalogs/count`,
-      info,
+      { displayToast, failureResponse },
       queryParams
     );
+  };
 
   getTenantById$ = (
     id: number,

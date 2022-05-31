@@ -1,5 +1,5 @@
 import { DebugElement } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { MockComponent } from 'ng-mocks';
@@ -10,6 +10,7 @@ import { InstructionService } from '../services/instruction.service';
 import { CustomStepperComponent } from './overview.component';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { State } from '../../../state/app.state';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 const sid = 1234;
 
@@ -29,14 +30,14 @@ describe('CustomStepperComponent', () => {
       'updateWorkInstruction',
       'addStep',
       'getStepById',
-      'getStepsByWID',
+      'getStepsByWID'
     ]);
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       snapshot: {
         paramMap: convertToParamMap({
-          id: sid,
-        }),
-      },
+          id: sid
+        })
+      }
     });
     wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [
       'unloadImages',
@@ -49,8 +50,11 @@ describe('CustomStepperComponent', () => {
     ]);
 
     TestBed.configureTestingModule({
-      declarations: [CustomStepperComponent, MockComponent(NgxSpinnerComponent)],
-      imports: [AppMaterialModules, ReactiveFormsModule],
+      declarations: [
+        CustomStepperComponent,
+        MockComponent(NgxSpinnerComponent)
+      ],
+      imports: [AppMaterialModules, ReactiveFormsModule, SharedModule],
       providers: [
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },

@@ -11,6 +11,7 @@ import {
   Validators
 } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { permissions } from 'src/app/app.constants';
 
 export interface ReportData {
   name: string;
@@ -25,6 +26,7 @@ export interface ReportData {
 })
 export class ReportSaveAsModalComponent implements OnInit {
   reportNameAndDescForm: FormGroup;
+  readonly permissions = permissions;
   constructor(
     private dialogRef: MatDialogRef<ReportSaveAsModalComponent>,
     @Inject(MAT_DIALOG_DATA)

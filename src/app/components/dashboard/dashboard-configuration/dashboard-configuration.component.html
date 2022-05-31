@@ -15,13 +15,28 @@
       *ngIf="dashboards$ | async as dashboards"
       (selectionChange)="dashboardSelectionChanged($event)"
     >
-      <mat-option
+      <ng-container
         *ngFor="let dashboard of dashboards.concat(staticDropDownOptions)"
-        [value]="dashboard"
       >
-        {{ dashboard.name | translate }}
-        {{ dashboard.isDefault === true ? '(default)' : '' }}
-      </mat-option>
+        <ng-container
+          *ngIf="dashboard.id === 'CREATE_DASHBOARD'; else displayOptions"
+        >
+          <ng-container
+            *appCheckUserHasPermission="[permissions.createDashboard]"
+          >
+            <mat-option [value]="dashboard">
+              {{ dashboard.name | translate }}
+            </mat-option>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #displayOptions>
+          <mat-option [value]="dashboard">
+            {{ dashboard.name | translate }}
+            {{ dashboard.isDefault === true ? '(default)' : '' }}
+          </mat-option>
+        </ng-template>
+      </ng-container>
     </mat-select>
   </mat-form-field>
   <div class="width-60 dis-flex">
@@ -30,33 +45,55 @@
       <span *ngIf="dashboard.isDefault" class="default-chip">Default</span>
     </span>
 
-    <button
-      [matMenuTriggerFor]="menu"
-      class="more-icon"
-      *ngIf="dashboardDisplayMode !== 'ALL'"
-      [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
+    <ng-container
+      *appCheckUserHasPermission="[
+        permissions.updateDashboard,
+        permissions.copyDashboard,
+        permissions.deleteDashboard
+      ]"
     >
-      <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu" xPosition="before">
-      <button mat-menu-item (click)="editDashboard(dashboard)" translate>
-        edit
+      <button
+        [matMenuTriggerFor]="menu"
+        class="more-icon"
+        *ngIf="dashboardDisplayMode !== 'ALL'"
+        [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
+      >
+        <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
       </button>
-      <button mat-menu-item (click)="copyDashboard(dashboard)" translate>
-        copy
+    </ng-container>
+
+    <mat-menu #menu="matMenu" xPosition="before">
+      <button
+        mat-menu-item
+        (click)="editDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.updateDashboard]"
+        translate
+      >
+        edit
       </button>
       <button
         mat-menu-item
-        (click)="markDashboardDefault(dashboard)"
-        *ngIf="!dashboard.isDefault"
+        (click)="copyDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.copyDashboard]"
         translate
       >
-        markDefault
+        copy
       </button>
+      <ng-container *appCheckUserHasPermission="[permissions.updateDashboard]">
+        <button
+          mat-menu-item
+          (click)="markDashboardDefault(dashboard)"
+          *ngIf="!dashboard.isDefault"
+          translate
+        >
+          markDefault
+        </button>
+      </ng-container>
       <button
         mat-menu-item
         class="delete-menu-item"
         (click)="deleteDashboard(dashboard)"
+        *appCheckUserHasPermission="[permissions.deleteDashboard]"
         translate
       >
         delete
@@ -74,6 +111,7 @@
       translate="newWidget"
       [disabled]="!dashboard.id"
       (click)="createWidget()"
+      *appCheckUserHasPermission="[permissions.createDashboard]"
     ></button>
   </div>
 </div>
@@ -95,20 +133,37 @@
           >
             {{ widget.name }}
           </div>
-          <button [matMenuTriggerFor]="widgetMenu" class="more-icon">
+          <button
+            [matMenuTriggerFor]="widgetMenu"
+            class="more-icon"
+            *appCheckUserHasPermission="[
+              permissions.updateDashboard,
+              permissions.copyDashboard,
+              permissions.deleteDashboard
+            ]"
+          >
             <mat-icon>more_horiz</mat-icon>
           </button>
           <mat-menu #widgetMenu="matMenu">
-            <button mat-menu-item (click)="editWidget(widget)">
+            <button
+              mat-menu-item
+              (click)="editWidget(widget)"
+              *appCheckUserHasPermission="[permissions.updateDashboard]"
+            >
               <span translate>editWidget</span>
             </button>
-            <button mat-menu-item (click)="copyWidget(widget)">
+            <button
+              mat-menu-item
+              (click)="copyWidget(widget)"
+              *appCheckUserHasPermission="[permissions.copyDashboard]"
+            >
               <span translate>copyWidget</span>
             </button>
             <button
               mat-menu-item
               (click)="deleteWidget(widget)"
               class="text-red"
+              *appCheckUserHasPermission="[permissions.deleteDashboard]"
             >
               <span translate>deleteWidget</span>
             </button>

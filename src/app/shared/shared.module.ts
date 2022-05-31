@@ -22,6 +22,7 @@ import { PeopleComponent } from './components/collaboration/people/people.compon
 import { ChatsComponent } from './components/collaboration/chats/chats.component';
 import { CreateGroupComponent } from './components/collaboration/chats/create-group/create-group.component';
 import { CallsComponent } from './components/collaboration/calls/calls.component';
+import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { CallsComponent } from './components/collaboration/calls/calls.component
     ChatsComponent,
     CreateGroupComponent,
     CallsComponent,
-    NumberToKMPipe
+    NumberToKMPipe,
+    CheckUserHasPermissionDirective
   ],
   imports: [
     FormsModule,
@@ -60,7 +62,8 @@ import { CallsComponent } from './components/collaboration/calls/calls.component
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
-    NumberToKMPipe
+    NumberToKMPipe,
+    CheckUserHasPermissionDirective
   ],
   providers: [DatePipe]
 })

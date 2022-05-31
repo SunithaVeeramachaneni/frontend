@@ -6,13 +6,20 @@ import {
   OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { defaultLanguage, routingUrls } from './app.constants';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { filter, mergeMap, tap } from 'rxjs/operators';
+import {
+  defaultLanguage,
+  routingUrls,
+  permissions as perms
+} from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { UsersService } from './components/user-management/users/users.service';
 import { environment } from './../environments/environment';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { UsersService } from './components/user-management/services/users.service';
+import { combineLatest, Observable, of } from 'rxjs';
+import { Permission } from './interfaces';
 
 const {
   dashboard,
@@ -46,14 +53,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: dashboard.url,
       image: '../assets/sidebar-icons/dashboard-gray.svg',
       showSubMenu: false,
-      disable: false,
-      subPages: [{ title: reports.title, url: reports.url }]
+      permission: perms.viewDashboards,
+      subPages: [
+        {
+          title: reports.title,
+          url: reports.url,
+          permission: perms.viewReports
+        }
+      ],
+      disable: false
     },
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
       image: 'assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
+      permission: perms.viewTenants,
       subPages: [],
       disable: false
     },
@@ -62,6 +77,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: maintenance.url,
       image: '../assets/sidebar-icons/maintenance-gray.svg',
       showSubMenu: false,
+      permission: perms.viewMaintenanceControlCenter,
       subPages: null,
       disable: false
     },
@@ -70,6 +86,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: spareParts.url,
       image: '../assets/sidebar-icons/spare-parts-gray.svg',
       showSubMenu: false,
+      permission: perms.viewSparePartsControlCenter,
       subPages: null,
       disable: false
     },
@@ -78,9 +95,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: userManagement.url,
       image: '../assets/sidebar-icons/user-management.svg',
       showSubMenu: false,
+      permission: perms.viewUsers,
       subPages: [
-        { title: rolesPermissions.title, url: rolesPermissions.url },
-        { title: inActiveUsers.title, url: inActiveUsers.url }
+        {
+          title: rolesPermissions.title,
+          url: rolesPermissions.url,
+          permission: perms.viewRoles
+        },
+        {
+          title: inActiveUsers.title,
+          url: inActiveUsers.url,
+          permission: perms.viewInactiveUsers
+        }
       ],
       disable: false
     },
@@ -89,14 +115,35 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: workInstructions.url,
       image: '../assets/sidebar-icons/work-instructions-gray.svg',
       showSubMenu: false,
-      disable: false,
+      permission: perms.viewWorkInstructions,
       subPages: [
-        { title: favorites.title, url: favorites.url },
-        { title: drafts.title, url: drafts.url },
-        { title: published.title, url: published.url },
-        { title: recents.title, url: recents.url },
-        { title: files.title, url: files.url }
-      ]
+        {
+          title: favorites.title,
+          url: favorites.url,
+          permission: perms.viewWorkInstructions
+        },
+        {
+          title: drafts.title,
+          url: drafts.url,
+          permission: perms.viewWorkInstructions
+        },
+        {
+          title: published.title,
+          url: published.url,
+          permission: perms.viewWorkInstructions
+        },
+        {
+          title: recents.title,
+          url: recents.url,
+          permission: perms.viewWorkInstructions
+        },
+        {
+          title: files.title,
+          url: files.url,
+          permission: perms.viewFiles
+        }
+      ],
+      disable: false
     }
   ];
   loggedIn = false;
@@ -105,6 +152,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   currentRouteUrl: string;
   selectedMenu: string;
   eventSource: any;
+  permissions$: Observable<Permission[]>;
+  menuHasSubMenu = {};
+  isNavigated = false;
 
   constructor(
     private commonService: CommonService,
@@ -112,6 +162,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService,
     private chatService: ChatService,
+    private oidcSecurityService: OidcSecurityService,
     private usersService: UsersService
   ) {}
 
@@ -182,6 +233,76 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.translateService.use(defaultLanguage);
     this.commonService.setTranslateLanguage(defaultLanguage);
+
+    this.oidcSecurityService.userData$
+      .pipe(
+        mergeMap((res) => {
+          if (res.userData) {
+            if (!this.commonService.getPermissions().length) {
+              return this.usersService
+                .getUserPermissionsByEmail$(res.userData.email)
+                .pipe(
+                  tap((permissions) =>
+                    this.commonService.setPermissions(permissions)
+                  )
+                );
+            } else {
+              return of(null);
+            }
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe();
+
+    this.permissions$ = this.commonService.permissionsAction$;
+
+    combineLatest([
+      this.commonService.permissionsAction$.pipe(
+        filter((permissions) => permissions.length !== 0)
+      ),
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationStart)
+      )
+    ])
+      .pipe(
+        tap(([permissions, event]: [Permission[], NavigationStart]) => {
+          if (event.url === '/') {
+            this.navigateToModule(
+              permissions,
+              perms.viewDashboards,
+              'dashboards'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewTenants,
+              'tenant-management'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewMaintenanceControlCenter,
+              'maintenance'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewSparePartsControlCenter,
+              'spare-parts'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewUsers,
+              'user-management'
+            );
+            this.navigateToModule(
+              permissions,
+              perms.viewWorkInstructions,
+              'work-instructions'
+            );
+          }
+        })
+      )
+      .subscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -212,6 +333,41 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy() {
     if (this.eventSource) {
       this.eventSource.close();
+    }
+  }
+
+  checkUserHasSubMenusPermissions(
+    permissions: Permission[],
+    subMenus,
+    menuPermission: string
+  ) {
+    if (
+      permissions.length &&
+      this.menuHasSubMenu[menuPermission] === undefined
+    ) {
+      const subMenuPermission = subMenus.find((subMenu) =>
+        permissions.find((permission) => subMenu.permission === permission.name)
+      );
+      const hasPermission = subMenuPermission ? true : false;
+      this.menuHasSubMenu[menuPermission] = hasPermission;
+      return hasPermission;
+    }
+    return this.menuHasSubMenu[menuPermission];
+  }
+
+  navigateToModule(
+    permissions: Permission[],
+    permission: string,
+    routePath: string
+  ) {
+    if (!this.isNavigated && permissions.length) {
+      const found = permissions.find((perm) => perm.name === permission);
+      if (found) {
+        if (permission !== perms.viewDashboards) {
+          this.router.navigate([routePath]);
+        }
+        this.isNavigated = true;
+      }
     }
   }
 }

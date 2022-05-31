@@ -9,6 +9,11 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { Observable } from 'rxjs';
+import { Permission } from 'src/app/interfaces';
+import { tap } from 'rxjs/operators';
+import { permissions as perms } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-mcc-card',
@@ -17,15 +22,24 @@ import { DomSanitizer } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MCCCardComponent implements OnInit {
-  constructor(
-    public translateService: TranslateService,
-    private sanitizer: DomSanitizer
-  ) {}
-
   @Input('workOrder') workOrder;
   @Output('assign') assign = new EventEmitter();
   isDropdownOpen = false;
-  ngOnInit() {}
+  permissions$: Observable<Permission[]>;
+  permissions: Permission[];
+  readonly perms = perms;
+
+  constructor(
+    public translateService: TranslateService,
+    private sanitizer: DomSanitizer,
+    private commonService: CommonService
+  ) {}
+
+  ngOnInit() {
+    this.permissions$ = this.commonService.permissionsAction$.pipe(
+      tap((permissions) => (this.permissions = permissions))
+    );
+  }
 
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -37,8 +51,15 @@ export class MCCCardComponent implements OnInit {
     }
   };
   onAssignPress = (workOrder) => {
-    this.assign.emit(workOrder);
+    if (this.checkUserHasPermission('ASSIGN_WORK_ORDERS')) {
+      this.assign.emit(workOrder);
+    }
   };
 
-  ngOnDestroy() {}
+  checkUserHasPermission(checkPermissions: string) {
+    return this.commonService.checkUserHasPermission(
+      this.permissions,
+      checkPermissions
+    );
+  }
 }
