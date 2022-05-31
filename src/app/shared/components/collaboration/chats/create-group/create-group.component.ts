@@ -71,20 +71,26 @@ export class CreateGroupComponent implements OnInit {
     }
   };
   startConversation = (groupName: string, selectedUsers: any) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     // TODO: map slackID from selectedUsers parameter and push those to invitedUsers when multiple users were able to login to CWP with their tenant domain.
     const invitedUsers = [];
 
     groupName = groupName.replace(/[^a-zA-Z ]/g, '');
     groupName = groupName.replaceAll(/\s/g, '');
-    this.chatService.createConversation$(groupName, invitedUsers).subscribe(
-      (resp) => {
-        if (resp.ok) {
-          this.handleGroupCreation.emit(resp);
+    this.chatService
+      .createConversation$(groupName, invitedUsers, info)
+      .subscribe(
+        (resp) => {
+          if (resp.ok) {
+            this.handleGroupCreation.emit(resp);
+          }
+        },
+        (err) => {
+          // TODO: Display toasty messsage
         }
-      },
-      (err) => {
-        // TODO: Display toasty messsage
-      }
-    );
+      );
   };
 }

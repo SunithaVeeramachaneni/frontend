@@ -115,11 +115,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   downloadFile = (file: any) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     if (this.downloadInProgress) {
       return;
     }
     this.downloadInProgress = true;
-    this.chatService.downloadFileSlack$(file.url_private).subscribe(
+    this.chatService.downloadFileSlack$(file.url_private, info).subscribe(
       (data) => {
         const url = window.URL.createObjectURL(data);
         const a = document.createElement('a');
@@ -216,8 +220,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   sendMessageToUser = async (targetUser, message) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     this.messageDeliveryProgress = true;
-    this.chatService.sendMessage$(message, targetUser.id).subscribe(
+    this.chatService.sendMessage$(message, targetUser.id, info).subscribe(
       (response) => {
         if (response && Object.keys(response).length) {
           if (response.ok) {
@@ -265,11 +273,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        const info: ErrorInfo = {
+          displayToast: true,
+          failureResponse: 'throwError'
+        };
         const conversationId = selectedConversation.id;
         const formData = new FormData();
         formData.append('attachment', result);
         this.chatService
-          .uploadFileToConversation$(conversationId, formData)
+          .uploadFileToConversation$(conversationId, formData, info)
           .subscribe(
             (res) => {
               const filesArr = [];
