@@ -35,6 +35,7 @@ import {
   take,
   tap
 } from 'rxjs/operators';
+import { permissions } from 'src/app/app.constants';
 import {
   Dashboard,
   Widget,
@@ -174,6 +175,7 @@ export class DashboardConfigurationComponent implements OnInit {
   mimimizeSidebar$: Observable<boolean>;
   interval$: Observable<number>;
   dashboardControl = new FormControl();
+  readonly permissions = permissions;
   private _dashboard: Dashboard;
   private _dashboardDisplayMode: string;
 

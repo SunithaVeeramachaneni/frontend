@@ -38,7 +38,11 @@ import {
 } from 'src/app/interfaces';
 import { ToastService } from 'src/app/shared/toast';
 import { ReportService } from '../services/report.service';
-import { defaultLimit, defaultCountFieldName } from '../../../app.constants';
+import {
+  defaultLimit,
+  defaultCountFieldName,
+  permissions
+} from '../../../app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import {
   Column,
@@ -127,6 +131,7 @@ export class ReportConfigurationComponent implements OnInit {
   subscription: any;
   isExportInProgress = false;
   showPreview: boolean;
+  readonly permissions = permissions;
 
   constructor(
     private cdrf: ChangeDetectorRef,
@@ -194,10 +199,12 @@ export class ReportConfigurationComponent implements OnInit {
       map(([reportDefinition, filtersApplied, params, queryParams]) => {
         this.skip = 0;
         this.filtersApplied = filtersApplied;
+        const preview =
+          queryParams.preview === 'true' || queryParams.preview === 'false'
+            ? JSON.parse(queryParams.preview)
+            : false;
         this.showPreview =
-          this.showPreview === undefined
-            ? queryParams.preview
-            : this.showPreview;
+          this.showPreview === undefined ? preview : this.showPreview;
         if (this.filtersApplied) {
           this.dataCount$ = this.getReportDataCount();
           return this.getReportData();

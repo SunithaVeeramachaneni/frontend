@@ -9,6 +9,7 @@
         type="button"
         class="btn btn-link font-weight-bold btn-link-custom categories-button"
         (click)="open(catSubscribeComponent, {})"
+        *appCheckUserHasPermission="[permissions.createCategory]"
       >
         <img
           src="./assets/work-instructions-icons/svg/addcategory.svg"
@@ -77,6 +78,10 @@
                 mat-icon-button
                 [matMenuTriggerFor]="menu"
                 style="margin-right: 20px"
+                *appCheckUserHasPermission="[
+                  permissions.updateCategory,
+                  permissions.deleteCategory
+                ]"
               >
                 <mat-icon>more_horiz</mat-icon>
               </button>
@@ -85,6 +90,7 @@
                   mat-menu-item
                   (click)="open(catSubscribeComponent, obj)"
                   id="editCategory"
+                  *appCheckUserHasPermission="[permissions.updateCategory]"
                 >
                   <span class="menu-text">Edit Category</span>
                 </button>
@@ -92,6 +98,7 @@
                   mat-menu-item
                   (click)="open(delCatSubscribeComponent, obj)"
                   id="deleteCategory"
+                  *appCheckUserHasPermission="[permissions.deleteCategory]"
                 >
                   <span class="menu-text text-red">Delete Category</span>
                 </button>

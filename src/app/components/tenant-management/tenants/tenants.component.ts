@@ -3,18 +3,20 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { defaultLimit } from 'src/app/app.constants';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
   DeactivateTenant,
+  Permission,
   RowLevelActionEvent,
   TableColumn,
   TableEvent,
   Tenant,
   TenantData
 } from 'src/app/interfaces';
+import { CommonService } from 'src/app/shared/services/common.service';
 import { TenantService } from '../services/tenant.service';
 
 @Component({
@@ -70,14 +72,9 @@ export class TenantsComponent implements OnInit {
     enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
-    displayActionsColumn: true,
+    displayActionsColumn: false,
     rowLevelActions: {
-      menuActions: [
-        {
-          title: 'Edit',
-          action: 'edit'
-        }
-      ]
+      menuActions: []
     },
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
@@ -89,10 +86,16 @@ export class TenantsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   deactivate = false;
+  permissions$: Observable<Permission[]>;
+  readonly perms = perms;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 
-  constructor(private tenantService: TenantService, private router: Router) {}
+  constructor(
+    private tenantService: TenantService,
+    private router: Router,
+    private commonService: CommonService
+  ) {}
 
   ngOnInit(): void {
     this.tenantsOnLoad$ = this.getTenants();
@@ -147,6 +150,10 @@ export class TenantsComponent implements OnInit {
         }
         return tenantsCount;
       })
+    );
+
+    this.permissions$ = this.commonService.permissionsAction$.pipe(
+      tap((permissions) => this.prepareMenuActions(permissions))
     );
   }
 
@@ -203,4 +210,27 @@ export class TenantsComponent implements OnInit {
       // do nothing
     }
   };
+
+  prepareMenuActions(permissions: Permission[]) {
+    const menuActions = [];
+
+    if (
+      this.commonService.checkUserHasPermission(permissions, 'UPDATE_TENANT')
+    ) {
+      menuActions.push({
+        title: 'Edit',
+        action: 'edit'
+      });
+    }
+
+    this.configOptions.rowLevelActions.menuActions = [
+      ...this.configOptions.rowLevelActions.menuActions,
+      ...menuActions
+    ];
+    this.configOptions.displayActionsColumn = this.configOptions.rowLevelActions
+      .menuActions.length
+      ? true
+      : false;
+    this.configOptions = { ...this.configOptions };
+  }
 }

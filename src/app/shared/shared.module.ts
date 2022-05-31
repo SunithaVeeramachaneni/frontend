@@ -13,6 +13,7 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
+import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
-    NumberToKMPipe
+    NumberToKMPipe,
+    CheckUserHasPermissionDirective
   ],
   imports: [
     FormsModule,
@@ -43,7 +45,8 @@ import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
-    NumberToKMPipe
+    NumberToKMPipe,
+    CheckUserHasPermissionDirective
   ],
   providers: [DatePipe]
 })

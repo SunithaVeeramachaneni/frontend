@@ -32,12 +32,14 @@
         class="delete-forever-icon align-icon p-t-5 p-l-15 step-action"
         title="Delete Step"
         (click)="deleteStep(this.step)"
+        *appCheckUserHasPermission="[permissions.deleteWorkInstruction]"
         >delete_forever</mat-icon
       >
       <mat-icon
         class="align-icon fa-pull-right p-l-0 p-t-5 step-action"
         title="Clone Step"
         (click)="cloneCurrentStep()"
+        *appCheckUserHasPermission="[permissions.createWorkInstruction]"
         >content_copy
       </mat-icon>
     </div>
@@ -100,7 +102,13 @@
                   <br />
                   <div class="image-title p-l-10">{{ file }}</div>
                   <div class="delete-uploaded-file">
-                    <button class="delete-file" (click)="deleteAtt(file, i)">
+                    <button
+                      class="delete-file"
+                      (click)="deleteAtt(file, i)"
+                      *appCheckUserHasPermission="[
+                        permissions.deleteWorkInstruction
+                      ]"
+                    >
                       <mat-icon class="delete-forever-icon"
                         >delete_forever</mat-icon
                       >
@@ -231,7 +239,11 @@
               {{ file }}
             </div>
             <div class="p-0 vertical-center-icons width-20">
-              <button class="delete-file" (click)="deleteAtt(file, i)">
+              <button
+                class="delete-file"
+                (click)="deleteAtt(file, i)"
+                *appCheckUserHasPermission="[permissions.deleteWorkInstruction]"
+              >
                 <mat-icon class="delete-forever-icon">delete_forever</mat-icon>
               </button>
               <div
@@ -239,6 +251,10 @@
                 class="customised-drop-zone"
                 [accept]="'image/*'"
                 (change)="uploadFile($event, i)"
+                *appCheckUserHasPermission="[
+                  permissions.createWorkInstruction,
+                  permissions.updateWorkInstruction
+                ]"
               >
                 <input
                   hidden

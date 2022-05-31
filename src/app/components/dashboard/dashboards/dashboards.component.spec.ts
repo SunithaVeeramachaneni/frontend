@@ -13,6 +13,8 @@ import { DashboardsComponent } from './dashboards.component';
 import { dashboards, dashboards$ } from './dashboards.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { RouterTestingModule } from '@angular/router/testing';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const info: ErrorInfo = {
   displayToast: true,
@@ -36,7 +38,9 @@ describe('DashboardsComponent', () => {
         dashboardSelectionChanged$: of('')
       }
     );
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['getUserName']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['getUserName'], {
+      permissionsAction$: permissions$
+    });
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -47,7 +51,8 @@ describe('DashboardsComponent', () => {
       imports: [
         AppMaterialModules,
         NgxShimmerLoadingModule,
-        RouterTestingModule
+        RouterTestingModule,
+        SharedModule
       ],
       providers: [
         { provide: MatDialog, useValue: dialogSpy },

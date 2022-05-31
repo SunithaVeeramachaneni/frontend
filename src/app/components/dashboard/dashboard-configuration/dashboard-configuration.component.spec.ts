@@ -15,6 +15,8 @@ import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ToastService } from 'src/app/shared/toast';
 import {
   dashboards,
@@ -41,7 +43,8 @@ describe('DashboardConfigurationComponent', () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      minimizeSidebarAction$: of(true)
+      minimizeSidebarAction$: of(true),
+      permissionsAction$: permissions$
     });
     widgetServiceSpy = jasmine.createSpyObj('WidgetService', [
       'updateWidget$',
@@ -72,6 +75,7 @@ describe('DashboardConfigurationComponent', () => {
         AppMaterialModules,
         GridsterModule,
         BrowserAnimationsModule,
+        SharedModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -134,7 +138,8 @@ describe('TestDashboardConfigurationHostComponent', () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      minimizeSidebarAction$: of(true)
+      minimizeSidebarAction$: of(true),
+      permissionsAction$: permissions$
     });
     widgetServiceSpy = jasmine.createSpyObj('WidgetService', [
       'updateWidget$',
@@ -166,6 +171,7 @@ describe('TestDashboardConfigurationHostComponent', () => {
         AppMaterialModules,
         GridsterModule,
         BrowserAnimationsModule,
+        SharedModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,

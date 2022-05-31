@@ -38,6 +38,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -194,75 +195,74 @@ describe('WorkInstructionsComponent', () => {
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getFavInstructions',
-        'getDraftedInstructions',
-        'getRecentInstructions',
-        'uploadWIExcel'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
-      wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
-        fetchWIAction$: of(true)
-      });
-      overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-      headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-        'getLogonUserDetails'
-      ]);
-      oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-        userData$
-      });
-      commonServiceSpy = jasmine.createSpyObj(
-        'CommonService',
-        ['setHeaderTitle', 'setUserInfo'],
-        {
-          currentRouteUrlAction$: of('/work-instructions'),
-          headerTitleAction$: of(routingUrls.workInstructions.title),
-          minimizeSidebarAction$: of(false)
-        }
-      );
+  beforeEach(waitForAsync(() => {
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getFavInstructions',
+      'getDraftedInstructions',
+      'getRecentInstructions',
+      'uploadWIExcel'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [], {
+      fetchWIAction$: of(true)
+    });
+    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'getLogonUserDetails'
+    ]);
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
+      userData$
+    });
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setHeaderTitle', 'setUserInfo'],
+      {
+        currentRouteUrlAction$: of('/work-instructions'),
+        headerTitleAction$: of(routingUrls.workInstructions.title),
+        minimizeSidebarAction$: of(false),
+        permissionsAction$: permissions$
+      }
+    );
 
-      TestBed.configureTestingModule({
-        declarations: [
-          WorkInstructionsComponent,
-          MockComponent(CategoriesComponent),
-          TimeAgoPipe,
-          DummyComponent,
-          MockComponent(NgxSpinnerComponent)
-        ],
-        imports: [
-          NgxPaginationModule,
-          NgpSortModule,
-          Ng2SearchPipeModule,
-          RouterTestingModule,
-          AppMaterialModules,
-          FormsModule,
-          SharedModule,
-          BrowserAnimationsModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: WiCommonService, useValue: wiCommonServiceSpy },
-          { provide: OverlayService, useValue: overlayServiceSpy },
-          { provide: HeaderService, useValue: headerServiceSpy },
-          { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-          { provide: CommonService, useValue: commonServiceSpy }
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [
+        WorkInstructionsComponent,
+        MockComponent(CategoriesComponent),
+        TimeAgoPipe,
+        DummyComponent,
+        MockComponent(NgxSpinnerComponent)
+      ],
+      imports: [
+        NgxPaginationModule,
+        NgpSortModule,
+        Ng2SearchPipeModule,
+        RouterTestingModule,
+        AppMaterialModules,
+        FormsModule,
+        SharedModule,
+        BrowserAnimationsModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: OverlayService, useValue: overlayServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy }
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     breadcrumbService = TestBed.inject(BreadcrumbService);

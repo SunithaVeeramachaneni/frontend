@@ -28,6 +28,7 @@ import {
   defaultCategoryName,
   routingUrls
 } from '../../../app.constants';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -155,7 +156,8 @@ describe('PublishedComponent', () => {
       'CommonService',
       ['setHeaderTitle'],
       {
-        currentRouteUrlAction$: of('/work-instructions/published')
+        currentRouteUrlAction$: of('/work-instructions/published'),
+        permissionsAction$: permissions$
       }
     );
 

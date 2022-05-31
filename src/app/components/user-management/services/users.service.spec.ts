@@ -109,17 +109,17 @@ describe('User service', () => {
   });
 
   it('needs to get roles by user ID', () => {
-    const roles$ = service.getRoleByUserID$(1);
+    const roles$ = service.getRolesByUserID$(1);
     roles$.subscribe((res) => {
       expect(isEqual(res, rolesByID1Mock)).toBeTrue();
     });
 
-    const roles2$ = service.getRoleByUserID$(2);
+    const roles2$ = service.getRolesByUserID$(2);
     roles2$.subscribe((res) => {
       expect(isEqual(res, rolesByID2Mock)).toBeTrue();
     });
 
-    const roles3$ = service.getRoleByUserID$(3);
+    const roles3$ = service.getRolesByUserID$(3);
     roles3$.subscribe((res) => {
       expect(isEqual(res, rolesByID3Mock)).toBeTrue();
     });

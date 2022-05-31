@@ -24,6 +24,8 @@ import { tenants } from '../services/tenant.service.mock';
 import { cloneDeep } from 'lodash';
 
 import { TenantComponent } from './tenant.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
@@ -71,10 +73,13 @@ describe('TenantComponent', () => {
       data: of({}),
       queryParams: of({})
     });
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [
-      'setHeaderTitle',
-      'decrypt'
-    ]);
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setHeaderTitle', 'decrypt'],
+      {
+        permissionsAction$: permissions$
+      }
+    );
 
     await TestBed.configureTestingModule({
       declarations: [TenantComponent, MockComponent(NgxSpinnerComponent)],
@@ -83,6 +88,7 @@ describe('TenantComponent', () => {
         RouterTestingModule,
         AppMaterialModules,
         BrowserAnimationsModule,
+        SharedModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -2455,7 +2461,7 @@ describe('TenantComponent', () => {
       (
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParams')
           .get as jasmine.Spy
-      ).and.returnValue(of({ edit: true }));
+      ).and.returnValue(of({ edit: 'true' }));
       component.ngOnInit();
       fixture.detectChanges();
 
