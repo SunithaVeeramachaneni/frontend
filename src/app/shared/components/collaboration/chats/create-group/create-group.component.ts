@@ -6,6 +6,7 @@ import { PeopleService } from '../../people/people.service';
 import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
 import { getImageSrc } from '../../../../../shared/utils/imageUtils';
+import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 @Component({
   selector: 'app-create-group',
@@ -29,7 +30,11 @@ export class CreateGroupComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activeUsersInitial$ = this.peopleService.getUsers$().pipe(
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    this.activeUsersInitial$ = this.peopleService.getUsers$(info).pipe(
       mergeMap((users) => {
         if (users.length) {
           users.forEach((user) => {

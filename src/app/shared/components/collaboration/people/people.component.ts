@@ -7,6 +7,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { getImageSrc } from '../../../../shared/utils/imageUtils';
+import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 @Component({
   selector: 'app-people',
@@ -28,7 +29,11 @@ export class PeopleComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.activeUsersInitial$ = this.peopleService.getUsers$().pipe(
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    this.activeUsersInitial$ = this.peopleService.getUsers$(info).pipe(
       mergeMap((users) => {
         if (users.length) {
           users.forEach((user) => {
@@ -39,7 +44,8 @@ export class PeopleComponent implements OnInit {
           });
           return of({ data: users });
         }
-      })
+      }),
+      catchError(() => of({ data: [] }))
     );
     this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
       map(([initial]) => initial.data)

@@ -17,6 +17,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { getImageSrc } from '../../../../shared/utils/imageUtils';
+import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive';
@@ -137,10 +138,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   setSelectedConversation = async (conversation: any) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
     this.conversationHistory = [];
     this.selectedConversation = conversation;
     this.conversationHistoryInit$ = this.chatService
-      .getConversationHistory$(conversation.id)
+      .getConversationHistory$(conversation.id, info)
       .pipe(
         // eslint-disable-next-line arrow-body-style
         mergeMap((history) => {
