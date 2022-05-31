@@ -1,0 +1,203 @@
+<div class="chatsBody" *ngIf="selectedView === 'CHAT'">
+  <div class="conversationsList">
+    <div class="searchBar">
+      <input matInput placeholder="Search Users" disabled class="searchInput" />
+      <button mat-icon-button class="searchMore" [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="createGroup()">Create Group</button>
+        <button mat-menu-item disabled>Mute Messages</button>
+        <button mat-menu-item disabled>Delete Conversations</button>
+      </mat-menu>
+    </div>
+    <div class="userList">
+      <mat-list>
+        <mat-list-item
+          *ngFor="let conversation of conversations$ | async; let i = index"
+          (click)="setSelectedConversation(conversation)"
+          class="conversationListItem"
+          [ngClass]="{
+            active: selectedConversation.id === conversation.id
+          }"
+        >
+          <div class="icon-button" mat-list-icon>
+            <img class="icon" [src]="conversation.userInfo.profileImage" />
+          </div>
+          <div mat-line>
+            <b
+              >{{ conversation.userInfo.firstName }}
+              {{ conversation.userInfo.lastName }}</b
+            >
+          </div>
+          <div mat-line>{{ conversation.info.latest?.text }}</div>
+          <mat-divider class="horiz-dividerConv"></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+  <div class="conversationContent" *ngIf="selectedConversation">
+    <div class="conversationHead">
+      <div class="displayFlex">
+        <div class="iconButton">
+          <img
+            class="icon"
+            [src]="selectedConversation.userInfo.profileImage"
+          />
+        </div>
+        <div class="userTitle">
+          <b class="userName"
+            >{{ selectedConversation.userInfo.firstName }}
+            {{ selectedConversation.userInfo.lastName }}
+          </b>
+          <div mat-line class="userDescription">
+            {{ selectedConversation.userInfo.title }}
+          </div>
+        </div>
+      </div>
+      <div>
+        <button
+          disabled
+          mat-icon-button
+          color="primary"
+          (click)="triggerCall(selectedConversation)"
+        >
+          <mat-icon>phone</mat-icon>
+        </button>
+        <button
+          disabled
+          mat-icon-button
+          color="primary"
+          (click)="openVideoCallDialog(selectedConversation)"
+        >
+          <mat-icon>videocam</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-divider class="horiz-divider"></mat-divider>
+    <div
+      class="conversationBody"
+      id="conversationHistory"
+      #scrollMe
+      [scrollTop]="scrollMe.scrollHeight"
+    >
+      <div *ngFor="let message of conversationHistory$ | async">
+        <div *ngIf="message.user" class="conversationMessage">
+          <div class="conv-user-icon">
+            <img class="icon" [src]="message.userInfo.profileImage" />
+          </div>
+          <div class="nameAndMessage">
+            <div>
+              <b
+                >{{ message.userInfo.firstName }}
+                {{ message.userInfo.lastName }}</b
+              >
+              <span class="timeAgoLabel">{{
+                getLocalDateFromEpoch(message.ts)
+              }}</span>
+            </div>
+            <div *ngIf="message.isMeeting === true">
+              <div class="attachmentItemMeeting">
+                <!-- <div mat-line>{{ message.text }}</div> -->
+                <mat-icon mat-list-icon>videocam</mat-icon>
+                <div mat-line class="attachmentTitle">
+                  {{ message.userInfo.firstName }}
+                  {{ message.userInfo.lastName }} is Inviting you for a meeting.
+                </div>
+                <div mat-line class="attachmentSubTitle">
+                  <div class="downloadBtn" (click)="openMeetingLink(message)">
+                    <mat-icon>videocam</mat-icon
+                    ><span class="downloadLabel">Join the meeting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="message.isMeeting === false">
+              <div mat-line>{{ message.text }}</div>
+              <div *ngIf="message.files && message.files.length">
+                <mat-list>
+                  <mat-list-item
+                    *ngFor="let file of message.files"
+                    class="attachmentItem"
+                  >
+                    <mat-icon mat-list-icon>folder</mat-icon>
+                    <div mat-line class="attachmentTitle">
+                      {{ file.name }}
+                    </div>
+                    <div mat-line class="attachmentSubTitle">
+                      <div>
+                        Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                      </div>
+                      <div
+                        *ngIf="!downloadInProgress"
+                        class="downloadBtn"
+                        (click)="downloadFile(file)"
+                      >
+                        <mat-icon>cloud_download</mat-icon
+                        ><span class="downloadLabel">Download</span>
+                      </div>
+                      <div *ngIf="downloadInProgress" class="downloadBtn">
+                        <mat-spinner
+                          strokeWidth="5"
+                          diameter="25"
+                        ></mat-spinner>
+                        <span class="downloadLabel">Downloading...</span>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <mat-divider class="horiz-divider"></mat-divider>
+    <div class="chatBottom">
+      <div class="messageInputBar">
+        <div class="messageInputGroup">
+          <mat-icon matPrefix (click)="openUploadDialog(selectedConversation)"
+            >attach_file</mat-icon
+          >
+          <input
+            matInput
+            class="messageInput"
+            placeholder="Enter Message.."
+            autocomplete="off"
+            [(ngModel)]="messageText"
+            (keyup.enter)="onMessageEnter(selectedConversation, messageText)"
+          />
+          <div matSuffix>
+            <button
+              mat-icon-button
+              [disabled]="!messageText.length"
+              (click)="sendMessageToUser(selectedConversation, messageText)"
+            >
+              <mat-spinner
+                *ngIf="messageDeliveryProgress"
+                strokeWidth="5"
+                diameter="25"
+              ></mat-spinner>
+              <mat-icon *ngIf="!messageDeliveryProgress" color="primary"
+                >send</mat-icon
+              >
+            </button>
+          </div>
+        </div>
+
+        <button mat-mini-fab class="audioRecord" disabled>
+          <mat-icon>mic</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="conversationContent" *ngIf="!selectedConversation">
+    <h6>Please select a conversation to send message</h6>
+  </div>
+</div>
+<div *ngIf="selectedView === 'CREATE_GROUP'">
+  <app-create-group
+    (handleGroupCreation)="handleGroupCreation($event)"
+    (viewChangeListener)="handleViewChange($event)"
+  ></app-create-group>
+</div>

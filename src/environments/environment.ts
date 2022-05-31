@@ -10,6 +10,7 @@ export const environment = {
   wiApiUrl: 'http://localhost:8001/wiapi/',
   wiAbapApiUrl: 'http://localhost:8002/wiabapapi/',
   userRoleManagementApiUrl: 'http://localhost:8007/',
+  slackAPIUrl: 'http://localhost:8007/slack/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5
