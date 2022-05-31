@@ -29,7 +29,11 @@ import {
   toArray,
   filter
 } from 'rxjs/operators';
-import { permissions as perms, routingUrls } from 'src/app/app.constants';
+import {
+  permissions as perms,
+  routingUrls,
+  superAdminText
+} from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -54,6 +58,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   currentRouteUrl$: Observable<string>;
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
+  readonly superAdminText = superAdminText;
 
   rolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];

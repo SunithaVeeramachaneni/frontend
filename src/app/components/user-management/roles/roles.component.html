@@ -61,7 +61,7 @@
             >
               <mat-checkbox
                 (change)="roleChecked(role, $event)"
-                [disabled]="role.name === routingUrls.superAdminText"
+                [disabled]="role.name === superAdminText"
               ></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
@@ -70,7 +70,7 @@
                 src="assets/user-management-icons/super-admin-icon.svg"
                 alt="super admin"
                 class="super-admin-icon"
-                *ngIf="role.name === routingUrls.superAdminText"
+                *ngIf="role.name === superAdminText"
               />
               <span class="role-count">
                 {{ role.permissionIds?.length }} of
@@ -94,7 +94,7 @@
                 <ng-container *appCheckUserHasPermission="[perms.deleteRole]">
                   <button
                     mat-menu-item
-                    *ngIf="role.name !== routingUrls.superAdminText"
+                    *ngIf="role.name !== superAdminText"
                     (click)="deleteRole(role)"
                   >
                     <span class="text-red-color" translate="deleteBtn"></span>
