@@ -61,7 +61,7 @@
             >
               <mat-checkbox
                 (change)="roleChecked(role, $event)"
-                [disabled]="role.name === 'Super Admin'"
+                [disabled]="role.name === routingUrls.superAdminText"
               ></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
@@ -70,7 +70,7 @@
                 src="assets/user-management-icons/super-admin-icon.svg"
                 alt="super admin"
                 class="super-admin-icon"
-                *ngIf="role.name === 'Super Admin'"
+                *ngIf="role.name === routingUrls.superAdminText"
               />
               <span class="role-count">
                 {{ role.permissionIds?.length }} of
@@ -94,7 +94,7 @@
                 <ng-container *appCheckUserHasPermission="[perms.deleteRole]">
                   <button
                     mat-menu-item
-                    *ngIf="role.name !== 'Super Admin'"
+                    *ngIf="role.name !== routingUrls.superAdminText"
                     (click)="deleteRole(role)"
                   >
                     <span class="text-red-color" translate="deleteBtn"></span>
@@ -213,6 +213,20 @@
                               name: 'roleDescriptionLabel' | translate,
                               length:
                                 f.description.errors?.minlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error
+                    *ngIf="f.description.errors?.maxlength"
+                    class="role-errors"
+                  >
+                    {{
+                      'fieldMaximumLength'
+                        | translate
+                          : {
+                              name: 'roleDescriptionLabel' | translate,
+                              length:
+                                f.description.errors?.maxlength.requiredLength
                             }
                     }}
                   </mat-error>

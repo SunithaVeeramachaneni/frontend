@@ -33,19 +33,23 @@ export class AddEditUserModalComponent implements OnInit {
     firstName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(30)
+      Validators.maxLength(100)
     ]),
     lastName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(30)
+      Validators.maxLength(100)
     ]),
     title: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(30)
+      Validators.maxLength(100)
     ]),
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email,
+      this.emailNameValidator()
+    ]),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
@@ -77,6 +81,15 @@ export class AddEditUserModalComponent implements OnInit {
   matSelectValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null =>
       !control.value.length ? { selectOne: { value: control.value } } : null;
+  }
+
+  emailNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const find = this.data.allusers.findIndex(
+        (user) => user.email === control.value
+      );
+      return find === -1 ? null : { duplicateName: true };
+    };
   }
 
   ngOnInit() {

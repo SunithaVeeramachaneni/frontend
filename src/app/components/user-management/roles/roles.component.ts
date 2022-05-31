@@ -96,12 +96,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(50),
+        Validators.maxLength(100),
         this.roleNameValidator()
       ]),
       description: new FormControl('', [
         Validators.required,
-        Validators.minLength(3)
+        Validators.minLength(3),
+        Validators.maxLength(255)
       ])
     });
     this.getRoles();
@@ -129,7 +130,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       this.rolesListUpdate$
     ]).pipe(
       map(([roles, update]) => {
-        console.log(roles);
         const { role, action } = update;
         switch (action) {
           case 'add':
@@ -300,7 +300,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       });
     } else {
       this.roleService.updateRole$(updateRoleData).subscribe((resp) => {
-        console.log(resp);
         if (Object.keys(resp).length) {
           this.addingRole$.next(false);
           this.rolesListUpdate$.next({

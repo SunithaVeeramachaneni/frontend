@@ -160,10 +160,7 @@
     <mat-form-field appearance="outline" class="width-100 m-b-10">
       <mat-label>{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
-      <mat-error
-        *ngIf="userForm.controls.email.errors?.required"
-        style="margin-top: 7px"
-      >
+      <mat-error *ngIf="userForm.controls.email.errors?.required" class="m-t-5">
         {{
           'fieldRequired'
             | translate
@@ -172,11 +169,21 @@
                 }
         }}
       </mat-error>
-      <mat-error
-        *ngIf="userForm.controls.email.errors?.email"
-        style="margin-top: 7px"
-      >
+      <mat-error *ngIf="userForm.controls.email.errors?.email" class="m-t-5">
         {{ 'validEmail' | translate }}
+      </mat-error>
+
+      <mat-error
+        *ngIf="userForm.controls.email.hasError('duplicateName')"
+        class="m-t-5"
+      >
+        {{
+          'alreadyExists'
+            | translate
+              : {
+                  name: 'email' | translate
+                }
+        }}
       </mat-error>
     </mat-form-field>
 
