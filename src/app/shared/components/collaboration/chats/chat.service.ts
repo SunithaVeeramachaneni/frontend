@@ -5,7 +5,6 @@ import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from '../../../services/app.services';
 import { environment } from '../../../../../environments/environment';
 
-import axios from 'axios';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -117,8 +116,7 @@ export class ChatService {
       info
     );
 
-  triggerCall = (user) =>
-    axios.post(`${environment.slackAPIUrl}calls`, {
-      user
-    });
+  triggerCall = (user) => {
+    //
+  };
 }
