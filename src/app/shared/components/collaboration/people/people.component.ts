@@ -40,8 +40,7 @@ export class PeopleComponent implements OnInit {
           });
           return of({ data: users });
         }
-      }),
-      catchError(() => of({ data: [] }))
+      })
     );
     this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
       map(([initial]) => initial.data)

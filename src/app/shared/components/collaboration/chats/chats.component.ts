@@ -90,10 +90,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
           console.log(conversations);
           return of({ data: conversations });
         }
-      }),
-      catchError((err) => {
-        console.log('error', err);
-        return of({ data: [] });
       })
     );
     this.conversations$ = combineLatest([this.conversationsInitial$]).pipe(
