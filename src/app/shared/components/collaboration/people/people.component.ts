@@ -30,7 +30,6 @@ export class PeopleComponent implements OnInit {
   ngOnInit() {
     this.activeUsersInitial$ = this.peopleService.getUsers$().pipe(
       mergeMap((users) => {
-        console.log(users);
         if (users.length) {
           users.forEach((user) => {
             user.profileImage = getImageSrc(
@@ -57,7 +56,6 @@ export class PeopleComponent implements OnInit {
   // }
 
   onVideoMessageClick = (user: any) => {
-    console.log(user);
     const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
       disableClose: true,
       hasBackdrop: true,
@@ -71,7 +69,6 @@ export class PeopleComponent implements OnInit {
       if (result) {
         //
       }
-      console.log('The video call dialog was closed');
     });
   };
 }

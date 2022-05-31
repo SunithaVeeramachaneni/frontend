@@ -79,7 +79,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
     this.conversationsInitial$ = this.chatService.getConversations$().pipe(
       mergeMap((conversations) => {
-        console.log(conversations);
         if (conversations.length) {
           conversations.forEach((conv) => {
             conv.userInfo.profileImage = getImageSrc(
@@ -87,7 +86,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
               this.sanitizer
             );
           });
-          console.log(conversations);
           return of({ data: conversations });
         }
       })
@@ -141,7 +139,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
   setSelectedConversation = async (conversation: any) => {
     this.conversationHistory = [];
     this.selectedConversation = conversation;
-    console.log(conversation);
     this.conversationHistoryInit$ = this.chatService
       .getConversationHistory$(conversation.id)
       .pipe(
@@ -161,7 +158,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
                     message.isMeeting = true;
                   }
                 } catch (err) {
-                  console.log(err.message);
+                  // TODO: Display toasty
                 }
               }
             });
@@ -252,7 +249,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
       if (result) {
         //
       }
-      console.log('The video call dialog was closed');
     });
   };
 
@@ -287,7 +283,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
               });
             },
             (err) => {
-              console.log(err);
+              // TODO: Display toasty message
             }
           );
       }
@@ -311,7 +307,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             message.isMeeting = true;
           }
         } catch (err) {
-          console.log(err.message);
+          // TODO: Display toasty message
         }
       }
       this.sendReceiveMessages$.next({

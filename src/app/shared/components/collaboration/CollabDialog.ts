@@ -44,26 +44,22 @@ export class CollabDialogComponent implements OnInit {
   }
 
   handleTextMessaging(targetUser: any) {
-    console.log('text messaging initiated', targetUser);
     this.selectedTab = 'chats';
     this.selectedUser = targetUser;
     this.callType = 'audio';
   }
   handleAudioMessaging(targetUser: any) {
-    console.log('audio messaging initiated', targetUser);
     this.selectedTab = 'calls';
     this.selectedUser = targetUser;
     this.callType = 'video';
   }
   handleVideoMessaging(targetUser: any) {
-    console.log('video messaging initiated', targetUser);
     this.selectedTab = 'calls';
     this.selectedUser = targetUser;
   }
 
   onValChange(val: string) {
     this.selectedTab = val;
-    console.log(`selected tab: ${this.selectedTab}`);
   }
   closeCollabDialog(): void {
     this.dialogRef.close();

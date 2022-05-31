@@ -78,7 +78,7 @@ export class CreateGroupComponent implements OnInit {
         }
       },
       (err) => {
-        console.log(err);
+        // TODO: Display toasty messsage
       }
     );
   };

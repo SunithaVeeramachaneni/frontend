@@ -197,8 +197,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
               }
             });
             ref.chatService.processSSEMessages$(processedMessageIds).subscribe(
-              (response) => console.log(response),
-              (err) => console.log(err)
+              (response) => {
+                // Do nothing
+              },
+              (err) => {
+                // Do Nothing
+              }
             );
           }
         };
