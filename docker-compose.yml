@@ -285,6 +285,10 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SLACK_CLIENT_ID=${SLACK_CLIENT_ID}
+      - SLACK_CLIENT_SECRET=${SLACK_CLIENT_SECRET}
+      - CLIENT_SIGNING_SECRET=${CLIENT_SIGNING_SECRET}
+      - SLACK_STATE_SECRET=${SLACK_STATE_SECRET}
     ports:
       - '8007:8007'
     depends_on:
@@ -339,7 +343,7 @@ services:
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
       - ./.docker/mysql/3-tenants-data.sh:/docker-entrypoint-initdb.d/3-tenants-data.sh:ro
     ports:
-      - '3307:3306'
+      - '3306:3306'
     networks:
       - app-network
 
