@@ -151,8 +151,9 @@ export class UsersComponent implements OnInit {
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
   selectedUsers = [];
+  allUsersList = [];
   dataSource: MatTableDataSource<any>;
-  disableDeactivate: boolean = false;
+  disableDeactivate = false;
   users$: Observable<UserTable>;
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
@@ -215,6 +216,7 @@ export class UsersComponent implements OnInit {
       AddEditUserModalComponent,
       {
         data: {
+          allusers: this.allUsersList,
           user,
           roles: this.roles,
           permissionsList$: this.permissionsList$,
@@ -332,6 +334,7 @@ export class UsersComponent implements OnInit {
               }
             }
         }
+        this.allUsersList = users;
         return users;
       })
     );
