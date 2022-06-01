@@ -3,8 +3,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
+import {
+  openCollabWindow$,
+  unreadCount$,
+  userData$
+} from 'src/app/shared/components/header/header.component.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -19,13 +25,20 @@ describe('UserManagementContainerComponent', () => {
   let fixture: ComponentFixture<UserManagementContainerComponent>;
   let rolesPermissionsServiceSpy: RolesPermissionsService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let breadcrumbService: BreadcrumbService;
 
   beforeEach(async () => {
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails'
+      'getLogonUserDetails',
+      'getInstallationURL$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
     });
@@ -47,7 +60,8 @@ describe('UserManagementContainerComponent', () => {
           useValue: rolesPermissionsServiceSpy
         },
         { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy }
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
@@ -59,6 +73,10 @@ describe('UserManagementContainerComponent', () => {
     (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
       .withArgs()
       .and.returnValue(logonUserDetails);
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
     fixture.detectChanges();
   });
 
