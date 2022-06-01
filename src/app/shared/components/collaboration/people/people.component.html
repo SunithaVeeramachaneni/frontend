@@ -1,0 +1,58 @@
+<div class="peoplesTabBody">
+  <div class="searchBar">
+    <input matInput placeholder="Search Users" disabled class="searchInput" />
+    <button mat-icon-button class="searchMore">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+  <div class="userList">
+    <mat-list>
+      <mat-list-item
+        *ngFor="let user of activeUsers$ | async; let i = index"
+        class="peopleList"
+        (click)="onTextMessageClick(user)"
+      >
+        <div class="icon-button" mat-list-icon>
+          <img class="icon" [src]="user.profileImage" />
+        </div>
+        <div mat-line>
+          <b>{{ user.firstName }} {{ user.lastName }}</b>
+        </div>
+        <div mat-line>{{ user.title }}</div>
+        <button
+          [disabled]="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
+          mat-icon-button
+          color="primary"
+          (click)="onTextMessageClick(user)"
+        >
+          <mat-icon *ngIf="user.UserSlackDetail && user.UserSlackDetail.slackID"
+            >chat</mat-icon
+          >
+          <mat-icon
+            *ngIf="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
+            title="This user is not connected to Slack"
+            >comments_disabled</mat-icon
+          >
+        </button>
+
+        <button
+          mat-icon-button
+          color="primary"
+          disabled
+          (click)="onAudioMessageClick(user)"
+        >
+          <mat-icon>phone</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          disabled
+          color="primary"
+          (click)="onVideoMessageClick(user)"
+        >
+          <mat-icon>videocam</mat-icon>
+        </button>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</div>

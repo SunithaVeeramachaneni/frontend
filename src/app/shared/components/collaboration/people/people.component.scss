@@ -1,0 +1,56 @@
+.peoplesTabBody {
+  background: #ffffff !important;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+    0 1px 3px 0 rgb(116 116 116);
+  height: 80vh;
+  .searchBar {
+    display: flex;
+    .searchInput {
+      border: 1px solid #e1dcdc;
+      border-radius: 45px;
+      padding: 10px;
+      background: #eeeeee;
+    }
+    .searchMore {
+      color: #1a66ff;
+    }
+  }
+  .userList {
+    height: 71vh;
+    overflow: auto;
+  }
+}
+.peopleList {
+  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
+.userIcon {
+  font-size: 50px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add application styles & imports to this file! */
+
+.icon-button {
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  border-radius: 45px;
+  margin-top: -15px;
+  margin-right: 10px;
+}
+
+.icon-button .icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+}

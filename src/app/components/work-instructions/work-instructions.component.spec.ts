@@ -26,7 +26,11 @@ import { logonUserDetails } from '../../shared/services/header.service.mock';
 import { importedWorkInstructions } from './work-instructions.component.mock';
 import { OverlayService } from './modal/overlay.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { userData$ } from '../../shared/components/header/header.component.mock';
+import {
+  openCollabWindow$,
+  unreadCount$,
+  userData$
+} from '../../shared/components/header/header.component.mock';
 import { CommonService } from '../../shared/services/common.service';
 import {
   defaultCategoryId,
@@ -39,6 +43,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 const categoryDetails = [
   {
@@ -189,6 +194,7 @@ describe('WorkInstructionsComponent', () => {
   let wiCommonServiceSpy: WiCommonService;
   let overlayServiceSpy: OverlayService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let commonServiceSpy: CommonService;
   let breadcrumbService: BreadcrumbService;
@@ -215,8 +221,14 @@ describe('WorkInstructionsComponent', () => {
     });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails'
+      'getLogonUserDetails',
+      'getInstallationURL$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
     });
@@ -258,6 +270,7 @@ describe('WorkInstructionsComponent', () => {
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy }
       ]
@@ -286,6 +299,11 @@ describe('WorkInstructionsComponent', () => {
       .withArgs()
       .and.returnValue(logonUserDetails)
       .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
+
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
     spyOn(breadcrumbService, 'set');
     fixture.detectChanges();

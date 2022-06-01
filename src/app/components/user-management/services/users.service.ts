@@ -45,11 +45,10 @@ export class UsersService {
   constructor(private appService: AppService, private sant: DomSanitizer) {}
 
   prepareUser = (user: UserDetails, roles) => {
-    if(user.firstName && user.lastName) {
+    if (user.firstName && user.lastName) {
       user.user = user.firstName + ' ' + user.lastName;
-    }
-    else {
-      user.user = ''
+    } else {
+      user.user = '';
     }
     const roleNames = roles.map((role) => role.name);
     if (roleNames.length) user.displayRoles = roleNames || '';
@@ -91,6 +90,9 @@ export class UsersService {
       return this.sant.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
+
+  getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+    this.appService._getResp(environment.userRoleManagementApiUrl, 'me', info);
 
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> =>
     this.appService._getResp(

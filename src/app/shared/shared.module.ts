@@ -13,6 +13,15 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
 import { DateTimePipe } from './pipes/date-time.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { NumberToKMPipe } from './pipes/number-to-k-m.pipe';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
+import { CollabDialogComponent } from './components/collaboration/CollabDialog';
+import { UploadDialogComponent } from './components/collaboration/chats/upload-dialog/upload-dialog.component';
+import { VideoCallDialogComponent } from './components/collaboration/chats/video-call-dialog/video-call-dialog.component';
+import { PeopleComponent } from './components/collaboration/people/people.component';
+import { ChatsComponent } from './components/collaboration/chats/chats.component';
+import { CreateGroupComponent } from './components/collaboration/chats/create-group/create-group.component';
+import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 
 @NgModule({
@@ -25,6 +34,13 @@ import { CheckUserHasPermissionDirective } from './directives/check-user-has-per
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
+    CollabDialogComponent,
+    UploadDialogComponent,
+    VideoCallDialogComponent,
+    PeopleComponent,
+    ChatsComponent,
+    CreateGroupComponent,
+    CallsComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective
   ],
@@ -32,6 +48,7 @@ import { CheckUserHasPermissionDirective } from './directives/check-user-has-per
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+    DragDropModule,
     AppMaterialModules,
     BreadcrumbModule,
     TranslateModule.forChild({})

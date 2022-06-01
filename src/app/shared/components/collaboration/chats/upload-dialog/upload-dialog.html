@@ -1,0 +1,23 @@
+<div
+  class="uploadHead"
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+>
+  <h4>Select Attachments...</h4>
+  <button mat-icon-button class="closeBtn" (click)="closeUploadDialog()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div class="uploadContainer">
+  <div class="uploadGroup">
+    <input
+      (change)="onFileSelect($event)"
+      class="uploadInput"
+      type="file"
+      id="fileUpload"
+    />
+
+    <button (click)="uploadFile()" class="uploadBtn">Upload</button>
+  </div>
+</div>
