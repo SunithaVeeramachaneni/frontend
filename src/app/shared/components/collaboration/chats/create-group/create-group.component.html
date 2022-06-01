@@ -1,0 +1,77 @@
+<div class="chatsBody">
+  <div class="conversationsList">
+    <div class="participants">
+      <button mat-icon-button (click)="switchToConversationsView()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <span class="participantsTitle">Add Participants</span>
+    </div>
+    <div class="searchBar">
+      <input matInput placeholder="Search Users" disabled class="searchInput" />
+    </div>
+    <div class="userList">
+      <mat-list>
+        <mat-list-item
+          *ngFor="let user of activeUsers$ | async; let i = index"
+          class="peopleList"
+          (click)="selectUser(user)"
+        >
+          <div class="icon-button" mat-list-icon>
+            <img class="icon" [src]="user.profileImage" />
+          </div>
+          <div mat-line>
+            <b>{{ user.firstName }} {{ user.lastName }}</b>
+          </div>
+          <div mat-line>{{ user.title }}</div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+  <div class="conversationContent">
+    <div class="userList">
+      <mat-list>
+        <mat-list-item
+          *ngFor="let user of selectedUsers; let i = index"
+          class="peopleList"
+        >
+          <div class="icon-button" mat-list-icon>
+            <img class="icon" [src]="user.profileImage" />
+          </div>
+          <div mat-line>
+            <b>{{ user.firstName }} {{ user.lastName }}</b>
+          </div>
+          <div mat-line>{{ user.title }}</div>
+          <button mat-icon-button (click)="removeParticipant(user)">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <mat-divider class="horiz-divider"></mat-divider>
+    <div class="chatBottom">
+      <div class="messageInputBar">
+        <div class="messageInputGroup">
+          <input
+            matInput
+            class="messageInput"
+            placeholder="Group Name"
+            [(ngModel)]="groupName"
+            autocomplete="off"
+          />
+          <button
+            mat-flat-button
+            class="convBtn"
+            color="primary"
+            [disabled]="!(groupName.length && selectedUsers.length)"
+            (click)="startConversation(groupName, selectedUsers)"
+          >
+            Start Conversation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

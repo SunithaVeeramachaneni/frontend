@@ -29,7 +29,11 @@ import {
   toArray,
   filter
 } from 'rxjs/operators';
-import { routingUrls } from 'src/app/app.constants';
+import {
+  permissions as perms,
+  routingUrls,
+  superAdminText
+} from 'src/app/app.constants';
 import { Role, Permission } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -54,6 +58,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   currentRouteUrl$: Observable<string>;
   headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
+  readonly superAdminText = superAdminText;
 
   rolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
@@ -72,8 +77,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   showCancelBtn = false;
   disableSaveButton: boolean;
   addingRole$ = new BehaviorSubject<boolean>(false);
-  permissionsTotalLength$ : Observable<number>;
-  rolesList : Role[] = [];
+  permissionsTotalLength$: Observable<number>;
+  rolesList: Role[] = [];
+  readonly perms = perms;
 
   constructor(
     private commonService: CommonService,
@@ -92,28 +98,27 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       )
     );
     this.roleForm = this.fb.group({
-      name: new FormControl('', 
-      [
+      name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20),
+        Validators.maxLength(100),
         this.roleNameValidator()
-      ]
-      ),
+      ]),
       description: new FormControl('', [
         Validators.required,
-        Validators.minLength(3)
+        Validators.minLength(3),
+        Validators.maxLength(255)
       ])
     });
     this.getRoles();
     this.getAllPermissions();
-    this.roleForm.valueChanges.pipe(
-      tap(resp =>{
-        this.disableSaveButton = false
-      }
+    this.roleForm.valueChanges
+      .pipe(
+        tap((resp) => {
+          this.disableSaveButton = false;
+        })
       )
-    ).subscribe();
-
+      .subscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -123,8 +128,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   getRoles() {
     const initialRolesList$ = this.roleService
       .getRolesWithPermissions$()
-      .pipe(shareReplay(1)).pipe(tap((roles => this.showSelectedRole(roles[0]) ))
-        );
+      .pipe(shareReplay(1))
+      .pipe(tap((roles) => this.showSelectedRole(roles[0])));
     this.rolesList$ = combineLatest([
       initialRolesList$,
       this.rolesListUpdate$
@@ -145,10 +150,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             break;
           case 'copy':
             const newRole = this.createDuplicateRole(roles, role);
-            const postRole = { ...newRole, permissionIds: newRole.permissionIds.map((p) => p.id) };
+            const postRole = {
+              ...newRole,
+              permissionIds: newRole.permissionIds.map((p) => p.id)
+            };
             this.roleService.createRole$(postRole).subscribe((resp) => {
               if (Object.keys(resp).length) {
-                roles.push({...newRole, id: resp.id});
+                roles.push({ ...newRole, id: resp.id });
                 this.showSelectedRole(newRole);
                 this.toast.show({
                   text: 'Role copied successfully',
@@ -156,14 +164,19 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                 });
                 this.selectedRole = resp;
                 this.selectedRolePermissions$ = of(postRole.permissionIds);
-              }})
-              
+              }
+            });
+
             // roles.push(role);
             break;
         }
         return roles;
-      }), tap(rolesList => {this.rolesList = rolesList}), shareReplay(1)
-    )
+      }),
+      tap((rolesList) => {
+        this.rolesList = rolesList;
+      }),
+      shareReplay(1)
+    );
   }
 
   getAllPermissions() {
@@ -173,11 +186,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         let length = 0;
         permissionsList.forEach((module) => {
           length += module.permissions.length;
-        }
-      )
-      return length;
-  }))
-}
+        });
+        return length;
+      })
+    );
+  }
 
   get f() {
     return this.roleForm.controls;
@@ -210,7 +223,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRole = [];
   }
 
-  createDuplicateRole = (roles, copyRole) =>{
+  createDuplicateRole = (roles, copyRole) => {
     const roleName = copyRole.name;
     const regex = generateCopyRegex(roleName);
     const roleCopyNumbers = [];
@@ -219,25 +232,23 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       if (matchObject) {
         roleCopyNumbers.push(parseInt(matchObject[1], 10));
       }
-
     });
     const newIndex = generateCopyNumber(roleCopyNumbers);
     const newRoleName = `${roleName} Copy(${newIndex})`;
-    const newRole = {...copyRole, name: newRoleName}
+    const newRole = { ...copyRole, name: newRoleName };
     delete newRole.id;
-    return newRole
-    
+    return newRole;
+  };
+
+  copyRole(role) {
+    this.rolesListUpdate$.next({
+      action: 'copy',
+      role
+    });
   }
 
-  copyRole(role){
-          this.rolesListUpdate$.next({
-            action: 'copy',
-            role
-          });
-  }
-
-  copyRoleClickHandler(){
-    this.copyRole(this.selectedRole)
+  copyRoleClickHandler() {
+    this.copyRole(this.selectedRole);
   }
 
   update(data) {
@@ -275,7 +286,12 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         if (Object.keys(resp).length) {
           this.rolesListUpdate$.next({
             action: 'add',
-            role: {...resp, permissionIds: updatedPermissions.filter(p => p.checked === true)}
+            role: {
+              ...resp,
+              permissionIds: updatedPermissions.filter(
+                (p) => p.checked === true
+              )
+            }
           });
           this.addingRole$.next(false);
           this.showCancelBtn = false;
@@ -293,7 +309,12 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           this.addingRole$.next(false);
           this.rolesListUpdate$.next({
             action: 'edit',
-            role: {...updateRoleData, permissionIds: updatedPermissions.filter(p => p.checked === true)}
+            role: {
+              ...updateRoleData,
+              permissionIds: updatedPermissions.filter(
+                (p) => p.checked === true
+              )
+            }
           });
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.toast.show({
@@ -310,14 +331,15 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     cancelReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
         this.addingRole$.next(false);
-        this.rolesList$.pipe(tap((roles => this.showSelectedRole(roles[0]) ))).subscribe();
+        this.rolesList$
+          .pipe(tap((roles) => this.showSelectedRole(roles[0])))
+          .subscribe();
         this.showCancelBtn = false;
         this.copyDisabled = false;
       } else {
         this.addingRole$.next(true);
       }
     });
-
   }
 
   deleteRole(role) {
@@ -353,12 +375,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   roleNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null =>
-      { 
-        if(this.selectedRole && this.selectedRole.name === control.value)  return null;
-        const find = this.rolesList.findIndex(role => role.name === control.value);
-        return find === -1 ? null : {'duplicateName': true};
-      }
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (this.selectedRole && this.selectedRole.name === control.value)
+        return null;
+      const find = this.rolesList.findIndex(
+        (role) => role.name === control.value
+      );
+      return find === -1 ? null : { duplicateName: true };
+    };
   }
 
   showSelectedRole(role: Role) {
@@ -375,7 +399,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         const permissions = roles.find((r) => r.id === role.id).permissionIds;
         this.disableSaveButton = true;
         return permissions.map((perm) => perm.id);
-      }), shareReplay(1)
+      }),
+      shareReplay(1)
     );
   }
 }

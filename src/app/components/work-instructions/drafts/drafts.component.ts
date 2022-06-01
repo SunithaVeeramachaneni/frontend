@@ -10,7 +10,7 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { CommonService } from '../../../shared/services/common.service';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { routingUrls } from '../../../app.constants';
+import { permissions, routingUrls } from '../../../app.constants';
 
 @Component({
   selector: 'app-drafts',
@@ -34,6 +34,7 @@ export class DraftsComponent implements OnInit {
   drafts$: Observable<Instruction[]>;
   authors$: Observable<string[]>;
   readonly routingUrls = routingUrls;
+  readonly permissions = permissions;
   routeWithSearch: string;
 
   @ViewChild('filteredResults', { static: false }) set drafts(

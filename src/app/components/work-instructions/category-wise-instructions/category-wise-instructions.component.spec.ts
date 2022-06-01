@@ -30,6 +30,7 @@ import {
   defaultCategoryName,
   routingUrls
 } from '../../../app.constants';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -164,7 +165,8 @@ describe('CategoryWiseInstructionsComponent', () => {
       {
         currentRouteUrlAction$: of(
           `/work-instructions/category/${defaultCategoryId}`
-        )
+        ),
+        permissionsAction$: permissions$
       }
     );
     breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);

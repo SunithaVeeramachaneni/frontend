@@ -36,6 +36,7 @@
     [disabled]="reportNameAndDescForm.invalid"
     (click)="saveAs()"
     translate="save"
+    *appCheckUserHasPermission="[permissions.updateReport]"
   ></button>
   <button
     mat-button

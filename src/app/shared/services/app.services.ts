@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -85,6 +86,16 @@ export class AppService {
       url + id + this.getQueryString(queryParams),
       httpOptions
     );
+  }
+
+  uploadFile(
+    apiUrl: string,
+    urlStr: string,
+    formData: FormData,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    const url = this.prepareUrl(apiUrl, urlStr);
+    return this.http.post<any>(url, formData);
   }
 
   _downloadFile(

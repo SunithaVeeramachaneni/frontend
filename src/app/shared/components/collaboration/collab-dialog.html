@@ -1,0 +1,70 @@
+<div
+  mat-dialog-title
+  class="dialogTitle"
+  cdkDrag
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  cdkDragBoundary="body"
+>
+  <div class="dialogHeader">
+    <mat-button-toggle-group
+      #group="matButtonToggleGroup"
+      name="collaborationMode"
+      aria-label="Collaboration Mode"
+      class="buttonGroup"
+      [value]="selectedTab"
+      (change)="onValChange(group.value)"
+    >
+      <mat-button-toggle class="btnGroupBtn" value="chats"
+        >Chats</mat-button-toggle
+      >
+      <mat-button-toggle class="btnGroupBtn" value="calls"
+        >Calls</mat-button-toggle
+      >
+      <mat-button-toggle class="btnGroupBtn" value="peoples"
+        >People</mat-button-toggle
+      >
+    </mat-button-toggle-group>
+    <div>
+      <button
+        mat-icon-button
+        class="closeBtn rotate90"
+        (click)="minimizeCollabDialog()"
+        *ngIf="isMaximized"
+      >
+        <mat-icon>unfold_less</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        class="closeBtn rotate90"
+        (click)="maximizeCollabDialog()"
+        *ngIf="!isMaximized"
+      >
+        <mat-icon>unfold_more</mat-icon>
+      </button>
+
+      <button mat-icon-button class="closeBtn" (click)="closeCollabDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<div mat-dialog-content class="dialogContent">
+  <div class="dialogBody">
+    <div>
+      <div *ngIf="selectedTab ==='chats'" class="tabContent">
+        <app-chats [targetUser]="selectedUser"></app-chats>
+      </div>
+      <div *ngIf="selectedTab ==='calls'" class="tabContent">
+        <app-calls [targetUser]="selectedUser"></app-calls>
+      </div>
+      <div *ngIf="selectedTab ==='peoples'" class="tabContent">
+        <app-people
+          (handleTextMessaging)="handleTextMessaging($event)"
+          (handleAudioMessaging)="handleAudioMessaging($event)"
+          (handleVideoMessaging)="handleVideoMessaging($event)"
+        ></app-people>
+      </div>
+    </div>
+  </div>
+</div>

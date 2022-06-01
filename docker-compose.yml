@@ -81,7 +81,6 @@ services:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
-      - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
       - MYSQL_PORT=3306
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
@@ -113,11 +112,24 @@ services:
     volumes:
       - ${BACKEND_HOME}/WorkInstructions:/usr/src/wi-abap
       - /usr/src/wi-abap/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/wi-abap/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     ports:
       - '8002:8002'
     networks:
@@ -134,13 +146,25 @@ services:
     volumes:
       - ${BACKEND_HOME}/MCC_SCC:/usr/src/mcc-spcc-abap
       - /usr/src/mcc-spcc-abap/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/mcc-spcc-abap/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
       - MONGODB_HOST_NAME=mongo-local
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     ports:
       - '8003:8003'
     depends_on:
@@ -261,6 +285,10 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SLACK_CLIENT_ID=${SLACK_CLIENT_ID}
+      - SLACK_CLIENT_SECRET=${SLACK_CLIENT_SECRET}
+      - CLIENT_SIGNING_SECRET=${CLIENT_SIGNING_SECRET}
+      - SLACK_STATE_SECRET=${SLACK_STATE_SECRET}
     ports:
       - '8007:8007'
     depends_on:
@@ -315,7 +343,7 @@ services:
       - ./.docker/mysql/2-tenants-data.sql:/docker-entrypoint-initdb.d/2-tenants-data.sql:ro
       - ./.docker/mysql/3-tenants-data.sh:/docker-entrypoint-initdb.d/3-tenants-data.sh:ro
     ports:
-      - '3307:3306'
+      - '3306:3306'
     networks:
       - app-network
 

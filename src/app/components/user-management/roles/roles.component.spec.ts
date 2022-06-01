@@ -23,6 +23,7 @@ import { PermissionsComponent } from '../permissions/permissions.component';
 import { MatDialog } from '@angular/material/dialog';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('RolesComponent', () => {
   let component: RolesComponent;

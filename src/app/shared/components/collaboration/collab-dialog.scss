@@ -1,0 +1,79 @@
+.rotate90 {
+  transform: rotate(90deg);
+}
+.cdk-overlay-pane {
+  width: unset !important;
+  height: unset !important;
+  max-width: 100% !important;
+}
+
+::ng-deep .overlay-max {
+  max-width: 100% !important;
+  height: 100vh !important;
+  margin: 0px !important;
+  display: contents;
+}
+::ng-deep .overlay-min {
+  margin-top: 54.5px !important;
+  margin-right: 180px !important;
+  height: auto !important;
+}
+.dialogTitle {
+  padding: 4px 15px;
+  background: #f2f2f2;
+  margin: 0px;
+  cursor: move;
+  .dialogHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .buttonGroup {
+      box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
+        0 0px 0px 0 #747474;
+    }
+    .closeBtn {
+      color: #000;
+    }
+  }
+}
+.dialogContent {
+  margin: 0px;
+  padding: 0px 0px;
+  background-color: #f2f2f2;
+  min-height: 88vh !important;
+  .dialogBody {
+    height: 440px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0px 10px;
+
+    .buttonGroup {
+      background: #ffffff;
+      height: 15px;
+      padding: 10px 6px;
+      border-radius: 45px;
+      padding-top: 10px;
+    }
+
+    .tabContent {
+      // background: #ffffff;
+      // padding: 10px 6px;
+      height: 400px;
+      border-radius: 12px;
+    }
+  }
+}
+
+::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
+.mat-button-toggle-group-appearance-standard {
+  border-radius: 35px;
+  height: 35px;
+  width: fit-content;
+  margin: 10px 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.btnGroupBtn {
+  background: #ffffff;
+}

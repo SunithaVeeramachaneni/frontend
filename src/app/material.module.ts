@@ -5,6 +5,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { BidiModule } from '@angular/cdk/bidi';
 import { ObserversModule } from '@angular/cdk/observers';
 import { PortalModule } from '@angular/cdk/portal';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,23 +34,22 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatRadioModule} from '@angular/material/radio'
-import { MatRippleModule,} from '@angular/material/core'
-import { MatTabsModule} from '@angular/material/tabs'
-import { MatNativeDateModule} from '@angular/material/core';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatRippleModule } from '@angular/material/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { CdkTableModule } from '@angular/cdk/table';
-
 
 import { PlatformModule } from '@angular/cdk/platform';
 
 // @ts-ignore
 
-
 @NgModule({
   exports: [
     // Material Modules
     MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -91,4 +91,4 @@ import { PlatformModule } from '@angular/cdk/platform';
   ],
   providers: []
 })
-export class AppMaterialModules { }
+export class AppMaterialModules {}

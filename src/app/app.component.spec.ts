@@ -9,12 +9,24 @@ import { AppMaterialModules } from './material.module';
 import { CommonService } from './shared/services/common.service';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import {
+  openCollabWindow$,
+  userData$
+} from './shared/components/header/header.component.mock';
+import { permissions$ } from './shared/services/common.service.mock';
+import { UsersService } from './components/user-management/services/users.service';
+import { SharedModule } from './shared/shared.module';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let commonServiceSpy: CommonService;
   let translateServiceSpy: TranslateService;
+  let chatServiceSpy: ChatService;
+  let oidcSecurityServiceSpy: OidcSecurityService;
+  let usersServiceSpy: UsersService;
   let appDe: DebugElement;
   let appEl: HTMLElement;
 
@@ -23,16 +35,35 @@ describe('AppComponent', () => {
       'CommonService',
       ['setCurrentRouteUrl', 'setTranslateLanguage'],
       {
-        minimizeSidebarAction$: of(false)
+        minimizeSidebarAction$: of(false),
+        permissionsAction$: permissions$
       }
     );
+
     translateServiceSpy = jasmine.createSpyObj('TranslateService', ['use']);
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
+      userData$
+    });
+    usersServiceSpy = jasmine.createSpyObj('UsersService', [
+      'getUserPermissionsByEmail$'
+    ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      [
+        'getCollaborationWindowStatus',
+        'newMessageReceived',
+        'setUnreadMessageCount',
+        'getUnreadMessageCount'
+      ],
+      { processSSEMessages$: openCollabWindow$ }
+    );
 
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
         AppMaterialModules,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        SharedModule
       ],
       declarations: [AppComponent, MockComponent(NgxSpinnerComponent)],
       providers: [
@@ -40,7 +71,10 @@ describe('AppComponent', () => {
           provide: CommonService,
           useValue: commonServiceSpy
         },
-        { provide: TranslateService, useValue: translateServiceSpy }
+        { provide: TranslateService, useValue: translateServiceSpy },
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: UsersService, useValue: usersServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
@@ -50,6 +84,9 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
     appDe = fixture.debugElement;
     appEl = appDe.nativeElement;
+    (usersServiceSpy.getUserPermissionsByEmail$ as jasmine.Spy)
+      .withArgs('test.user@innovapptive.com')
+      .and.returnValue(permissions$);
   });
 
   it('should create the app', () => {
