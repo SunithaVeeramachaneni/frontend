@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
-import { filter, mergeMap, tap } from 'rxjs/operators';
+import { filter, mergeMap, take, tap } from 'rxjs/operators';
 import {
   defaultLanguage,
   routingUrls,
@@ -168,46 +168,59 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     const ref = this;
-    this.usersService.getLoggedInUser$().subscribe((data) => {
-      if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
-        const userSlackDetail = data.UserSlackDetail;
-        const { slackID } = userSlackDetail;
-
-        this.eventSource = new EventSource(
-          `${environment.slackAPIUrl}sse/${slackID}`
-        );
-        this.eventSource.onmessage = async (event: any) => {
-          const eventData = JSON.parse(event.data);
-          if (!eventData.isHeartbeat) {
-            const processedMessageIds = [];
-            eventData.forEach((evt: any) => {
-              const { message } = evt;
-              if (!message.isHeartbeat && message.eventType === 'message') {
-                processedMessageIds.push(evt.id);
-                // If collab window is not open, increment notification count...
-                const iscollabWindowOpen =
-                  ref.chatService.getCollaborationWindowStatus();
-                if (iscollabWindowOpen) {
-                  ref.chatService.newMessageReceived(message);
-                } else {
-                  let unreadCount = ref.chatService.getUnreadMessageCount();
-                  unreadCount = unreadCount + 1;
-                  ref.chatService.setUnreadMessageCount(unreadCount);
-                }
-              }
-            });
-            ref.chatService.processSSEMessages$(processedMessageIds).subscribe(
-              (response) => {
-                // Do nothing
-              },
-              (err) => {
-                // Do Nothing
-              }
-            );
+    this.oidcSecurityService.userData$
+      .pipe(
+        take(2),
+        mergeMap((user) => {
+          if (user.userData) {
+            return this.usersService.getLoggedInUser$();
+          } else {
+            return of({});
           }
-        };
-      }
-    });
+        })
+      )
+      .subscribe((data) => {
+        if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
+          const userSlackDetail = data.UserSlackDetail;
+          const { slackID } = userSlackDetail;
+
+          this.eventSource = new EventSource(
+            `${environment.slackAPIUrl}sse/${slackID}`
+          );
+          this.eventSource.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              const processedMessageIds = [];
+              eventData.forEach((evt: any) => {
+                const { message } = evt;
+                if (!message.isHeartbeat && message.eventType === 'message') {
+                  processedMessageIds.push(evt.id);
+                  // If collab window is not open, increment notification count...
+                  const iscollabWindowOpen =
+                    ref.chatService.getCollaborationWindowStatus();
+                  if (iscollabWindowOpen) {
+                    ref.chatService.newMessageReceived(message);
+                  } else {
+                    let unreadCount = ref.chatService.getUnreadMessageCount();
+                    unreadCount = unreadCount + 1;
+                    ref.chatService.setUnreadMessageCount(unreadCount);
+                  }
+                }
+              });
+              ref.chatService
+                .processSSEMessages$(processedMessageIds)
+                .subscribe(
+                  (response) => {
+                    // Do nothing
+                  },
+                  (err) => {
+                    // Do Nothing
+                  }
+                );
+            }
+          };
+        }
+      });
 
     this.commonService.minimizeSidebarAction$.subscribe((data) => {
       this.sidebar = data;
