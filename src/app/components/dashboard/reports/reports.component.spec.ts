@@ -14,7 +14,11 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
 import { defaultLimit } from 'src/app/app.constants';
 import { AppMaterialModules } from 'src/app/material.module';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
+import {
+  openCollabWindow$,
+  unreadCount$,
+  userData$
+} from 'src/app/shared/components/header/header.component.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -25,6 +29,7 @@ import { ReportService } from '../services/report.service';
 import { ReportsComponent } from './reports.component';
 import { configOptions, reports, reports$ } from './reports.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -33,6 +38,7 @@ describe('ReportsComponent', () => {
   let reportServiceSpy: ReportService;
   let reportConfigServiceSpy: ReportConfigurationService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let toastServiceSpy: ToastService;
 
@@ -57,8 +63,14 @@ describe('ReportsComponent', () => {
       ['downloadReport$', 'updateReport$']
     );
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails'
+      'getLogonUserDetails',
+      'getInstallationURL$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
     });
@@ -92,7 +104,8 @@ describe('ReportsComponent', () => {
         },
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
@@ -117,6 +130,10 @@ describe('ReportsComponent', () => {
     (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
       .withArgs()
       .and.returnValue(logonUserDetails);
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
     fixture.detectChanges();
   });
 
