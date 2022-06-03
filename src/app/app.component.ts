@@ -66,28 +66,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
-      image: 'assets/sidebar-icons/user-management.svg',
+      image: 'assets/sidebar-icons/tenant-management-gray.svg',
       showSubMenu: false,
       permission: perms.viewTenants,
       subPages: [],
-      disable: false
-    },
-    {
-      title: maintenance.title,
-      url: maintenance.url,
-      image: '../assets/sidebar-icons/maintenance-gray.svg',
-      showSubMenu: false,
-      permission: perms.viewMaintenanceControlCenter,
-      subPages: null,
-      disable: false
-    },
-    {
-      title: spareParts.title,
-      url: spareParts.url,
-      image: '../assets/sidebar-icons/spare-parts-gray.svg',
-      showSubMenu: false,
-      permission: perms.viewSparePartsControlCenter,
-      subPages: null,
       disable: false
     },
     {
@@ -108,6 +90,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           permission: perms.viewInactiveUsers
         }
       ],
+      disable: false
+    },
+    {
+      title: maintenance.title,
+      url: maintenance.url,
+      image: '../assets/sidebar-icons/maintenance-gray.svg',
+      showSubMenu: false,
+      permission: perms.viewMaintenanceControlCenter,
+      subPages: null,
+      disable: false
+    },
+    {
+      title: spareParts.title,
+      url: spareParts.url,
+      image: '../assets/sidebar-icons/spare-parts-gray.svg',
+      showSubMenu: false,
+      permission: perms.viewSparePartsControlCenter,
+      subPages: null,
       disable: false
     },
     {
@@ -171,13 +171,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.oidcSecurityService.userData$
       .pipe(
         take(2),
-        mergeMap((user) => {
-          if (user.userData) {
-            return this.usersService.getLoggedInUser$();
-          } else {
-            return of({});
-          }
-        })
+        filter((user) => user.userData),
+        mergeMap(() => this.usersService.getLoggedInUser$())
       )
       .subscribe((data) => {
         if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
