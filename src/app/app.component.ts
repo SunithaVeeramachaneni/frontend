@@ -171,13 +171,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.oidcSecurityService.userData$
       .pipe(
         take(2),
-        mergeMap((user) => {
-          if (user.userData) {
-            return this.usersService.getLoggedInUser$();
-          } else {
-            return of({});
-          }
-        })
+        filter((user) => user.userData),
+        mergeMap(() => this.usersService.getLoggedInUser$())
       )
       .subscribe((data) => {
         if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
