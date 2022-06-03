@@ -9,7 +9,12 @@
       >
       </ngx-spinner>
       <div class="roles-header">
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="more-roles">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          class="more-roles"
+          *appCheckUserHasPermission="[perms.deleteRole]"
+        >
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
@@ -30,6 +35,7 @@
           class="add-role-btn"
           (click)="addRole()"
           translate="addRoleBtn"
+          *appCheckUserHasPermission="[perms.createRole]"
         ></button>
       </div>
       <div class="dis-flex roles-content">
@@ -53,7 +59,10 @@
                   : ''
               }"
             >
-              <mat-checkbox (change)="roleChecked(role, $event)"></mat-checkbox>
+              <mat-checkbox
+                (change)="roleChecked(role, $event)"
+                [disabled]="role.name === superAdminText"
+              ></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
               </span>
@@ -61,7 +70,7 @@
                 src="assets/user-management-icons/super-admin-icon.svg"
                 alt="super admin"
                 class="super-admin-icon"
-                *ngIf="role.name === 'Super Admin'"
+                *ngIf="role.name === superAdminText"
               />
               <span class="role-count">
                 {{ role.permissionIds?.length }} of
@@ -71,18 +80,26 @@
                 mat-icon-button
                 [matMenuTriggerFor]="submenu"
                 class="more-items"
+                *appCheckUserHasPermission="[perms.copyRole, perms.deleteRole]"
               >
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #submenu="matMenu">
-                <button mat-menu-item disabled translate="copyBtn"></button>
                 <button
                   mat-menu-item
-                  *ngIf="role.name !== 'Super Admin'"
-                  (click)="deleteRole(role)"
-                >
-                  <span class="text-red-color" translate="deleteBtn"></span>
-                </button>
+                  (click)="copyRole(role)"
+                  translate="copyBtn"
+                  *appCheckUserHasPermission="[perms.copyRole]"
+                ></button>
+                <ng-container *appCheckUserHasPermission="[perms.deleteRole]">
+                  <button
+                    mat-menu-item
+                    *ngIf="role.name !== superAdminText"
+                    (click)="deleteRole(role)"
+                  >
+                    <span class="text-red-color" translate="deleteBtn"></span>
+                  </button>
+                </ng-container>
               </mat-menu>
             </mat-list-item>
             <div *ngIf="addingRole$ | async as addnewrole">
@@ -199,17 +216,46 @@
                             }
                     }}
                   </mat-error>
+                  <mat-error
+                    *ngIf="f.description.errors?.maxlength"
+                    class="role-errors"
+                  >
+                    {{
+                      'fieldMaximumLength'
+                        | translate
+                          : {
+                              name: 'roleDescriptionLabel' | translate,
+                              length:
+                                f.description.errors?.maxlength.requiredLength
+                            }
+                    }}
+                  </mat-error>
                 </div>
               </div>
 
               <div class="width-40">
-                <button
-                  mat-raised-button
-                  type="submit"
-                  class="save-role-btn"
-                  [disabled]="roleForm.invalid || this.disableSaveButton"
-                  translate="saveBtn"
-                ></button>
+                <ng-container
+                  *ngIf="selectedRole.id === undefined; else updateButton"
+                >
+                  <button
+                    mat-raised-button
+                    type="submit"
+                    class="save-role-btn"
+                    [disabled]="roleForm.invalid || this.disableSaveButton"
+                    translate="saveBtn"
+                    *appCheckUserHasPermission="[perms.createRole]"
+                  ></button>
+                </ng-container>
+                <ng-template #updateButton>
+                  <button
+                    mat-raised-button
+                    type="submit"
+                    class="save-role-btn"
+                    [disabled]="roleForm.invalid || this.disableSaveButton"
+                    translate="saveBtn"
+                    *appCheckUserHasPermission="[perms.updateRole]"
+                  ></button>
+                </ng-template>
 
                 <button
                   mat-stroked-button
@@ -227,8 +273,10 @@
                   mat-stroked-button
                   type="button"
                   class="copy-role-btn"
+                  (click)="copyRoleClickHandler()"
                   [disabled]="copyDisabled"
                   translate="copyBtn"
+                  *appCheckUserHasPermission="[perms.copyRole]"
                 ></button>
               </div>
             </form>

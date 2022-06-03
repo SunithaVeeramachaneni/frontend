@@ -94,36 +94,54 @@
                     }"
                     *ngIf="this.editRows[i] === false"
                   ></app-player>
-                  <mat-icon
-                    class="files-icons"
-                    (click)="updateEditRow(i)"
-                    *ngIf="this.editRows[i] === false"
-                    >edit</mat-icon
+                  <ng-container
+                    *appCheckUserHasPermission="[permissions.updateFile]"
                   >
-                  <mat-icon
-                    class="files-icons"
-                    (click)="removeFile(obj)"
-                    *ngIf="this.editRows[i] === false"
-                    >delete_forever</mat-icon
+                    <mat-icon
+                      class="files-icons"
+                      (click)="updateEditRow(i)"
+                      *ngIf="this.editRows[i] === false"
+                      >edit</mat-icon
+                    >
+                  </ng-container>
+                  <ng-container
+                    *appCheckUserHasPermission="[permissions.deleteFile]"
                   >
+                    <mat-icon
+                      class="files-icons"
+                      (click)="removeFile(obj)"
+                      *ngIf="this.editRows[i] === false"
+                      >delete_forever</mat-icon
+                    >
+                  </ng-container>
                 </span>
-                <button
-                  class="create-wi-btn"
-                  *ngIf="this.editRows[i] === false"
-                  (click)="createWorkInstruction(obj.fullFilePath)"
+                <ng-container
+                  *appCheckUserHasPermission="[
+                    permissions.createWorkInstruction
+                  ]"
                 >
-                  <mat-icon class="create-wi-btn-icon">add</mat-icon>
-                  <span class="create-wi-btn-text"
-                    >Create Work Instruction</span
+                  <button
+                    class="create-wi-btn"
+                    *ngIf="this.editRows[i] === false"
+                    (click)="createWorkInstruction(obj.fullFilePath)"
                   >
-                </button>
-                <button
-                  class="save-files-btn"
-                  *ngIf="this.editRows[i] === true"
-                  (click)="saveFile(obj, i)"
+                    <mat-icon class="create-wi-btn-icon">add</mat-icon>
+                    <span class="create-wi-btn-text"
+                      >Create Work Instruction</span
+                    >
+                  </button>
+                </ng-container>
+                <ng-container
+                  *appCheckUserHasPermission="[permissions.updateFile]"
                 >
-                  SAVE
-                </button>
+                  <button
+                    class="save-files-btn"
+                    *ngIf="this.editRows[i] === true"
+                    (click)="saveFile(obj, i)"
+                  >
+                    SAVE
+                  </button>
+                </ng-container>
                 <button
                   #cancel
                   class="cancel-files-btn"

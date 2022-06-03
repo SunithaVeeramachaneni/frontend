@@ -25,6 +25,7 @@ import { ErrorInfo } from '../../../../../interfaces';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { permissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-category',
@@ -41,6 +42,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   readonly coverImages = COVER_IMAGES;
   imageHeight = '';
   path: string;
+  readonly permissions = permissions;
 
   constructor(
     private fb: FormBuilder,

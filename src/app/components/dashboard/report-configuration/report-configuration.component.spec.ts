@@ -9,7 +9,11 @@ import { ToastService } from 'src/app/shared/toast';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
+import {
+  openCollabWindow$,
+  unreadCount$,
+  userData$
+} from 'src/app/shared/components/header/header.component.mock';
 import { ActivatedRoute } from '@angular/router';
 import { defaultLimit } from 'src/app/app.constants';
 import {
@@ -31,6 +35,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('ReportConfigurationComponent', () => {
   let component: ReportConfigurationComponent;
@@ -39,6 +44,7 @@ describe('ReportConfigurationComponent', () => {
   let reportConfigServiceSpy: ReportConfigurationService;
   let toastSpy: ToastService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let activatedRouteSpy: ActivatedRoute;
   let breadcrumbService: BreadcrumbService;
@@ -66,8 +72,14 @@ describe('ReportConfigurationComponent', () => {
     );
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails'
+      'getLogonUserDetails',
+      'getInstallationURL$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
     });
@@ -76,7 +88,10 @@ describe('ReportConfigurationComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      declarations: [ReportConfigurationComponent, MockComponent(NgxSpinnerComponent)],
+      declarations: [
+        ReportConfigurationComponent,
+        MockComponent(NgxSpinnerComponent)
+      ],
       imports: [
         RouterTestingModule,
         SharedModule,
@@ -102,7 +117,8 @@ describe('ReportConfigurationComponent', () => {
         { provide: ToastService, useValue: toastSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ActivatedRoute, useValue: activatedRouteSpy }
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
@@ -117,6 +133,10 @@ describe('ReportConfigurationComponent', () => {
         limit: defaultLimit
       })
       .and.returnValue(reportDetails$);
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
 
     (
       reportConfigServiceSpy.updateConfigOptionsFromReportConfiguration as jasmine.Spy

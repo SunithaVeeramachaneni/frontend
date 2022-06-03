@@ -30,6 +30,8 @@ import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { CommonService } from 'src/app/shared/services/common.service';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -111,71 +113,74 @@ describe('CategoriesComponent', () => {
   let base64HelperServiceSpy: Base64HelperService;
   let cdrfSpy: ChangeDetectorRef;
   let wiCommonServiceSpy: WiCommonService;
+  let commonServiceSpy: CommonService;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
   let catSubscribeComponent = CategoryComponent;
   let delCatSubscribeComponent = DeleteCategoryComponent;
   let store: MockStore<State>;
 
-  beforeEach(
-    waitForAsync(() => {
-      overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-      categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
-        'removeDeleteFiles',
-        'getDeleteFiles'
-      ]);
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'deleteFile',
-        'getAllCategories',
-        'getInstructionsByCategoryId',
-        'deleteCategory$',
-        'addCategory',
-        'updateCategory$',
-        'renameFile'
-      ]);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'handleError'
-      ]);
-      toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
-        'getBase64ImageData',
-        'getBase64Image'
-      ]);
-      cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
-      wiCommonServiceSpy = jasmine.createSpyObj(
-        'WiCommonService',
-        ['fetchWorkInstructions'],
-        {
-          fetchCategoriesAction$: of(true)
-        }
-      );
+  beforeEach(waitForAsync(() => {
+    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
+    categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
+      'removeDeleteFiles',
+      'getDeleteFiles'
+    ]);
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'deleteFile',
+      'getAllCategories',
+      'getInstructionsByCategoryId',
+      'deleteCategory$',
+      'addCategory',
+      'updateCategory$',
+      'renameFile'
+    ]);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'handleError'
+    ]);
+    toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    base64HelperServiceSpy = jasmine.createSpyObj('Base64HelperService', [
+      'getBase64ImageData',
+      'getBase64Image'
+    ]);
+    cdrfSpy = jasmine.createSpyObj('ChangeDetectorRef', ['detectChanges']);
+    wiCommonServiceSpy = jasmine.createSpyObj(
+      'WiCommonService',
+      ['fetchWorkInstructions'],
+      {
+        fetchCategoriesAction$: of(true)
+      }
+    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      permissionsAction$: permissions$
+    });
 
-      TestBed.configureTestingModule({
-        declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
-        imports: [
-          NgxPaginationModule,
-          Ng2SearchPipeModule,
-          SharedModule,
-          AppMaterialModules,
-          BrowserAnimationsModule,
-          RouterTestingModule,
-          OrderModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          { provide: OverlayService, useValue: overlayServiceSpy },
-          { provide: CategoryService, useValue: categoryServiceSpy },
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toastServiceSpy },
-          { provide: Base64HelperService, useValue: base64HelperServiceSpy },
-          { provide: ChangeDetectorRef, useValue: cdrfSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: WiCommonService, useValue: wiCommonServiceSpy },
-          provideMockStore()
-        ]
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      declarations: [CategoriesComponent, MockComponent(NgxSpinnerComponent)],
+      imports: [
+        NgxPaginationModule,
+        Ng2SearchPipeModule,
+        SharedModule,
+        AppMaterialModules,
+        BrowserAnimationsModule,
+        RouterTestingModule,
+        OrderModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        { provide: OverlayService, useValue: overlayServiceSpy },
+        { provide: CategoryService, useValue: categoryServiceSpy },
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: Base64HelperService, useValue: base64HelperServiceSpy },
+        { provide: ChangeDetectorRef, useValue: cdrfSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy },
+        provideMockStore()
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     store = TestBed.inject(MockStore);

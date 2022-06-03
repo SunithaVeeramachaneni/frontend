@@ -1,0 +1,216 @@
+.chatsBody {
+  display: flex;
+  height: 85vh;
+}
+.conversationsList {
+  width: 40%;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 15px 0px 0px 15px;
+  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+    0 1px 3px 0 rgb(116 116 116);
+  max-width: 400px;
+  .searchBar {
+    display: flex;
+    .searchInput {
+      border: 1px solid #e1dcdc;
+      border-radius: 45px;
+      padding: 10px;
+      background: #eeeeee;
+    }
+    .searchMore {
+      color: #1a66ff;
+    }
+  }
+  .participants {
+    display: flex;
+    align-items: center;
+    padding: 10px 0px;
+  }
+  .participantsTitle {
+    margin-left: 10px;
+  }
+  .userList {
+    height: 68vh;
+    overflow: auto;
+    overflow-x: hidden;
+  }
+}
+.conversationListItem {
+  cursor: pointer;
+  border-radius: 15px;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
+
+.icon-button {
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  border-radius: 45px;
+  margin-top: -15px;
+  margin-right: 10px;
+}
+
+.icon-button .icon {
+  width: 45px !important;
+  height: 45px !important;
+  border-radius: 45px;
+}
+.horiz-dividerConv {
+  margin: 0px 25px !important;
+  width: 80% !important;
+}
+
+.conversationContent {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  background: #ffffff !important;
+  border-radius: 0px 15px 15px 0px;
+  padding: 10px;
+  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+    0 1px 3px 0 rgb(116 116 116);
+  .conversationHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 20px;
+    height: 50px;
+    // box-shadow: 0px 15px 10px -15px #111;
+    .iconButton {
+      background: none;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+      width: 40px;
+      border-radius: 45px;
+      // margin-top: 15px;
+    }
+    .iconButton .icon {
+      width: 45px !important;
+      height: 45px !important;
+      border-radius: 45px;
+    }
+    .userTitle {
+      margin-left: 15px;
+      .userName {
+        width: 175px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .userDescription {
+        width: 175px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+  .conversationBody {
+    width: 100%;
+    height: 275px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    word-break: break-all;
+  }
+  .conversationMessage {
+    width: 375px;
+    margin: 10px 0px;
+    display: flex;
+    word-break: break-word;
+    .nameAndMessage {
+      width: 95% !important;
+    }
+  }
+  .conv-user-icon {
+    background: none;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    width: 40px;
+    border-radius: 45px;
+    margin-right: 10px;
+    // margin-top: -15px;
+  }
+  .attachmentItem {
+    font-size: 10pt;
+    background: #ebf5f8;
+    border-radius: 5px;
+    width: 99% !important;
+    .attachmentTitle {
+      font-size: 10pt;
+      font-weight: 450;
+    }
+    .attachmentSubTitle {
+      font-size: 8pt;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .downloadBtn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0px 5px;
+        background: #0391fd;
+        border-radius: 5px;
+        color: white;
+
+        &:hover {
+          background: #7dbef6;
+        }
+        .downloadLabel {
+          margin-left: 5px;
+        }
+      }
+    }
+  }
+  .conv-user-icon .icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 45px;
+  }
+  .userList {
+    height: 74vh;
+    overflow: auto;
+    overflow-x: hidden;
+  }
+  .chatBottom {
+    .messageInputBar {
+      display: flex;
+      padding: 10px 0px;
+      .messageInputGroup {
+        display: flex;
+        align-items: center;
+      }
+      .messageInput {
+        padding: 10px;
+        background: #eeeeee;
+        margin-right: 5px;
+        border-radius: 5px;
+      }
+      .convBtn {
+        width: 225px;
+      }
+      .audioRecord {
+        color: #ffffff;
+        border-radius: 8px;
+        font-size: 8pt;
+        background: #1a66ff;
+        margin-left: 5px;
+      }
+    }
+  }
+}
+.peopleList {
+  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}

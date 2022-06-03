@@ -26,7 +26,7 @@ import { ImportService } from './services/import.service';
 import { environment } from '../../../environments/environment';
 import { CommonService } from '../../shared/services/common.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { routingUrls } from '../../app.constants';
+import { permissions, routingUrls } from '../../app.constants';
 
 @Component({
   selector: 'app-work-instructions',
@@ -72,6 +72,7 @@ export class WorkInstructionsComponent
     recents: Instruction[];
   }>;
   readonly routingUrls = routingUrls;
+  readonly permissions = permissions;
   public sidebarMinimize: boolean;
   private fetchWISubscription: Subscription;
 

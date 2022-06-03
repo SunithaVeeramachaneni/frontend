@@ -225,7 +225,7 @@ describe('Roles Permissions service', () => {
           {
             createdAt: '2022-04-19T10:38:41.000Z',
             displayName: 'Create Report',
-            id: '1',
+            id: 1,
             moduleName: 'Reports',
             name: 'CREATE_REPORT',
             updatedAt: '2022-04-19T10:38:41.000Z'
@@ -233,7 +233,7 @@ describe('Roles Permissions service', () => {
           {
             createdAt: '2022-04-19T10:38:41.000Z',
             displayName: 'Edit Report',
-            id: '2',
+            id: 2,
             moduleName: 'Reports',
             name: 'UPDATE_REPORT',
             updatedAt: '2022-04-19T10:38:41.000Z'
@@ -241,7 +241,7 @@ describe('Roles Permissions service', () => {
           {
             createdAt: '2022-04-19T10:38:41.000Z',
             displayName: 'Delete Report',
-            id: '3',
+            id: 3,
             moduleName: 'Reports',
             name: 'DELETE_REPORT',
             updatedAt: '2022-04-19T10:38:41.000Z'
@@ -249,7 +249,7 @@ describe('Roles Permissions service', () => {
           {
             createdAt: '2022-04-19T10:38:41.000Z',
             displayName: 'Share Report',
-            id: '4',
+            id: 4,
             moduleName: 'Reports',
             name: 'SHARE_REPORT',
             updatedAt: '2022-04-19T10:38:41.000Z'

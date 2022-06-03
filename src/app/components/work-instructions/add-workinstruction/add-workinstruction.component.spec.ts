@@ -38,6 +38,7 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
+import { permissions$ } from 'src/app/shared/services/common.service.mock';
 
 const categoryDetails = [
   {
@@ -183,7 +184,8 @@ describe('AddWorkinstructionComponent', () => {
       ['minimizeSidebar', 'setHeaderTitle'],
       {
         minimizeSidebarAction$: of(false),
-        currentRouteUrlAction$: of('work-instructions/create')
+        currentRouteUrlAction$: of('work-instructions/create'),
+        permissionsAction$: permissions$
       }
     );
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [

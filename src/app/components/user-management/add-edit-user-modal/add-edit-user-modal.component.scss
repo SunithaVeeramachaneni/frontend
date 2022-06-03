@@ -1,5 +1,5 @@
 .user-modal {
-  width: 450px;
+  width: 470px;
   height: 430px;
   overflow: hidden;
   padding: 20px;
@@ -91,4 +91,9 @@
   background: white;
   border: none;
   float: right;
+}
+
+.error-fields {
+  white-space: nowrap;
+  margin-left: -10px;
 }

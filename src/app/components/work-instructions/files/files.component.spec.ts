@@ -6,6 +6,11 @@ import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
+import {
+  openCollabWindow$,
+  unreadCount$
+} from 'src/app/shared/components/header/header.component.mock';
 import { AppMaterialModules } from '../../../material.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { HeaderService } from '../../../shared/services/header.service';
@@ -30,69 +35,79 @@ describe('MediaFilesComponent', () => {
   let overlayServiceSpy: OverlayService;
   let wiCommonServiceSpy: WiCommonService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let filesDe: DebugElement;
   let filesEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
-        'getFiles',
-        'deleteFiles',
-        'getAllInstructionsByFilePath',
-        'updateWorkInstruction',
-        'updateFile'
-      ]);
-      toasterServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
-      errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
-        'getErrorMessage',
-        'handleError'
-      ]);
-      importServiceSpy = jasmine.createSpyObj('ImportService', [
-        'importFile',
-        'closeConnection'
-      ]);
-      overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-      wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [
-        'updateUploadInfo'
-      ]);
-      headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-        'getLogonUserDetails'
-      ]);
+  beforeEach(waitForAsync(() => {
+    instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
+      'getFiles',
+      'deleteFiles',
+      'getAllInstructionsByFilePath',
+      'updateWorkInstruction',
+      'updateFile'
+    ]);
+    toasterServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    errorHandlerServiceSpy = jasmine.createSpyObj('ErrorHandlerService', [
+      'getErrorMessage',
+      'handleError'
+    ]);
+    importServiceSpy = jasmine.createSpyObj('ImportService', [
+      'importFile',
+      'closeConnection'
+    ]);
+    overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
+    wiCommonServiceSpy = jasmine.createSpyObj('WiCommonService', [
+      'updateUploadInfo'
+    ]);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'getLogonUserDetails',
+      'getInstallationURL$'
+    ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
 
-      TestBed.configureTestingModule({
-        declarations: [MediaFilesComponent, PlayerComponent],
-        imports: [
-          AppMaterialModules,
-          SharedModule,
-          NgxPaginationModule,
-          OrderModule,
-          Ng2SearchPipeModule,
-          FormsModule,
-          NgxShimmerLoadingModule
-        ],
-        providers: [
-          { provide: InstructionService, useValue: instructionServiceSpy },
-          { provide: ToastService, useValue: toasterServiceSpy },
-          { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-          { provide: ImportService, useValue: importServiceSpy },
-          { provide: OverlayService, useValue: overlayServiceSpy },
-          { provide: WiCommonService, useValue: wiCommonServiceSpy },
-          { provide: HeaderService, useValue: headerServiceSpy }
-        ]
-      }).compileComponents();
+    TestBed.configureTestingModule({
+      declarations: [MediaFilesComponent, PlayerComponent],
+      imports: [
+        AppMaterialModules,
+        SharedModule,
+        NgxPaginationModule,
+        OrderModule,
+        Ng2SearchPipeModule,
+        FormsModule,
+        NgxShimmerLoadingModule
+      ],
+      providers: [
+        { provide: InstructionService, useValue: instructionServiceSpy },
+        { provide: ToastService, useValue: toasterServiceSpy },
+        { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
+        { provide: ImportService, useValue: importServiceSpy },
+        { provide: OverlayService, useValue: overlayServiceSpy },
+        { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
+      ]
+    }).compileComponents();
 
-      fixture = TestBed.createComponent(MediaFilesComponent);
-      component = fixture.componentInstance;
-      filesDe = fixture.debugElement;
-      filesEl = filesDe.nativeElement;
+    fixture = TestBed.createComponent(MediaFilesComponent);
+    component = fixture.componentInstance;
+    filesDe = fixture.debugElement;
+    filesEl = filesDe.nativeElement;
 
-      (instructionServiceSpy.getFiles as jasmine.Spy)
-        .withArgs('media', true)
-        .and.returnValue(of(mediaFiles))
-        .and.callThrough();
-      fixture.detectChanges();
-    })
-  );
+    (instructionServiceSpy.getFiles as jasmine.Spy)
+      .withArgs('media', true)
+      .and.returnValue(of(mediaFiles))
+      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
+    fixture.detectChanges();
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
