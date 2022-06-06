@@ -102,12 +102,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(100),
+        this.noWhitespaceValidator,
         this.roleNameValidator()
       ]),
       description: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(255)
+        Validators.maxLength(255),
+        this.noWhitespaceValidator
       ])
     });
     this.getRoles();
@@ -192,10 +194,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     );
   }
 
-  get f() {
-    return this.roleForm.controls;
-  }
-
   roleChecked = (role, event) => {
     if (event.checked === true) {
       this.selectedRoleList.push(role);
@@ -217,8 +215,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.showCancelBtn = true;
     this.addingRole$.next(true);
     this.selectedRolePermissions$ = of([]);
-    this.f.name.setValue('New Role');
-    this.f.description.setValue('');
+    this.roleForm.controls.name.setValue('New Role');
+    this.roleForm.controls.description.setValue('');
     this.disableSaveButton = true;
     this.selectedRole = [];
   }
@@ -266,8 +264,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         updatedPermissions.push(permission);
       }
     }
-    this.f.description.markAsPristine();
-    this.f.name.markAsPristine();
+    this.roleForm.controls.description.markAsPristine();
+    this.roleForm.controls.name.markAsPristine();
     this.copyDisabled = false;
     // this.spinner.show();
     const postNewRoleData = {
@@ -385,13 +383,19 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     };
   }
 
+  noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { whitespace: true };
+  }
+
   showSelectedRole(role: Role) {
     this.addingRole$.next(false);
     this.selectedRole = role;
     this.showCancelBtn = false;
     this.disableSaveButton = true;
-    this.f.name.setValue(role.name);
-    this.f.description.setValue(role.description);
+    this.roleForm.controls.name.setValue(role.name);
+    this.roleForm.controls.description.setValue(role.description);
     this.updatedPermissions = [];
 
     this.selectedRolePermissions$ = this.rolesList$.pipe(

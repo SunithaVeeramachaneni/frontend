@@ -33,17 +33,20 @@ export class AddEditUserModalComponent implements OnInit {
     firstName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      this.noWhitespaceValidator
     ]),
     lastName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      this.noWhitespaceValidator
     ]),
     title: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      this.noWhitespaceValidator
     ]),
     email: new FormControl('', [
       Validators.required,
@@ -85,11 +88,19 @@ export class AddEditUserModalComponent implements OnInit {
 
   emailNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      if (this.data.user.email && this.data.user.email === control.value)
+        return null;
       const find = this.data.allusers.findIndex(
         (user) => user.email === control.value
       );
       return find === -1 ? null : { duplicateName: true };
     };
+  }
+
+  noWhitespaceValidator(control: FormControl) {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { whitespace: true };
   }
 
   ngOnInit() {

@@ -17,6 +17,7 @@
   "cancel": "Cancel",
   "firstName": "FirstName",
   "lastName": "LastName",
+  "validInput": "Enter a valid input",
   "title": "Title",
   "email": "Email",
   "fieldRequired": "{name} is required",
