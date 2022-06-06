@@ -167,9 +167,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) {}
 
   ngOnInit() {
-    this.commonService.currentRouteUrlAction$.subscribe((currentRouteUrl) => {
-      this.currentRouteUrl = currentRouteUrl;
-    });
     const ref = this;
     this.oidcSecurityService.userData$
       .pipe(
