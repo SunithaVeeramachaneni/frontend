@@ -17,7 +17,7 @@
   "cancel": "Cancel",
   "firstName": "FirstName",
   "lastName": "LastName",
-  "noWhiteSpace": "Enter a valid {name}",
+  "noWhiteSpace": "{name} is required",
   "title": "Title",
   "email": "Email",
   "fieldRequired": "{name} is required",
