@@ -112,6 +112,16 @@ export class UsersService {
     };
   }
 
+  getIsUniqueEmail$ = (
+    email: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<Boolean> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `users/${email}/unique`,
+      info
+    );
+
   getUsers$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo

@@ -233,10 +233,11 @@
     <mat-form-field appearance="outline" class="width-100 m-b-10">
       <mat-label>{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
+      <!-- <mat-progress-spinner matSuffix [mode]="'indeterminate'" [diameter]="20" *ngIf="userForm.controls.email.pending">
+      </mat-progress-spinner> -->
       <mat-error
         *ngIf="
-          userForm.controls.email.errors?.required &&
-          userForm.controls.email.touched
+          userForm.controls.email.errors?.required
         "
         class="m-t-5"
       >
@@ -260,7 +261,7 @@
 
       <mat-error
         *ngIf="
-          userForm.controls.email.hasError('duplicateName') &&
+          userForm.controls.email.hasError('emailExists') &&
           userForm.controls.email.touched
         "
         class="m-t-5"

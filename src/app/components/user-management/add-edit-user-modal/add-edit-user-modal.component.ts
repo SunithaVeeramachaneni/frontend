@@ -2,7 +2,6 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
   Inject
 } from '@angular/core';
 import {
@@ -12,7 +11,8 @@ import {
   FormArray,
   ValidatorFn,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  AsyncValidatorFn
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -20,18 +20,19 @@ import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { UsersService } from '../services/users.service';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
-  styleUrls: ['./add-edit-user-modal.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./add-edit-user-modal.component.scss']
 })
 export class AddEditUserModalComponent implements OnInit {
+  initialEmail = '';
   userForm = this.fb.group({
     firstName: new FormControl('', [
       Validators.required,
@@ -54,8 +55,8 @@ export class AddEditUserModalComponent implements OnInit {
     email: new FormControl('', [
       Validators.required,
       Validators.email,
-      this.emailNameValidator()
-    ]),
+    ],
+    this.emailValidator()),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
@@ -80,7 +81,7 @@ export class AddEditUserModalComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
-    private roleService: RolesPermissionsService,
+    private usersService: UsersService,
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA)
     public data: any
@@ -91,14 +92,16 @@ export class AddEditUserModalComponent implements OnInit {
       !control.value.length ? { selectOne: { value: control.value } } : null;
   }
 
-  emailNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (this.data.user.email && this.data.user.email === control.value)
-        return null;
-      const find = this.data.allusers.findIndex(
-        (user) => user.email === control.value
+  emailValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (control.value === this.initialEmail) {
+        return of(null);
+      }
+      return this.usersService.getIsUniqueEmail$(control.value).pipe(
+        map((isUnique) => {
+          return isUnique ? null : { emailExists: true };
+        })
       );
-      return find === -1 ? null : { duplicateName: true };
     };
   }
 
@@ -113,6 +116,7 @@ export class AddEditUserModalComponent implements OnInit {
       this.getBase64FromImageURI(this.profileImageURI);
     } else {
       this.dialogText = 'editUser';
+      this.initialEmail = this.data.user.email;
       let base64;
       if (typeof userDetails.profileImage === 'string') {
         base64 = this.data.user.profileImage;
