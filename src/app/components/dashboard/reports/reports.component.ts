@@ -67,12 +67,7 @@ export class ReportsComponent implements OnInit {
     displayFilterPanel: false,
     displayActionsColumn: true,
     rowLevelActions: {
-      menuActions: [
-        {
-          title: 'Preview',
-          action: 'preview'
-        }
-      ],
+      menuActions: [],
       iconAction: {
         iconToggleOff: 'star_border',
         iconToggleOn: 'star',
@@ -366,6 +361,15 @@ export class ReportsComponent implements OnInit {
     const menuActions = [];
 
     if (
+      this.commonService.checkUserHasPermission(permissions, 'VIEW_REPORTS')
+    ) {
+      menuActions.push(   {
+        title: 'Preview',
+        action: 'preview'
+      });
+    }
+
+    if (
       this.commonService.checkUserHasPermission(permissions, 'UPDATE_REPORT')
     ) {
       menuActions.push({
@@ -402,10 +406,7 @@ export class ReportsComponent implements OnInit {
       });
     }
 
-    this.configOptions.rowLevelActions.menuActions = [
-      ...this.configOptions.rowLevelActions.menuActions,
-      ...menuActions
-    ];
+    this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions = { ...this.configOptions };
   }
 }

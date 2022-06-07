@@ -131,12 +131,13 @@
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
                   <mat-label translate="roleName"></mat-label>
                   <input matInput formControlName="name" />
-                </mat-form-field>
-
-                <div class="mat-error-name">
                   <mat-error
-                    *ngIf="f.name.errors?.required && f.name.touched"
-                    class="role-errors"
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.errors?.required &&
+                      roleForm.controls.name.touched
+                    "
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldRequired'
@@ -144,57 +145,73 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="f.name.errors?.minlength"
-                    class="role-errors"
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.errors?.minlength &&
+                      roleForm.controls.name.touched
+                    "
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldMinimumLength'
                         | translate
                           : {
                               name: 'roleLabel' | translate,
-                              length: f.name.errors?.minlength.requiredLength
+                              length:
+                                roleForm.controls.name.errors?.minlength
+                                  .requiredLength
                             }
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="f.name.hasError('duplicateName')"
-                    class="role-errors"
-                  >
-                    {{
-                      'alreadyExists'
-                        | translate
-                          : {
-                              name: 'roleLabel' | translate
-                            }
-                    }}
-                  </mat-error>
-                  <mat-error
-                    *ngIf="f.name.errors?.maxlength"
-                    class="role-errors"
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.errors?.maxlength &&
+                      roleForm.controls.name.touched
+                    "
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldMaximumLength'
                         | translate
                           : {
                               name: 'roleLabel' | translate,
-                              length: f.name.errors?.maxlength.requiredLength
+                              length:
+                                roleForm.controls.name.errors?.maxlength
+                                  .requiredLength
                             }
                     }}
                   </mat-error>
-                </div>
+
+                  <mat-error
+                    *ngIf="
+                      roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.touched
+                    "
+                    class="m-t-8 error-fields"
+                  >
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
               </div>
 
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title">
                   <mat-label translate="roleDescription"></mat-label>
                   <input matInput formControlName="description" />
-                </mat-form-field>
-                <div class="mat-error-description">
                   <mat-error
                     *ngIf="
-                      f.description.errors?.required && !f.description.pristine
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.errors?.required &&
+                      roleForm.controls.description.touched
                     "
-                    class="role-errors"
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldRequired'
@@ -203,8 +220,12 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="f.description.errors?.minlength"
-                    class="role-errors"
+                    *ngIf="
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.errors?.minlength &&
+                      roleForm.controls.description.touched
+                    "
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldMinimumLength'
@@ -212,13 +233,18 @@
                           : {
                               name: 'roleDescriptionLabel' | translate,
                               length:
-                                f.description.errors?.minlength.requiredLength
+                                roleForm.controls.description.errors?.minlength
+                                  .requiredLength
                             }
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="f.description.errors?.maxlength"
-                    class="role-errors"
+                    *ngIf="
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.errors?.maxlength &&
+                      roleForm.controls.description.touched
+                    "
+                    class="m-t-8 error-fields"
                   >
                     {{
                       'fieldMaximumLength'
@@ -226,11 +252,28 @@
                           : {
                               name: 'roleDescriptionLabel' | translate,
                               length:
-                                f.description.errors?.maxlength.requiredLength
+                                roleForm.controls.description.errors?.maxlength
+                                  .requiredLength
                             }
                     }}
                   </mat-error>
-                </div>
+
+                  <mat-error
+                    *ngIf="
+                      roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.touched
+                    "
+                    class="m-t-8 error-fields"
+                  >
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'roleDescriptionLabel' | translate
+                            }
+                    }}
+                  </mat-error>
+                </mat-form-field>
               </div>
 
               <div class="width-40">
