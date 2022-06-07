@@ -124,7 +124,10 @@
   right: 8px;
 }
 
-::ng-deep .mat-button-toggle-disabled .mat-button-toggle-button {
+::ng-deep
+  .report-configuration
+  .mat-button-toggle-disabled
+  .mat-button-toggle-button {
   cursor: default;
   background: #e0e0e0;
   color: #bdbdbd;
