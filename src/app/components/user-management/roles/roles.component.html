@@ -147,7 +147,8 @@
                   <mat-error
                     *ngIf="
                       !roleForm.controls.name.errors?.noWhiteSpace &&
-                      roleForm.controls.name.errors?.minlength
+                      roleForm.controls.name.errors?.minlength &&
+                      roleForm.controls.name.touched
                     "
                     class="m-t-8 error-fields"
                   >
@@ -165,7 +166,8 @@
                   <mat-error
                     *ngIf="
                       !roleForm.controls.name.errors?.noWhiteSpace &&
-                      roleForm.controls.name.errors?.maxlength
+                      roleForm.controls.name.errors?.maxlength &&
+                      roleForm.controls.name.touched
                     "
                     class="m-t-8 error-fields"
                   >
@@ -188,7 +190,13 @@
                     "
                     class="m-t-8 error-fields"
                   >
-                    {{ 'validInput' | translate }}
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate
+                            }
+                    }}
                   </mat-error>
                 </mat-form-field>
               </div>
@@ -214,7 +222,8 @@
                   <mat-error
                     *ngIf="
                       !roleForm.controls.description.errors?.noWhiteSpace &&
-                      roleForm.controls.description.errors?.minlength
+                      roleForm.controls.description.errors?.minlength &&
+                      roleForm.controls.description.touched
                     "
                     class="m-t-8 error-fields"
                   >
@@ -232,7 +241,8 @@
                   <mat-error
                     *ngIf="
                       !roleForm.controls.description.errors?.noWhiteSpace &&
-                      roleForm.controls.description.errors?.maxlength
+                      roleForm.controls.description.errors?.maxlength &&
+                      roleForm.controls.description.touched
                     "
                     class="m-t-8 error-fields"
                   >
@@ -255,7 +265,13 @@
                     "
                     class="m-t-8 error-fields"
                   >
-                    {{ 'validInput' | translate }}
+                    {{
+                      'noWhiteSpace'
+                        | translate
+                          : {
+                              name: 'roleDescriptionLabel' | translate
+                            }
+                    }}
                   </mat-error>
                 </mat-form-field>
               </div>

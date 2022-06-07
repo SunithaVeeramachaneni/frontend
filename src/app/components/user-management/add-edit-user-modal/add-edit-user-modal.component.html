@@ -40,7 +40,8 @@
         <mat-error
           *ngIf="
             !userForm.controls.firstName.errors?.noWhiteSpace &&
-            userForm.controls.firstName.errors?.minlength
+            userForm.controls.firstName.errors?.minlength &&
+            userForm.controls.firstName.touched
           "
           class="m-t-5 error-fields"
         >
@@ -58,7 +59,8 @@
         <mat-error
           *ngIf="
             !userForm.controls.firstName.errors?.noWhiteSpace &&
-            userForm.controls.firstName.errors?.maxlength
+            userForm.controls.firstName.errors?.maxlength &&
+            userForm.controls.firstName.touched
           "
           class="m-t-5 error-fields"
         >
@@ -81,7 +83,13 @@
           "
           class="m-t-5 error-fields"
         >
-          {{ 'validInput' | translate }}
+          {{
+            'noWhiteSpace'
+              | translate
+                : {
+                    name: 'firstName' | translate
+                  }
+          }}
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline" class="m-b-10 last-name">
@@ -100,7 +108,8 @@
         <mat-error
           *ngIf="
             !userForm.controls.lastName.errors?.noWhiteSpace &&
-            userForm.controls.lastName.errors?.minlength
+            userForm.controls.lastName.errors?.minlength &&
+            userForm.controls.lastName.touched
           "
           class="m-t-5 error-fields"
         >
@@ -118,7 +127,8 @@
         <mat-error
           *ngIf="
             !userForm.controls.lastName.errors?.noWhiteSpace &&
-            userForm.controls.lastName.errors?.maxlength
+            userForm.controls.lastName.errors?.maxlength &&
+            userForm.controls.lastName.touched
           "
           class="m-t-5 error-fields"
         >
@@ -140,7 +150,13 @@
           "
           class="m-t-5 error-fields"
         >
-          {{ 'validInput' | translate }}
+          {{
+            'noWhiteSpace'
+              | translate
+                : {
+                    name: 'lastName' | translate
+                  }
+          }}
         </mat-error>
       </mat-form-field>
     </div>
@@ -164,7 +180,8 @@
       <mat-error
         *ngIf="
           !userForm.controls.title.errors?.noWhiteSpace &&
-          userForm.controls.title.errors?.minlength
+          userForm.controls.title.errors?.minlength &&
+          userForm.controls.title.touched
         "
         class="m-t-5 error-fields"
       >
@@ -181,7 +198,8 @@
       <mat-error
         *ngIf="
           !userForm.controls.title.errors?.noWhiteSpace &&
-          userForm.controls.title.errors?.maxlength
+          userForm.controls.title.errors?.maxlength &&
+          userForm.controls.title.touched
         "
         class="m-t-5 error-fields"
       >
@@ -202,14 +220,26 @@
         "
         class="m-t-5 error-fields"
       >
-        {{ 'validInput' | translate }}
+        {{
+          'noWhiteSpace'
+            | translate
+              : {
+                  name: 'title' | translate
+                }
+        }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100 m-b-10">
       <mat-label>{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
-      <mat-error *ngIf="userForm.controls.email.errors?.required" class="m-t-5">
+      <mat-error
+        *ngIf="
+          userForm.controls.email.errors?.required &&
+          userForm.controls.email.touched
+        "
+        class="m-t-5"
+      >
         {{
           'fieldRequired'
             | translate
@@ -218,12 +248,21 @@
                 }
         }}
       </mat-error>
-      <mat-error *ngIf="userForm.controls.email.errors?.email" class="m-t-5">
+      <mat-error
+        *ngIf="
+          userForm.controls.email.errors?.email &&
+          userForm.controls.email.touched
+        "
+        class="m-t-5"
+      >
         {{ 'validEmail' | translate }}
       </mat-error>
 
       <mat-error
-        *ngIf="userForm.controls.email.hasError('duplicateName')"
+        *ngIf="
+          userForm.controls.email.hasError('duplicateName') &&
+          userForm.controls.email.touched
+        "
         class="m-t-5"
       >
         {{
@@ -306,7 +345,10 @@
         </mat-option>
       </mat-select>
       <mat-error
-        *ngIf="userForm.controls.roles.errors?.selectOne"
+        *ngIf="
+          userForm.controls.roles.errors?.selectOne &&
+          userForm.controls.roles.touched
+        "
         style="margin-top: 7px"
       >
         {{ 'rolesEmpty' | translate }}
