@@ -297,7 +297,8 @@
           *ngFor="let role of rolesInput; let i = index"
           [value]="role"
           style="padding-right: 0"
-        >
+          [disabled]="role.name === superAdminText"
+          >
           <span>{{ role.name }}</span>
           <mat-icon
             cdkOverlayOrigin

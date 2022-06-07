@@ -165,8 +165,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                   text: 'Role copied successfully',
                   type: 'success'
                 });
-                this.selectedRole = resp;
-                this.selectedRolePermissions$ = of(postRole.permissionIds);
+                this.selectedRole = role;
+                this.selectedRolePermissions$ = of(role.permissionIds);
               }
             });
 
