@@ -29,6 +29,7 @@
         <input matInput formControlName="firstName" />
         <mat-error
           *ngIf="
+            !userForm.controls.firstName.errors?.noWhiteSpace &&
             userForm.controls.firstName.errors?.required &&
             userForm.controls.firstName.touched
           "
@@ -37,7 +38,10 @@
           {{ 'fieldRequired' | translate: { name: 'firstName' | translate } }}
         </mat-error>
         <mat-error
-          *ngIf="userForm.controls.firstName.errors?.minlength"
+          *ngIf="
+            !userForm.controls.firstName.errors?.noWhiteSpace &&
+            userForm.controls.firstName.errors?.minlength
+          "
           class="m-t-5 error-fields"
         >
           {{
@@ -52,7 +56,10 @@
           }}
         </mat-error>
         <mat-error
-          *ngIf="userForm.controls.firstName.errors?.maxlength"
+          *ngIf="
+            !userForm.controls.firstName.errors?.noWhiteSpace &&
+            userForm.controls.firstName.errors?.maxlength
+          "
           class="m-t-5 error-fields"
         >
           {{
@@ -68,7 +75,10 @@
         </mat-error>
 
         <mat-error
-          *ngIf="userForm.controls.firstName.hasError('whitespace')"
+          *ngIf="
+            userForm.controls.firstName.errors?.noWhiteSpace &&
+            userForm.controls.firstName.touched
+          "
           class="m-t-5 error-fields"
         >
           {{ 'validInput' | translate }}
@@ -79,6 +89,7 @@
         <input matInput formControlName="lastName" />
         <mat-error
           *ngIf="
+            !userForm.controls.lastName.errors?.noWhiteSpace &&
             userForm.controls.lastName.errors?.required &&
             userForm.controls.lastName.touched
           "
@@ -87,7 +98,10 @@
           {{ 'fieldRequired' | translate: { name: 'lastName' | translate } }}
         </mat-error>
         <mat-error
-          *ngIf="userForm.controls.lastName.errors?.minlength"
+          *ngIf="
+            !userForm.controls.lastName.errors?.noWhiteSpace &&
+            userForm.controls.lastName.errors?.minlength
+          "
           class="m-t-5 error-fields"
         >
           {{
@@ -102,7 +116,10 @@
           }}
         </mat-error>
         <mat-error
-          *ngIf="userForm.controls.lastName.errors?.maxlength"
+          *ngIf="
+            !userForm.controls.lastName.errors?.noWhiteSpace &&
+            userForm.controls.lastName.errors?.maxlength
+          "
           class="m-t-5 error-fields"
         >
           {{
@@ -117,7 +134,10 @@
           }}
         </mat-error>
         <mat-error
-          *ngIf="userForm.controls.lastName.hasError('whitespace')"
+          *ngIf="
+            userForm.controls.lastName.errors?.noWhiteSpace &&
+            userForm.controls.lastName.touched
+          "
           class="m-t-5 error-fields"
         >
           {{ 'validInput' | translate }}
@@ -133,6 +153,7 @@
       <input matInput formControlName="title" />
       <mat-error
         *ngIf="
+          !userForm.controls.title.errors?.noWhiteSpace &&
           userForm.controls.title.errors?.required &&
           userForm.controls.title.touched
         "
@@ -141,7 +162,10 @@
         {{ 'fieldRequired' | translate: { name: 'title' | translate } }}
       </mat-error>
       <mat-error
-        *ngIf="userForm.controls.title.errors?.minlength"
+        *ngIf="
+          !userForm.controls.title.errors?.noWhiteSpace &&
+          userForm.controls.title.errors?.minlength
+        "
         class="m-t-5 error-fields"
       >
         {{
@@ -155,7 +179,10 @@
         }}
       </mat-error>
       <mat-error
-        *ngIf="userForm.controls.title.errors?.maxlength"
+        *ngIf="
+          !userForm.controls.title.errors?.noWhiteSpace &&
+          userForm.controls.title.errors?.maxlength
+        "
         class="m-t-5 error-fields"
       >
         {{
@@ -169,7 +196,10 @@
         }}
       </mat-error>
       <mat-error
-        *ngIf="userForm.controls.title.hasError('whitespace')"
+        *ngIf="
+          userForm.controls.title.errors?.noWhiteSpace &&
+          userForm.controls.title.touched
+        "
         class="m-t-5 error-fields"
       >
         {{ 'validInput' | translate }}
@@ -267,6 +297,7 @@
                 <app-permissions
                   [selectedRolePermissions$]="selectedRolePermissions$"
                   [allPermissions$]="permissionsList$"
+                  [rolesWithPermissionsInUsers]="userRolePermissions"
                 ></app-permissions>
               </div>
               <div class="dashboard-widgets-list"></div>

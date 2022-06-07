@@ -1,8 +1,23 @@
 <div
   *ngIf="permissions$ | async as permissions; else loadingPermissionList"
-  class="permissions-container"
+  [ngClass]="{
+    'permissions-list': rolesWithPermissionsInUsers === userRolePermissions,
+    'permissions-container': rolesWithPermissionsInUsers !== userRolePermissions
+  }"
 >
-  <mat-accordion *ngFor="let module of permissions; let i = index">
+  <mat-accordion
+    *ngFor="let module of permissions; let i = index"
+    class="dis-flex"
+  >
+    <mat-checkbox
+      [disabled]="isEditable"
+      [checked]="module.checked"
+      [indeterminate]="fewComplete(module)"
+      (change)="setAllChecked($event.checked, module)"
+      [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
+      class="permissions-checkbox"
+    >
+    </mat-checkbox>
     <mat-expansion-panel
       (opened)="panelOpenState[i] = true"
       (closed)="panelOpenState[i] = false"
@@ -10,15 +25,15 @@
       class="permissions-expand"
       [(expanded)]="panelOpenState[i]"
     >
-      <mat-expansion-panel-header class="h-40 expansion-header">
+      <mat-expansion-panel-header
+        [ngClass]="{
+          'permissions-padding':
+            rolesWithPermissionsInUsers === userRolePermissions,
+          'h-40 expansion-header':
+            rolesWithPermissionsInUsers !== userRolePermissions
+        }"
+      >
         <mat-panel-title>
-          <mat-checkbox
-            [disabled]="isEditable"
-            [checked]="module.checked"
-            [indeterminate]="fewComplete(module)"
-            (change)="setAllChecked($event.checked, module)"
-          >
-          </mat-checkbox>
           <span class="module-name">{{ module.name }}</span>
           <span class="permission-count">
             {{ module.countOfChecked }} of {{ module.permissions.length }}
@@ -27,11 +42,12 @@
           <mat-icon *ngIf="panelOpenState[i]">arrow_drop_down</mat-icon>
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <ul class="m-0">
+      <ul class="m-0 p-0">
         <li *ngFor="let permission of module.permissions">
           <mat-checkbox
             [checked]="permission.checked"
             (change)="updateAllChecked($event.checked, permission)"
+            [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
           >
             {{ permission.displayName }}
           </mat-checkbox>

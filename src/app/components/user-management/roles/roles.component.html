@@ -133,6 +133,7 @@
                   <input matInput formControlName="name" />
                   <mat-error
                     *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
                       roleForm.controls.name.errors?.required &&
                       roleForm.controls.name.touched
                     "
@@ -144,7 +145,10 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="roleForm.controls.name.errors?.minlength"
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.errors?.minlength
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{
@@ -159,7 +163,10 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="roleForm.controls.name.errors?.maxlength"
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.errors?.maxlength
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{
@@ -175,7 +182,10 @@
                   </mat-error>
 
                   <mat-error
-                    *ngIf="roleForm.controls.name.hasError('whitespace')"
+                    *ngIf="
+                      roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.touched
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{ 'validInput' | translate }}
@@ -189,6 +199,7 @@
                   <input matInput formControlName="description" />
                   <mat-error
                     *ngIf="
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
                       roleForm.controls.description.errors?.required &&
                       roleForm.controls.description.touched
                     "
@@ -201,7 +212,10 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="roleForm.controls.description.errors?.minlength"
+                    *ngIf="
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.errors?.minlength
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{
@@ -216,7 +230,10 @@
                     }}
                   </mat-error>
                   <mat-error
-                    *ngIf="roleForm.controls.description.errors?.maxlength"
+                    *ngIf="
+                      !roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.errors?.maxlength
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{
@@ -232,7 +249,10 @@
                   </mat-error>
 
                   <mat-error
-                    *ngIf="roleForm.controls.description.hasError('whitespace')"
+                    *ngIf="
+                      roleForm.controls.description.errors?.noWhiteSpace &&
+                      roleForm.controls.description.touched
+                    "
                     class="m-t-8 error-fields"
                   >
                     {{ 'validInput' | translate }}

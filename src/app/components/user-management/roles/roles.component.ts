@@ -37,6 +37,7 @@ import {
 import { Role, Permission } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import Swal from 'sweetalert2';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { RoleDeleteModalComponent } from '../role-delete-modal/role-delete-modal.component';
@@ -102,14 +103,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(100),
-        this.noWhitespaceValidator,
+        WhiteSpaceValidator.noWhiteSpace,
         this.roleNameValidator()
       ]),
       description: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(255),
-        this.noWhitespaceValidator
+        WhiteSpaceValidator.noWhiteSpace
       ])
     });
     this.getRoles();
@@ -381,12 +382,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       );
       return find === -1 ? null : { duplicateName: true };
     };
-  }
-
-  noWhitespaceValidator(control: FormControl) {
-    const isWhitespace = (control.value || '').trim().length === 0;
-    const isValid = !isWhitespace;
-    return isValid ? null : { whitespace: true };
   }
 
   showSelectedRole(role: Role) {
