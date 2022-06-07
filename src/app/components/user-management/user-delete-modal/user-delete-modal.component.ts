@@ -16,17 +16,25 @@ import { UserDetails } from 'src/app/interfaces';
 export class UserDeleteModalComponent implements OnInit {
   firstName;
   lastName;
+  multiple;
+  selctedUsersList;
 
   constructor(
     private dialogRef: MatDialogRef<UserDeleteModalComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { user: UserDetails }
+    public data: { user: UserDetails; multiDeactivate }
   ) {}
 
   ngOnInit() {
-    const { firstName, lastName } = this.data.user;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    if (this.data.multiDeactivate) {
+      this.multiple = true;
+      this.selctedUsersList = this.data.multiDeactivate.selctedUsers;
+    }
+    if (this.data.user) {
+      const { firstName, lastName } = this.data.user;
+      this.firstName = firstName;
+      this.lastName = lastName;
+    }
   }
 
   deleteUser() {

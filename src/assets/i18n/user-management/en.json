@@ -39,6 +39,10 @@
   "noBtn": "No",
   "okBtn": "Ok",
   "deactivateUser": "Deactivate User?",
+  "deactivate": "Deactivate",
+  "user": "User?",
+  "users": "Users?",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
+  "deactivateUsersWarning": "Do you want to deactivate the selected",
   "alreadyExists": "{name} already exists"
 }
