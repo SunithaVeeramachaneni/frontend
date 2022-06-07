@@ -8,6 +8,7 @@
   <mat-accordion
     *ngFor="let module of permissions; let i = index"
     class="dis-flex"
+    multi
   >
     <mat-checkbox
       [disabled]="isEditable"
@@ -34,10 +35,12 @@
         }"
       >
         <mat-panel-title>
-          <span class="module-name">{{ module.name }}</span>
-          <span class="permission-count">
-            {{ module.countOfChecked }} of {{ module.permissions.length }}
-          </span>
+          <div class="my-panel" (click)="$event.stopPropagation()">
+            <span class="module-name">{{ module.name }}</span>
+            <span class="permission-count">
+              {{ module.countOfChecked }} of {{ module.permissions.length }}
+            </span>
+          </div>
           <mat-icon *ngIf="!panelOpenState[i]"> arrow_right </mat-icon>
           <mat-icon *ngIf="panelOpenState[i]">arrow_drop_down</mat-icon>
         </mat-panel-title>
