@@ -202,3 +202,15 @@
 .text-red-color {
   color: #f44336;
 }
+
+.error-fields {
+  white-space: nowrap;
+  margin-left: -10px;
+  background: white;
+}
+
+.roles-content {
+  ::ng-deep .mat-form-field-subscript-wrapper {
+    width: auto;
+  }
+}

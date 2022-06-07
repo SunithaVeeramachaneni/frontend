@@ -23,6 +23,8 @@ import { Permission, Role } from 'src/app/interfaces';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
+import { userRolePermissions } from 'src/app/app.constants';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -34,17 +36,20 @@ export class AddEditUserModalComponent implements OnInit {
     firstName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      WhiteSpaceValidator.noWhiteSpace
     ]),
     lastName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      WhiteSpaceValidator.noWhiteSpace
     ]),
     title: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(100)
+      Validators.maxLength(100),
+      WhiteSpaceValidator.noWhiteSpace
     ]),
     email: new FormControl('', [
       Validators.required,
@@ -69,6 +74,7 @@ export class AddEditUserModalComponent implements OnInit {
     return this.userForm.get('roles');
   }
   rolePermissions: Permission[];
+  userRolePermissions = userRolePermissions;
 
   constructor(
     private fb: FormBuilder,
@@ -87,6 +93,8 @@ export class AddEditUserModalComponent implements OnInit {
 
   emailNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      if (this.data.user.email && this.data.user.email === control.value)
+        return null;
       const find = this.data.allusers.findIndex(
         (user) => user.email === control.value
       );

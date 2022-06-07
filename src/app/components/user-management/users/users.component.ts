@@ -409,26 +409,37 @@ export class UsersComponent implements OnInit {
   };
 
   deactivateUsers = () => {
+    const openDeleteUserModalRef = this.dialog.open(UserDeleteModalComponent, {
+      data: {
+        multiDeactivate: {
+          selctedUsers: this.selectedUsers
+        }
+      }
+    });
     this.selectedUsers.forEach((selectUser) => {
       const id = selectUser.id;
-      this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
-        if (Object.keys(deactivatedUser).length) {
-          this.userTableUpdate$.next({
-            action: 'deactivate',
-            user: {
-              id,
-              title: '',
-              email: '',
-              isActive: false,
-              createdAt: new Date(),
-              roles: []
+      openDeleteUserModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
+            if (Object.keys(deactivatedUser).length) {
+              this.userTableUpdate$.next({
+                action: 'deactivate',
+                user: {
+                  id,
+                  title: '',
+                  email: '',
+                  isActive: false,
+                  createdAt: new Date(),
+                  roles: []
+                }
+              });
+              this.toast.show({
+                text: 'User deactivated successfully!',
+                type: 'success'
+              });
+              this.selectedUsers = [];
             }
           });
-          this.toast.show({
-            text: 'User deactivated successfully!',
-            type: 'success'
-          });
-          this.selectedUsers = [];
         }
       });
     });
