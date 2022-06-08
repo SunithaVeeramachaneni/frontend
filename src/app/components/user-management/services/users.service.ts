@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
 import { Buffer } from 'buffer';
 import { map, mergeMap, toArray } from 'rxjs/operators';
+import { superAdminText } from 'src/app/app.constants';
 import { AppService } from '../../../shared/services/app.services';
 import {
   ErrorInfo,
@@ -49,7 +50,7 @@ export class UsersService {
       condition: {
         operation: 'contains',
         fieldName: 'displayRoles',
-        operand: 'Super Admin'
+        operand: superAdminText
       }
     };
     user.preTextImage = {

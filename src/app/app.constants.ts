@@ -91,6 +91,8 @@ export const superAdminIcon =
 
 export const superAdminText = 'Super Admin';
 
+export const userRolePermissions = 'UserRolePermissions';
+
 export const permissions = Object.freeze({
   viewDashboards: 'VIEW_DASHBOARDS',
   createDashboard: 'CREATE_DASHBOARD',

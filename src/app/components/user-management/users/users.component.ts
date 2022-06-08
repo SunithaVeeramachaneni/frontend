@@ -11,7 +11,7 @@ import {
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms, superAdminText } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
@@ -395,11 +395,11 @@ export class UsersComponent implements OnInit {
             (user) => user.id !== data.id
           );
 
-          if (data.displayRoles.includes('Super Admin'))
+          if (data.displayRoles.includes(superAdminText))
             this.disableDeactivate = false;
         } else {
           this.selectedUsers.push(data);
-          if (data.displayRoles.includes('Super Admin'))
+          if (data.displayRoles.includes(superAdminText))
             this.disableDeactivate = true;
         }
         break;
@@ -409,26 +409,37 @@ export class UsersComponent implements OnInit {
   };
 
   deactivateUsers = () => {
+    const openDeleteUserModalRef = this.dialog.open(UserDeleteModalComponent, {
+      data: {
+        multiDeactivate: {
+          selctedUsers: this.selectedUsers
+        }
+      }
+    });
     this.selectedUsers.forEach((selectUser) => {
       const id = selectUser.id;
-      this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
-        if (Object.keys(deactivatedUser).length) {
-          this.userTableUpdate$.next({
-            action: 'deactivate',
-            user: {
-              id,
-              title: '',
-              email: '',
-              isActive: false,
-              createdAt: new Date(),
-              roles: []
+      openDeleteUserModalRef.afterClosed().subscribe((resp) => {
+        if (resp) {
+          this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
+            if (Object.keys(deactivatedUser).length) {
+              this.userTableUpdate$.next({
+                action: 'deactivate',
+                user: {
+                  id,
+                  title: '',
+                  email: '',
+                  isActive: false,
+                  createdAt: new Date(),
+                  roles: []
+                }
+              });
+              this.toast.show({
+                text: 'User deactivated successfully!',
+                type: 'success'
+              });
+              this.selectedUsers = [];
             }
           });
-          this.toast.show({
-            text: 'User deactivated successfully!',
-            type: 'success'
-          });
-          this.selectedUsers = [];
         }
       });
     });
