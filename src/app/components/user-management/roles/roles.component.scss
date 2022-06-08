@@ -2,6 +2,11 @@
   background-color: #ffffff;
   margin: 14px;
   position: relative;
+
+  ::ng-deep .mat-list-base .mat-list-item {
+    min-height: 48px;
+    height: auto;
+  }
 }
 
 .roles-header {
@@ -96,6 +101,7 @@
 .role-name {
   padding: 10px;
   margin-top: 3px;
+  width: 60%;
 }
 
 .role-count {
@@ -109,7 +115,6 @@
 
 .super-admin-icon {
   position: relative;
-  left: -7px;
   top: 2px;
 }
 
