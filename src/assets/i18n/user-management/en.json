@@ -1,5 +1,6 @@
 {
   "searchUsers": "Search Users",
+  "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
   "deleteBtn": "Delete",
   "roles": "Roles",
@@ -17,6 +18,7 @@
   "cancel": "Cancel",
   "firstName": "FirstName",
   "lastName": "LastName",
+  "noWhiteSpace": "{name} is required",
   "title": "Title",
   "email": "Email",
   "fieldRequired": "{name} is required",
@@ -38,6 +40,10 @@
   "noBtn": "No",
   "okBtn": "Ok",
   "deactivateUser": "Deactivate User?",
+  "deactivate": "Deactivate",
+  "user": "User?",
+  "users": "Users",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
+  "deactivateUsersWarning": "Do you want to deactivate the selected",
   "alreadyExists": "{name} already exists"
 }

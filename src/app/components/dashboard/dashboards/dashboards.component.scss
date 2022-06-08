@@ -10,7 +10,7 @@
     width: 20%;
     height: 100%;
     .dashboard-dropdown {
-      padding: 7px 10px 0 10px;
+      padding: 7px 0px 0 5px;
     }
     .create-btn-row {
       width: 100%;
@@ -53,6 +53,14 @@
   }
   .fullWidth {
     width: 100%;
+  }
+  .all-dashboards-list {
+    overflow-y: scroll;
+    height: calc(100vh - 210px);
+  }
+
+  ::ng-deep .mat-list-base .mat-list-item .mat-list-item-content {
+    padding: 0 0 0 16px !important;
   }
 }
 

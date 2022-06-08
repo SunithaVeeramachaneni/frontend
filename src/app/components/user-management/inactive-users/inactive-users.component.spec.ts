@@ -20,7 +20,12 @@ import {
 } from '../services/roles-permissions.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
+import {
+  openCollabWindow$,
+  unreadCount$,
+  userData$
+} from 'src/app/shared/components/header/header.component.mock';
+import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('InactiveUsersComponent', () => {
   let component: InactiveUsersComponent;
@@ -28,6 +33,7 @@ describe('InactiveUsersComponent', () => {
   let rolesPermissionsServiceSpy: RolesPermissionsService;
   let usersServiceSpy: UsersService;
   let headerServiceSpy: HeaderService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
 
   beforeEach(async () => {
@@ -43,8 +49,14 @@ describe('InactiveUsersComponent', () => {
     ]);
 
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails'
+      'getLogonUserDetails',
+      'getInstallationURL$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['collaborationWindowAction'],
+      { unreadCount$, openCollabWindow$ }
+    );
 
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
@@ -72,7 +84,8 @@ describe('InactiveUsersComponent', () => {
         },
         { provide: UsersService, useValue: usersServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy }
+        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
@@ -80,6 +93,11 @@ describe('InactiveUsersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InactiveUsersComponent);
     component = fixture.componentInstance;
+
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(of({ dummy: 'dummyvalue' }))
+      .and.callThrough();
 
     (rolesPermissionsServiceSpy.getPermissions$ as jasmine.Spy)
       .withArgs()

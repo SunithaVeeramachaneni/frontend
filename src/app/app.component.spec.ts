@@ -10,16 +10,21 @@ import { CommonService } from './shared/services/common.service';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { userData$ } from './shared/components/header/header.component.mock';
+import {
+  openCollabWindow$,
+  userData$
+} from './shared/components/header/header.component.mock';
 import { permissions$ } from './shared/services/common.service.mock';
 import { UsersService } from './components/user-management/services/users.service';
 import { SharedModule } from './shared/shared.module';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let commonServiceSpy: CommonService;
   let translateServiceSpy: TranslateService;
+  let chatServiceSpy: ChatService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let usersServiceSpy: UsersService;
   let appDe: DebugElement;
@@ -42,6 +47,16 @@ describe('AppComponent', () => {
     usersServiceSpy = jasmine.createSpyObj('UsersService', [
       'getUserPermissionsByEmail$'
     ]);
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      [
+        'getCollaborationWindowStatus',
+        'newMessageReceived',
+        'setUnreadMessageCount',
+        'getUnreadMessageCount'
+      ],
+      { processSSEMessages$: openCollabWindow$ }
+    );
 
     await TestBed.configureTestingModule({
       imports: [
@@ -58,7 +73,8 @@ describe('AppComponent', () => {
         },
         { provide: TranslateService, useValue: translateServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: UsersService, useValue: usersServiceSpy }
+        { provide: UsersService, useValue: usersServiceSpy },
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });

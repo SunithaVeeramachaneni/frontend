@@ -26,8 +26,8 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-divider class="m-r-n20"></mat-divider>
-        <mat-list role="list" class="m-r-n20">
+        <mat-divider></mat-divider>
+        <mat-list role="list" class="height-100">
           <mat-list-item role="listitem">
             <div class="create-btn-row">
               <span class="left-head-text" translate>allDashboards</span>
@@ -42,7 +42,7 @@
             </div>
           </mat-list-item>
           <mat-divider></mat-divider>
-          <div>
+          <div class="all-dashboards-list">
             <div *ngFor="let dashboard of dashboards">
               <mat-list-item
                 class="dashboards-list"
@@ -122,7 +122,7 @@
       </div>
       <mat-divider
         vertical="true"
-        class="p-10"
+        class="p-0"
         *ngIf="dashboardMode === 'ALL'"
       ></mat-divider>
       <div [ngClass]="displayAllDashboards ? 'right' : 'fullWidth'">
