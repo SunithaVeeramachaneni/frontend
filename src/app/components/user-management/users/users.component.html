@@ -3,7 +3,12 @@
     <span class="custom-mat-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-form-field">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>
-        <input matInput type="text" placeholder="Search Users" disabled />
+        <input
+          matInput
+          type="text"
+          [placeholder]="'searchUsers' | translate"
+          disabled
+        />
       </mat-form-field>
     </span>
 
@@ -12,14 +17,13 @@
       class="add-user-btn"
       (click)="openEditAddUserModal()"
       *appCheckUserHasPermission="[perms.createUser]"
-    >
-      Add User
-    </button>
+      translate="addUserBtn"
+    ></button>
     <span class="users-count" *ngIf="userCount$ | async as userCount">
       <span class="no-of-records">
         {{ userCount.count }}
       </span>
-      <span class="users-text">Users</span>
+      <span class="users-text" translate="users"></span>
     </span>
     <button
       mat-icon-button
@@ -36,7 +40,7 @@
         (click)="deactivateUsers()"
         class="text-red"
       >
-        <span>Deactivate</span>
+        <span translate="deactivate"></span>
       </button>
     </mat-menu>
   </div>
