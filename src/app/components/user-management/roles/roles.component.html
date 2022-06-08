@@ -65,13 +65,14 @@
               ></mat-checkbox>
               <span class="role-name">
                 {{ role.name }}
+                <img
+                  src="assets/user-management-icons/super-admin-icon.svg"
+                  alt="super admin"
+                  class="super-admin-icon"
+                  *ngIf="role.name === superAdminText"
+                />
               </span>
-              <img
-                src="assets/user-management-icons/super-admin-icon.svg"
-                alt="super admin"
-                class="super-admin-icon"
-                *ngIf="role.name === superAdminText"
-              />
+
               <span class="role-count">
                 {{ role.permissionIds?.length }} of
                 {{ permissionsTotalLength$ | async }}
