@@ -11,13 +11,16 @@ import {
 import { CommonService } from '../../services/common.service';
 import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
-import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { LogonUserDetails } from '../../../interfaces';
-import { map, tap } from 'rxjs/operators';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { LogonUserDetails, UserDetails } from '../../../interfaces';
+import { filter, map, tap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
 import { ChatService } from '../collaboration/chats/chat.service';
+import { getImageSrc } from '../../utils/imageUtils';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Buffer } from 'buffer';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +30,7 @@ import { ChatService } from '../collaboration/chats/chat.service';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
+  @Input() title: string;
 
   public username: string;
   public userImage: string;
@@ -38,15 +42,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   slackVerification$: Observable<any>;
 
-  @Input() title;
+  userData$: Observable<UserDetails>;
 
   private minimizeSidebarActionSubscription: Subscription;
 
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
-
-  isAuthenticated = false;
-  userData$: Observable<UserDataResult>;
 
   constructor(
     private headerService: HeaderService,
@@ -54,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public oidcSecurityService: OidcSecurityService,
     private chatService: ChatService,
     public dialog: MatDialog,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {}
 
   openDialog(): void {
@@ -104,18 +106,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.commonService.minimizeSidebarAction$.subscribe((data) => {
         this.sidebarMinimize = data;
       });
-    this.logonUserDetails$ = this.headerService.getLogonUserDetails();
-    this.userData$ = this.oidcSecurityService.userData$.pipe(
-      tap((res) => {
-        this.commonService.setUserInfo(res);
-        this.username = res.userData ? res.userData.name.split('.') : [];
-        if (this.username.length) {
-          const loggedInUser = {
-            first_name: this.username[0],
-            last_name: this.username[1]
-          };
-          localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
-        }
+
+    this.userData$ = this.commonService.userInfo$.pipe(
+      filter((userInfo) => Object.keys(userInfo).length !== 0),
+      tap((userInfo) => {
+        const loggedInUser = {
+          first_name: userInfo.firstName,
+          last_name: userInfo.lastName
+        };
+        localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
       })
     );
   }
@@ -138,7 +137,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout() {
-    this.oidcSecurityService.logoffAndRevokeTokens();
+    const { tenantId: configId } = this.commonService.getTenantInfo();
+    this.oidcSecurityService.logoffAndRevokeTokens(configId).subscribe();
     sessionStorage.clear();
+  }
+
+  profileImage(buffer: any) {
+    return getImageSrc(Buffer.from(buffer).toString(), this.sanitizer);
   }
 }

@@ -1,24 +1,73 @@
 <div class="login-main-page">
   <h1 class="login-heading">
-    Let's get <br />
-    empowered
+    <span [innerHTML]="'loginHeader' | translate"></span>
   </h1>
 
-  <div class="centered" [formGroup]="loginForm">
-    <img src="assets/img/svg/innov-logo.svg" alt="" class="p-t-10 width-200" />
-    <h4 class="m-5 p-t-10">Sign in</h4>
+  <form
+    class="centered"
+    [formGroup]="loginForm"
+    (ngSubmit)="redirectToTenant()"
+  >
+    <h2 class="m-0" translate>welcome</h2>
+    <h4 class="m-t-5 m-b-5 p-t-10" translate>signinInfo</h4>
     <input
       type="text"
-      placeholder="Email address, phone number or Skype"
+      [placeholder]="'companyOrDomainNamePlaceholder' | translate"
       class="email-input"
-      formControlName="email"
+      formControlName="companyOrDomainName"
       autofocus="false"
+      (keyup.enter)="onEnter()"
     />
-    <mat-error *ngIf="f.email.errors?.required"> Email is required </mat-error>
-    <mat-error *ngIf="f.email.errors?.email"> Enter a valid Email </mat-error>
-    <p class="cant-access-text">Can't access your account?</p>
-    <button class="next-btn">Next</button>
-  </div>
+    <mat-error
+      *ngIf="
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.required
+      "
+    >
+      {{ 'required' | translate: { name: 'companyOrDomainName' | translate } }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.noWhiteSpace
+      "
+    >
+      {{
+        'noWhiteSpace' | translate: { name: 'companyOrDomainName' | translate }
+      }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.maxlength
+      "
+    >
+      {{
+        'maxlength'
+          | translate
+            : {
+                name: 'companyOrDomainName' | translate,
+                length: loginForm.get('companyOrDomainName').errors?.maxlength
+                  .requiredLength
+              }
+      }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.invalidCompanyOrDomaniName
+      "
+    >
+      {{ 'invalidCompanyOrDomaniName' | translate }}
+    </mat-error>
+    <button
+      class="next-btn"
+      [disabled]="!loginForm.valid || loginForm.pristine"
+      translate="next"
+    ></button>
+  </form>
   <img
     src="assets/login/graphics_left.svg"
     alt="graphics left"

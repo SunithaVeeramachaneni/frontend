@@ -16,9 +16,9 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { environment } from './../environments/environment';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
-import { combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { Permission } from './interfaces';
 
 const {
@@ -35,10 +35,8 @@ const {
   userManagement,
   rolesPermissions,
   inActiveTenants,
-  //inActiveUsers,
   inActiveUsers,
   tenantManagement
-  //inActiveTenants
 } = routingUrls;
 
 @Component({
@@ -155,6 +153,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   permissions$: Observable<Permission[]>;
   menuHasSubMenu = {};
   isNavigated = false;
+  isUserAuthenticated = false;
 
   constructor(
     private commonService: CommonService,
@@ -168,13 +167,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnInit() {
     const ref = this;
-    this.oidcSecurityService.userData$
+    this.commonService.isUserAuthenticated$
       .pipe(
-        take(2),
-        filter((user) => user.userData),
+        tap(
+          (isUserAuthenticated) =>
+            (this.isUserAuthenticated = isUserAuthenticated)
+        ),
+        filter((isUserAuthenticated) => isUserAuthenticated),
         mergeMap(() => this.usersService.getLoggedInUser$())
       )
       .subscribe((data) => {
+        this.commonService.setUserInfo(data);
         if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
           const userSlackDetail = data.UserSlackDetail;
           const { slackID } = userSlackDetail;
@@ -248,22 +251,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.oidcSecurityService.userData$
       .pipe(
-        mergeMap((res) => {
-          if (res.userData) {
-            if (!this.commonService.getPermissions().length) {
-              return this.usersService
-                .getUserPermissionsByEmail$(res.userData.email)
-                .pipe(
-                  tap((permissions) =>
-                    this.commonService.setPermissions(permissions)
-                  )
-                );
-            } else {
-              return of(null);
-            }
-          } else {
-            return of(null);
-          }
+        take(2),
+        filter((user) => user.allUserData.length !== 0),
+        mergeMap((res: UserDataResult) => {
+          const {
+            userData: { email }
+          } = res.allUserData.find(({ userData }) => userData);
+          return this.usersService
+            .getUserPermissionsByEmail$(email)
+            .pipe(
+              tap((permissions) =>
+                this.commonService.setPermissions(permissions)
+              )
+            );
         })
       )
       .subscribe();
@@ -280,7 +280,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     ])
       .pipe(
         tap(([permissions, event]: [Permission[], NavigationStart]) => {
-          if (event.url === '/') {
+          const returnUrl = sessionStorage.getItem('returnUrl');
+          if (returnUrl) {
+            sessionStorage.removeItem('returnUrl');
+            this.router.navigate([returnUrl]);
+          } else if (event.url === '/') {
             this.navigateToModule(
               permissions,
               perms.viewDashboards,

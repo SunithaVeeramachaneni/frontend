@@ -1,12 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AutoLoginAllRoutesGuard } from 'angular-auth-oidc-client';
+import { AuthGuard } from './shared/guards/auth.guard';
 export const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
-  },
   {
     path: 'login',
     loadChildren: () =>
@@ -18,7 +13,7 @@ export const routes: Routes = [
       import('./components/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'tenant-management',
@@ -26,7 +21,7 @@ export const routes: Routes = [
       import('./components/tenant-management/tenant-management.module').then(
         (m) => m.TenantManagementModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'work-instructions',
@@ -34,7 +29,7 @@ export const routes: Routes = [
       import('./components/work-instructions/work-instructions.module').then(
         (m) => m.WorkInstructionsPageModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'maintenance',
@@ -42,7 +37,7 @@ export const routes: Routes = [
       import('./components/maintenance/maintenance.module').then(
         (m) => m.MaintenanceModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'spare-parts',
@@ -50,7 +45,7 @@ export const routes: Routes = [
       import('./components/spare-parts/spare-parts.module').then(
         (m) => m.SparePartsModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'user-management',
@@ -58,7 +53,12 @@ export const routes: Routes = [
       import('./components/user-management/user-management.module').then(
         (m) => m.UserManagementModule
       ),
-    canActivate: [AutoLoginAllRoutesGuard]
+    canActivate: [AuthGuard]
+  },
+  {
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
   }
 ];
 

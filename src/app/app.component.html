@@ -8,7 +8,7 @@
     mode="side"
     opened
     class="sidenav-drawer"
-    *ngIf="this.currentRouteUrl !== '/login'"
+    *ngIf="isUserAuthenticated"
   >
     <div
       [ngClass]="{
@@ -119,7 +119,7 @@
   </mat-drawer>
   <mat-drawer-content
     [ngClass]="{
-      'hide-sidebar': this.currentRouteUrl === '/login',
+      'hide-sidebar': isUserAuthenticated === false,
       'max-drawer-content': this.sidebar === false,
       'min-drawer-content': this.sidebar === true
     }"

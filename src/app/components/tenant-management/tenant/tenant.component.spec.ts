@@ -2443,6 +2443,7 @@ describe('TenantComponent', () => {
       });
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();
@@ -2598,6 +2599,7 @@ describe('TenantComponent', () => {
       expect(component.tenantForm.get('id').value).toBe(tenant.id);
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();
@@ -2758,6 +2760,7 @@ describe('TenantComponent', () => {
       expect(component.editTenant).toBeTrue();
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();
