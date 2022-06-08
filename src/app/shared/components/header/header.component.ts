@@ -58,6 +58,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   openDialog(): void {
+    const dialogAlreadyOpened = this.chatService.getCollaborationWindowStatus();
+    if (dialogAlreadyOpened) {
+      return;
+    }
+    this.unreadMessageCount = 0;
     const dialogRef = this.dialog.open(CollabDialogComponent, {
       hasBackdrop: false,
       width: '750px',
