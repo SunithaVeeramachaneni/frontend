@@ -106,7 +106,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       surl: encodeURIComponent(window.location.href),
       furl: encodeURIComponent(window.location.href)
     };
-    console.log(queryParams);
     this.slackVerification$ = this.headerService
       .getInstallationURL$(queryParams)
       .pipe(map((url) => url));
