@@ -67,19 +67,11 @@ describe('HeaderComponent', () => {
         { provide: CommonService, useValue: commonServiceSpy }
       ]
     }).compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
       .withArgs()
       .and.returnValue(logonUserDetails);
-
-    const queryParams = {
-      furl: 'http://localhost:1234',
-      surl: 'http://localhost:1234'
-    };
 
     (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
       of({ dummy: 'dummyvalue' })
