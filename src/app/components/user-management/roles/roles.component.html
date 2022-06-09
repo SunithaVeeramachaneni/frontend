@@ -63,7 +63,11 @@
                 (change)="roleChecked(role, $event)"
                 [disabled]="role.name === superAdminText"
               ></mat-checkbox>
-              <span class="role-name">
+              <span
+                class="role-name"
+                matTooltip="{{ role.name }}"
+                [ngClass]="{ 'text-red': role.name.length > 100 }"
+              >
                 {{ role.name }}
                 <img
                   src="assets/user-management-icons/super-admin-icon.svg"
