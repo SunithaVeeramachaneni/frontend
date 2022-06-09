@@ -94,10 +94,9 @@ describe('InactiveUsersComponent', () => {
     fixture = TestBed.createComponent(InactiveUsersComponent);
     component = fixture.componentInstance;
 
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of({ dummy: 'dummyvalue' }))
-      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
+      of({ dummy: 'dummyvalue' })
+    );
 
     (rolesPermissionsServiceSpy.getPermissions$ as jasmine.Spy)
       .withArgs()
