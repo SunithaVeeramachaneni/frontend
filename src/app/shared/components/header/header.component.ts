@@ -102,8 +102,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       });
 
+    const queryParams = {
+      surl: encodeURIComponent(window.location.href),
+      furl: encodeURIComponent(window.location.href)
+    };
+    console.log(queryParams);
     this.slackVerification$ = this.headerService
-      .getInstallationURL$()
+      .getInstallationURL$(queryParams)
       .pipe(map((url) => url));
     this.minimizeSidebarActionSubscription =
       this.commonService.minimizeSidebarAction$.subscribe((data) => {
