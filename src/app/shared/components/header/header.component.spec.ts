@@ -29,7 +29,7 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setCurrentRouteUrl', 'setTranslateLanguage'],
+      ['setCurrentRouteUrl', 'setTranslateLanguage', 'setUserInfo '],
       {
         minimizeSidebarAction$: of(false),
         permissionsAction$: permissions$
