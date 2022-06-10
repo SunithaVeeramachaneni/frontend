@@ -230,7 +230,7 @@ describe('WorkInstructionsComponent', () => {
     ]);
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setHeaderTitle', 'setUserInfo'],
+      ['setHeaderTitle'],
       {
         currentRouteUrlAction$: of('/work-instructions'),
         headerTitleAction$: of(routingUrls.workInstructions.title),

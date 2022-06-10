@@ -44,7 +44,7 @@ describe('TenantManagementContainerComponent', () => {
     );
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setHeaderTitle', 'setUserInfo'],
+      ['setHeaderTitle'],
       {
         headerTitleAction$: of(routingUrls.tenantManagement.title),
         currentRouteUrlAction$: of(routingUrls.tenantManagement.url),
