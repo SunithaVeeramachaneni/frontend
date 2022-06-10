@@ -11,11 +11,7 @@ import { HeaderService } from '../../services/header.service';
 import { ChatService } from '../collaboration/chats/chat.service';
 
 import { HeaderComponent } from './header.component';
-import {
-  userData$,
-  unreadCount$,
-  openCollabWindow$
-} from './header.component.mock';
+import { userData$, openCollabWindow$ } from './header.component.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
