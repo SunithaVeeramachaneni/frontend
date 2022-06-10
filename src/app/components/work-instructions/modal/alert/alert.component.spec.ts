@@ -13,32 +13,27 @@ describe('AlertComponent', () => {
   let alertDe: DebugElement;
   let alertEl: HTMLElement;
 
-  beforeEach(
-    waitForAsync(() => {
-      alertServiceSpy = jasmine.createSpyObj('AlertService', [
-        'onAlert',
-        'clear'
-      ]);
+  beforeEach(waitForAsync(() => {
+    alertServiceSpy = jasmine.createSpyObj('AlertService', [
+      'onAlert',
+      'clear'
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [AlertComponent],
-        imports: [RouterTestingModule, AlertModule],
-        providers: [
-          AlertConfig,
-          { provide: AlertService, useValue: alertServiceSpy }
-        ]
-      }).compileComponents();
-      router = TestBed.inject(Router);
-    })
-  );
-
-  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [AlertComponent],
+      imports: [RouterTestingModule, AlertModule],
+      providers: [
+        AlertConfig,
+        { provide: AlertService, useValue: alertServiceSpy }
+      ]
+    }).compileComponents();
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(AlertComponent);
     component = fixture.componentInstance;
     alertDe = fixture.debugElement;
     alertEl = alertDe.nativeElement;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();

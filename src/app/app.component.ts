@@ -21,6 +21,9 @@ import { UsersService } from './components/user-management/services/users.servic
 import { combineLatest, Observable, of } from 'rxjs';
 import { Permission } from './interfaces';
 
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import { AuthHeaderService } from './shared/services/authHeader.service';
+
 const {
   dashboard,
   reports,
@@ -157,6 +160,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isNavigated = false;
 
   constructor(
+    private authHeaderService: AuthHeaderService,
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
@@ -178,10 +182,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
           const userSlackDetail = data.UserSlackDetail;
           const { slackID } = userSlackDetail;
+          const SSE_URL = `${environment.slackAPIUrl}sse/${slackID}`;
 
-          this.eventSource = new EventSource(
-            `${environment.slackAPIUrl}sse/${slackID}`
-          );
+          const { authorization, tenantid } =
+            this.authHeaderService.getAuthHeaders(SSE_URL);
+          this.eventSource = new EventSourcePolyfill(SSE_URL, {
+            headers: {
+              authorization,
+              tenantid
+            }
+          });
           this.eventSource.onmessage = async (event: any) => {
             const eventData = JSON.parse(event.data);
             if (!eventData.isHeartbeat) {
@@ -189,8 +199,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
               eventData.forEach((evt: any) => {
                 const { message } = evt;
                 if (!message.isHeartbeat && message.eventType === 'message') {
+                  const audio = new Audio('../assets/audio/notification.mp3');
+                  audio.play();
                   processedMessageIds.push(evt.id);
-                  // If collab window is not open, increment notification count...
                   const iscollabWindowOpen =
                     ref.chatService.getCollaborationWindowStatus();
                   if (iscollabWindowOpen) {
