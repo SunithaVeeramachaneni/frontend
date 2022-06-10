@@ -1,5 +1,6 @@
 {
   "searchUsers": "Search Users",
+  "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
   "deleteBtn": "Delete",
   "roles": "Roles",
@@ -41,7 +42,7 @@
   "deactivateUser": "Deactivate User?",
   "deactivate": "Deactivate",
   "user": "User?",
-  "users": "Users?",
+  "users": "Users",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
   "deactivateUsersWarning": "Do you want to deactivate the selected",
   "alreadyExists": "{name} already exists"

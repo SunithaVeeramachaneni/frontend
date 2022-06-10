@@ -60,6 +60,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   openDialog(): void {
+    const dialogAlreadyOpened = this.chatService.getCollaborationWindowStatus();
+    if (dialogAlreadyOpened) {
+      return;
+    }
+    this.unreadMessageCount = 0;
     const dialogRef = this.dialog.open(CollabDialogComponent, {
       hasBackdrop: false,
       width: '750px',
@@ -99,8 +104,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       });
 
+    const queryParams = {
+      surl: encodeURIComponent(window.location.href),
+      furl: encodeURIComponent(window.location.href)
+    };
     this.slackVerification$ = this.headerService
-      .getInstallationURL$()
+      .getInstallationURL$(queryParams)
       .pipe(map((url) => url));
     this.minimizeSidebarActionSubscription =
       this.commonService.minimizeSidebarAction$.subscribe((data) => {

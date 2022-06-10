@@ -12,6 +12,14 @@ export class HeaderService {
 
   constructor(private appService: AppService) {}
 
-  getInstallationURL$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
-    this.appService._getResp(environment.slackAPIUrl, 'install/verify', info);
+  getInstallationURL$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.slackAPIUrl,
+      'install/verify',
+      info,
+      queryParams
+    );
 }

@@ -27,6 +27,9 @@
 
 .collabButton {
   margin: 0px 15px;
+  & ::ng-deep .mat-button-focus-overlay {
+    background-color: transparent;
+  }
 }
 
 .header-title {

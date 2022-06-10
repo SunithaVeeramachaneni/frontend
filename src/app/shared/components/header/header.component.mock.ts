@@ -74,4 +74,4 @@ export const unreadCount$ = of({ data: 'dummy' });
 export const openCollabWindow$ = of({
   data: { dummy: 'dummy' }
 });
-export const getInstallationURL$ = () => of('mock');
+export const getInstallationURL$ = ({}) => of('mock');

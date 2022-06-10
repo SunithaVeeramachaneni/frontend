@@ -292,10 +292,9 @@ describe('WorkInstructionsComponent', () => {
       .withArgs()
       .and.returnValue(of([...favorites, ...drafts]))
       .and.callThrough();
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of({ dummy: 'dummyvalue' }))
-      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
+      of({ dummy: 'dummyvalue' })
+    );
 
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
     spyOn(breadcrumbService, 'set');

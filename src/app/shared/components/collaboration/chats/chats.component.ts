@@ -20,8 +20,14 @@ import { getImageSrc } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 interface SendReceiveMessages {
-  action: 'send' | 'receive';
+  action: 'send' | 'receive' | '';
   message: any;
+  channel: any;
+}
+interface UpdateConversations {
+  action: 'update_latest_message' | '';
+  message: any;
+  channel: any;
 }
 
 @Component({
@@ -52,7 +58,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
     action: 'send',
-    message: {} as any
+    message: {} as any,
+    channel: ''
+  });
+
+  updateConversations$ = new BehaviorSubject<UpdateConversations>({
+    action: 'update_latest_message',
+    message: {} as any,
+    channel: ''
   });
 
   private newMessageReceivedSubscription: Subscription;
@@ -87,13 +100,33 @@ export class ChatsComponent implements OnInit, OnDestroy {
               this.sanitizer
             );
           });
+          if (this.targetUser) {
+            conversations.forEach((conv) => {
+              if (conv.user === this.targetUser.UserSlackDetail.slackID) {
+                this.setSelectedConversation(conv);
+              }
+            });
+          } else {
+            this.setSelectedConversation(conversations[0]);
+          }
           return of({ data: conversations });
         }
       })
     );
-    this.conversations$ = combineLatest([this.conversationsInitial$]).pipe(
-      map(([initial]) => {
-        this.setSelectedConversation(initial.data[0]);
+    this.conversations$ = combineLatest([
+      this.conversationsInitial$,
+      this.updateConversations$
+    ]).pipe(
+      map(([initial, updateConversation]) => {
+        const { action, message, channel } = updateConversation;
+        const conversationsList = initial.data;
+        if (action === 'update_latest_message' && channel?.length) {
+          conversationsList.forEach((conv) => {
+            if (conv.id === channel) {
+              conv.info.latest = message;
+            }
+          });
+        }
         return initial.data;
       }),
       tap((conversations) => {
@@ -146,6 +179,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       displayToast: true,
       failureResponse: 'throwError'
     };
+    this.sendReceiveMessages$.next({ action: '', message: '', channel: '' });
     this.conversationHistory = [];
     this.selectedConversation = conversation;
     this.conversationHistoryInit$ = this.chatService
@@ -183,7 +217,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       this.sendReceiveMessages$
     ]).pipe(
       map(([initial, messageAction]) => {
-        const { action, message } = messageAction;
+        const { action, message, channel } = messageAction;
         if (action === 'send') {
           let userInfo;
           initial.data.forEach((msg) => {
@@ -191,9 +225,22 @@ export class ChatsComponent implements OnInit, OnDestroy {
               userInfo = msg.userInfo;
             }
           });
+
           message.userInfo = userInfo;
           message.isMeeting = false;
           initial.data = initial.data.concat(message);
+          if (
+            this.selectedConversation &&
+            this.selectedConversation.id === channel
+          ) {
+            this.selectedConversation.info.latest = message;
+          } else {
+            this.updateConversations$.next({
+              action: 'update_latest_message',
+              message,
+              channel: message.channel
+            });
+          }
           return initial.data;
         } else if (action === 'receive') {
           let userInfo;
@@ -205,6 +252,20 @@ export class ChatsComponent implements OnInit, OnDestroy {
           message.userInfo = userInfo;
           message.isMeeting = false;
           initial.data = initial.data.concat(message);
+
+          if (
+            this.selectedConversation &&
+            this.selectedConversation.id === channel
+          ) {
+            this.selectedConversation.info.latest = message;
+          } else {
+            this.updateConversations$.next({
+              action: 'update_latest_message',
+              message,
+              channel: message.channel
+            });
+          }
+
           return initial.data;
         } else {
           return initial.data;
@@ -231,7 +292,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
           if (response.ok) {
             this.sendReceiveMessages$.next({
               action: 'send',
-              message: response.message
+              message: response.message,
+              channel: response.channel
             });
             this.messageText = '';
             this.messageDeliveryProgress = false;
@@ -296,7 +358,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
                   user: selectedConversation.user,
                   files: filesArr,
                   ts: dateToday
-                }
+                },
+                channel: selectedConversation.id
               });
             },
             (err) => {
@@ -329,10 +392,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
       }
       this.sendReceiveMessages$.next({
         action: 'receive',
-        message
+        message,
+        channel: message.channel
       });
     } else {
       // TODO: Find the conversation and push it as latest..
+      this.updateConversations$.next({
+        action: 'update_latest_message',
+        message,
+        channel: message.channel
+      });
     }
   };
 

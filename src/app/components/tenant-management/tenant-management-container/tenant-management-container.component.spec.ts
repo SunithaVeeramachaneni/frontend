@@ -73,10 +73,9 @@ describe('TenantManagementContainerComponent', () => {
     fixture = TestBed.createComponent(TenantManagementContainerComponent);
     cdrf = fixture.debugElement.injector.get(ChangeDetectorRef);
     component = fixture.componentInstance;
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of({ dummy: 'dummyvalue' }))
-      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
+      of({ dummy: 'dummyvalue' })
+    );
     spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });

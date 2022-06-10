@@ -5,6 +5,8 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { CommonService } from '../../services/common.service';
+import { permissions$ } from '../../services/common.service.mock';
 import { HeaderService } from '../../services/header.service';
 import { ChatService } from '../collaboration/chats/chat.service';
 
@@ -19,10 +21,20 @@ describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let headerServiceSpy: HeaderService;
+  let commonServiceSpy: CommonService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let chatServiceSpy: ChatService;
 
   beforeEach(async () => {
+    commonServiceSpy = jasmine.createSpyObj(
+      'CommonService',
+      ['setCurrentRouteUrl', 'setTranslateLanguage', 'setUserInfo '],
+      {
+        minimizeSidebarAction$: of(false),
+        permissionsAction$: permissions$
+      }
+    );
+
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'getInstallationURL$'
     ]);
@@ -49,23 +61,27 @@ describe('HeaderComponent', () => {
       providers: [
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
+        { provide: ChatService, useValue: chatServiceSpy },
+        { provide: CommonService, useValue: commonServiceSpy }
       ]
     }).compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of({ dummy: 'dummyvalue' }))
-      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
+      of({ dummy: 'dummyvalue' })
+    );
 
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  afterAll(() => {
+    TestBed.resetTestingModule();
   });
 });
