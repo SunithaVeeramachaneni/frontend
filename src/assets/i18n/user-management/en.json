@@ -2,6 +2,7 @@
   "searchUsers": "Search Users",
   "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
+  "inactiveUsersPlural": "{count, plural, =0{Inactive User} one{Inactive User} other{Inactive Users}}",
   "deleteBtn": "Delete",
   "roles": "Roles",
   "addRoleBtn": "Add Role",
@@ -43,6 +44,7 @@
   "deactivate": "Deactivate",
   "user": "User?",
   "users": "Users",
+  "usersPlural": "{count, plural, =0{User} one{User} other{Users}}",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
   "deactivateUsersWarning": "Do you want to deactivate the selected",
   "alreadyExists": "{name} already exists"
