@@ -76,7 +76,7 @@ export class SseService {
     method: string;
     headers: { authorization: string; tenantid: string };
   } {
-    const { tenantId: tenantid } = this.commonService.getTenantConfig();
+    const { tenantId: tenantid } = this.commonService.getTenantInfo();
     const protectedResource = this.getProtectedResource(url);
     let authorization: string;
     if (protectedResource && Object.keys(protectedResource).length) {

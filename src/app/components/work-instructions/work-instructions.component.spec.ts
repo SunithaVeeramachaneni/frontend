@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +7,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { NgpSortModule } from 'ngp-sort-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { ErrorInfo } from '../../interfaces';
 import { AppMaterialModules } from '../../material.module';
 import { TimeAgoPipe } from '../../shared/pipes/time-ago.pipe';
@@ -22,7 +21,6 @@ import { SharedModule } from '../../shared/shared.module';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 import { WiCommonService } from './services/wi-common.services';
 import { HeaderService } from '../../shared/services/header.service';
-import { logonUserDetails } from '../../shared/services/header.service.mock';
 import { importedWorkInstructions } from './work-instructions.component.mock';
 import { OverlayService } from './modal/overlay.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -39,7 +37,6 @@ import {
 } from '../../app.constants';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatMenuTrigger } from '@angular/material/menu';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
@@ -221,7 +218,6 @@ describe('WorkInstructionsComponent', () => {
     });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
     chatServiceSpy = jasmine.createSpyObj(
@@ -229,17 +225,18 @@ describe('WorkInstructionsComponent', () => {
       ['collaborationWindowAction'],
       { unreadCount$, openCollabWindow$ }
     );
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'logoffAndRevokeTokens'
+    ]);
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setHeaderTitle', 'setUserInfo'],
+      ['setHeaderTitle'],
       {
         currentRouteUrlAction$: of('/work-instructions'),
         headerTitleAction$: of(routingUrls.workInstructions.title),
         minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$
+        permissionsAction$: permissions$,
+        userInfo$: userData$
       }
     );
 
@@ -295,11 +292,6 @@ describe('WorkInstructionsComponent', () => {
       .withArgs()
       .and.returnValue(of([...favorites, ...drafts]))
       .and.callThrough();
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
-
     (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
       of({ dummy: 'dummyvalue' })
     );

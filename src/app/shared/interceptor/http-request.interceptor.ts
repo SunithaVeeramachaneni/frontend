@@ -28,7 +28,8 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const { tenantId } = this.commonService.getTenantConfig();
+    const { tenantId } = this.commonService.getTenantInfo();
+    const configId = tenantId;
     if (request.headers.get('authorization') === null) {
       const protectedResource = this.getProtectedResource(request.url);
 
@@ -48,7 +49,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           });
           return next.handle(cloneRequest);
         } else {
-          const config = this.oidcSecurityService.getConfiguration();
+          const config = this.oidcSecurityService.getConfiguration(configId);
           const {
             authWellknownEndpoints: { tokenEndpoint },
             clientId
@@ -56,7 +57,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
           const data = {
             grant_type: 'refresh_token',
             client_id: clientId,
-            refresh_token: this.oidcSecurityService.getRefreshToken(),
+            refresh_token: this.oidcSecurityService.getRefreshToken(configId),
             scope
           };
 

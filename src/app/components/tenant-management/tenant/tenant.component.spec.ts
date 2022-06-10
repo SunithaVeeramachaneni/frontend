@@ -2426,6 +2426,9 @@ describe('TenantComponent', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantName: 'tenantName' })
         .and.returnValue(of({ count: 0 }));
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantDomainName: 'tenantDomainName' })
+        .and.returnValue(of({ count: 0 }));
 
       (commonServiceSpy.decrypt as jasmine.Spy)
         .withArgs(tenant.rdbms.password, ENCRYPTION_KEY)
@@ -2443,6 +2446,7 @@ describe('TenantComponent', () => {
       });
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();
@@ -2569,6 +2573,10 @@ describe('TenantComponent', () => {
         .withArgs({ tenantName: 'tenantName' })
         .and.returnValue(of({ count: 0 }));
 
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantDomainName: 'tenantDomainName' })
+        .and.returnValue(of({ count: 0 }));
+
       (tenantServiceSpy.createTenant$ as jasmine.Spy)
         .withArgs(createTenant)
         .and.returnValue(of(tenant));
@@ -2598,6 +2606,7 @@ describe('TenantComponent', () => {
       expect(component.tenantForm.get('id').value).toBe(tenant.id);
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();
@@ -2758,6 +2767,7 @@ describe('TenantComponent', () => {
       expect(component.editTenant).toBeTrue();
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
       expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
       expect(
         component.tenantForm.get('tenantAdmin.firstName').disabled
       ).toBeTrue();

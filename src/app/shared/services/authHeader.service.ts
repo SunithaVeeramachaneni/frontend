@@ -8,7 +8,7 @@ export class AuthHeaderService {
   constructor(private commonService: CommonService) {}
 
   getAuthHeaders(requestUrl: string) {
-    const { tenantId: tenantid } = this.commonService.getTenantConfig();
+    const { tenantId: tenantid } = this.commonService.getTenantInfo();
     const protectedResource = this.commonService
       .getProtectedResources()
       .find((_protectedResource) => {

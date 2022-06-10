@@ -8,11 +8,9 @@ import { AppMaterialModules } from 'src/app/material.module';
 import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 import {
   openCollabWindow$,
-  unreadCount$,
-  userData$
+  unreadCount$
 } from 'src/app/shared/components/header/header.component.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { DashboardsComponent } from '../dashboards/dashboards.component';
@@ -35,12 +33,11 @@ describe('DashboardContainerComponent', () => {
       dashboardsAction$: dashboards$
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'logoffAndRevokeTokens'
+    ]);
     chatServiceSpy = jasmine.createSpyObj(
       'ChatService',
       ['collaborationWindowAction'],
@@ -71,10 +68,6 @@ describe('DashboardContainerComponent', () => {
     breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(DashboardContainerComponent);
     component = fixture.componentInstance;
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails);
-
     (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
       of({ dummy: 'dummyvalue' })
     );

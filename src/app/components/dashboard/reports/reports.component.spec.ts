@@ -10,26 +10,17 @@ import {
   TranslateModule,
   TranslateService
 } from '@ngx-translate/core';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
 import { defaultLimit } from 'src/app/app.constants';
 import { AppMaterialModules } from 'src/app/material.module';
-import {
-  openCollabWindow$,
-  unreadCount$,
-  userData$
-} from 'src/app/shared/components/header/header.component.mock';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ToastModule, ToastService } from 'src/app/shared/toast';
+import { ToastService } from 'src/app/shared/toast';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
 
 import { ReportsComponent } from './reports.component';
 import { configOptions, reports, reports$ } from './reports.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
-import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -37,9 +28,6 @@ describe('ReportsComponent', () => {
   let dialogSpy: MatDialog;
   let reportServiceSpy: ReportService;
   let reportConfigServiceSpy: ReportConfigurationService;
-  let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
-  let oidcSecurityServiceSpy: OidcSecurityService;
   let toastServiceSpy: ToastService;
 
   beforeEach(async () => {
@@ -62,18 +50,6 @@ describe('ReportsComponent', () => {
       'ReportConfigurationService',
       ['downloadReport$', 'updateReport$']
     );
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
-      'getInstallationURL$'
-    ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -102,10 +78,7 @@ describe('ReportsComponent', () => {
           provide: ReportConfigurationService,
           useValue: reportConfigServiceSpy
         },
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy }
       ]
     }).compileComponents();
   });
@@ -127,14 +100,6 @@ describe('ReportsComponent', () => {
     (reportServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
       .withArgs(reports.columns, component.configOptions)
       .and.returnValue(configOptions);
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails);
-
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
-
     fixture.detectChanges();
   });
 

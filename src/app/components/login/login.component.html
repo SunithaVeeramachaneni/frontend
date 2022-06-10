@@ -1,0 +1,81 @@
+<div class="login-main-page">
+  <h1 class="login-heading">
+    <span [innerHTML]="'loginHeader' | translate"></span>
+  </h1>
+
+  <form
+    class="centered"
+    [formGroup]="loginForm"
+    (ngSubmit)="redirectToTenantIdp()"
+  >
+    <h2 class="m-0" translate>welcome</h2>
+    <h5 class="m-t-5 m-b-5 p-t-10" translate>signinInfo</h5>
+    <input
+      type="text"
+      [placeholder]="'companyOrDomainNamePlaceholder' | translate"
+      class="email-input"
+      formControlName="companyOrDomainName"
+      autofocus="false"
+      (keyup.enter)="onEnter()"
+    />
+    <mat-error
+      *ngIf="
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.required
+      "
+    >
+      {{ 'required' | translate: { name: 'companyOrDomainName' | translate } }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.noWhiteSpace
+      "
+    >
+      {{
+        'noWhiteSpace' | translate: { name: 'companyOrDomainName' | translate }
+      }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.maxlength
+      "
+    >
+      {{
+        'maxlength'
+          | translate
+            : {
+                name: 'companyOrDomainName' | translate,
+                length: loginForm.get('companyOrDomainName').errors?.maxlength
+                  .requiredLength
+              }
+      }}
+    </mat-error>
+    <mat-error
+      *ngIf="
+        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        loginForm.get('companyOrDomainName').touched &&
+        loginForm.get('companyOrDomainName').errors?.invalidCompanyOrDomaniName
+      "
+    >
+      {{ 'invalidCompanyOrDomaniName' | translate }}
+    </mat-error>
+    <button
+      class="next-btn"
+      [disabled]="!loginForm.valid || loginForm.pristine"
+      translate="next"
+    ></button>
+  </form>
+  <img
+    src="assets/login/graphics_left.svg"
+    alt="graphics left"
+    class="graphics-left"
+  />
+  <img
+    src="assets/login/graphics_right.svg"
+    alt="graphics right"
+    class="graphics-right"
+  />
+</div>

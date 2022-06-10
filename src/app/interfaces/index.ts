@@ -9,8 +9,6 @@ export * from './user';
 export * from './import-file-event';
 export * from './file-info';
 export * from './logon-user-details';
-export * from './tenant-config';
-export * from './logged-in-user-info';
 export * from './files';
 export * from './report-category';
 export * from './report-details';
