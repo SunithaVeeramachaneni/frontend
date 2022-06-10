@@ -1,28 +1,83 @@
-<div class="widget-delete-modal" *ngIf="this.userdata.data.length === 0">
-  <p class="cancel-title" translate="deleteModalHeading"></p>
-  <p class="cancel-subtitle" translate="deleteModalSubHeading"></p>
+<div *ngIf="this.userdata.singleDelete === true">
+  <div class="widget-delete-modal" *ngIf="this.userdata.data.length === 0">
+    <p class="cancel-title" translate="deleteModalHeading"></p>
+    <p class="cancel-subtitle" translate="deleteModalSubHeading"></p>
 
-  <button
-    mat-raised-button
-    class="yes-btn"
-    (click)="deleteRole('yes')"
-    translate="yesBtn"
-  ></button>
-  <button
-    mat-button
-    class="no-btn"
-    (click)="deleteRole('no')"
-    translate="noBtn"
-  ></button>
+    <button
+      mat-raised-button
+      class="yes-btn"
+      (click)="deleteRole('yes')"
+      translate="yesBtn"
+    ></button>
+    <button
+      mat-button
+      class="no-btn"
+      (click)="deleteRole('no')"
+      translate="noBtn"
+    ></button>
+  </div>
+
+  <div class="widget-delete-modal" *ngIf="this.userdata.data.length !== 0">
+    <p class="cancel-title" translate="deleteRoleHavingUsersHeading"></p>
+
+    <button
+      mat-raised-button
+      class="ok-btn"
+      (click)="deleteRole('ok')"
+      translate="okBtn"
+    ></button>
+  </div>
 </div>
 
-<div class="widget-delete-modal" *ngIf="this.userdata.data.length !== 0">
-  <p class="cancel-title" translate="deleteRoleHavingUsersHeading"></p>
+<div *ngIf="this.userdata.multiDelete === true">
+  <div class="widget-delete-modal">
+    <p class="cancel-title" translate="alert"></p>
+    <p class="cancel-subtitle" *ngIf="this.userdata.usersExists.length !== 0">
+      <b>
+        “
+        <span *ngFor="let data of this.userdata.usersExists; let i = index">
+          {{ data.name }}
+          <span *ngIf="i !== this.userdata.usersExists.length - 1">,</span>
+        </span>
+        ” {{ this.userdata.usersExists.length === 1 ? 'role' : 'roles' }}
+        <span translate="cannotBeDeletedText"> </span>
+      </b>
+      <span translate="usersAssignedText"> </span>
+    </p>
+    <p
+      class="cancel-subtitle"
+      *ngIf="this.userdata.usersDoesntExists.length !== 0"
+    >
+      <span translate="doYouWantToText"> </span>
+      <b>
+        <span translate="delete"> </span>
+        <span *ngFor="let data of this.userdata.usersDoesntExists">
+          “{{ data.name }}”
+        </span>
+        {{ this.userdata.usersDoesntExists.length === 1 ? 'role?' : 'roles?' }}
+      </b>
+    </p>
 
-  <button
-    mat-raised-button
-    class="ok-btn"
-    (click)="deleteRole('ok')"
-    translate="okBtn"
-  ></button>
+    <button
+      mat-raised-button
+      class="yes-btn"
+      (click)="deleteRole('yes')"
+      translate="yesBtn"
+      *ngIf="this.userdata.usersDoesntExists.length !== 0"
+    ></button>
+    <button
+      mat-button
+      class="no-btn"
+      (click)="deleteRole('no')"
+      translate="noBtn"
+      *ngIf="this.userdata.usersDoesntExists.length !== 0"
+    ></button>
+    <button
+      mat-raised-button
+      class="ok-btn"
+      (click)="deleteRole('ok')"
+      translate="okBtn"
+      *ngIf="this.userdata.usersDoesntExists.length === 0"
+    ></button>
+  </div>
 </div>

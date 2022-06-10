@@ -45,5 +45,10 @@
   "users": "Users",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
   "deactivateUsersWarning": "Do you want to deactivate the selected",
-  "alreadyExists": "{name} already exists"
+  "alreadyExists": "{name} already exists",
+  "alert": "Alert",
+  "cannotBeDeletedText": " cannot be deleted",
+  "usersAssignedText": " as users are assigned to it.",
+  "doYouWantToText": " Do you want to",
+  "delete": " delete"
 }
