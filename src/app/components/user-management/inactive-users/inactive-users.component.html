@@ -17,10 +17,17 @@
           class="inactive-users-count"
           *ngIf="userCount$ | async as userCount"
         >
-          <span class="no-of-records">
+          <span class="no-of-records" *ngIf="userCount.count">
             {{ userCount.count }}
           </span>
-          <span class="inactive-users-text" translate="inactiveUsers"></span>
+          <span class="no-of-records" *ngIf="!userCount.count">0</span>
+          <span class="inactive-users-text">{{
+            'inactiveUsersPlural'
+              | translate
+                : {
+                    count: userCount.count ? userCount.count : 0
+                  }
+          }}</span>
         </span>
       </div>
       <div

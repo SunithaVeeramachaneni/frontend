@@ -14,7 +14,6 @@ import {
 } from 'src/app/shared/components/header/header.component.mock';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantsComponent } from '../tenants/tenants.component';
@@ -33,12 +32,11 @@ describe('TenantManagementContainerComponent', () => {
 
   beforeEach(async () => {
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'logoffAndRevokeTokens'
+    ]);
     chatServiceSpy = jasmine.createSpyObj(
       'ChatService',
       ['collaborationWindowAction'],
@@ -46,11 +44,12 @@ describe('TenantManagementContainerComponent', () => {
     );
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setHeaderTitle', 'setUserInfo'],
+      ['setHeaderTitle'],
       {
         headerTitleAction$: of(routingUrls.tenantManagement.title),
         currentRouteUrlAction$: of(routingUrls.tenantManagement.url),
-        minimizeSidebarAction$: of(true)
+        minimizeSidebarAction$: of(true),
+        userInfo$: userData$
       }
     );
 
@@ -74,11 +73,6 @@ describe('TenantManagementContainerComponent', () => {
     fixture = TestBed.createComponent(TenantManagementContainerComponent);
     cdrf = fixture.debugElement.injector.get(ChangeDetectorRef);
     component = fixture.componentInstance;
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails)
-      .and.callThrough();
-
     (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
       of({ dummy: 'dummyvalue' })
     );

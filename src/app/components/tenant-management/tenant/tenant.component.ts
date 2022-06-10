@@ -162,7 +162,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(100),
           WhiteSpaceValidator.noWhiteSpace
-        ]
+        ],
+        this.validateUnique('tenantDomainName')
       ],
       tenantAdmin: this.fb.group({
         firstName: [
@@ -334,6 +335,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ).setControl('urls', this.fb.array(this.setUrls(nodeUrls)));
         this.tenantForm.get('tenantId').disable();
         this.tenantForm.get('tenantName').disable();
+        this.tenantForm.get('tenantDomainName').disable();
         this.tenantForm.get('tenantAdmin').disable();
       }
     });
@@ -612,6 +614,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             this.tenantForm.reset(this.tenantForm.getRawValue());
             this.tenantForm.get('tenantId').disable();
             this.tenantForm.get('tenantName').disable();
+            this.tenantForm.get('tenantDomainName').disable();
             this.tenantForm.get('tenantAdmin').disable();
             this.toast.show({
               text: `Tenant '${tenantName}' onboarded successfully`,
@@ -671,6 +674,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.editTenant = true;
     this.tenantForm.get('tenantId').disable();
     this.tenantForm.get('tenantName').disable();
+    this.tenantForm.get('tenantDomainName').disable();
     this.tenantForm.get('tenantAdmin').disable();
     this.tenantForm.get('rdbms.database').disable();
     this.tenantForm.get('nosql.database').disable();

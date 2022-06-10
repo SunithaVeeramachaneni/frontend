@@ -20,10 +20,17 @@
       translate="addUserBtn"
     ></button>
     <span class="users-count" *ngIf="userCount$ | async as userCount">
-      <span class="no-of-records">
+      <span class="no-of-records" *ngIf="userCount.count">
         {{ userCount.count }}
       </span>
-      <span class="users-text" translate="users"></span>
+      <span class="no-of-records" *ngIf="!userCount.count">0</span>
+      <span class="users-text">{{
+        'usersPlural'
+          | translate
+            : {
+                count: userCount.count ? userCount.count : 0
+              }
+      }}</span>
     </span>
     <button
       mat-icon-button

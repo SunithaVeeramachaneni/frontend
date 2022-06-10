@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   LocationStrategy,
   HashLocationStrategy,
-  CommonModule,
   registerLocaleData
 } from '@angular/common';
 
@@ -37,7 +36,7 @@ import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor'
 import { HttpRequestInterceptor } from './shared/interceptor/http-request.interceptor';
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
 
-import { filter, mergeMap, tap } from 'rxjs/operators';
+import { filter, mergeMap, take, tap } from 'rxjs/operators';
 import { CommonService } from './shared/services/common.service';
 import { from } from 'rxjs';
 import { AppService } from './shared/services/app.services';
@@ -130,7 +129,8 @@ export class AppModule {
         )
       )
       .subscribe(() => {
-        const config = this.oidcSecurityService.getConfiguration();
+        const { tenantId: configId } = this.commonService.getTenantInfo();
+        const config = this.oidcSecurityService.getConfiguration(configId);
         const {
           authWellknownEndpoints: { tokenEndpoint },
           clientId
@@ -144,7 +144,8 @@ export class AppModule {
               const data = {
                 grant_type: 'refresh_token',
                 client_id: clientId,
-                refresh_token: this.oidcSecurityService.getRefreshToken(),
+                refresh_token:
+                  this.oidcSecurityService.getRefreshToken(configId),
                 scope
               };
 
@@ -174,5 +175,27 @@ export class AppModule {
           )
           .subscribe();
       });
+
+    this.oidcSecurityService.userData$
+      .pipe(
+        take(2),
+        filter((user) => user.allUserData.length !== 0),
+        tap((data) => {
+          const configUserDataResult = data.allUserData.find(
+            ({ userData }) => userData
+          );
+          const configIds = data.allUserData
+            .map(({ configId, userData }) =>
+              userData === null ? configId : undefined
+            )
+            .filter((configId) => configId);
+
+          this.commonService.performPostLoginActions(
+            configUserDataResult,
+            configIds
+          );
+        })
+      )
+      .subscribe();
   }
 }

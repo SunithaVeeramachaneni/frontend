@@ -18,23 +18,12 @@ import {
   allPermissionsMock,
   roleWithPermissionsMock
 } from '../services/roles-permissions.mock';
-import { HeaderService } from 'src/app/shared/services/header.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import {
-  openCollabWindow$,
-  unreadCount$,
-  userData$
-} from 'src/app/shared/components/header/header.component.mock';
-import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
 
 describe('InactiveUsersComponent', () => {
   let component: InactiveUsersComponent;
   let fixture: ComponentFixture<InactiveUsersComponent>;
   let rolesPermissionsServiceSpy: RolesPermissionsService;
   let usersServiceSpy: UsersService;
-  let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
-  let oidcSecurityServiceSpy: OidcSecurityService;
 
   beforeEach(async () => {
     rolesPermissionsServiceSpy = jasmine.createSpyObj(
@@ -47,20 +36,6 @@ describe('InactiveUsersComponent', () => {
       'getUsers$',
       'getUsersCount$'
     ]);
-
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
-      'getInstallationURL$'
-    ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
-
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
 
     await TestBed.configureTestingModule({
       declarations: [InactiveUsersComponent],
@@ -82,10 +57,7 @@ describe('InactiveUsersComponent', () => {
           provide: RolesPermissionsService,
           useValue: rolesPermissionsServiceSpy
         },
-        { provide: UsersService, useValue: usersServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
+        { provide: UsersService, useValue: usersServiceSpy }
       ]
     }).compileComponents();
   });
@@ -93,10 +65,6 @@ describe('InactiveUsersComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(InactiveUsersComponent);
     component = fixture.componentInstance;
-
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
 
     (rolesPermissionsServiceSpy.getPermissions$ as jasmine.Spy)
       .withArgs()

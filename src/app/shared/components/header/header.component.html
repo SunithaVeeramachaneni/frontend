@@ -69,16 +69,16 @@
     </div>
     <div class="width-auto displayGrid">
       <span class="loggedin-user-name"
-        >{{ this.username[0] }} {{ this.username[1] }}</span
+        >{{ userDetails.firstName }} {{ userDetails.lastName }}</span
       >
-      <span class="loggedin-user-role">Maintenance Manager</span>
+      <span class="loggedin-user-role">{{ userDetails.title }}</span>
     </div>
     <div class="width-auto">
-      <mat-icon
-        class="m-r-10 m-l-10 cursor arrow-icon"
+      <img
+        [src]="profileImage(userDetails.profileImage)"
+        class="profile-img m-l-10 cursor arrow-icon"
         [matMenuTriggerFor]="menu"
-        >account_circle</mat-icon
-      >
+      />
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="signout()">
           <span>Sign Out</span>
