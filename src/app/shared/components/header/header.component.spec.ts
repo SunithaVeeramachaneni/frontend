@@ -28,10 +28,11 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['setCurrentRouteUrl', 'setTranslateLanguage', 'setUserInfo '],
+      ['setCurrentRouteUrl', 'setTranslateLanguage'],
       {
         minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$
+        permissionsAction$: permissions$,
+        userInfo$: userData$
       }
     );
 
@@ -74,14 +75,7 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    fixture.destroy();
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-  afterAll(() => {
-    TestBed.resetTestingModule();
   });
 });
