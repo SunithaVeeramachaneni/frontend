@@ -83,9 +83,6 @@ describe('AppComponent', () => {
         { provide: AuthHeaderService, useValue: authHeaderServiceSpy }
       ]
     }).compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     appDe = fixture.debugElement;

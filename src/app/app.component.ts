@@ -199,6 +199,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
               eventData.forEach((evt: any) => {
                 const { message } = evt;
                 if (!message.isHeartbeat && message.eventType === 'message') {
+                  const audio = new Audio('../assets/audio/notification.mp3');
+                  audio.play();
                   processedMessageIds.push(evt.id);
                   const iscollabWindowOpen =
                     ref.chatService.getCollaborationWindowStatus();
