@@ -1,6 +1,6 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.inActiveUsers.url">
-    <div class="main-container">
+    <div class="inactive-users-main-container">
       <div class="inactive-users-header">
         <div class="width-60 custom-mat-form-field-gray-color">
           <mat-form-field appearance="outline" class="search-form-field">
@@ -23,11 +23,15 @@
           <span class="inactive-users-text" translate="inactiveUsers"></span>
         </span>
       </div>
-      <div *ngIf="users$ | async as users; else loadingInactiveUsers">
+      <div
+        *ngIf="users$ | async as users; else loadingInactiveUsers"
+        class="dis-flex users-content"
+      >
         <cwp-dynamictable
           [dataSource]="dataSource"
           [configOptions]="configOptions"
           (fetchDataCallback)="handleTableEvent($event)"
+          class="width-100"
         ></cwp-dynamictable>
       </div>
     </div>

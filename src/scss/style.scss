@@ -645,6 +645,11 @@ button.mat-menu-item {
   width: auto !important;
 }
 
+.inactive-users-main-container .table-column {
+  min-width: 140px !important;
+  width: 100% !important;
+}
+
 .sidebar-menu-panel {
   min-height: auto !important;
   padding: 0 10px;
