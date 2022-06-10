@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
 import { BreadcrumbModule } from 'xng-breadcrumb';
 import { HeaderService } from '../../services/header.service';
-import { logonUserDetails } from '../../services/header.service.mock';
 import { ChatService } from '../collaboration/chats/chat.service';
 
 import { HeaderComponent } from './header.component';
@@ -25,7 +24,6 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
@@ -59,10 +57,6 @@ describe('HeaderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails);
-
     (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
       .withArgs()
       .and.returnValue(of({ dummy: 'dummyvalue' }))

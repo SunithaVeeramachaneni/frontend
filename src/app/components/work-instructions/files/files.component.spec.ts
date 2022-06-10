@@ -61,7 +61,6 @@ describe('MediaFilesComponent', () => {
       'updateUploadInfo'
     ]);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
     chatServiceSpy = jasmine.createSpyObj(

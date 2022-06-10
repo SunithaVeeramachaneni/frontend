@@ -36,7 +36,6 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.maxLength(100),
           WhiteSpaceValidator.noWhiteSpace,
           this.companyOrDomaniNameValidator()
         ]
@@ -47,11 +46,11 @@ export class LoginComponent implements OnInit {
     if (companyOrDomainName) {
       this.loginForm.setValue({ companyOrDomainName });
       this.loginForm.markAsDirty();
-      this.redirectToTenant();
+      this.redirectToTenantIdp();
     }
   }
 
-  redirectToTenant() {
+  redirectToTenantIdp() {
     if (this.loginForm.valid && this.loginForm.dirty) {
       let { companyOrDomainName } = this.loginForm.value;
       companyOrDomainName = companyOrDomainName.trim().toLowerCase();

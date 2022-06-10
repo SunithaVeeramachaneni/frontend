@@ -24,11 +24,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  ): Observable<boolean> {
     return this.oidcSecurityService.checkAuthMultiple().pipe(
       map((loginResponses) => {
         const authResponse = loginResponses.find(

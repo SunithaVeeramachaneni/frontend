@@ -2426,6 +2426,9 @@ describe('TenantComponent', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantName: 'tenantName' })
         .and.returnValue(of({ count: 0 }));
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantDomainName: 'tenantDomainName' })
+        .and.returnValue(of({ count: 0 }));
 
       (commonServiceSpy.decrypt as jasmine.Spy)
         .withArgs(tenant.rdbms.password, ENCRYPTION_KEY)
@@ -2568,6 +2571,10 @@ describe('TenantComponent', () => {
 
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantName: 'tenantName' })
+        .and.returnValue(of({ count: 0 }));
+
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantDomainName: 'tenantDomainName' })
         .and.returnValue(of({ count: 0 }));
 
       (tenantServiceSpy.createTenant$ as jasmine.Spy)
