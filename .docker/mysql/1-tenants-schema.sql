@@ -24,8 +24,10 @@ create table catalogs(
   updatedBy VARCHAR(100) NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NULL,
+  slackTeamID VARCHAR(100) NOT NULL,
   PRIMARY KEY ( id ),
   UNIQUE (tenantId),
-  UNIQUE (tenantName)
+  UNIQUE (tenantName),
+  UNIQUE (tenantDomainName)
 );
 

@@ -12,12 +12,30 @@
     <h5 class="m-t-5 m-b-5 p-t-10" translate>signinInfo</h5>
     <input
       type="text"
+      matInput
       [placeholder]="'companyOrDomainNamePlaceholder' | translate"
-      class="email-input"
+      class="company-or-domain-input"
       formControlName="companyOrDomainName"
       autofocus="false"
       (keyup.enter)="onEnter()"
+      [matAutocomplete]="auto"
     />
+    <mat-autocomplete #auto="matAutocomplete">
+      <ng-container *ngIf="tenantsInfo$ | async as tenantsInfo">
+        <mat-option
+          *ngFor="let tenantInfo of tenantsInfo"
+          [value]="tenantInfo.tenantName"
+        >
+          {{ tenantInfo.tenantName }}
+        </mat-option>
+        <mat-option
+          *ngFor="let tenantInfo of tenantsInfo"
+          [value]="tenantInfo.tenantDomainName"
+        >
+          {{ tenantInfo.tenantDomainName }}
+        </mat-option>
+      </ng-container>
+    </mat-autocomplete>
     <mat-error
       *ngIf="
         loginForm.get('companyOrDomainName').touched &&
