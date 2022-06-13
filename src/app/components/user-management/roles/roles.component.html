@@ -62,6 +62,7 @@
               <mat-checkbox
                 (change)="roleChecked(role, $event)"
                 [disabled]="role.name === superAdminText"
+                [checked]="selectedRoleIDList.includes(role.id)"
               ></mat-checkbox>
               <span
                 class="role-name"
@@ -341,6 +342,7 @@
               [selectedRolePermissions$]="selectedRolePermissions$"
               [allPermissions$]="permissionsList$"
               (permissionsChange)="update($event)"
+              [isEditable]="this.selectedRole.name === superAdminText ? false : true"
             >
             </app-permissions>
           </div>

@@ -11,11 +11,10 @@
     multi
   >
     <mat-checkbox
-      [disabled]="isEditable"
       [checked]="module.checked"
       [indeterminate]="fewComplete(module)"
       (change)="setAllChecked($event.checked, module)"
-      [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
+      [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
       [ngClass]="{
         'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
         'permissions-checkbox':
@@ -47,7 +46,7 @@
           <mat-checkbox
             [checked]="permission.checked"
             (change)="updateAllChecked($event.checked, permission)"
-            [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
+            [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
           >
             {{ permission.displayName }}
           </mat-checkbox>
