@@ -4,6 +4,8 @@
   "inactiveUsers": "Inactive Users",
   "inactiveUsersPlural": "{count, plural, =0{Inactive User} one{Inactive User} other{Inactive Users}}",
   "deleteBtn": "Delete",
+  "singlerole": "role",
+  "multiroles": "roles",
   "roles": "Roles",
   "addRoleBtn": "Add Role",
   "copyBtn": "Copy",
