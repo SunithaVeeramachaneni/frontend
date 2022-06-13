@@ -128,6 +128,32 @@ describe('LoginComponent', () => {
       });
     });
 
+    it('should return matched tenantsInfo if company or domain name matches', () => {
+      component.loginForm.setValue({ companyOrDomainName: 'inno' });
+
+      component.ngOnInit();
+
+      component.tenantsInfo$.subscribe((data) =>
+        expect(data).toEqual(tenantsInfo)
+      );
+    });
+
+    it('should return empty tenantsInfo if company or domain name doesnt match', () => {
+      component.loginForm.setValue({ companyOrDomainName: 'innovation' });
+
+      component.ngOnInit();
+
+      component.tenantsInfo$.subscribe((data) => expect(data).toEqual([]));
+    });
+
+    it('should return empty tenantsInfo if company or domain name is empty', () => {
+      component.loginForm.setValue({ companyOrDomainName: ' ' });
+
+      component.ngOnInit();
+
+      component.tenantsInfo$.subscribe((data) => expect(data).toEqual([]));
+    });
+
     it('should redirect to tenant idp, if company or domain name exists in session storage', () => {
       sessionStorage.setItem('companyOrDomainName', 'innovapptive');
       const redirectToTenantIdpSpy = spyOn(component, 'redirectToTenantIdp');

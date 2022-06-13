@@ -21,15 +21,17 @@ import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
 import { environment } from '../../../environments/environment';
+
 import {
   WarehouseTechnician,
   WarehouseTechnicians
 } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
+import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
-  constructor(private _zone: NgZone, private _appService: AppService) {}
+  constructor(private _zone: NgZone, private _appService: AppService, private sseService: SseService) {}
 
   private transformedObservable$;
   private technicians$: Observable<any>;
@@ -59,11 +61,11 @@ export class MaintenanceService {
   }
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable((observer) => {
-      this.eventSource = new EventSource(
+      this.eventSource = this.sseService.getEventSourceWithGet(
         this._appService.prepareUrl(
           environment.mccAbapApiUrl,
           'updateWorkOrders'
-        )
+        ), null
       );
       this.eventSource.onmessage = (event) => {
         const workOrders: WorkOrders = {
@@ -88,7 +90,7 @@ export class MaintenanceService {
             );
         });
 
-        if (workOrderList !== []) {
+        if (workOrderList.length !== 0) {
           this._zone.run(() => {
             observer.next(workOrders);
           });

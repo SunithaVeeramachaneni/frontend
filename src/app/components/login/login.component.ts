@@ -9,6 +9,9 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Tenant } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
@@ -21,6 +24,7 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   returnUrl: string;
+  tenantsInfo$: Observable<Tenant[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +45,25 @@ export class LoginComponent implements OnInit {
         ]
       ]
     });
+
+    this.tenantsInfo$ = this.loginForm
+      .get('companyOrDomainName')
+      .valueChanges.pipe(
+        map((value) => {
+          if (value.trim()) {
+            return this.commonService
+              .getTenantsInfo()
+              .filter(
+                ({ tenantName, tenantDomainName }) =>
+                  tenantName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+                  tenantDomainName.toLowerCase().indexOf(value.toLowerCase()) >
+                    -1
+              );
+          } else {
+            return [];
+          }
+        })
+      );
 
     const companyOrDomainName = sessionStorage.getItem('companyOrDomainName');
     if (companyOrDomainName) {
