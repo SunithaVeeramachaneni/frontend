@@ -97,3 +97,14 @@
   white-space: nowrap;
   margin-left: -10px;
 }
+
+::ng-deep .roles-select .mat-option-text {
+  display: flex;
+}
+
+.info-div {
+  position: absolute;
+  right: 0;
+  height: 48px;
+  width: 15%;
+}

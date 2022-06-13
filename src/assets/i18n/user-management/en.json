@@ -3,6 +3,7 @@
   "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
   "inactiveUsersPlural": "{count, plural, =0{Inactive User} one{Inactive User} other{Inactive Users}}",
+  "rolesPlural": "{roles, plural, one{role} other{roles}}",
   "deleteBtn": "Delete",
   "roles": "Roles",
   "addRoleBtn": "Add Role",
@@ -47,5 +48,10 @@
   "usersPlural": "{count, plural, =0{User} one{User} other{Users}}",
   "deactivateUserWarning": "Do you want to deactivate the user profile of",
   "deactivateUsersWarning": "Do you want to deactivate the selected",
-  "alreadyExists": "{name} already exists"
+  "alreadyExists": "{name} already exists",
+  "alert": "Alert",
+  "cannotBeDeletedText": " cannot be deleted",
+  "usersAssignedText": " as users are assigned to it.",
+  "doYouWantToText": " Do you want to",
+  "delete": " delete"
 }
