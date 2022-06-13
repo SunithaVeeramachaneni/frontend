@@ -114,7 +114,10 @@
               >
                 <mat-checkbox disabled=""></mat-checkbox>
                 <span class="role-name" translate="addingRoleText"></span>
-                <span class="role-count" translate="roleCount"></span>
+                <span class="role-count">
+                  0 of
+                  {{ permissionsTotalLength$ | async }}
+                </span>
                 <button disabled mat-icon-button class="more-items">
                   <mat-icon>more_horiz</mat-icon>
                 </button>
