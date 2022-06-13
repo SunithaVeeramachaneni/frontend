@@ -61,9 +61,9 @@ services:
       dockerfile: .docker/nginx.${DEPLOYMENT_ENV}.dockerfile
       args:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+        - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+        - TENANTS_COUNT=${TENANTS_COUNT}
     restart: always
-    environment:
-      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     ports:
       - '80:80'
       - '443:443'

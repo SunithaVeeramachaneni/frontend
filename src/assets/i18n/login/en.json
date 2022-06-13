@@ -1,0 +1,12 @@
+{
+  "loginHeader": "Let's get <br/> empowered",
+  "welcome": "Welcome!",
+  "signinInfo": "Sign in to Connected Office Worker",
+  "next": "Next",
+  "required": "{name} is required",
+  "maxlength": "{name} must be at the max of {length} characters",
+  "noWhiteSpace": "{name} is required",
+  "companyOrDomainName": "Company or Domain",
+  "companyOrDomainNamePlaceholder": "Enter Company or Domain",
+  "invalidCompanyOrDomaniName": "Invalid Company or Domain"
+}

@@ -18,6 +18,7 @@ import { permissions$ } from './shared/services/common.service.mock';
 import { UsersService } from './components/user-management/services/users.service';
 import { SharedModule } from './shared/shared.module';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
+import { AuthHeaderService } from './shared/services/authHeader.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -25,6 +26,7 @@ describe('AppComponent', () => {
   let commonServiceSpy: CommonService;
   let translateServiceSpy: TranslateService;
   let chatServiceSpy: ChatService;
+  let authHeaderServiceSpy: AuthHeaderService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let usersServiceSpy: UsersService;
   let appDe: DebugElement;
@@ -57,6 +59,9 @@ describe('AppComponent', () => {
       ],
       { processSSEMessages$: openCollabWindow$ }
     );
+    authHeaderServiceSpy = jasmine.createSpyObj('AuthHeaderService', [
+      'getAuthHeaders'
+    ]);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -74,12 +79,10 @@ describe('AppComponent', () => {
         { provide: TranslateService, useValue: translateServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
         { provide: UsersService, useValue: usersServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
+        { provide: ChatService, useValue: chatServiceSpy },
+        { provide: AuthHeaderService, useValue: authHeaderServiceSpy }
       ]
     }).compileComponents();
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     appDe = fixture.debugElement;

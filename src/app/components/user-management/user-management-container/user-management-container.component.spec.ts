@@ -12,7 +12,6 @@ import {
   userData$
 } from 'src/app/shared/components/header/header.component.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { logonUserDetails } from 'src/app/shared/services/header.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
@@ -31,7 +30,6 @@ describe('UserManagementContainerComponent', () => {
 
   beforeEach(async () => {
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getLogonUserDetails',
       'getInstallationURL$'
     ]);
     chatServiceSpy = jasmine.createSpyObj(
@@ -39,9 +37,9 @@ describe('UserManagementContainerComponent', () => {
       ['collaborationWindowAction'],
       { unreadCount$, openCollabWindow$ }
     );
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
-    });
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'logoffAndRevokeTokens'
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -70,13 +68,9 @@ describe('UserManagementContainerComponent', () => {
     breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(UserManagementContainerComponent);
     component = fixture.componentInstance;
-    (headerServiceSpy.getLogonUserDetails as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(logonUserDetails);
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy)
-      .withArgs()
-      .and.returnValue(of({ dummy: 'dummyvalue' }))
-      .and.callThrough();
+    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
+      of({ dummy: 'dummyvalue' })
+    );
     fixture.detectChanges();
   });
 

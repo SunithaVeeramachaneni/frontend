@@ -39,7 +39,7 @@ export class CollabDialogComponent implements OnInit {
       this.positionRelativeToElement.nativeElement.getBoundingClientRect();
     matDialogConfig.position = { right: `180px`, top: `${rect.bottom + 2}px` };
     this.dialogRef.updatePosition(matDialogConfig.position);
-    this.selectedTab = 'peoples';
+    this.selectedTab = 'chats';
     this.isMaximized = false;
   }
 

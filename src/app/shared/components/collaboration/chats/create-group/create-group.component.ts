@@ -49,7 +49,15 @@ export class CreateGroupComponent implements OnInit {
       catchError(() => of({ data: [] }))
     );
     this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
-      map(([initial]) => initial.data)
+      map(([initial]) => {
+        const validUsers = [];
+        initial.data.forEach((user) => {
+          if (user.UserSlackDetail) {
+            validUsers.push(user);
+          }
+        });
+        return validUsers;
+      })
     );
   }
 
@@ -75,8 +83,12 @@ export class CreateGroupComponent implements OnInit {
       displayToast: true,
       failureResponse: 'throwError'
     };
-    // TODO: map slackID from selectedUsers parameter and push those to invitedUsers when multiple users were able to login to CWP with their tenant domain.
     const invitedUsers = [];
+    selectedUsers.forEach((user) => {
+      if (user.UserSlackDetail && user.UserSlackDetail.slackID) {
+        invitedUsers.push(user.UserSlackDetail.slackID);
+      }
+    });
 
     groupName = groupName.replace(/[^a-zA-Z ]/g, '');
     groupName = groupName.replaceAll(/\s/g, '');

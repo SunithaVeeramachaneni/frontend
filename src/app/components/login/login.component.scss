@@ -1,0 +1,72 @@
+.m-5 {
+  margin: 5px;
+}
+
+.width-200 {
+  width: 200px;
+}
+
+.login-main-page {
+  background: #f0f7ff;
+  height: 100%;
+  margin-top: -30px;
+}
+
+.login-heading {
+  padding: 22px;
+  font-weight: 800;
+  font-size: 44px;
+  letter-spacing: 1.5px;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background: white;
+  z-index: 100;
+  padding: 25px;
+  box-shadow: 3px 3px 3px 3px #f2f2f2;
+}
+
+.email-input {
+  border: none;
+  border-bottom: 1px solid black;
+  width: 95%;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.email-input:focus {
+  outline: none;
+}
+
+.cant-access-text {
+  color: #006bb5;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.next-btn {
+  background-color: #006bb5;
+  border: none;
+  color: #ffffff;
+  width: 100px;
+  height: 35px;
+  float: right;
+  margin-top: 45px;
+}
+
+.graphics-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.graphics-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

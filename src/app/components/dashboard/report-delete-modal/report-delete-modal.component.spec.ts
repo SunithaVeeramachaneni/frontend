@@ -33,9 +33,7 @@ describe('ReportDeleteModalComponent', () => {
         }
       ]
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ReportDeleteModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -22,6 +22,7 @@ import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 @Component({
@@ -67,6 +68,7 @@ export class AddEditUserModalComponent implements OnInit {
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
+  superAdminText = superAdminText;
   selectedRolePermissions$: Observable<any[]>;
   get roles() {
     return this.userForm.get('roles');

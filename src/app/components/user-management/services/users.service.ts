@@ -3,34 +3,17 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
 import { Buffer } from 'buffer';
-import {
-  map,
-  mergeAll,
-  mergeMap,
-  reduce,
-  shareReplay,
-  tap,
-  toArray
-} from 'rxjs/operators';
+import { map, mergeMap, toArray } from 'rxjs/operators';
+import { superAdminText } from 'src/app/app.constants';
 import { AppService } from '../../../shared/services/app.services';
 import {
-  TableColumn,
   ErrorInfo,
-  ReportCategory,
-  Report,
   Count,
-  Widget,
   UserDetails,
   Role,
   Permission
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
-import { addUserMock, updateUserMock, usersMock } from './users.mock';
-import { query } from '@angular/animations';
 import { DomSanitizer } from '@angular/platform-browser';
 import { superAdminIcon } from 'src/app/app.constants';
 
@@ -67,7 +50,7 @@ export class UsersService {
       condition: {
         operation: 'contains',
         fieldName: 'displayRoles',
-        operand: 'Super Admin'
+        operand: superAdminText
       }
     };
     user.preTextImage = {
@@ -91,8 +74,17 @@ export class UsersService {
     }
   };
 
-  getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
-    this.appService._getResp(environment.userRoleManagementApiUrl, 'me', info);
+  getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'me',
+      {
+        displayToast,
+        failureResponse
+      }
+    );
+  };
 
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> =>
     this.appService._getResp(

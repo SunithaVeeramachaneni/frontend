@@ -11,7 +11,7 @@ import {
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import { defaultLimit, permissions as perms, superAdminText } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
@@ -395,11 +395,11 @@ export class UsersComponent implements OnInit {
             (user) => user.id !== data.id
           );
 
-          if (data.displayRoles.includes('Super Admin'))
+          if (data.displayRoles.includes(superAdminText))
             this.disableDeactivate = false;
         } else {
           this.selectedUsers.push(data);
-          if (data.displayRoles.includes('Super Admin'))
+          if (data.displayRoles.includes(superAdminText))
             this.disableDeactivate = true;
         }
         break;
