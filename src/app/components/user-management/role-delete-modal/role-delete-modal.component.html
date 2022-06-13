@@ -41,8 +41,14 @@
         </span>
         ”
         {{
-          (this.userdata.usersExists.length === 1 ? 'singlerole' : 'multiroles')
+          'rolesPlural'
             | translate
+              : {
+                  roles:
+                    this.userdata.usersExists.length !== 1
+                      ? this.userdata.usersDoesntExists.length
+                      : 1
+                }
         }}
         <span translate="cannotBeDeletedText"> </span>
       </b>
@@ -59,10 +65,14 @@
           “{{ data.name }}”
         </span>
         {{
-          (this.userdata.usersDoesntExists.length === 1
-            ? 'singlerole'
-            : 'multiroles'
-          ) | translate
+          'rolesPlural'
+            | translate
+              : {
+                  roles:
+                    this.userdata.usersDoesntExists.length !== 1
+                      ? this.userdata.usersDoesntExists.length
+                      : 1
+                }
         }}?
       </b>
     </p>
