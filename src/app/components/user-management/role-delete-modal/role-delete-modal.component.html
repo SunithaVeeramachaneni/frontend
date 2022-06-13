@@ -44,10 +44,7 @@
           'rolesPlural'
             | translate
               : {
-                  roles:
-                    this.userdata.usersExists.length !== 1
-                      ? this.userdata.usersDoesntExists.length
-                      : 1
+                  roles: this.userdata.usersExists.length
                 }
         }}
         <span translate="cannotBeDeletedText"> </span>
@@ -68,10 +65,7 @@
           'rolesPlural'
             | translate
               : {
-                  roles:
-                    this.userdata.usersDoesntExists.length !== 1
-                      ? this.userdata.usersDoesntExists.length
-                      : 1
+                  roles: this.userdata.usersDoesntExists.length
                 }
         }}?
       </b>
