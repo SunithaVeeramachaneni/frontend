@@ -203,6 +203,23 @@
                             }
                     }}
                   </mat-error>
+
+                  <mat-error
+                    *ngIf="
+                      !roleForm.controls.name.errors?.noWhiteSpace &&
+                      roleForm.controls.name.hasError('duplicateName') &&
+                      roleForm.controls.name.touched
+                    "
+                    class="m-t-5"
+                  >
+                    {{
+                      'alreadyExists'
+                        | translate
+                          : {
+                              name: 'roleLabel' | translate
+                            }
+                    }}
+                  </mat-error>
                 </mat-form-field>
               </div>
 
