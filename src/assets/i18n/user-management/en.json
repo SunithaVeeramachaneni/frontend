@@ -3,6 +3,7 @@
   "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
   "inactiveUsersPlural": "{count, plural, =0{Inactive User} one{Inactive User} other{Inactive Users}}",
+  "rolesPlural": "{roles, plural, one{role} other{roles}}",
   "deleteBtn": "Delete",
   "roles": "Roles",
   "addRoleBtn": "Add Role",

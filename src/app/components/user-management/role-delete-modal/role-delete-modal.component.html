@@ -39,7 +39,14 @@
           {{ data.name }}
           <span *ngIf="i !== this.userdata.usersExists.length - 1">,</span>
         </span>
-        ” {{ this.userdata.usersExists.length === 1 ? 'role' : 'roles' }}
+        ”
+        {{
+          'rolesPlural'
+            | translate
+              : {
+                  roles: this.userdata.usersExists.length
+                }
+        }}
         <span translate="cannotBeDeletedText"> </span>
       </b>
       <span translate="usersAssignedText"> </span>
@@ -54,7 +61,13 @@
         <span *ngFor="let data of this.userdata.usersDoesntExists">
           “{{ data.name }}”
         </span>
-        {{ this.userdata.usersDoesntExists.length === 1 ? 'role?' : 'roles?' }}
+        {{
+          'rolesPlural'
+            | translate
+              : {
+                  roles: this.userdata.usersDoesntExists.length
+                }
+        }}?
       </b>
     </p>
 

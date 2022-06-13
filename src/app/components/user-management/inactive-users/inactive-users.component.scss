@@ -1,4 +1,4 @@
-.main-container {
+.inactive-users-main-container {
   background-color: #ffffff;
   margin: 14px;
 }
@@ -32,4 +32,9 @@
 .search-form-field {
   float: left;
   margin-right: 10px;
+}
+
+.users-content {
+  height: 75vh;
+  width: 100%;
 }

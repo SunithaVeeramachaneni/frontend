@@ -438,11 +438,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   roleNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.selectedRole && this.selectedRole.name === control.value)
+      const duplicate = control.value.trim();
+      if (this.selectedRole && this.selectedRole.name === duplicate)
         return null;
-      const find = this.rolesList.findIndex(
-        (role) => role.name === control.value
-      );
+      const find = this.rolesList.findIndex((role) => role.name === duplicate);
       return find === -1 ? null : { duplicateName: true };
     };
   }
@@ -458,9 +457,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
-        const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        const permissions = roles.find((r) => r.id === role.id)?.permissionIds;
         this.disableSaveButton = true;
-        return permissions.map((perm) => perm.id);
+        if (permissions) return permissions.map((perm) => perm.id);
       }),
       shareReplay(1)
     );
