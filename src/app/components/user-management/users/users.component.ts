@@ -141,6 +141,13 @@ export class UsersComponent implements OnInit {
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
+    enableRowLevelActions: {
+      condition: {
+        operation: 'notContains',
+        operand: superAdminText,
+        fieldName: 'displayRoles'
+      }
+    },
     rowLevelActions: {
       menuActions: []
     },
@@ -468,7 +475,7 @@ export class UsersComponent implements OnInit {
         title: 'Deactivate',
         action: 'deactivate',
         condition: {
-          operand: 'Super Admin',
+          operand: superAdminText,
           operation: 'notContains',
           fieldName: 'displayRoles'
         }

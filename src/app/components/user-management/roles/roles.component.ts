@@ -68,6 +68,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   rolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
+  selectedRoleIDList = [];
   permissionsList$: Observable<any>;
   selectedRolePermissions$: Observable<any[]>;
   rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
@@ -157,6 +158,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           case 'delete':
             const indexToDelete = roles.findIndex((r) => r.id === role.id);
             roles.splice(indexToDelete, 1);
+            this.selectedRole = this.rolesList[0];
+            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
             break;
           case 'copy':
             const newRole = this.createDuplicateRole(roles, role);
@@ -172,8 +175,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                   text: 'Role copied successfully',
                   type: 'success'
                 });
-                this.selectedRole = role;
-                this.selectedRolePermissions$ = of(role.permissionIds);
+                this.selectedRole = resp;
+                this.selectedRolePermissions$ = of(postRole.permissionIds);
               }
             });
 
@@ -205,9 +208,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   roleChecked = (role, event) => {
     if (event.checked === true) {
       this.selectedRoleList.push(role);
+      this.selectedRoleIDList.push(role.id)
     } else {
-      const index = this.selectedRoleList.findIndex((r) => r.id === role.id);
+      let index = this.selectedRoleList.findIndex((r) => r.id === role.id);
       this.selectedRoleList.splice(index, 1);
+      this.selectedRoleIDList.splice(index,1)
     }
   };
 
@@ -242,10 +247,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                 (resp) => {
                   if (Object.keys(resp).length && resp.id) {
                     this.rolesListUpdate$.next({ action: 'delete', role });
-                    this.selectedRole = undefined;
-                    this.selectedRoleList = [];
-                    this.usersExists = [];
-                    this.usersDoesntExists = [];
                     this.toast.show({
                       text: 'Role Deleted successfully',
                       type: 'success'
@@ -260,11 +261,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                 }
               );
             });
-          } else {
+          } 
             this.selectedRoleList = [];
+            this.selectedRoleIDList = [];
             this.usersExists = [];
             this.usersDoesntExists = [];
-          }
+            this.selectedRole = this.rolesList[0];
+            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
+          
         });
       });
   };

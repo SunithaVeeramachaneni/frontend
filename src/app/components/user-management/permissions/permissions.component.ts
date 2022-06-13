@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { userRolePermissions } from 'src/app/app.constants';
+import { userRolePermissions, superAdminText } from 'src/app/app.constants';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 
 @Component({
@@ -23,13 +23,13 @@ export class PermissionsComponent implements OnChanges {
   @Input() selectedRolePermissions$: Observable<any[]>;
   @Input() allPermissions$: Observable<any[]>;
   @Input() rolesWithPermissionsInUsers: string;
+  @Input() isEditable: boolean = true;
 
   @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
 
   rolesBasedPermissions = [];
   permissions$: BehaviorSubject<any>;
   panelOpenState: boolean[] = [];
-  isEditable = false;
   userRolePermissions = userRolePermissions;
 
   constructor(private roleService: RolesPermissionsService) {}
