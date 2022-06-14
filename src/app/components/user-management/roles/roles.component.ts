@@ -10,35 +10,22 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormArray,
   ValidatorFn,
   ValidationErrors,
-  Validators,
-  AsyncValidatorFn
+  Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import {
-  mergeMap,
-  tap,
-  map,
-  debounceTime,
-  shareReplay,
-  distinctUntilChanged,
-  toArray,
-  filter
-} from 'rxjs/operators';
+import { mergeMap, tap, map, shareReplay, toArray } from 'rxjs/operators';
 import {
   permissions as perms,
   routingUrls,
   superAdminText
 } from 'src/app/app.constants';
-import { Role, Permission, ErrorInfo } from 'src/app/interfaces';
+import { Role, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import Swal from 'sweetalert2';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { RoleDeleteModalComponent } from '../role-delete-modal/role-delete-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
@@ -95,7 +82,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     private fb: FormBuilder,
     private roleService: RolesPermissionsService,
     private cdrf: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
     public dialog: MatDialog,
     private toast: ToastService
   ) {}
