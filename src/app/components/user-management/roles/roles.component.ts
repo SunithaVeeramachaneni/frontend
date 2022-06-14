@@ -10,35 +10,22 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormArray,
   ValidatorFn,
   ValidationErrors,
-  Validators,
-  AsyncValidatorFn
+  Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import {
-  mergeMap,
-  tap,
-  map,
-  debounceTime,
-  shareReplay,
-  distinctUntilChanged,
-  toArray,
-  filter
-} from 'rxjs/operators';
+import { mergeMap, tap, map, shareReplay, toArray } from 'rxjs/operators';
 import {
   permissions as perms,
   routingUrls,
   superAdminText
 } from 'src/app/app.constants';
-import { Role, Permission, ErrorInfo } from 'src/app/interfaces';
+import { Role, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import Swal from 'sweetalert2';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { RoleDeleteModalComponent } from '../role-delete-modal/role-delete-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
@@ -95,7 +82,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     private fb: FormBuilder,
     private roleService: RolesPermissionsService,
     private cdrf: ChangeDetectorRef,
-    private spinner: NgxSpinnerService,
     public dialog: MatDialog,
     private toast: ToastService
   ) {}
@@ -123,13 +109,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
     this.getRoles();
     this.getAllPermissions();
-    this.roleForm.valueChanges
-      .pipe(
-        tap((resp) => {
-          this.disableSaveButton = false;
-        })
-      )
-      .subscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -208,11 +187,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   roleChecked = (role, event) => {
     if (event.checked === true) {
       this.selectedRoleList.push(role);
-      this.selectedRoleIDList.push(role.id)
+      this.selectedRoleIDList.push(role.id);
     } else {
-      let index = this.selectedRoleList.findIndex((r) => r.id === role.id);
+      const index = this.selectedRoleList.findIndex((r) => r.id === role.id);
       this.selectedRoleList.splice(index, 1);
-      this.selectedRoleIDList.splice(index,1)
+      this.selectedRoleIDList.splice(index, 1);
     }
   };
 
@@ -261,14 +240,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                 }
               );
             });
-          } 
-            this.selectedRoleList = [];
-            this.selectedRoleIDList = [];
-            this.usersExists = [];
-            this.usersDoesntExists = [];
-            this.selectedRole = this.rolesList[0];
-            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
-          
+          }
+          this.selectedRoleList = [];
+          this.selectedRoleIDList = [];
+          this.usersExists = [];
+          this.usersDoesntExists = [];
+          this.selectedRole = this.rolesList[0];
+          this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
         });
       });
   };
@@ -280,6 +258,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = of([]);
     this.roleForm.controls.name.setValue('New Role');
     this.roleForm.controls.description.setValue('');
+    this.roleForm.controls.description.markAsUntouched();
     this.disableSaveButton = true;
     this.selectedRole = [];
   }
@@ -314,7 +293,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   update(data) {
     this.updatedPermissions = data;
-    this.disableSaveButton = false;
+    let permissionsChecked = false;
+    data.forEach((module) => {
+      if (module.countOfChecked) {
+        permissionsChecked = true;
+      }
+    });
+
+    this.disableSaveButton = permissionsChecked ? false : true;
   }
 
   saveRole(formData, roleId) {

@@ -23,7 +23,7 @@ export class PermissionsComponent implements OnChanges {
   @Input() selectedRolePermissions$: Observable<any[]>;
   @Input() allPermissions$: Observable<any[]>;
   @Input() rolesWithPermissionsInUsers: string;
-  @Input() isEditable: boolean = true;
+  @Input() isEditable = true;
 
   @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
 
@@ -58,14 +58,14 @@ export class PermissionsComponent implements OnChanges {
       this.selectedRolePermissions$,
       this.allPermissions$
     ]).pipe(
-      map(([permissionIDs, allPermissions]) => {
-        return allPermissions.map((modulePermissions) => {
+      map(([permissionIDs, allPermissions]) =>
+        allPermissions.map((modulePermissions) => {
           modulePermissions.checked = false;
           let activePermissionCount = 0;
           const newPermissions = modulePermissions.permissions.map(
             (permission) => {
               permission.checked = false;
-              if (permissionIDs.includes(permission.id)) {
+              if (permissionIDs && permissionIDs.includes(permission.id)) {
                 permission.checked = true;
                 activePermissionCount += 1;
               }
@@ -79,10 +79,12 @@ export class PermissionsComponent implements OnChanges {
             permissions: newPermissions,
             countOfChecked: activePermissionCount
           };
-        });
-      })
+        })
+      )
     );
-    permissionObservable.subscribe(this.permissions$);
+    permissionObservable.subscribe((permissions) => {
+      this.permissions$.next(permissions);
+    });
   }
 
   updateAllChecked(checked, permission) {
