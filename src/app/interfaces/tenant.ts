@@ -11,7 +11,7 @@ export interface Tenant {
   tenantDomainName: string;
   tenantAdmin: UserDetails;
   erps: { [key: string]: Erp };
-  protectedResources: { [key: string]: ProtectedResourceLatest };
+  protectedResources: { [key: string]: ProtectedResource };
   rdbms: Rdbms;
   nosql: Nosql;
   noOfLicenses: number;
@@ -26,7 +26,7 @@ export interface Tenant {
   updatedAt?: string;
 }
 
-export interface ProtectedResourceLatest {
+export interface ProtectedResource {
   identityMetadata: string;
   issuer: string;
   clientId: string;

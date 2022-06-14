@@ -96,6 +96,11 @@
 .role-name {
   padding: 10px;
   margin-top: 3px;
+  max-width: 60%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
 }
 
 .role-count {
@@ -109,7 +114,6 @@
 
 .super-admin-icon {
   position: relative;
-  left: -7px;
   top: 2px;
 }
 
@@ -120,7 +124,7 @@
 
 .roles {
   padding: 0;
-  height: 68vh;
+  height: 65vh;
   overflow-y: scroll;
   background: white;
 }

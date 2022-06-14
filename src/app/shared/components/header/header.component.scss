@@ -27,6 +27,9 @@
 
 .collabButton {
   margin: 0px 15px;
+  & ::ng-deep .mat-button-focus-overlay {
+    background-color: transparent;
+  }
 }
 
 .header-title {
@@ -41,11 +44,17 @@
   display: flex;
   align-items: center;
   position: absolute;
-  right: 25px;
+  right: 15px;
 }
 
 .width-auto {
   width: auto;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .header-message-icon {

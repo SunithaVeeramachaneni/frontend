@@ -34,7 +34,7 @@ import {
   routingUrls,
   superAdminText
 } from 'src/app/app.constants';
-import { Role, Permission } from 'src/app/interfaces';
+import { Role, Permission, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -48,6 +48,11 @@ interface RolesListUpdate {
   action: 'add' | 'edit' | 'delete' | 'copy' | null;
   role: Role;
 }
+
+const info: ErrorInfo = {
+  displayToast: true,
+  failureResponse: 'throwError'
+};
 
 @Component({
   selector: 'app-roles',
@@ -63,6 +68,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   rolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
+  selectedRoleIDList = [];
   permissionsList$: Observable<any>;
   selectedRolePermissions$: Observable<any[]>;
   rolesListUpdate$: BehaviorSubject<RolesListUpdate> =
@@ -81,6 +87,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   permissionsTotalLength$: Observable<number>;
   rolesList: Role[] = [];
   readonly perms = perms;
+  usersExists = [];
+  usersDoesntExists = [];
 
   constructor(
     private commonService: CommonService,
@@ -150,6 +158,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           case 'delete':
             const indexToDelete = roles.findIndex((r) => r.id === role.id);
             roles.splice(indexToDelete, 1);
+            this.selectedRole = this.rolesList[0];
+            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
             break;
           case 'copy':
             const newRole = this.createDuplicateRole(roles, role);
@@ -165,8 +175,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                   text: 'Role copied successfully',
                   type: 'success'
                 });
-                this.selectedRole = role;
-                this.selectedRolePermissions$ = of(role.permissionIds);
+                this.selectedRole = resp;
+                this.selectedRolePermissions$ = of(postRole.permissionIds);
               }
             });
 
@@ -198,17 +208,69 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   roleChecked = (role, event) => {
     if (event.checked === true) {
       this.selectedRoleList.push(role);
+      this.selectedRoleIDList.push(role.id)
     } else {
-      const index = this.selectedRoleList.findIndex((r) => r.id === role.id);
+      let index = this.selectedRoleList.findIndex((r) => r.id === role.id);
       this.selectedRoleList.splice(index, 1);
+      this.selectedRoleIDList.splice(index,1)
     }
   };
 
   deleteRoles = () => {
-    this.selectedRoleList.forEach((role) => {
-      this.deleteRole(role);
-    });
-    this.selectedRoleList = [];
+    from(this.selectedRoleList)
+      .pipe(
+        mergeMap((role) =>
+          this.roleService.getUsersByRoleId$(role.id, info).pipe(
+            tap((users) => {
+              if (users.length !== 0) {
+                this.usersExists.push(role);
+              } else {
+                this.usersDoesntExists.push(role);
+              }
+            })
+          )
+        ),
+        toArray()
+      )
+      .subscribe(() => {
+        const deleteReportRef = this.dialog.open(RoleDeleteModalComponent, {
+          data: {
+            usersExists: this.usersExists,
+            usersDoesntExists: this.usersDoesntExists,
+            multiDelete: true
+          }
+        });
+        deleteReportRef.afterClosed().subscribe((res) => {
+          if (res === 'yes') {
+            this.usersDoesntExists.forEach((role) => {
+              this.roleService.deleteRole$(role).subscribe(
+                (resp) => {
+                  if (Object.keys(resp).length && resp.id) {
+                    this.rolesListUpdate$.next({ action: 'delete', role });
+                    this.toast.show({
+                      text: 'Role Deleted successfully',
+                      type: 'success'
+                    });
+                  }
+                },
+                (error) => {
+                  this.toast.show({
+                    text: 'Unable to delete the role',
+                    type: 'success'
+                  });
+                }
+              );
+            });
+          } 
+            this.selectedRoleList = [];
+            this.selectedRoleIDList = [];
+            this.usersExists = [];
+            this.usersDoesntExists = [];
+            this.selectedRole = this.rolesList[0];
+            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
+          
+        });
+      });
   };
 
   addRole() {
@@ -345,7 +407,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.roleService.getUsersByRoleId$(role.id).subscribe((usersData) => {
       const deleteReportRef = this.dialog.open(RoleDeleteModalComponent, {
         data: {
-          data: usersData
+          data: usersData,
+          singleDelete: true
         }
       });
       deleteReportRef.afterClosed().subscribe((res) => {
@@ -375,11 +438,10 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   roleNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.selectedRole && this.selectedRole.name === control.value)
+      const duplicate = control.value.trim();
+      if (this.selectedRole && this.selectedRole.name === duplicate)
         return null;
-      const find = this.rolesList.findIndex(
-        (role) => role.name === control.value
-      );
+      const find = this.rolesList.findIndex((role) => role.name === duplicate);
       return find === -1 ? null : { duplicateName: true };
     };
   }
@@ -395,9 +457,9 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
-        const permissions = roles.find((r) => r.id === role.id).permissionIds;
+        const permissions = roles.find((r) => r.id === role.id)?.permissionIds;
         this.disableSaveButton = true;
-        return permissions.map((perm) => perm.id);
+        if (permissions) return permissions.map((perm) => perm.id);
       }),
       shareReplay(1)
     );

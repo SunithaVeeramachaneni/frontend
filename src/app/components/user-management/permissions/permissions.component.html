@@ -11,12 +11,15 @@
     multi
   >
     <mat-checkbox
-      [disabled]="isEditable"
       [checked]="module.checked"
       [indeterminate]="fewComplete(module)"
       (change)="setAllChecked($event.checked, module)"
-      [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
-      class="permissions-checkbox"
+      [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
+      [ngClass]="{
+        'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
+        'permissions-checkbox':
+          rolesWithPermissionsInUsers !== userRolePermissions
+      }"
     >
     </mat-checkbox>
     <mat-expansion-panel
@@ -26,14 +29,7 @@
       class="permissions-expand"
       [(expanded)]="panelOpenState[i]"
     >
-      <mat-expansion-panel-header
-        [ngClass]="{
-          'permissions-padding':
-            rolesWithPermissionsInUsers === userRolePermissions,
-          'h-40 expansion-header':
-            rolesWithPermissionsInUsers !== userRolePermissions
-        }"
-      >
+      <mat-expansion-panel-header class="h-40 expansion-header">
         <mat-panel-title>
           <div class="my-panel" (click)="$event.stopPropagation()">
             <span class="module-name">{{ module.name }}</span>
@@ -50,7 +46,7 @@
           <mat-checkbox
             [checked]="permission.checked"
             (change)="updateAllChecked($event.checked, permission)"
-            [disabled]="rolesWithPermissionsInUsers === userRolePermissions"
+            [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
           >
             {{ permission.displayName }}
           </mat-checkbox>

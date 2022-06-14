@@ -178,7 +178,12 @@
                 strokeWidth="5"
                 diameter="25"
               ></mat-spinner>
-              <mat-icon *ngIf="!messageDeliveryProgress" color="primary"
+              <mat-icon
+                *ngIf="!messageDeliveryProgress"
+                [ngClass]="{
+                  disableSendBtn: !messageText.length,
+                  activeSendBtn: messageText.length
+                }"
                 >send</mat-icon
               >
             </button>

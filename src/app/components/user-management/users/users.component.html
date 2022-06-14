@@ -1,15 +1,41 @@
 <div class="main-container" *ngIf="permissions$ | async">
-  <div class="roles-header">
-    <div class="width-60 custom-mat-form-field-gray-color">
+  <div class="users-header">
+    <span class="custom-mat-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-form-field">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>
-        <input matInput type="text" placeholder="Search Users" disabled />
+        <input
+          matInput
+          type="text"
+          [placeholder]="'searchUsers' | translate"
+          disabled
+        />
       </mat-form-field>
-    </div>
+    </span>
+
+    <button
+      mat-raised-button
+      class="add-user-btn"
+      (click)="openEditAddUserModal()"
+      *appCheckUserHasPermission="[perms.createUser]"
+      translate="addUserBtn"
+    ></button>
+    <span class="users-count" *ngIf="userCount$ | async as userCount">
+      <span class="no-of-records" *ngIf="userCount.count">
+        {{ userCount.count }}
+      </span>
+      <span class="no-of-records" *ngIf="!userCount.count">0</span>
+      <span class="users-text">{{
+        'usersPlural'
+          | translate
+            : {
+                count: userCount.count ? userCount.count : 0
+              }
+      }}</span>
+    </span>
     <button
       mat-icon-button
       [matMenuTriggerFor]="menu"
-      class="more-roles"
+      class="more-users"
       *appCheckUserHasPermission="[perms.deactivateUser]"
     >
       <mat-icon>more_horiz</mat-icon>
@@ -21,28 +47,14 @@
         (click)="deactivateUsers()"
         class="text-red"
       >
-        <span>Deactivate</span>
+        <span translate="deactivate"></span>
       </button>
     </mat-menu>
-    <span class="roles-count">
-      <span
-        class="no-of-records"
-        *ngIf="userCount$ | async as userCount; else loadingUsers"
-      >
-        {{ userCount.count }}
-      </span>
-      <span class="roles-text">Users</span>
-    </span>
-    <button
-      mat-raised-button
-      class="add-role-btn"
-      (click)="openEditAddUserModal()"
-      *appCheckUserHasPermission="[perms.createUser]"
-    >
-      Add User
-    </button>
   </div>
-  <div *ngIf="users$ | async as users; else loadingUsers" class="">
+  <div
+    *ngIf="users$ | async as users; else loadingUsers"
+    class="dis-flex users-content"
+  >
     <cwp-dynamictable
       [dataSource]="dataSource"
       [configOptions]="configOptions"
@@ -50,6 +62,7 @@
       (rowLevelActionHandler)="rowLevelActionHandler($event)"
       (onConfigOptionsChange)="configOptionsChangeHandler($event)"
       (cellClickActionHandler)="cellClickActionHandler($event)"
+      class="width-100"
     ></cwp-dynamictable>
   </div>
 </div>

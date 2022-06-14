@@ -19,7 +19,8 @@ insert into catalogs (
   logDBType,
   logLevel,
   createdBy,
-  createdAt
+  createdAt,
+  slackTeamID
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
   "Innovapptive",
@@ -64,12 +65,10 @@ insert into catalogs (
       "urls": [
         "http://localhost:8002/",
         "http://localhost:8003/",
+        "https://cwpdev.innovapptive.com/wiabapapi/",
         "http://cwpdev.innovapptive.com/wiabapapi/",
+        "https://cwpdev.innovapptive.com/mccspccabapapi/",
         "http://cwpdev.innovapptive.com/mccspccabapapi/",
-        "http://cwpqa.innovapptive.com/wiabapapi/",
-        "http://cwpqa.innovapptive.com/mccspccabapapi/",
-        "http://cwpdemo.innovapptive.com/wiabapapi/",
-        "http://cwpdemo.innovapptive.com/mccspccabapapi/"
       ]
     },
     "node": {
@@ -82,30 +81,17 @@ insert into catalogs (
         "http://localhost:8001/",
         "http://localhost:8004/",
         "http://localhost:8007/",
+        "https://cwpdev.innovapptive.com/wiapi/",
         "http://cwpdev.innovapptive.com/wiapi/",
+        "https://cwpdev.innovapptive.com/dashboardapi/",
         "http://cwpdev.innovapptive.com/dashboardapi/",
+        "https://cwpdev.innovapptive.com/userrolemanagementapi/",
         "http://cwpdev.innovapptive.com/users",
         "http://cwpdev.innovapptive.com/roles",
         "http://cwpdev.innovapptive.com/permissions",
         "http://cwpdev.innovapptive.com/catalogs",
         "http://cwpdev.innovapptive.com/me",
-        "http://cwpdev.innovapptive.com/slack",
-        "http://cwpqa.innovapptive.com/wiapi/",
-        "http://cwpqa.innovapptive.com/dashboardapi/",
-        "http://cwpqa.innovapptive.com/users",
-        "http://cwpqa.innovapptive.com/roles",
-        "http://cwpqa.innovapptive.com/permissions",
-        "http://cwpqa.innovapptive.com/catalogs",
-        "http://cwpqa.innovapptive.com/me",
-        "http://cwpqa.innovapptive.com/slack",
-        "http://cwpdemo.innovapptive.com/wiapi/",
-        "http://cwpdemo.innovapptive.com/dashboardapi/",
-        "http://cwpdemo.innovapptive.com/users",
-        "http://cwpdemo.innovapptive.com/roles",
-        "http://cwpdemo.innovapptive.com/permissions",
-        "http://cwpdemo.innovapptive.com/catalogs",
-        "http://cwpdemo.innovapptive.com/me",
-        "http://cwpdemo.innovapptive.com/slack"
+        "http://cwpdev.innovapptive.com/slack"
       ]
     }
   }',
@@ -130,7 +116,8 @@ insert into catalogs (
   "rdbms",
   "off",
   "admin@innovapptive.com",
-  "2022-05-10 12:00:00"
+  "2022-05-10 12:00:00",
+  "T78857ZCK"
 );
 
 CREATE DATABASE Innovapptive;

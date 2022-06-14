@@ -21,19 +21,19 @@ import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
 import { environment } from '../../../environments/environment';
+
 import {
   WarehouseTechnician,
   WarehouseTechnicians
 } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
+import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
-  constructor(private _zone: NgZone, private _appService: AppService) {}
+  constructor(private _zone: NgZone, private _appService: AppService, private sseService: SseService) {}
 
-  private transformedObservable$;
   private technicians$: Observable<any>;
-  private eventSource: EventSource;
   public workOrderBSubject: BehaviorSubject<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
@@ -55,17 +55,18 @@ export class MaintenanceService {
   ];
 
   closeEventSource(): void {
-    this.eventSource.close();
+    this.sseService.closeEventSource();
   }
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable((observer) => {
-      this.eventSource = new EventSource(
+      const eventSource = this.sseService.getEventSourceWithGet(
         this._appService.prepareUrl(
           environment.mccAbapApiUrl,
           'updateWorkOrders'
-        )
+        ), null
       );
-      this.eventSource.onmessage = (event) => {
+      eventSource.stream();
+      eventSource.onmessage = (event) => {
         const workOrders: WorkOrders = {
           unassigned: [],
           assigned: [],
@@ -88,7 +89,7 @@ export class MaintenanceService {
             );
         });
 
-        if (workOrderList !== []) {
+        if (workOrderList.length !== 0) {
           this._zone.run(() => {
             observer.next(workOrders);
           });
