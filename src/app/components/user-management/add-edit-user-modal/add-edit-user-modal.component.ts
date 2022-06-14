@@ -13,7 +13,8 @@ import {
   FormArray,
   ValidatorFn,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  AsyncValidatorFn
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -21,7 +22,7 @@ import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
@@ -56,7 +57,8 @@ export class AddEditUserModalComponent implements OnInit {
     email: new FormControl('', [
       Validators.required,
       Validators.email,
-      this.emailNameValidator()
+      this.emailNameValidator(),
+      this.checkIfUserExistsInIDP()
     ]),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
@@ -109,6 +111,29 @@ export class AddEditUserModalComponent implements OnInit {
       return find === -1 ? null : { duplicateName: true };
     };
   }
+  checkIfUserExistsInIDP(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      const email = control.value;
+      const re = /\S+@\S+\.\S+/;
+      const isValidEmail = re.test(email);
+      if (!isValidEmail) {
+        return of(null);
+      }
+      this.emailValidated = false;
+      this.isValidIDPUser = false;
+      this.verificationInProgress = true;
+      this.usersService.verifyUserEmail$(email).subscribe((res) => {
+        this.verificationInProgress = false;
+        this.emailValidated = true;
+        if (res.isValidUserEmail) {
+          this.isValidIDPUser = true;
+        } else {
+          this.isValidIDPUser = false;
+        }
+        this.cdrf.detectChanges();
+      });
+    };
+  }
 
   ngOnInit() {
     const userDetails = this.data.user;
@@ -134,27 +159,6 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue(userDetails);
     }
   }
-
-  validateEmail = (event) => {
-    const email = event.target.value;
-    const re = /\S+@\S+\.\S+/;
-    const isValidEmail = re.test(email);
-    if (isValidEmail) {
-      this.emailValidated = false;
-      this.isValidIDPUser = false;
-      this.verificationInProgress = true;
-      this.usersService.verifyUserEmail$(email).subscribe((res) => {
-        this.verificationInProgress = false;
-        this.emailValidated = true;
-        if (res.isValidUserEmail) {
-          this.isValidIDPUser = true;
-        } else {
-          this.isValidIDPUser = false;
-        }
-        this.cdrf.detectChanges();
-      });
-    }
-  };
 
   getBase64FromImageURI = (uri) => {
     this.http.get(uri, { responseType: 'blob' }).subscribe((res) => {
