@@ -169,10 +169,6 @@ describe('RolesComponent', () => {
     component.getRoles();
   });
 
-  it('should get update method', () => {
-    component.update('');
-  });
-
   it('should get deleteRoles method', () => {
     component.deleteRoles();
     spyOn(component, 'deleteRole');
