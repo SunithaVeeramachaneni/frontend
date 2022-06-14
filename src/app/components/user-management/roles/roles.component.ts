@@ -123,13 +123,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     });
     this.getRoles();
     this.getAllPermissions();
-    this.roleForm.valueChanges
-      .pipe(
-        tap((resp) => {
-          this.disableSaveButton = false;
-        })
-      )
-      .subscribe();
   }
 
   ngAfterViewChecked(): void {
@@ -208,11 +201,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   roleChecked = (role, event) => {
     if (event.checked === true) {
       this.selectedRoleList.push(role);
-      this.selectedRoleIDList.push(role.id)
+      this.selectedRoleIDList.push(role.id);
     } else {
-      let index = this.selectedRoleList.findIndex((r) => r.id === role.id);
+      const index = this.selectedRoleList.findIndex((r) => r.id === role.id);
       this.selectedRoleList.splice(index, 1);
-      this.selectedRoleIDList.splice(index,1)
+      this.selectedRoleIDList.splice(index, 1);
     }
   };
 
@@ -261,14 +254,13 @@ export class RolesComponent implements OnInit, AfterViewChecked {
                 }
               );
             });
-          } 
-            this.selectedRoleList = [];
-            this.selectedRoleIDList = [];
-            this.usersExists = [];
-            this.usersDoesntExists = [];
-            this.selectedRole = this.rolesList[0];
-            this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
-          
+          }
+          this.selectedRoleList = [];
+          this.selectedRoleIDList = [];
+          this.usersExists = [];
+          this.usersDoesntExists = [];
+          this.selectedRole = this.rolesList[0];
+          this.selectedRolePermissions$ = of(this.rolesList[0].permissionIds);
         });
       });
   };
@@ -280,6 +272,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = of([]);
     this.roleForm.controls.name.setValue('New Role');
     this.roleForm.controls.description.setValue('');
+    this.roleForm.controls.description.markAsUntouched();
     this.disableSaveButton = true;
     this.selectedRole = [];
   }
@@ -314,7 +307,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   update(data) {
     this.updatedPermissions = data;
-    this.disableSaveButton = false;
+    let permissionsChecked = false;
+    data.forEach((module) => {
+      if (module.countOfChecked) {
+        permissionsChecked = true;
+      }
+    });
+
+    this.disableSaveButton = permissionsChecked ? false : true;
   }
 
   saveRole(formData, roleId) {

@@ -362,7 +362,9 @@
               [selectedRolePermissions$]="selectedRolePermissions$"
               [allPermissions$]="permissionsList$"
               (permissionsChange)="update($event)"
-              [isEditable]="this.selectedRole.name === superAdminText ? false : true"
+              [isEditable]="
+                this.selectedRole.name === superAdminText ? false : true
+              "
             >
             </app-permissions>
           </div>
