@@ -33,9 +33,7 @@ import { SseService } from 'src/app/shared/services/sse.service';
 export class MaintenanceService {
   constructor(private _zone: NgZone, private _appService: AppService, private sseService: SseService) {}
 
-  private transformedObservable$;
   private technicians$: Observable<any>;
-  private eventSource: EventSource;
   public workOrderBSubject: BehaviorSubject<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
@@ -57,17 +55,18 @@ export class MaintenanceService {
   ];
 
   closeEventSource(): void {
-    this.eventSource.close();
+    this.sseService.closeEventSource();
   }
   getServerSentEvent(url: string): Observable<WorkOrders> {
     return new Observable((observer) => {
-      this.eventSource = this.sseService.getEventSourceWithGet(
+      const eventSource = this.sseService.getEventSourceWithGet(
         this._appService.prepareUrl(
           environment.mccAbapApiUrl,
           'updateWorkOrders'
         ), null
       );
-      this.eventSource.onmessage = (event) => {
+      eventSource.stream();
+      eventSource.onmessage = (event) => {
         const workOrders: WorkOrders = {
           unassigned: [],
           assigned: [],
