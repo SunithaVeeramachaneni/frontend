@@ -232,7 +232,24 @@
 
     <mat-form-field appearance="outline" class="width-100 m-b-10">
       <mat-label>{{ 'email' | translate }}</mat-label>
-      <input matInput formControlName="email" />
+      <input
+        matInput
+        formControlName="email"
+        (change)="validateEmail($event)"
+      />
+      <div matSuffix>
+        <mat-spinner
+          *ngIf="verificationInProgress"
+          strokeWidth="5"
+          diameter="25"
+        ></mat-spinner>
+        <button *ngIf="emailValidated && isValidIDPUser" mat-icon-button>
+          <mat-icon class="email-verified">check_circle</mat-icon>
+        </button>
+        <button *ngIf="emailValidated && !isValidIDPUser" mat-icon-button>
+          <mat-icon class="email-not-verified">error_outline</mat-icon>
+        </button>
+      </div>
       <mat-error
         *ngIf="
           userForm.controls.email.errors?.required &&
@@ -299,8 +316,7 @@
           style="padding-right: 0"
           class="roles-select"
         >
-          [disabled]="role.name === superAdminText"
-          >
+          [disabled]="role.name === superAdminText" >
           <span>{{ role.name }}</span>
           <div (click)="$event.stopPropagation()" class="info-div">
             <mat-icon

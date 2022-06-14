@@ -203,4 +203,14 @@ export class UsersService {
       )
       .pipe(map((response) => (response === null ? user : response)));
   };
+
+  verifyUserEmail$ = (
+    emailID: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `users/verify/${emailID}`,
+      info
+    );
 }

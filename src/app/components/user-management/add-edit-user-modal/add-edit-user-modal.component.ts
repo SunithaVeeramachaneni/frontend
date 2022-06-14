@@ -3,7 +3,8 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Inject
+  Inject,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
   FormControl,
@@ -25,6 +26,7 @@ import { map } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { UsersService } from '../services/users.service';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -59,6 +61,10 @@ export class AddEditUserModalComponent implements OnInit {
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
+  emailValidated = false;
+  isValidIDPUser = false;
+  verificationInProgress = false;
+
   rolesInput: any;
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
@@ -81,6 +87,8 @@ export class AddEditUserModalComponent implements OnInit {
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
     private roleService: RolesPermissionsService,
+    private cdrf: ChangeDetectorRef,
+    private usersService: UsersService,
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA)
     public data: any
@@ -126,6 +134,27 @@ export class AddEditUserModalComponent implements OnInit {
       this.userForm.patchValue(userDetails);
     }
   }
+
+  validateEmail = (event) => {
+    const email = event.target.value;
+    const re = /\S+@\S+\.\S+/;
+    const isValidEmail = re.test(email);
+    if (isValidEmail) {
+      this.emailValidated = false;
+      this.isValidIDPUser = false;
+      this.verificationInProgress = true;
+      this.usersService.verifyUserEmail$(email).subscribe((res) => {
+        this.verificationInProgress = false;
+        this.emailValidated = true;
+        if (res.isValidUserEmail) {
+          this.isValidIDPUser = true;
+        } else {
+          this.isValidIDPUser = false;
+        }
+        this.cdrf.detectChanges();
+      });
+    }
+  };
 
   getBase64FromImageURI = (uri) => {
     this.http.get(uri, { responseType: 'blob' }).subscribe((res) => {
@@ -207,6 +236,9 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    if (!this.isValidIDPUser) {
+      return;
+    }
     this.dialogRef.close({
       user: { ...this.data.user, ...this.userForm.value },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
