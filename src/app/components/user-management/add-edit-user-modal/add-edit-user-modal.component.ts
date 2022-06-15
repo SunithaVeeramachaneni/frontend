@@ -23,7 +23,13 @@ import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  first,
+  map,
+  switchMap
+} from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -54,12 +60,11 @@ export class AddEditUserModalComponent implements OnInit {
       Validators.maxLength(100),
       WhiteSpaceValidator.noWhiteSpace
     ]),
-    email: new FormControl('', [
-      Validators.required,
-      Validators.email,
-      this.emailNameValidator(),
+    email: new FormControl(
+      '',
+      [Validators.required, Validators.email, this.emailNameValidator()],
       this.checkIfUserExistsInIDP()
-    ]),
+    ),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
@@ -103,6 +108,9 @@ export class AddEditUserModalComponent implements OnInit {
 
   emailNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      this.emailValidated = false;
+      this.isValidIDPUser = false;
+
       if (this.data.user.email && this.data.user.email === control.value)
         return null;
       const find = this.data.allusers.findIndex(
@@ -112,27 +120,30 @@ export class AddEditUserModalComponent implements OnInit {
     };
   }
   checkIfUserExistsInIDP(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> => {
-      const email = control.value;
-      const re = /\S+@\S+\.\S+/;
-      const isValidEmail = re.test(email);
-      if (!isValidEmail) {
-        return of(null);
-      }
-      this.emailValidated = false;
-      this.isValidIDPUser = false;
-      this.verificationInProgress = true;
-      this.usersService.verifyUserEmail$(email).subscribe((res) => {
-        this.verificationInProgress = false;
-        this.emailValidated = true;
-        if (res.isValidUserEmail) {
-          this.isValidIDPUser = true;
-        } else {
+    return (control: AbstractControl): Observable<ValidationErrors> =>
+      control.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          this.emailValidated = false;
           this.isValidIDPUser = false;
-        }
-        this.cdrf.detectChanges();
-      });
-    };
+          this.verificationInProgress = true;
+          return this.usersService.verifyUserEmail$(value);
+        }),
+        map((response: any) => {
+          console.log(response);
+          this.verificationInProgress = false;
+          this.emailValidated = true;
+          if (response.isValidUserEmail) {
+            this.isValidIDPUser = true;
+          } else {
+            this.isValidIDPUser = false;
+          }
+          this.cdrf.detectChanges();
+          return null;
+        }),
+        first()
+      );
   }
 
   ngOnInit() {

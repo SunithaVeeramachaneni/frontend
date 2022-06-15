@@ -239,11 +239,13 @@
           strokeWidth="5"
           diameter="25"
         ></mat-spinner>
-        <button *ngIf="emailValidated && isValidIDPUser" mat-icon-button>
-          <mat-icon class="email-verified">check_circle</mat-icon>
-        </button>
-        <button *ngIf="emailValidated && !isValidIDPUser" mat-icon-button>
-          <mat-icon class="email-not-verified">error_outline</mat-icon>
+        <button *ngIf="emailValidated" mat-icon-button>
+          <mat-icon class="email-verified" *ngIf="isValidIDPUser"
+            >check_circle</mat-icon
+          >
+          <mat-icon class="email-not-verified" *ngIf="!isValidIDPUser"
+            >error_outline</mat-icon
+          >
         </button>
       </div>
       <mat-error
