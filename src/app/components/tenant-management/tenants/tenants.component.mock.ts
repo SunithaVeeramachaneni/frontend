@@ -9,12 +9,12 @@ export const columns = [
   },
   {
     name: 'products',
-    displayName: 'Back office worker apps',
+    displayName: 'Products',
     type: 'string'
   },
   {
     name: 'modules',
-    displayName: 'Front office worker apps',
+    displayName: 'Modules',
     type: 'string'
   },
   {
@@ -73,7 +73,7 @@ export const configOptions: ConfigOptions = {
     },
     {
       id: 'products',
-      displayName: 'Back office worker apps',
+      displayName: 'Products',
       type: 'string',
       visible: true,
       sticky: false,
@@ -97,7 +97,7 @@ export const configOptions: ConfigOptions = {
     },
     {
       id: 'modules',
-      displayName: 'Front office worker apps',
+      displayName: 'Modules',
       type: 'string',
       visible: true,
       sticky: false,
