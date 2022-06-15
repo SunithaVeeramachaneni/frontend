@@ -26,8 +26,8 @@ import { TenantService } from '../services/tenant.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantsComponent implements OnInit {
-  selectedProduct = ['All Products'];
-  products = ['All Products', 'MWorkOrder', 'MInventory'];
+  selectedProduct = ['All Back office worker apps'];
+  products = ['All Back office worker apps', 'MWorkOrder', 'MInventory'];
   tenantsOnLoad$: Observable<Tenant[]>;
   tenantsOnScroll$: Observable<Tenant[]>;
   deactivateTenant$: BehaviorSubject<DeactivateTenant> =
@@ -42,12 +42,12 @@ export class TenantsComponent implements OnInit {
     },
     {
       name: 'products',
-      displayName: 'Products',
+      displayName: 'Back office worker apps',
       type: 'string'
     },
     {
       name: 'modules',
-      displayName: 'Modules',
+      displayName: 'Front office worker apps',
       type: 'string'
     },
     {

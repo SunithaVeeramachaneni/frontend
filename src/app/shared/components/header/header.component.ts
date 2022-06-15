@@ -13,7 +13,7 @@ import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { LogonUserDetails, UserDetails } from '../../../interfaces';
+import { UserDetails } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
@@ -37,8 +37,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public sidebarMinimize = false;
 
   unreadMessageCount: number;
-
-  logonUserDetails$: Observable<LogonUserDetails>;
 
   slackVerification$: Observable<any>;
 
