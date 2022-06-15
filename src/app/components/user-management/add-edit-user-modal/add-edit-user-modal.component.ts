@@ -131,7 +131,6 @@ export class AddEditUserModalComponent implements OnInit {
           return this.usersService.verifyUserEmail$(value);
         }),
         map((response: any) => {
-          console.log(response);
           this.verificationInProgress = false;
           this.emailValidated = true;
           if (response.isValidUserEmail) {

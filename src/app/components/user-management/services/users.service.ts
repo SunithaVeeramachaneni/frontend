@@ -207,10 +207,12 @@ export class UsersService {
   verifyUserEmail$ = (
     emailID: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._getResp(
+  ): Observable<any> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
       environment.userRoleManagementApiUrl,
       `users/verify/${emailID}`,
-      info
+      { displayToast, failureResponse }
     );
+  };
 }
