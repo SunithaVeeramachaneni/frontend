@@ -3,7 +3,8 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Inject
+  Inject,
+  ChangeDetectorRef
 } from '@angular/core';
 import {
   FormControl,
@@ -12,7 +13,8 @@ import {
   FormArray,
   ValidatorFn,
   AbstractControl,
-  ValidationErrors
+  ValidationErrors,
+  AsyncValidatorFn
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -20,11 +22,18 @@ import { Buffer } from 'buffer';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  first,
+  map,
+  switchMap
+} from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { UsersService } from '../services/users.service';
 @Component({
   selector: 'app-report-delete-modal',
   templateUrl: './add-edit-user-modal.component.html',
@@ -51,14 +60,18 @@ export class AddEditUserModalComponent implements OnInit {
       Validators.maxLength(100),
       WhiteSpaceValidator.noWhiteSpace
     ]),
-    email: new FormControl('', [
-      Validators.required,
-      Validators.email,
-      this.emailNameValidator()
-    ]),
+    email: new FormControl(
+      '',
+      [Validators.required, Validators.email, this.emailNameValidator()],
+      this.checkIfUserExistsInIDP()
+    ),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl('')
   });
+  emailValidated = false;
+  isValidIDPUser = false;
+  verificationInProgress = false;
+
   rolesInput: any;
   dialogText: 'addUser' | 'editUser';
   isfilterTooltipOpen = [];
@@ -81,6 +94,8 @@ export class AddEditUserModalComponent implements OnInit {
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
     private roleService: RolesPermissionsService,
+    private cdrf: ChangeDetectorRef,
+    private usersService: UsersService,
     private http: HttpClient,
     @Inject(MAT_DIALOG_DATA)
     public data: any
@@ -93,6 +108,9 @@ export class AddEditUserModalComponent implements OnInit {
 
   emailNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
+      this.emailValidated = false;
+      this.isValidIDPUser = false;
+
       if (this.data.user.email && this.data.user.email === control.value)
         return null;
       const find = this.data.allusers.findIndex(
@@ -100,6 +118,31 @@ export class AddEditUserModalComponent implements OnInit {
       );
       return find === -1 ? null : { duplicateName: true };
     };
+  }
+  checkIfUserExistsInIDP(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> =>
+      control.valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          this.emailValidated = false;
+          this.isValidIDPUser = false;
+          this.verificationInProgress = true;
+          return this.usersService.verifyUserEmail$(value);
+        }),
+        map((response: any) => {
+          this.verificationInProgress = false;
+          this.emailValidated = true;
+          if (response.isValidUserEmail) {
+            this.isValidIDPUser = true;
+          } else {
+            this.isValidIDPUser = false;
+          }
+          this.cdrf.detectChanges();
+          return null;
+        }),
+        first()
+      );
   }
 
   ngOnInit() {
@@ -207,6 +250,9 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    if (!this.isValidIDPUser) {
+      return;
+    }
     this.dialogRef.close({
       user: { ...this.data.user, ...this.userForm.value },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
