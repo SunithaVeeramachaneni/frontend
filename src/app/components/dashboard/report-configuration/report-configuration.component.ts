@@ -19,6 +19,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  mergeMap,
   pairwise,
   switchMap,
   tap
@@ -574,9 +575,18 @@ export class ReportConfigurationComponent implements OnInit {
     );
 
   getReportDataCount = () =>
-    this.reportConfigService.getReportDataCount$(this.reportConfiguration, {
-      searchKey: this.searchKey
-    });
+    this.reportConfigService
+      .getReportDataCount$(this.reportConfiguration, {
+        searchKey: this.searchKey
+      })
+      .pipe(
+        mergeMap((response) => {
+          if (!response.count) {
+            this.reportConfiguration.showChart = false;
+          }
+          return of(response);
+        })
+      );
 
   tableEventHandler(event: TableEvent) {
     this.fetchData$.next(event);
