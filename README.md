@@ -18,9 +18,9 @@ Open another Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\local.env build
+> docker compose --env-file .\\.docker\env\local.env build
 
-> docker compose --env-file .\.docker\env\local.env up
+> docker compose --env-file .\\.docker\env\local.env up
 
 Linux
 
@@ -42,9 +42,9 @@ Open another Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\local.env build
+> docker compose --env-file .\\.docker\env\local.env build
 
-> docker compose --env-file .\.docker\env\local.env up
+> docker compose --env-file .\\.docker\env\local.env up
 
 Linux
 
@@ -68,9 +68,9 @@ Open Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\development.env -f docker-compose.deployment.yml build
+> docker compose --env-file .\\.docker\env\development.env -f docker-compose.deployment.yml build
 
-> docker compose --env-file .\.docker\env\development.env -f docker-compose.deployment.yml up -d
+> docker compose --env-file .\\.docker\env\development.env -f docker-compose.deployment.yml up -d
 
 Linux
 
@@ -90,9 +90,9 @@ Open Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\testing.env -f docker-compose.deployment.yml build
+> docker compose --env-file .\\.docker\env\testing.env -f docker-compose.deployment.yml build
 
-> docker compose --env-file .\.docker\env\testing.env -f docker-compose.deployment.yml up -d
+> docker compose --env-file .\\.docker\env\testing.env -f docker-compose.deployment.yml up -d
 
 Linux
 
@@ -112,9 +112,9 @@ Open Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\staging.env -f docker-compose.deployment.yml build
+> docker compose --env-file .\\.docker\env\staging.env -f docker-compose.deployment.yml build
 
-> docker compose --env-file .\.docker\env\staging.env -f docker-compose.deployment.yml up -d
+> docker compose --env-file .\\.docker\env\staging.env -f docker-compose.deployment.yml up -d
 
 Linux
 
@@ -134,9 +134,9 @@ Open Terminal
 
 Windows
 
-> docker compose --env-file .\.docker\env\production.env -f docker-compose.deployment.yml build
+> docker compose --env-file .\\.docker\env\production.env -f docker-compose.deployment.yml build
 
-> docker compose --env-file .\.docker\env\production.env -f docker-compose.deployment.yml up -d
+> docker compose --env-file .\\.docker\env\production.env -f docker-compose.deployment.yml up -d
 
 Linux
 
