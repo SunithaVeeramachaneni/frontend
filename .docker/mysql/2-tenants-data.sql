@@ -68,7 +68,7 @@ insert into catalogs (
         "https://cwpdev.innovapptive.com/wiabapapi/",
         "http://cwpdev.innovapptive.com/wiabapapi/",
         "https://cwpdev.innovapptive.com/mccspccabapapi/",
-        "http://cwpdev.innovapptive.com/mccspccabapapi/",
+        "http://cwpdev.innovapptive.com/mccspccabapapi/"
       ]
     },
     "node": {
