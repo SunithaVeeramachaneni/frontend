@@ -1,5 +1,14 @@
-conn = new Mongo();
-db = conn.getDB('Innovapptive');
+#!/bin/bash
+set -e
+
+mongo admin<<EOF
+use Innovapptive;
+
+db.createUser({
+  user: 'admin',
+  pwd: '$MONGO_PASSWORD',
+  roles: [{ role: 'readWrite', db: 'Innovapptive' }]
+});
 
 db.categories.insertOne({
   _id: '_UnassignedCategory_',
@@ -9,3 +18,4 @@ db.categories.insertOne({
   Created_At: new Date(),
   Updated_At: new Date()
 });
+EOF
