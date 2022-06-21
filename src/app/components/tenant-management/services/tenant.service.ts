@@ -104,7 +104,7 @@ export class TenantService {
         groupable: false,
         hasSubtitle,
         subtitleColumn,
-        showMenuOptions: true,
+        showMenuOptions: false,
         hideable: true,
         stickable: true,
         titleStyle: {},

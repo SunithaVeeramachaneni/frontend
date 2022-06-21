@@ -8,7 +8,6 @@ export * from './upload-file';
 export * from './user';
 export * from './import-file-event';
 export * from './file-info';
-export * from './logon-user-details';
 export * from './files';
 export * from './report-category';
 export * from './report-details';

@@ -66,8 +66,8 @@
   "dialect": "Dialect",
   "noOfLicenses": "Licence Count",
   "product": "Product",
-  "products": "Back office worker apps",
-  "modules": "Front office worker apps",
+  "products": "Products",
+  "modules": "Modules",
   "logDBType": "Log DB Type",
   "logLevel": "Log Level"
 }
