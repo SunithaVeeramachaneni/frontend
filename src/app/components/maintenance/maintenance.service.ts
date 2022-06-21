@@ -1,58 +1,27 @@
 import { Injectable, NgZone } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  from,
-  Observable,
-  of,
-  Subject
-} from 'rxjs';
-import {
-  map,
-  mergeAll,
-  mergeMap,
-  reduce,
-  scan,
-  share,
-  switchMap,
-  tap
-} from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from, Observable } from 'rxjs';
+import { map, mergeMap, reduce, share, tap } from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
 import { environment } from '../../../environments/environment';
 
-import {
-  WarehouseTechnician,
-  WarehouseTechnicians
-} from '../../interfaces/warehouse_technicians';
+import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
 import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
-  constructor(private _zone: NgZone, private _appService: AppService, private sseService: SseService) {}
+  constructor(
+    private zone: NgZone,
+    private _appService: AppService,
+    private sseService: SseService
+  ) {}
 
   private technicians$: Observable<any>;
   public workOrderBSubject: BehaviorSubject<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
-
-  private selectOptions: string[] = [
-    'PRIOK',
-    'PRIOKX',
-    'COLOUR',
-    'AUFNR',
-    'AUFTEXT',
-    'ARBPL',
-    'KTEXT',
-    'PARNR',
-    'IPHAS',
-    'WorkOrderOperationSet/STATUS',
-    'WorkOrderOperationSet/ARBEI',
-    'IPHAS',
-    'GSTRP'
-  ];
 
   closeEventSource(): void {
     this.sseService.closeEventSource();
@@ -63,7 +32,8 @@ export class MaintenanceService {
         this._appService.prepareUrl(
           environment.mccAbapApiUrl,
           'updateWorkOrders'
-        ), null
+        ),
+        null
       );
       eventSource.stream();
       eventSource.onmessage = (event) => {
@@ -90,10 +60,18 @@ export class MaintenanceService {
         });
 
         if (workOrderList.length !== 0) {
-          this._zone.run(() => {
+          this.zone.run(() => {
             observer.next(workOrders);
           });
         }
+      };
+
+      eventSource.onerror = (event) => {
+        this.zone.run(() => {
+          if (event.data) {
+            observer.error(JSON.parse(event.data));
+          }
+        });
       };
     });
   }

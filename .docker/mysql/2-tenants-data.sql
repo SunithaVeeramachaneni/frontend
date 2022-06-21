@@ -112,7 +112,7 @@ insert into catalogs (
   }',
   20,
   '["MWORKORDER", "MINVENTORY"]',
-  '["Dashboard"]',
+  '["Dashboard", "Tenant Management", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]',
   "rdbms",
   "off",
   "admin@innovapptive.com",
