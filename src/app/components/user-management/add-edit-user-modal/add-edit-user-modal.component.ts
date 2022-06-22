@@ -250,7 +250,8 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
-    if (!this.isValidIDPUser) {
+    const emailControl = this.userForm.get('email');
+    if (emailControl.dirty && !this.isValidIDPUser) {
       return;
     }
     this.dialogRef.close({
