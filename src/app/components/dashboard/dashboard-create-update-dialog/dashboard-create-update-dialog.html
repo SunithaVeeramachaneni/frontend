@@ -18,14 +18,14 @@
     <mat-error
       *ngIf="f.dashboardName.errors?.required && f.dashboardName.touched"
     >
-      {{ 'fieldRequired' | translate: { name: 'dashboardLabel' | translate } }}
+      {{ 'fieldRequired' | translate: { name: 'dashboardTitle' | translate } }}
     </mat-error>
     <mat-error *ngIf="f.dashboardName.errors?.minlength">
-      {{ 'fieldMinimumLength' | translate : { name: 'dashboardLabel' |
+      {{ 'fieldMinimumLength' | translate : { name: 'dashboardTitle' |
       translate, length: f.dashboardName.errors?.minlength.requiredLength } }}
     </mat-error>
     <mat-error *ngIf="f.dashboardName.errors?.maxlength">
-      {{ 'fieldMaximumLength' | translate : { name: 'dashboardLabel' |
+      {{ 'fieldMaximumLength' | translate : { name: 'dashboardTitle' |
       translate, length: f.dashboardName.errors?.maxlength.requiredLength } }}
     </mat-error>
     <mat-checkbox
