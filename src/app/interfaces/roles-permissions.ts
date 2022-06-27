@@ -24,6 +24,7 @@ export interface Permission {
   name: string;
   displayName: string;
   moduleName: string;
+  subModuleName?: string;
   createdAt?: string;
   updatedAt?: string;
 }

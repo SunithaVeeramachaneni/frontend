@@ -28,7 +28,13 @@
         </mat-menu>
         <span class="count-of-roles" *ngIf="rolesList$ | async as roles">
           <span class="roles-count">{{ roles ? roles.length : 0 }}</span>
-          <span class="roles-text" translate="roles"></span>
+          <span class="roles-text">{{
+            'rolesTitleCasePlural'
+              | translate
+                : {
+                    count: roles.length
+                  }
+          }}</span>
         </span>
         <button
           mat-raised-button
@@ -127,10 +133,7 @@
           </mat-list>
         </div>
         <div class="width-70 custom-mat-form-field-white-color">
-          <div
-            class="roles-right-panel"
-            *ngIf="this.selectedRole !== undefined"
-          >
+          <div class="roles-right-panel" *ngIf="this.selectedRole !== null">
             <form
               [formGroup]="roleForm"
               (ngSubmit)="saveRole(roleForm.value, this.selectedRole.id)"
@@ -304,7 +307,7 @@
 
               <div class="width-40">
                 <ng-container
-                  *ngIf="selectedRole.id === undefined; else updateButton"
+                  *ngIf="selectedRole?.id === undefined; else updateButton"
                 >
                   <button
                     mat-raised-button
@@ -351,20 +354,20 @@
             </form>
           </div>
 
-          <div
-            *ngIf="this.selectedRole === undefined"
-            class="unselected-role-text"
-          >
+          <div *ngIf="this.selectedRole === null" class="unselected-role-text">
             <span translate="noRoles"></span>
           </div>
-          <div *ngIf="this.selectedRole !== undefined">
+          <div *ngIf="this.selectedRole !== null">
             <app-permissions
               [selectedRolePermissions$]="selectedRolePermissions$"
               [allPermissions$]="permissionsList$"
               (permissionsChange)="update($event)"
               [isEditable]="
-                this.selectedRole.name === superAdminText ? false : true
+                this.selectedRole?.name === superAdminText ? false : true
               "
+              [selectedRole]="selectedRole"
+              [roleFormChanged]="roleFormChanged"
+              (rolePermissions)="rolePermissionsHandler($event)"
             >
             </app-permissions>
           </div>
