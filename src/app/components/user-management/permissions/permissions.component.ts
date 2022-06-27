@@ -1,18 +1,14 @@
 import {
-  AfterViewChecked,
-  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { userRolePermissions, superAdminText } from 'src/app/app.constants';
-import { RolesPermissionsService } from '../services/roles-permissions.service';
+import { userRolePermissions } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-permissions',
@@ -24,24 +20,46 @@ export class PermissionsComponent implements OnChanges {
   @Input() allPermissions$: Observable<any[]>;
   @Input() rolesWithPermissionsInUsers: string;
   @Input() isEditable = true;
+  @Input() selectedRole: any;
+  @Input() set roleFormChanged(roleFormChanged: { isChanged: boolean }) {
+    if (roleFormChanged && roleFormChanged.isChanged) {
+      if (this.permissions$?.value) {
+        this.rolePermissions.emit(this.permissions$.value);
+      }
+    }
+  }
 
   @Output() permissionsChange: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rolePermissions: EventEmitter<any> = new EventEmitter<any>();
 
   rolesBasedPermissions = [];
   permissions$: BehaviorSubject<any>;
   panelOpenState: boolean[] = [];
   userRolePermissions = userRolePermissions;
 
-  constructor(private roleService: RolesPermissionsService) {}
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes.selectedRole &&
+      changes.selectedRole.previousValue &&
+      !changes.selectedRole.currentValue.isNew
+    ) {
+      if (
+        changes.selectedRole.previousValue.id !==
+        changes.selectedRole.currentValue.id
+      ) {
+        this.panelOpenState = [];
+      }
+    }
+
     if (changes.selectedRolePermissions$) {
       if (changes.selectedRolePermissions$.firstChange) {
         this.permissions$ = new BehaviorSubject([]);
       }
+      this.selectedRolePermissions$ =
+        changes.selectedRolePermissions$.currentValue;
     }
-    this.selectedRolePermissions$ =
-      changes.selectedRolePermissions$.currentValue;
 
     if (changes.allPermissions$) {
       this.allPermissions$ = changes.allPermissions$.currentValue;
@@ -97,9 +115,60 @@ export class PermissionsComponent implements OnChanges {
           return per;
         });
 
+        const isMainModule = module.permissions.find(
+          (per) => per.moduleName === permission.subModuleName
+        );
+
+        if (
+          !checked &&
+          permission.displayName.toLowerCase().indexOf('display') !== -1
+        ) {
+          module.permissions = module.permissions.map((per) => {
+            if (isMainModule) {
+              per.checked = false;
+            } else if (per.subModuleName === permission.subModuleName) {
+              per.checked = false;
+            }
+            return per;
+          });
+        } else if (checked) {
+          if (permission.displayName.toLowerCase().indexOf('display') === -1) {
+            module.permissions = module.permissions.map((per) => {
+              if (isMainModule) {
+                if (
+                  per.subModuleName === permission.subModuleName &&
+                  per.displayName.toLowerCase().indexOf('display') !== -1
+                ) {
+                  per.checked = true;
+                }
+              } else {
+                if (
+                  (per.moduleName === per.subModuleName ||
+                    per.subModuleName === permission.subModuleName) &&
+                  per.displayName.toLowerCase().indexOf('display') !== -1
+                ) {
+                  per.checked = true;
+                }
+              }
+              return per;
+            });
+          } else {
+            module.permissions = module.permissions.map((per) => {
+              if (
+                per.moduleName === per.subModuleName &&
+                per.displayName.toLowerCase().indexOf('display') !== -1
+              ) {
+                per.checked = true;
+              }
+              return per;
+            });
+          }
+        }
+
         module.countOfChecked = module.permissions.filter(
           (per) => per.checked
         ).length;
+
         if (module.countOfChecked === 0) module.checked = false;
         if (module.countOfChecked === module.permissions.length)
           module.checked = true;
