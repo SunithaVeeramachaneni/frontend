@@ -141,7 +141,7 @@ export class AddEditUserModalComponent implements OnInit {
             this.isValidIDPUser = false;
           }
           this.cdrf.detectChanges();
-          return null;
+          return !this.isValidIDPUser ? { invalid: true } : null;
         }),
         first()
       );
@@ -252,9 +252,6 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
-    if (!this.isValidIDPUser) {
-      return;
-    }
     this.dialogRef.close({
       user: { ...this.data.user, ...this.userForm.value },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'

@@ -184,7 +184,7 @@ describe('RolesComponent', () => {
 
   it('should get cancelRole', () => {
     component.cancelRole();
-    expect(component.selectedRole).toBe(undefined);
+    expect(component.selectedRole).toBe(null);
   });
 
   it('should get showSelectedRole method', () => {
