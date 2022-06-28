@@ -18,6 +18,7 @@ import {
   FormControlName,
   FormGroup,
   ValidationErrors,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -324,6 +325,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
           tenant.erps.sap.saml.clientSecret,
           this.encryptionKey
         );
+        tenant.erps.sap.scope = JSON.stringify(
+          tenant.erps.sap.scope,
+          null,
+          ' '
+        );
 
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
@@ -432,8 +438,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         '',
         [
           Validators.required,
-          Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.noWhiteSpace,
+          this.scopeValidator()
         ]
       ],
       saml: this.fb.group({
@@ -587,6 +593,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   saveTenant() {
     if (this.tenantForm.valid && this.tenantForm.dirty) {
       const { id, ...tenant } = this.tenantForm.getRawValue();
+      tenant.erps.sap.scope = JSON.parse(tenant.erps.sap.scope);
       this.spinner.show();
 
       if (id) {
@@ -678,5 +685,34 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.tenantForm.get('tenantAdmin').disable();
     this.tenantForm.get('rdbms.database').disable();
     this.tenantForm.get('nosql.database').disable();
+  }
+
+  scopeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value.trim()) {
+        try {
+          const json = JSON.parse(control.value);
+          if (
+            !json.hasOwnProperty('race') ||
+            !json.hasOwnProperty('mWorkOrder') ||
+            !json.hasOwnProperty('mInventory')
+          ) {
+            return { invalidScope: true };
+          }
+
+          if (
+            json.race.trim() === '' ||
+            json.mWorkOrder.trim() === '' ||
+            json.mInventory.trim() === ''
+          ) {
+            return { invalidScope: true };
+          }
+        } catch (e) {
+          return { invalidScope: true };
+        }
+        return null;
+      }
+      return null;
+    };
   }
 }

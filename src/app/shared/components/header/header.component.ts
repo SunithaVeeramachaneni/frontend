@@ -18,8 +18,7 @@ import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
 import { ChatService } from '../collaboration/chats/chat.service';
-import { getImageSrc } from '../../utils/imageUtils';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ImageUtils } from '../../utils/imageUtils';
 import { Buffer } from 'buffer';
 
 @Component({
@@ -54,7 +53,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private imageUtils: ImageUtils
   ) {}
 
   openDialog(): void {
@@ -150,6 +149,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   profileImage(buffer: any) {
-    return getImageSrc(Buffer.from(buffer).toString(), this.sanitizer);
+    return this.imageUtils.getImageSrc(Buffer.from(buffer).toString());
   }
 }
