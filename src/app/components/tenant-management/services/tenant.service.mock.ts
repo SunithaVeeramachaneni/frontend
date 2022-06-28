@@ -25,7 +25,11 @@ export const tenants: Tenant[] = [
         password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
         grantType: 'grantType',
         clientId: 'clientId',
-        scope: 'scope',
+        scope: {
+          race: 'racescope',
+          mWorkOrder: 'wrokorderscope',
+          mInventory: 'inventoeyscope'
+        },
         saml: {
           oauth2Url: 'https://oauth2urltest.com',
           grantType: 'https://granttypetest.com',
