@@ -11,19 +11,27 @@ import { ToastRef } from './toast-ref';
 })
 export class ToastService {
   private lastToast: ToastRef;
+  private toastData: ToastData[] = [];
 
   constructor(
     private overlay: Overlay,
     private parentInjector: Injector,
     @Inject(TOAST_CONFIG_TOKEN) private toastConfig: ToastConfig
-  ) { }
+  ) {}
 
   show(data: ToastData) {
+    const findToastData = this.toastData.find(
+      (toastData) => data.type === 'warning' && toastData.text === data.text
+    );
+    if (findToastData) {
+      return;
+    }
     const positionStrategy = this.getPositionStrategy();
     const overlayRef = this.overlay.create({ positionStrategy });
 
     const toastRef = new ToastRef(overlayRef);
     this.lastToast = toastRef;
+    this.toastData.push(data);
     const injector = this.getInjector(data, toastRef, this.parentInjector);
     const toastPortal = new ComponentPortal(ToastComponent, null, injector);
     overlayRef.attach(toastPortal);
@@ -31,7 +39,8 @@ export class ToastService {
   }
 
   getPositionStrategy() {
-    return this.overlay.position()
+    return this.overlay
+      .position()
       .global()
       .top(this.getPosition())
       .right(this.toastConfig.position.right + 'px');
@@ -50,5 +59,13 @@ export class ToastService {
     tokens.set(ToastData, data);
     tokens.set(ToastRef, toastRef);
     return new PortalInjector(parentInjector, tokens);
+  }
+
+  setToastData(toastData: ToastData[]) {
+    this.toastData = toastData;
+  }
+
+  getToastData(): ToastData[] {
+    return this.toastData;
   }
 }
