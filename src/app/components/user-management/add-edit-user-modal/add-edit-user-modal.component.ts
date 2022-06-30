@@ -46,14 +46,14 @@ export class AddEditUserModalComponent implements OnInit {
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(100),
-      Validators.pattern("^[a-zA-Z0-9 -']"),
+      Validators.pattern('^[a-zA-Z0-9 ]+$'),
       WhiteSpaceValidator.noWhiteSpace
     ]),
     lastName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(100),
-      Validators.pattern("^[a-zA-Z0-9 -']"),
+      Validators.pattern('^[a-zA-Z0-9 ]+$'),
       WhiteSpaceValidator.noWhiteSpace
     ]),
     title: new FormControl('', [

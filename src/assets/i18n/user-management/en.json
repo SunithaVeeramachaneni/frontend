@@ -26,7 +26,7 @@
   "fieldRequired": "{name} is required",
   "fieldMinimumLength": "{name} must be atleast {length} characters",
   "fieldMaximumLength": "{name} must not exceed {length} characters",
-  "patternNotAllowed": "{name} does not allow any special characters",
+  "patternNotAllowed": "{name} doesn't allow special characters",
   "addUser": "Add User",
   "editUser": "Edit User",
   "addUserBtn": "Add User",
