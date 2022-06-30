@@ -77,7 +77,7 @@ export class InactiveUsersComponent implements OnInit {
       showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
-      sortable: true,
+      sortable: false,
       hideable: false,
       visible: true,
       movable: false,
