@@ -248,31 +248,31 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         });
         deleteReportRef.afterClosed().subscribe((res) => {
           if (res === 'yes') {
-            this.usersDoesntExists.forEach((role) => {
-              this.roleService.deleteRole$(role).subscribe(
-                (resp) => {
-                  if (Object.keys(resp).length && resp.id) {
-                    this.rolesListUpdate$.next({ action: 'delete', role });
-                    this.toast.show({
-                      text: 'Role Deleted successfully',
-                      type: 'success'
-                    });
-                  }
-                },
-                (error) => {
+            from(this.usersDoesntExists)
+              .pipe(
+                mergeMap((role) => this.roleService.deleteRole$(role, info)),
+                toArray()
+              )
+              .subscribe((deletedRoles) => {
+                if (deletedRoles.length === this.usersDoesntExists.length) {
                   this.toast.show({
-                    text: 'Unable to delete the role',
+                    text: `${deletedRoles.length} Roles Deleted successfully`,
                     type: 'success'
                   });
                 }
-              );
-            });
+                deletedRoles.forEach((deletedRole) => {
+                  this.rolesListUpdate$.next({
+                    action: 'delete',
+                    role: deletedRole
+                  });
+                });
+                this.selectedRoleList = [];
+                this.selectedRoleIDList = [];
+                this.usersExists = [];
+                this.usersDoesntExists = [];
+                this.selectedRole = null;
+              });
           }
-          this.selectedRoleList = [];
-          this.selectedRoleIDList = [];
-          this.usersExists = [];
-          this.usersDoesntExists = [];
-          this.selectedRole = null;
         });
       });
   };
@@ -425,24 +425,16 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       });
       deleteReportRef.afterClosed().subscribe((res) => {
         if (res === 'yes') {
-          this.roleService.deleteRole$(role).subscribe(
-            (resp) => {
-              if (Object.keys(resp).length && resp.id) {
-                this.rolesListUpdate$.next({ action: 'delete', role });
-                this.selectedRole = null;
-                this.toast.show({
-                  text: 'Role Deleted successfully',
-                  type: 'success'
-                });
-              }
-            },
-            (error) => {
+          this.roleService.deleteRole$(role).subscribe((resp) => {
+            if (Object.keys(resp).length) {
+              this.rolesListUpdate$.next({ action: 'delete', role });
+              this.selectedRole = null;
               this.toast.show({
-                text: 'Unable to delete the role',
+                text: 'Role Deleted successfully',
                 type: 'success'
               });
             }
-          );
+          });
         }
       });
     });
