@@ -83,6 +83,7 @@ export class TenantService {
       let hasSubtitle = false;
       let visible = true;
       let subtitleColumn = '';
+      let sortable = false;
 
       if (id === 'adminInfo') {
         hasSubtitle = true;
@@ -91,6 +92,9 @@ export class TenantService {
       if (id === 'adminEmail') {
         visible = false;
       }
+      if (id === 'tenantName' || id === 'createdAt') {
+        sortable = true;
+      }
       return {
         id,
         displayName,
@@ -98,7 +102,7 @@ export class TenantService {
         visible,
         sticky: false,
         searchable: true,
-        sortable: true,
+        sortable,
         movable: false,
         order: index + 1,
         groupable: false,
