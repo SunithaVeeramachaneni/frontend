@@ -94,12 +94,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.conversationsInitial$ = this.chatService.getConversations$().pipe(
       mergeMap((conversations) => {
         if (conversations.length) {
-          conversations.forEach((conv) => {
-            conv.userInfo.profileImage = getImageSrc(
-              Buffer.from(conv.userInfo.profileImage).toString(),
-              this.sanitizer
-            );
-          });
+          // conversations.forEach((conv) => {
+          //   conv.userInfo.profileImage = getImageSrc(
+          //     Buffer.from(conv.userInfo.profileImage).toString(),
+          //     this.sanitizer
+          //   );
+          // });
           if (this.targetUser) {
             conversations.forEach((conv) => {
               if (conv.user === this.targetUser.UserSlackDetail.slackID) {
@@ -187,23 +187,24 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .pipe(
         // eslint-disable-next-line arrow-body-style
         mergeMap((history) => {
+          console.log(history);
           if (history.length) {
             history.forEach((message) => {
-              message.userInfo.profileImage = getImageSrc(
-                Buffer.from(message.userInfo.profileImage).toString(),
-                this.sanitizer
-              );
+              // message.userInfo.profileImage = getImageSrc(
+              //   Buffer.from(message.userInfo.profileImage).toString(),
+              //   this.sanitizer
+              // );
               message.isMeeting = false;
-              if (message.text.indexOf('meeting_request')) {
-                try {
-                  message.jsonObj = JSON.parse(message.text);
-                  if (message.jsonObj.link) {
-                    message.isMeeting = true;
-                  }
-                } catch (err) {
-                  // TODO: Display toasty
-                }
-              }
+              // if (message.text.indexOf('meeting_request')) {
+              //   try {
+              //     message.jsonObj = JSON.parse(message.text);
+              //     if (message.jsonObj.link) {
+              //       message.isMeeting = true;
+              //     }
+              //   } catch (err) {
+              //     // TODO: Display toasty
+              //   }
+              // }
             });
             return of({ data: history });
           }
@@ -290,10 +291,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
       (response) => {
         if (response && Object.keys(response).length) {
           if (response.ok) {
+            response.user = response.from.user;
             this.sendReceiveMessages$.next({
               action: 'send',
-              message: response.message,
-              channel: response.channel
+              message: response,
+              channel: response.chatId
             });
             this.messageText = '';
             this.messageDeliveryProgress = false;
@@ -342,30 +344,28 @@ export class ChatsComponent implements OnInit, OnDestroy {
         const conversationId = selectedConversation.id;
         const formData = new FormData();
         formData.append('attachment', result);
-        this.chatService
-          .uploadFileToConversation$(conversationId, formData, info)
-          .subscribe(
-            (res) => {
-              const filesArr = [];
-              filesArr.push(result);
-              const dateToday = moment().unix();
+        this.chatService.uploadFileToConversation$(formData, info).subscribe(
+          (res) => {
+            const filesArr = [];
+            filesArr.push(result);
+            const dateToday = moment().unix();
 
-              this.sendReceiveMessages$.next({
-                action: 'send',
-                message: {
-                  type: 'message',
-                  text: '',
-                  user: selectedConversation.user,
-                  files: filesArr,
-                  ts: dateToday
-                },
-                channel: selectedConversation.id
-              });
-            },
-            (err) => {
-              // TODO: Display toasty message
-            }
-          );
+            this.sendReceiveMessages$.next({
+              action: 'send',
+              message: {
+                type: 'message',
+                text: '',
+                user: selectedConversation.user,
+                files: filesArr,
+                ts: dateToday
+              },
+              channel: selectedConversation.id
+            });
+          },
+          (err) => {
+            // TODO: Display toasty message
+          }
+        );
       }
     });
   };

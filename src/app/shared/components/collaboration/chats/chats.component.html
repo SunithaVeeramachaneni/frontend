@@ -22,15 +22,15 @@
           }"
         >
           <div class="icon-button" mat-list-icon>
-            <img class="icon" [src]="conversation.userInfo.profileImage" />
+            <!-- <img class="icon" [src]="conversation.userInfo.profileImage" /> -->
           </div>
           <div mat-line>
             <b
-              >{{ conversation.userInfo.firstName }}
-              {{ conversation.userInfo.lastName }}</b
-            >
+              >{{ conversation.userInfo.displayName }}
+              <!-- {{ conversation.userInfo.lastName }} -->
+            </b>
           </div>
-          <div mat-line>{{ conversation.info.latest?.text }}</div>
+          <div mat-line>{{ conversation.info?.body?.content }}</div>
           <mat-divider class="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
@@ -40,18 +40,19 @@
     <div class="conversationHead">
       <div class="displayFlex">
         <div class="iconButton">
-          <img
+          <span class="icon"></span>
+          <!-- <img
             class="icon"
             [src]="selectedConversation.userInfo.profileImage"
-          />
+          /> -->
         </div>
         <div class="userTitle">
           <b class="userName"
-            >{{ selectedConversation.userInfo.firstName }}
-            {{ selectedConversation.userInfo.lastName }}
+            >{{ selectedConversation.userInfo.displayName }}
+            <!-- {{ selectedConversation.userInfo.lastName }} -->
           </b>
           <div mat-line class="userDescription">
-            {{ selectedConversation.userInfo.title }}
+            {{ selectedConversation.userInfo?.title }}
           </div>
         </div>
       </div>
@@ -82,19 +83,18 @@
       [scrollTop]="scrollMe.scrollHeight"
     >
       <div *ngFor="let message of conversationHistory$ | async">
-        <div *ngIf="message.user" class="conversationMessage">
+        <div class="conversationMessage">
           <div class="conv-user-icon">
-            <img class="icon" [src]="message.userInfo.profileImage" />
+            <span class="icon"></span>
+            <!-- <img class="icon" [src]="message.userInfo.profileImage" /> -->
           </div>
           <div class="nameAndMessage">
             <div>
               <b
-                >{{ message.userInfo.firstName }}
-                {{ message.userInfo.lastName }}</b
-              >
-              <span class="timeAgoLabel">{{
-                getLocalDateFromEpoch(message.ts)
-              }}</span>
+                >{{ message.from?.user?.displayName }}
+                <!-- {{ message.userInfo.lastName }} -->
+              </b>
+              <span class="timeAgoLabel">{{ message.createdDateTime }}</span>
             </div>
             <div *ngIf="message.isMeeting === true">
               <div class="attachmentItemMeeting">
@@ -112,9 +112,9 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="message.isMeeting === false">
-              <div mat-line>{{ message.text }}</div>
-              <div *ngIf="message.files && message.files.length">
+            <div>
+              <div mat-line [innerHtml]="message.body.content"></div>
+              <!-- <div *ngIf="message.files && message.files.length">
                 <mat-list>
                   <mat-list-item
                     *ngFor="let file of message.files"
@@ -146,7 +146,7 @@
                     </div>
                   </mat-list-item>
                 </mat-list>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>

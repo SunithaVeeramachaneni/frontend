@@ -13,7 +13,7 @@ import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { UserDetails } from '../../../interfaces';
+import { ErrorInfo, UserDetails } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
@@ -21,6 +21,11 @@ import { ChatService } from '../collaboration/chats/chat.service';
 import { getImageSrc } from '../../utils/imageUtils';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
+
+import axios from 'axios';
+import * as moment from 'moment';
+import { UploadDialogComponent } from '../collaboration/chats/upload-dialog/upload-dialog.component';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-header',
@@ -39,6 +44,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   unreadMessageCount: number;
 
   slackVerification$: Observable<any>;
+  msTeamsSignIn$: Observable<any>;
 
   userData$: Observable<UserDetails>;
 
@@ -48,6 +54,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private unreadCountSubscription: Subscription;
 
   constructor(
+    public uploadDialog: MatDialog,
     private headerService: HeaderService,
     private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
@@ -86,6 +93,50 @@ export class HeaderComponent implements OnInit, OnDestroy {
   connectToSlack(slackVerification): void {
     window.open(slackVerification.installationURL, '_self');
   }
+
+  openFileUploadDialog = async () => {
+    const dialogRef = this.uploadDialog.open(UploadDialogComponent, {
+      disableClose: true,
+      hasBackdrop: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const info: ErrorInfo = {
+          displayToast: true,
+          failureResponse: 'throwError'
+        };
+        const formData = new FormData();
+        formData.append('attachment', result);
+        formData.append('owner', 'shiva kumar');
+        this.chatService.uploadFileToConversation$(formData, info).subscribe(
+          (res) => {
+            console.log(res);
+            // const filesArr = [];
+            // filesArr.push(result);
+          },
+          (err) => {
+            // TODO: Display toasty message
+          }
+        );
+      }
+    });
+  };
+
+  subscribeToTeamsMessages = async () => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    this.headerService.subscribeToTeamsMessages$(info).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        // TODO: Display toasty message
+      }
+    );
+  };
 
   ngOnInit() {
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
@@ -150,6 +201,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   profileImage(buffer: any) {
+    if (!buffer) return;
     return getImageSrc(Buffer.from(buffer).toString(), this.sanitizer);
   }
 }

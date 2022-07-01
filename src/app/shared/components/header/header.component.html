@@ -20,6 +20,37 @@
     </div>
   </div>
   <div class="header-cols" *ngIf="userData$ | async as userDetails">
+    <div>
+      <button
+        #collabButton
+        class="collabButton"
+        mat-icon-button
+        color="primary"
+        aria-label="Collaboration Dialog trigger button"
+        (click)="openDialog()"
+        [matBadge]="unreadMessageCount"
+        [matBadgeDisabled]="unreadMessageCount < 1"
+        matBadgePosition="after"
+        matBadgeColor="warn"
+        matBadgeOverlap="true"
+      >
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="openFileUploadDialog()"
+      >
+        Upload File
+      </button>
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="subscribeToTeamsMessages()"
+      >
+        Subscribe
+      </button>
+    </div>
     <div *ngIf="slackVerification$ | async as slackVerification">
       <div
         *ngIf="!slackVerification.slackInstalled"

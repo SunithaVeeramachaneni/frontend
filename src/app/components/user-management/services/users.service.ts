@@ -86,6 +86,18 @@ export class UsersService {
     );
   };
 
+  getMessageHistory$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
+    const { displayToast, failureResponse = {} } = info;
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'msteams/channels',
+      {
+        displayToast,
+        failureResponse
+      }
+    );
+  };
+
   getRoles$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Role[]> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,

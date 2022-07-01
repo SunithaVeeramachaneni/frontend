@@ -67,7 +67,7 @@ export class ChatService {
   ): Observable<any> =>
     this.appService._postData(
       environment.slackAPIUrl,
-      `users/${userId}/messages`,
+      `channels/${userId}/messages`,
       { message },
       info
     );
@@ -85,14 +85,14 @@ export class ChatService {
     );
 
   uploadFileToConversation$ = (
-    conversationId,
-    formData,
+    formData: FormData,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService.uploadFile(
-      environment.slackAPIUrl,
-      `conversations/${conversationId}/files`,
-      formData
+      environment.userRoleManagementApiUrl,
+      `msteams/channel/messages/files`,
+      formData,
+      info
     );
 
   downloadFileSlack$ = (

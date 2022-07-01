@@ -19,4 +19,20 @@ export class HeaderService {
       info,
       queryParams
     );
+
+  subscribeToTeamsMessages$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.userRoleManagementApiUrl,
+      'msteams/subscribe',
+      info
+    );
+
+  getMSTeamsSignIn$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `msteams/auth/signin`,
+      info
+    );
 }
