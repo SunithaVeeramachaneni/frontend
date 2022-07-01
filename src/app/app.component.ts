@@ -48,6 +48,7 @@ const {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
+  opened = false;
   menus = [
     {
       title: dashboard.title,
@@ -70,7 +71,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       image: 'assets/sidebar-icons/tenant-management-gray.svg',
       showSubMenu: false,
       permission: perms.viewTenants,
-      subPages: [],
+      subPages: null,
       disable: false
     },
     {
@@ -231,17 +232,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       });
 
-    this.commonService.minimizeSidebarAction$.subscribe((data) => {
-      this.sidebar = data;
-      if (this.currentRouteUrl) {
-        this.menus = this.toggleSubMenu(
-          this.menus,
-          this.currentRouteUrl,
-          this.sidebar
-        );
-      }
-    });
-
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -250,11 +240,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         const selectedmenu = this.menus.find((x) => x.url === splitedUrl);
         this.selectedMenu = selectedmenu?.title;
         this.commonService.setCurrentRouteUrl(this.currentRouteUrl);
-        this.menus = this.toggleSubMenu(
-          this.menus,
-          this.currentRouteUrl,
-          this.sidebar
-        );
+        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl);
       });
 
     this.translateService.use(defaultLanguage);
@@ -334,22 +320,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
+    this.sidebar = this.opened;
   }
 
   selectedListElement(title) {
     this.selectedMenu = title;
   }
 
-  toggleSubMenu(
-    menus: any,
-    currentRouteUrl: string,
-    sidebarMinimized: boolean
-  ) {
+  toggleSubMenu(menus: any, currentRouteUrl: string) {
     return menus.map((menuItem) => {
       let showSubMenu = false;
       if (
         menuItem.subPages !== null &&
-        !sidebarMinimized &&
         currentRouteUrl.indexOf(menuItem.url) === 0
       ) {
         showSubMenu = true;
@@ -372,7 +354,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       permissions.length &&
       this.menuHasSubMenu[menuPermission] === undefined
     ) {
-      const subMenuPermission = subMenus.find((subMenu) =>
+      const subMenuPermission = subMenus?.find((subMenu) =>
         permissions.find((permission) => subMenu.permission === permission.name)
       );
       const hasPermission = subMenuPermission ? true : false;
