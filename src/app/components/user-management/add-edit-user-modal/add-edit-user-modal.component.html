@@ -78,6 +78,19 @@
 
         <mat-error
           *ngIf="
+            !userForm.controls.firstName.errors?.noWhiteSpace &&
+            userForm.controls.firstName.errors?.pattern &&
+            userForm.controls.firstName.touched
+          "
+          class="m-t-5 error-fields"
+        >
+          {{
+            'patternNotAllowed' | translate: { name: 'firstName' | translate }
+          }}
+        </mat-error>
+
+        <mat-error
+          *ngIf="
             userForm.controls.firstName.errors?.noWhiteSpace &&
             userForm.controls.firstName.touched
           "
@@ -143,6 +156,20 @@
                   }
           }}
         </mat-error>
+
+        <mat-error
+          *ngIf="
+            !userForm.controls.lastName.errors?.noWhiteSpace &&
+            userForm.controls.lastName.errors?.pattern &&
+            userForm.controls.lastName.touched
+          "
+          class="m-t-5 error-fields"
+        >
+          {{
+            'patternNotAllowed' | translate: { name: 'lastName' | translate }
+          }}
+        </mat-error>
+
         <mat-error
           *ngIf="
             userForm.controls.lastName.errors?.noWhiteSpace &&

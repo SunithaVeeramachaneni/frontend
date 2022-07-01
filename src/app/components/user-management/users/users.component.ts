@@ -54,9 +54,6 @@ export class UsersComponent implements OnInit {
       displayName: 'User',
       type: 'string',
       order: 1,
-      hasSubtitle: true,
-      showMenuOptions: false,
-      subtitleColumn: '', //'displayRoles',
       searchable: false,
       sortable: true,
       hideable: false,
@@ -66,7 +63,13 @@ export class UsersComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: { 'font-weight': '500' },
-      subtitleStyle: {}, // { 'font-size': '8pt', color: 'darkgray' },
+      hasSubtitle: true,
+      showMenuOptions: false,
+      subtitleColumn: 'title',
+      subtitleStyle: {
+        'font-size': '8pt',
+        color: 'darkgray'
+      },
       hasPreTextImage: true,
       hasPostTextImage: false
     },
@@ -100,7 +103,7 @@ export class UsersComponent implements OnInit {
       showMenuOptions: false,
       subtitleColumn: '',
       searchable: false,
-      sortable: true,
+      sortable: false,
       hideable: false,
       visible: true,
       movable: false,

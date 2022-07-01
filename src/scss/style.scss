@@ -640,15 +640,23 @@ button.mat-menu-item {
   margin-right: -10px !important;
 }
 
-.table-column {
-  min-width: 140px !important;
-  width: auto !important;
+// .table-column {
+//   min-width: 140px !important;
+//   width: auto !important;
+// }
+
+.mat-column-tenantName {
+  font-weight: 500;
 }
 
-.inactive-users-main-container .table-column {
-  min-width: 140px !important;
-  width: 100% !important;
+.mat-column-createdAt {
+  color: #757575;
 }
+
+// .inactive-users-main-container .table-column {
+//   min-width: 140px !important;
+//   width: 100% !important;
+// }
 
 .sidebar-menu-panel {
   min-height: auto !important;
