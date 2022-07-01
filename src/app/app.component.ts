@@ -319,8 +319,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    this.cdrf.detectChanges();
     this.sidebar = this.opened;
+    this.cdrf.detectChanges();
   }
 
   selectedListElement(title) {

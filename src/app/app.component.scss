@@ -124,6 +124,32 @@ li.selected .sidebar-icons {
   display: none;
 }
 
+.arrow-margin {
+  margin: 15px 10px;
+}
+
+.innov-big-img {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+}
+
+.innov-small-img {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+}
+
+.show-content {
+  margin: 14px 0 0 70px;
+  height: 100%;
+}
+
+.show-login {
+  margin: 0;
+  height: 100%;
+}
+
 mat-sidenav {
   height: 100%;
 }

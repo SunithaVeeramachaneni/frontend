@@ -22,7 +22,7 @@
         routerDirection="root"
         title="{{ menuitem.title }}"
         *appCheckUserHasPermission="[menuitem.permission]"
-        style="display: flex"
+        class="dis-flex"
       >
         <a
           mat-list-item
@@ -38,7 +38,7 @@
         </a>
         <a
           *ngIf="menuitem.subPages !== null && this.sidebar === true"
-          style="margin: 15px 10px"
+          class="arrow-margin"
           (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
         >
           <img
@@ -90,12 +90,12 @@
     <img
       src="../assets/sidebar-icons/innova-big.svg"
       [hidden]="this.sidebar === false"
-      style="position: absolute; bottom: 15px; left: 20px"
+      class="innov-big-img"
     />
     <img
       src="../assets/sidebar-icons/innova-small.svg"
       [hidden]="this.sidebar === true"
-      style="position: absolute; bottom: 15px; left: 20px"
+      class="innov-small-img"
     />
   </mat-sidenav>
 
@@ -109,9 +109,10 @@
     ></app-header>
 
     <main
-      style="margin: 14px 0 0 70px; height: 100%"
       [ngClass]="{
-        'hide-sidebar': isUserAuthenticated === false
+        'hide-sidebar': isUserAuthenticated === false,
+        'show-content': selectedMenu !== 'login',
+        'show-login': selectedMenu === undefined
       }"
     >
       <router-outlet></router-outlet>
