@@ -19,6 +19,7 @@ import { UsersService } from './components/user-management/services/users.servic
 import { SharedModule } from './shared/shared.module';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -65,6 +66,7 @@ describe('AppComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [
+        HttpClientModule,
         RouterTestingModule,
         AppMaterialModules,
         BrowserAnimationsModule,

@@ -368,7 +368,6 @@ describe('WorkInstructionsComponent', () => {
         'SEE ALL'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
       expect(homeEl.querySelectorAll('router-outlet').length).toBe(1);
       expect(homeEl.querySelectorAll('app-dummy').length).toBe(2);
       expect(component.getBase64Images).toHaveBeenCalledTimes(2);
@@ -431,7 +430,6 @@ describe('WorkInstructionsComponent', () => {
         'No Favorite Instructions found !!'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display No Resulst found in case of search term not found in data', () => {
@@ -486,7 +484,6 @@ describe('WorkInstructionsComponent', () => {
         'No Results Found !!'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display three instructions of each darfted/favorites if more then 3 instructions are present', () => {
