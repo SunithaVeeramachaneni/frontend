@@ -3,9 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { CommonService } from '../../services/common.service';
@@ -32,6 +34,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
   @Input() title: string;
+  @Input() selectedMenu: string;
+
+  @Output() SideNavToggle = new EventEmitter();
 
   public username: string;
   public userImage: string;
@@ -126,6 +131,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
       })
     );
+  }
+
+  openSidenav() {
+    this.SideNavToggle.emit();
   }
 
   minimize(e) {
