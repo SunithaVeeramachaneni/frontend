@@ -6,7 +6,7 @@ const routes: Routes = [
   {
     path: '',
     component: UserSettingsContainerComponent,
-    data: { breadcrumb: { label: 'Your Settings' } }
+    data: { breadcrumb: { skip: true } }
   }
 ];
 
