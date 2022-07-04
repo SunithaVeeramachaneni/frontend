@@ -38,7 +38,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Input() set selectedMenu(menu) {
     this.commonService.setHeaderTitle(menu);
-    this.headerTitle$ = this.commonService.headerTitleAction$;
   }
 
   public username: string;
@@ -97,6 +96,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.headerTitle$ = this.commonService.headerTitleAction$;
+
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
       (unreadCount) => {
         this.unreadMessageCount = unreadCount;
