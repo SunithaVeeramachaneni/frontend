@@ -1,6 +1,7 @@
 .min-toolbar {
   background-color: white;
   height: 65px;
+  border-bottom: 1px solid #e0e0e0;
 }
 .connectToSlackButton {
   align-items: center;
@@ -38,6 +39,7 @@
   font-size: 22px;
   margin-left: 10px;
   color: #000000;
+  line-height: 42px;
 }
 
 .header-cols {
@@ -138,6 +140,10 @@
 //   background: rgba(61, 90, 254, 0.08);
 //   border-radius: 50%;
 // }
+
+::ng-deep .xng-breadcrumb-root {
+  margin: 0 0 0 10px !important;
+}
 
 ::ng-deep xng-breadcrumb {
   font-size: 12px;
