@@ -23,25 +23,10 @@ import { TenantManagementContainerComponent } from './tenant-management-containe
 describe('TenantManagementContainerComponent', () => {
   let component: TenantManagementContainerComponent;
   let fixture: ComponentFixture<TenantManagementContainerComponent>;
-  let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
-  let oidcSecurityServiceSpy: OidcSecurityService;
   let commonServiceSpy: CommonService;
-  let breadcrumbService: BreadcrumbService;
   let cdrf: ChangeDetectorRef;
 
   beforeEach(async () => {
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getInstallationURL$'
-    ]);
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
-      'logoffAndRevokeTokens'
-    ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
       ['setHeaderTitle'],
@@ -59,24 +44,14 @@ describe('TenantManagementContainerComponent', () => {
         MockComponent(TenantsComponent)
       ],
       imports: [SharedModule, RouterTestingModule, BrowserAnimationsModule],
-      providers: [
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
-      ]
+      providers: [{ provide: CommonService, useValue: commonServiceSpy }]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(TenantManagementContainerComponent);
     cdrf = fixture.debugElement.injector.get(ChangeDetectorRef);
     component = fixture.componentInstance;
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
-    spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });
 
@@ -90,12 +65,6 @@ describe('TenantManagementContainerComponent', () => {
     component.currentRouteUrl$.subscribe((data) => {
       expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         routingUrls.tenantManagement.title
-      );
-      expect(breadcrumbService.set).toHaveBeenCalledWith(
-        routingUrls.tenantManagement.url,
-        {
-          skip: true
-        }
       );
       expect(detectChangesSpy).toHaveBeenCalledWith();
     });
@@ -114,17 +83,5 @@ describe('TenantManagementContainerComponent', () => {
 
     component.ngOnInit();
     fixture.detectChanges();
-
-    component.currentRouteUrl$.subscribe(() => {
-      expect(breadcrumbService.set).toHaveBeenCalledWith(
-        routingUrls.tenantManagement.url,
-        {
-          skip: false
-        }
-      );
-    });
-    component.headerTitle$.subscribe((data) =>
-      expect(data).toBe(routingUrls.tenantManagement.title)
-    );
   });
 });

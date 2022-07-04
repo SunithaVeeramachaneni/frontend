@@ -23,26 +23,11 @@ describe('DashboardContainerComponent', () => {
   let component: DashboardContainerComponent;
   let fixture: ComponentFixture<DashboardContainerComponent>;
   let dashboardServiceSpy: DashboardService;
-  let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
-  let oidcSecurityServiceSpy: OidcSecurityService;
-  let breadcrumbService: BreadcrumbService;
 
   beforeEach(async () => {
     dashboardServiceSpy = jasmine.createSpyObj('DashboardService', [], {
       dashboardsAction$: dashboards$
     });
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getInstallationURL$'
-    ]);
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
-      'logoffAndRevokeTokens'
-    ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -55,22 +40,13 @@ describe('DashboardContainerComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule
       ],
-      providers: [
-        { provide: DashboardService, useValue: dashboardServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
-      ]
+      providers: [{ provide: DashboardService, useValue: dashboardServiceSpy }]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(DashboardContainerComponent);
     component = fixture.componentInstance;
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
     fixture.detectChanges();
   });
 
