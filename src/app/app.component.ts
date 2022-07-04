@@ -53,6 +53,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: dashboard.title,
       url: dashboard.url,
+      activeImage: '../assets/sidebar-icons/dashboard-white.svg',
       image: '../assets/sidebar-icons/dashboard-gray.svg',
       showSubMenu: false,
       permission: perms.viewDashboards,
@@ -68,6 +69,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
+      activeImage: '../assets/sidebar-icons/tenant-management-white.svg',
       image: 'assets/sidebar-icons/tenant-management-gray.svg',
       showSubMenu: false,
       permission: perms.viewTenants,
@@ -77,7 +79,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: userManagement.title,
       url: userManagement.url,
-      image: '../assets/sidebar-icons/user-management.svg',
+      activeImage: '../assets/sidebar-icons/user-management-white.svg',
+      image: '../assets/sidebar-icons/user-management-gray.svg',
       showSubMenu: false,
       permission: perms.viewUsers,
       subPages: [
@@ -97,6 +100,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: maintenance.title,
       url: maintenance.url,
+      activeImage: '../assets/sidebar-icons/maintenance-white.svg',
       image: '../assets/sidebar-icons/maintenance-gray.svg',
       showSubMenu: false,
       permission: perms.viewMaintenanceControlCenter,
@@ -106,6 +110,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: spareParts.title,
       url: spareParts.url,
+      activeImage: '../assets/sidebar-icons/spare-parts-white.svg',
       image: '../assets/sidebar-icons/spare-parts-gray.svg',
       showSubMenu: false,
       permission: perms.viewSparePartsControlCenter,
@@ -115,6 +120,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: workInstructions.title,
       url: workInstructions.url,
+      activeImage: '../assets/sidebar-icons/work-instructions-white.svg',
       image: '../assets/sidebar-icons/work-instructions-gray.svg',
       showSubMenu: false,
       permission: perms.viewWorkInstructions,

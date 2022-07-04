@@ -32,7 +32,16 @@
             routerLinkActive="active"
             (click)="selectedListElement(menuitem.title); sidenav.close()"
           >
-            <img src="{{ menuitem.image }}" class="sidebar-icons" />
+            <img
+              src="{{ menuitem.image }}"
+              class="sidebar-icons"
+              [hidden]="selectedMenu === menuitem.title"
+            />
+            <img
+              src="{{ menuitem.activeImage }}"
+              class="sidebar-icons"
+              [hidden]="selectedMenu !== menuitem.title"
+            />
             <span class="menu-title">
               {{ menuitem.title }}
             </span>
