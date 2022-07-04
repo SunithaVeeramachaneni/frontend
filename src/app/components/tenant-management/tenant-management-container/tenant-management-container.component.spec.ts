@@ -2,20 +2,12 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { routingUrls } from 'src/app/app.constants';
-import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
-import {
-  openCollabWindow$,
-  unreadCount$,
-  userData$
-} from 'src/app/shared/components/header/header.component.mock';
+import { userData$ } from 'src/app/shared/components/header/header.component.mock';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { HeaderService } from 'src/app/shared/services/header.service';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantsComponent } from '../tenants/tenants.component';
 
 import { TenantManagementContainerComponent } from './tenant-management-container.component';
