@@ -20,27 +20,19 @@ import { WorkInstructionsComponent } from './work-instructions.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ErrorHandlerService } from '../../shared/error-handler/error-handler.service';
 import { WiCommonService } from './services/wi-common.services';
-import { HeaderService } from '../../shared/services/header.service';
 import { importedWorkInstructions } from './work-instructions.component.mock';
 import { OverlayService } from './modal/overlay.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import {
-  openCollabWindow$,
-  unreadCount$,
-  userData$
-} from '../../shared/components/header/header.component.mock';
 import { CommonService } from '../../shared/services/common.service';
 import {
   defaultCategoryId,
   defaultCategoryName,
   routingUrls
 } from '../../app.constants';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
-import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
+import { userData$ } from 'src/app/shared/components/header/header.component.mock';
 
 const categoryDetails = [
   {
@@ -190,11 +182,7 @@ describe('WorkInstructionsComponent', () => {
   let base64HelperServiceSpy: Base64HelperService;
   let wiCommonServiceSpy: WiCommonService;
   let overlayServiceSpy: OverlayService;
-  let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
-  let oidcSecurityServiceSpy: OidcSecurityService;
   let commonServiceSpy: CommonService;
-  let breadcrumbService: BreadcrumbService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -217,17 +205,6 @@ describe('WorkInstructionsComponent', () => {
       fetchWIAction$: of(true)
     });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getInstallationURL$'
-    ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
-      'logoffAndRevokeTokens'
-    ]);
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
       ['setHeaderTitle'],
@@ -266,16 +243,12 @@ describe('WorkInstructionsComponent', () => {
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy },
-        { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy }
       ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(WorkInstructionsComponent);
     component = fixture.componentInstance;
     homeDe = fixture.debugElement;
@@ -292,12 +265,8 @@ describe('WorkInstructionsComponent', () => {
       .withArgs()
       .and.returnValue(of([...favorites, ...drafts]))
       .and.callThrough();
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
 
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
-    spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });
 
@@ -368,7 +337,6 @@ describe('WorkInstructionsComponent', () => {
         'SEE ALL'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
       expect(homeEl.querySelectorAll('router-outlet').length).toBe(1);
       expect(homeEl.querySelectorAll('app-dummy').length).toBe(2);
       expect(component.getBase64Images).toHaveBeenCalledTimes(2);
@@ -431,7 +399,6 @@ describe('WorkInstructionsComponent', () => {
         'No Favorite Instructions found !!'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display No Resulst found in case of search term not found in data', () => {
@@ -486,7 +453,6 @@ describe('WorkInstructionsComponent', () => {
         'No Results Found !!'
       );
       expect(homeEl.querySelectorAll('app-categories').length).toBe(1);
-      expect(homeEl.querySelectorAll('app-header').length).toBe(1);
     });
 
     it('should display three instructions of each darfted/favorites if more then 3 instructions are present', () => {
@@ -589,10 +555,6 @@ describe('WorkInstructionsComponent', () => {
 
       component.ngOnInit();
       fixture.detectChanges();
-
-      expect(homeEl.querySelector('.header-title').textContent).toBe(
-        routingUrls.workInstructions.title
-      );
     });
   });
 
@@ -770,10 +732,6 @@ describe('WorkInstructionsComponent', () => {
         expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           routingUrls.workInstructions.title
         );
-        expect(breadcrumbService.set).toHaveBeenCalledWith(
-          routingUrls.workInstructions.url,
-          { skip: true }
-        );
       });
       component.headerTitle$.subscribe((data) =>
         expect(data).toBe(routingUrls.workInstructions.title)
@@ -788,13 +746,6 @@ describe('WorkInstructionsComponent', () => {
 
       component.ngOnInit();
       fixture.detectChanges();
-
-      component.currentRouteUrl$.subscribe(() => {
-        expect(breadcrumbService.set).toHaveBeenCalledWith(
-          routingUrls.workInstructions.url,
-          { skip: false }
-        );
-      });
     });
   });
 

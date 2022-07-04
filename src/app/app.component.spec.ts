@@ -19,10 +19,12 @@ import { UsersService } from './components/user-management/services/users.servic
 import { SharedModule } from './shared/shared.module';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
+import { HeaderService } from './shared/services/header.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  let headerServiceSpy: HeaderService;
   let commonServiceSpy: CommonService;
   let translateServiceSpy: TranslateService;
   let chatServiceSpy: ChatService;
@@ -42,6 +44,10 @@ describe('AppComponent', () => {
       }
     );
 
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'getInstallationURL$'
+    ]);
+
     translateServiceSpy = jasmine.createSpyObj('TranslateService', ['use']);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$
@@ -49,6 +55,7 @@ describe('AppComponent', () => {
     usersServiceSpy = jasmine.createSpyObj('UsersService', [
       'getUserPermissionsByEmail$'
     ]);
+
     chatServiceSpy = jasmine.createSpyObj(
       'ChatService',
       [
@@ -80,7 +87,8 @@ describe('AppComponent', () => {
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
         { provide: UsersService, useValue: usersServiceSpy },
         { provide: ChatService, useValue: chatServiceSpy },
-        { provide: AuthHeaderService, useValue: authHeaderServiceSpy }
+        { provide: AuthHeaderService, useValue: authHeaderServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
