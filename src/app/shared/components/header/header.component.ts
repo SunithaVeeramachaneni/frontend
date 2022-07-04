@@ -32,10 +32,14 @@ import { Buffer } from 'buffer';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Input() title: string;
-  @Input() selectedMenu: string;
-
   @Output() SideNavToggle = new EventEmitter();
+
+  headerTitle$: Observable<string>;
+
+  @Input() set selectedMenu(menu) {
+    this.commonService.setHeaderTitle(menu);
+    this.headerTitle$ = this.commonService.headerTitleAction$;
+  }
 
   public username: string;
   public userImage: string;

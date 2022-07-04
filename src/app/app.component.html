@@ -79,7 +79,9 @@
                   [routerLink]="submenuitem.url"
                   routerLinkActive="subSelected"
                   *appCheckUserHasPermission="[submenuitem.permission]"
-                  (click)="sidenav.close()"
+                  (click)="
+                    selectedListElement(submenuitem.title); sidenav.close()
+                  "
                 >
                   <span>{{ submenuitem.title }}</span>
                 </a>
