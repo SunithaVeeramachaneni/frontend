@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-user-settings-container',
@@ -6,10 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-settings-container.component.css']
 })
 export class UserSettingsContainerComponent implements OnInit {
-
-  constructor() { }
+  constructor(private commonService: CommonService) {}
 
   ngOnInit(): void {
+    this.commonService.setHeaderTitle('Your Settings');
   }
-
 }

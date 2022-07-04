@@ -1,1 +1,31 @@
-<p>profile works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12">
+      <form [formGroup]="myForm" (ngSubmit)="submitPhone()">
+        <div class="form-width">
+          <mat-form-field appearance="outline">
+            <ngx-mat-intl-tel-input
+              formControlName="phone"
+              [preferredCountries]="['us', 'in']"
+              [enablePlaceholder]="true"
+              [enableSearch]="true"
+              name="phone"
+              #phone
+            >
+            </ngx-mat-intl-tel-input>
+            <mat-hint>eg : {{ phone.selectedCountry.placeHolder }}</mat-hint>
+          </mat-form-field>
+        </div>
+        <div class="m-t-10">
+          <button mat-raised-button color="primary">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="m-t-10" *ngIf="phoneNumber">
+      Entered Phone number : {{ phoneNumber }}
+    </div>
+    <div class="m-t-10 error" *ngIf="phoneValue.touched && phoneValue.invalid">
+      phone number invalid
+    </div>
+  </div>
+</div>
