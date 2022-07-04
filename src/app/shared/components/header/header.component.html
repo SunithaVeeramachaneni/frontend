@@ -1,19 +1,13 @@
 <mat-toolbar class="min-toolbar">
   <div>
     <div class="sidebar-minimize-icons">
-      <img
-        src="../../../../assets/img/svg/sidebar-closed.svg"
-        (click)="minimize(true)"
-        *ngIf="this.sidebarMinimize === false"
-        class="sidebar-close"
-      />
-      <img
-        src="../../../../assets/img/svg/sidebar-opened.svg"
-        (click)="minimize(false)"
-        *ngIf="this.sidebarMinimize === true"
-        class="sidebar-open"
-      />
-      <h6 class="header-title">{{ title }}</h6>
+      <button mat-icon-button (click)="openSidenav()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
+        {{ headerTitle }}
+      </h6>
     </div>
     <div class="breadcrumbs">
       <xng-breadcrumb separator=">"></xng-breadcrumb>

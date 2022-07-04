@@ -1,6 +1,7 @@
 .main-container {
   background-color: #ffffff;
-  margin: 14px;
+  margin: 14px 14px 0 14px;
+  height: 90vh;
   position: relative;
 }
 
@@ -50,7 +51,7 @@
 }
 
 .roles-content {
-  height: 75vh;
+  height: 80vh;
 }
 
 .roles-left-panel {
@@ -124,8 +125,8 @@
 
 .roles {
   padding: 0;
-  height: 65vh;
-  overflow-y: scroll;
+  height: 68vh;
+  overflow-y: auto;
   background: white;
 }
 
