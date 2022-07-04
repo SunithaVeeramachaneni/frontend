@@ -21,6 +21,7 @@ import { ChatService } from '../collaboration/chats/chat.service';
 import { getImageSrc } from '../../utils/imageUtils';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -54,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {}
 
   openDialog(): void {
@@ -151,5 +153,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   profileImage(buffer: any) {
     return getImageSrc(Buffer.from(buffer).toString(), this.sanitizer);
+  }
+
+  userSettings() {
+    this.router.navigate(['/user-settings']);
   }
 }

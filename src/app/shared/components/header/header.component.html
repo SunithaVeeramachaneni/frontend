@@ -78,6 +78,7 @@
         [src]="profileImage(userDetails.profileImage)"
         class="profile-img m-l-10 cursor arrow-icon"
         [matMenuTriggerFor]="menu"
+        (click)="userSettings()"
       />
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="signout()">
