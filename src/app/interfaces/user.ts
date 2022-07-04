@@ -23,6 +23,9 @@ export interface UserDetails {
   updatedOn?: Date;
   roles: any[];
   displayRoles?: string;
+  collaborationType?: string;
+  slackConfiguration?: any;
+  msTeamsConfiguration?: any;
 }
 
 export interface UserTable {

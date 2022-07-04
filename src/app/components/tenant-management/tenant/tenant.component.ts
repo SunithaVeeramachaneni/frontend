@@ -57,8 +57,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
-  noOfTabs = 5;
+  noOfTabs = 6;
   tenantForm: FormGroup;
+  slackConfiguration: FormGroup;
+  msTeamsConfiguration: FormGroup;
+
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
     'Dashboard',
@@ -71,6 +74,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   idps = ['azure'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
+  collaborationTypes = ['slack', 'msteams'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   validationErrors$: Observable<{
     [key: string]:
@@ -79,7 +83,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       | any;
   }>;
   tenantHeader = 'Adding Tenant...';
-  encryptionKey = ENCRYPTION_KEY;
+  encryptionKey = ENCRYPTION_KEY || 'Innovation@5';
   editTenant = true;
   editQueryParam = true;
   readonly permissions = permissions;
@@ -267,6 +271,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ],
         database: [{ value: '', disabled: true }]
       }),
+      collaborationType: ['', [Validators.required]],
       noOfLicenses: [
         '',
         [
@@ -282,6 +287,21 @@ export class TenantComponent implements OnInit, AfterViewInit {
       logLevel: ['', [Validators.required]]
     });
 
+    this.slackConfiguration = this.fb.group({
+      slackTeamID: ['', [Validators.required]],
+      slackClientID: ['', [Validators.required]],
+      slackClientSecret: ['', [Validators.required]],
+      slackClientSigningSecret: ['', [Validators.required]],
+      slackClientStateSecret: ['', [Validators.required]]
+    });
+    this.msTeamsConfiguration = this.fb.group({
+      msTeamsTenantID: ['', [Validators.required]],
+      msTeamsClientID: ['', [Validators.required]],
+      msTeamsClientSecret: ['', [Validators.required]],
+      msTeamsRSAPrivateKey: ['', [Validators.required]],
+      msTeamsRSAPublicKey: ['', [Validators.required]]
+    });
+
     const headerTitle = this.tenantForm.get('tenantName').value
       ? this.tenantForm.get('tenantName').value
       : `Addding Tenant...`;
@@ -289,6 +309,33 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.breadcrumbService.set('@tenantName', {
       label: headerTitle
     });
+
+    this.tenantForm
+      .get('collaborationType')
+      .valueChanges.subscribe((collabType) => {
+        console.log(collabType);
+        if (collabType === 'slack') {
+          if (this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.removeControl('msTeamsConfiguration');
+          }
+          if (!this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.addControl(
+              'slackConfiguration',
+              this.slackConfiguration
+            );
+          }
+        } else if (collabType === 'msteams') {
+          if (this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.removeControl('slackConfiguration');
+          }
+          if (!this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.addControl(
+              'msTeamsConfiguration',
+              this.msTeamsConfiguration
+            );
+          }
+        }
+      });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
       const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
