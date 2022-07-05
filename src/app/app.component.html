@@ -3,57 +3,59 @@
   Please use a tablet or desktop for the best connected worker experience
 </div>
 
-<mat-drawer-container class="app-container main-app">
-  <mat-drawer
-    mode="side"
-    opened
-    class="sidenav-drawer"
-    *ngIf="isUserAuthenticated"
+<mat-sidenav-container class="main-app">
+  <mat-sidenav
+    #sidenav
+    [(opened)]="this.opened"
+    (opened)="this.opened = true"
+    (closed)="this.opened = false"
+    [ngClass]="{
+      'hide-content': isUserAuthenticated === false
+    }"
   >
-    <div
-      [ngClass]="{
-        'maximized-sidebar-container': this.sidebar === false,
-        'minimized-sidebar-container': this.sidebar === true
-      }"
-    >
-      <div class="sidebar-header">
-        <img
-          src="../../../assets/img/svg/innov-logo.svg"
-          class="sidebar-logo"
-          *ngIf="this.sidebar === false"
-        />
-        <img
-          src="../../../assets/img/svg/innov-small-logo.svg"
-          class="sidebar-small-logo"
-          *ngIf="this.sidebar === true"
-        />
-      </div>
-      <ul *ngFor="let menuitem of menus; let i = index" class="menu-item">
+    <div class="sidebar-menu-items">
+      <mat-nav-list
+        class="menu-item"
+        *ngFor="let menuitem of menus; let i = index"
+      >
         <li
-          [routerLink]="menuitem.url"
           routerLinkActive="selected"
           routerDirection="root"
-          detail="false"
-          (click)="selectedListElement(menuitem.title)"
           title="{{ menuitem.title }}"
           *appCheckUserHasPermission="[menuitem.permission]"
+          class="dis-flex"
         >
-          <span *ngIf="this.sidebar === false">
+          <a
+            mat-list-item
+            class="menu-name"
+            [routerLink]="menuitem.url"
+            routerLinkActive="active"
+            (click)="selectedListElement(menuitem.title); sidenav.close()"
+          >
             <img src="{{ menuitem.image }}" class="sidebar-icons" />
             <span class="menu-title">
               {{ menuitem.title }}
             </span>
-          </span>
-          <span *ngIf="this.sidebar === true">
-            <button [matMenuTriggerFor]="menu" class="menu-trigger-btn">
-              <img src="{{ menuitem.image }}" class="sidebar-icons" />
-            </button>
-          </span>
+          </a>
+          <a
+            *ngIf="menuitem.subPages !== null && this.sidebar === true"
+            class="arrow-margin"
+            (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
+          >
+            <img
+              src="assets/sidebar-icons/right-arrow.svg"
+              [hidden]="menuitem.showSubMenu === true"
+            />
+            <img
+              src="assets/sidebar-icons/down-arrow.svg"
+              [hidden]="menuitem.showSubMenu === false"
+            />
+          </a>
         </li>
 
         <div
           *ngIf="menuitem.showSubMenu && menuitem.subPages !== null"
-          class="m-l-60"
+          class="m-l-70"
         >
           <ng-container *ngIf="permissions$ | async as permissions">
             <ng-container
@@ -67,63 +69,57 @@
             >
               <ul
                 lines="none"
-                class="p-0 submenu"
+                class="p-0 m-0"
+                [hidden]="this.sidebar === false"
                 *ngFor="let submenuitem of menuitem.subPages"
               >
-                <li
+                <a
+                  class="submenu m-0"
+                  mat-list-item
                   [routerLink]="submenuitem.url"
                   routerLinkActive="subSelected"
-                  routerDirection="root"
-                  detail="false"
                   *appCheckUserHasPermission="[submenuitem.permission]"
+                  (click)="
+                    selectedListElement(submenuitem.title); sidenav.close()
+                  "
                 >
                   <span>{{ submenuitem.title }}</span>
-                </li>
+                </a>
               </ul>
             </ng-container>
           </ng-container>
         </div>
-
-        <mat-menu #menu="matMenu" class="sidebar-menu-panel">
-          <span *ngIf="menuitem.subPages !== null && this.sidebar === true">
-            <ng-container *ngIf="permissions$ | async as permissions">
-              <ng-container
-                *ngIf="
-                  checkUserHasSubMenusPermissions(
-                    permissions,
-                    menuitem.subPages,
-                    menuitem.permission
-                  )
-                "
-              >
-                <ul
-                  class="p-0 submenu"
-                  *ngFor="let submenuitem of menuitem.subPages"
-                >
-                  <li
-                    [routerLink]="submenuitem.url"
-                    routerLinkActive="subSelected"
-                    routerDirection="root"
-                    detail="false"
-                    *appCheckUserHasPermission="[submenuitem.permission]"
-                  >
-                    {{ submenuitem.title }}
-                  </li>
-                </ul>
-              </ng-container>
-            </ng-container>
-          </span>
-        </mat-menu>
-      </ul>
+      </mat-nav-list>
     </div>
-  </mat-drawer>
-  <mat-drawer-content
-    [ngClass]="{
-      'hide-sidebar': isUserAuthenticated === false,
-      'max-drawer-content': this.sidebar === false,
-      'min-drawer-content': this.sidebar === true
-    }"
-  >
-    <router-outlet></router-outlet>
-  </mat-drawer-content>
-</mat-drawer-container>
+    <img
+      src="assets/sidebar-icons/innova-big.svg"
+      [hidden]="this.sidebar === false"
+      class="innov-big-img"
+    />
+    <img
+      src="assets/sidebar-icons/innova-small.svg"
+      [hidden]="this.sidebar === true"
+      class="innov-small-img"
+    />
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <app-header
+      (SideNavToggle)="sidenav.toggle()"
+      [selectedMenu]="this.selectedMenu"
+      [ngClass]="{
+        'hide-content': isUserAuthenticated === false
+      }"
+    ></app-header>
+
+    <main
+      [ngClass]="{
+        'hide-sidebar': isUserAuthenticated === false,
+        'show-content': selectedMenu !== 'login',
+        'show-login': selectedMenu === undefined
+      }"
+    >
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -3,9 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild
 } from '@angular/core';
 import { CommonService } from '../../services/common.service';
@@ -29,7 +31,13 @@ import { Buffer } from 'buffer';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Input() title: string;
+  @Output() SideNavToggle = new EventEmitter();
+
+  headerTitle$: Observable<string>;
+
+  @Input() set selectedMenu(menu) {
+    this.commonService.setHeaderTitle(menu);
+  }
 
   public username: string;
   public userImage: string;
@@ -87,6 +95,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.headerTitle$ = this.commonService.headerTitleAction$;
+
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
       (unreadCount) => {
         this.unreadMessageCount = unreadCount;
@@ -123,6 +133,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
       })
     );
+  }
+
+  openSidenav() {
+    this.SideNavToggle.emit();
   }
 
   minimize(e) {
