@@ -329,6 +329,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.cdrf.detectChanges();
   }
 
+  getImage = (image, activeImage, active) =>
+    active === true ? activeImage : image;
+
   selectedListElement(title) {
     this.selectedMenu = title;
   }
