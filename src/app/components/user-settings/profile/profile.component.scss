@@ -1,0 +1,101 @@
+.user-modal {
+  width: 470px;
+  height: 430px;
+  overflow: hidden;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.dialog-close-btn {
+  float: right;
+  cursor: pointer;
+}
+
+.image-upload > input {
+  display: none;
+}
+
+.file-upload-icon {
+  position: absolute;
+  left: 52%;
+  top: 30%;
+  width: 30px;
+  cursor: pointer;
+}
+
+.user-profile-img {
+  display: block;
+  margin: 0 auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.custom-mat-form-field-white-color {
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 4px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+}
+
+.add-user-btn {
+  text-transform: capitalize;
+  float: right;
+}
+
+.cancel-btn {
+  color: #76767b;
+  text-transform: capitalize;
+  float: right;
+}
+
+.first-name {
+  width: 49%;
+}
+
+.last-name {
+  width: 49%;
+  float: right;
+}
+
+.permissions-cancel {
+  background: white;
+  border: none;
+  float: right;
+}
+
+.error-fields {
+  white-space: nowrap;
+  margin-left: -10px;
+}
+
+::ng-deep .roles-select .mat-option-text {
+  display: flex;
+}
+
+.info-div {
+  position: absolute;
+  right: 0;
+  height: 48px;
+  width: 15%;
+}

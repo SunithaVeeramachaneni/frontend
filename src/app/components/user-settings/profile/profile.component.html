@@ -1,31 +1,149 @@
-<div class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-12">
-      <form [formGroup]="myForm" (ngSubmit)="submitPhone()">
-        <div class="form-width">
-          <mat-form-field appearance="outline">
-            <ngx-mat-intl-tel-input
-              formControlName="phone"
-              [preferredCountries]="['us', 'in']"
-              [enablePlaceholder]="true"
-              [enableSearch]="true"
-              name="phone"
-              #phone
-            >
-            </ngx-mat-intl-tel-input>
-            <mat-hint>eg : {{ phone.selectedCountry.placeHolder }}</mat-hint>
-          </mat-form-field>
-        </div>
-        <div class="m-t-10">
-          <button mat-raised-button color="primary">Submit</button>
-        </div>
-      </form>
-    </div>
-    <div class="m-t-10" *ngIf="phoneNumber">
-      Entered Phone number : {{ phoneNumber }}
-    </div>
-    <div class="m-t-10 error" *ngIf="phoneValue.touched && phoneValue.invalid">
-      phone number invalid
-    </div>
+<div class="user-modal" [formGroup]="profileForm">
+  <span *ngIf="dialogText === 'editUser'" class="title" translate
+    >editUser</span
+  >
+  <span *ngIf="dialogText === 'addUser'" class="title" translate>addUser</span>
+
+  <div class="image-upload">
+    <img [src]="profileImage" class="user-profile-img" />
+    <label for="file-input">
+      <img
+        src="assets/user-management-icons/upload.svg"
+        class="file-upload-icon"
+      />
+    </label>
+    <input
+      id="file-input"
+      type="file"
+      (change)="onFileChange($event)"
+      accept="image/*"
+    />
   </div>
+  <div class="custom-mat-form-field-white-color" style="margin-top: 15px">
+    <div class="input-container">
+      <mat-form-field appearance="outline" class="m-b-10 first-name">
+        <mat-label>{{ 'firstName' | translate }}</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="m-b-10 last-name">
+        <mat-label>{{ 'lastName' | translate }}</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field
+      appearance="outline"
+      class="input-container width-100 m-b-10"
+    >
+      <mat-label>{{ 'title' | translate }}</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="width-100 m-b-10">
+      <mat-label>{{ 'email' | translate }}</mat-label>
+      <input matInput formControlName="email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="width-100 m-b-10">
+      <mat-label>{{ 'roles' | translate }}</mat-label>
+      <mat-select
+        name="priority"
+        multiple
+        [compareWith]="objectComparisonFunction"
+        formControlName="roles"
+      >
+        <!-- <mat-select-trigger>
+          {{ roles.value[0]?.name }}
+          <span
+            *ngIf="roles.value?.length > 1"
+            class="example-additional-selection"
+          >
+            (+{{ roles.value.length - 1 }}
+            {{ roles.value?.length === 2 ? 'more' : 'more' }})
+          </span>
+        </mat-select-trigger>
+        <mat-option
+          *ngFor="let role of rolesInput; let i = index"
+          [value]="role"
+          style="padding-right: 0"
+          class="roles-select"
+          [disabled]="role.name === superAdminText"
+        >
+          <span>{{ role.name }}</span>
+          <div (click)="$event.stopPropagation()" class="info-div">
+            <mat-icon
+              cdkOverlayOrigin
+              #trigger="cdkOverlayOrigin"
+              class="material-icons-outlined"
+              style="
+                margin-top: 17px;
+                float: right;
+                color: #9e9e9e;
+                font-size: 18px;
+              "
+            >
+              info_border
+            </mat-icon>
+          </div>
+        </mat-option> -->
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="width-100 m-b-10">
+      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <ngx-mat-intl-tel-input
+        formControlName="contact"
+        [preferredCountries]="['us', 'in']"
+        [enablePlaceholder]="true"
+        [enableSearch]="true"
+        name="contact"
+        #contact
+      >
+      </ngx-mat-intl-tel-input>
+      <mat-error
+        *ngIf="
+          profileForm.get('contact').errors?.required &&
+          profileForm.get('contact').touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'fieldRequired' | translate: { name: 'contact' | translate } }}
+      </mat-error>
+      <mat-error
+        *ngIf="
+          profileForm.get('contact').errors?.valdatePhoneNumber &&
+          profileForm.get('contact').touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'invalidContact' | translate }}
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <button
+    *ngIf="dialogText === 'addUser'"
+    mat-raised-button
+    color="primary"
+    class="add-user-btn"
+    (click)="save()"
+    type="submit"
+    [disabled]="profileForm.invalid"
+    translate="addUserBtn"
+  ></button>
+  <button
+    *ngIf="dialogText === 'editUser'"
+    mat-raised-button
+    color="primary"
+    class="add-user-btn"
+    (click)="save()"
+    type="submit"
+    [disabled]="profileForm.invalid || profileForm.pristine"
+    translate="editUserBtn"
+  ></button>
+  <button
+    mat-button
+    class="cancel-btn"
+    autofocus="false"
+    mat-dialog-close
+    translate="cancelBtn"
+  ></button>
 </div>

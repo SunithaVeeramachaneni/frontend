@@ -1,29 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { superAdminText } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  myForm: FormGroup;
-  phoneNumber;
-  constructor(private fb: FormBuilder) {
-    this.myForm = this.fb.group({
-      phone: [undefined, [Validators.required]]
+  profileForm: FormGroup;
+  dialogText = 'addUser';
+  readonly superAdminText = superAdminText;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.profileForm = this.fb.group({
+      firstName: [''],
+      lastName: [''],
+      title: [''],
+      email: [''],
+      roles: [[]],
+      profileImage: [''],
+      contact: ['', [Validators.required]]
     });
   }
 
-  ngOnInit(): void {}
-
-  submitPhone() {
-    if (this.myForm.valid) {
-      this.phoneNumber = this.myForm.get('phone').value;
-    }
+  objectComparisonFunction(option, value): boolean {
+    return option.id === value.id;
   }
 
-  get phoneValue() {
-    return this.myForm.controls.phone;
-  }
+  save() {}
 }
