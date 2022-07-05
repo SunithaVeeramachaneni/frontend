@@ -19,27 +19,32 @@
   height: auto !important;
 }
 .dialogTitle {
-  padding: 4px 15px;
-  background: #f2f2f2;
+  //
+  background: #ffffff;
   margin: 0px;
   cursor: move;
   .dialogHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: #2a3eb1;
+    padding: 4px 15px;
+    .headerTitle {
+      color: #ffffff;
+    }
     .buttonGroup {
       box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
         0 0px 0px 0 #747474;
     }
     .closeBtn {
-      color: #000;
+      color: #ffffff;
     }
   }
 }
 .dialogContent {
   margin: 0px;
   padding: 0px 0px;
-  background-color: #f2f2f2;
+  background-color: #ffffff;
   min-height: 88vh !important;
   .dialogBody {
     height: 440px;
@@ -51,7 +56,7 @@
       background: #ffffff;
       height: 15px;
       padding: 10px 6px;
-      border-radius: 45px;
+      border-radius: 5px;
       padding-top: 10px;
     }
 
@@ -66,7 +71,8 @@
 
 ::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
 .mat-button-toggle-group-appearance-standard {
-  border-radius: 35px;
+  border-radius: 5px;
+  background: #f2f2f2;
   height: 35px;
   width: fit-content;
   margin: 10px 0px;

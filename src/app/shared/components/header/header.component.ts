@@ -82,6 +82,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       width: '750px',
       disableClose: true,
+      panelClass: 'collabDialog',
       data: { positionRelativeToElement: this.collabButtonRef }
     });
 

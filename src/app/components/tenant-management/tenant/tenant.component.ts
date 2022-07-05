@@ -313,7 +313,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.tenantForm
       .get('collaborationType')
       .valueChanges.subscribe((collabType) => {
-        console.log(collabType);
         if (collabType === 'slack') {
           if (this.tenantForm.contains('msTeamsConfiguration')) {
             this.tenantForm.removeControl('msTeamsConfiguration');
@@ -367,10 +366,17 @@ export class TenantComponent implements OnInit, AfterViewInit {
           tenant.erps.sap.password,
           this.encryptionKey
         );
+
         tenant.erps.sap.saml.clientSecret = this.commonService.decrypt(
           tenant.erps.sap.saml.clientSecret,
           this.encryptionKey
         );
+
+        tenant.msTeamsConfiguration.msTeamsClientSecret =
+          this.commonService.decrypt(
+            tenant.msTeamsConfiguration.msTeamsClientSecret,
+            this.encryptionKey
+          );
 
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(

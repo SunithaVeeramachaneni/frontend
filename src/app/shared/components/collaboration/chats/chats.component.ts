@@ -18,6 +18,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
 import { getImageSrc } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | '';
@@ -28,6 +29,24 @@ interface UpdateConversations {
   action: 'update_latest_message' | '';
   message: any;
   channel: any;
+}
+
+interface Conversation {
+  id: string;
+  userInfo: any;
+  chatType: string;
+  topic: string;
+  members: any[];
+  latest: any;
+}
+interface Message {
+  id: string;
+  from: any;
+  timestamp: string;
+  message: string;
+  attachments: [];
+  chatId: string;
+  messageType: string;
 }
 
 @Component({
@@ -51,10 +70,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
   userMaps: any = [];
 
   conversationsInitial$: Observable<any>;
-  conversations$: Observable<any[]>;
+  conversations$: Observable<Conversation[]>;
 
   conversationHistoryInit$: Observable<any>;
-  conversationHistory$: Observable<any[]>;
+  conversationHistory$: Observable<Message[]>;
 
   sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
     action: 'send',
@@ -74,7 +93,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private emitterService: EmitterService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private commonService: CommonService
   ) {}
 
   ngOnInit() {
@@ -91,28 +111,35 @@ export class ChatsComponent implements OnInit, OnDestroy {
         this.addMessageToConversation(event);
       });
 
-    this.conversationsInitial$ = this.chatService.getConversations$().pipe(
-      mergeMap((conversations) => {
-        if (conversations.length) {
-          // conversations.forEach((conv) => {
-          //   conv.userInfo.profileImage = getImageSrc(
-          //     Buffer.from(conv.userInfo.profileImage).toString(),
-          //     this.sanitizer
-          //   );
-          // });
-          if (this.targetUser) {
+    const userInfo = this.commonService.getUserInfo();
+    this.conversationsInitial$ = this.chatService
+      .getConversations$(userInfo.email)
+      .pipe(
+        mergeMap((conversations) => {
+          if (conversations.length) {
             conversations.forEach((conv) => {
-              if (conv.user === this.targetUser.UserSlackDetail.slackID) {
-                this.setSelectedConversation(conv);
+              if (conv.chatType === 'oneOnOne') {
+                conv.userInfo.profileImage = getImageSrc(
+                  Buffer.from(conv.userInfo.profileImage).toString(),
+                  this.sanitizer
+                );
+              } else if (conv.chatType === 'group') {
+                conv.userInfo.profileImage = '';
               }
             });
-          } else {
-            this.setSelectedConversation(conversations[0]);
+            if (this.targetUser) {
+              conversations.forEach((conv) => {
+                if (conv.user === this.targetUser.UserSlackDetail.slackID) {
+                  this.setSelectedConversation(conv);
+                }
+              });
+            } else {
+              this.setSelectedConversation(conversations[0]);
+            }
+            return of({ data: conversations });
           }
-          return of({ data: conversations });
-        }
-      })
-    );
+        })
+      );
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
       this.updateConversations$
@@ -187,13 +214,21 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .pipe(
         // eslint-disable-next-line arrow-body-style
         mergeMap((history) => {
-          console.log(history);
           if (history.length) {
             history.forEach((message) => {
-              // message.userInfo.profileImage = getImageSrc(
-              //   Buffer.from(message.userInfo.profileImage).toString(),
-              //   this.sanitizer
-              // );
+              const members = this.selectedConversation.members;
+              const user = members.find(
+                (member) => member.userId === message.from.id
+              );
+              if (user) {
+                message.from = user;
+                setTimeout(() => {
+                  message.from.profileImage = getImageSrc(
+                    Buffer.from(message.from.profileImage).toString(),
+                    this.sanitizer
+                  );
+                }, 0);
+              }
               message.isMeeting = false;
               // if (message.text.indexOf('meeting_request')) {
               //   try {
@@ -273,6 +308,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }
       })
     );
+  };
+
+  isLoggedInUser = (user) => {
+    const userInfo = this.commonService.getUserInfo();
+    return userInfo.email === user.email;
   };
 
   onMessageEnter = (targetUser, message) => {

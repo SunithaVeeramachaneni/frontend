@@ -47,8 +47,15 @@ export class ChatService {
   };
   getUnreadMessageCount = () => this.unreadMessageCount;
 
-  getConversations$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.slackAPIUrl, `conversations`, info);
+  getConversations$ = (
+    userId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.slackAPIUrl,
+      `conversations/${userId}`,
+      info
+    );
 
   getConversationHistory$ = (
     conversationId: string,

@@ -12,25 +12,44 @@
       </mat-menu>
     </div>
     <div class="userList">
-      <mat-list>
+      <mat-list
+        *ngIf="
+          conversations$ | async as conversations;
+          else loadingConversations
+        "
+      >
         <mat-list-item
-          *ngFor="let conversation of conversations$ | async; let i = index"
+          *ngFor="let conversation of conversations; let i = index"
           (click)="setSelectedConversation(conversation)"
           class="conversationListItem"
           [ngClass]="{
             active: selectedConversation.id === conversation.id
           }"
         >
-          <div class="icon-button" mat-list-icon>
-            <!-- <img class="icon" [src]="conversation.userInfo.profileImage" /> -->
+          <div
+            class="icon-button"
+            mat-list-icon
+            *ngIf="conversation.chatType === 'oneOnOne'"
+          >
+            <img class="icon" [src]="conversation.userInfo.profileImage" />
+          </div>
+          <div
+            class="icon-button"
+            mat-list-icon
+            *ngIf="conversation.chatType === 'group'"
+          >
+            <mat-icon class="icon group-icon">groups</mat-icon>
           </div>
           <div mat-line>
-            <b
-              >{{ conversation.userInfo.displayName }}
-              <!-- {{ conversation.userInfo.lastName }} -->
+            <b *ngIf="conversation.chatType === 'oneOnOne'"
+              >{{ conversation.userInfo.firstName }}
+              {{ conversation.userInfo.lastName }}
+            </b>
+            <b *ngIf="conversation.chatType === 'group'"
+              >{{ conversation.topic }}
             </b>
           </div>
-          <div mat-line>{{ conversation.info?.body?.content }}</div>
+          <div mat-line>{{ conversation.latest.message }}</div>
           <mat-divider class="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
@@ -39,18 +58,40 @@
   <div class="conversationContent" *ngIf="selectedConversation">
     <div class="conversationHead">
       <div class="displayFlex">
-        <div class="iconButton">
-          <span class="icon"></span>
-          <!-- <img
-            class="icon"
+        <div
+          class="icon-button"
+          mat-list-icon
+          *ngIf="selectedConversation.chatType === 'oneOnOne'"
+        >
+          <img
+            class="icon mt-10"
             [src]="selectedConversation.userInfo.profileImage"
-          /> -->
+          />
         </div>
-        <div class="userTitle">
+        <div
+          class="icon-button"
+          mat-list-icon
+          *ngIf="selectedConversation.chatType === 'group'"
+        >
+          <mat-icon class="icon group-icon">groups</mat-icon>
+        </div>
+        <div
+          class="userTitle"
+          *ngIf="selectedConversation.chatType === 'oneOnOne'"
+        >
           <b class="userName"
-            >{{ selectedConversation.userInfo.displayName }}
-            <!-- {{ selectedConversation.userInfo.lastName }} -->
+            >{{ selectedConversation.userInfo.firstName }}
+            {{ selectedConversation.userInfo.lastName }}
           </b>
+          <div mat-line class="userDescription">
+            {{ selectedConversation.userInfo?.title }}
+          </div>
+        </div>
+        <div
+          class="userTitle"
+          *ngIf="selectedConversation.chatType === 'group'"
+        >
+          <b class="userName">{{ selectedConversation.topic }} </b>
           <div mat-line class="userDescription">
             {{ selectedConversation.userInfo?.title }}
           </div>
@@ -81,28 +122,32 @@
       id="conversationHistory"
       #scrollMe
       [scrollTop]="scrollMe.scrollHeight"
+      *ngIf="
+        conversationHistory$ | async as conversationHistory;
+        else loadingHistory
+      "
     >
-      <div *ngFor="let message of conversationHistory$ | async">
-        <div class="conversationMessage">
-          <div class="conv-user-icon">
+      <div *ngFor="let message of conversationHistory">
+        <div class="conversationMessage" *ngIf="!isLoggedInUser(message.from)">
+          <!-- <div class="conv-user-icon">
             <span class="icon"></span>
-            <!-- <img class="icon" [src]="message.userInfo.profileImage" /> -->
-          </div>
+            <img class="icon" [src]="message.from.profileImage" />
+          </div> -->
           <div class="nameAndMessage">
-            <div>
+            <!-- <div>
               <b
-                >{{ message.from?.user?.displayName }}
-                <!-- {{ message.userInfo.lastName }} -->
+                >{{ message.from.firstName }}
+                {{ message.from.lastName }}
               </b>
-              <span class="timeAgoLabel">{{ message.createdDateTime }}</span>
-            </div>
-            <div *ngIf="message.isMeeting === true">
+              <span class="timeAgoLabel">{{ message.timestamp }}</span>
+            </div> -->
+            <div *ngIf="message.messageType === 'meeting'">
               <div class="attachmentItemMeeting">
                 <!-- <div mat-line>{{ message.text }}</div> -->
                 <mat-icon mat-list-icon>videocam</mat-icon>
                 <div mat-line class="attachmentTitle">
-                  {{ message.userInfo.firstName }}
-                  {{ message.userInfo.lastName }} is Inviting you for a meeting.
+                  {{ message.from.firstName }}
+                  {{ message.from.lastName }} is Inviting you for a meeting.
                 </div>
                 <div mat-line class="attachmentSubTitle">
                   <div class="downloadBtn" (click)="openMeetingLink(message)">
@@ -112,8 +157,9 @@
                 </div>
               </div>
             </div>
-            <div>
-              <div mat-line [innerHtml]="message.body.content"></div>
+            <div class="messageContainerNonLoggedIn">
+              <div [innerHtml]="message.message" class="message"></div>
+              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
               <!-- <div *ngIf="message.files && message.files.length">
                 <mat-list>
                   <mat-list-item
@@ -149,6 +195,75 @@
               </div> -->
             </div>
           </div>
+        </div>
+        <div
+          class="conversationMessageCurrentUser"
+          *ngIf="isLoggedInUser(message.from)"
+        >
+          <div
+            class="nameAndMessage"
+            [ngClass]="{
+              loggedInUser: isLoggedInUser(message.from)
+            }"
+          >
+            <div *ngIf="message.messageType === 'meeting'">
+              <div class="attachmentItemMeeting">
+                <!-- <div mat-line>{{ message.text }}</div> -->
+                <mat-icon mat-list-icon>videocam</mat-icon>
+                <div mat-line class="attachmentTitle">
+                  {{ message.from.firstName }}
+                  {{ message.from.lastName }} is Inviting you for a meeting.
+                </div>
+                <div mat-line class="attachmentSubTitle">
+                  <div class="downloadBtn" (click)="openMeetingLink(message)">
+                    <mat-icon>videocam</mat-icon
+                    ><span class="downloadLabel">Join the meeting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="messageContainer">
+              <div [innerHtml]="message.message" class="message"></div>
+              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+              <!-- <div *ngIf="message.files && message.files.length">
+                <mat-list>
+                  <mat-list-item
+                    *ngFor="let file of message.files"
+                    class="attachmentItem"
+                  >
+                    <mat-icon mat-list-icon>folder</mat-icon>
+                    <div mat-line class="attachmentTitle">
+                      {{ file.name }}
+                    </div>
+                    <div mat-line class="attachmentSubTitle">
+                      <div>
+                        Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                      </div>
+                      <div
+                        *ngIf="!downloadInProgress"
+                        class="downloadBtn"
+                        (click)="downloadFile(file)"
+                      >
+                        <mat-icon>cloud_download</mat-icon
+                        ><span class="downloadLabel">Download</span>
+                      </div>
+                      <div *ngIf="downloadInProgress" class="downloadBtn">
+                        <mat-spinner
+                          strokeWidth="5"
+                          diameter="25"
+                        ></mat-spinner>
+                        <span class="downloadLabel">Downloading...</span>
+                      </div>
+                    </div>
+                  </mat-list-item>
+                </mat-list>
+              </div> -->
+            </div>
+          </div>
+          <!-- <div class="conv-user-icon">
+            <span class="icon"></span>
+            <img class="icon" [src]="message.from.profileImage" />
+          </div> -->
         </div>
       </div>
     </div>
@@ -196,7 +311,7 @@
       </div>
     </div>
   </div>
-  <div class="conversationContent" *ngIf="!selectedConversation">
+  <div class="conversationContent centerText" *ngIf="!selectedConversation">
     <h6>Please select a conversation to send message</h6>
   </div>
 </div>
@@ -206,3 +321,48 @@
     (viewChangeListener)="handleViewChange($event)"
   ></app-create-group>
 </div>
+
+<ng-template #loadingConversations>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>
+<ng-template #loadingHistory>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

@@ -23,6 +23,7 @@ import { ChatsComponent } from './components/collaboration/chats/chats.component
 import { CreateGroupComponent } from './components/collaboration/chats/create-group/create-group.component';
 import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { CheckUserHasPermissionDirective } from './directives/check-user-has-per
     DragDropModule,
     AppMaterialModules,
     BreadcrumbModule,
+    NgxShimmerLoadingModule,
     TranslateModule.forChild({})
   ],
   exports: [
