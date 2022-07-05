@@ -4,8 +4,10 @@
 }
 
 .mat-drawer {
+  position: fixed;
   border: none;
-  height: 90vh;
+  height: auto;
+  box-shadow: none;
   overflow: hidden;
 }
 
