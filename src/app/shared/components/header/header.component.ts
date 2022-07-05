@@ -33,10 +33,13 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Input() title: string;
-  @Input() selectedMenu: string;
-
   @Output() SideNavToggle = new EventEmitter();
+
+  headerTitle$: Observable<string>;
+
+  @Input() set selectedMenu(menu) {
+    this.commonService.setHeaderTitle(menu);
+  }
 
   public username: string;
   public userImage: string;
@@ -95,6 +98,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.headerTitle$ = this.commonService.headerTitleAction$;
+
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
       (unreadCount) => {
         this.unreadMessageCount = unreadCount;
