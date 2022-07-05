@@ -5,7 +5,9 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <h6 class="header-title">{{ selectedMenu }}</h6>
+      <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
+        {{ headerTitle }}
+      </h6>
     </div>
     <div class="breadcrumbs">
       <xng-breadcrumb separator=">"></xng-breadcrumb>
