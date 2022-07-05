@@ -27,6 +27,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    top: 7px;
+
     .buttonGroup {
       box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
         0 0px 0px 0 #747474;
@@ -40,7 +43,7 @@
   margin: 0px;
   padding: 0px 0px;
   background-color: #f2f2f2;
-  min-height: 88vh !important;
+  min-height: 80vh !important;
   .dialogBody {
     height: 440px;
     margin-top: 10px;
