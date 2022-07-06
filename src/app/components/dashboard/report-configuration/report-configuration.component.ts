@@ -91,7 +91,7 @@ export class ReportConfigurationComponent implements OnInit {
     groupByColumns: [],
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
-    tableHeight: 'calc(100vh - 173px)',
+    tableHeight: 'calc(100vh - 160px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e6d9d9']
   };
   dummy = '';
