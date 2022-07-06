@@ -1,1 +1,14 @@
-{}
+{
+  "profile": "Profile",
+  "editBtn": "Edit",
+  "saveBtn": "Save",
+  "cancelBtn": "Cancel",
+  "removePhoto": "Remove Photo",
+  "changePhoto": "Change Photo",
+  "firstName": "FirstName",
+  "lastName": "LastName",
+  "title": "Title",
+  "email": "Email",
+  "roles": "Roles",
+  "contact": "Contact"
+}

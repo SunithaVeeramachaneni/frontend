@@ -18,13 +18,16 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
-      title: [''],
-      email: [''],
-      roles: [[]],
-      profileImage: [''],
-      contact: ['', [Validators.required]]
+      firstName: [{ value: 'Kavya', disabled: true }],
+      lastName: [{ value: 'Krishna', disabled: true }],
+      title: [{ value: 'Developer', disabled: true }],
+      email: [
+        { value: 'kavya.koka@innovapptive.com', disabled: true },
+        Validators.required
+      ],
+      roles: [{ value: 'Developer', disabled: true }],
+      profileImage: [{ value: '' }],
+      contact: [{ value: '+917286034557', disabled: true }]
     });
   }
 
@@ -32,5 +35,18 @@ export class ProfileComponent implements OnInit {
     return option.id === value.id;
   }
 
-  save() {}
+  saveProfile() {
+    this.profileEditMode = false;
+    this.profileForm.controls.contact.disable();
+  }
+
+  editProfile() {
+    this.profileEditMode = true;
+    this.profileForm.controls.contact.enable();
+  }
+
+  cancelProfile() {
+    this.profileEditMode = false;
+    this.profileForm.controls.contact.disable();
+  }
 }
