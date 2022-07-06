@@ -10,5 +10,7 @@
   "title": "Title",
   "email": "Email",
   "roles": "Roles",
-  "contact": "Contact"
+  "contact": "Contact",
+  "required": "{name} is required",
+  "invalidContact": "Enter valid contact"
 }

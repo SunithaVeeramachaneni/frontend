@@ -5,7 +5,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { routingUrls } from 'src/app/app.constants';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { TenantsComponent } from '../tenants/tenants.component';
@@ -24,9 +23,7 @@ describe('TenantManagementContainerComponent', () => {
       ['setHeaderTitle'],
       {
         headerTitleAction$: of(routingUrls.tenantManagement.title),
-        currentRouteUrlAction$: of(routingUrls.tenantManagement.url),
-        minimizeSidebarAction$: of(true),
-        userInfo$: userData$
+        currentRouteUrlAction$: of(routingUrls.tenantManagement.url)
       }
     );
 

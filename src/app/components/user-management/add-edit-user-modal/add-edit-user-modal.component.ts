@@ -30,7 +30,7 @@ import {
   map,
   switchMap
 } from 'rxjs/operators';
-import { superAdminText } from 'src/app/app.constants';
+import { defaultProfile, superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { UsersService } from '../services/users.service';
@@ -79,7 +79,6 @@ export class AddEditUserModalComponent implements OnInit {
   isfilterTooltipOpen = [];
   displayedPermissions;
   isPopoverOpen = false;
-  profileImageURI = 'assets/user-management-icons/Vector.png';
   profileImage;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
@@ -154,8 +153,8 @@ export class AddEditUserModalComponent implements OnInit {
     this.rolesList$ = this.data.rolesList$;
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
-      this.profileImage = this.profileImageURI;
-      this.getBase64FromImageURI(this.profileImageURI);
+      this.profileImage = defaultProfile;
+      this.getBase64FromImageURI(defaultProfile);
     } else {
       this.dialogText = 'editUser';
       let base64;

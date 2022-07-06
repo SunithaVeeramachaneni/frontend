@@ -212,8 +212,7 @@ describe('WorkInstructionsComponent', () => {
         currentRouteUrlAction$: of('/work-instructions'),
         headerTitleAction$: of(routingUrls.workInstructions.title),
         minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$,
-        userInfo$: userData$
+        permissionsAction$: permissions$
       }
     );
 

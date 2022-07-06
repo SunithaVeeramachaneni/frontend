@@ -6,8 +6,13 @@ export interface User {
   last_name: string;
 }
 
+export interface UserProfile {
+  contact: string;
+  profileImage: string;
+}
+
 export interface UserDetails {
-  id: string;
+  id: number;
   user?: string;
   firstName?: string;
   lastName?: string;
@@ -16,6 +21,7 @@ export interface UserDetails {
   profileImage?: string;
   preTextImage?: any;
   postTextImage?: any;
+  contact?: string;
   isActive: boolean;
   createdBy?: string;
   updatedBy?: string;

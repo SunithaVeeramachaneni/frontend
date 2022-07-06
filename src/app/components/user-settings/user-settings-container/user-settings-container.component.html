@@ -2,29 +2,15 @@
   <div class="width-20" style="border-right: 1px solid #bdbdbd">
     <mat-list>
       <mat-list-item
-        routerLink="/user-settings"
+        routerLink="/user-settings/profile"
         [routerLinkActive]="['is-active']"
         class="user-settings-menu"
       >
         Profile
       </mat-list-item>
-      <mat-list-item
-        routerLink="/base/dashboard"
-        [routerLinkActive]="['is-active']"
-        class="user-settings-menu"
-      >
-        Notifications
-      </mat-list-item>
-      <mat-list-item
-        routerLink="/base/dashboard"
-        [routerLinkActive]="['is-active']"
-        class="user-settings-menu"
-      >
-        Item 3
-      </mat-list-item>
     </mat-list>
   </div>
   <div class="width-80">
-    <app-profile></app-profile>
+    <router-outlet></router-outlet>
   </div>
 </div>

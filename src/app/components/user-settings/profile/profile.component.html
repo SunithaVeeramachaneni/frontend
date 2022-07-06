@@ -1,57 +1,67 @@
-<div [formGroup]="profileForm" class="profile-container">
+<form
+  [formGroup]="profileForm"
+  (ngSubmit)="saveProfile()"
+  class="profile-container"
+>
   <div class="p-20">
     <span class="profile-heading" translate>profile</span>
     <button
+      type="button"
       class="edit-btn"
-      *ngIf="this.profileEditMode === false"
+      *ngIf="!profileEditMode"
       (click)="editProfile()"
-      translate
-    >
-      editBtn
-    </button>
+      translate="editBtn"
+    ></button>
     <button
+      type="submit"
+      mat-raised-button
       class="save-btn"
-      *ngIf="this.profileEditMode === true"
-      (click)="saveProfile()"
-      translate
-    >
-      saveBtn
-    </button>
+      *ngIf="profileEditMode"
+      [disabled]="profileForm.invalid || profileForm.pristine"
+      translate="saveBtn"
+    ></button>
     <button
+      type="button"
       class="cancel-btn"
-      *ngIf="this.profileEditMode === true"
+      *ngIf="profileEditMode"
       (click)="cancelProfile()"
-      translate
-    >
-      cancelBtn
-    </button>
+      translate="cancelBtn"
+    ></button>
   </div>
 
   <div class="image-upload">
     <img [src]="profileImage" class="user-profile-img" />
     <button
+      type="button"
       class="change-remove-btn"
-      *ngIf="this.profileEditMode === true"
-      translate
-    >
-      removePhoto
-    </button>
-    <label for="file-input" *ngIf="this.profileEditMode === true">
-      <button class="change-remove-btn" translate>changePhoto</button>
+      *ngIf="profileEditMode"
+      (click)="removeProfile()"
+      translate="removePhoto"
+      [disabled]="disableRemoveProfile"
+    ></button>
+    <label for="file-input" #file *ngIf="profileEditMode">
+      <button
+        type="button"
+        class="change-remove-btn"
+        (click)="file.click()"
+        translate="changePhoto"
+      ></button>
     </label>
-    <input id="file-input" type="file" accept="image/*" />
+    <input
+      id="file-input"
+      type="file"
+      accept="image/*"
+      (change)="changeProfile($event)"
+      (click)="resetProfile($event)"
+    />
   </div>
   <div class="custom-profile-form-fields">
     <div class="input-container">
       <mat-form-field appearance="outline" class="first-name">
         <mat-label>{{ 'firstName' | translate }}</mat-label>
-        <input
-          matInput
-          type="text"
-          formControlName="firstName"
-          [disabled]="true"
-        />
+        <input matInput formControlName="firstName" />
       </mat-form-field>
+
       <mat-form-field appearance="outline" class="last-name">
         <mat-label>{{ 'lastName' | translate }}</mat-label>
         <input matInput formControlName="lastName" />
@@ -91,11 +101,11 @@
         "
         class="m-t-5 error-fields"
       >
-        {{ 'fieldRequired' | translate: { name: 'contact' | translate } }}
+        {{ 'required' | translate: { name: 'contact' | translate } }}
       </mat-error>
       <mat-error
         *ngIf="
-          profileForm.get('contact').errors?.valdatecontactNumber &&
+          profileForm.get('contact').errors?.validatePhoneNumber &&
           profileForm.get('contact').touched
         "
         class="m-t-5 error-fields"
@@ -104,4 +114,4 @@
       </mat-error>
     </mat-form-field>
   </div>
-</div>
+</form>

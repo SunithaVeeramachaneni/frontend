@@ -17,14 +17,9 @@
 
 .save-btn {
   float: right;
-  color: #ffffff;
   background-color: #3d5afe;
-  border: 1px solid #3d5afe;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 7px 15px;
-  margin-left: 20px;
+  box-shadow: none;
+  color: #ffffff;
 }
 
 .cancel-btn {
@@ -81,6 +76,12 @@
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
     margin: 0;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline
+    .mat-form-field-subscript-wrapper {
+    padding: 0;
   }
 
   ::ng-deep .mat-form-field-label-wrapper {
