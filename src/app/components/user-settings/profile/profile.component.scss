@@ -15,14 +15,38 @@
   padding: 7px 15px;
 }
 
+.save-btn {
+  float: right;
+  color: #ffffff;
+  background-color: #3d5afe;
+  border: 1px solid #3d5afe;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 7px 15px;
+  margin-left: 20px;
+}
+
+.cancel-btn {
+  float: right;
+  color: #3d5afe;
+  background-color: #ffffff;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 7px 15px;
+}
+
 .change-remove-btn {
   color: #3d5afe;
   font-size: 13px;
   font-weight: 500;
   border: none;
   background-color: transparent;
-  margin: 10px;
+  margin: 0 10px 5px 10px;
 }
+
 .image-upload {
   text-align: center;
 }
@@ -31,17 +55,9 @@
   display: none;
 }
 
-.file-upload-icon {
-  position: absolute;
-  left: 52%;
-  top: 30%;
-  width: 30px;
-  cursor: pointer;
-}
-
 .user-profile-img {
   display: block;
-  margin: 0 auto;
+  margin: 0 auto 10px auto;
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -79,17 +95,6 @@
   }
 }
 
-.add-user-btn {
-  text-transform: capitalize;
-  float: right;
-}
-
-.cancel-btn {
-  color: #76767b;
-  text-transform: capitalize;
-  float: right;
-}
-
 .first-name {
   width: 49%;
 }
@@ -99,24 +104,26 @@
   float: right;
 }
 
-.permissions-cancel {
-  background: white;
-  border: none;
-  float: right;
-}
-
-.error-fields {
-  white-space: nowrap;
-  margin-left: -10px;
-}
-
 ::ng-deep .roles-select .mat-option-text {
   display: flex;
 }
 
-.info-div {
-  position: absolute;
-  right: 0;
-  height: 48px;
-  width: 15%;
+.profile-container {
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    opacity: 0;
+  }
+
+  ::ng-deep .mat-input-element:disabled {
+    color: #000000;
+  }
+
+  ::ng-deep .ngx-floating .country-selector {
+    margin: -5px 0 0 -10px;
+  }
+
+  ::ng-deep .country-selector:disabled {
+    color: #000000;
+  }
 }

@@ -1,37 +1,56 @@
-<form [formGroup]="profileForm">
+<div [formGroup]="profileForm" class="profile-container">
   <div class="p-20">
-    <span class="profile-heading">Profile</span>
+    <span class="profile-heading" translate>profile</span>
     <button
       class="edit-btn"
       *ngIf="this.profileEditMode === false"
-      (click)="this.profileEditMode = true"
+      (click)="editProfile()"
+      translate
     >
-      Edit
+      editBtn
     </button>
-    <button *ngIf="this.profileEditMode === true">Save</button>
-    <button *ngIf="this.profileEditMode === true">Cancel</button>
+    <button
+      class="save-btn"
+      *ngIf="this.profileEditMode === true"
+      (click)="saveProfile()"
+      translate
+    >
+      saveBtn
+    </button>
+    <button
+      class="cancel-btn"
+      *ngIf="this.profileEditMode === true"
+      (click)="cancelProfile()"
+      translate
+    >
+      cancelBtn
+    </button>
   </div>
 
   <div class="image-upload">
     <img [src]="profileImage" class="user-profile-img" />
-    <button class="change-remove-btn" *ngIf="this.profileEditMode === true">
-      Remove Photo
+    <button
+      class="change-remove-btn"
+      *ngIf="this.profileEditMode === true"
+      translate
+    >
+      removePhoto
     </button>
     <label for="file-input" *ngIf="this.profileEditMode === true">
-      <button class="change-remove-btn">Change Photo</button>
+      <button class="change-remove-btn" translate>changePhoto</button>
     </label>
-    <input
-      id="file-input"
-      type="file"
-      (change)="onFileChange($event)"
-      accept="image/*"
-    />
+    <input id="file-input" type="file" accept="image/*" />
   </div>
   <div class="custom-profile-form-fields">
     <div class="input-container">
       <mat-form-field appearance="outline" class="first-name">
         <mat-label>{{ 'firstName' | translate }}</mat-label>
-        <input matInput formControlName="firstName" />
+        <input
+          matInput
+          type="text"
+          formControlName="firstName"
+          [disabled]="true"
+        />
       </mat-form-field>
       <mat-form-field appearance="outline" class="last-name">
         <mat-label>{{ 'lastName' | translate }}</mat-label>
@@ -51,47 +70,7 @@
 
     <mat-form-field appearance="outline" class="width-100">
       <mat-label>{{ 'roles' | translate }}</mat-label>
-      <mat-select
-        name="priority"
-        multiple
-        [compareWith]="objectComparisonFunction"
-        formControlName="roles"
-      >
-        <!-- <mat-select-trigger>
-          {{ roles.value[0]?.name }}
-          <span
-            *ngIf="roles.value?.length > 1"
-            class="example-additional-selection"
-          >
-            (+{{ roles.value.length - 1 }}
-            {{ roles.value?.length === 2 ? 'more' : 'more' }})
-          </span>
-        </mat-select-trigger>
-        <mat-option
-          *ngFor="let role of rolesInput; let i = index"
-          [value]="role"
-          style="padding-right: 0"
-          class="roles-select"
-          [disabled]="role.name === superAdminText"
-        >
-          <span>{{ role.name }}</span>
-          <div (click)="$event.stopPropagation()" class="info-div">
-            <mat-icon
-              cdkOverlayOrigin
-              #trigger="cdkOverlayOrigin"
-              class="material-icons-outlined"
-              style="
-                margin-top: 17px;
-                float: right;
-                color: #9e9e9e;
-                font-size: 18px;
-              "
-            >
-              info_border
-            </mat-icon>
-          </div>
-        </mat-option> -->
-      </mat-select>
+      <input matInput formControlName="roles" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="width-100">
@@ -125,4 +104,4 @@
       </mat-error>
     </mat-form-field>
   </div>
-</form>
+</div>
