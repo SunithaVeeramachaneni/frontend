@@ -1,16 +1,24 @@
-<div class="user-modal" [formGroup]="profileForm">
-  <span *ngIf="dialogText === 'editUser'" class="title" translate
-    >editUser</span
-  >
-  <span *ngIf="dialogText === 'addUser'" class="title" translate>addUser</span>
+<form [formGroup]="profileForm">
+  <div class="p-20">
+    <span class="profile-heading">Profile</span>
+    <button
+      class="edit-btn"
+      *ngIf="this.profileEditMode === false"
+      (click)="this.profileEditMode = true"
+    >
+      Edit
+    </button>
+    <button *ngIf="this.profileEditMode === true">Save</button>
+    <button *ngIf="this.profileEditMode === true">Cancel</button>
+  </div>
 
   <div class="image-upload">
     <img [src]="profileImage" class="user-profile-img" />
-    <label for="file-input">
-      <img
-        src="assets/user-management-icons/upload.svg"
-        class="file-upload-icon"
-      />
+    <button class="change-remove-btn" *ngIf="this.profileEditMode === true">
+      Remove Photo
+    </button>
+    <label for="file-input" *ngIf="this.profileEditMode === true">
+      <button class="change-remove-btn">Change Photo</button>
     </label>
     <input
       id="file-input"
@@ -19,32 +27,29 @@
       accept="image/*"
     />
   </div>
-  <div class="custom-mat-form-field-white-color" style="margin-top: 15px">
+  <div class="custom-profile-form-fields">
     <div class="input-container">
-      <mat-form-field appearance="outline" class="m-b-10 first-name">
+      <mat-form-field appearance="outline" class="first-name">
         <mat-label>{{ 'firstName' | translate }}</mat-label>
         <input matInput formControlName="firstName" />
       </mat-form-field>
-      <mat-form-field appearance="outline" class="m-b-10 last-name">
+      <mat-form-field appearance="outline" class="last-name">
         <mat-label>{{ 'lastName' | translate }}</mat-label>
         <input matInput formControlName="lastName" />
       </mat-form-field>
     </div>
 
-    <mat-form-field
-      appearance="outline"
-      class="input-container width-100 m-b-10"
-    >
+    <mat-form-field appearance="outline" class="input-container width-100">
       <mat-label>{{ 'title' | translate }}</mat-label>
       <input matInput formControlName="title" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+    <mat-form-field appearance="outline" class="width-100">
       <mat-label>{{ 'email' | translate }}</mat-label>
       <input matInput formControlName="email" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+    <mat-form-field appearance="outline" class="width-100">
       <mat-label>{{ 'roles' | translate }}</mat-label>
       <mat-select
         name="priority"
@@ -88,7 +93,8 @@
         </mat-option> -->
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="width-100 m-b-10">
+
+    <mat-form-field appearance="outline" class="width-100">
       <mat-label>{{ 'contact' | translate }}</mat-label>
       <ngx-mat-intl-tel-input
         formControlName="contact"
@@ -110,7 +116,7 @@
       </mat-error>
       <mat-error
         *ngIf="
-          profileForm.get('contact').errors?.valdatePhoneNumber &&
+          profileForm.get('contact').errors?.valdatecontactNumber &&
           profileForm.get('contact').touched
         "
         class="m-t-5 error-fields"
@@ -119,31 +125,4 @@
       </mat-error>
     </mat-form-field>
   </div>
-  <button
-    *ngIf="dialogText === 'addUser'"
-    mat-raised-button
-    color="primary"
-    class="add-user-btn"
-    (click)="save()"
-    type="submit"
-    [disabled]="profileForm.invalid"
-    translate="addUserBtn"
-  ></button>
-  <button
-    *ngIf="dialogText === 'editUser'"
-    mat-raised-button
-    color="primary"
-    class="add-user-btn"
-    (click)="save()"
-    type="submit"
-    [disabled]="profileForm.invalid || profileForm.pristine"
-    translate="editUserBtn"
-  ></button>
-  <button
-    mat-button
-    class="cancel-btn"
-    autofocus="false"
-    mat-dialog-close
-    translate="cancelBtn"
-  ></button>
-</div>
+</form>

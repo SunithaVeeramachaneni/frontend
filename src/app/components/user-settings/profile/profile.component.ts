@@ -9,7 +9,9 @@ import { superAdminText } from 'src/app/app.constants';
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
-  dialogText = 'addUser';
+  profileImage = 'assets/user-management-icons/Vector.png';
+  profileEditMode = false;
+
   readonly superAdminText = superAdminText;
 
   constructor(private fb: FormBuilder) {}
