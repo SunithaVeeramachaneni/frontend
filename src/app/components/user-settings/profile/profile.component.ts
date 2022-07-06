@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { superAdminText } from 'src/app/app.constants';
+import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +16,7 @@ export class ProfileComponent implements OnInit {
 
   readonly superAdminText = superAdminText;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.profileForm = this.fb.group({
@@ -46,7 +48,12 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelProfile() {
-    this.profileEditMode = false;
-    this.profileForm.controls.contact.disable();
+    const cancelReportRef = this.dialog.open(CancelModalComponent);
+    cancelReportRef.afterClosed().subscribe((res) => {
+      if (res === 'yes') {
+        this.profileEditMode = false;
+        this.profileForm.controls.contact.disable();
+      }
+    });
   }
 }
