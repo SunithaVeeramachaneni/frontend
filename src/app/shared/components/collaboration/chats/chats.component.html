@@ -87,11 +87,9 @@
             <img class="icon" [src]="message.userInfo.profileImage" />
           </div>
           <div class="nameAndMessage">
-            <div>
-              <b
-                >{{ message.userInfo.firstName }}
-                {{ message.userInfo.lastName }}</b
-              >
+            <div class="chat-user-name">
+              {{ message.userInfo.firstName }}
+              {{ message.userInfo.lastName }}
               <span class="timeAgoLabel">{{
                 getLocalDateFromEpoch(message.ts)
               }}</span>
@@ -113,7 +111,7 @@
               </div>
             </div>
             <div *ngIf="message.isMeeting === false">
-              <div mat-line>{{ message.text }}</div>
+              <div mat-line class="user-chat-messages">{{ message.text }}</div>
               <div *ngIf="message.files && message.files.length">
                 <mat-list>
                   <mat-list-item
