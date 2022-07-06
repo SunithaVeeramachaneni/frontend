@@ -12,5 +12,9 @@
   "roles": "Roles",
   "contact": "Contact",
   "required": "{name} is required",
-  "invalidContact": "Enter valid contact"
+  "invalidContact": "Enter valid contact",
+  "cancelModalHeading": "Alert",
+  "cancelModalSubHeading": "Are you surely want to exit without saving?",
+  "yesBtn": "Yes",
+  "noBtn": "No"
 }

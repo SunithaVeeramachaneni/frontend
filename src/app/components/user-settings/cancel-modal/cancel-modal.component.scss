@@ -1,0 +1,35 @@
+.cancel-modal {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.cancel-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cancel-subtitle {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.yes-btn {
+  background: #f6685e;
+  border-radius: 4px;
+  color: #ffffff;
+  float: right;
+  border: none;
+}
+
+.no-btn {
+  color: #3d5afe;
+  background: #ffffff;
+  border-radius: 4px;
+  float: right;
+  border: none;
+}

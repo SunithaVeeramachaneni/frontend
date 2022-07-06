@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserSettingsRoutingModule } from './user-settings-routing.module';
 import { UserSettingsContainerComponent } from './user-settings-container/user-settings-container.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CancelModalComponent } from './cancel-modal/cancel-modal.component';
 import { AppMaterialModules } from 'src/app/material.module';
 import { NgxMatIntlTelInputModule } from 'ngx-mat-intl-tel-input';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +24,11 @@ export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-settings/', '.json');
 
 @NgModule({
-  declarations: [UserSettingsContainerComponent, ProfileComponent],
+  declarations: [
+    UserSettingsContainerComponent,
+    ProfileComponent,
+    CancelModalComponent
+  ],
   imports: [
     CommonModule,
     UserSettingsRoutingModule,

@@ -9,6 +9,8 @@ import { Base64HelperService } from '../../work-instructions/services/base64-hel
 import { UsersService } from '../../user-management/services/users.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserDetails } from 'src/app/interfaces';
+import { MatDialog } from '@angular/material/dialog';
+import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -29,7 +31,8 @@ export class ProfileComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private base64Service: Base64HelperService,
     private userService: UsersService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +89,13 @@ export class ProfileComponent implements OnInit {
     this.profileEditMode = false;
     this.profileForm.controls.contact.disable();
     this.commonService.setUserInfo(this.userInfo);
+    const cancelReportRef = this.dialog.open(CancelModalComponent);
+    cancelReportRef.afterClosed().subscribe((res) => {
+      if (res === 'yes') {
+        this.profileEditMode = false;
+        this.profileForm.controls.contact.disable();
+      }
+    });
   }
 
   changeProfile(event: Event) {
