@@ -193,8 +193,8 @@
   background: #ffffff;
   padding: 10px;
   border-radius: 15px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  // box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+  //   0 1px 3px 0 rgb(116 116 116);
   max-width: 400px;
   min-width: 250px;
   .searchBar {
@@ -209,7 +209,7 @@
     }
   }
   .userList {
-    height: 66vh;
+    height: 54vh;
     overflow: auto;
     overflow-x: hidden;
     margin-right: -10px;
@@ -342,7 +342,8 @@
     color: #9e9e9e;
   }
   .message {
-    background: #3d5afe14;
+    background: #3d5afe;
+    color: #ffffff;
     padding: 10px;
     border-radius: 5px;
     font-style: normal;
@@ -380,4 +381,7 @@
   .message p {
     margin: 0 !important;
   }
+}
+.unreadLatestMessage {
+  font-weight: bold !important;
 }

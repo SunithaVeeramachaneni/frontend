@@ -103,35 +103,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.open(slackVerification.installationURL, '_self');
   }
 
-  openFileUploadDialog = async () => {
-    const dialogRef = this.uploadDialog.open(UploadDialogComponent, {
-      disableClose: true,
-      hasBackdrop: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const info: ErrorInfo = {
-          displayToast: true,
-          failureResponse: 'throwError'
-        };
-        const formData = new FormData();
-        formData.append('attachment', result);
-        formData.append('owner', 'shiva kumar');
-        this.chatService.uploadFileToConversation$(formData, info).subscribe(
-          (res) => {
-            console.log(res);
-            // const filesArr = [];
-            // filesArr.push(result);
-          },
-          (err) => {
-            // TODO: Display toasty message
-          }
-        );
-      }
-    });
-  };
-
   subscribeToTeamsMessages = async () => {
     const info: ErrorInfo = {
       displayToast: true,

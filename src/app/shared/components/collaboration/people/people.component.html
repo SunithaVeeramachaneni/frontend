@@ -5,10 +5,13 @@
       <mat-icon>more_vert</mat-icon>
     </button>
   </div>
-  <div class="userList">
+  <div
+    class="userList"
+    *ngIf="activeUsers$ | async as activeUsers; else loadingUsers"
+  >
     <mat-list>
       <mat-list-item
-        *ngFor="let user of activeUsers$ | async; let i = index"
+        *ngFor="let user of activeUsers; let i = index"
         class="peopleList"
         (click)="onTextMessageClick(user)"
       >
@@ -56,3 +59,23 @@
     </mat-list>
   </div>
 </div>
+<ng-template #loadingUsers>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

@@ -104,6 +104,7 @@ export class ChatService {
   };
 
   uploadFileToConversation$ = (
+    conversationId: string,
     formData: FormData,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
@@ -111,7 +112,7 @@ export class ChatService {
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService.uploadFile(
       apiURL,
-      `channel/messages/files`,
+      `channels/${conversationId}/messages/files`,
       formData,
       info
     );

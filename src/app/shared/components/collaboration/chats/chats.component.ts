@@ -150,11 +150,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
         if (action === 'update_latest_message' && channel?.length) {
           conversationsList.forEach((conv) => {
             if (conv.id === channel) {
-              conv.info.latest = message;
+              conv.latest = message;
             }
           });
         }
-        return initial.data;
+        return conversationsList;
       }),
       tap((conversations) => {
         this.conversations = conversations;
@@ -209,6 +209,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.sendReceiveMessages$.next({ action: '', message: '', channel: '' });
     this.conversationHistory = [];
     this.selectedConversation = conversation;
+
     this.conversationHistoryInit$ = this.chatService
       .getConversationHistory$(conversation.id, info)
       .pipe(
@@ -269,7 +270,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             this.selectedConversation &&
             this.selectedConversation.id === channel
           ) {
-            this.selectedConversation.info.latest = message;
+            this.selectedConversation.latest = message;
           } else {
             this.updateConversations$.next({
               action: 'update_latest_message',
@@ -293,7 +294,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             this.selectedConversation &&
             this.selectedConversation.id === channel
           ) {
-            this.selectedConversation.info.latest = message;
+            this.selectedConversation.latest = message;
           } else {
             this.updateConversations$.next({
               action: 'update_latest_message',
@@ -330,16 +331,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.chatService.sendMessage$(message, targetUser.id, info).subscribe(
       (response) => {
         if (response && Object.keys(response).length) {
-          if (response.ok) {
-            response.user = response.from.user;
-            this.sendReceiveMessages$.next({
-              action: 'send',
-              message: response,
-              channel: response.chatId
-            });
-            this.messageText = '';
-            this.messageDeliveryProgress = false;
-          }
+          response.user = response.from.user;
+          this.sendReceiveMessages$.next({
+            action: 'send',
+            message: response,
+            channel: response.chatId
+          });
+          this.messageText = '';
+          this.messageDeliveryProgress = false;
         }
       },
       (err) => {
@@ -384,28 +383,32 @@ export class ChatsComponent implements OnInit, OnDestroy {
         const conversationId = selectedConversation.id;
         const formData = new FormData();
         formData.append('attachment', result);
-        this.chatService.uploadFileToConversation$(formData, info).subscribe(
-          (res) => {
-            const filesArr = [];
-            filesArr.push(result);
-            const dateToday = moment().unix();
+        this.chatService
+          .uploadFileToConversation$(conversationId, formData, info)
+          .subscribe(
+            (response) => {
+              const filesArr = [];
+              filesArr.push(response.file);
+              // const dateToday = moment().unix();
 
-            this.sendReceiveMessages$.next({
-              action: 'send',
-              message: {
-                type: 'message',
-                text: '',
-                user: selectedConversation.user,
-                files: filesArr,
-                ts: dateToday
-              },
-              channel: selectedConversation.id
-            });
-          },
-          (err) => {
-            // TODO: Display toasty message
-          }
-        );
+              this.sendReceiveMessages$.next({
+                action: 'send',
+                message: {
+                  id: selectedConversation.id,
+                  from: response.userInfo,
+                  timestamp: response.file.timestamp,
+                  message: `${selectedConversation.user} Uploaded a file.`,
+                  attachments: filesArr,
+                  chatId: selectedConversation.id,
+                  messageType: 'message'
+                },
+                channel: selectedConversation.id
+              });
+            },
+            (err) => {
+              // TODO: Display toasty message
+            }
+          );
       }
     });
   };

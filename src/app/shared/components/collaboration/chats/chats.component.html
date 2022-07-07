@@ -49,7 +49,9 @@
               >{{ conversation.topic }}
             </b>
           </div>
-          <div mat-line>{{ conversation.latest.message }}</div>
+          <div mat-line>
+            {{ conversation.latest.message }}
+          </div>
           <mat-divider class="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
@@ -153,19 +155,18 @@
             <div class="messageContainerNonLoggedIn">
               <div [innerHtml]="message.message" class="message"></div>
               <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
-              <!-- <div *ngIf="message.files && message.files.length">
+              <div *ngIf="message.attachments && message.attachments.length">
                 <mat-list>
                   <mat-list-item
-                    *ngFor="let file of message.files"
+                    *ngFor="let file of message.attachments"
                     class="attachmentItem"
                   >
                     <mat-icon mat-list-icon>folder</mat-icon>
-                    <div mat-line class="attachmentTitle">
-                      {{ file.name }}
-                    </div>
+                    <div mat-line class="attachmentTitle">{{ file.name }}</div>
                     <div mat-line class="attachmentSubTitle">
                       <div>
-                        Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                        Size:
+                        {{ file.size / 1024 | number: '1.0-0' }} KB
                       </div>
                       <div
                         *ngIf="!downloadInProgress"
@@ -185,7 +186,7 @@
                     </div>
                   </mat-list-item>
                 </mat-list>
-              </div> -->
+              </div>
             </div>
           </div>
         </div>
@@ -216,12 +217,15 @@
               </div>
             </div>
             <div class="messageContainer">
-              <div [innerHtml]="message.message" class="message"></div>
-              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
-              <!-- <div *ngIf="message.files && message.files.length">
+              <div
+                [innerHtml]="message.message"
+                *ngIf="message.message && message.message.length"
+                class="message"
+              ></div>
+              <div *ngIf="message.attachments && message.attachments.length">
                 <mat-list>
                   <mat-list-item
-                    *ngFor="let file of message.files"
+                    *ngFor="let file of message.attachments"
                     class="attachmentItem"
                   >
                     <mat-icon mat-list-icon>folder</mat-icon>
@@ -250,7 +254,8 @@
                     </div>
                   </mat-list-item>
                 </mat-list>
-              </div> -->
+              </div>
+              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
             </div>
           </div>
           <!-- <div class="conv-user-icon">
@@ -341,10 +346,6 @@
 </ng-template>
 <ng-template #loadingHistory>
   <div class="p-15">
-    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
-    </ngx-shimmer-loading>
-    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
-    </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
     </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
