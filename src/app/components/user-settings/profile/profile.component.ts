@@ -11,6 +11,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { UserDetails } from 'src/app/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
+import { ToastService } from 'src/app/shared/toast';
 
 @Component({
   selector: 'app-profile',
@@ -31,6 +32,7 @@ export class ProfileComponent implements OnInit {
     private base64Service: Base64HelperService,
     private userService: UsersService,
     private spinner: NgxSpinnerService,
+    private toast: ToastService,
     public dialog: MatDialog
   ) {}
 
@@ -95,7 +97,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  changeProfile(event: Event) {
+  changePhoto(event: Event) {
     let base64: string;
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
@@ -112,7 +114,7 @@ export class ProfileComponent implements OnInit {
     };
   }
 
-  removeProfile() {
+  removePhoto() {
     this.profileImage = defaultProfile;
     (async () => {
       const { base64Response } =
@@ -125,7 +127,7 @@ export class ProfileComponent implements OnInit {
     })();
   }
 
-  resetProfile(event: Event) {
+  resetPhoto(event: Event) {
     const input = event.target as HTMLInputElement;
     input.value = '';
   }
@@ -142,6 +144,10 @@ export class ProfileComponent implements OnInit {
             this.profileForm.reset(this.profileForm.getRawValue());
             this.userInfo = { ...this.userInfo, ...response };
             this.commonService.setUserInfo(this.userInfo);
+            this.toast.show({
+              text: `Profile updated successfully`,
+              type: 'success'
+            });
           }
         });
     }

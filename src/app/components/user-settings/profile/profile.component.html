@@ -35,7 +35,7 @@
       type="button"
       class="change-remove-btn"
       *ngIf="profileEditMode"
-      (click)="removeProfile()"
+      (click)="removePhoto()"
       translate="removePhoto"
       [disabled]="disableRemoveProfile"
     ></button>
@@ -51,8 +51,8 @@
       id="file-input"
       type="file"
       accept="image/*"
-      (change)="changeProfile($event)"
-      (click)="resetProfile($event)"
+      (change)="changePhoto($event)"
+      (click)="resetPhoto($event)"
     />
   </div>
   <div class="custom-profile-form-fields">

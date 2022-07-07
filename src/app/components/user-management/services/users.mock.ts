@@ -44,7 +44,7 @@ const role4 = {
 
 export const usersMock: UserDetails[] = [
   {
-    id: '1',
+    id: 1,
     firstName: 'Arthur',
     lastName: 'Dent',
     user: 'Arthur Dent',
@@ -56,7 +56,7 @@ export const usersMock: UserDetails[] = [
     profileImage: 'image,123'
   },
   {
-    id: '2',
+    id: 2,
     firstName: 'Ford',
     lastName: 'Prefect',
     user: 'Ford Prefect',
@@ -68,7 +68,7 @@ export const usersMock: UserDetails[] = [
     profileImage: 'image,123'
   },
   {
-    id: '3',
+    id: 3,
     firstName: 'Tricia',
     lastName: 'McMillan',
     user: 'Tricia McMillan',
@@ -82,7 +82,7 @@ export const usersMock: UserDetails[] = [
 ];
 
 export const addUserMock: UserDetails = {
-  id: '4',
+  id: 4,
   firstName: 'Marvin',
   lastName: 'A.',
   user: 'Marvin A.',
@@ -95,7 +95,7 @@ export const addUserMock: UserDetails = {
 };
 
 export const updateUserMock: UserDetails = {
-  id: '5',
+  id: 5,
   firstName: 'Zaphod',
   lastName: 'B.',
   user: 'Zaphod B.',

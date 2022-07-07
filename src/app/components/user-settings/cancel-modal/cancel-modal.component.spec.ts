@@ -36,7 +36,7 @@ describe('CancelModalComponent', () => {
   });
 
   it('it should close modal', () => {
-    component.cancelRole('yes');
+    component.cancel('yes');
     expect(dialogRefSpy.close).toHaveBeenCalled();
   });
 });
