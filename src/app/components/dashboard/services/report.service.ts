@@ -90,7 +90,7 @@ export class ReportService {
         groupable: true,
         hasSubtitle: false,
         subtitleColumn: '',
-        showMenuOptions: true,
+        showMenuOptions: false,
         hideable: true,
         stickable: true,
         titleStyle: {},

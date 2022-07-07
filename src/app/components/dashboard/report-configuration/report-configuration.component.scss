@@ -1,11 +1,14 @@
 .report-configuration {
   overflow: hidden;
   height: 100%;
+
+  ::ng-deep .table-column {
+    width: 10%;
+  }
 }
 
 .content-div {
   background-color: white;
-  margin: 14px 0 0 14px;
   display: flex;
   // justify-content: flex-end;
   height: 100%;
