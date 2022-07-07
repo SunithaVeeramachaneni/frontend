@@ -1,5 +1,6 @@
 .chatsBody {
   display: flex;
+  height: 480px;
 }
 .active {
   cursor: pointer;
@@ -78,7 +79,7 @@
   }
   .conversationBody {
     width: 100%;
-    height: 400px;
+    height: 320px;
     overflow-y: auto;
     overflow-x: hidden;
     word-break: break-all;
@@ -208,9 +209,10 @@
     }
   }
   .userList {
-    height: 71vh;
+    height: 66vh;
     overflow: auto;
     overflow-x: hidden;
+    margin-right: -10px;
   }
 }
 .userIcon {
@@ -246,8 +248,7 @@
   margin: 5px 25px;
 }
 .horiz-dividerConv {
-  margin: 0px 25px !important;
-  width: 80% !important;
+  width: 95% !important;
 }
 
 .timeAgoLabel {
