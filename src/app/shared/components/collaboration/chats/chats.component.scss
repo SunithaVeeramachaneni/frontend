@@ -104,7 +104,6 @@
     .nameAndMessage {
       width: 95% !important;
       word-break: break-all;
-      padding-right: 20px;
     }
   }
   .conv-user-icon {
@@ -336,6 +335,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
+  margin-bottom: 10px;
   .timestamp {
     font-size: 8pt;
     color: #9e9e9e;
@@ -347,6 +347,8 @@
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
+    max-width: 70%;
+    word-break: break-word;
   }
 }
 .messageContainerNonLoggedIn {
@@ -355,6 +357,7 @@
   justify-content: center;
   align-content: flex-start;
   align-items: flex-start;
+  margin-bottom: 10px;
   .timestamp {
     font-size: 8pt;
     color: #9e9e9e;
@@ -366,6 +369,8 @@
     font-style: normal;
     font-weight: 400;
     font-size: 13px;
+    max-width: 70%;
+    word-break: break-word;
     p {
       margin: 0px;
       padding: 0px;

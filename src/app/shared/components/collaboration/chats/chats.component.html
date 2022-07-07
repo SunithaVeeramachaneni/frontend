@@ -127,20 +127,13 @@
         else loadingHistory
       "
     >
-      <div *ngFor="let message of conversationHistory">
+      <div *ngFor="let message of conversationHistory; let i = index">
         <div class="conversationMessage" *ngIf="!isLoggedInUser(message.from)">
           <!-- <div class="conv-user-icon">
             <span class="icon"></span>
             <img class="icon" [src]="message.from.profileImage" />
           </div> -->
           <div class="nameAndMessage">
-            <!-- <div>
-              <b
-                >{{ message.from.firstName }}
-                {{ message.from.lastName }}
-              </b>
-              <span class="timeAgoLabel">{{ message.timestamp }}</span>
-            </div> -->
             <div *ngIf="message.messageType === 'meeting'">
               <div class="attachmentItemMeeting">
                 <!-- <div mat-line>{{ message.text }}</div> -->
