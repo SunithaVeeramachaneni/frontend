@@ -89,7 +89,8 @@
       appearance="outline"
       class="width-100"
       [ngClass]="{
-        'hide-field': profileEditMode === true && this.userInfo.contact !== null
+        'hide-field':
+          profileEditMode === true || this.userInfo?.contact !== null
       }"
     >
       <mat-label>{{ 'contact' | translate }}</mat-label>
@@ -100,7 +101,8 @@
       appearance="outline"
       class="width-100"
       [ngClass]="{
-        'hide-field': this.userInfo.contact === null
+        'hide-field':
+          profileEditMode === false && this.userInfo?.contact === null
       }"
     >
       <mat-label>{{ 'contact' | translate }}</mat-label>

@@ -88,14 +88,20 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelProfile() {
-    const cancelReportRef = this.dialog.open(CancelModalComponent);
-    cancelReportRef.afterClosed().subscribe((res) => {
-      if (res === 'yes') {
-        this.profileEditMode = false;
-        this.commonService.setUserInfo(this.userInfo);
-        this.profileForm.controls.contact.disable();
-      }
-    });
+    if (this.profileForm.valid && this.profileForm.dirty) {
+      const cancelReportRef = this.dialog.open(CancelModalComponent);
+      cancelReportRef.afterClosed().subscribe((res) => {
+        if (res === 'yes') {
+          this.profileEditMode = false;
+          this.commonService.setUserInfo(this.userInfo);
+          this.profileForm.controls.contact.disable();
+        }
+      });
+    } else {
+      this.profileEditMode = false;
+      this.commonService.setUserInfo(this.userInfo);
+      this.profileForm.controls.contact.disable();
+    }
   }
 
   changePhoto(event: Event) {
