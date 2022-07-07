@@ -7,12 +7,10 @@
 .edit-btn {
   float: right;
   color: #3d5afe;
+  box-shadow: none;
   background-color: #ffffff;
   border: 1px solid rgba(61, 90, 254, 0.5);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 7px 15px;
+  margin-top: -7px;
 }
 
 .save-btn {
@@ -20,6 +18,9 @@
   background-color: #3d5afe;
   box-shadow: none;
   color: #ffffff;
+  margin-top: -7px;
+  border: 1px solid transparent;
+  margin-left: 15px;
 }
 
 .cancel-btn {
@@ -27,10 +28,8 @@
   color: #3d5afe;
   background-color: #ffffff;
   border: 1px solid rgba(61, 90, 254, 0.5);
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 7px 15px;
+  box-shadow: none;
+  margin-top: -7px;
 }
 
 .change-remove-btn {
@@ -40,6 +39,11 @@
   border: none;
   background-color: transparent;
   margin: 0 10px 5px 10px;
+}
+
+.change-remove-btn:disabled {
+  color: #e0e0e0;
+  cursor: auto;
 }
 
 .image-upload {
@@ -63,7 +67,7 @@
   margin: 0 auto;
   overflow-y: auto;
   height: 330px;
-  padding-top: 5px;
+  padding-top: 20px;
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
@@ -127,4 +131,17 @@
   ::ng-deep .country-selector:disabled {
     color: #000000;
   }
+}
+
+::ng-deep .mat-menu-panel {
+  max-height: calc(100vh - 400px) !important;
+}
+
+::ng-deep input.country-search {
+  width: 90% !important;
+  padding: 0 0 0 20px !important;
+}
+
+.hide-field {
+  display: none;
 }

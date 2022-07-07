@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
@@ -15,14 +15,15 @@ import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
+  encapsulation: ViewEncapsulation.Emulated
 })
 export class ProfileComponent implements OnInit {
   profileForm: FormGroup;
   profileImage: string | SafeResourceUrl;
   profileEditMode = false;
   disableRemoveProfile = false;
-  private userInfo: UserDetails;
+  userInfo: UserDetails;
 
   constructor(
     private fb: FormBuilder,
