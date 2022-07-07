@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { defaultProfile, superAdminText } from 'src/app/app.constants';
+import { defaultProfile } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { getImageSrc } from 'src/app/shared/utils/imageUtils';
 import { Buffer } from 'buffer';
@@ -22,7 +22,6 @@ export class ProfileComponent implements OnInit {
   profileImage: string | SafeResourceUrl;
   profileEditMode = false;
   disableRemoveProfile = false;
-  readonly superAdminText = superAdminText;
   private userInfo: UserDetails;
 
   constructor(
@@ -86,13 +85,11 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelProfile() {
-    this.profileEditMode = false;
-    this.profileForm.controls.contact.disable();
-    this.commonService.setUserInfo(this.userInfo);
     const cancelReportRef = this.dialog.open(CancelModalComponent);
     cancelReportRef.afterClosed().subscribe((res) => {
       if (res === 'yes') {
         this.profileEditMode = false;
+        this.commonService.setUserInfo(this.userInfo);
         this.profileForm.controls.contact.disable();
       }
     });
