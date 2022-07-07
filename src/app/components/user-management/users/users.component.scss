@@ -1,6 +1,8 @@
 .main-container {
   background-color: #ffffff;
-  margin: 14px;
+  ::ng-deep .table-column {
+    width: 25%;
+  }
 }
 
 .users-header {

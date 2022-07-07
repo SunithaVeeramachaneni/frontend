@@ -23,16 +23,20 @@
   border: none;
 }
 
-::ng-deep
-  .configurations-div
-  .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
-  background: #f2f2f2;
+::ng-deep .configurations-div .mat-button-toggle {
+  background: #ffffff;
 }
 
 ::ng-deep
   .configurations-div
   .mat-button-toggle-checked.mat-button-toggle-appearance-standard {
   background: #3d5afe;
+}
+
+::ng-deep
+  .configurations-div
+  .mat-button-toggle-disabled.mat-button-toggle-appearance-standard {
+  background: #f2f2f2;
 }
 
 .variants-title {

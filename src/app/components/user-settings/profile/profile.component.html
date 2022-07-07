@@ -6,6 +6,7 @@
   <div class="p-20">
     <span class="profile-heading" translate>profile</span>
     <button
+      mat-raised-button
       type="button"
       class="edit-btn"
       *ngIf="!profileEditMode"
@@ -21,6 +22,7 @@
       translate="saveBtn"
     ></button>
     <button
+      mat-raised-button
       type="button"
       class="cancel-btn"
       *ngIf="profileEditMode"
@@ -83,7 +85,24 @@
       <input matInput formControlName="roles" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="width-100">
+    <mat-form-field
+      appearance="outline"
+      class="width-100"
+      [ngClass]="{
+        'hide-field': profileEditMode === true && this.userInfo.contact !== null
+      }"
+    >
+      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <input matInput value="Not added" [disabled]="true" />
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline"
+      class="width-100"
+      [ngClass]="{
+        'hide-field': this.userInfo.contact === null
+      }"
+    >
       <mat-label>{{ 'contact' | translate }}</mat-label>
       <ngx-mat-intl-tel-input
         formControlName="contact"

@@ -29,6 +29,7 @@ li {
   font-size: 15px;
   color: #76767b;
   cursor: pointer;
+  padding: 4px 0;
 }
 
 .menu-item li:hover {
@@ -143,7 +144,7 @@ li.selected .sidebar-icons {
 }
 
 .show-content {
-  margin: 14px 0 0 70px;
+  margin: 14px 0 0 90px;
   height: 100%;
 }
 
@@ -185,4 +186,8 @@ mat-sidenav {
   overflow-y: auto;
   overflow-x: hidden;
   height: 75vh;
+
+  ::ng-deep .mat-list-base {
+    padding-top: 0 !important;
+  }
 }
