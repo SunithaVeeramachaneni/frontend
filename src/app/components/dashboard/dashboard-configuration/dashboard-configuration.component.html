@@ -25,15 +25,21 @@
             *appCheckUserHasPermission="[permissions.createDashboard]"
           >
             <mat-option [value]="dashboard">
-              {{ dashboard.name | translate }}
+              <a class="dropdown-dashboard-name-ellipsis">
+                {{ dashboard.name | translate }}
+              </a>
             </mat-option>
           </ng-container>
         </ng-container>
 
         <ng-template #displayOptions>
           <mat-option [value]="dashboard">
-            {{ dashboard.name | translate }}
-            {{ dashboard.isDefault === true ? '(default)' : '' }}
+            <a class="dropdown-dashboard-name-ellipsis">
+              {{ dashboard.name | translate }}
+            </a>
+            <span class="dropdwon-dashboard-default">{{
+              dashboard.isDefault === true ? '(default)' : ''
+            }}</span>
           </mat-option>
         </ng-template>
       </ng-container>
