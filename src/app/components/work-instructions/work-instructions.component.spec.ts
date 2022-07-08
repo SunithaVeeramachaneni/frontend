@@ -32,6 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { BreadcrumbService } from 'xng-breadcrumb';
 
 const categoryDetails = [
   {
@@ -182,6 +183,7 @@ describe('WorkInstructionsComponent', () => {
   let wiCommonServiceSpy: WiCommonService;
   let overlayServiceSpy: OverlayService;
   let commonServiceSpy: CommonService;
+  let breadcrumbService: BreadcrumbService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -247,6 +249,7 @@ describe('WorkInstructionsComponent', () => {
   }));
 
   beforeEach(() => {
+    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(WorkInstructionsComponent);
     component = fixture.componentInstance;
     homeDe = fixture.debugElement;
@@ -263,7 +266,7 @@ describe('WorkInstructionsComponent', () => {
       .withArgs()
       .and.returnValue(of([...favorites, ...drafts]))
       .and.callThrough();
-
+    spyOn(breadcrumbService, 'set');
     spyOn(component, 'getAllFavsDraftsAndRecentIns');
     fixture.detectChanges();
   });
@@ -547,13 +550,6 @@ describe('WorkInstructionsComponent', () => {
 
       expect(homeEl.querySelector('.content')).toBeNull();
     });
-
-    it('should contain app header title', () => {
-      (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
-
-      component.ngOnInit();
-      fixture.detectChanges();
-    });
   });
 
   describe('getBase64Images', () => {
@@ -731,6 +727,10 @@ describe('WorkInstructionsComponent', () => {
           routingUrls.workInstructions.title
         );
       });
+      expect(breadcrumbService.set).toHaveBeenCalledWith(
+        routingUrls.workInstructions.url,
+        { skip: true }
+      );
       component.headerTitle$.subscribe((data) =>
         expect(data).toBe(routingUrls.workInstructions.title)
       );
@@ -744,6 +744,13 @@ describe('WorkInstructionsComponent', () => {
 
       component.ngOnInit();
       fixture.detectChanges();
+
+      component.currentRouteUrl$.subscribe(() => {
+        expect(breadcrumbService.set).toHaveBeenCalledWith(
+          routingUrls.workInstructions.url,
+          { skip: false }
+        );
+      });
     });
   });
 

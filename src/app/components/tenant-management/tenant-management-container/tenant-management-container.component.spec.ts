@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantsComponent } from '../tenants/tenants.component';
 
 import { TenantManagementContainerComponent } from './tenant-management-container.component';
@@ -15,6 +16,7 @@ describe('TenantManagementContainerComponent', () => {
   let component: TenantManagementContainerComponent;
   let fixture: ComponentFixture<TenantManagementContainerComponent>;
   let commonServiceSpy: CommonService;
+  let breadcrumbService: BreadcrumbService;
   let cdrf: ChangeDetectorRef;
 
   beforeEach(async () => {
@@ -38,9 +40,11 @@ describe('TenantManagementContainerComponent', () => {
   });
 
   beforeEach(() => {
+    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(TenantManagementContainerComponent);
     cdrf = fixture.debugElement.injector.get(ChangeDetectorRef);
     component = fixture.componentInstance;
+    spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });
 
@@ -55,6 +59,12 @@ describe('TenantManagementContainerComponent', () => {
       expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         routingUrls.tenantManagement.title
       );
+      expect(breadcrumbService.set).toHaveBeenCalledWith(
+        routingUrls.tenantManagement.url,
+        {
+          skip: true
+        }
+      );
       expect(detectChangesSpy).toHaveBeenCalledWith();
     });
     component.headerTitle$.subscribe((data) =>
@@ -62,7 +72,7 @@ describe('TenantManagementContainerComponent', () => {
     );
   });
 
-  it('should display breadcrumb if current route url is not tenant-management', () => {
+  it('should set breadcrumb if current route url is not tenant-management', () => {
     (
       Object.getOwnPropertyDescriptor(
         commonServiceSpy,
@@ -72,5 +82,17 @@ describe('TenantManagementContainerComponent', () => {
 
     component.ngOnInit();
     fixture.detectChanges();
+
+    component.currentRouteUrl$.subscribe(() => {
+      expect(breadcrumbService.set).toHaveBeenCalledWith(
+        routingUrls.tenantManagement.url,
+        {
+          skip: false
+        }
+      );
+    });
+    component.headerTitle$.subscribe((data) =>
+      expect(data).toBe(routingUrls.tenantManagement.title)
+    );
   });
 });
