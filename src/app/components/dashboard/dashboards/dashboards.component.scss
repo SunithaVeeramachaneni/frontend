@@ -50,13 +50,6 @@
     color: #2a3eb1 !important;
     font-weight: bold;
     font-size: 14px;
-    .ellipsis-dashboard-name {
-      overflow: hidden;
-      white-space: nowrap;
-      display: block;
-      text-overflow: ellipsis;
-      max-width: 60%;
-    }
   }
   .right {
     width: 80%;
@@ -110,6 +103,14 @@
   display: block;
   text-overflow: ellipsis;
   max-width: 80%;
+}
+
+.default-tagged-dashboard-name {
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  text-overflow: ellipsis;
+  max-width: 60%;
 }
 
 .dropdown-dashboard-name-ellipsis {

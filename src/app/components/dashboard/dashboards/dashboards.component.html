@@ -62,8 +62,12 @@
               >
                 <div class="create-btn-row">
                   <a
-                    class="display-flex default-row ellipsis-dashboard-name"
+                    class="display-flex default-row"
                     matTooltip="{{ dashboard.name }}"
+                    [ngClass]="{
+                      'default-tagged-dashboard-name': dashboard.isDefault,
+                      'ellipsis-dashboard-name': !dashboard.isDefault
+                    }"
                   >
                     {{ dashboard.name }}
                   </a>
