@@ -14,17 +14,22 @@
     .create-btn-row {
       width: 100%;
       align-content: center;
-      justify-content: space-between;
       flex-wrap: nowrap;
       align-items: center;
       display: flex;
       .more-icon {
         color: #757575;
+        position: absolute;
+        right: 0;
       }
       .left-head-text {
         font-size: 16px;
         color: #212121;
         font-weight: bold;
+      }
+      .add-dashboard-plus-icon {
+        position: absolute;
+        right: -7px;
       }
     }
     .create-dashboard {
@@ -45,6 +50,13 @@
     color: #2a3eb1 !important;
     font-weight: bold;
     font-size: 14px;
+    .ellipsis-dashboard-name {
+      overflow: hidden;
+      white-space: nowrap;
+      display: block;
+      text-overflow: ellipsis;
+      max-width: 60%;
+    }
   }
   .right {
     width: 80%;
@@ -72,6 +84,7 @@
   border-radius: 15px;
   padding: 1px 6px;
   font-size: 12px;
+  font-weight: 500;
   background: #3f51b5;
   color: #ffff;
 }
@@ -89,4 +102,27 @@
 }
 .m-r-n20 {
   margin-right: -20px;
+}
+
+.ellipsis-dashboard-name {
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.dropdown-dashboard-name-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 75%;
+  display: inline-block;
+  position: relative;
+  top: 10px;
+}
+
+.dropdwon-dashboard-default {
+  position: relative;
+  top: -9px;
 }
