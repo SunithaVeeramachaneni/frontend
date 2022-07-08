@@ -3,6 +3,13 @@
   (ngSubmit)="saveProfile()"
   class="profile-container"
 >
+  <ngx-spinner
+    size="medium"
+    bdColor="rgba(0, 0, 0, 0.6)"
+    type="ball-clip-rotate-pulse"
+    [fullScreen]="false"
+  >
+  </ngx-spinner>
   <div class="p-20">
     <span class="profile-heading" translate>profile</span>
     <button

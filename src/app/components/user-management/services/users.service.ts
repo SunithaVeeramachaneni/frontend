@@ -37,8 +37,6 @@ export class UsersService {
     const roleNames = roles.map((role) => role.name);
     if (roleNames.length) user.displayRoles = roleNames || '';
     user.roles = roles;
-    if (!user.createdAt) user.createdAt = new Date();
-    else user.createdAt = new Date(user.createdAt);
     user.postTextImage = {
       style: {
         width: '20px',

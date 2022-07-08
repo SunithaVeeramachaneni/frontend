@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   slackVerification$: Observable<any>;
 
-  userData$: Observable<UserDetails>;
+  userInfo$: Observable<UserDetails>;
 
   private minimizeSidebarActionSubscription: Subscription;
 
@@ -126,7 +126,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.sidebarMinimize = data;
       });
 
-    this.userData$ = this.commonService.userInfo$.pipe(
+    this.userInfo$ = this.commonService.userInfo$.pipe(
       filter((userInfo) => Object.keys(userInfo).length !== 0),
       tap((userInfo) => {
         const loggedInUser = {

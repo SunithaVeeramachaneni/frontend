@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
@@ -12,14 +12,16 @@ import { UserDetails } from 'src/app/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { ToastService } from 'src/app/shared/toast';
+import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('contact')
+  conatct: NgxMatIntlTelInputComponent;
   profileForm: FormGroup;
   profileImage: string | SafeResourceUrl;
   profileEditMode = false;
@@ -88,13 +90,16 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelProfile() {
-    if (this.profileForm.valid && this.profileForm.dirty) {
+    if (this.profileForm.dirty) {
       const cancelReportRef = this.dialog.open(CancelModalComponent);
       cancelReportRef.afterClosed().subscribe((res) => {
         if (res === 'yes') {
           this.profileEditMode = false;
           this.commonService.setUserInfo(this.userInfo);
           this.profileForm.controls.contact.disable();
+          if (this.userInfo.contact === null) {
+            this.conatct.reset();
+          }
         }
       });
     } else {
@@ -104,7 +109,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  changePhoto(event: Event) {
+  changePhoto(event: any) {
     let base64: string;
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();

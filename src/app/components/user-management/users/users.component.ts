@@ -443,7 +443,6 @@ export class UsersComponent implements OnInit {
                   title: '',
                   email: '',
                   isActive: false,
-                  createdAt: new Date(),
                   roles: []
                 }
               });

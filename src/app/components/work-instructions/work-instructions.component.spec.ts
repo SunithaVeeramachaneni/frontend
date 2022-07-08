@@ -32,7 +32,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
-import { userData$ } from 'src/app/shared/components/header/header.component.mock';
 
 const categoryDetails = [
   {

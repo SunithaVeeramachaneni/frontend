@@ -18,15 +18,15 @@ export interface UserDetails {
   lastName?: string;
   title: string;
   email: string;
-  profileImage?: string;
+  profileImage?: any;
   preTextImage?: any;
   postTextImage?: any;
   contact?: string;
   isActive: boolean;
-  createdBy?: string;
-  updatedBy?: string;
-  createdAt: Date;
-  updatedOn?: Date;
+  createdBy?: number;
+  updatedBy?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
   roles: any[];
   displayRoles?: string;
 }

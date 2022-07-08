@@ -1,6 +1,4 @@
-import { DataRowOutlet } from '@angular/cdk/table';
-import { of } from 'rxjs';
-import { UserDetails, UserTable } from '../../../interfaces';
+import { UserDetails } from '../../../interfaces';
 
 const role1 = {
   id: 4,
@@ -8,8 +6,8 @@ const role1 = {
   description: 'Super admin description',
   createdBy: 1,
   updatedBy: null,
-  createdAt: new Date('2022-04-21T06:37:07.000Z'),
-  updatedAt: new Date('2022-04-21T06:37:07.000Z')
+  createdAt: '2022-04-21T06:37:07.000Z',
+  updatedAt: '2022-04-21T06:37:07.000Z'
 };
 
 const role2 = {
@@ -18,8 +16,8 @@ const role2 = {
   description: 'desc',
   createdBy: 1,
   updatedBy: 1,
-  createdAt: new Date('2022-04-21T06:44:44.000Z'),
-  updatedAt: new Date('2022-04-21T13:54:22.000Z')
+  createdAt: '2022-04-21T06:44:44.000Z',
+  updatedAt: '2022-04-21T13:54:22.000Z'
 };
 
 const role3 = {
@@ -28,8 +26,8 @@ const role3 = {
   description: 'Supervisor Description',
   createdBy: 1,
   updatedBy: null,
-  createdAt: new Date('2022-04-21T08:29:17.000Z'),
-  updatedAt: new Date('2022-04-21T08:29:17.000Z')
+  createdAt: '2022-04-21T08:29:17.000Z',
+  updatedAt: '2022-04-21T08:29:17.000Z'
 };
 
 const role4 = {
@@ -38,8 +36,8 @@ const role4 = {
   description: ' bgf',
   createdBy: 1,
   updatedBy: null,
-  createdAt: new Date('2022-04-21T11:03:59.000Z'),
-  updatedAt: new Date('2022-04-21T11:03:59.000Z')
+  createdAt: '2022-04-21T11:03:59.000Z',
+  updatedAt: '2022-04-21T11:03:59.000Z'
 };
 
 export const usersMock: UserDetails[] = [
@@ -52,7 +50,7 @@ export const usersMock: UserDetails[] = [
     isActive: true,
     roles: [role1],
     email: 'arthur@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    createdAt: '2022-04-21T11:03:59.000Z',
     profileImage: 'image,123'
   },
   {
@@ -64,7 +62,7 @@ export const usersMock: UserDetails[] = [
     isActive: true,
     roles: [role2, role3],
     email: 'ford@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    createdAt: '2022-04-21T11:03:59.000Z',
     profileImage: 'image,123'
   },
   {
@@ -76,7 +74,7 @@ export const usersMock: UserDetails[] = [
     title: 'Engineer',
     isActive: true,
     email: 'trillian@gmail.com',
-    createdAt: new Date('2022-04-21T11:03:59.000Z'),
+    createdAt: '2022-04-21T11:03:59.000Z',
     profileImage: 'image,123'
   }
 ];
@@ -90,7 +88,7 @@ export const addUserMock: UserDetails = {
   title: 'Manager',
   isActive: true,
   email: 'android@gmail.com',
-  createdAt: new Date('2022-04-21T11:03:59.000Z'),
+  createdAt: '2022-04-21T11:03:59.000Z',
   profileImage: 'image,456'
 };
 
@@ -103,7 +101,7 @@ export const updateUserMock: UserDetails = {
   title: 'Head of Human Resources',
   isActive: true,
   email: 'beeblebrox@gmail.com',
-  createdAt: new Date('2022-04-21T11:03:59.000Z)'),
+  createdAt: '2022-04-21T11:03:59.000Z',
   profileImage: 'image,123'
 };
 

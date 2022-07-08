@@ -19,6 +19,7 @@ import {
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { defaultLanguage } from 'src/app/app.constants';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/user-settings/', '.json');
@@ -35,6 +36,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReactiveFormsModule,
     AppMaterialModules,
     NgxMatIntlTelInputModule,
+    NgxSpinnerModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
