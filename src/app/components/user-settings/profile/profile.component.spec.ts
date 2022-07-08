@@ -31,6 +31,7 @@ import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 const { firstName, lastName, title, email, roles, profileImage, contact } =
   userInfo;
@@ -46,6 +47,7 @@ describe('ProfileComponent', () => {
   let toastSpy: ToastService;
   let matDialogSpy: MatDialog;
   let spinnerSpy: NgxSpinnerService;
+  let imageUtilsSpy: ImageUtils;
   let profileDe: DebugElement;
   let profileEl: HTMLElement;
 
@@ -61,6 +63,7 @@ describe('ProfileComponent', () => {
     ]);
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
+    imageUtilsSpy = jasmine.createSpyObj('ImageUtils', ['getImageSrc']);
     matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     await TestBed.configureTestingModule({
@@ -83,6 +86,7 @@ describe('ProfileComponent', () => {
         { provide: UsersService, useValue: userServiceSpy },
         { provide: ToastService, useValue: toastSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
+        { provide: ImageUtils, useValue: imageUtilsSpy },
         { provide: MatDialog, useValue: matDialogSpy }
       ]
     }).compileComponents();
@@ -93,6 +97,9 @@ describe('ProfileComponent', () => {
     component = fixture.componentInstance;
     profileDe = fixture.debugElement;
     profileEl = profileDe.nativeElement;
+    (imageUtilsSpy.getImageSrc as jasmine.Spy)
+      .withArgs(base64String)
+      .and.returnValue(`data:image/jpeg;base64,${base64String}`);
     fixture.detectChanges();
   });
 
@@ -127,7 +134,9 @@ describe('ProfileComponent', () => {
       component.ngOnInit();
 
       expect(component.userInfo).toEqual(userInfo);
-      expect(component.profileImage).toBeDefined();
+      expect(component.profileImage).toBe(
+        `data:image/jpeg;base64,${base64String}`
+      );
       expect(component.profileForm.getRawValue()).toEqual({
         firstName,
         lastName,
@@ -231,6 +240,9 @@ describe('ProfileComponent', () => {
     });
 
     it('should change existing profile photo', () => {
+      (imageUtilsSpy.getImageSrc as jasmine.Spy).and.returnValue(
+        `data:image/jpeg;base64,${base64String}`
+      );
       const buttons = profileEl.querySelectorAll('button');
       buttons[0].click();
       fixture.detectChanges();
@@ -242,7 +254,9 @@ describe('ProfileComponent', () => {
       inputDebugEl.nativeElement.dispatchEvent(new InputEvent('change'));
       fixture.detectChanges();
 
-      expect(component.profileImage).toBeDefined();
+      expect(component.profileImage).toBe(
+        `data:image/jpeg;base64,${base64String}`
+      );
       expect(component.disableRemoveProfile).toBeFalse();
     });
   });
