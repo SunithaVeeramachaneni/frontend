@@ -1,7 +1,3 @@
-.add-instruction-main {
-  margin-left: 20px;
-}
-
 input[type='text']:focus {
   outline: none;
   caret-color: #007aff;
