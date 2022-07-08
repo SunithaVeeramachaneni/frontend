@@ -21,8 +21,12 @@
               "
               [value]="dashboard"
             >
-              {{ dashboard.name | translate }}
-              {{ dashboard.isDefault === true ? '(default)' : '' }}
+              <a class="dropdown-dashboard-name-ellipsis"
+                >{{ dashboard.name | translate }}
+              </a>
+              <span class="dropdwon-dashboard-default">
+                {{ dashboard.isDefault === true ? '(default)' : '' }}
+              </span>
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -36,6 +40,7 @@
                 color="primary"
                 (click)="openCreateDashboardDialog('CREATE')"
                 *appCheckUserHasPermission="[permissions.createDashboard]"
+                class="add-dashboard-plus-icon"
               >
                 <mat-icon>add</mat-icon>
               </button>
@@ -56,11 +61,18 @@
                 (click)="setSelectedDashboard(dashboard)"
               >
                 <div class="create-btn-row">
-                  <span class="display-flex default-row">
+                  <a
+                    class="display-flex default-row"
+                    matTooltip="{{ dashboard.name }}"
+                    [ngClass]="{
+                      'default-tagged-dashboard-name': dashboard.isDefault,
+                      'ellipsis-dashboard-name': !dashboard.isDefault
+                    }"
+                  >
                     {{ dashboard.name }}
-                    <span *ngIf="dashboard.isDefault" class="default-chip"
-                      >Default</span
-                    >
+                  </a>
+                  <span *ngIf="dashboard.isDefault" class="default-chip">
+                    Default
                   </span>
                   <button
                     mat-icon-button
