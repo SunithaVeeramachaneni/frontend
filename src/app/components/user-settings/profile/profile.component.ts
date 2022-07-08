@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { getImageSrc } from 'src/app/shared/utils/imageUtils';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { Buffer } from 'buffer';
 import { Base64HelperService } from '../../work-instructions/services/base64-helper.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserDetails } from 'src/app/interfaces';
 import { MatDialog } from '@angular/material/dialog';
-import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { ToastService } from 'src/app/shared/toast';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
+import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 
 @Component({
   selector: 'app-profile',
@@ -31,11 +31,11 @@ export class ProfileComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private commonService: CommonService,
-    private sanitizer: DomSanitizer,
     private base64Service: Base64HelperService,
     private userService: UsersService,
     private spinner: NgxSpinnerService,
     private toast: ToastService,
+    private imageUtils: ImageUtils,
     public dialog: MatDialog
   ) {}
 
@@ -65,9 +65,8 @@ export class ProfileComponent implements OnInit {
         } = userInfo;
 
         this.userInfo = userInfo;
-        this.profileImage = getImageSrc(
-          Buffer.from(profileImage).toString(),
-          this.sanitizer
+        this.profileImage = this.imageUtils.getImageSrc(
+          Buffer.from(profileImage).toString()
         );
         this.profileForm.setValue({
           firstName,
@@ -120,7 +119,7 @@ export class ProfileComponent implements OnInit {
       this.profileForm.patchValue({
         profileImage
       });
-      this.profileImage = getImageSrc(profileImage, this.sanitizer);
+      this.profileImage = this.imageUtils.getImageSrc(profileImage);
       this.profileForm.get('profileImage').markAsDirty();
       this.disableRemoveProfile = false;
     };

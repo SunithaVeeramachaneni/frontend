@@ -43,7 +43,11 @@ insert into catalogs (
       "password": "",
       "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
       "clientId": "cwpuser",
-      "scope": "/INVCEC/RACE_SRV_0001",
+      "scope": {
+        "race": "/INVCEC/RACE_SRV_0001",
+        "mWorkOrder": "/INVMWO/MWORKORDER_SRV_0001",
+        "mInventory": "/INVMIM/MINVENTORY_2_SRV_0001"
+      },
       "saml": {
         "oauth2Url":
         "https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/oauth2/token",
@@ -112,7 +116,7 @@ insert into catalogs (
   }',
   20,
   '["MWORKORDER", "MINVENTORY"]',
-  '["Dashboard"]',
+  '["Dashboard", "Tenant Management", "Maintenance Control Center", "Spare Parts Control Center", "User Management", "Work Instructions Authoring"]',
   "rdbms",
   "off",
   "admin@innovapptive.com",

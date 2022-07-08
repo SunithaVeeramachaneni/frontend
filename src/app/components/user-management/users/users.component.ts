@@ -29,6 +29,7 @@ import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal
 import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { Buffer } from 'buffer';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
@@ -241,18 +242,23 @@ export class UsersComponent implements OnInit {
     openEditAddUserModalRef.afterClosed().subscribe((resp) => {
       if (!resp || Object.keys(resp).length === 0 || !resp.user) return;
       if (resp.action === 'edit') {
-        this.usersService.updateUser$(resp.user).subscribe((updatedUser) => {
-          if (Object.keys(updatedUser).length) {
-            this.userTableUpdate$.next({
-              action: 'edit',
-              user: this.usersService.prepareUser(resp.user, resp.user.roles)
-            });
-            this.toast.show({
-              text: 'User updated successfully!',
-              type: 'success'
-            });
-          }
-        });
+        this.usersService
+          .updateUser$({
+            ...resp.user,
+            profileImage: Buffer.from(resp.user.profileImage).toString()
+          })
+          .subscribe((updatedUser) => {
+            if (Object.keys(updatedUser).length) {
+              this.userTableUpdate$.next({
+                action: 'edit',
+                user: this.usersService.prepareUser(resp.user, resp.user.roles)
+              });
+              this.toast.show({
+                text: 'User updated successfully!',
+                type: 'success'
+              });
+            }
+          });
       }
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
@@ -338,7 +344,6 @@ export class UsersComponent implements OnInit {
             break;
           case 'edit':
             if (user.id) {
-              this.usersService.updateUser$(user).subscribe();
               const index = users.findIndex(
                 (iteratedUser) => iteratedUser.id === user.id
               );
