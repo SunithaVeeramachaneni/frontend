@@ -12,7 +12,7 @@ import { MockComponent } from 'ng-mocks';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import {
   openCollabWindow$,
-  userData$
+  userAuthData$
 } from './shared/components/header/header.component.mock';
 import { permissions$ } from './shared/services/common.service.mock';
 import { UsersService } from './components/user-management/services/users.service';
@@ -50,7 +50,7 @@ describe('AppComponent', () => {
 
     translateServiceSpy = jasmine.createSpyObj('TranslateService', ['use']);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
+      userData$: userAuthData$
     });
     usersServiceSpy = jasmine.createSpyObj('UsersService', [
       'getUserPermissionsByEmail$'

@@ -13,7 +13,7 @@
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
-  <div class="header-cols" *ngIf="userData$ | async as userDetails">
+  <div class="header-cols" *ngIf="userInfo$ | async as userDetails">
     <div *ngIf="slackVerification$ | async as slackVerification">
       <div
         *ngIf="!slackVerification.slackInstalled"
@@ -74,6 +74,9 @@
         [matMenuTriggerFor]="menu"
       />
       <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="userSettings()">
+          <span>Profile</span>
+        </button>
         <button mat-menu-item (click)="signout()">
           <span>Sign Out</span>
         </button>

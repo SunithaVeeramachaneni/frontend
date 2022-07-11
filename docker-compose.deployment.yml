@@ -90,7 +90,7 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/usr/src/wi/.docker/google-cloud-authentication/CWP-S2T_5d8404bd7ee9e7145a60f2778956aef6b96b822f.json
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MYSQL_HOST_NAME=mysql-${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=${MYSQL_HOST_NAME}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -117,7 +117,7 @@ services:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MYSQL_HOST_NAME=mysql-${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=${MYSQL_HOST_NAME}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -144,7 +144,7 @@ services:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MYSQL_HOST_NAME=mysql-${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=${MYSQL_HOST_NAME}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -171,7 +171,7 @@ services:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MYSQL_HOST_NAME=mysql-${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=${MYSQL_HOST_NAME}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -197,7 +197,7 @@ services:
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
-      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8005:8005'
     networks:
@@ -215,6 +215,7 @@ services:
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8006:8006'
     depends_on:
@@ -232,9 +233,10 @@ services:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
     restart: always
     environment:
-      - NODE_ENV=${APP_ENV}
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
-      - MYSQL_HOST_NAME=mysql-${DEPLOYMENT_ENV}
+      - NODE_ENV=${APP_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=${MYSQL_HOST_NAME}
       - MYSQL_PORT=${MYSQL_PORT}
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}

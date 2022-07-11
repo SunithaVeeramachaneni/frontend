@@ -5,7 +5,7 @@
 >
   <ngx-spinner
     size="medium"
-    bdColor="#BBBBBB"
+    bdColor="rgba(0, 0, 0, 0.6)"
     type="ball-clip-rotate-pulse"
     [fullScreen]="false"
   >
@@ -524,11 +524,11 @@
             <p class="m-0">
               <mat-form-field appearance="outline" class="width-100">
                 <mat-label translate>scope</mat-label>
-                <input
+                <textarea
                   matInput
                   [placeholder]="'scope' | translate"
                   formControlName="scope"
-                />
+                ></textarea>
               </mat-form-field>
               <ng-container *ngIf="validationErrors$ | async as errors">
                 <mat-error *ngIf="errors.erps.sap.scope.name">

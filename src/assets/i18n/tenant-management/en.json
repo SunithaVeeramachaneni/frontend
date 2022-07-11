@@ -32,6 +32,7 @@
   "invalidPort": "Enter a valid port",
   "invalidLicenceCount": "Enter valid licence count",
   "invalidUrl": "Enter valid {name}",
+  "invalidScope": "Enter valid scope",
   "tenantId": "Tenant ID",
   "tenantName": "Tenant Name",
   "tenantIdp": "Tenant IDP",

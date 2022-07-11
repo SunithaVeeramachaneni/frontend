@@ -1,0 +1,16 @@
+<div class="user-settings-body">
+  <div class="width-20" style="border-right: 1px solid #bdbdbd">
+    <mat-list>
+      <mat-list-item
+        routerLink="/user-settings/profile"
+        [routerLinkActive]="['is-active']"
+        class="user-settings-menu"
+      >
+        Profile
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="width-80">
+    <router-outlet></router-outlet>
+  </div>
+</div>

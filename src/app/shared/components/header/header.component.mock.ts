@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
+import { UserDetails } from 'src/app/interfaces';
 
-export const userData$ = of({
+export const userInfo = {
   id: 1,
   firstName: 'test',
   lastName: 'user',
@@ -18,33 +19,19 @@ export const userData$ = of({
       53, 69, 114, 107, 74, 103, 103, 103, 61, 61
     ]
   },
+  contact: '+918123456789',
   isActive: true,
   createdBy: 1,
   updatedBy: null,
   createdAt: '2022-06-04T06:43:46.000Z',
-  updatedAt: '2022-06-04T06:43:46.000Z'
-});
+  updatedAt: '2022-06-04T06:43:46.000Z',
+  roles: [{ name: 'Super Admin' }]
+} as UserDetails;
+
+export const userInfo$ = of(userInfo);
 
 export const userAuthData$ = of({
-  userData: {
-    aud: '06a96c09-45cc-4120-8f96-9c0a0d89d6bc',
-    iss: 'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0',
-    iat: 1635229986,
-    nbf: 1635229986,
-    exp: 1635233886,
-    authtime: 1635143579,
-    email: 'test.user@innovapptive.com',
-    idp: 'https://sts.windows.net/1ff16493-9d04-4875-97a7-76878d5899a6/',
-    name: 'test.user',
-    nonce: 'bc4ec30e87f45023015f085a41789ddfd0bbQlLV1',
-    oid: '2af29cc2-2050-485d-9b1e-ce3303655a1e',
-    preferredusername: 'test.user@innovapptive.com',
-    rh: '0.ARIAS_Dm-J8rq0O6irTDZwiHIwlsqQbMRSBBj5acCg2J1rwSABI.',
-    sub: 'SbL1ZS_swAZiTIZ9umIM6eu2ajtvFGFBZ5NhVny30jg',
-    tid: 'f8e6f04b-2b9f-43ab-ba8a-b4c367088723',
-    uti: '8QCnfKooeUifLZ7qy14hAQ',
-    ver: '2.0'
-  },
+  userData: null,
   allUserData: [
     {
       configId: '0-06a96c09-45cc-4120-8f96-9c0a0d89d6bc',

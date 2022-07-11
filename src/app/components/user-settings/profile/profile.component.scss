@@ -1,0 +1,150 @@
+$white-color: #ffffff;
+$blue-color: #3d5afe;
+
+.profile-heading {
+  color: #212121;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.edit-btn {
+  float: right;
+  color: $blue-color;
+  box-shadow: none;
+  background-color: $white-color;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  margin-top: -7px;
+}
+
+.save-btn {
+  float: right;
+  background-color: $blue-color;
+  box-shadow: none;
+  color: $white-color;
+  margin-top: -7px;
+  border: 1px solid transparent;
+  margin-left: 15px;
+}
+
+.cancel-btn {
+  float: right;
+  color: $blue-color;
+  background-color: $white-color;
+  border: 1px solid rgba(61, 90, 254, 0.5);
+  box-shadow: none;
+  margin-top: -7px;
+}
+
+.change-remove-btn {
+  color: $blue-color;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background-color: transparent;
+  margin: 0 10px 5px 10px;
+}
+
+.change-remove-btn:disabled {
+  color: #e0e0e0;
+  cursor: auto;
+}
+
+.image-upload {
+  text-align: center;
+}
+
+.image-upload > input {
+  display: none;
+}
+
+.user-profile-img {
+  display: block;
+  margin: 0 auto 10px auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.custom-profile-form-fields {
+  width: 40%;
+  margin: 0 auto;
+  overflow-y: auto;
+  height: 330px;
+  padding-top: 20px;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: $white-color;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 4px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline
+    .mat-form-field-subscript-wrapper {
+    padding: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+}
+
+.first-name {
+  width: 49%;
+}
+
+.last-name {
+  width: 49%;
+  float: right;
+}
+
+::ng-deep .roles-select .mat-option-text {
+  display: flex;
+}
+
+.profile-container {
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-disabled
+    .mat-form-field-outline {
+    opacity: 0;
+  }
+
+  ::ng-deep .mat-input-element:disabled {
+    color: #000000;
+  }
+
+  ::ng-deep .ngx-floating .country-selector {
+    margin: -5px 0 0 -10px;
+  }
+
+  ::ng-deep .country-selector:disabled {
+    color: #000000;
+  }
+}
+
+::ng-deep .mat-menu-panel {
+  max-height: calc(100vh - 400px) !important;
+}
+
+::ng-deep input.country-search {
+  width: 90% !important;
+  padding: 0 0 0 20px !important;
+}
+
+.hide-field {
+  display: none;
+}

@@ -1,0 +1,145 @@
+<form
+  [formGroup]="profileForm"
+  (ngSubmit)="saveProfile()"
+  class="profile-container"
+>
+  <ngx-spinner
+    size="medium"
+    bdColor="rgba(0, 0, 0, 0.6)"
+    type="ball-clip-rotate-pulse"
+    [fullScreen]="false"
+  >
+  </ngx-spinner>
+  <div class="p-20">
+    <span class="profile-heading" translate>profile</span>
+    <button
+      mat-raised-button
+      type="button"
+      class="edit-btn"
+      *ngIf="!profileEditMode"
+      (click)="editProfile()"
+      translate="editBtn"
+    ></button>
+    <button
+      type="submit"
+      mat-raised-button
+      class="save-btn"
+      *ngIf="profileEditMode"
+      [disabled]="profileForm.invalid || profileForm.pristine"
+      translate="saveBtn"
+    ></button>
+    <button
+      mat-raised-button
+      type="button"
+      class="cancel-btn"
+      *ngIf="profileEditMode"
+      (click)="cancelProfile()"
+      translate="cancelBtn"
+    ></button>
+  </div>
+
+  <div class="image-upload">
+    <img [src]="profileImage" class="user-profile-img" />
+    <button
+      type="button"
+      class="change-remove-btn"
+      *ngIf="profileEditMode"
+      (click)="removePhoto()"
+      translate="removePhoto"
+      [disabled]="disableRemoveProfile"
+    ></button>
+    <label for="file-input" #file *ngIf="profileEditMode">
+      <button
+        type="button"
+        class="change-remove-btn"
+        (click)="file.click()"
+        translate="changePhoto"
+      ></button>
+    </label>
+    <input
+      id="file-input"
+      type="file"
+      accept="image/*"
+      (change)="changePhoto($event)"
+      (click)="resetPhoto($event)"
+    />
+  </div>
+  <div class="custom-profile-form-fields">
+    <div class="input-container">
+      <mat-form-field appearance="outline" class="first-name">
+        <mat-label>{{ 'firstName' | translate }}</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="last-name">
+        <mat-label>{{ 'lastName' | translate }}</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="input-container width-100">
+      <mat-label>{{ 'title' | translate }}</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="width-100">
+      <mat-label>{{ 'email' | translate }}</mat-label>
+      <input matInput formControlName="email" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="width-100">
+      <mat-label>{{ 'roles' | translate }}</mat-label>
+      <input matInput formControlName="roles" />
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline"
+      class="width-100"
+      [ngClass]="{
+        'hide-field':
+          profileEditMode === true || this.userInfo?.contact !== null
+      }"
+    >
+      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <input matInput value="Not added" [disabled]="true" />
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="outline"
+      class="width-100"
+      [ngClass]="{
+        'hide-field':
+          profileEditMode === false && this.userInfo?.contact === null
+      }"
+    >
+      <mat-label>{{ 'contact' | translate }}</mat-label>
+      <ngx-mat-intl-tel-input
+        formControlName="contact"
+        [preferredCountries]="['us', 'in']"
+        [enablePlaceholder]="true"
+        [enableSearch]="true"
+        name="contact"
+        #contact
+      >
+      </ngx-mat-intl-tel-input>
+      <mat-error
+        *ngIf="
+          profileForm.get('contact').errors?.required &&
+          profileForm.get('contact').touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'required' | translate: { name: 'contact' | translate } }}
+      </mat-error>
+      <mat-error
+        *ngIf="
+          profileForm.get('contact').errors?.validatePhoneNumber &&
+          profileForm.get('contact').touched
+        "
+        class="m-t-5 error-fields"
+      >
+        {{ 'invalidContact' | translate }}
+      </mat-error>
+    </mat-form-field>
+  </div>
+</form>

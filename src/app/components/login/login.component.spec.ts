@@ -128,30 +128,43 @@ describe('LoginComponent', () => {
       });
     });
 
-    it('should return matched tenantsInfo if company or domain name matches', () => {
-      component.loginForm.setValue({ companyOrDomainName: 'inno' });
+    it('should return matched tenantsInfo if company or domain name matches', async () => {
+      const companyOrDomainNameElement = loginEl.querySelector('input');
+      companyOrDomainNameElement.dispatchEvent(new Event('focusin'));
+      companyOrDomainNameElement.value = 'inno';
+      companyOrDomainNameElement.dispatchEvent(new Event('input'));
 
-      component.ngOnInit();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
 
-      component.tenantsInfo$.subscribe((data) =>
-        expect(data).toEqual(tenantsInfo)
-      );
+      expect(document.querySelectorAll('mat-option').length).toBe(2);
     });
 
-    it('should return empty tenantsInfo if company or domain name doesnt match', () => {
-      component.loginForm.setValue({ companyOrDomainName: 'innovation' });
+    it('should return empty tenantsInfo if company or domain name doesnt match', async () => {
+      const companyOrDomainNameElement = loginEl.querySelector('input');
+      companyOrDomainNameElement.dispatchEvent(new Event('focusin'));
+      companyOrDomainNameElement.value = 'innovation';
+      companyOrDomainNameElement.dispatchEvent(new Event('input'));
 
-      component.ngOnInit();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
 
-      component.tenantsInfo$.subscribe((data) => expect(data).toEqual([]));
+      expect(document.querySelectorAll('mat-option').length).toBe(0);
     });
 
-    it('should return empty tenantsInfo if company or domain name is empty', () => {
-      component.loginForm.setValue({ companyOrDomainName: ' ' });
+    it('should return empty tenantsInfo if company or domain name is empty', async () => {
+      const companyOrDomainNameElement = loginEl.querySelector('input');
+      companyOrDomainNameElement.dispatchEvent(new Event('focusin'));
+      companyOrDomainNameElement.value = ' ';
+      companyOrDomainNameElement.dispatchEvent(new Event('input'));
 
-      component.ngOnInit();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
 
-      component.tenantsInfo$.subscribe((data) => expect(data).toEqual([]));
+      expect(document.querySelectorAll('mat-option').length).toBe(0);
     });
 
     it('should redirect to tenant idp, if company or domain name exists in session storage', () => {
