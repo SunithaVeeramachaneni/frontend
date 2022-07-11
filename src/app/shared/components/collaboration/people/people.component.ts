@@ -4,9 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, Observable, of } from 'rxjs';
 import { PeopleService } from './people.service';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
-import { getImageSrc } from '../../../../shared/utils/imageUtils';
+import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 @Component({
@@ -25,7 +24,7 @@ export class PeopleComponent implements OnInit {
   constructor(
     public uploadDialog: MatDialog,
     private peopleService: PeopleService,
-    private sanitizer: DomSanitizer
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -37,9 +36,8 @@ export class PeopleComponent implements OnInit {
       mergeMap((users) => {
         if (users.length) {
           users.forEach((user) => {
-            user.profileImage = getImageSrc(
-              Buffer.from(user.profileImage).toString(),
-              this.sanitizer
+            user.profileImage = this.imageUtils.getImageSrc(
+              Buffer.from(user.profileImage).toString()
             );
           });
           return of({ data: users });

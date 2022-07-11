@@ -114,11 +114,15 @@
 .add-url-icon {
   float: right;
   position: relative;
-  top: 35px;
-  left: 30px;
-  cursor: pointer;
+  top: 40px;
+  left: 40px;
+  cursor: auto;
+  background: transparent;
+  border: none;
 }
 
-.delete-icon {
-  cursor: pointer;
+.delete-button {
+  border: none;
+  background: transparent;
+  cursor: auto;
 }

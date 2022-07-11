@@ -1,0 +1,17 @@
+<div class="cancel-modal">
+  <p class="cancel-title" translate="cancelModalHeading"></p>
+  <p class="cancel-subtitle" translate="cancelModalSubHeading"></p>
+
+  <button
+    mat-raised-button
+    class="yes-btn"
+    (click)="cancel('yes')"
+    translate="yesBtn"
+  ></button>
+  <button
+    mat-button
+    class="no-btn"
+    (click)="cancel('no')"
+    translate="noBtn"
+  ></button>
+</div>

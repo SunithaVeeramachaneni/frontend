@@ -160,4 +160,36 @@ describe('User service', () => {
   //     ).toBeTrue();
   //   });
   // });
+
+  describe('updateUserProfile$', () => {
+    it('should define function', () => {
+      expect(service.updateUserProfile$).toBeDefined();
+    });
+
+    it('should update user profile', () => {
+      const userProfile = {
+        contact: '+918123456789',
+        profileImage:
+          'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
+      };
+      (appServiceSpy.patchData as jasmine.Spy)
+        .withArgs(
+          environment.userRoleManagementApiUrl,
+          `users/profile/1`,
+          userProfile,
+          info
+        )
+        .and.returnValue(of(null));
+
+      service.updateUserProfile$(1, userProfile, info).subscribe((response) => {
+        expect(response).toEqual(userProfile);
+        expect(appServiceSpy.patchData).toHaveBeenCalledWith(
+          environment.userRoleManagementApiUrl,
+          `users/profile/1`,
+          userProfile,
+          info
+        );
+      });
+    });
+  });
 });

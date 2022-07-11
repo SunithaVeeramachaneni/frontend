@@ -1,43 +1,29 @@
 /* eslint-disable guard-for-in */
 import {
   Component,
-  ViewChild,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  OnInit
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import {
   BehaviorSubject,
   combineLatest,
-  forkJoin,
-  from,
   Observable,
   of,
-  Subscription
+  Subscription,
+  throwError
 } from 'rxjs';
-import { FormControl, FormGroupDirective } from '@angular/forms';
-import {
-  map,
-  startWith,
-  filter,
-  tap,
-  mergeMap,
-  toArray,
-  flatMap
-} from 'rxjs/operators';
-import { remove } from 'lodash';
-import { MCCCardComponent } from './mcc-card/mcc-card.component';
+import { FormControl } from '@angular/forms';
+import { map, startWith, mergeMap, retryWhen, take } from 'rxjs/operators';
 import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
-import { base64String } from './image';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
 import * as moment from 'moment';
 import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-maintenance',
@@ -45,7 +31,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./maintenance.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MaintenanceComponent implements OnInit {
+export class MaintenanceComponent implements OnInit, OnDestroy {
   public workOrderList$: Observable<WorkOrders>;
   public updateWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList$: Observable<WorkOrders>;
@@ -109,14 +95,11 @@ export class MaintenanceComponent implements OnInit {
   hideList = true;
   showFilters = false;
   constructor(
-    private _maintenanceSvc: MaintenanceService,
-    // private modalCtrl: ModalController,
+    private maintenanceSvc: MaintenanceService,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,
     private _dateSegmentService: DateSegmentService,
-    private cd: ChangeDetectorRef,
-    public dialog: MatDialog,
-    private translateService: TranslateService
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -124,10 +107,10 @@ export class MaintenanceComponent implements OnInit {
     this.dateRange$ = new BehaviorSubject(
       this._dateSegmentService.getStartAndEndDate('month')
     );
-    this.workCenterSubscription = this._maintenanceSvc
+    this.workCenterSubscription = this.maintenanceSvc
       .getAllWorkCenters()
       .subscribe((resp) => (this.workCenterList = resp));
-    this.technicianSubscription = this._maintenanceSvc
+    this.technicianSubscription = this.maintenanceSvc
       .getTechnicians()
       .subscribe((resp) => {
         this.technicians = resp;
@@ -143,7 +126,7 @@ export class MaintenanceComponent implements OnInit {
   ngOnDestroy() {
     this.technicianSubscription.unsubscribe();
     this.workCenterSubscription.unsubscribe();
-    this._maintenanceSvc.closeEventSource();
+    this.maintenanceSvc.closeEventSource();
   }
 
   getImageSrc = (source: string) => {
@@ -158,9 +141,9 @@ export class MaintenanceComponent implements OnInit {
   }
 
   getWorkOrders() {
-    this.workOrderList$ = this._maintenanceSvc.getAllWorkOrders();
+    this.workOrderList$ = this.maintenanceSvc.getAllWorkOrders();
 
-    this.updateWorkOrderList$ = this._maintenanceSvc
+    this.updateWorkOrderList$ = this.maintenanceSvc
       .getServerSentEvent('/updateWorkOrders')
       .pipe(
         startWith({
@@ -168,7 +151,19 @@ export class MaintenanceComponent implements OnInit {
           assigned: [],
           inProgress: [],
           completed: []
-        })
+        }),
+        retryWhen((error) =>
+          error.pipe(
+            mergeMap((err) => {
+              if (err && err.status === 401) {
+                this.maintenanceSvc.closeEventSource();
+                return of(err);
+              }
+              return throwError(err);
+            }),
+            take(1)
+          )
+        )
       );
     this.combinedWorkOrderList1$ = this.combineWorkOrders(
       this.workOrderList$,
@@ -349,11 +344,11 @@ export class MaintenanceComponent implements OnInit {
           assigned: [{ ...workOrder, isLoading: true, status: 'assigned' }]
         });
 
-        const res = this._maintenanceSvc.setAssigneeAndWorkCenter(resp);
+        const res = this.maintenanceSvc.setAssigneeAndWorkCenter(resp);
         res.subscribe(async (response) => {
           if (response === true) {
             const workOrder$ =
-              this._maintenanceSvc.getWorkOrderByID(workOrderID);
+              this.maintenanceSvc.getWorkOrderByID(workOrderID);
             workOrder$.subscribe((workOrderNew) =>
               this.putWorkOrder$.next(workOrderNew)
             );

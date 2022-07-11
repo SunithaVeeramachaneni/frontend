@@ -136,3 +136,5 @@ export const permissions = Object.freeze({
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE'
 });
+
+export const defaultProfile = 'assets/user-management-icons/Vector.png';

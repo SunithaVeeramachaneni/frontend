@@ -44,7 +44,7 @@ const updateTenant = {
 } as Tenant;
 declare const ENCRYPTION_KEY: string;
 const regUrl =
-  '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$';
+  '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
 describe('TenantComponent', () => {
   let component: TenantComponent;
@@ -996,19 +996,18 @@ describe('TenantComponent', () => {
               );
             });
 
-            it('should validate maxlength', () => {
+            it('should validate valid scope', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope:
-                      'loremipsumdolorsitametconsecteturadipisicingelitinimpeditaccusantiumreiciendisperferendissuntveroanim'
+                    scope: '{}'
                   }
                 }
               });
 
               expect(component.tenantForm.get('erps.sap.scope').errors).toEqual(
                 {
-                  maxlength: { requiredLength: 100, actualLength: 101 }
+                  invalidScope: true
                 }
               );
             });
@@ -2420,6 +2419,13 @@ describe('TenantComponent', () => {
     });
 
     it('should patch form with tenant data', () => {
+      const newTenant = cloneDeep(createTenant);
+      newTenant.erps.sap.scope = JSON.stringify(
+        newTenant.erps.sap.scope,
+        null,
+        ' '
+      );
+
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));
@@ -2441,7 +2447,7 @@ describe('TenantComponent', () => {
       component.ngOnInit();
 
       expect(component.tenantForm.getRawValue()).toEqual({
-        ...createTenant,
+        ...newTenant,
         id
       });
       expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
@@ -2564,7 +2570,14 @@ describe('TenantComponent', () => {
   });
 
   describe('saveTenant', () => {
+    let newTenant: Tenant;
     beforeEach(() => {
+      newTenant = cloneDeep(createTenant);
+      newTenant.erps.sap.scope = JSON.stringify(
+        newTenant.erps.sap.scope,
+        null,
+        ' '
+      );
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));
@@ -2591,7 +2604,7 @@ describe('TenantComponent', () => {
     });
 
     it('should allow user to add a tenant if form is valid & dirty', () => {
-      component.tenantForm.patchValue(createTenant);
+      component.tenantForm.patchValue(newTenant);
       component.tenantForm.markAsDirty();
 
       tenantDe.query(By.css('form')).triggerEventHandler('submit', null);
@@ -2619,7 +2632,7 @@ describe('TenantComponent', () => {
     });
 
     it('should not allow user to add a tenant if form is invalid', () => {
-      component.tenantForm.patchValue({ ...createTenant, tenantName: '' });
+      component.tenantForm.patchValue({ ...newTenant, tenantName: '' });
       component.tenantForm.markAsDirty();
 
       tenantDe.query(By.css('form')).triggerEventHandler('submit', null);
@@ -2628,7 +2641,7 @@ describe('TenantComponent', () => {
     });
 
     it('should allow user to update a tenant if form is valid & dirty', () => {
-      component.tenantForm.patchValue({ ...createTenant, id });
+      component.tenantForm.patchValue({ ...newTenant, id });
       component.tenantForm.markAsDirty();
 
       tenantDe.query(By.css('form')).triggerEventHandler('submit', null);
@@ -2778,6 +2791,82 @@ describe('TenantComponent', () => {
       expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
       expect(component.tenantForm.get('rdbms.database').disabled).toBeTrue();
       expect(component.tenantForm.get('nosql.database').disabled).toBeTrue();
+    });
+  });
+
+  describe('scopeValidator', () => {
+    it('should define function', () => {
+      expect(component.scopeValidator).toBeDefined();
+    });
+
+    it('should return null if scope is empty', () => {
+      component.tenantForm.patchValue({
+        erps: {
+          sap: {
+            scope: ''
+          }
+        }
+      });
+
+      expect(
+        component.tenantForm.get('erps.sap.scope').errors.invalidScope
+      ).toBeUndefined();
+    });
+
+    it('should return invalidScope true if scope is empty', () => {
+      component.tenantForm.patchValue({
+        erps: {
+          sap: {
+            scope: '{}'
+          }
+        }
+      });
+
+      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+        invalidScope: true
+      });
+    });
+
+    it('should return invalidScope true if scopes are empty', () => {
+      component.tenantForm.patchValue({
+        erps: {
+          sap: {
+            scope: '{"race": "", "mWorkOrder": "", "mInventory":""}'
+          }
+        }
+      });
+
+      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+        invalidScope: true
+      });
+    });
+
+    it('should return invalidScope true if scope is invalid', () => {
+      component.tenantForm.patchValue({
+        erps: {
+          sap: {
+            scope:
+              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory}'
+          }
+        }
+      });
+
+      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+        invalidScope: true
+      });
+    });
+
+    it('should return null if scope is valid', () => {
+      component.tenantForm.patchValue({
+        erps: {
+          sap: {
+            scope:
+              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory"}'
+          }
+        }
+      });
+
+      expect(component.tenantForm.get('erps.sap.scope').errors).toBeNull();
     });
   });
 });

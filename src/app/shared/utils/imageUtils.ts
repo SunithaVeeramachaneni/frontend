@@ -1,9 +1,16 @@
+import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-export function getImageSrc(source: string, sanitizer: DomSanitizer) {
-  if (source) {
-    const base64Image = 'data:image/jpeg;base64,' + source;
-    return sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+@Injectable({
+  providedIn: 'root'
+})
+export class ImageUtils {
+  constructor(private sanitizer: DomSanitizer) {}
+
+  getImageSrc(source: string) {
+    if (source) {
+      const base64Image = 'data:image/jpeg;base64,' + source;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
+    }
   }
 }

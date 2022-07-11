@@ -14,9 +14,8 @@ import {
   Subscription
 } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
-import { getImageSrc } from '../../../../shared/utils/imageUtils';
+import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 
 interface SendReceiveMessages {
@@ -74,7 +73,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private emitterService: EmitterService,
-    private sanitizer: DomSanitizer
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -95,9 +94,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
       mergeMap((conversations) => {
         if (conversations.length) {
           conversations.forEach((conv) => {
-            conv.userInfo.profileImage = getImageSrc(
-              Buffer.from(conv.userInfo.profileImage).toString(),
-              this.sanitizer
+            conv.userInfo.profileImage = this.imageUtils.getImageSrc(
+              Buffer.from(conv.userInfo.profileImage).toString()
             );
           });
           if (this.targetUser) {
@@ -189,9 +187,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
         mergeMap((history) => {
           if (history.length) {
             history.forEach((message) => {
-              message.userInfo.profileImage = getImageSrc(
-                Buffer.from(message.userInfo.profileImage).toString(),
-                this.sanitizer
+              message.userInfo.profileImage = this.imageUtils.getImageSrc(
+                Buffer.from(message.userInfo.profileImage).toString()
               );
               message.isMeeting = false;
               if (message.text.indexOf('meeting_request')) {
