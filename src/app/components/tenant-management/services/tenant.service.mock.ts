@@ -28,7 +28,7 @@ export const tenants: Tenant[] = [
         scope: {
           race: 'racescope',
           mWorkOrder: 'wrokorderscope',
-          mInventory: 'inventoeyscope'
+          mInventory: 'inventoryscope'
         },
         saml: {
           oauth2Url: 'https://oauth2urltest.com',
