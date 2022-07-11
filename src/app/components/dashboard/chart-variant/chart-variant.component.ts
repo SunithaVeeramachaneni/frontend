@@ -46,11 +46,15 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
 
   firstInputName: string;
   secondInputName: string;
+  isStacked: boolean;
   chartVarientForm = this.fb.group({
     chartTitle: new FormControl('', [
       Validators.minLength(3),
       Validators.maxLength(48)
     ]),
+    datasetFieldName: [''],
+    countFieldName: [''],
+    stackFieldName: [''],
     chartVarient: new FormControl(''),
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
@@ -72,8 +76,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       } = {},
       groupBy
     } = this.report;
-    const { isStacked } = this.chartConfig;
-    let chartVarient;
+    const { isStacked, datasetFieldName, countFieldName, stackFieldName } =
+      this.chartConfig;
+    this.isStacked = isStacked;
+    let chartVarient: string;
     if (isStacked) chartVarient = `stacked_${type}_${indexAxis}`;
     else
       chartVarient = groupBy?.length
@@ -82,6 +88,9 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     this.chartVarientForm.patchValue({
       chartVarient,
       chartTitle,
+      datasetFieldName,
+      countFieldName,
+      stackFieldName,
       showValues,
       showLegends
     });
@@ -106,10 +115,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       .pipe(
         distinctUntilChanged(),
         takeUntil(this.destroy$),
-        tap((showValues) => {
+        tap((value) => {
           this.chartVarientChanges.emit({
             type: 'showValues',
-            value: showValues
+            value
           });
         })
       )
@@ -119,11 +128,68 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       .pipe(
         distinctUntilChanged(),
         takeUntil(this.destroy$),
-        tap((showLegends) => {
+        tap((value) => {
           this.chartVarientChanges.emit({
             type: 'showLegends',
-            value: showLegends
+            value
           });
+        })
+      )
+      .subscribe();
+
+    this.f.datasetFieldName.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        tap((value) => {
+          this.chartVarientChanges.emit({
+            type: 'datasetFieldName',
+            value
+          });
+          if (this.isStacked) {
+            const datasetFields = this.chartConfig.datasetFields.filter(
+              (datasetField) =>
+                datasetField.name !== this.f.stackFieldName.value
+            );
+            if (this.f.datasetFieldName.value === this.f.stackFieldName.value) {
+              this.f.stackFieldName.setValue(datasetFields[0].name);
+            }
+          }
+        })
+      )
+      .subscribe();
+
+    this.f.countFieldName.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        tap((value) => {
+          this.chartVarientChanges.emit({
+            type: 'countFieldName',
+            value
+          });
+        })
+      )
+      .subscribe();
+
+    this.f.stackFieldName.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        takeUntil(this.destroy$),
+        tap((value) => {
+          this.chartVarientChanges.emit({
+            type: 'stackFieldName',
+            value
+          });
+          if (this.isStacked) {
+            const datasetFields = this.chartConfig.datasetFields.filter(
+              (datasetField) =>
+                datasetField.name !== this.f.datasetFieldName.value
+            );
+            if (this.f.datasetFieldName.value === this.f.stackFieldName.value) {
+              this.f.datasetFieldName.setValue(datasetFields[0].name);
+            }
+          }
         })
       )
       .subscribe();
@@ -132,27 +198,6 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   get f() {
     return this.chartVarientForm.controls;
   }
-
-  onDatasetFieldNameChange = () => {
-    this.chartVarientChanges.emit({
-      type: 'datasetFieldName',
-      value: this.chartConfig.datasetFieldName
-    });
-  };
-
-  onCountFieldNameChange = () => {
-    this.chartVarientChanges.emit({
-      type: 'countFieldName',
-      value: this.chartConfig.countFieldName
-    });
-  };
-
-  onStackFieldNameChange = () => {
-    this.chartVarientChanges.emit({
-      type: 'stackFieldName',
-      value: this.chartConfig.stackFieldName
-    });
-  };
 
   onChartVarientChange = (event: MatButtonToggleChange) => {
     const { value } = event;
@@ -169,6 +214,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       : `assets/dashboard-icons/${imageName}.svg`;
 
   setAxisNames = () => {
+    this.isStacked = false;
     if (
       this.f.chartVarient.value === 'doughnut' ||
       this.f.chartVarient.value === 'pie'
@@ -184,6 +230,10 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     } else {
       this.firstInputName = 'Y axis';
       this.secondInputName = 'X axis';
+    }
+
+    if (this.f.chartVarient.value.indexOf('stacked') > -1) {
+      this.isStacked = true;
     }
   };
 
