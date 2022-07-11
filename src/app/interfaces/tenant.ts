@@ -20,6 +20,9 @@ export interface Tenant {
   logDBType: string;
   logLevel: string;
   isActive?: boolean;
+  collaborationType: string;
+  slackConfiguration?: any;
+  msteamsConfiguration?: any;
   createdBy?: string;
   updatedBy?: string;
   createdAt?: string;

@@ -23,16 +23,14 @@
         </div>
         <div mat-line>{{ user.title }}</div>
         <button
-          [disabled]="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
+          [disabled]="user.collaborationDisabled"
           mat-icon-button
           color="primary"
           (click)="onTextMessageClick(user)"
         >
-          <mat-icon *ngIf="user.UserSlackDetail && user.UserSlackDetail.slackID"
-            >chat</mat-icon
-          >
+          <mat-icon *ngIf="!user.collaborationDisabled">chat</mat-icon>
           <mat-icon
-            *ngIf="!user.UserSlackDetail || !user.UserSlackDetail.slackID"
+            *ngIf="user.collaborationDisabled"
             title="This user is not connected to Slack"
             >comments_disabled</mat-icon
           >

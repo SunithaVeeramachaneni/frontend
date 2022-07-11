@@ -62,6 +62,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
   slackConfiguration: FormGroup;
   msTeamsConfiguration: FormGroup;
 
+  tenantData: any;
+
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
     'Dashboard',
@@ -323,6 +325,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
               this.slackConfiguration
             );
           }
+          this.slackConfiguration.patchValue(
+            this.tenantData.slackConfiguration
+          );
         } else if (collabType === 'msteams') {
           if (this.tenantForm.contains('slackConfiguration')) {
             this.tenantForm.removeControl('slackConfiguration');
@@ -333,6 +338,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
               this.msTeamsConfiguration
             );
           }
+          this.msTeamsConfiguration.patchValue(
+            this.tenantData.msTeamsConfiguration
+          );
         }
       });
 
@@ -350,33 +358,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     this.route.data.subscribe(({ tenant }) => {
       if (tenant && Object.keys(tenant).length) {
+        this.tenantData = tenant;
         const { sap, node } = tenant.protectedResources;
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
-
-        tenant.rdbms.password = this.commonService.decrypt(
-          tenant.rdbms.password,
-          this.encryptionKey
-        );
-        tenant.nosql.password = this.commonService.decrypt(
-          tenant.nosql.password,
-          this.encryptionKey
-        );
-        tenant.erps.sap.password = this.commonService.decrypt(
-          tenant.erps.sap.password,
-          this.encryptionKey
-        );
-
-        tenant.erps.sap.saml.clientSecret = this.commonService.decrypt(
-          tenant.erps.sap.saml.clientSecret,
-          this.encryptionKey
-        );
-
-        tenant.msTeamsConfiguration.msTeamsClientSecret =
-          this.commonService.decrypt(
-            tenant.msTeamsConfiguration.msTeamsClientSecret,
-            this.encryptionKey
-          );
 
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(

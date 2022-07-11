@@ -1,20 +1,21 @@
 .chatsBody {
   display: flex;
-  height: 85vh;
+  // height: 85vh;
 }
 .conversationsList {
-  width: 40%;
+  width: 400px;
   background: #ffffff;
-  padding: 10px;
-  border-radius: 15px 0px 0px 15px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  // padding: 10px;
+  border-right: 2px solid #f2f2f2;
+  // border-radius: 15px 0px 0px 15px;
+  // box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+  //   0 1px 3px 0 rgb(116 116 116);
   max-width: 400px;
   .searchBar {
     display: flex;
     .searchInput {
-      border: 1px solid #e1dcdc;
-      border-radius: 45px;
+      // border: 1px solid #e1dcdc;
+      border-radius: 5px;
       padding: 10px;
       background: #eeeeee;
     }
@@ -25,13 +26,15 @@
   .participants {
     display: flex;
     align-items: center;
-    padding: 10px 0px;
+    font-weight: bold;
+    // padding: 10px 0px;
   }
   .participantsTitle {
     margin-left: 10px;
   }
   .userList {
-    height: 68vh;
+    // height: 68vh;
+    height: 440px;
     overflow: auto;
     overflow-x: hidden;
   }
@@ -71,10 +74,11 @@
   width: 100%;
   flex-direction: column;
   background: #ffffff !important;
-  border-radius: 0px 15px 15px 0px;
-  padding: 10px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  margin-top: -60px;
+  // border-radius: 0px 15px 15px 0px;
+  // padding: 10px;
+  // box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+  //   0 1px 3px 0 rgb(116 116 116);
   .conversationHead {
     display: flex;
     align-items: center;
@@ -176,14 +180,15 @@
     border-radius: 45px;
   }
   .userList {
-    height: 74vh;
+    // height: 74vh;
+    height: 520px;
     overflow: auto;
     overflow-x: hidden;
   }
   .chatBottom {
     .messageInputBar {
       display: flex;
-      padding: 10px 0px;
+      padding: 10px 10px;
       .messageInputGroup {
         display: flex;
         align-items: center;
@@ -213,4 +218,11 @@
     cursor: pointer;
     background: #b7b9bc2e;
   }
+}
+
+.centerText {
+  display: flex !important;
+  justify-content: center;
+  align-content: space-around;
+  align-items: center;
 }

@@ -129,8 +129,13 @@ export class ChatsComponent implements OnInit, OnDestroy {
             });
             if (this.targetUser) {
               conversations.forEach((conv) => {
-                if (conv.user === this.targetUser.UserSlackDetail.slackID) {
+                if (
+                  conv.chatType === 'oneOnOne' &&
+                  conv.userInfo.email === this.targetUser.email
+                ) {
                   this.setSelectedConversation(conv);
+                } else {
+                  // TODO: Create a DM conversation with this.targetUser and set it as selected conversation
                 }
               });
             } else {
@@ -166,7 +171,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.selectedView = 'CREATE_GROUP';
   };
 
-  handleGroupCreation = ($event) => {
+  handleGroupCreation = (event) => {
     // TODO: Add the created group to the existing groups/conversations...
     this.selectedView = 'CHAT';
   };
@@ -368,50 +373,47 @@ export class ChatsComponent implements OnInit, OnDestroy {
     });
   };
 
-  openUploadDialog = (selectedConversation: any) => {
-    const dialogRef = this.uploadDialog.open(UploadDialogComponent, {
-      disableClose: true,
-      hasBackdrop: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const info: ErrorInfo = {
-          displayToast: true,
-          failureResponse: 'throwError'
-        };
-        const conversationId = selectedConversation.id;
-        const formData = new FormData();
-        formData.append('attachment', result);
-        this.chatService
-          .uploadFileToConversation$(conversationId, formData, info)
-          .subscribe(
-            (response) => {
-              const filesArr = [];
-              filesArr.push(response.file);
-              // const dateToday = moment().unix();
-
-              this.sendReceiveMessages$.next({
-                action: 'send',
-                message: {
-                  id: selectedConversation.id,
-                  from: response.userInfo,
-                  timestamp: response.file.timestamp,
-                  message: `${selectedConversation.user} Uploaded a file.`,
-                  attachments: filesArr,
-                  chatId: selectedConversation.id,
-                  messageType: 'message'
-                },
-                channel: selectedConversation.id
-              });
-            },
-            (err) => {
-              // TODO: Display toasty message
-            }
-          );
-      }
-    });
-  };
+  selectFile() {
+    const fileUpload = document.getElementById(
+      'uploadFile'
+    ) as HTMLInputElement;
+    fileUpload.onchange = () => {
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      // for (let index = 0; index < fileUpload.files.length; index++) {
+      const selectedFile = fileUpload.files[0];
+      const info: ErrorInfo = {
+        displayToast: true,
+        failureResponse: 'throwError'
+      };
+      const conversationId = this.selectedConversation.id;
+      const formData = new FormData();
+      formData.append('attachment', selectedFile);
+      this.chatService
+        .uploadFileToConversation$(conversationId, formData, info)
+        .subscribe(
+          (response) => {
+            this.sendReceiveMessages$.next({
+              action: 'send',
+              message: {
+                id: this.selectedConversation.id,
+                from: response.from,
+                timestamp: response.createdDateTime,
+                message: `${this.selectedConversation.userInfo.firstName} Uploaded a file.`,
+                attachments: response.attachments || [],
+                chatId: this.selectedConversation.id,
+                messageType: 'message'
+              },
+              channel: this.selectedConversation.id
+            });
+          },
+          (err) => {
+            // TODO: Display toasty message
+          }
+        );
+      // }
+    };
+    fileUpload.click();
+  }
 
   addMessageToConversation = (message) => {
     // check if collaboration dialog is open and chat window is open,

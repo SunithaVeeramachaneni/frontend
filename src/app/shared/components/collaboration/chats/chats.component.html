@@ -90,16 +90,24 @@
           </div>
         </div>
         <div
-          class="userTitle"
+          class="userTitle groupTitle"
           *ngIf="selectedConversation.chatType === 'group'"
         >
           <b class="userName">{{ selectedConversation.topic }} </b>
-          <div mat-line class="userDescription">
-            {{ selectedConversation.userInfo?.title }}
+          <div mat-line class="userDescription groupDescription">
+            <span
+              *ngFor="let member of selectedConversation.members; let i = index"
+            >
+              {{ member.firstName }},
+              <button *ngIf="i === 3">More</button>
+            </span>
           </div>
         </div>
       </div>
       <div>
+        <button mat-icon-button color="primary">
+          <mat-icon>people_alt</mat-icon>
+        </button>
         <button
           disabled
           mat-icon-button
@@ -153,7 +161,14 @@
               </div>
             </div>
             <div class="messageContainerNonLoggedIn">
-              <div [innerHtml]="message.message" class="message"></div>
+              <span class="groupMessageFrom"
+                >{{ message.from.firstName }} {{ message.from.lastName }}</span
+              >
+              <div
+                [innerHtml]="message.message"
+                *ngIf="message.message && message.message.length"
+                class="message"
+              ></div>
               <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
               <div *ngIf="message.attachments && message.attachments.length">
                 <mat-list>
@@ -268,10 +283,22 @@
     <mat-divider class="horiz-divider"></mat-divider>
     <div class="chatBottom">
       <div class="messageInputBar">
+        <input
+          #uploadFile
+          type="file"
+          id="uploadFile"
+          class="hidden-input"
+          accept="image/jpeg, .jpeg, image/png, .png, image/pjpeg, .jpg, .docx, .pdf"
+        />
+
+        <button
+          for="uploadFile"
+          (click)="selectFile()"
+          class="attachmentIconBtn"
+        >
+          <mat-icon class="attachmentIcon">attach_file</mat-icon>
+        </button>
         <div class="messageInputGroup">
-          <mat-icon matPrefix (click)="openUploadDialog(selectedConversation)"
-            >attach_file</mat-icon
-          >
           <input
             matInput
             class="messageInput"
@@ -346,6 +373,10 @@
 </ng-template>
 <ng-template #loadingHistory>
   <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
     </ngx-shimmer-loading>
     <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">

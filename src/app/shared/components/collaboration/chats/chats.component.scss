@@ -33,13 +33,16 @@
 .conversationContent {
   display: flex;
   width: 100%;
+  height: 555px;
   flex-direction: column;
   margin-left: 10px;
   background: #ffffff !important;
-  border-radius: 15px;
+  // border-radius: 15px;
+  border-left: 5px solid #f2f2f2;
   padding: 10px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  // box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
+  //   0 1px 3px 0 rgb(116 116 116);
+  margin-top: -55px;
   .conversationHead {
     display: flex;
     align-items: center;
@@ -70,7 +73,7 @@
         text-overflow: ellipsis;
       }
       .userDescription {
-        width: 175px;
+        width: 200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -79,7 +82,7 @@
   }
   .conversationBody {
     width: 100%;
-    height: 320px;
+    height: 420px;
     overflow-y: auto;
     overflow-x: hidden;
     word-break: break-all;
@@ -163,25 +166,21 @@
       .messageInputGroup {
         display: flex;
         align-items: center;
-        background: #eeeeee;
-        margin-left: 24px;
-        border: 1px solid #eeeeee;
+        margin-left: 5px;
         border-radius: 5px;
-        padding: 0px 10px;
         width: 100%;
+        background: #eeeeee;
       }
       .messageInput {
-        border: 1px solid #e1dcdc;
         padding: 10px;
         background: #eeeeee;
-        margin-left: 5px;
-        border-left: none;
-        border-right: none;
+        border-radius: 5px;
       }
       .audioRecord {
         color: #ffffff;
         border-radius: 8px;
         font-size: 8pt;
+        height: auto;
         // background: #1a66ff;
         margin-left: 5px;
       }
@@ -191,7 +190,7 @@
 .conversationsList {
   width: 40%;
   background: #ffffff;
-  padding: 10px;
+  // padding: 10px;
   border-radius: 15px;
   // box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
   //   0 1px 3px 0 rgb(116 116 116);
@@ -209,7 +208,7 @@
     }
   }
   .userList {
-    height: 54vh;
+    height: 470px;
     overflow: auto;
     overflow-x: hidden;
     margin-right: -10px;
@@ -245,7 +244,7 @@
   display: flex;
 }
 .horiz-divider {
-  margin: 5px 25px;
+  margin: 5px 5px;
 }
 .horiz-dividerConv {
   width: 95% !important;
@@ -351,6 +350,9 @@
     font-size: 13px;
     max-width: 70%;
     word-break: break-word;
+    p {
+      margin: 0px;
+    }
   }
 }
 .messageContainerNonLoggedIn {
@@ -378,10 +380,40 @@
       padding: 0px;
     }
   }
-  .message p {
-    margin: 0 !important;
-  }
+}
+
+.message,
+p {
+  margin: 0px !important;
 }
 .unreadLatestMessage {
   font-weight: bold !important;
+}
+
+.groupTitle {
+  margin-top: -10px;
+}
+.groupDescription {
+  width: 300px;
+}
+.attachmentIconBtn {
+  background: #eeeeee;
+  padding: 10px 10px;
+  border-radius: 5px;
+  margin: 0px 5px;
+  border: none;
+}
+
+.attachmentIcon {
+  transform: rotate(45deg);
+  color: #3d5afe;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.groupMessageFrom {
+  font-size: 8pt;
+  color: #757575;
 }

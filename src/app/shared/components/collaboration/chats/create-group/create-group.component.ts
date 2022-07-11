@@ -7,6 +7,7 @@ import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
 import { getImageSrc } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-create-group',
@@ -25,6 +26,7 @@ export class CreateGroupComponent implements OnInit {
 
   constructor(
     private peopleService: PeopleService,
+    private commonService: CommonService,
     private chatService: ChatService,
     private sanitizer: DomSanitizer
   ) {}
@@ -52,8 +54,16 @@ export class CreateGroupComponent implements OnInit {
       map(([initial]) => {
         const validUsers = [];
         initial.data.forEach((user) => {
-          if (user.UserSlackDetail) {
-            validUsers.push(user);
+          const userInfo = this.commonService.getUserInfo();
+          if (userInfo.collaborationType === 'slack') {
+            if (user.UserSlackDetail) {
+              validUsers.push(user);
+            }
+          } else if (userInfo.collaborationType === 'msteams') {
+            // This is a temporary check to restrict the user selection...
+            if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
+              validUsers.push(user);
+            }
           }
         });
         return validUsers;
@@ -85,8 +95,13 @@ export class CreateGroupComponent implements OnInit {
     };
     const invitedUsers = [];
     selectedUsers.forEach((user) => {
-      if (user.UserSlackDetail && user.UserSlackDetail.slackID) {
-        invitedUsers.push(user.UserSlackDetail.slackID);
+      const userInfo = this.commonService.getUserInfo();
+      if (userInfo.collaborationType === 'slack') {
+        if (user.UserSlackDetail && user.UserSlackDetail.slackID) {
+          invitedUsers.push(user.UserSlackDetail.slackID);
+        }
+      } else if (userInfo.collaborationType === 'msteams') {
+        invitedUsers.push(user.email);
       }
     });
 
