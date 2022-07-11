@@ -1,6 +1,5 @@
-.profile-container {
-  position: relative;
-}
+$white-color: #ffffff;
+$blue-color: #3d5afe;
 
 .profile-heading {
   color: #212121;
@@ -10,18 +9,18 @@
 
 .edit-btn {
   float: right;
-  color: #3d5afe;
+  color: $blue-color;
   box-shadow: none;
-  background-color: #ffffff;
+  background-color: $white-color;
   border: 1px solid rgba(61, 90, 254, 0.5);
   margin-top: -7px;
 }
 
 .save-btn {
   float: right;
-  background-color: #3d5afe;
+  background-color: $blue-color;
   box-shadow: none;
-  color: #ffffff;
+  color: $white-color;
   margin-top: -7px;
   border: 1px solid transparent;
   margin-left: 15px;
@@ -29,15 +28,15 @@
 
 .cancel-btn {
   float: right;
-  color: #3d5afe;
-  background-color: #ffffff;
+  color: $blue-color;
+  background-color: $white-color;
   border: 1px solid rgba(61, 90, 254, 0.5);
   box-shadow: none;
   margin-top: -7px;
 }
 
 .change-remove-btn {
-  color: #3d5afe;
+  color: $blue-color;
   font-size: 13px;
   font-weight: 500;
   border: none;
@@ -75,7 +74,7 @@
 
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     border-radius: 8px;
-    background: #ffffff;
+    background: $white-color;
   }
 
   ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
