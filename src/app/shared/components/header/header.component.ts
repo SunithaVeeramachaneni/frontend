@@ -99,21 +99,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.open(slackVerification.installationURL, '_self');
   }
 
-  subscribeToTeamsMessages = async () => {
-    const info: ErrorInfo = {
-      displayToast: true,
-      failureResponse: 'throwError'
-    };
-    this.headerService.subscribeToTeamsMessages$(info).subscribe(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        // TODO: Display toasty message
-      }
-    );
-  };
-
   ngOnInit() {
     this.headerTitle$ = this.commonService.headerTitleAction$;
 

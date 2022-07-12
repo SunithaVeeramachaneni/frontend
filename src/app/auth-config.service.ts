@@ -9,7 +9,7 @@ import { AppService } from './shared/services/app.services';
 import { CommonService } from './shared/services/common.service';
 import { cloneDeep } from 'lodash';
 
-const TENANTS_COUNT = 100;
+declare const TENANTS_COUNT: string;
 
 @Injectable({
   providedIn: 'root'
@@ -62,8 +62,8 @@ export class AuthConfigService {
       configId: tenantId,
       authority,
       authWellknownEndpointUrl: authority,
-      redirectUrl: 'http://localhost:4200/',
-      postLogoutRedirectUri: 'http://localhost:4200/',
+      redirectUrl: redirectUri,
+      postLogoutRedirectUri: redirectUri,
       clientId,
       scope: `openid profile offline_access email ${scope}`,
       responseType: 'code',
@@ -83,15 +83,15 @@ export class AuthConfigService {
 
   defaultAuthConfig() {
     const authority =
-      'https://login.microsoftonline.com/63ad6831-ccca-481c-bc5a-76fc53f85b9b/v2.0';
-    const redirectUri = 'http://localhost:4200/';
+      'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0';
+    const redirectUri = 'https://cwpdev.innovapptive.com/';
     return {
       configId: 'default',
       authority,
       authWellknownEndpointUrl: authority,
       redirectUrl: redirectUri,
       postLogoutRedirectUri: redirectUri,
-      clientId: 'ad72beb9-737b-461b-985a-eeb3551faf40',
+      clientId: '06a96c09-45cc-4120-8f96-9c0a0d89d6bc',
       scope: `openid profile offline_access email`,
       responseType: 'code',
       silentRenew: false,

@@ -1577,6 +1577,28 @@
                 }}
               </mat-error>
             </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsSharepointSiteID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsSharepointSiteID' | translate"
+                  formControlName="msTeamsSharepointSiteID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsSharepointSiteID' | translate }
+                }}
+              </mat-error>
+            </p>
             <p class="sub-headings" translate>msTeamsPublicPrivateKeys</p>
             <p class="m-0">
               <mat-form-field appearance="outline" class="width-100">

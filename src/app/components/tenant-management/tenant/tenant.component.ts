@@ -301,6 +301,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       msTeamsTenantID: ['', [Validators.required]],
       msTeamsClientID: ['', [Validators.required]],
       msTeamsClientSecret: ['', [Validators.required]],
+      msTeamsSharepointSiteID: ['', [Validators.required]],
       msTeamsRSAPrivateKey: ['', [Validators.required]],
       msTeamsRSAPublicKey: ['', [Validators.required]]
     });

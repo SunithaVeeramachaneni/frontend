@@ -26,6 +26,7 @@
   "msTeamsTenantID": "Tenant ID",
   "msTeamsClientID": "Client ID",
   "msTeamsClientSecret": "Client Secret",
+  "msTeamsSharepointSiteID": "Sharepoint Site ID",
   "msTeamsPublicPrivateKeys": "RSA Public-Private Keys",
   "msTeamsRSAPrivateKey": "Private Key",
   "msTeamsRSAPublicKey": "Public Key",
