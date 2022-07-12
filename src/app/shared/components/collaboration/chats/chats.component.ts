@@ -3,7 +3,6 @@ import { ChatService } from './chat.service';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 
-import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
 import { EmitterService } from '../EmitterService';
 import {
@@ -18,7 +17,6 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | '';
