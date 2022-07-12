@@ -49,7 +49,7 @@ export class ProfileComponent implements OnInit {
       email: [{ value: '', disabled: true }],
       roles: [{ value: '', disabled: true }],
       profileImage: [{ value: '' }],
-      contact: [{ value: '', disabled: true }, [Validators.required]]
+      contact: [{ value: '', disabled: true }]
     });
 
     this.commonService.userInfo$.subscribe((userInfo) => {

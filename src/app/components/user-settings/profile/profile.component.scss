@@ -18,6 +18,7 @@ $blue-color: #3d5afe;
   background-color: $white-color;
   border: 1px solid rgba(61, 90, 254, 0.5);
   margin-top: -7px;
+  padding-top: 2px;
 }
 
 .save-btn {
@@ -28,6 +29,7 @@ $blue-color: #3d5afe;
   margin-top: -7px;
   border: 1px solid transparent;
   margin-left: 15px;
+  padding-top: 2px;
 }
 
 .cancel-btn {
@@ -37,6 +39,7 @@ $blue-color: #3d5afe;
   border: 1px solid rgba(61, 90, 254, 0.5);
   box-shadow: none;
   margin-top: -7px;
+  padding-top: 2px;
 }
 
 .change-remove-btn {
@@ -125,6 +128,12 @@ $blue-color: #3d5afe;
     .mat-form-field-appearance-outline.mat-form-field-disabled
     .mat-form-field-outline {
     opacity: 0;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    color: #757575;
   }
 
   ::ng-deep .mat-input-element:disabled {
