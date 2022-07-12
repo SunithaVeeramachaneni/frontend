@@ -224,7 +224,11 @@ export class ChartComponent {
         const dataset = {
           label: stackName,
           data: datasetObject[stackName].countArray,
-          backgroundColor: colors[index]
+          backgroundColor: colors[index],
+          borderColor: colors[index],
+          hoverBackgroundColor: colors[index],
+          hoverBorderColor: colors[index],
+          barPercentage: 1
         };
         return dataset;
       });
