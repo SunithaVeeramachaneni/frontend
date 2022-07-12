@@ -264,7 +264,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.chartConfig = this.reportConfigService.updateChartConfig(
       this.selectedReport,
       this.chartConfig,
-      false,
+      true,
       false,
       false
     );
@@ -410,7 +410,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
           this.chartConfig = this.reportConfigService.updateChartConfig(
             this.selectedReport,
             this.chartConfig,
-            false,
+            true,
             false
           );
         }

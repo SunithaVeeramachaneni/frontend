@@ -11,7 +11,11 @@ import { HeaderService } from '../../services/header.service';
 import { ChatService } from '../collaboration/chats/chat.service';
 
 import { HeaderComponent } from './header.component';
-import { userData$, openCollabWindow$ } from './header.component.mock';
+import {
+  userInfo$,
+  openCollabWindow$,
+  userAuthData$
+} from './header.component.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -28,7 +32,7 @@ describe('HeaderComponent', () => {
       {
         minimizeSidebarAction$: of(false),
         permissionsAction$: permissions$,
-        userInfo$: userData$
+        userInfo$
       }
     );
 
@@ -36,7 +40,7 @@ describe('HeaderComponent', () => {
       'getInstallationURL$'
     ]);
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
-      userData$
+      userData$: userAuthData$
     });
     chatServiceSpy = jasmine.createSpyObj(
       'ChatService',

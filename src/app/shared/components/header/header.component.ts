@@ -20,9 +20,9 @@ import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
 import { ChatService } from '../collaboration/chats/chat.service';
-import { getImageSrc } from '../../utils/imageUtils';
-import { DomSanitizer } from '@angular/platform-browser';
+import { ImageUtils } from '../../utils/imageUtils';
 import { Buffer } from 'buffer';
+import { Router } from '@angular/router';
 
 import axios from 'axios';
 import * as moment from 'moment';
@@ -54,7 +54,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   slackVerification$: Observable<any>;
   msTeamsSignIn$: Observable<any>;
 
-  userData$: Observable<UserDetails>;
+  userInfo$: Observable<UserDetails>;
 
   private minimizeSidebarActionSubscription: Subscription;
 
@@ -69,7 +69,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private router: Router,
+    private imageUtils: ImageUtils
   ) {}
 
   openDialog(): void {
@@ -147,7 +148,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.sidebarMinimize = data;
       });
 
-    this.userData$ = this.commonService.userInfo$.pipe(
+    this.userInfo$ = this.commonService.userInfo$.pipe(
       filter((userInfo) => Object.keys(userInfo).length !== 0),
       tap((userInfo) => {
         const loggedInUser = {
@@ -187,7 +188,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   profileImage(buffer: any) {
-    if (!buffer) return;
-    return getImageSrc(Buffer.from(buffer).toString(), this.sanitizer);
+    return this.imageUtils.getImageSrc(Buffer.from(buffer).toString());
+  }
+
+  userSettings() {
+    this.router.navigate(['/user-settings']);
   }
 }

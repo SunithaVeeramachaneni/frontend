@@ -135,6 +135,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         this.spinner.hide();
       },
       (error) => {
+        this.spinner.hide();
         Swal.fire(
           'Sorry',
           this.errorHandlerService.getErrorMessage(error),

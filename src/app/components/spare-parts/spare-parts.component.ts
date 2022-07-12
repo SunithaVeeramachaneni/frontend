@@ -132,7 +132,14 @@ export class SparePartsComponent implements OnInit, OnDestroy {
                   );
                 }
               });
-            oldWorkOrders[key] = [...newWorkOrders[key], ...oldWorkOrders[key]];
+            if (oldWorkOrders[key]) {
+              oldWorkOrders[key] = [
+                ...newWorkOrders[key],
+                ...oldWorkOrders[key]
+              ];
+            } else {
+              oldWorkOrders[key] = [...newWorkOrders[key]];
+            }
           }
         }
         return oldWorkOrders;

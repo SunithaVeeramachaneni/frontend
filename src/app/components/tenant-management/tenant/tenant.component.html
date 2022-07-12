@@ -5,7 +5,7 @@
 >
   <ngx-spinner
     size="medium"
-    bdColor="#BBBBBB"
+    bdColor="rgba(0, 0, 0, 0.6)"
     type="ball-clip-rotate-pulse"
     [fullScreen]="false"
   >
@@ -455,6 +455,7 @@
                   (click)="hidePasswordERPS = !hidePasswordERPS"
                   [attr.aria-label]="'Hide password ERPS'"
                   [attr.aria-pressed]="hidePasswordERPS"
+                  [disabled]="!this.editTenant"
                 >
                   <mat-icon>
                     {{ hidePasswordERPS ? 'visibility_off' : 'visibility' }}
@@ -524,11 +525,11 @@
             <p class="m-0">
               <mat-form-field appearance="outline" class="width-100">
                 <mat-label translate>scope</mat-label>
-                <input
+                <textarea
                   matInput
                   [placeholder]="'scope' | translate"
                   formControlName="scope"
-                />
+                ></textarea>
               </mat-form-field>
               <ng-container *ngIf="validationErrors$ | async as errors">
                 <mat-error *ngIf="errors.erps.sap.scope.name">
@@ -831,9 +832,13 @@
 
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
-                <mat-icon (click)="addUrl('sap')" class="add-url-icon">
-                  add
-                </mat-icon>
+                <button
+                  (click)="addUrl('sap')"
+                  [disabled]="!this.editTenant"
+                  class="add-url-icon"
+                >
+                  <mat-icon> add </mat-icon>
+                </button>
                 <div *ngFor="let url of sapUrls.controls; let i = index">
                   <mat-form-field appearance="outline" class="width-100">
                     <mat-label translate>url</mat-label>
@@ -842,14 +847,15 @@
                       [placeholder]="'url' | translate"
                       [formControlName]="i"
                     />
-                    <mat-icon
+                    <button
                       matSuffix
                       (click)="deleteUrl(i, 'sap')"
                       *ngIf="sapUrls.length !== 1"
-                      class="delete-icon"
+                      [disabled]="!this.editTenant"
+                      class="delete-button"
                     >
-                      delete
-                    </mat-icon>
+                      <mat-icon> delete </mat-icon>
+                    </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
                     {{ 'required' | translate: { name: 'url' | translate } }}
@@ -1027,9 +1033,14 @@
 
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
-                <mat-icon (click)="addUrl('node')" class="add-url-icon">
-                  add
-                </mat-icon>
+                <button
+                  (click)="addUrl('node')"
+                  [disabled]="!this.editTenant"
+                  class="add-url-icon"
+                >
+                  <mat-icon> add </mat-icon>
+                </button>
+
                 <div *ngFor="let url of nodeUrls.controls; let i = index">
                   <mat-form-field appearance="outline" class="width-100">
                     <mat-label translate>url</mat-label>
@@ -1038,14 +1049,15 @@
                       [placeholder]="'url' | translate"
                       [formControlName]="i"
                     />
-                    <mat-icon
+                    <button
                       matSuffix
-                      (click)="deleteUrl(i, 'node')"
                       *ngIf="nodeUrls.length !== 1"
-                      class="delete-icon"
+                      (click)="deleteUrl(i, 'node')"
+                      [disabled]="!this.editTenant"
+                      class="delete-button"
                     >
-                      delete
-                    </mat-icon>
+                      <mat-icon> delete </mat-icon>
+                    </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
                     {{ 'required' | translate: { name: 'url' | translate } }}
@@ -1181,6 +1193,7 @@
                 (click)="hidePasswordDBMS = !hidePasswordDBMS"
                 [attr.aria-label]="'Hide password DBMS'"
                 [attr.aria-pressed]="hidePasswordDBMS"
+                [disabled]="!this.editTenant"
               >
                 <mat-icon>
                   {{ hidePasswordDBMS ? 'visibility_off' : 'visibility' }}
@@ -1320,6 +1333,7 @@
                 (click)="hidePasswordNoSQL = !hidePasswordNoSQL"
                 [attr.aria-label]="'Hide password NoSQL'"
                 [attr.aria-pressed]="hidePasswordNoSQL"
+                [disabled]="!this.editTenant"
               >
                 <mat-icon>
                   {{ hidePasswordNoSQL ? 'visibility_off' : 'visibility' }}

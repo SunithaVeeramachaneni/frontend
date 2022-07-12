@@ -1,11 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { PeopleService } from '../../people/people.service';
 import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
-import { getImageSrc } from '../../../../../shared/utils/imageUtils';
+import { ImageUtils } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { CommonService } from 'src/app/shared/services/common.service';
 
@@ -28,7 +27,7 @@ export class CreateGroupComponent implements OnInit {
     private peopleService: PeopleService,
     private commonService: CommonService,
     private chatService: ChatService,
-    private sanitizer: DomSanitizer
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -40,9 +39,8 @@ export class CreateGroupComponent implements OnInit {
       mergeMap((users) => {
         if (users.length) {
           users.forEach((user) => {
-            user.profileImage = getImageSrc(
-              Buffer.from(user.profileImage).toString(),
-              this.sanitizer
+            user.profileImage = this.imageUtils.getImageSrc(
+              Buffer.from(user.profileImage).toString()
             );
           });
           return of({ data: users });

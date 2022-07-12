@@ -14,11 +14,11 @@ import {
   Subscription
 } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
-import { getImageSrc } from '../../../../shared/utils/imageUtils';
+import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | '';
@@ -93,8 +93,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private emitterService: EmitterService,
-    private sanitizer: DomSanitizer,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -119,9 +119,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
           if (conversations.length) {
             conversations.forEach((conv) => {
               if (conv.chatType === 'oneOnOne') {
-                conv.userInfo.profileImage = getImageSrc(
-                  Buffer.from(conv.userInfo.profileImage).toString(),
-                  this.sanitizer
+                conv.userInfo.profileImage = this.imageUtils.getImageSrc(
+                  Buffer.from(conv.userInfo.profileImage).toString()
                 );
               } else if (conv.chatType === 'group') {
                 conv.userInfo.profileImage = '';
@@ -229,9 +228,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
               if (user) {
                 message.from = user;
                 setTimeout(() => {
-                  message.from.profileImage = getImageSrc(
-                    Buffer.from(message.from.profileImage).toString(),
-                    this.sanitizer
+                  message.from.profileImage = this.imageUtils.getImageSrc(
+                    Buffer.from(message.from.profileImage).toString()
                   );
                 }, 0);
               }

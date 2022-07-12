@@ -1,0 +1,15 @@
+.user-settings-body {
+  height: 90vh;
+  margin-right: 14px;
+  background-color: #ffffff;
+  display: flex;
+}
+
+.user-settings-menu {
+  color: #727caf;
+}
+
+.is-active {
+  background: #eff2ff;
+  color: #2a3eb1;
+}

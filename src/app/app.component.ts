@@ -185,6 +185,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
             (this.isUserAuthenticated = isUserAuthenticated)
         ),
         filter((isUserAuthenticated) => isUserAuthenticated),
+        take(1),
         mergeMap(() => this.usersService.getLoggedInUser$())
       )
       .subscribe((data) => {

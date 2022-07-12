@@ -45,7 +45,7 @@ export interface Erp {
   password: string;
   grantType: string;
   clientId: string;
-  scope: string;
+  scope: Scope | string;
   saml: Saml;
 }
 
@@ -83,4 +83,10 @@ export interface TenantData {
 export interface DeactivateTenant {
   deactivate: boolean;
   id: number;
+}
+
+export interface Scope {
+  race: string;
+  mWorkOrder: string;
+  mInventory: string;
 }

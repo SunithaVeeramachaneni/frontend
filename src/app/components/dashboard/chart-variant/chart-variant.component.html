@@ -78,10 +78,7 @@
     <div class="chart-settings">
       <mat-form-field appearance="outline" class="width-90">
         <mat-label>{{ firstInputName }}</mat-label>
-        <mat-select
-          [(value)]="chartConfig.datasetFieldName"
-          (selectionChange)="onDatasetFieldNameChange()"
-        >
+        <mat-select formControlName="datasetFieldName">
           <mat-option
             [value]="field.name"
             *ngFor="let field of chartConfig.datasetFields"
@@ -92,10 +89,7 @@
       </mat-form-field>
       <mat-form-field appearance="outline" class="width-90">
         <mat-label>{{ secondInputName }}</mat-label>
-        <mat-select
-          [(value)]="chartConfig.countFieldName"
-          (selectionChange)="onCountFieldNameChange()"
-        >
+        <mat-select formControlName="countFieldName">
           <mat-option
             [value]="field.name"
             *ngFor="let field of chartConfig.countFields"
@@ -113,10 +107,7 @@
         "
       >
         <mat-label translate>stackBy</mat-label>
-        <mat-select
-          [(value)]="chartConfig.stackFieldName"
-          (selectionChange)="onStackFieldNameChange()"
-        >
+        <mat-select formControlName="stackFieldName">
           <mat-option
             [value]="field.name"
             *ngFor="let field of chartConfig.datasetFields"

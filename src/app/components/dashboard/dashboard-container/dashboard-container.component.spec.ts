@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 import { AppMaterialModules } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { BreadcrumbService } from 'xng-breadcrumb';
 import { DashboardsComponent } from '../dashboards/dashboards.component';
 import { dashboards$ } from '../dashboards/dashboards.component.mock';
 import { DashboardService } from '../services/dashboard.service';
@@ -14,6 +15,7 @@ describe('DashboardContainerComponent', () => {
   let component: DashboardContainerComponent;
   let fixture: ComponentFixture<DashboardContainerComponent>;
   let dashboardServiceSpy: DashboardService;
+  let breadcrumbService: BreadcrumbService;
 
   beforeEach(async () => {
     dashboardServiceSpy = jasmine.createSpyObj('DashboardService', [], {
@@ -36,8 +38,10 @@ describe('DashboardContainerComponent', () => {
   });
 
   beforeEach(() => {
+    breadcrumbService = TestBed.inject(BreadcrumbService);
     fixture = TestBed.createComponent(DashboardContainerComponent);
     component = fixture.componentInstance;
+    spyOn(breadcrumbService, 'set');
     fixture.detectChanges();
   });
 

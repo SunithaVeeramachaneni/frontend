@@ -13,7 +13,7 @@
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
-  <div class="header-cols" *ngIf="userData$ | async as userDetails">
+  <div class="header-cols" *ngIf="userInfo$ | async as userDetails">
     <div *ngIf="userDetails.collaborationType === 'msteams'">
       <button
         #collabButton
@@ -105,6 +105,9 @@
         [matMenuTriggerFor]="menu"
       />
       <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="userSettings()">
+          <span>Profile</span>
+        </button>
         <button mat-menu-item (click)="signout()">
           <span>Sign Out</span>
         </button>

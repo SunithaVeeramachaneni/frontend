@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable } from 'rxjs';
 import { Buffer } from 'buffer';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
@@ -11,7 +11,8 @@ import {
   Count,
   UserDetails,
   Role,
-  Permission
+  Permission,
+  UserProfile
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -36,8 +37,6 @@ export class UsersService {
     const roleNames = roles.map((role) => role.name);
     if (roleNames.length) user.displayRoles = roleNames || '';
     user.roles = roles;
-    if (!user.createdAt) user.createdAt = new Date();
-    else user.createdAt = new Date(user.createdAt);
     user.postTextImage = {
       style: {
         width: '20px',
@@ -215,6 +214,20 @@ export class UsersService {
       )
       .pipe(map((response) => (response === null ? user : response)));
   };
+
+  updateUserProfile$ = (
+    userId: number,
+    userProfile: UserProfile,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<UserProfile> =>
+    this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/profile/${userId}`,
+        userProfile,
+        info
+      )
+      .pipe(map((response) => (response === null ? userProfile : response)));
 
   verifyUserEmail$ = (
     emailID: string,

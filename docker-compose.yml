@@ -154,7 +154,6 @@ services:
       - NODE_ENV=${APP_ENV}
       - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
       - NODE_HEAPDUMP_OPTIONS=nosignal
-      - MONGODB_HOST_NAME=mongo-local
       - MYSQL_HOST_NAME=mysql-local
       - MYSQL_PORT=3306
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
@@ -226,8 +225,7 @@ services:
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
-      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
-      - MONGODB_HOST_NAME=mongo-local
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8005:8005'
     depends_on:
@@ -249,7 +247,7 @@ services:
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
-      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
     ports:
       - '8006:8006'
     depends_on:
@@ -274,7 +272,7 @@ services:
     environment:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
-      - DEPLOYMENT_ENV=${DEPLOYMENT_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
       - MYSQL_HOST_NAME=mysql-local
       - MYSQL_PORT=3306
       - MYSQL_USER_NAME=${MYSQL_USER_NAME}
