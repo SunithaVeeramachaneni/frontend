@@ -22,21 +22,25 @@
         color="primary"
         aria-label="Collaboration Dialog trigger button"
         (click)="openDialog()"
+        *ngIf="unreadMessageCount > 0"
         [matBadge]="unreadMessageCount"
-        [matBadgeDisabled]="unreadMessageCount < 1"
         matBadgePosition="after"
         matBadgeColor="warn"
         matBadgeOverlap="true"
       >
         <mat-icon>chat_bubble_outline</mat-icon>
       </button>
-      <!-- <button
-        mat-stroked-button
+      <button
+        #collabButton
+        class="collabButton"
+        mat-icon-button
         color="primary"
-        (click)="subscribeToTeamsMessages()"
+        aria-label="Collaboration Dialog trigger button"
+        (click)="openDialog()"
+        *ngIf="unreadMessageCount <= 0"
       >
-        Subscribe
-      </button> -->
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
     </div>
     <div *ngIf="userDetails.collaborationType === 'slack'">
       <div *ngIf="slackVerification$ | async as slackVerification">
