@@ -325,17 +325,5 @@ describe('ProfileComponent', () => {
         type: 'success'
       });
     });
-
-    it('should not allow user to update the profile, If form is invalid', () => {
-      const buttons = profileEl.querySelectorAll('button');
-      buttons[0].click();
-      fixture.detectChanges();
-      component.profileForm.patchValue({ contact: '' });
-      component.profileForm.markAsDirty();
-
-      profileDe.query(By.css('form')).triggerEventHandler('submit', null);
-
-      expect(userServiceSpy.updateUserProfile$).not.toHaveBeenCalled();
-    });
   });
 });
