@@ -21,6 +21,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
@@ -30,12 +31,14 @@ import {
   map,
   shareReplay
 } from 'rxjs/operators';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Buffer } from 'buffer';
 import { permissions } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 
 declare const ENCRYPTION_KEY: string;
@@ -58,7 +61,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
-  noOfTabs = 5;
+  noOfTabs = 6;
   tenantForm: FormGroup;
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
@@ -83,6 +86,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
+  tenantLogo: string | SafeResourceUrl;
   readonly permissions = permissions;
   private genericValidator: GenericValidator;
 
@@ -104,7 +108,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private titleCase: TitleCasePipe,
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit(): void {
@@ -280,7 +285,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
       products: [[], [Validators.required]],
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
-      logLevel: ['', [Validators.required]]
+      logLevel: ['', [Validators.required]],
+      tenantLogo: [''],
+      tenantLogoName: ['']
     });
 
     const headerTitle = this.tenantForm.get('tenantName').value
@@ -331,6 +338,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
           ' '
         );
 
+        if (tenant.tenantLogo) {
+          const tenantLogo = Buffer.from(tenant.tenantLogo).toString();
+          this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+          tenant.tenantLogo = tenantLogo;
+        }
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
           'urls',
@@ -714,5 +726,46 @@ export class TenantComponent implements OnInit, AfterViewInit {
       }
       return null;
     };
+  }
+
+  onTenantLogoChange(event: any) {
+    let base64: string;
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const tenantLogo = base64.split(',')[1];
+      this.tenantForm.patchValue({
+        tenantLogo,
+        tenantLogoName: files[0].name
+      });
+      this.tenantForm.get('tenantLogo').markAsDirty();
+      this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+    };
+  }
+
+  removeTenantLogo() {
+    this.tenantForm.patchValue({
+      tenantLogo: null,
+      tenantLogoName: null
+    });
+    this.tenantForm.get('tenantLogo').markAsDirty();
+    this.tenantLogo = null;
+  }
+
+  showRemoveTenantLogo() {
+    return this.tenantForm.get('tenantLogo').value ? true : false;
+  }
+
+  getBrowseLogoName() {
+    return this.tenantForm.get('tenantLogoName').value
+      ? this.tenantForm.get('tenantLogoName').value
+      : 'browseLogo';
+  }
+
+  resetTenantLogo(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = '';
   }
 }

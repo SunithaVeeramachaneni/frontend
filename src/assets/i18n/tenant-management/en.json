@@ -6,12 +6,14 @@
   "nextBtn": "Next",
   "saveBtn": "Save",
   "editBtn": "Edit",
+  "browseLogo": "Browse Logo",
   "addingTenant": "Adding Tenant...",
   "primary": "1. PRIMARY",
   "erps": "2. ERPs",
   "protectedResources": "3. PROTECTED RESOURCES",
   "dbConfigurations": "4. DB CONFIGURATIONS",
   "configurations": "5. CONFIGURATIONS",
+  "assets": "6. ASSETS",
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
   "sapsamlDetails": "SAP SAML Details",
@@ -70,5 +72,12 @@
   "products": "Products",
   "modules": "Modules",
   "logDBType": "Log DB Type",
-  "logLevel": "Log Level"
+  "logLevel": "Log Level",
+  "idealDimension": "Ideal Dimension:",
+  "idealDimensions": "378px wide by 144px tall",
+  "logoNote": "The App automatically shrinks the logo <br /> according to the aspect ratio",
+  "appearanceOnWebsite": "Appearance on the website",
+  "removeTenantLogo": "Remove",
+  "dashboard": "Dashboard",
+  "borderNote": "The border indicates the maximum logo area"
 }

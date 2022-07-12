@@ -73,6 +73,7 @@
         <mat-tab label="{{ 'protectedResources' | translate }}"></mat-tab>
         <mat-tab label="{{ 'dbConfigurations' | translate }}"></mat-tab>
         <mat-tab label="{{ 'configurations' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'assets' | translate }}"></mat-tab>
       </mat-tab-group>
     </div>
     <div class="nextbtn p-0">
@@ -1468,6 +1469,56 @@
             {{ 'required' | translate: { name: 'logLevel' | translate } }}
           </mat-error>
         </p>
+      </div>
+      <div [hidden]="selectedID.value !== 5">
+        <div class="assets">
+          <div>
+            <label for="file-input" #file>
+              <button
+                mat-raised-button
+                type="button"
+                class="browse-btn"
+                (click)="file.click()"
+              >
+                {{ getBrowseLogoName() | translate }}
+              </button>
+            </label>
+            <input
+              hidden
+              id="file-input"
+              type="file"
+              accept="image/*"
+              (change)="onTenantLogoChange($event)"
+              (click)="resetTenantLogo($event)"
+            />
+          </div>
+          <div *ngIf="showRemoveTenantLogo()" class="m-10">
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeTenantLogo()"
+              translate="removeTenantLogo"
+            ></button>
+          </div>
+          <div class="m-4 m-t-0 info1">
+            <span translate>idealDimension</span>
+            <span class="info2" translate> idealDimensions</span>
+          </div>
+          <div class="m-4 info4">
+            <span [innerHTML]="'logoNote' | translate"></span>
+          </div>
+          <div class="m-10 m-t-20 info3" translate>appearanceOnWebsite</div>
+          <div class="m-10 header">
+            <h6 class="title" translate>dashboard</h6>
+            <img
+              [src]="tenantLogo"
+              alt="Tenant Logo"
+              class="logo"
+              *ngIf="tenantLogo"
+            />
+          </div>
+          <div class="info4" translate>borderNote</div>
+        </div>
       </div>
     </div>
 
