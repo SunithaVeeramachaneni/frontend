@@ -281,13 +281,13 @@ export class ChatsComponent implements OnInit, OnDestroy {
           }
           return initial.data;
         } else if (action === 'receive') {
-          let userInfo;
-          initial.data.forEach((msg) => {
-            if (message.user === msg.user) {
-              userInfo = msg.userInfo;
-            }
-          });
-          message.userInfo = userInfo;
+          // let userInfo;
+          // initial.data.forEach((msg) => {
+          //   if (message.from.email === msg.from.email) {
+          //     userInfo = msg.from;
+          //   }
+          // });
+          // message.userInfo = userInfo;
           message.isMeeting = false;
           initial.data = initial.data.concat(message);
 
@@ -300,7 +300,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             this.updateConversations$.next({
               action: 'update_latest_message',
               message,
-              channel: message.channel
+              channel: message.chatId
             });
           }
 
@@ -419,9 +419,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
     // return;
     if (
       this.selectedConversation &&
-      message.channel === this.selectedConversation.id
+      message.chatId === this.selectedConversation.id
     ) {
-      if (message.text.indexOf('meeting_request')) {
+      if (message.message.indexOf('meeting_request')) {
         try {
           message.jsonObj = JSON.parse(message.text);
           if (message.jsonObj.link) {
@@ -434,14 +434,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
       this.sendReceiveMessages$.next({
         action: 'receive',
         message,
-        channel: message.channel
+        channel: message.chatId
       });
     } else {
       // TODO: Find the conversation and push it as latest..
       this.updateConversations$.next({
         action: 'update_latest_message',
         message,
-        channel: message.channel
+        channel: message.chatId
       });
     }
   };

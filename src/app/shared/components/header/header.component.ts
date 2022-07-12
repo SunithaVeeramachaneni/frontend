@@ -24,11 +24,6 @@ import { ImageUtils } from '../../utils/imageUtils';
 import { Buffer } from 'buffer';
 import { Router } from '@angular/router';
 
-import axios from 'axios';
-import * as moment from 'moment';
-import { UploadDialogComponent } from '../collaboration/chats/upload-dialog/upload-dialog.component';
-import { async } from '@angular/core/testing';
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',

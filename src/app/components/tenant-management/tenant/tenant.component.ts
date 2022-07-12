@@ -86,7 +86,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       | any;
   }>;
   tenantHeader = 'Adding Tenant...';
-  encryptionKey = ENCRYPTION_KEY || 'Innovation@5';
+  encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
   readonly permissions = permissions;
