@@ -124,15 +124,6 @@
       </ngx-mat-intl-tel-input>
       <mat-error
         *ngIf="
-          profileForm.get('contact').errors?.required &&
-          profileForm.get('contact').touched
-        "
-        class="m-t-5 error-fields"
-      >
-        {{ 'required' | translate: { name: 'contact' | translate } }}
-      </mat-error>
-      <mat-error
-        *ngIf="
           profileForm.get('contact').errors?.validatePhoneNumber &&
           profileForm.get('contact').touched
         "
