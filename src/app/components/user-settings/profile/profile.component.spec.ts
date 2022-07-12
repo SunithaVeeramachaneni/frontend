@@ -112,24 +112,6 @@ describe('ProfileComponent', () => {
       expect(component.ngOnInit).toBeDefined();
     });
 
-    describe('form validations', () => {
-      describe('contact', () => {
-        it('should validate require', () => {
-          const buttons = profileEl.querySelectorAll('button');
-          buttons[0].click();
-          fixture.detectChanges();
-
-          component.profileForm.patchValue({
-            contact: ''
-          });
-
-          expect(
-            component.profileForm.get('contact').errors.required
-          ).toBeTrue();
-        });
-      });
-    });
-
     it('should set profile from value', () => {
       component.ngOnInit();
 
