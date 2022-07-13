@@ -51,6 +51,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userInfo$: Observable<UserDetails>;
   eventSource: any;
   tenantLogo: any;
+  isOpen = false;
 
   private minimizeSidebarActionSubscription: Subscription;
   private collabWindowSubscription: Subscription;
@@ -233,6 +234,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout() {
+    this.isOpen = false;
     const { tenantId: configId } = this.commonService.getTenantInfo();
     this.oidcSecurityService.logoffAndRevokeTokens(configId).subscribe();
     sessionStorage.clear();
@@ -243,6 +245,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   userSettings() {
+    this.isOpen = false;
     this.router.navigate(['/user-settings']);
   }
 }

@@ -1479,6 +1479,7 @@
                 type="button"
                 class="browse-btn"
                 (click)="file.click()"
+                [disabled]="!this.editTenant"
               >
                 {{ getBrowseLogoName() | translate }}
               </button>
@@ -1498,10 +1499,11 @@
               class="remove-btn"
               (click)="removeTenantLogo()"
               translate="removeTenantLogo"
+              [disabled]="!this.editTenant"
             ></button>
           </div>
-          <div class="m-4 m-t-0 info1">
-            <span translate>idealDimension</span>
+          <div class="m-4 m-t-0">
+            <span class="info1" translate>idealDimension</span>
             <span class="info2" translate> idealDimensions</span>
           </div>
           <div class="m-4 info4">
@@ -1509,13 +1511,31 @@
           </div>
           <div class="m-10 m-t-20 info3" translate>appearanceOnWebsite</div>
           <div class="m-10 header">
-            <h6 class="title" translate>dashboard</h6>
-            <img
-              [src]="tenantLogo"
-              alt="Tenant Logo"
-              class="logo"
-              *ngIf="tenantLogo"
-            />
+            <div class="title" translate>dashboard</div>
+            <div class="m-r-15 dis-flex">
+              <div>
+                <img
+                  src="assets/tenant-management-icons/App_icon.svg"
+                  class="apps-icon"
+                />
+              </div>
+              <div class="user">
+                <img
+                  src="assets/tenant-management-icons/profile.svg"
+                  class="profile"
+                />
+              </div>
+              <div class="without-company-logo" *ngIf="!tenantLogo">
+                <span class="logo-comes-here-text" translate>
+                  logoComes <br />
+                  here
+                </span>
+              </div>
+              <div class="with-company-logo" *ngIf="tenantLogo">
+                <span class="helper"> </span>
+                <img [src]="tenantLogo" alt="Tenant Logo" class="logo" />
+              </div>
+            </div>
           </div>
           <div class="info4" translate>borderNote</div>
         </div>
