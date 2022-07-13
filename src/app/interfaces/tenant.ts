@@ -22,7 +22,7 @@ export interface Tenant {
   isActive?: boolean;
   collaborationType: string;
   slackConfiguration?: any;
-  msteamsConfiguration?: any;
+  msTeamsConfiguration?: any;
   createdBy?: string;
   updatedBy?: string;
   createdAt?: string;
