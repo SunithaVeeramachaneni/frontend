@@ -20,7 +20,6 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 export class TenantManagementContainerComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
-  headerTitle$: Observable<string>;
 
   constructor(
     private commonService: CommonService,
@@ -45,6 +44,5 @@ export class TenantManagementContainerComponent implements OnInit {
         }
       })
     );
-    this.headerTitle$ = this.headerService.headerTitleAction$;
   }
 }

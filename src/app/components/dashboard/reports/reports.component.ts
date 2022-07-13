@@ -37,7 +37,6 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 })
 export class ReportsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
   readonly perms = perms;
   selectedReportSegmentControl = new FormControl('all');

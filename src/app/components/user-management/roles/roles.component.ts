@@ -50,7 +50,6 @@ const info: ErrorInfo = {
 })
 export class RolesComponent implements OnInit, AfterViewChecked {
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
   readonly superAdminText = superAdminText;
 

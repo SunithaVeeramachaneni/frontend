@@ -737,9 +737,6 @@ describe('WorkInstructionsComponent', () => {
         routingUrls.workInstructions.url,
         { skip: true }
       );
-      component.headerTitle$.subscribe((data) =>
-        expect(data).toBe(routingUrls.workInstructions.title)
-      );
 
       (
         Object.getOwnPropertyDescriptor(

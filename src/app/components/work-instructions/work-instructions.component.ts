@@ -66,7 +66,6 @@ export class WorkInstructionsComponent
   public CreatedBy = '';
   searchCriteria = '';
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   workInstructions$: Observable<{
     favorites: Instruction[];
     drafts: Instruction[];
@@ -122,7 +121,6 @@ export class WorkInstructionsComponent
         }
       })
     );
-    this.headerTitle$ = this.headerService.headerTitleAction$;
     this.fetchWISubscription = this.wiCommonService.fetchWIAction$.subscribe(
       () => this.getAllFavsDraftsAndRecentIns()
     );

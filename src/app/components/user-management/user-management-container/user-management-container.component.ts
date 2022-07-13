@@ -19,7 +19,6 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 })
 export class UserManagementContainerComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
 
   constructor(
@@ -45,6 +44,5 @@ export class UserManagementContainerComponent implements OnInit {
         }
       })
     );
-    this.headerTitle$ = this.headerService.headerTitleAction$;
   }
 }

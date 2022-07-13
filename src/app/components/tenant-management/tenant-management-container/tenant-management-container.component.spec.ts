@@ -74,9 +74,6 @@ describe('TenantManagementContainerComponent', () => {
       );
       expect(detectChangesSpy).toHaveBeenCalledWith();
     });
-    component.headerTitle$.subscribe((data) =>
-      expect(data).toBe(routingUrls.tenantManagement.title)
-    );
   });
 
   it('should set breadcrumb if current route url is not tenant-management', () => {
@@ -98,8 +95,5 @@ describe('TenantManagementContainerComponent', () => {
         }
       );
     });
-    component.headerTitle$.subscribe((data) =>
-      expect(data).toBe(routingUrls.tenantManagement.title)
-    );
   });
 });
