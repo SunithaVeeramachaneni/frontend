@@ -2,21 +2,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as CryptoJS from 'crypto-js';
-import {
-  Permission,
-  ProtectedResource,
-  Tenant,
-  UserDetails
-} from 'src/app/interfaces';
-import { ConfigUserDataResult } from 'angular-auth-oidc-client';
+import { Permission, ProtectedResource, UserDetails } from 'src/app/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
   private protectedResources: ProtectedResource[] = [];
-  private tenantInfo: Tenant = {} as Tenant;
-  private tenantsInfo: Tenant[] = [];
   private userInfo = {} as UserDetails;
 
   private minimizeSidebarSubject = new BehaviorSubject<boolean>(true);
@@ -53,22 +45,6 @@ export class CommonService {
     return this.protectedResources;
   }
 
-  setTenantInfo(tenantInfo: Tenant) {
-    this.tenantInfo = tenantInfo;
-  }
-
-  getTenantInfo() {
-    return this.tenantInfo;
-  }
-
-  setTenantsInfo(tenantsInfo: Tenant[]) {
-    this.tenantsInfo = tenantsInfo;
-  }
-
-  getTenantsInfo() {
-    return this.tenantsInfo;
-  }
-
   setTranslateLanguage(value: string) {
     this.translateLanguageSubject.next(value);
   }
@@ -100,9 +76,5 @@ export class CommonService {
   setUserInfo(userInfo: UserDetails) {
     this.userInfoSubject.next(userInfo);
     this.userInfo = userInfo;
-  }
-
-  getUserInfo(): UserDetails {
-    return this.userInfo;
   }
 }

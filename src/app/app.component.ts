@@ -17,8 +17,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
-import { Permission } from './interfaces';
+import { Permission, Tenant } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
+import { HeaderService } from './shared/services/header.service';
+import { environment } from 'src/environments/environment';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
+import { AuthHeaderService } from './shared/services/authHeader.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
+import { ImageUtils } from './shared/utils/imageUtils';
+import { Buffer } from 'buffer';
 
 const {
   dashboard,
@@ -168,18 +176,87 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private translateService: TranslateService,
     private oidcSecurityService: OidcSecurityService,
     private usersService: UsersService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private authHeaderService: AuthHeaderService,
+    private chatService: ChatService,
+    private headerService: HeaderService,
+    private tenantService: TenantService,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
+    const ref = this;
     this.loginService.isUserAuthenticated$
       .pipe(
         tap(
           (isUserAuthenticated) =>
             (this.isUserAuthenticated = isUserAuthenticated)
-        )
+        ),
+        filter((isUserAuthenticated) => isUserAuthenticated),
+        take(1),
+        mergeMap(() => {
+          const { tenantId } = this.tenantService.getTenantInfo();
+          return combineLatest([
+            this.usersService.getLoggedInUser$(),
+            this.headerService.getTenantLogoByTenantId$(tenantId)
+          ]);
+        })
       )
-      .subscribe();
+      .subscribe(([data, { tenantLogo }]) => {
+        this.tenantService.setTenantInfo({
+          tenantLogo: this.imageUtils.getImageSrc(
+            Buffer.from(tenantLogo).toString()
+          )
+        } as Tenant);
+        this.commonService.setUserInfo(data);
+        if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
+          const userSlackDetail = data.UserSlackDetail;
+          const { slackID } = userSlackDetail;
+          const SSE_URL = `${environment.slackAPIUrl}sse/${slackID}`;
+
+          const { authorization, tenantid } =
+            this.authHeaderService.getAuthHeaders(SSE_URL);
+          this.eventSource = new EventSourcePolyfill(SSE_URL, {
+            headers: {
+              authorization,
+              tenantid
+            }
+          });
+          this.eventSource.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              const processedMessageIds = [];
+              eventData.forEach((evt: any) => {
+                const { message } = evt;
+                if (!message.isHeartbeat && message.eventType === 'message') {
+                  const audio = new Audio('../assets/audio/notification.mp3');
+                  audio.play();
+                  processedMessageIds.push(evt.id);
+                  const iscollabWindowOpen =
+                    ref.chatService.getCollaborationWindowStatus();
+                  if (iscollabWindowOpen) {
+                    ref.chatService.newMessageReceived(message);
+                  } else {
+                    let unreadCount = ref.chatService.getUnreadMessageCount();
+                    unreadCount = unreadCount + 1;
+                    ref.chatService.setUnreadMessageCount(unreadCount);
+                  }
+                }
+              });
+              ref.chatService
+                .processSSEMessages$(processedMessageIds)
+                .subscribe(
+                  (response) => {
+                    // Do nothing
+                  },
+                  (err) => {
+                    // Do Nothing
+                  }
+                );
+            }
+          };
+        }
+      });
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))

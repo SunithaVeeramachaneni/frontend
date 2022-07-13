@@ -2,12 +2,10 @@
 import { Injectable } from '@angular/core';
 import { LogLevel, OpenIdConfiguration } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
-import { map, shareReplay, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ErrorInfo, Tenant } from './interfaces';
-import { AppService } from './shared/services/app.services';
-import { CommonService } from './shared/services/common.service';
-import { cloneDeep } from 'lodash';
+import { TenantService } from './components/tenant-management/services/tenant.service';
 
 declare const TENANTS_COUNT: string;
 
@@ -18,24 +16,14 @@ export class AuthConfigService {
   tenantsInfo$: Observable<Tenant[]>;
   authConfigsCount = TENANTS_COUNT ? +TENANTS_COUNT : 1;
 
-  constructor(
-    private appService: AppService,
-    private commonService: CommonService
-  ) {}
+  constructor(private tenantService: TenantService) {}
 
   getAuthConfig$ = (
     index: number,
     info: ErrorInfo = {} as ErrorInfo
   ): Promise<OpenIdConfiguration> => {
     if (!this.tenantsInfo$) {
-      this.tenantsInfo$ = this.appService
-        ._getResp(environment.userRoleManagementApiUrl, 'catalogs/info', info)
-        .pipe(
-          tap((tenants) =>
-            this.commonService.setTenantsInfo(cloneDeep(tenants))
-          ),
-          shareReplay(1)
-        );
+      this.tenantsInfo$ = this.tenantService.getTenantsInfo$(info);
     }
     return this.tenantsInfo$
       .pipe(

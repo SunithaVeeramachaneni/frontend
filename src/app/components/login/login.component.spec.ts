@@ -13,6 +13,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { tenantsInfo } from 'src/app/auth-config.service.mock';
 import { AppMaterialModules } from 'src/app/material.module';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { TenantService } from '../tenant-management/services/tenant.service';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -20,6 +21,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let commonServiceSpy: CommonService;
+  let tenantServiceSpy: TenantService;
   let loginDe: DebugElement;
   let loginEl: HTMLElement;
 
@@ -28,8 +30,10 @@ describe('LoginComponent', () => {
       'authorize'
     ]);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [
+      'setProtectedResources'
+    ]);
+    tenantServiceSpy = jasmine.createSpyObj('TenantService', [
       'getTenantsInfo',
-      'setProtectedResources',
       'setTenantInfo'
     ]);
 
@@ -60,6 +64,10 @@ describe('LoginComponent', () => {
         {
           provide: CommonService,
           useValue: commonServiceSpy
+        },
+        {
+          provide: TenantService,
+          useValue: tenantServiceSpy
         }
       ]
     }).compileComponents();
@@ -70,7 +78,7 @@ describe('LoginComponent', () => {
     component = fixture.componentInstance;
     loginDe = fixture.debugElement;
     loginEl = loginDe.nativeElement;
-    (commonServiceSpy.getTenantsInfo as jasmine.Spy)
+    (tenantServiceSpy.getTenantsInfo as jasmine.Spy)
       .withArgs()
       .and.returnValue(tenantsInfo);
 
@@ -202,7 +210,7 @@ describe('LoginComponent', () => {
 
       expect(commonServiceSpy.setProtectedResources).toHaveBeenCalledWith(node);
       expect(commonServiceSpy.setProtectedResources).toHaveBeenCalledWith(sap);
-      expect(commonServiceSpy.setTenantInfo).toHaveBeenCalledWith(tenantInfo);
+      expect(tenantServiceSpy.setTenantInfo).toHaveBeenCalledWith(tenantInfo);
       expect(sessionStorage.getItem('companyOrDomainName')).toEqual(
         'innovapptive'
       );

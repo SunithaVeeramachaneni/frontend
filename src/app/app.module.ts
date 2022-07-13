@@ -54,6 +54,7 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { defaultLanguage } from './app.constants';
 import localeEn from '@angular/common/locales/en';
 import { LoginService } from './components/login/services/login.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
 
 registerLocaleData(localeEn, 'en');
 
@@ -119,7 +120,8 @@ export class AppModule {
     private oidcSecurityService: OidcSecurityService,
     private appService: AppService,
     private commonService: CommonService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private tenantService: TenantService
   ) {
     this.eventService
       .registerForEvents()
@@ -131,7 +133,7 @@ export class AppModule {
         )
       )
       .subscribe(() => {
-        const { tenantId: configId } = this.commonService.getTenantInfo();
+        const { tenantId: configId } = this.tenantService.getTenantInfo();
         const config = this.oidcSecurityService.getConfiguration(configId);
         const {
           authWellknownEndpoints: { tokenEndpoint },

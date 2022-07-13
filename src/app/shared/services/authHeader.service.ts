@@ -2,13 +2,17 @@
 import { Injectable } from '@angular/core';
 import { CommonService } from './common.service';
 import * as hash from 'object-hash';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthHeaderService {
-  constructor(private commonService: CommonService) {}
+  constructor(
+    private commonService: CommonService,
+    private tenantService: TenantService
+  ) {}
 
   getAuthHeaders(requestUrl: string) {
-    const { tenantId: tenantid } = this.commonService.getTenantInfo();
+    const { tenantId: tenantid } = this.tenantService.getTenantInfo();
     const protectedResource = this.commonService
       .getProtectedResources()
       .find((_protectedResource) => {
