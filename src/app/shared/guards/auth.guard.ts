@@ -3,13 +3,12 @@ import {
   ActivatedRouteSnapshot,
   CanActivate,
   Router,
-  RouterStateSnapshot,
-  UrlTree
+  RouterStateSnapshot
 } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CommonService } from '../services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +17,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private oidcSecurityService: OidcSecurityService,
     private router: Router,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   canActivate(
@@ -38,7 +37,7 @@ export class AuthGuard implements CanActivate {
             )
             .filter((id) => id);
 
-          this.commonService.performPostLoginActions(
+          this.loginService.performPostLoginActions(
             { configId, userData },
             configIds
           );

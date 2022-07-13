@@ -53,6 +53,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { defaultLanguage } from './app.constants';
 import localeEn from '@angular/common/locales/en';
+import { LoginService } from './components/login/services/login.service';
 
 registerLocaleData(localeEn, 'en');
 
@@ -117,7 +118,8 @@ export class AppModule {
     private readonly eventService: PublicEventsService,
     private oidcSecurityService: OidcSecurityService,
     private appService: AppService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private loginService: LoginService
   ) {
     this.eventService
       .registerForEvents()
@@ -190,7 +192,7 @@ export class AppModule {
             )
             .filter((configId) => configId);
 
-          this.commonService.performPostLoginActions(
+          this.loginService.performPostLoginActions(
             configUserDataResult,
             configIds
           );

@@ -11,6 +11,7 @@ import { CommonService } from '../../../shared/services/common.service';
 import { Observable } from 'rxjs';
 import { permissions, routingUrls } from '../../../app.constants';
 import { map, tap } from 'rxjs/operators';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-favorites',
@@ -59,13 +60,14 @@ export class FavoritesComponent implements OnInit {
     private route: ActivatedRoute,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit() {
     this.routeWithSearch = `${routingUrls.favorites.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.favorites.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.favorites.title))
     );
     this.getAllWorkInstructionsByFav();
     this.authorDropDown();

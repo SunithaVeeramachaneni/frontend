@@ -40,6 +40,7 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { TenantService } from '../services/tenant.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 declare const ENCRYPTION_KEY: string;
 const regUrl =
@@ -109,7 +110,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
     private router: Router,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
@@ -293,7 +295,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     const headerTitle = this.tenantForm.get('tenantName').value
       ? this.tenantForm.get('tenantName').value
       : `Addding Tenant...`;
-    this.commonService.setHeaderTitle(headerTitle);
+    this.headerService.setHeaderTitle(headerTitle);
     this.breadcrumbService.set('@tenantName', {
       label: headerTitle
     });
@@ -302,7 +304,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
       this.tenantHeader = displayName;
       this.breadcrumbService.set('@tenantName', { label: displayName });
-      this.commonService.setHeaderTitle(displayName);
+      this.headerService.setHeaderTitle(displayName);
       const database = this.titleCase.transform(tenantName).replace(/\s+/g, '');
       this.tenantForm.patchValue({
         rdbms: { database },

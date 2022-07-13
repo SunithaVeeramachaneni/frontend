@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { permissions, routingUrls } from '../../../app.constants';
 import { CommonService } from '../../../shared/services/common.service';
 import { map, tap } from 'rxjs/operators';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-recents',
@@ -56,12 +57,13 @@ export class RecentsComponent implements OnInit {
     private instructionSvc: InstructionService,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.recents.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.recents.title))
     );
     this.getAllRecentInstructions();
     this.authorDropDown();

@@ -26,6 +26,7 @@ import { cloneDeep } from 'lodash';
 import { TenantComponent } from './tenant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
@@ -55,6 +56,7 @@ describe('TenantComponent', () => {
   let spinnerSpy: NgxSpinnerService;
   let activatedRouteSpy: ActivatedRoute;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let router: Router;
   let cdrf: ChangeDetectorRef;
   let tenantDe: DebugElement;
@@ -73,13 +75,12 @@ describe('TenantComponent', () => {
       data: of({}),
       queryParams: of({})
     });
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setHeaderTitle', 'decrypt'],
-      {
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', ['decrypt'], {
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [TenantComponent, MockComponent(NgxSpinnerComponent)],
@@ -121,6 +122,10 @@ describe('TenantComponent', () => {
         {
           provide: CommonService,
           useValue: commonServiceSpy
+        },
+        {
+          provide: HeaderService,
+          useValue: headerServiceSpy
         }
       ]
     }).compileComponents();
@@ -2389,7 +2394,7 @@ describe('TenantComponent', () => {
     });
 
     it('should set header title', () => {
-      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+      expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         'Addding Tenant...'
       );
       expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith('@tenantName', {
@@ -2404,7 +2409,7 @@ describe('TenantComponent', () => {
 
       component.tenantForm.patchValue({ tenantName: 'tenant Name' });
 
-      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+      expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         'tenant Name'
       );
       expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith('@tenantName', {

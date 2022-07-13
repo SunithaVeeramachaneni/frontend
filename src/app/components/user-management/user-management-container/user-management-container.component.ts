@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 
 @Component({
@@ -24,14 +25,15 @@ export class UserManagementContainerComponent implements OnInit {
   constructor(
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.userManagement.url) {
-          this.commonService.setHeaderTitle(routingUrls.userManagement.title);
+          this.headerService.setHeaderTitle(routingUrls.userManagement.title);
           this.breadcrumbService.set(routingUrls.userManagement.url, {
             skip: true
           });
@@ -43,6 +45,6 @@ export class UserManagementContainerComponent implements OnInit {
         }
       })
     );
-    this.headerTitle$ = this.commonService.headerTitleAction$;
+    this.headerTitle$ = this.headerService.headerTitleAction$;
   }
 }

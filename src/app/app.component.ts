@@ -14,15 +14,11 @@ import {
   permissions as perms
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
-import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { environment } from './../environments/environment';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
 import { Permission } from './interfaces';
-
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { AuthHeaderService } from './shared/services/authHeader.service';
+import { LoginService } from './components/login/services/login.service';
 
 const {
   dashboard,
@@ -166,78 +162,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isUserAuthenticated = false;
 
   constructor(
-    private authHeaderService: AuthHeaderService,
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService,
-    private chatService: ChatService,
     private oidcSecurityService: OidcSecurityService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
-    const ref = this;
-    this.commonService.isUserAuthenticated$
+    this.loginService.isUserAuthenticated$
       .pipe(
         tap(
           (isUserAuthenticated) =>
             (this.isUserAuthenticated = isUserAuthenticated)
-        ),
-        filter((isUserAuthenticated) => isUserAuthenticated),
-        take(1),
-        mergeMap(() => this.usersService.getLoggedInUser$())
+        )
       )
-      .subscribe((data) => {
-        this.commonService.setUserInfo(data);
-        if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
-          const userSlackDetail = data.UserSlackDetail;
-          const { slackID } = userSlackDetail;
-          const SSE_URL = `${environment.slackAPIUrl}sse/${slackID}`;
-
-          const { authorization, tenantid } =
-            this.authHeaderService.getAuthHeaders(SSE_URL);
-          this.eventSource = new EventSourcePolyfill(SSE_URL, {
-            headers: {
-              authorization,
-              tenantid
-            }
-          });
-          this.eventSource.onmessage = async (event: any) => {
-            const eventData = JSON.parse(event.data);
-            if (!eventData.isHeartbeat) {
-              const processedMessageIds = [];
-              eventData.forEach((evt: any) => {
-                const { message } = evt;
-                if (!message.isHeartbeat && message.eventType === 'message') {
-                  const audio = new Audio('../assets/audio/notification.mp3');
-                  audio.play();
-                  processedMessageIds.push(evt.id);
-                  const iscollabWindowOpen =
-                    ref.chatService.getCollaborationWindowStatus();
-                  if (iscollabWindowOpen) {
-                    ref.chatService.newMessageReceived(message);
-                  } else {
-                    let unreadCount = ref.chatService.getUnreadMessageCount();
-                    unreadCount = unreadCount + 1;
-                    ref.chatService.setUnreadMessageCount(unreadCount);
-                  }
-                }
-              });
-              ref.chatService
-                .processSSEMessages$(processedMessageIds)
-                .subscribe(
-                  (response) => {
-                    // Do nothing
-                  },
-                  (err) => {
-                    // Do Nothing
-                  }
-                );
-            }
-          };
-        }
-      });
+      .subscribe();
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))

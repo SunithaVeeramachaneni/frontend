@@ -33,6 +33,7 @@ import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -183,6 +184,7 @@ describe('WorkInstructionsComponent', () => {
   let wiCommonServiceSpy: WiCommonService;
   let overlayServiceSpy: OverlayService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let breadcrumbService: BreadcrumbService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
@@ -216,6 +218,9 @@ describe('WorkInstructionsComponent', () => {
         permissionsAction$: permissions$
       }
     );
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [''], {
+      headerTitleAction$: of(routingUrls.workInstructions.title)
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -243,7 +248,8 @@ describe('WorkInstructionsComponent', () => {
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
   }));
@@ -723,7 +729,7 @@ describe('WorkInstructionsComponent', () => {
     it('should set header title & breadcrumb', () => {
       component.currentRouteUrl$.subscribe((data) => {
         expect(data).toBe(routingUrls.workInstructions.url);
-        expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+        expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           routingUrls.workInstructions.title
         );
       });

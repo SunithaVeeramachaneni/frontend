@@ -24,6 +24,7 @@ import {
 } from 'src/app/app.constants';
 import { Role, ErrorInfo } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 import { ToastService } from 'src/app/shared/toast';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
@@ -85,13 +86,14 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     private roleService: RolesPermissionsService,
     private cdrf: ChangeDetectorRef,
     public dialog: MatDialog,
-    private toast: ToastService
+    private toast: ToastService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
-        this.commonService.setHeaderTitle(routingUrls.rolesPermissions.title)
+        this.headerService.setHeaderTitle(routingUrls.rolesPermissions.title)
       )
     );
     this.roleForm = this.fb.group({

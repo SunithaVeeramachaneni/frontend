@@ -6,6 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantsComponent } from '../tenants/tenants.component';
@@ -16,16 +17,19 @@ describe('TenantManagementContainerComponent', () => {
   let component: TenantManagementContainerComponent;
   let fixture: ComponentFixture<TenantManagementContainerComponent>;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let breadcrumbService: BreadcrumbService;
   let cdrf: ChangeDetectorRef;
 
   beforeEach(async () => {
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of(routingUrls.tenantManagement.url)
+    });
+    headerServiceSpy = jasmine.createSpyObj(
+      'HeaderService',
       ['setHeaderTitle'],
       {
-        headerTitleAction$: of(routingUrls.tenantManagement.title),
-        currentRouteUrlAction$: of(routingUrls.tenantManagement.url)
+        headerTitleAction$: of(routingUrls.tenantManagement.title)
       }
     );
 
@@ -35,7 +39,10 @@ describe('TenantManagementContainerComponent', () => {
         MockComponent(TenantsComponent)
       ],
       imports: [SharedModule, RouterTestingModule, BrowserAnimationsModule],
-      providers: [{ provide: CommonService, useValue: commonServiceSpy }]
+      providers: [
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
+      ]
     }).compileComponents();
   });
 
@@ -56,7 +63,7 @@ describe('TenantManagementContainerComponent', () => {
     const detectChangesSpy = spyOn(cdrf.constructor.prototype, 'detectChanges');
 
     component.currentRouteUrl$.subscribe((data) => {
-      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+      expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         routingUrls.tenantManagement.title
       );
       expect(breadcrumbService.set).toHaveBeenCalledWith(

@@ -29,6 +29,7 @@ import {
   routingUrls
 } from '../../../app.constants';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -133,6 +134,7 @@ describe('PublishedComponent', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let publishedDe: DebugElement;
   let publishedEl: HTMLElement;
 
@@ -152,14 +154,13 @@ describe('PublishedComponent', () => {
       'getBase64ImageData',
       'getBase64Image'
     ]);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setHeaderTitle'],
-      {
-        currentRouteUrlAction$: of('/work-instructions/published'),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of('/work-instructions/published'),
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [PublishedComponent, DropDownFilterPipe, TimeAgoPipe],
@@ -500,7 +501,7 @@ describe('PublishedComponent', () => {
     it('should set header title', () => {
       component.currentRouteUrl$.subscribe((data) => {
         expect(data).toBe(routingUrls.published.url);
-        expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+        expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           routingUrls.published.title
         );
       });

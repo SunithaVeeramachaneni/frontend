@@ -31,6 +31,7 @@ import {
   routingUrls
 } from '../../../app.constants';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -138,6 +139,7 @@ describe('CategoryWiseInstructionsComponent', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let breadcrumbServiceSpy: BreadcrumbService;
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
@@ -159,16 +161,15 @@ describe('CategoryWiseInstructionsComponent', () => {
       'getBase64ImageData',
       'getBase64Image'
     ]);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setHeaderTitle'],
-      {
-        currentRouteUrlAction$: of(
-          `/work-instructions/category/${defaultCategoryId}`
-        ),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of(
+        `/work-instructions/category/${defaultCategoryId}`
+      ),
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
     breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
 
     TestBed.configureTestingModule({
@@ -1243,7 +1244,7 @@ describe('CategoryWiseInstructionsComponent', () => {
           `${routingUrls.workInstructions.url}/category/${categoryId}`,
           Category_Name
         );
-        expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+        expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           Category_Name
         );
         expect(component.selectedCategory).toBe(Category_Name);

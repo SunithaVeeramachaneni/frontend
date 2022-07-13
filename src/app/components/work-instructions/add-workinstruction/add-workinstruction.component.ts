@@ -36,6 +36,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
 import { MediaType } from 'plyr';
 import { permissions } from 'src/app/app.constants';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-add-workinstruction',
@@ -106,7 +107,8 @@ export class AddWorkinstructionComponent
     private store: Store<State>,
     private commonService: CommonService,
     private errorHandlerService: ErrorHandlerService,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private headerService: HeaderService
   ) {}
 
   ngAfterViewInit() {
@@ -136,7 +138,7 @@ export class AddWorkinstructionComponent
       this.breadcrumbService.set(currentRouteUrl, {
         label: WI_Name ? WI_Name : 'Untitled Work Instruction'
       });
-      this.commonService.setHeaderTitle(
+      this.headerService.setHeaderTitle(
         WI_Name ? WI_Name : 'Untitled Work Instruction'
       );
     });

@@ -11,6 +11,7 @@ import { CommonService } from '../../../shared/services/common.service';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { permissions, routingUrls } from '../../../app.constants';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-drafts',
@@ -59,13 +60,14 @@ export class DraftsComponent implements OnInit {
     private route: ActivatedRoute,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit() {
     this.routeWithSearch = `${routingUrls.drafts.url}?search=`;
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.drafts.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.drafts.title))
     );
     this.getAllDraftedInstructions();
     this.authorDropDown();
