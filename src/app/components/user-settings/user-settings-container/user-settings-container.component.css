@@ -3,6 +3,8 @@
   margin-right: 14px;
   background-color: #ffffff;
   display: flex;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 .user-settings-menu {

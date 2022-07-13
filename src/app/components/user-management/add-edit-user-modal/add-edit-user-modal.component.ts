@@ -158,6 +158,9 @@ export class AddEditUserModalComponent implements OnInit {
     } else {
       this.dialogText = 'editUser';
       let base64;
+      if (this.data.user.title === superAdminText) {
+        this.userForm.disable();
+      }
       if (typeof userDetails.profileImage === 'string') {
         base64 = this.data.user.profileImage;
       } else {
