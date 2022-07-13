@@ -73,31 +73,6 @@
   border-radius: 50%;
 }
 
-.loggedin-user-name {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  text-align: right;
-  color: #000000;
-  white-space: nowrap;
-  float: right;
-  text-transform: capitalize;
-  line-height: 1;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.loggedin-user-role {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 18px;
-  text-align: right;
-  color: #8f8f8f;
-  white-space: nowrap;
-  margin-top: 5px;
-}
-
 .arrow-icon {
   margin-top: 10px;
   font-size: 45px;
@@ -186,4 +161,133 @@
 
 .cursor {
   cursor: pointer;
+}
+
+.header-cols {
+  .user {
+    border-top: 1px solid #e0e0e0;
+    border-left: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding: 0 7px;
+  }
+
+  .profile {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    top: 5px;
+    border-radius: 50%;
+  }
+
+  .without-company-logo {
+    border: 1px dashed #e0e0e0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 0 10px;
+    height: 48px;
+  }
+
+  .with-company-logo {
+    border-top: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 48px;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  .logo-comes-here-text {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 15px;
+    text-align: center;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #000000;
+    opacity: 0.3;
+    margin: 10px 0;
+  }
+
+  .logo {
+    max-height: 44px;
+    max-width: 140px;
+    vertical-align: middle;
+  }
+}
+.header-profile-menu:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
+  border-bottom: 15px solid #ffffff;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.header-profile-menu {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
+  padding: 16px 0px;
+  width: 210px;
+  position: absolute;
+  top: 10px;
+  right: 230px;
+
+  .profile-image {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    margin: 0 62px;
+  }
+
+  .loggedin-user-name {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
+    color: #000000;
+    white-space: nowrap;
+    margin: 10px 0 7px 0;
+  }
+
+  .loggedin-user-role {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    margin: 0 0 7px 0;
+    text-align: center;
+    color: #8f8f8f;
+    white-space: nowrap;
+  }
+
+  .loggedin-user-email {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    margin: 0;
+    text-align: center;
+    color: #8f8f8f;
+    white-space: nowrap;
+  }
+
+  .profile-signout {
+    font-weight: 400;
+    font-size: 16px;
+    color: #000000;
+  }
 }
