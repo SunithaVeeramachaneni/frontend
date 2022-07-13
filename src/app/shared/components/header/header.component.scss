@@ -3,6 +3,11 @@
   height: 65px;
   border-bottom: 1px solid #e0e0e0;
 }
+
+::ng-deep .sidebar-minimize-icons .mat-button-focus-overlay {
+  background-color: transparent !important;
+}
+
 .connectToSlackButton {
   align-items: center;
   color: #000;
