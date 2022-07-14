@@ -204,9 +204,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
       .subscribe(([data, { tenantLogo }]) => {
         this.tenantService.setTenantInfo({
-          tenantLogo: this.imageUtils.getImageSrc(
-            Buffer.from(tenantLogo).toString()
-          )
+          tenantLogo: tenantLogo
+            ? this.imageUtils.getImageSrc(Buffer.from(tenantLogo).toString())
+            : tenantLogo
         } as Tenant);
         this.commonService.setUserInfo(data);
         if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
