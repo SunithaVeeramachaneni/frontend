@@ -18,8 +18,7 @@ describe('AuthConfigService', () => {
 
   beforeEach(() => {
     tenantServiceSpy = jasmine.createSpyObj('TenantService', [
-      'getTenantsInfo$',
-      'setTenantsInfo'
+      'getTenantsInfo$'
     ]);
 
     TestBed.configureTestingModule({
@@ -44,9 +43,6 @@ describe('AuthConfigService', () => {
 
       service.getAuthConfig$(0).then((response) => {
         expect(response).toEqual(authConfigs[0]);
-        expect(tenantServiceSpy.setTenantsInfo).toHaveBeenCalledWith(
-          tenantsInfo
-        );
       });
       expect(true).toBe(true);
     });

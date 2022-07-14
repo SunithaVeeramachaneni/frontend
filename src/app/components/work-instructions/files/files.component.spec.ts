@@ -90,9 +90,6 @@ describe('MediaFilesComponent', () => {
       .and.returnValue(of(mediaFiles))
       .and.callThrough();
 
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
     fixture.detectChanges();
   }));
 

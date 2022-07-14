@@ -180,7 +180,8 @@ describe('PublishedComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
   }));

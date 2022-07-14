@@ -201,7 +201,8 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
-        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy }
+        { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
   }));

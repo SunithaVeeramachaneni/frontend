@@ -34,6 +34,7 @@ import { NgxSpinnerComponent } from 'ngx-spinner';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { ImportService } from './services/import.service';
 
 const categoryDetails = [
   {
@@ -186,6 +187,7 @@ describe('WorkInstructionsComponent', () => {
   let commonServiceSpy: CommonService;
   let headerServiceSpy: HeaderService;
   let breadcrumbService: BreadcrumbService;
+  let importServiceSpy: ImportService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -208,19 +210,19 @@ describe('WorkInstructionsComponent', () => {
       fetchWIAction$: of(true)
     });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of('/work-instructions'),
+      minimizeSidebarAction$: of(false),
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj(
+      'HeaderService',
       ['setHeaderTitle'],
       {
-        currentRouteUrlAction$: of('/work-instructions'),
-        headerTitleAction$: of(routingUrls.workInstructions.title),
-        minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$
+        headerTitleAction$: of(routingUrls.workInstructions.title)
       }
     );
-    headerServiceSpy = jasmine.createSpyObj('HeaderService', [''], {
-      headerTitleAction$: of(routingUrls.workInstructions.title)
-    });
+    importServiceSpy = jasmine.createSpyObj('ImportService', ['importFile']);
 
     TestBed.configureTestingModule({
       declarations: [
@@ -249,7 +251,8 @@ describe('WorkInstructionsComponent', () => {
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: ImportService, useValue: importServiceSpy }
       ]
     }).compileComponents();
   }));
