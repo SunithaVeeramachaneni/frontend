@@ -2573,11 +2573,6 @@ describe('TenantComponent', () => {
     let newTenant: Tenant;
     beforeEach(() => {
       newTenant = cloneDeep(createTenant);
-      // newTenant.erps.sap.scope = JSON.stringify(
-      //   newTenant.erps.sap.scope,
-      //   null,
-      //   ' '
-      // );
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));

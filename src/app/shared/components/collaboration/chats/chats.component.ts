@@ -232,16 +232,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
                 }, 0);
               }
               message.isMeeting = false;
-              // if (message.text.indexOf('meeting_request')) {
-              //   try {
-              //     message.jsonObj = JSON.parse(message.text);
-              //     if (message.jsonObj.link) {
-              //       message.isMeeting = true;
-              //     }
-              //   } catch (err) {
-              //     // TODO: Display toasty
-              //   }
-              // }
             });
             return of({ data: history });
           }
@@ -281,13 +271,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
           }
           return initial.data;
         } else if (action === 'receive') {
-          // let userInfo;
-          // initial.data.forEach((msg) => {
-          //   if (message.from.email === msg.from.email) {
-          //     userInfo = msg.from;
-          //   }
-          // });
-          // message.userInfo = userInfo;
           message.isMeeting = false;
           initial.data = initial.data.concat(message);
 
@@ -374,6 +357,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       'uploadFile'
     ) as HTMLInputElement;
     fileUpload.onchange = () => {
+      // Note: enable the below for loop if we need to support uploading of multiple files.
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       // for (let index = 0; index < fileUpload.files.length; index++) {
       const selectedFile = fileUpload.files[0];

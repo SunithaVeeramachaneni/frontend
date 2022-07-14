@@ -88,5 +88,7 @@
   "products": "Products",
   "modules": "Modules",
   "logDBType": "Log DB Type",
-  "logLevel": "Log Level"
+  "logLevel": "Log Level",
+  "selectConversationToSendMessage": "Please select a conversation to send message",
+  "selectUserToCreateGroup": "Please select a user to add to the Group"
 }
