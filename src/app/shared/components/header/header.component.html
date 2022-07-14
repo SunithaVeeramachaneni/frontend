@@ -1,10 +1,10 @@
 <mat-toolbar class="min-toolbar">
-  <div>
-    <div class="sidebar-minimize-icons">
-      <button mat-icon-button (click)="openSidenav()">
-        <mat-icon>menu</mat-icon>
-      </button>
+  <button mat-icon-button (click)="openSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
 
+  <div class="width-50" (click)="closeSidenav()">
+    <div class="sidebar-minimize-icons">
       <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
         {{ headerTitle }}
       </h6>
@@ -13,7 +13,11 @@
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
-  <div class="header-cols" *ngIf="userInfo$ | async as userDetails">
+  <div
+    class="header-cols width-50"
+    *ngIf="userInfo$ | async as userDetails"
+    (click)="closeSidenav()"
+  >
     <div *ngIf="slackVerification$ | async as slackVerification">
       <div
         *ngIf="!slackVerification.slackInstalled"

@@ -6,11 +6,11 @@
 <mat-sidenav-container class="main-app">
   <mat-sidenav
     #sidenav
-    [(opened)]="this.opened"
-    (opened)="this.opened = true"
-    (closed)="this.opened = false"
+    mode="side"
+    opened
     [ngClass]="{
-      'hide-content': isUserAuthenticated === false
+      'hide-content': isUserAuthenticated === false,
+      'menu-close': !menuOpenClose
     }"
   >
     <div class="sidebar-menu-items">
@@ -30,7 +30,7 @@
             class="menu-name"
             [routerLink]="menuitem.url"
             routerLinkActive="active"
-            (click)="selectedListElement(menuitem.title); sidenav.close()"
+            (click)="selectedListElement(menuitem.title)"
           >
             <img
               [src]="
@@ -42,12 +42,12 @@
               "
               class="sidebar-icons"
             />
-            <span class="menu-title">
+            <span class="menu-title" *ngIf="menuOpenClose">
               {{ menuitem.title }}
             </span>
           </a>
           <a
-            *ngIf="menuitem.subPages !== null && this.sidebar === true"
+            *ngIf="menuitem.subPages !== null && menuOpenClose"
             class="arrow-margin"
             (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
           >
@@ -63,7 +63,9 @@
         </li>
 
         <div
-          *ngIf="menuitem.showSubMenu && menuitem.subPages !== null"
+          *ngIf="
+            menuitem.showSubMenu && menuitem.subPages !== null && menuOpenClose
+          "
           class="m-l-70"
         >
           <ng-container *ngIf="permissions$ | async as permissions">
@@ -79,7 +81,6 @@
               <ul
                 lines="none"
                 class="p-0 m-0"
-                [hidden]="this.sidebar === false"
                 *ngFor="let submenuitem of menuitem.subPages"
               >
                 <a
@@ -88,9 +89,7 @@
                   [routerLink]="submenuitem.url"
                   routerLinkActive="subSelected"
                   *appCheckUserHasPermission="[submenuitem.permission]"
-                  (click)="
-                    selectedListElement(submenuitem.title); sidenav.close()
-                  "
+                  (click)="selectedListElement(submenuitem.title)"
                 >
                   <span>{{ submenuitem.title }}</span>
                 </a>
@@ -101,20 +100,21 @@
       </mat-nav-list>
     </div>
     <img
-      src="assets/sidebar-icons/innova-big.svg"
-      [hidden]="this.sidebar === false"
+      src="{{ bigInnovaIcon }}"
+      [hidden]="!menuOpenClose"
       class="innov-big-img"
     />
     <img
-      src="assets/sidebar-icons/innova-small.svg"
-      [hidden]="this.sidebar === true"
+      src="{{ smallInnovaIcon }}"
+      [hidden]="menuOpenClose"
       class="innov-small-img"
     />
   </mat-sidenav>
 
   <mat-sidenav-content>
     <app-header
-      (SideNavToggle)="sidenav.toggle()"
+      (SideNavToggle)="toggleMenu()"
+      (OutsideClickTrigger)="closeSideNav()"
       [selectedMenu]="this.selectedMenu"
       [ngClass]="{
         'hide-content': isUserAuthenticated === false
@@ -122,6 +122,7 @@
     ></app-header>
 
     <main
+      (click)="closeSideNav()"
       [ngClass]="{
         'show-content': this.currentRouteUrl !== '/login',
         'show-login':

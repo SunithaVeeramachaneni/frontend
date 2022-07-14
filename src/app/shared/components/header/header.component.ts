@@ -33,6 +33,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
   @Output() SideNavToggle = new EventEmitter();
+  @Output() OutsideClickTrigger = new EventEmitter();
 
   headerTitle$: Observable<string>;
 
@@ -139,6 +140,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   openSidenav() {
     this.SideNavToggle.emit();
+  }
+
+  closeSidenav() {
+    this.OutsideClickTrigger.emit();
   }
 
   minimize(e) {
