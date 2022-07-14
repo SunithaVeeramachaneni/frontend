@@ -65,7 +65,10 @@ export const tenantsInfo: Tenant[] = [
     products: [],
     modules: [],
     logDBType: '',
-    logLevel: ''
+    logLevel: '',
+    collaborationType: 'msteams',
+    slackConfiguration: {},
+    msTeamsConfiguration: {}
   }
 ];
 

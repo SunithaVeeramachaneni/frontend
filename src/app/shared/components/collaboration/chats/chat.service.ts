@@ -6,6 +6,7 @@ import { AppService } from '../../../services/app.services';
 import { environment } from '../../../../../environments/environment';
 
 import { BehaviorSubject, Observable } from 'rxjs';
+import { CommonService } from '../../../services/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,10 @@ export class ChatService {
   openCollabWindow$ = this.openCollaborationWindowSubject.asObservable();
   unreadCount$ = this.unreadCountSubject.asObservable();
 
-  constructor(private appService: AppService) {}
+  constructor(
+    private appService: AppService,
+    private commonService: CommonService
+  ) {}
 
   newMessageReceived = (message: any) => {
     this.newMessageReceivedSubject.next(message);
@@ -47,74 +51,99 @@ export class ChatService {
   };
   getUnreadMessageCount = () => this.unreadMessageCount;
 
-  getConversations$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.slackAPIUrl, `conversations`, info);
+  getConversations$ = (
+    userId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._getResp(apiURL, `conversations/${userId}`, info);
+  };
 
   getConversationHistory$ = (
     conversationId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._getResp(
-      environment.slackAPIUrl,
+  ): Observable<any> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._getResp(
+      apiURL,
       `conversations/${conversationId}/history`,
       info
     );
+  };
 
   sendMessage$ = (
     message: string,
     userId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._postData(
-      environment.slackAPIUrl,
-      `users/${userId}/messages`,
+  ): Observable<any> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._postData(
+      apiURL,
+      `channels/${userId}/messages`,
       { message },
       info
     );
+  };
 
   createConversation$ = (
     groupName: string,
     invitedUsers: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._postData(
-      environment.slackAPIUrl,
+  ): Observable<any> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._postData(
+      apiURL,
       `conversations`,
       { groupName, invitedUsers },
       info
     );
+  };
 
   uploadFileToConversation$ = (
-    conversationId,
-    formData,
+    conversationId: string,
+    formData: FormData,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService.uploadFile(
-      environment.slackAPIUrl,
-      `conversations/${conversationId}/files`,
-      formData
+  ): Observable<any> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService.uploadFile(
+      apiURL,
+      `channels/${conversationId}/messages/files`,
+      formData,
+      info
     );
+  };
 
   downloadFileSlack$ = (
     fileId: string,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Blob> =>
-    this.appService._downloadFile(
-      environment.slackAPIUrl,
+  ): Observable<Blob> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._downloadFile(
+      apiURL,
       `files/download?url=${fileId}`,
       info
     );
+  };
 
   processSSEMessages$ = (
     messageIds: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService.patchData(
-      environment.slackAPIUrl,
+  ): Observable<any> => {
+    const userInfo = this.commonService.getUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService.patchData(
+      apiURL,
       `sse/events`,
       { messageIds },
       info
     );
+  };
 
   triggerCall = (user) => {
     //

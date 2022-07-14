@@ -14,8 +14,8 @@ export class HeaderService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._getResp(
-      environment.slackAPIUrl,
-      'install/verify',
+      environment.userRoleManagementApiUrl,
+      'slack/install/verify',
       info,
       queryParams
     );

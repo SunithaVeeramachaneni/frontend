@@ -58,8 +58,13 @@ export class TenantComponent implements OnInit, AfterViewInit {
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
-  noOfTabs = 5;
+  noOfTabs = 6;
   tenantForm: FormGroup;
+  slackConfiguration: FormGroup;
+  msTeamsConfiguration: FormGroup;
+
+  tenantData: any;
+
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
     'Dashboard',
@@ -72,6 +77,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   idps = ['azure'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
+  collaborationTypes = ['slack', 'msteams'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   validationErrors$: Observable<{
     [key: string]:
@@ -268,6 +274,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ],
         database: [{ value: '', disabled: true }]
       }),
+      collaborationType: ['', [Validators.required]],
       noOfLicenses: [
         '',
         [
@@ -283,6 +290,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
       logLevel: ['', [Validators.required]]
     });
 
+    this.slackConfiguration = this.fb.group({
+      slackTeamID: ['', [Validators.required]],
+      slackClientID: ['', [Validators.required]],
+      slackClientSecret: ['', [Validators.required]],
+      slackClientSigningSecret: ['', [Validators.required]],
+      slackClientStateSecret: ['', [Validators.required]]
+    });
+    this.msTeamsConfiguration = this.fb.group({
+      msTeamsTenantID: ['', [Validators.required]],
+      msTeamsClientID: ['', [Validators.required]],
+      msTeamsClientSecret: ['', [Validators.required]],
+      msTeamsSharepointSiteID: ['', [Validators.required]],
+      msTeamsRSAPrivateKey: ['', [Validators.required]],
+      msTeamsRSAPublicKey: ['', [Validators.required]]
+    });
+
     const headerTitle = this.tenantForm.get('tenantName').value
       ? this.tenantForm.get('tenantName').value
       : `Addding Tenant...`;
@@ -290,6 +313,38 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.breadcrumbService.set('@tenantName', {
       label: headerTitle
     });
+
+    this.tenantForm
+      .get('collaborationType')
+      .valueChanges.subscribe((collabType) => {
+        if (collabType === 'slack') {
+          if (this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.removeControl('msTeamsConfiguration');
+          }
+          if (!this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.addControl(
+              'slackConfiguration',
+              this.slackConfiguration
+            );
+          }
+          this.slackConfiguration.patchValue(
+            this.tenantData.slackConfiguration
+          );
+        } else if (collabType === 'msteams') {
+          if (this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.removeControl('slackConfiguration');
+          }
+          if (!this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.addControl(
+              'msTeamsConfiguration',
+              this.msTeamsConfiguration
+            );
+          }
+          this.msTeamsConfiguration.patchValue(
+            this.tenantData.msTeamsConfiguration
+          );
+        }
+      });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
       const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
@@ -305,31 +360,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     this.route.data.subscribe(({ tenant }) => {
       if (tenant && Object.keys(tenant).length) {
+        this.tenantData = tenant;
         const { sap, node } = tenant.protectedResources;
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
-
-        tenant.rdbms.password = this.commonService.decrypt(
-          tenant.rdbms.password,
-          this.encryptionKey
-        );
-        tenant.nosql.password = this.commonService.decrypt(
-          tenant.nosql.password,
-          this.encryptionKey
-        );
-        tenant.erps.sap.password = this.commonService.decrypt(
-          tenant.erps.sap.password,
-          this.encryptionKey
-        );
-        tenant.erps.sap.saml.clientSecret = this.commonService.decrypt(
-          tenant.erps.sap.saml.clientSecret,
-          this.encryptionKey
-        );
-        tenant.erps.sap.scope = JSON.stringify(
-          tenant.erps.sap.scope,
-          null,
-          ' '
-        );
 
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(

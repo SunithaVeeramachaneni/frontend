@@ -206,53 +206,52 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
       .subscribe((data) => {
         this.commonService.setUserInfo(data);
-        if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
-          const userSlackDetail = data.UserSlackDetail;
-          const { slackID } = userSlackDetail;
-          const SSE_URL = `${environment.slackAPIUrl}sse/${slackID}`;
-
-          const { authorization, tenantid } =
-            this.authHeaderService.getAuthHeaders(SSE_URL);
-          this.eventSource = new EventSourcePolyfill(SSE_URL, {
-            headers: {
-              authorization,
-              tenantid
-            }
-          });
-          this.eventSource.onmessage = async (event: any) => {
-            const eventData = JSON.parse(event.data);
-            if (!eventData.isHeartbeat) {
-              const processedMessageIds = [];
-              eventData.forEach((evt: any) => {
-                const { message } = evt;
-                if (!message.isHeartbeat && message.eventType === 'message') {
-                  const audio = new Audio('../assets/audio/notification.mp3');
-                  audio.play();
-                  processedMessageIds.push(evt.id);
-                  const iscollabWindowOpen =
-                    ref.chatService.getCollaborationWindowStatus();
-                  if (iscollabWindowOpen) {
-                    ref.chatService.newMessageReceived(message);
-                  } else {
-                    let unreadCount = ref.chatService.getUnreadMessageCount();
-                    unreadCount = unreadCount + 1;
-                    ref.chatService.setUnreadMessageCount(unreadCount);
-                  }
-                }
-              });
-              ref.chatService
-                .processSSEMessages$(processedMessageIds)
-                .subscribe(
-                  (response) => {
-                    // Do nothing
-                  },
-                  (err) => {
-                    // Do Nothing
-                  }
-                );
-            }
-          };
+        let userID;
+        if (data.collaborationType === 'slack') {
+          if (data['UserSlackDetail.slackID']) {
+            userID = data['UserSlackDetail.slackID'];
+          }
+        } else if (data.collaborationType === 'msteams') {
+          userID = data.email;
         }
+
+        const SSE_URL = `${environment.userRoleManagementApiUrl}${data.collaborationType}/sse/${userID}`;
+
+        const { authorization, tenantid } =
+          this.authHeaderService.getAuthHeaders(SSE_URL);
+        this.eventSource = new EventSourcePolyfill(SSE_URL, {
+          headers: {
+            authorization,
+            tenantid
+          }
+        });
+        this.eventSource.onmessage = async (event: any) => {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            const processedMessageIds = [];
+            eventData.forEach((evt: any) => {
+              const { message } = evt;
+              if (
+                !message.isHeartbeat &&
+                (message.eventType === 'message' ||
+                  message.messageType === 'message')
+              ) {
+                const audio = new Audio('../assets/audio/notification.mp3');
+                audio.play();
+                processedMessageIds.push(evt.id);
+                const iscollabWindowOpen =
+                  ref.chatService.getCollaborationWindowStatus();
+                if (iscollabWindowOpen) {
+                  ref.chatService.newMessageReceived(message);
+                } else {
+                  let unreadCount = ref.chatService.getUnreadMessageCount();
+                  unreadCount = unreadCount + 1;
+                  ref.chatService.setUnreadMessageCount(unreadCount);
+                }
+              }
+            });
+          }
+        };
       });
 
     this.router.events
