@@ -3,7 +3,6 @@ import { ChatService } from './chat.service';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 
-import { UploadDialogComponent } from './upload-dialog/upload-dialog.component';
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
 import { EmitterService } from '../EmitterService';
 import {
@@ -17,6 +16,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | '';
@@ -27,6 +27,24 @@ interface UpdateConversations {
   action: 'update_latest_message' | '';
   message: any;
   channel: any;
+}
+
+interface Conversation {
+  id: string;
+  userInfo: any;
+  chatType: string;
+  topic: string;
+  members: any[];
+  latest: any;
+}
+interface Message {
+  id: string;
+  from: any;
+  timestamp: string;
+  message: string;
+  attachments: [];
+  chatId: string;
+  messageType: string;
 }
 
 @Component({
@@ -50,10 +68,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
   userMaps: any = [];
 
   conversationsInitial$: Observable<any>;
-  conversations$: Observable<any[]>;
+  conversations$: Observable<Conversation[]>;
 
   conversationHistoryInit$: Observable<any>;
-  conversationHistory$: Observable<any[]>;
+  conversationHistory$: Observable<Message[]>;
 
   sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
     action: 'send',
@@ -73,6 +91,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private emitterService: EmitterService,
+    private commonService: CommonService,
     private imageUtils: ImageUtils
   ) {}
 
@@ -90,27 +109,39 @@ export class ChatsComponent implements OnInit, OnDestroy {
         this.addMessageToConversation(event);
       });
 
-    this.conversationsInitial$ = this.chatService.getConversations$().pipe(
-      mergeMap((conversations) => {
-        if (conversations.length) {
-          conversations.forEach((conv) => {
-            conv.userInfo.profileImage = this.imageUtils.getImageSrc(
-              Buffer.from(conv.userInfo.profileImage).toString()
-            );
-          });
-          if (this.targetUser) {
+    const userInfo = this.commonService.getUserInfo();
+    this.conversationsInitial$ = this.chatService
+      .getConversations$(userInfo.email)
+      .pipe(
+        mergeMap((conversations) => {
+          if (conversations.length) {
             conversations.forEach((conv) => {
-              if (conv.user === this.targetUser.UserSlackDetail.slackID) {
-                this.setSelectedConversation(conv);
+              if (conv.chatType === 'oneOnOne') {
+                conv.userInfo.profileImage = this.imageUtils.getImageSrc(
+                  Buffer.from(conv.userInfo.profileImage).toString()
+                );
+              } else if (conv.chatType === 'group') {
+                conv.userInfo.profileImage = '';
               }
             });
-          } else {
-            this.setSelectedConversation(conversations[0]);
+            if (this.targetUser) {
+              conversations.forEach((conv) => {
+                if (
+                  conv.chatType === 'oneOnOne' &&
+                  conv.userInfo.email === this.targetUser.email
+                ) {
+                  this.setSelectedConversation(conv);
+                } else {
+                  // TODO: Create a DM conversation with this.targetUser and set it as selected conversation
+                }
+              });
+            } else {
+              this.setSelectedConversation(conversations[0]);
+            }
+            return of({ data: conversations });
           }
-          return of({ data: conversations });
-        }
-      })
-    );
+        })
+      );
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
       this.updateConversations$
@@ -121,11 +152,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
         if (action === 'update_latest_message' && channel?.length) {
           conversationsList.forEach((conv) => {
             if (conv.id === channel) {
-              conv.info.latest = message;
+              conv.latest = message;
             }
           });
         }
-        return initial.data;
+        return conversationsList;
       }),
       tap((conversations) => {
         this.conversations = conversations;
@@ -137,7 +168,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.selectedView = 'CREATE_GROUP';
   };
 
-  handleGroupCreation = ($event) => {
+  handleGroupCreation = (event) => {
     // TODO: Add the created group to the existing groups/conversations...
     this.selectedView = 'CHAT';
   };
@@ -180,6 +211,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.sendReceiveMessages$.next({ action: '', message: '', channel: '' });
     this.conversationHistory = [];
     this.selectedConversation = conversation;
+
     this.conversationHistoryInit$ = this.chatService
       .getConversationHistory$(conversation.id, info)
       .pipe(
@@ -187,20 +219,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
         mergeMap((history) => {
           if (history.length) {
             history.forEach((message) => {
-              message.userInfo.profileImage = this.imageUtils.getImageSrc(
-                Buffer.from(message.userInfo.profileImage).toString()
+              const members = this.selectedConversation.members;
+              const user = members.find(
+                (member) => member.userId === message.from.id
               );
-              message.isMeeting = false;
-              if (message.text.indexOf('meeting_request')) {
-                try {
-                  message.jsonObj = JSON.parse(message.text);
-                  if (message.jsonObj.link) {
-                    message.isMeeting = true;
-                  }
-                } catch (err) {
-                  // TODO: Display toasty
-                }
+              if (user) {
+                message.from = user;
+                setTimeout(() => {
+                  message.from.profileImage = this.imageUtils.getImageSrc(
+                    Buffer.from(message.from.profileImage).toString()
+                  );
+                }, 0);
               }
+              message.isMeeting = false;
             });
             return of({ data: history });
           }
@@ -230,7 +261,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             this.selectedConversation &&
             this.selectedConversation.id === channel
           ) {
-            this.selectedConversation.info.latest = message;
+            this.selectedConversation.latest = message;
           } else {
             this.updateConversations$.next({
               action: 'update_latest_message',
@@ -240,13 +271,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
           }
           return initial.data;
         } else if (action === 'receive') {
-          let userInfo;
-          initial.data.forEach((msg) => {
-            if (message.user === msg.user) {
-              userInfo = msg.userInfo;
-            }
-          });
-          message.userInfo = userInfo;
           message.isMeeting = false;
           initial.data = initial.data.concat(message);
 
@@ -254,12 +278,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
             this.selectedConversation &&
             this.selectedConversation.id === channel
           ) {
-            this.selectedConversation.info.latest = message;
+            this.selectedConversation.latest = message;
           } else {
             this.updateConversations$.next({
               action: 'update_latest_message',
               message,
-              channel: message.channel
+              channel: message.chatId
             });
           }
 
@@ -269,6 +293,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }
       })
     );
+  };
+
+  isLoggedInUser = (user) => {
+    const userInfo = this.commonService.getUserInfo();
+    return userInfo.email === user.email;
   };
 
   onMessageEnter = (targetUser, message) => {
@@ -286,15 +315,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.chatService.sendMessage$(message, targetUser.id, info).subscribe(
       (response) => {
         if (response && Object.keys(response).length) {
-          if (response.ok) {
-            this.sendReceiveMessages$.next({
-              action: 'send',
-              message: response.message,
-              channel: response.channel
-            });
-            this.messageText = '';
-            this.messageDeliveryProgress = false;
-          }
+          response.user = response.from.user;
+          this.sendReceiveMessages$.next({
+            action: 'send',
+            message: response,
+            channel: response.chatId
+          });
+          this.messageText = '';
+          this.messageDeliveryProgress = false;
         }
       },
       (err) => {
@@ -324,48 +352,48 @@ export class ChatsComponent implements OnInit, OnDestroy {
     });
   };
 
-  openUploadDialog = (selectedConversation: any) => {
-    const dialogRef = this.uploadDialog.open(UploadDialogComponent, {
-      disableClose: true,
-      hasBackdrop: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const info: ErrorInfo = {
-          displayToast: true,
-          failureResponse: 'throwError'
-        };
-        const conversationId = selectedConversation.id;
-        const formData = new FormData();
-        formData.append('attachment', result);
-        this.chatService
-          .uploadFileToConversation$(conversationId, formData, info)
-          .subscribe(
-            (res) => {
-              const filesArr = [];
-              filesArr.push(result);
-              const dateToday = moment().unix();
-
-              this.sendReceiveMessages$.next({
-                action: 'send',
-                message: {
-                  type: 'message',
-                  text: '',
-                  user: selectedConversation.user,
-                  files: filesArr,
-                  ts: dateToday
-                },
-                channel: selectedConversation.id
-              });
-            },
-            (err) => {
-              // TODO: Display toasty message
-            }
-          );
-      }
-    });
-  };
+  selectFile() {
+    const fileUpload = document.getElementById(
+      'uploadFile'
+    ) as HTMLInputElement;
+    fileUpload.onchange = () => {
+      // Note: enable the below for loop if we need to support uploading of multiple files.
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      // for (let index = 0; index < fileUpload.files.length; index++) {
+      const selectedFile = fileUpload.files[0];
+      const info: ErrorInfo = {
+        displayToast: true,
+        failureResponse: 'throwError'
+      };
+      const conversationId = this.selectedConversation.id;
+      const formData = new FormData();
+      formData.append('attachment', selectedFile);
+      this.chatService
+        .uploadFileToConversation$(conversationId, formData, info)
+        .subscribe(
+          (response) => {
+            this.sendReceiveMessages$.next({
+              action: 'send',
+              message: {
+                id: this.selectedConversation.id,
+                from: response.from,
+                timestamp: response.createdDateTime,
+                message: `${this.selectedConversation.userInfo.firstName} Uploaded a file.`,
+                attachments: response.attachments || [],
+                chatId: this.selectedConversation.id,
+                messageType: 'message'
+              },
+              channel: this.selectedConversation.id
+            });
+          },
+          (err) => {
+            // TODO: Display toasty message
+          }
+        );
+      // }
+    };
+    fileUpload.click();
+  }
 
   addMessageToConversation = (message) => {
     // check if collaboration dialog is open and chat window is open,
@@ -375,9 +403,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
     // return;
     if (
       this.selectedConversation &&
-      message.channel === this.selectedConversation.id
+      message.chatId === this.selectedConversation.id
     ) {
-      if (message.text.indexOf('meeting_request')) {
+      if (message.message.indexOf('meeting_request')) {
         try {
           message.jsonObj = JSON.parse(message.text);
           if (message.jsonObj.link) {
@@ -390,14 +418,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
       this.sendReceiveMessages$.next({
         action: 'receive',
         message,
-        channel: message.channel
+        channel: message.chatId
       });
     } else {
       // TODO: Find the conversation and push it as latest..
       this.updateConversations$.next({
         action: 'update_latest_message',
         message,
-        channel: message.channel
+        channel: message.chatId
       });
     }
   };

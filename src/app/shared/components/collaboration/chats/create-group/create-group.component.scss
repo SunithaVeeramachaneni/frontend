@@ -1,37 +1,37 @@
+$white-color: #ffffff;
+$light-gray: #eeeeee;
+$blue-color: #1a66ff;
+$hover-bg-color: #b7b9bc2e;
+
 .chatsBody {
   display: flex;
-  height: 85vh;
 }
 .conversationsList {
-  width: 40%;
-  background: #ffffff;
-  padding: 10px;
-  border-radius: 15px 0px 0px 15px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  width: 400px;
+  background: $white-color;
+  border-right: 2px solid #f2f2f2;
   max-width: 400px;
   .searchBar {
     display: flex;
     .searchInput {
-      border: 1px solid #e1dcdc;
-      border-radius: 45px;
+      border-radius: 5px;
       padding: 10px;
-      background: #eeeeee;
+      background: $light-gray;
     }
     .searchMore {
-      color: #1a66ff;
+      color: $blue-color;
     }
   }
   .participants {
     display: flex;
     align-items: center;
-    padding: 10px 0px;
+    font-weight: bold;
   }
   .participantsTitle {
     margin-left: 10px;
   }
   .userList {
-    height: 68vh;
+    height: 60vh;
     overflow: auto;
     overflow-x: hidden;
   }
@@ -41,7 +41,7 @@
   border-radius: 15px;
   &:hover {
     cursor: pointer;
-    background: #b7b9bc2e;
+    background: $hover-bg-color;
   }
 }
 
@@ -70,18 +70,15 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: #ffffff !important;
-  border-radius: 0px 15px 15px 0px;
-  padding: 10px;
-  box-shadow: 0 2px 1px -1px rgb(116 116 116), 0 1px 1px 0 rgb(116 116 116),
-    0 1px 3px 0 rgb(116 116 116);
+  background: $white-color !important;
+  margin-top: -60px;
+  height: 85vh;
   .conversationHead {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 5px 20px;
     height: 50px;
-    // box-shadow: 0px 15px 10px -15px #111;
     .iconButton {
       background: none;
       padding: 0;
@@ -89,7 +86,6 @@
       cursor: pointer;
       width: 40px;
       border-radius: 45px;
-      // margin-top: 15px;
     }
     .iconButton .icon {
       width: 45px !important;
@@ -136,7 +132,6 @@
     width: 40px;
     border-radius: 45px;
     margin-right: 10px;
-    // margin-top: -15px;
   }
   .attachmentItem {
     font-size: 10pt;
@@ -176,21 +171,21 @@
     border-radius: 45px;
   }
   .userList {
-    height: 74vh;
+    height: 520px;
     overflow: auto;
     overflow-x: hidden;
   }
   .chatBottom {
     .messageInputBar {
       display: flex;
-      padding: 10px 0px;
+      padding: 10px 10px;
       .messageInputGroup {
         display: flex;
         align-items: center;
       }
       .messageInput {
         padding: 10px;
-        background: #eeeeee;
+        background: $light-gray;
         margin-right: 5px;
         border-radius: 5px;
       }
@@ -198,10 +193,10 @@
         width: 225px;
       }
       .audioRecord {
-        color: #ffffff;
+        color: $white-color;
         border-radius: 8px;
         font-size: 8pt;
-        background: #1a66ff;
+        background: $blue-color;
         margin-left: 5px;
       }
     }
@@ -211,6 +206,13 @@
   cursor: pointer;
   &:hover {
     cursor: pointer;
-    background: #b7b9bc2e;
+    background: $hover-bg-color;
   }
+}
+
+.centerText {
+  display: flex !important;
+  justify-content: center;
+  align-content: space-around;
+  align-items: center;
 }

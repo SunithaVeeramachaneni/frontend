@@ -72,6 +72,7 @@
         <mat-tab label="{{ 'erps' | translate }}"></mat-tab>
         <mat-tab label="{{ 'protectedResources' | translate }}"></mat-tab>
         <mat-tab label="{{ 'dbConfigurations' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'collaboration' | translate }}"></mat-tab>
         <mat-tab label="{{ 'configurations' | translate }}"></mat-tab>
       </mat-tab-group>
     </div>
@@ -1366,7 +1367,291 @@
         </div>
       </div>
 
+      <!-- COLLABORATION FIELDS - START -->
       <div [hidden]="selectedID.value !== 4">
+        <div>
+          <p class="sub-headings" translate>collaborationType</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>collaborationType</mat-label>
+              <mat-select formControlName="collaborationType">
+                <mat-option
+                  *ngFor="let type of collaborationTypes"
+                  [value]="type"
+                >
+                  {{ type | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('collaborationType').errors?.required &&
+                tenantForm.get('collaborationType').touched
+              "
+            >
+              {{
+                'required'
+                  | translate: { name: 'collaborationType' | translate }
+              }}
+            </mat-error>
+          </p>
+        </div>
+        <div *ngIf="tenantForm.get('collaborationType').value === 'slack'">
+          <div formGroupName="slackConfiguration">
+            <p class="sub-headings" translate>slackConfiguration</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackTeamID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackTeamID' | translate"
+                  formControlName="slackTeamID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackTeamID').errors?.required &&
+                  slackConfiguration.get('slackTeamID').touched
+                "
+              >
+                {{
+                  'required' | translate: { name: 'slackTeamID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientID' | translate"
+                  formControlName="slackClientID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientID').errors?.required &&
+                  slackConfiguration.get('slackClientID').touched
+                "
+              >
+                {{
+                  'required' | translate: { name: 'slackClientID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientSecret' | translate"
+                  formControlName="slackClientSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'slackClientSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientSigningSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientSigningSecret' | translate"
+                  formControlName="slackClientSigningSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientSigningSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientSigningSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate
+                      : { name: 'slackClientSigningSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientStateSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientStateSecret' | translate"
+                  formControlName="slackClientStateSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientStateSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientStateSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'slackClientStateSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+          </div>
+        </div>
+        <div *ngIf="tenantForm.get('collaborationType').value === 'msteams'">
+          <div formGroupName="msTeamsConfiguration">
+            <p class="sub-headings" translate>msTeamsConfiguration</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsTenantID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsTenantID' | translate"
+                  formControlName="msTeamsTenantID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsTenantID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsTenantID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsTenantID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsClientID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsClientID' | translate"
+                  formControlName="msTeamsClientID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsClientID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsClientID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsClientID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsClientSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsClientSecret' | translate"
+                  formControlName="msTeamsClientSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsClientSecret').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsClientSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsClientSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsSharepointSiteID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsSharepointSiteID' | translate"
+                  formControlName="msTeamsSharepointSiteID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsSharepointSiteID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="sub-headings" translate>msTeamsPublicPrivateKeys</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsRSAPrivateKey</mat-label>
+                <textarea
+                  matInput
+                  matInput
+                  [placeholder]="'msTeamsRSAPrivateKey' | translate"
+                  formControlName="msTeamsRSAPrivateKey"
+                ></textarea>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsRSAPrivateKey' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsRSAPublicKey</mat-label>
+                <textarea
+                  matInput
+                  matInput
+                  [placeholder]="'msTeamsRSAPublicKey' | translate"
+                  formControlName="msTeamsRSAPublicKey"
+                ></textarea>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsRSAPublicKey').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsRSAPublicKey').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsRSAPublicKey' | translate }
+                }}
+              </mat-error>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- COLLABORATION FIELDS - END -->
+
+      <div [hidden]="selectedID.value !== 5">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label translate>noOfLicenses</mat-label>

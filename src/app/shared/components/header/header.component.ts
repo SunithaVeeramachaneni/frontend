@@ -15,7 +15,7 @@ import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { UserDetails } from '../../../interfaces';
+import { ErrorInfo, UserDetails } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
@@ -47,6 +47,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   unreadMessageCount: number;
 
   slackVerification$: Observable<any>;
+  msTeamsSignIn$: Observable<any>;
 
   userInfo$: Observable<UserDetails>;
 
@@ -56,6 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private unreadCountSubscription: Subscription;
 
   constructor(
+    public uploadDialog: MatDialog,
     private headerService: HeaderService,
     private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
@@ -76,6 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       width: '750px',
       disableClose: true,
+      panelClass: 'collabDialog',
       data: { positionRelativeToElement: this.collabButtonRef }
     });
 
