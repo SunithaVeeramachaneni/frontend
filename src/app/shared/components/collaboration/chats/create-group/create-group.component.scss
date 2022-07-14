@@ -31,7 +31,7 @@ $hover-bg-color: #b7b9bc2e;
     margin-left: 10px;
   }
   .userList {
-    height: 440px;
+    height: 60vh;
     overflow: auto;
     overflow-x: hidden;
   }
@@ -72,6 +72,7 @@ $hover-bg-color: #b7b9bc2e;
   flex-direction: column;
   background: $white-color !important;
   margin-top: -60px;
+  height: 85vh;
   .conversationHead {
     display: flex;
     align-items: center;

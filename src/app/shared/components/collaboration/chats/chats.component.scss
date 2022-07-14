@@ -10,7 +10,6 @@ $white1: #f5f5f5;
 
 .chatsBody {
   display: flex;
-  height: 480px;
 }
 .active {
   cursor: pointer;
@@ -43,7 +42,7 @@ $white1: #f5f5f5;
 .conversationContent {
   display: flex;
   width: 100%;
-  height: 555px;
+  height: 80vh;
   flex-direction: column;
   margin-left: 10px;
   background: $white !important;
@@ -87,7 +86,7 @@ $white1: #f5f5f5;
   }
   .conversationBody {
     width: 100%;
-    height: 420px;
+    max-height: 60vh;
     overflow-y: auto;
     overflow-x: hidden;
     word-break: break-all;
@@ -208,7 +207,7 @@ $white1: #f5f5f5;
     }
   }
   .userList {
-    height: 470px;
+    height: 67vh;
     overflow: auto;
     overflow-x: hidden;
     margin-right: -10px;
