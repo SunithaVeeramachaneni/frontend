@@ -47,7 +47,7 @@ declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
-describe('TenantComponent', () => {
+fdescribe('TenantComponent', () => {
   let component: TenantComponent;
   let fixture: ComponentFixture<TenantComponent>;
   let breadcrumbServiceSpy: BreadcrumbService;

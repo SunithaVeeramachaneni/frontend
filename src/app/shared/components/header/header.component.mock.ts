@@ -30,11 +30,11 @@ export const userInfo = {
 
 export const userInfo$ = of(userInfo);
 
-export const userAuthData$ = of({
+export const userAuthData = {
   userData: null,
   allUserData: [
     {
-      configId: '0-06a96c09-45cc-4120-8f96-9c0a0d89d6bc',
+      configId: 'f8e6f04b-2b9f-43ab-ba8a-b4c367088723',
       userData: {
         aud: '06a96c09-45cc-4120-8f96-9c0a0d89d6bc',
         iss: 'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0',
@@ -56,7 +56,8 @@ export const userAuthData$ = of({
       }
     }
   ]
-});
+};
+export const userAuthData$ = of(userAuthData);
 export const unreadCount$ = of({ data: 'dummy' });
 export const openCollabWindow$ = of({
   data: { dummy: 'dummy' }

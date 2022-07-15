@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { defaultLimit } from 'src/app/app.constants';
+import { tenantsInfo, tenantsInfo$ } from 'src/app/auth-config.service.mock';
 import { ErrorInfo, Tenant } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -30,6 +31,57 @@ describe('TenantService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  describe('setTenantInfo', () => {
+    it('setTenantInfo', () => {
+      expect(service.setTenantInfo).toBeDefined();
+    });
+
+    it('should set tenant info', () => {
+      service.setTenantInfo(tenantsInfo[0]);
+
+      service.tenantInfo$.subscribe((tenantInfo) =>
+        expect(tenantInfo).toEqual(tenantsInfo[0])
+      );
+      expect(service.getTenantInfo()).toEqual(tenantsInfo[0]);
+    });
+  });
+
+  describe('getTenantInfo', () => {
+    it('getTenantInfo', () => {
+      expect(service.getTenantInfo).toBeDefined();
+    });
+
+    it('should get tenant info', () => {
+      service.setTenantInfo(tenantsInfo[0]);
+
+      expect(service.getTenantInfo()).toEqual(tenantsInfo[0]);
+    });
+  });
+
+  describe('setTenantsInfo', () => {
+    it('setTenantsInfo', () => {
+      expect(service.setTenantsInfo).toBeDefined();
+    });
+
+    it('should set tenants info', () => {
+      service.setTenantsInfo(tenantsInfo);
+
+      expect(service.getTenantsInfo()).toEqual(tenantsInfo);
+    });
+  });
+
+  describe('getTenantsInfo', () => {
+    it('getTenantsInfo', () => {
+      expect(service.getTenantsInfo).toBeDefined();
+    });
+
+    it('should get tenants info', () => {
+      service.setTenantsInfo(tenantsInfo);
+
+      expect(service.getTenantsInfo()).toEqual(tenantsInfo);
+    });
   });
 
   describe('createTenant$', () => {
@@ -158,6 +210,23 @@ describe('TenantService', () => {
       service
         .getTenantById$(id, info)
         .subscribe((response) => expect(response).toEqual(tenants[0]));
+    });
+  });
+
+  describe('getTenantsInfo$', () => {
+    it('should define function', () => {
+      expect(service.getTenantsInfo$).toBeDefined();
+    });
+
+    it('should get tenants info', () => {
+      const [{ id }] = tenants;
+      (appServiceSpy._getResp as jasmine.Spy)
+        .withArgs(environment.userRoleManagementApiUrl, 'catalogs/info', info)
+        .and.returnValue(tenantsInfo$);
+
+      service
+        .getTenantsInfo$(info)
+        .subscribe((response) => expect(response).toEqual(tenantsInfo));
     });
   });
 
