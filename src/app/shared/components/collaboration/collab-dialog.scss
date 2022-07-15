@@ -1,3 +1,5 @@
+$white: #ffffff;
+
 .rotate90 {
   transform: rotate(90deg);
 }
@@ -19,48 +21,46 @@
   height: auto !important;
 }
 .dialogTitle {
-  padding: 4px 15px;
-  background: #f2f2f2;
+  background: $white;
   margin: 0px;
   cursor: move;
   .dialogHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
-    top: 7px;
-
+    background: #2a3eb1;
+    padding: 4px 15px;
+    .headerTitle {
+      color: $white;
+    }
     .buttonGroup {
       box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
         0 0px 0px 0 #747474;
     }
     .closeBtn {
-      color: #000;
+      color: $white;
     }
   }
 }
 .dialogContent {
   margin: 0px;
   padding: 0px 0px;
-  background-color: #f2f2f2;
-  min-height: 80vh !important;
+  background-color: $white;
+  min-height: 85vh !important;
   .dialogBody {
-    height: 440px;
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 0px 10px;
 
     .buttonGroup {
-      background: #ffffff;
+      background: $white;
       height: 15px;
-      padding: 10px 6px;
-      border-radius: 45px;
+      padding: 10px 30px;
+      border-radius: 5px;
       padding-top: 10px;
     }
 
     .tabContent {
-      // background: #ffffff;
-      // padding: 10px 6px;
       height: 400px;
       border-radius: 12px;
     }
@@ -69,7 +69,8 @@
 
 ::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
 .mat-button-toggle-group-appearance-standard {
-  border-radius: 35px;
+  border-radius: 5px;
+  background: #f2f2f2;
   height: 35px;
   width: fit-content;
   margin: 10px 0px;
@@ -78,5 +79,5 @@
   flex-direction: row;
 }
 .btnGroupBtn {
-  background: #ffffff;
+  background: $white;
 }

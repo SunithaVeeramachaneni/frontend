@@ -22,6 +22,9 @@ export interface Tenant {
   tenantLogo?: any;
   tenantLogoName?: string;
   isActive?: boolean;
+  collaborationType: string;
+  slackConfiguration?: any;
+  msTeamsConfiguration?: any;
   createdBy?: string;
   updatedBy?: string;
   createdAt?: string;
