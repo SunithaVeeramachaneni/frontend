@@ -1,6 +1,9 @@
 import { of } from 'rxjs';
 import { UserDetails } from 'src/app/interfaces';
 
+export const profileImageBase64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+
 export const userInfo = {
   id: 1,
   firstName: 'test',

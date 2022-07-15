@@ -211,7 +211,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.commonService.setUserInfo(data);
         let userID;
         if (data.collaborationType === 'slack') {
-          if (data.UserSlackDetail.slackID) {
+          if (data.UserSlackDetail?.slackID) {
             userID = data.UserSlackDetail.slackID;
           }
         } else if (data.collaborationType === 'msteams') {

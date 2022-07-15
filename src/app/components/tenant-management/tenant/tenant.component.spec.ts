@@ -27,6 +27,7 @@ import { TenantComponent } from './tenant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { profileImageBase64 } from 'src/app/shared/components/header/header.component.mock';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
@@ -2944,6 +2945,73 @@ fdescribe('TenantComponent', () => {
       });
 
       expect(component.tenantForm.get('erps.sap.scope').errors).toBeNull();
+    });
+  });
+
+  fdescribe('onTenantLogoChange', () => {
+    it('should define function', () => {
+      expect(component.onTenantLogoChange).toBeDefined();
+    });
+
+    it('should change tenant logo', () => {
+      (
+        Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParams')
+          .get as jasmine.Spy
+      ).and.returnValue(of({ edit: 'true' }));
+      component.ngOnInit();
+      component.selectedID.setValue(7);
+      fixture.detectChanges();
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(new File([''], 'image.png'));
+
+      const inputDebugEl = tenantDe.query(By.css('input[type=file]'));
+      inputDebugEl.nativeElement.files = dataTransfer.files;
+      inputDebugEl.nativeElement.dispatchEvent(new InputEvent('change'));
+      fixture.detectChanges();
+    });
+  });
+
+  describe('removeTenantLogo', () => {
+    it('should define function', () => {
+      expect(component.removeTenantLogo).toBeDefined();
+    });
+  });
+
+  describe('showRemoveTenantLogo', () => {
+    it('should define function', () => {
+      expect(component.showRemoveTenantLogo).toBeDefined();
+    });
+
+    it('should return showRemoveTenantLogo true or false', () => {
+      component.tenantForm.patchValue({ tenantLogo: null });
+
+      expect(component.showRemoveTenantLogo()).toBeFalse();
+
+      component.tenantForm.patchValue({ tenantLogo: profileImageBase64 });
+
+      expect(component.showRemoveTenantLogo()).toBeTrue();
+    });
+  });
+
+  describe('getBrowseLogoName', () => {
+    it('should define function', () => {
+      expect(component.getBrowseLogoName).toBeDefined();
+    });
+
+    it('should retur broowse logo name', () => {
+      component.tenantForm.patchValue({ tenantLogoName: null });
+
+      expect(component.getBrowseLogoName()).toBe('browseLogo');
+
+      component.tenantForm.patchValue({ tenantLogoName: 'TenantLogo.png' });
+
+      expect(component.getBrowseLogoName()).toBe('TenantLogo.png');
+    });
+  });
+
+  describe('resetTenantLogo', () => {
+    it('should define function', () => {
+      expect(component.resetTenantLogo).toBeDefined();
     });
   });
 });
