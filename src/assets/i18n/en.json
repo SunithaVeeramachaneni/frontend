@@ -12,5 +12,8 @@
   "dueToday": "Due Today",
   "dueThisWeek": "Due This Week",
   "dueThisMonth": "Due This Month",
-  "custom": "Custom"
+  "custom": "Custom",
+
+  "selectConversationToSendMessage": "Please select a conversation to send message",
+  "selectUserToCreateGroup": "Please select a user to add to the Group"
 }

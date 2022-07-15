@@ -365,6 +365,12 @@ export class TenantComponent implements OnInit, AfterViewInit {
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
 
+        tenant.erps.sap.scope = JSON.stringify(
+          tenant.erps.sap.scope,
+          null,
+          ' '
+        );
+
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
           'urls',
