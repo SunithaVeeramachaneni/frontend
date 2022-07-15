@@ -34,11 +34,7 @@
           >
             <img
               [src]="
-                getImage(
-                  menuitem.image,
-                  menuitem.activeImage,
-                  selectedMenu === menuitem.title
-                )
+                getImage(menuitem.imageName, selectedMenu === menuitem.title)
               "
               class="sidebar-icons"
             />

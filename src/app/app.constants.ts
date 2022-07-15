@@ -141,18 +141,3 @@ export const defaultProfile = 'assets/user-management-icons/Vector.png';
 
 export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
-
-export const inactiveDashboardIcon = 'assets/sidebar-icons/dashboard-gray.svg';
-export const activeDashboardIcon = 'assets/sidebar-icons/dashboard-white.svg';
-export const inactiveTenantIcon =
-  'assets/sidebar-icons/tenant-management-gray.svg';
-export const activeTenantIcon =
-  'assets/sidebar-icons/tenant-management-white.svg';
-export const inactiveUserIcon = 'assets/sidebar-icons/user-management-gray.svg';
-export const activeUserIcon = 'assets/sidebar-icons/user-management-white.svg';
-export const inactiveMccIcon = 'assets/sidebar-icons/maintenance-gray.svg';
-export const activeMccIcon = 'assets/sidebar-icons/maintenance-white.svg';
-export const inactiveSpccIcon = 'assets/sidebar-icons/spare-parts-gray.svg';
-export const activeSpccIcon = 'assets/sidebar-icons/spare-parts-white.svg';
-export const inactiveWiIcon = 'assets/sidebar-icons/work-instructions-gray.svg';
-export const activeWiIcon = 'assets/sidebar-icons/work-instructions-white.svg';

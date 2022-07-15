@@ -13,19 +13,7 @@ import {
   routingUrls,
   bigInnovaIcon,
   smallInnovaIcon,
-  permissions as perms,
-  inactiveDashboardIcon,
-  activeDashboardIcon,
-  inactiveTenantIcon,
-  activeTenantIcon,
-  inactiveUserIcon,
-  activeUserIcon,
-  inactiveMccIcon,
-  activeMccIcon,
-  inactiveSpccIcon,
-  activeSpccIcon,
-  inactiveWiIcon,
-  activeWiIcon
+  permissions as perms
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
@@ -68,8 +56,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: dashboard.title,
       url: dashboard.url,
-      activeImage: activeDashboardIcon,
-      image: inactiveDashboardIcon,
+      imageName: 'dashboard',
       showSubMenu: false,
       permission: perms.viewDashboards,
       subPages: [
@@ -84,8 +71,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
-      activeImage: activeTenantIcon,
-      image: inactiveTenantIcon,
+      imageName: 'tenant-management',
       showSubMenu: false,
       permission: perms.viewTenants,
       subPages: null,
@@ -94,8 +80,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: userManagement.title,
       url: userManagement.url,
-      activeImage: activeUserIcon,
-      image: inactiveUserIcon,
+      imageName: 'user-management',
       showSubMenu: false,
       permission: perms.viewUsers,
       subPages: [
@@ -115,8 +100,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: maintenance.title,
       url: maintenance.url,
-      activeImage: activeMccIcon,
-      image: inactiveMccIcon,
+      imageName: 'maintenance',
       showSubMenu: false,
       permission: perms.viewMaintenanceControlCenter,
       subPages: null,
@@ -125,8 +109,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: spareParts.title,
       url: spareParts.url,
-      activeImage: activeSpccIcon,
-      image: inactiveSpccIcon,
+      imageName: 'spare-parts',
       showSubMenu: false,
       permission: perms.viewSparePartsControlCenter,
       subPages: null,
@@ -135,8 +118,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: workInstructions.title,
       url: workInstructions.url,
-      activeImage: activeWiIcon,
-      image: inactiveWiIcon,
+      imageName: 'work-instructions',
       showSubMenu: false,
       permission: perms.viewWorkInstructions,
       subPages: [
@@ -344,8 +326,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.cdrf.detectChanges();
   }
 
-  getImage = (image, activeImage, active) =>
-    active === true ? activeImage : image;
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/sidebar-icons/${imageName}-white.svg`
+      : `assets/sidebar-icons/${imageName}-gray.svg`;
 
   selectedListElement(title) {
     this.menuOpenClose = false;
