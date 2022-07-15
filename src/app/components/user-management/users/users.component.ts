@@ -402,9 +402,30 @@ export class UsersComponent implements OnInit {
       case 'deactivate':
         this.openDeleteUserModal(data);
         break;
+
       case 'edit':
         this.openEditAddUserModal(data);
         break;
+
+      case 'toggleAllRows':
+        let allSelected = false;
+        let users = [];
+        users = this.allUsersList.filter(
+          (user) => user.title !== superAdminText
+        );
+
+        if (
+          this.selectedUsers.length === 0 ||
+          this.selectedUsers.length !== users.length
+        ) {
+          allSelected = true;
+          this.selectedUsers = users;
+        } else {
+          allSelected = false;
+          this.selectedUsers = [];
+        }
+        break;
+
       case 'toggleRowSelect':
         const index = this.selectedUsers.findIndex(
           (user) => user.id === data.id
