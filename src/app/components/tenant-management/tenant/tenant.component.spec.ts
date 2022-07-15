@@ -2425,6 +2425,12 @@ describe('TenantComponent', () => {
 
     it('should patch form with tenant data', () => {
       const newTenant = cloneDeep(createTenant);
+      newTenant.erps.sap.scope = JSON.stringify(
+        newTenant.erps.sap.scope,
+        null,
+        ' '
+      );
+
       newTenant.msTeamsConfiguration = {
         msTeamsTenantID: '',
         msTeamsClientID: '',
@@ -2578,6 +2584,11 @@ describe('TenantComponent', () => {
     let newTenant: Tenant;
     beforeEach(() => {
       newTenant = cloneDeep(createTenant);
+      newTenant.erps.sap.scope = JSON.stringify(
+        newTenant.erps.sap.scope,
+        null,
+        ' '
+      );
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));
@@ -2606,8 +2617,6 @@ describe('TenantComponent', () => {
     xit('should allow user to add a tenant if form is valid & dirty', () => {
       let tenantMock = cloneDeep(newTenant);
 
-      createTenant.erps.sap.scope =
-        '{"race":"racescope","mWorkOrder":"wrokorderscope","mInventory":"inventoryscope"}';
       // eslint-disable-next-line @typescript-eslint/no-shadow
       const { id, ...rest } = tenantMock;
       tenantMock = rest;
@@ -2633,7 +2642,7 @@ describe('TenantComponent', () => {
       component.tenantForm.removeControl('id');
       (tenantServiceSpy.createTenant$ as jasmine.Spy)
         .withArgs(tenantMock)
-        .and.returnValue(of(tenant));
+        .and.returnValue(of(tenantMock));
 
       component.tenantForm.markAsDirty();
 

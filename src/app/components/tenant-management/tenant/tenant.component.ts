@@ -369,7 +369,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     this.route.data.subscribe(({ tenant }) => {
       if (tenant && Object.keys(tenant).length) {
-        this.tenantData = tenant;
         const { sap, node } = tenant.protectedResources;
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
@@ -386,6 +385,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           tenant.tenantLogo = tenantLogo;
         }
 
+        this.tenantData = tenant;
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
           'urls',
