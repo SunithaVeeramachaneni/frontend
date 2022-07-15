@@ -32,8 +32,8 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Output() SideNavToggle = new EventEmitter();
-  @Output() OutsideClickTrigger = new EventEmitter();
+  @Output() sideNavToggle = new EventEmitter();
+  @Output() outsideClickTrigger = new EventEmitter();
 
   headerTitle$: Observable<string>;
 
@@ -142,11 +142,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openSidenav() {
-    this.SideNavToggle.emit();
+    this.sideNavToggle.emit();
   }
 
   closeSidenav() {
-    this.OutsideClickTrigger.emit();
+    this.outsideClickTrigger.emit();
   }
 
   minimize(e) {

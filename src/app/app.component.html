@@ -113,8 +113,8 @@
 
   <mat-sidenav-content>
     <app-header
-      (SideNavToggle)="toggleMenu()"
-      (OutsideClickTrigger)="closeSideNav()"
+      (sideNavToggle)="toggleMenu()"
+      (outsideClickTrigger)="closeSideNav()"
       [selectedMenu]="this.selectedMenu"
       [ngClass]="{
         'hide-content': isUserAuthenticated === false
