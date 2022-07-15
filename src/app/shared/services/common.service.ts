@@ -77,4 +77,8 @@ export class CommonService {
     this.userInfoSubject.next(userInfo);
     this.userInfo = userInfo;
   }
+
+  getUserInfo(): UserDetails {
+    return this.userInfo;
+  }
 }
