@@ -34,7 +34,7 @@ export class HeaderService {
   ): Observable<any> =>
     this.appService._getRespById(
       environment.userRoleManagementApiUrl,
-      'catalogs/logo/',
-      tenantId
+      `catalogs/${tenantId}/logo`,
+      ''
     );
 }
