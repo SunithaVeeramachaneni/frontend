@@ -20,6 +20,8 @@ import { SharedModule } from './shared/shared.module';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
 import { HeaderService } from './shared/services/header.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
+import { LoginService } from './components/login/services/login.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -31,6 +33,8 @@ describe('AppComponent', () => {
   let authHeaderServiceSpy: AuthHeaderService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let usersServiceSpy: UsersService;
+  let tenantServiceSpy: TenantService;
+  let loginServiceSpy: LoginService;
   let appDe: DebugElement;
   let appEl: HTMLElement;
 
@@ -69,6 +73,13 @@ describe('AppComponent', () => {
     authHeaderServiceSpy = jasmine.createSpyObj('AuthHeaderService', [
       'getAuthHeaders'
     ]);
+    tenantServiceSpy = jasmine.createSpyObj('TenantService', [
+      'getTenantInfo',
+      'setTenantInfo'
+    ]);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      isUserAuthenticated$: of(true)
+    });
 
     await TestBed.configureTestingModule({
       imports: [
@@ -88,9 +99,12 @@ describe('AppComponent', () => {
         { provide: UsersService, useValue: usersServiceSpy },
         { provide: ChatService, useValue: chatServiceSpy },
         { provide: AuthHeaderService, useValue: authHeaderServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
+        { provide: TenantService, useValue: tenantServiceSpy }
       ]
     }).compileComponents();
+
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     appDe = fixture.debugElement;

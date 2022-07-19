@@ -389,6 +389,7 @@ button.mat-menu-item {
   .mat-grid-tile-content {
     justify-content: flex-start;
     align-items: flex-start;
+    margin: 0 5px;
     border-radius: 8px;
   }
 }
@@ -401,7 +402,7 @@ button.mat-menu-item {
   .mat-grid-tile-content {
     justify-content: flex-start;
     align-items: flex-start;
-    margin: 0 10px 0 0;
+    margin: 0 5px;
     border-radius: 8px;
   }
 }
@@ -673,6 +674,7 @@ button.mat-menu-item {
 
 .mat-dialog-container {
   padding: 0 !important;
+  border-radius: 15px !important;
 }
 
 .tableMain {

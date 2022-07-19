@@ -39,6 +39,7 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -157,6 +158,7 @@ describe('AddWorkinstructionComponent', () => {
   let spinnerSpy: NgxSpinnerService;
   let wiCommonServiceSpy: WiCommonService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let instructionServiceSpy: InstructionService;
   let errorHandlerServiceSpy: ErrorHandlerService;
   let toastServiceSpy: ToastService;
@@ -181,13 +183,16 @@ describe('AddWorkinstructionComponent', () => {
     );
     commonServiceSpy = jasmine.createSpyObj(
       'CommonService',
-      ['minimizeSidebar', 'setHeaderTitle'],
+      ['minimizeSidebar'],
       {
         minimizeSidebarAction$: of(false),
         currentRouteUrlAction$: of('work-instructions/create'),
         permissionsAction$: permissions$
       }
     );
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
     instructionServiceSpy = jasmine.createSpyObj('InstructionService', [
       'getInstructionsById',
       'getInstructionsByName',
@@ -236,6 +241,7 @@ describe('AddWorkinstructionComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
         { provide: Location, useValue: locationSpy },
@@ -378,7 +384,7 @@ describe('AddWorkinstructionComponent', () => {
         'work-instructions/create',
         { label: 'Untitled Work Instruction' }
       );
-      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+      expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
         'Untitled Work Instruction'
       );
 
@@ -396,7 +402,7 @@ describe('AddWorkinstructionComponent', () => {
         'work-instructions/create',
         { label: WI_Name }
       );
-      expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(WI_Name);
+      expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(WI_Name);
     });
 
     it('should set initilization data for work instruction', (done) => {

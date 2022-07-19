@@ -27,6 +27,7 @@ import { environment } from '../../../environments/environment';
 import { CommonService } from '../../shared/services/common.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { permissions, routingUrls } from '../../app.constants';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-work-instructions',
@@ -65,7 +66,6 @@ export class WorkInstructionsComponent
   public CreatedBy = '';
   searchCriteria = '';
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   workInstructions$: Observable<{
     favorites: Instruction[];
     drafts: Instruction[];
@@ -102,14 +102,15 @@ export class WorkInstructionsComponent
     private importService: ImportService,
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.workInstructions.url) {
-          this.commonService.setHeaderTitle(routingUrls.workInstructions.title);
+          this.headerService.setHeaderTitle(routingUrls.workInstructions.title);
           this.breadcrumbService.set(routingUrls.workInstructions.url, {
             skip: true
           });
@@ -120,7 +121,6 @@ export class WorkInstructionsComponent
         }
       })
     );
-    this.headerTitle$ = this.commonService.headerTitleAction$;
     this.fetchWISubscription = this.wiCommonService.fetchWIAction$.subscribe(
       () => this.getAllFavsDraftsAndRecentIns()
     );

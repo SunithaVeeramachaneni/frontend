@@ -11,9 +11,9 @@
       <input matInput placeholder="Search Users" disabled class="searchInput" />
     </div>
     <div class="userList">
-      <mat-list>
+      <mat-list *ngIf="activeUsers$ | async as activeUsers; else loadingUsers">
         <mat-list-item
-          *ngFor="let user of activeUsers$ | async; let i = index"
+          *ngFor="let user of activeUsers; let i = index"
           class="peopleList"
           (click)="selectUser(user)"
         >
@@ -30,7 +30,11 @@
     </div>
   </div>
   <div class="conversationContent">
-    <div class="userList">
+    <div class="centerText userList" *ngIf="!selectedUsers.length">
+      <h6 translate>selectUserToCreateGroup</h6>
+    </div>
+
+    <div class="userList" *ngIf="selectedUsers.length">
       <mat-list>
         <mat-list-item
           *ngFor="let user of selectedUsers; let i = index"
@@ -68,10 +72,35 @@
             [disabled]="!(groupName.length && selectedUsers.length)"
             (click)="startConversation(groupName, selectedUsers)"
           >
-            Start Conversation
+            Create Group
           </button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #loadingUsers>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

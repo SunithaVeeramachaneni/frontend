@@ -72,7 +72,9 @@
         <mat-tab label="{{ 'erps' | translate }}"></mat-tab>
         <mat-tab label="{{ 'protectedResources' | translate }}"></mat-tab>
         <mat-tab label="{{ 'dbConfigurations' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'collaboration' | translate }}"></mat-tab>
         <mat-tab label="{{ 'configurations' | translate }}"></mat-tab>
+        <mat-tab label="{{ 'assets' | translate }}"></mat-tab>
       </mat-tab-group>
     </div>
     <div class="nextbtn p-0">
@@ -1366,7 +1368,291 @@
         </div>
       </div>
 
+      <!-- COLLABORATION FIELDS - START -->
       <div [hidden]="selectedID.value !== 4">
+        <div>
+          <p class="sub-headings" translate>collaborationType</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>collaborationType</mat-label>
+              <mat-select formControlName="collaborationType">
+                <mat-option
+                  *ngFor="let type of collaborationTypes"
+                  [value]="type"
+                >
+                  {{ type | translate }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('collaborationType').errors?.required &&
+                tenantForm.get('collaborationType').touched
+              "
+            >
+              {{
+                'required'
+                  | translate: { name: 'collaborationType' | translate }
+              }}
+            </mat-error>
+          </p>
+        </div>
+        <div *ngIf="tenantForm.get('collaborationType').value === 'slack'">
+          <div formGroupName="slackConfiguration">
+            <p class="sub-headings" translate>slackConfiguration</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackTeamID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackTeamID' | translate"
+                  formControlName="slackTeamID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackTeamID').errors?.required &&
+                  slackConfiguration.get('slackTeamID').touched
+                "
+              >
+                {{
+                  'required' | translate: { name: 'slackTeamID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientID' | translate"
+                  formControlName="slackClientID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientID').errors?.required &&
+                  slackConfiguration.get('slackClientID').touched
+                "
+              >
+                {{
+                  'required' | translate: { name: 'slackClientID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientSecret' | translate"
+                  formControlName="slackClientSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'slackClientSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientSigningSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientSigningSecret' | translate"
+                  formControlName="slackClientSigningSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientSigningSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientSigningSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate
+                      : { name: 'slackClientSigningSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>slackClientStateSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'slackClientStateSecret' | translate"
+                  formControlName="slackClientStateSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  slackConfiguration.get('slackClientStateSecret').errors
+                    ?.required &&
+                  slackConfiguration.get('slackClientStateSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'slackClientStateSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+          </div>
+        </div>
+        <div *ngIf="tenantForm.get('collaborationType').value === 'msteams'">
+          <div formGroupName="msTeamsConfiguration">
+            <p class="sub-headings" translate>msTeamsConfiguration</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsTenantID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsTenantID' | translate"
+                  formControlName="msTeamsTenantID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsTenantID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsTenantID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsTenantID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsClientID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsClientID' | translate"
+                  formControlName="msTeamsClientID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsClientID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsClientID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsClientID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsClientSecret</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsClientSecret' | translate"
+                  formControlName="msTeamsClientSecret"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsClientSecret').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsClientSecret').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsClientSecret' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsSharepointSiteID</mat-label>
+                <input
+                  matInput
+                  [placeholder]="'msTeamsSharepointSiteID' | translate"
+                  formControlName="msTeamsSharepointSiteID"
+                />
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsSharepointSiteID').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsSharepointSiteID' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="sub-headings" translate>msTeamsPublicPrivateKeys</p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsRSAPrivateKey</mat-label>
+                <textarea
+                  matInput
+                  matInput
+                  [placeholder]="'msTeamsRSAPrivateKey' | translate"
+                  formControlName="msTeamsRSAPrivateKey"
+                ></textarea>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsRSAPrivateKey' | translate }
+                }}
+              </mat-error>
+            </p>
+            <p class="m-0">
+              <mat-form-field appearance="outline" class="width-100">
+                <mat-label translate>msTeamsRSAPublicKey</mat-label>
+                <textarea
+                  matInput
+                  matInput
+                  [placeholder]="'msTeamsRSAPublicKey' | translate"
+                  formControlName="msTeamsRSAPublicKey"
+                ></textarea>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  msTeamsConfiguration.get('msTeamsRSAPublicKey').errors
+                    ?.required &&
+                  msTeamsConfiguration.get('msTeamsRSAPublicKey').touched
+                "
+              >
+                {{
+                  'required'
+                    | translate: { name: 'msTeamsRSAPublicKey' | translate }
+                }}
+              </mat-error>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- COLLABORATION FIELDS - END -->
+
+      <div [hidden]="selectedID.value !== 5">
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
             <mat-label translate>noOfLicenses</mat-label>
@@ -1468,6 +1754,76 @@
             {{ 'required' | translate: { name: 'logLevel' | translate } }}
           </mat-error>
         </p>
+      </div>
+      <div [hidden]="selectedID.value !== 6">
+        <div class="assets">
+          <div>
+            <label for="file-input" #file>
+              <button
+                mat-raised-button
+                type="button"
+                class="browse-btn"
+                (click)="file.click()"
+                [disabled]="!this.editTenant"
+              >
+                {{ getBrowseLogoName() | translate }}
+              </button>
+            </label>
+            <input
+              hidden
+              id="file-input"
+              type="file"
+              accept="image/*"
+              (change)="onTenantLogoChange($event)"
+              (click)="resetTenantLogo($event)"
+            />
+          </div>
+          <div *ngIf="showRemoveTenantLogo()" class="m-10">
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeTenantLogo()"
+              translate="removeTenantLogo"
+              [disabled]="!this.editTenant"
+            ></button>
+          </div>
+          <div class="m-4 m-t-0">
+            <span class="info1" translate>idealDimension</span>
+            <span class="info2" translate> idealDimensions</span>
+          </div>
+          <div class="m-4 info4">
+            <span [innerHTML]="'logoNote' | translate"></span>
+          </div>
+          <div class="m-10 m-t-20 info3" translate>appearanceOnWebsite</div>
+          <div class="m-10 header">
+            <div class="title" translate>dashboard</div>
+            <div class="m-r-15 dis-flex">
+              <div>
+                <img
+                  src="assets/tenant-management-icons/App_icon.svg"
+                  class="apps-icon"
+                />
+              </div>
+              <div class="user">
+                <img
+                  src="assets/tenant-management-icons/profile.svg"
+                  class="profile"
+                />
+              </div>
+              <div class="without-company-logo" *ngIf="!tenantLogo">
+                <span class="logo-comes-here-text" translate>
+                  logoComes <br />
+                  here
+                </span>
+              </div>
+              <div class="with-company-logo" *ngIf="tenantLogo">
+                <span class="helper"> </span>
+                <img [src]="tenantLogo" alt="Tenant Logo" class="logo" />
+              </div>
+            </div>
+          </div>
+          <div class="info4" translate>borderNote</div>
+        </div>
       </div>
     </div>
 

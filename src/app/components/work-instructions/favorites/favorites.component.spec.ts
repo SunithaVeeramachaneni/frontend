@@ -30,6 +30,7 @@ import {
 } from '../../../app.constants';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -134,6 +135,7 @@ describe('FavoritesComponent', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let activatedRouteSpy: ActivatedRoute;
   let favoritesDe: DebugElement;
   let favoritesEl: HTMLElement;
@@ -154,14 +156,13 @@ describe('FavoritesComponent', () => {
       'getBase64ImageData',
       'getBase64Image'
     ]);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setHeaderTitle'],
-      {
-        currentRouteUrlAction$: of('/work-instructions/favorites'),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of('/work-instructions/favorites'),
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       queryParamMap: of(convertToParamMap({}))
     });
@@ -185,6 +186,7 @@ describe('FavoritesComponent', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy }
       ]
     }).compileComponents();
@@ -558,7 +560,7 @@ describe('FavoritesComponent', () => {
       );
       component.currentRouteUrl$.subscribe((data) => {
         expect(data).toBe(routingUrls.favorites.url);
-        expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+        expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           routingUrls.favorites.title
         );
       });

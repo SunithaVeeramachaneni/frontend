@@ -19,7 +19,12 @@ export interface Tenant {
   modules: string[];
   logDBType: string;
   logLevel: string;
+  tenantLogo?: any;
+  tenantLogoName?: string;
   isActive?: boolean;
+  collaborationType: string;
+  slackConfiguration?: any;
+  msTeamsConfiguration?: any;
   createdBy?: string;
   updatedBy?: string;
   createdAt?: string;

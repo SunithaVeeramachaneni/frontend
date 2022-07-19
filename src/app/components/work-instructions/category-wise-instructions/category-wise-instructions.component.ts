@@ -21,6 +21,7 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { CommonService } from '../../../shared/services/common.service';
 import { permissions, routingUrls } from '../../../app.constants';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const { workInstructions: workInstructionsInfo } = routingUrls;
 
@@ -103,7 +104,8 @@ export class CategoryWiseInstructionsComponent
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
     private breadcrumbService: BreadcrumbService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngAfterContentChecked() {
@@ -249,7 +251,7 @@ export class CategoryWiseInstructionsComponent
         if (category && Object.keys(category).length) {
           const { Category_Name } = category;
           this.selectedCategory = Category_Name;
-          this.commonService.setHeaderTitle(this.selectedCategory);
+          this.headerService.setHeaderTitle(this.selectedCategory);
           this.breadcrumbService.set(this.routeUrl, this.selectedCategory);
         }
         return currentRouteUrl;

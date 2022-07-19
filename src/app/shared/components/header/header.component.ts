@@ -15,7 +15,7 @@ import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { UserDetails } from '../../../interfaces';
+import { ErrorInfo, UserDetails } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
@@ -23,6 +23,7 @@ import { ChatService } from '../collaboration/chats/chat.service';
 import { ImageUtils } from '../../utils/imageUtils';
 import { Buffer } from 'buffer';
 import { Router } from '@angular/router';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-header',
@@ -32,30 +33,31 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Output() SideNavToggle = new EventEmitter();
+  @Output() sideNavToggle = new EventEmitter();
+  @Output() outsideClickTrigger = new EventEmitter();
 
   headerTitle$: Observable<string>;
 
   @Input() set selectedMenu(menu) {
-    this.commonService.setHeaderTitle(menu);
+    this.headerService.setHeaderTitle(menu);
   }
 
-  public username: string;
-  public userImage: string;
-  public sidebarMinimize = false;
-
+  sidebarMinimize = false;
   unreadMessageCount: number;
-
   slackVerification$: Observable<any>;
+  msTeamsSignIn$: Observable<any>;
 
   userInfo$: Observable<UserDetails>;
+  eventSource: any;
+  tenantLogo: any;
+  isOpen = false;
 
   private minimizeSidebarActionSubscription: Subscription;
-
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
 
   constructor(
+    public uploadDialog: MatDialog,
     private headerService: HeaderService,
     private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
@@ -63,7 +65,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
     private router: Router,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private tenantService: TenantService
   ) {}
 
   openDialog(): void {
@@ -76,6 +79,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       hasBackdrop: false,
       width: '750px',
       disableClose: true,
+      panelClass: 'collabDialog',
       data: { positionRelativeToElement: this.collabButtonRef }
     });
 
@@ -97,7 +101,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.headerTitle$ = this.commonService.headerTitleAction$;
+    this.headerTitle$ = this.headerService.headerTitleAction$;
 
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
       (unreadCount) => {
@@ -135,10 +139,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
         localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
       })
     );
+
+    this.tenantService.tenantInfo$.subscribe(
+      ({ tenantLogo }) => (this.tenantLogo = tenantLogo)
+    );
   }
 
   openSidenav() {
-    this.SideNavToggle.emit();
+    this.sideNavToggle.emit();
+  }
+
+  closeSidenav() {
+    this.outsideClickTrigger.emit();
   }
 
   minimize(e) {
@@ -159,7 +171,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout() {
-    const { tenantId: configId } = this.commonService.getTenantInfo();
+    this.isOpen = false;
+    const { tenantId: configId } = this.tenantService.getTenantInfo();
     this.oidcSecurityService.logoffAndRevokeTokens(configId).subscribe();
     sessionStorage.clear();
   }
@@ -169,6 +182,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   userSettings() {
+    this.isOpen = false;
     this.router.navigate(['/user-settings']);
   }
 }

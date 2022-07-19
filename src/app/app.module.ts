@@ -53,6 +53,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { defaultLanguage } from './app.constants';
 import localeEn from '@angular/common/locales/en';
+import { LoginService } from './components/login/services/login.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
 
 registerLocaleData(localeEn, 'en');
 
@@ -117,7 +119,9 @@ export class AppModule {
     private readonly eventService: PublicEventsService,
     private oidcSecurityService: OidcSecurityService,
     private appService: AppService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private loginService: LoginService,
+    private tenantService: TenantService
   ) {
     this.eventService
       .registerForEvents()
@@ -129,7 +133,7 @@ export class AppModule {
         )
       )
       .subscribe(() => {
-        const { tenantId: configId } = this.commonService.getTenantInfo();
+        const { tenantId: configId } = this.tenantService.getTenantInfo();
         const config = this.oidcSecurityService.getConfiguration(configId);
         const {
           authWellknownEndpoints: { tokenEndpoint },
@@ -190,7 +194,7 @@ export class AppModule {
             )
             .filter((configId) => configId);
 
-          this.commonService.performPostLoginActions(
+          this.loginService.performPostLoginActions(
             configUserDataResult,
             configIds
           );

@@ -6,11 +6,6 @@ import { OrderModule } from 'ngx-order-pipe';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
-import { ChatService } from 'src/app/shared/components/collaboration/chats/chat.service';
-import {
-  openCollabWindow$,
-  unreadCount$
-} from 'src/app/shared/components/header/header.component.mock';
 import { AppMaterialModules } from '../../../material.module';
 import { ErrorHandlerService } from '../../../shared/error-handler/error-handler.service';
 import { HeaderService } from '../../../shared/services/header.service';
@@ -35,7 +30,6 @@ describe('MediaFilesComponent', () => {
   let overlayServiceSpy: OverlayService;
   let wiCommonServiceSpy: WiCommonService;
   let headerServiceSpy: HeaderService;
-  let chatServiceSpy: ChatService;
   let filesDe: DebugElement;
   let filesEl: HTMLElement;
 
@@ -61,13 +55,8 @@ describe('MediaFilesComponent', () => {
       'updateUploadInfo'
     ]);
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
-      'getInstallationURL$'
+      'setHeaderTitle'
     ]);
-    chatServiceSpy = jasmine.createSpyObj(
-      'ChatService',
-      ['collaborationWindowAction'],
-      { unreadCount$, openCollabWindow$ }
-    );
 
     TestBed.configureTestingModule({
       declarations: [MediaFilesComponent, PlayerComponent],
@@ -87,8 +76,7 @@ describe('MediaFilesComponent', () => {
         { provide: ImportService, useValue: importServiceSpy },
         { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: ChatService, useValue: chatServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
 
@@ -102,9 +90,6 @@ describe('MediaFilesComponent', () => {
       .and.returnValue(of(mediaFiles))
       .and.callThrough();
 
-    (headerServiceSpy.getInstallationURL$ as jasmine.Spy).and.returnValue(
-      of({ dummy: 'dummyvalue' })
-    );
     fixture.detectChanges();
   }));
 

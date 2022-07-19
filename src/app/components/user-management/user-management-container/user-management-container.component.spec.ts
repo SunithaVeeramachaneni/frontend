@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 import { AppMaterialModules } from 'src/app/material.module';
+import { HeaderService } from 'src/app/shared/services/header.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
@@ -15,8 +16,12 @@ describe('UserManagementContainerComponent', () => {
   let fixture: ComponentFixture<UserManagementContainerComponent>;
   let rolesPermissionsServiceSpy: RolesPermissionsService;
   let breadcrumbService: BreadcrumbService;
+  let headerServiceSpy: HeaderService;
 
   beforeEach(async () => {
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
     await TestBed.configureTestingModule({
       declarations: [
         UserManagementContainerComponent,
@@ -32,6 +37,10 @@ describe('UserManagementContainerComponent', () => {
         {
           provide: RolesPermissionsService,
           useValue: rolesPermissionsServiceSpy
+        },
+        {
+          provide: HeaderService,
+          useValue: headerServiceSpy
         }
       ]
     }).compileComponents();

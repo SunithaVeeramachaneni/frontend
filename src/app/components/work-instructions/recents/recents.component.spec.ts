@@ -29,6 +29,7 @@ import {
   routingUrls
 } from '../../../app.constants';
 import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 const categoryDetails = [
   {
@@ -133,6 +134,7 @@ describe('RecentsComponent', () => {
   let toastServiceSpy: ToastService;
   let base64HelperServiceSpy: Base64HelperService;
   let commonServiceSpy: CommonService;
+  let headerServiceSpy: HeaderService;
   let recentsDe: DebugElement;
   let recentsEl: HTMLElement;
 
@@ -152,14 +154,13 @@ describe('RecentsComponent', () => {
       'getBase64ImageData',
       'getBase64Image'
     ]);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setHeaderTitle'],
-      {
-        currentRouteUrlAction$: of('/work-instructions/recents'),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of('/work-instructions/recents'),
+      permissionsAction$: permissions$
+    });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
 
     TestBed.configureTestingModule({
       declarations: [RecentsComponent, DropDownFilterPipe, TimeAgoPipe],
@@ -179,7 +180,8 @@ describe('RecentsComponent', () => {
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
       ]
     }).compileComponents();
   }));
@@ -535,7 +537,7 @@ describe('RecentsComponent', () => {
     it('should set header title', () => {
       component.currentRouteUrl$.subscribe((data) => {
         expect(data).toBe(routingUrls.recents.url);
-        expect(commonServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
+        expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
           routingUrls.recents.title
         );
       });

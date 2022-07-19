@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 import { AppMaterialModules } from 'src/app/material.module';
+import { HeaderService } from 'src/app/shared/services/header.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { DashboardsComponent } from '../dashboards/dashboards.component';
@@ -16,11 +17,15 @@ describe('DashboardContainerComponent', () => {
   let fixture: ComponentFixture<DashboardContainerComponent>;
   let dashboardServiceSpy: DashboardService;
   let breadcrumbService: BreadcrumbService;
+  let headerServiceSpy: HeaderService;
 
   beforeEach(async () => {
     dashboardServiceSpy = jasmine.createSpyObj('DashboardService', [], {
       dashboardsAction$: dashboards$
     });
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -33,7 +38,10 @@ describe('DashboardContainerComponent', () => {
         RouterTestingModule,
         BrowserAnimationsModule
       ],
-      providers: [{ provide: DashboardService, useValue: dashboardServiceSpy }]
+      providers: [
+        { provide: DashboardService, useValue: dashboardServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy }
+      ]
     }).compileComponents();
   });
 

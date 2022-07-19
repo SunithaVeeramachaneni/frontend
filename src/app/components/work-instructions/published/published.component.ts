@@ -10,6 +10,7 @@ import { CommonService } from '../../../shared/services/common.service';
 import { Observable } from 'rxjs';
 import { permissions, routingUrls } from '../../../app.constants';
 import { map, tap } from 'rxjs/operators';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-published',
@@ -56,12 +57,13 @@ export class PublishedComponent implements OnInit {
     private instructionSvc: InstructionService,
     private base64HelperService: Base64HelperService,
     private errorHandlerService: ErrorHandlerService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit() {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.published.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.published.title))
     );
     this.getAllPublishedInstructions();
     this.authorDropDown();

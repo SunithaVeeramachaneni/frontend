@@ -28,7 +28,8 @@ export class AppService {
       return {
         headers: new HttpHeaders({
           info: JSON.stringify({ displayToast, failureResponse }),
-          'Content-Type': contentType
+          'Content-Type': contentType,
+          'Access-Control-Allow-Origin': window.location.origin
         })
       };
     } else {

@@ -1,10 +1,10 @@
 <mat-toolbar class="min-toolbar">
-  <div>
-    <div class="sidebar-minimize-icons">
-      <button mat-icon-button (click)="openSidenav()">
-        <mat-icon>menu</mat-icon>
-      </button>
+  <button mat-icon-button (click)="openSidenav()">
+    <mat-icon>menu</mat-icon>
+  </button>
 
+  <div class="width-50" (click)="closeSidenav()">
+    <div class="sidebar-minimize-icons">
       <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
         {{ headerTitle }}
       </h6>
@@ -13,74 +13,140 @@
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
-  <div class="header-cols" *ngIf="userInfo$ | async as userDetails">
-    <div *ngIf="slackVerification$ | async as slackVerification">
-      <div
-        *ngIf="!slackVerification.slackInstalled"
-        class="connectToSlackButton"
-        (click)="connectToSlack(slackVerification)"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="slackIcon"
-          viewBox="0 0 122.8 122.8"
-        >
-          <path
-            d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"
-            fill="#e01e5a"
-          ></path>
-          <path
-            d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z"
-            fill="#36c5f0"
-          ></path>
-          <path
-            d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z"
-            fill="#2eb67d"
-          ></path>
-          <path
-            d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"
-            fill="#ecb22e"
-          ></path>
-        </svg>
-        Connect to Slack
-      </div>
+  <div
+    class="header-cols width-50"
+    *ngIf="userInfo$ | async as userDetails"
+    (click)="closeSidenav()"
+  >
+    <div *ngIf="userDetails.collaborationType === 'msteams'">
       <button
-        *ngIf="slackVerification.slackInstalled"
         #collabButton
         class="collabButton"
         mat-icon-button
         color="primary"
         aria-label="Collaboration Dialog trigger button"
         (click)="openDialog()"
+        *ngIf="unreadMessageCount > 0"
         [matBadge]="unreadMessageCount"
-        [matBadgeDisabled]="unreadMessageCount < 1"
         matBadgePosition="after"
         matBadgeColor="warn"
         matBadgeOverlap="true"
       >
         <mat-icon>chat_bubble_outline</mat-icon>
       </button>
-    </div>
-    <div class="width-auto displayGrid">
-      <span class="loggedin-user-name"
-        >{{ userDetails.firstName }} {{ userDetails.lastName }}</span
+      <button
+        #collabButton
+        class="collabButton"
+        mat-icon-button
+        color="primary"
+        aria-label="Collaboration Dialog trigger button"
+        (click)="openDialog()"
+        *ngIf="unreadMessageCount <= 0"
       >
-      <span class="loggedin-user-role">{{ userDetails.title }}</span>
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
     </div>
-    <div class="width-auto">
-      <img
-        [src]="profileImage(userDetails.profileImage)"
-        class="profile-img m-l-10 cursor arrow-icon"
-        [matMenuTriggerFor]="menu"
-      />
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="userSettings()">
-          <span>Profile</span>
+    <div *ngIf="userDetails.collaborationType === 'slack'">
+      <div *ngIf="slackVerification$ | async as slackVerification">
+        <div
+          *ngIf="!slackVerification.slackInstalled"
+          class="connectToSlackButton"
+          (click)="connectToSlack(slackVerification)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="slackIcon"
+            viewBox="0 0 122.8 122.8"
+          >
+            <path
+              d="M25.8 77.6c0 7.1-5.8 12.9-12.9 12.9S0 84.7 0 77.6s5.8-12.9 12.9-12.9h12.9v12.9zm6.5 0c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9v32.3c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V77.6z"
+              fill="#e01e5a"
+            ></path>
+            <path
+              d="M45.2 25.8c-7.1 0-12.9-5.8-12.9-12.9S38.1 0 45.2 0s12.9 5.8 12.9 12.9v12.9H45.2zm0 6.5c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H12.9C5.8 58.1 0 52.3 0 45.2s5.8-12.9 12.9-12.9h32.3z"
+              fill="#36c5f0"
+            ></path>
+            <path
+              d="M97 45.2c0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9-5.8 12.9-12.9 12.9H97V45.2zm-6.5 0c0 7.1-5.8 12.9-12.9 12.9s-12.9-5.8-12.9-12.9V12.9C64.7 5.8 70.5 0 77.6 0s12.9 5.8 12.9 12.9v32.3z"
+              fill="#2eb67d"
+            ></path>
+            <path
+              d="M77.6 97c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9-12.9-5.8-12.9-12.9V97h12.9zm0-6.5c-7.1 0-12.9-5.8-12.9-12.9s5.8-12.9 12.9-12.9h32.3c7.1 0 12.9 5.8 12.9 12.9s-5.8 12.9-12.9 12.9H77.6z"
+              fill="#ecb22e"
+            ></path>
+          </svg>
+          Connect to Slack
+        </div>
+        <button
+          *ngIf="slackVerification.slackInstalled"
+          #collabButton
+          class="collabButton"
+          mat-icon-button
+          color="primary"
+          aria-label="Collaboration Dialog trigger button"
+          (click)="openDialog()"
+          [matBadge]="unreadMessageCount"
+          [matBadgeDisabled]="unreadMessageCount < 1"
+          matBadgePosition="after"
+          matBadgeColor="warn"
+          matBadgeOverlap="true"
+        >
+          <mat-icon>chat_bubble_outline</mat-icon>
         </button>
-        <button mat-menu-item (click)="signout()">
-          <span>Sign Out</span>
-        </button>
-      </mat-menu>
+      </div>
     </div>
+
+    <div
+      class="dis-flex cursor"
+      (click)="isOpen = !isOpen"
+      cdkOverlayOrigin
+      #trigger="cdkOverlayOrigin"
+    >
+      <div class="user">
+        <img [src]="profileImage(userDetails.profileImage)" class="profile" />
+      </div>
+      <div class="without-company-logo" *ngIf="!tenantLogo">
+        <pre class="logo-comes-here-text">
+Logo comes
+  here
+      </pre
+        >
+      </div>
+      <div class="with-company-logo" *ngIf="tenantLogo">
+        <span class="helper"> </span>
+        <img [src]="tenantLogo" alt="Tenant Logo" class="logo" />
+      </div>
+    </div>
+
+    <ng-template
+      cdkConnectedOverlay
+      [cdkConnectedOverlayHasBackdrop]="true"
+      cdkConnectedOverlayPanelClass="custom-popover"
+      cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+      cdkConnectedOverlayWidth="400px"
+      [cdkConnectedOverlayOpen]="isOpen"
+      [cdkConnectedOverlayOrigin]="trigger"
+      (backdropClick)="isOpen = false"
+    >
+      <div class="header-profile-menu">
+        <img
+          [src]="profileImage(userDetails.profileImage)"
+          class="profile-image"
+        />
+        <p class="loggedin-user-name">
+          {{ userDetails.firstName }} {{ userDetails.lastName }}
+        </p>
+        <p class="loggedin-user-role">{{ userDetails.title }}</p>
+        <p class="loggedin-user-email">{{ userDetails.email }}</p>
+        <mat-nav-list class="p-0">
+          <a mat-list-item class="profile-signout" (click)="userSettings()">
+            Profile
+          </a>
+          <a mat-list-item class="profile-signout" (click)="signout()">
+            Sign Out
+          </a>
+        </mat-nav-list>
+      </div>
+    </ng-template>
   </div>
 </mat-toolbar>

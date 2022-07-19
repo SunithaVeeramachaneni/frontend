@@ -21,6 +21,7 @@ import { map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { from, Observable, of } from 'rxjs';
 import { permissions, routingUrls } from '../../../app.constants';
 import { CommonService } from '../../../shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-files',
@@ -55,12 +56,13 @@ export class MediaFilesComponent implements OnInit {
     private importService: ImportService,
     private overlayService: OverlayService,
     private wiCommonService: WiCommonService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit() {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.files.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.files.title))
     );
     this.getAllMediaFiles();
   }

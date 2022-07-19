@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SSE } from 'sse.js';
 import { CommonService } from './common.service';
 import * as hash from 'object-hash';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,10 @@ import * as hash from 'object-hash';
 export class SseService {
   eventSource: SSE;
 
-  constructor(private commonService: CommonService) {}
+  constructor(
+    private commonService: CommonService,
+    private tenantService: TenantService
+  ) {}
 
   /**
    * Create an event source of POST request
@@ -76,7 +80,7 @@ export class SseService {
     method: string;
     headers: { authorization: string; tenantid: string };
   } {
-    const { tenantId: tenantid } = this.commonService.getTenantInfo();
+    const { tenantId: tenantid } = this.tenantService.getTenantInfo();
     const protectedResource = this.getProtectedResource(url);
     let authorization: string;
     if (protectedResource && Object.keys(protectedResource).length) {

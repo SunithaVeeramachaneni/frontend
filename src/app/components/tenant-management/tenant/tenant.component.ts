@@ -21,6 +21,7 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { fromEvent, merge, Observable } from 'rxjs';
@@ -30,13 +31,16 @@ import {
   map,
   shareReplay
 } from 'rxjs/operators';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Buffer } from 'buffer';
 import { permissions } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 declare const ENCRYPTION_KEY: string;
 const regUrl =
@@ -58,8 +62,13 @@ export class TenantComponent implements OnInit, AfterViewInit {
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
-  noOfTabs = 5;
+  noOfTabs = 7;
   tenantForm: FormGroup;
+  slackConfiguration: FormGroup;
+  msTeamsConfiguration: FormGroup;
+
+  tenantData: any;
+
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
     'Dashboard',
@@ -72,6 +81,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   idps = ['azure'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
+  collaborationTypes = ['slack', 'msteams'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
   validationErrors$: Observable<{
     [key: string]:
@@ -83,6 +93,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
+  tenantLogo: string | SafeResourceUrl;
   readonly permissions = permissions;
   private genericValidator: GenericValidator;
 
@@ -104,7 +115,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
     private titleCase: TitleCasePipe,
     private route: ActivatedRoute,
     private cdrf: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private imageUtils: ImageUtils,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit(): void {
@@ -268,6 +281,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ],
         database: [{ value: '', disabled: true }]
       }),
+      collaborationType: ['', [Validators.required]],
       noOfLicenses: [
         '',
         [
@@ -280,22 +294,72 @@ export class TenantComponent implements OnInit, AfterViewInit {
       products: [[], [Validators.required]],
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
-      logLevel: ['', [Validators.required]]
+      logLevel: ['', [Validators.required]],
+      tenantLogo: [''],
+      tenantLogoName: ['']
+    });
+
+    this.slackConfiguration = this.fb.group({
+      slackTeamID: ['', [Validators.required]],
+      slackClientID: ['', [Validators.required]],
+      slackClientSecret: ['', [Validators.required]],
+      slackClientSigningSecret: ['', [Validators.required]],
+      slackClientStateSecret: ['', [Validators.required]]
+    });
+    this.msTeamsConfiguration = this.fb.group({
+      msTeamsTenantID: ['', [Validators.required]],
+      msTeamsClientID: ['', [Validators.required]],
+      msTeamsClientSecret: ['', [Validators.required]],
+      msTeamsSharepointSiteID: ['', [Validators.required]],
+      msTeamsRSAPrivateKey: ['', [Validators.required]],
+      msTeamsRSAPublicKey: ['', [Validators.required]]
     });
 
     const headerTitle = this.tenantForm.get('tenantName').value
       ? this.tenantForm.get('tenantName').value
       : `Addding Tenant...`;
-    this.commonService.setHeaderTitle(headerTitle);
+    this.headerService.setHeaderTitle(headerTitle);
     this.breadcrumbService.set('@tenantName', {
       label: headerTitle
     });
+
+    this.tenantForm
+      .get('collaborationType')
+      .valueChanges.subscribe((collabType) => {
+        if (collabType === 'slack') {
+          if (this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.removeControl('msTeamsConfiguration');
+          }
+          if (!this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.addControl(
+              'slackConfiguration',
+              this.slackConfiguration
+            );
+          }
+          this.slackConfiguration.patchValue(
+            this.tenantData.slackConfiguration
+          );
+        } else if (collabType === 'msteams') {
+          if (this.tenantForm.contains('slackConfiguration')) {
+            this.tenantForm.removeControl('slackConfiguration');
+          }
+          if (!this.tenantForm.contains('msTeamsConfiguration')) {
+            this.tenantForm.addControl(
+              'msTeamsConfiguration',
+              this.msTeamsConfiguration
+            );
+          }
+          this.msTeamsConfiguration.patchValue(
+            this.tenantData.msTeamsConfiguration
+          );
+        }
+      });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
       const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
       this.tenantHeader = displayName;
       this.breadcrumbService.set('@tenantName', { label: displayName });
-      this.commonService.setHeaderTitle(displayName);
+      this.headerService.setHeaderTitle(displayName);
       const database = this.titleCase.transform(tenantName).replace(/\s+/g, '');
       this.tenantForm.patchValue({
         rdbms: { database },
@@ -305,31 +369,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     this.route.data.subscribe(({ tenant }) => {
       if (tenant && Object.keys(tenant).length) {
+        this.tenantData = tenant;
         const { sap, node } = tenant.protectedResources;
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
 
-        tenant.rdbms.password = this.commonService.decrypt(
-          tenant.rdbms.password,
-          this.encryptionKey
-        );
-        tenant.nosql.password = this.commonService.decrypt(
-          tenant.nosql.password,
-          this.encryptionKey
-        );
-        tenant.erps.sap.password = this.commonService.decrypt(
-          tenant.erps.sap.password,
-          this.encryptionKey
-        );
-        tenant.erps.sap.saml.clientSecret = this.commonService.decrypt(
-          tenant.erps.sap.saml.clientSecret,
-          this.encryptionKey
-        );
         tenant.erps.sap.scope = JSON.stringify(
           tenant.erps.sap.scope,
           null,
           ' '
         );
+
+        if (tenant.tenantLogo) {
+          const tenantLogo = Buffer.from(tenant.tenantLogo).toString();
+          this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+          tenant.tenantLogo = tenantLogo;
+        }
 
         this.tenantForm.patchValue(tenant);
         (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
@@ -714,5 +769,46 @@ export class TenantComponent implements OnInit, AfterViewInit {
       }
       return null;
     };
+  }
+
+  onTenantLogoChange(event: any) {
+    let base64: string;
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const tenantLogo = base64.split(',')[1];
+      this.tenantForm.patchValue({
+        tenantLogo,
+        tenantLogoName: files[0].name
+      });
+      this.tenantForm.get('tenantLogo').markAsDirty();
+      this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+    };
+  }
+
+  removeTenantLogo() {
+    this.tenantForm.patchValue({
+      tenantLogo: null,
+      tenantLogoName: null
+    });
+    this.tenantForm.get('tenantLogo').markAsDirty();
+    this.tenantLogo = null;
+  }
+
+  showRemoveTenantLogo() {
+    return this.tenantForm.get('tenantLogo').value ? true : false;
+  }
+
+  getBrowseLogoName() {
+    return this.tenantForm.get('tenantLogoName').value
+      ? this.tenantForm.get('tenantLogoName').value
+      : 'browseLogo';
+  }
+
+  resetTenantLogo(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = '';
   }
 }

@@ -11,18 +11,24 @@ import { filter, mergeMap, take, tap } from 'rxjs/operators';
 import {
   defaultLanguage,
   routingUrls,
+  bigInnovaIcon,
+  smallInnovaIcon,
   permissions as perms
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
-import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { environment } from './../environments/environment';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
-import { Permission } from './interfaces';
-
+import { Permission, Tenant } from './interfaces';
+import { LoginService } from './components/login/services/login.service';
+import { HeaderService } from './shared/services/header.service';
+import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
+import { ImageUtils } from './shared/utils/imageUtils';
+import { Buffer } from 'buffer';
 
 const {
   dashboard,
@@ -48,13 +54,13 @@ const {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
-  opened = false;
+  bigInnovaIcon = bigInnovaIcon;
+  smallInnovaIcon = smallInnovaIcon;
   menus = [
     {
       title: dashboard.title,
       url: dashboard.url,
-      activeImage: 'assets/sidebar-icons/dashboard-white.svg',
-      image: 'assets/sidebar-icons/dashboard-gray.svg',
+      imageName: 'dashboard',
       showSubMenu: false,
       permission: perms.viewDashboards,
       subPages: [
@@ -69,8 +75,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: tenantManagement.title,
       url: tenantManagement.url,
-      activeImage: 'assets/sidebar-icons/tenant-management-white.svg',
-      image: 'assets/sidebar-icons/tenant-management-gray.svg',
+      imageName: 'tenant-management',
       showSubMenu: false,
       permission: perms.viewTenants,
       subPages: null,
@@ -79,8 +84,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: userManagement.title,
       url: userManagement.url,
-      activeImage: 'assets/sidebar-icons/user-management-white.svg',
-      image: 'assets/sidebar-icons/user-management-gray.svg',
+      imageName: 'user-management',
       showSubMenu: false,
       permission: perms.viewUsers,
       subPages: [
@@ -100,8 +104,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: maintenance.title,
       url: maintenance.url,
-      activeImage: 'assets/sidebar-icons/maintenance-white.svg',
-      image: 'assets/sidebar-icons/maintenance-gray.svg',
+      imageName: 'maintenance',
       showSubMenu: false,
       permission: perms.viewMaintenanceControlCenter,
       subPages: null,
@@ -110,8 +113,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: spareParts.title,
       url: spareParts.url,
-      activeImage: 'assets/sidebar-icons/spare-parts-white.svg',
-      image: 'assets/sidebar-icons/spare-parts-gray.svg',
+      imageName: 'spare-parts',
       showSubMenu: false,
       permission: perms.viewSparePartsControlCenter,
       subPages: null,
@@ -120,8 +122,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: workInstructions.title,
       url: workInstructions.url,
-      activeImage: 'assets/sidebar-icons/work-instructions-white.svg',
-      image: 'assets/sidebar-icons/work-instructions-gray.svg',
+      imageName: 'work-instructions',
       showSubMenu: false,
       permission: perms.viewWorkInstructions,
       subPages: [
@@ -164,21 +165,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
+  menuOpenClose = false;
 
   constructor(
-    private authHeaderService: AuthHeaderService,
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService,
-    private chatService: ChatService,
     private oidcSecurityService: OidcSecurityService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private loginService: LoginService,
+    private authHeaderService: AuthHeaderService,
+    private chatService: ChatService,
+    private headerService: HeaderService,
+    private tenantService: TenantService,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
     const ref = this;
-    this.commonService.isUserAuthenticated$
+    this.loginService.isUserAuthenticated$
       .pipe(
         tap(
           (isUserAuthenticated) =>
@@ -186,57 +192,67 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         ),
         filter((isUserAuthenticated) => isUserAuthenticated),
         take(1),
-        mergeMap(() => this.usersService.getLoggedInUser$())
+        mergeMap(() => {
+          const { tenantId } = this.tenantService.getTenantInfo();
+          return combineLatest([
+            this.usersService.getLoggedInUser$(),
+            this.headerService.getTenantLogoByTenantId$(tenantId)
+          ]);
+        })
       )
-      .subscribe((data) => {
+      .subscribe(([data, { tenantLogo }]) => {
+        this.tenantService.setTenantInfo({
+          tenantLogo: tenantLogo
+            ? this.imageUtils.getImageSrc(Buffer.from(tenantLogo).toString())
+            : tenantLogo
+        } as Tenant);
         this.commonService.setUserInfo(data);
-        if (data.UserSlackDetail && data.UserSlackDetail.slackID) {
-          const userSlackDetail = data.UserSlackDetail;
-          const { slackID } = userSlackDetail;
-          const SSE_URL = `${environment.slackAPIUrl}sse/${slackID}`;
-
-          const { authorization, tenantid } =
-            this.authHeaderService.getAuthHeaders(SSE_URL);
-          this.eventSource = new EventSourcePolyfill(SSE_URL, {
-            headers: {
-              authorization,
-              tenantid
-            }
-          });
-          this.eventSource.onmessage = async (event: any) => {
-            const eventData = JSON.parse(event.data);
-            if (!eventData.isHeartbeat) {
-              const processedMessageIds = [];
-              eventData.forEach((evt: any) => {
-                const { message } = evt;
-                if (!message.isHeartbeat && message.eventType === 'message') {
-                  const audio = new Audio('../assets/audio/notification.mp3');
-                  audio.play();
-                  processedMessageIds.push(evt.id);
-                  const iscollabWindowOpen =
-                    ref.chatService.getCollaborationWindowStatus();
-                  if (iscollabWindowOpen) {
-                    ref.chatService.newMessageReceived(message);
-                  } else {
-                    let unreadCount = ref.chatService.getUnreadMessageCount();
-                    unreadCount = unreadCount + 1;
-                    ref.chatService.setUnreadMessageCount(unreadCount);
-                  }
-                }
-              });
-              ref.chatService
-                .processSSEMessages$(processedMessageIds)
-                .subscribe(
-                  (response) => {
-                    // Do nothing
-                  },
-                  (err) => {
-                    // Do Nothing
-                  }
-                );
-            }
-          };
+        let userID;
+        if (data.collaborationType === 'slack') {
+          if (data.UserSlackDetail?.slackID) {
+            userID = data.UserSlackDetail.slackID;
+          }
+        } else if (data.collaborationType === 'msteams') {
+          userID = data.email;
         }
+
+        const SSE_URL = `${environment.userRoleManagementApiUrl}${data.collaborationType}/sse/${userID}`;
+
+        const { authorization, tenantid } =
+          this.authHeaderService.getAuthHeaders(SSE_URL);
+        this.eventSource = new EventSourcePolyfill(SSE_URL, {
+          headers: {
+            authorization,
+            tenantid
+          }
+        });
+        this.eventSource.onmessage = async (event: any) => {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            const processedMessageIds = [];
+            eventData.forEach((evt: any) => {
+              const { message } = evt;
+              if (
+                !message.isHeartbeat &&
+                (message.eventType === 'message' ||
+                  message.messageType === 'message')
+              ) {
+                const audio = new Audio('../assets/audio/notification.mp3');
+                audio.play();
+                processedMessageIds.push(evt.id);
+                const iscollabWindowOpen =
+                  ref.chatService.getCollaborationWindowStatus();
+                if (iscollabWindowOpen) {
+                  ref.chatService.newMessageReceived(message);
+                } else {
+                  let unreadCount = ref.chatService.getUnreadMessageCount();
+                  unreadCount = unreadCount + 1;
+                  ref.chatService.setUnreadMessageCount(unreadCount);
+                }
+              }
+            });
+          }
+        };
       });
 
     this.router.events
@@ -326,15 +342,25 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    this.sidebar = this.opened;
     this.cdrf.detectChanges();
   }
 
-  getImage = (image, activeImage, active) =>
-    active === true ? activeImage : image;
+  getImage = (imageName: string, active: boolean) =>
+    active
+      ? `assets/sidebar-icons/${imageName}-white.svg`
+      : `assets/sidebar-icons/${imageName}-gray.svg`;
 
   selectedListElement(title) {
+    this.menuOpenClose = false;
     this.selectedMenu = title;
+  }
+
+  toggleMenu() {
+    this.menuOpenClose = !this.menuOpenClose;
+  }
+
+  closeSideNav() {
+    this.menuOpenClose = false;
   }
 
   toggleSubMenu(menus: any, currentRouteUrl: string) {

@@ -7,6 +7,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Component({
   selector: 'app-people',
@@ -24,6 +25,7 @@ export class PeopleComponent implements OnInit {
   constructor(
     public uploadDialog: MatDialog,
     private peopleService: PeopleService,
+    private commonService: CommonService,
     private imageUtils: ImageUtils
   ) {}
 
@@ -35,12 +37,29 @@ export class PeopleComponent implements OnInit {
     this.activeUsersInitial$ = this.peopleService.getUsers$(info).pipe(
       mergeMap((users) => {
         if (users.length) {
+          const validUsers = [];
           users.forEach((user) => {
+            const userInfo = this.commonService.getUserInfo();
+            if (userInfo.collaborationType === 'slack') {
+              if (user.UserSlackDetail) {
+                user.collaborationDisabled =
+                  !user.UserSlackDetail || !user.UserSlackDetail.slackID;
+                validUsers.push(user);
+              }
+            } else if (userInfo.collaborationType === 'msteams') {
+              // This is a temporary check to restrict the user selection...
+              if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
+                validUsers.push(user);
+              }
+            }
+          });
+
+          validUsers.forEach((user) => {
             user.profileImage = this.imageUtils.getImageSrc(
               Buffer.from(user.profileImage).toString()
             );
           });
-          return of({ data: users });
+          return of({ data: validUsers });
         }
       }),
       catchError(() => of({ data: [] }))

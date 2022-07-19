@@ -357,7 +357,7 @@ export class DashboardConfigurationComponent implements OnInit {
 
   editWidget = (widget: Widget) => {
     const dialogRef = this.dialog.open(WidgetConfigurationModalComponent, {
-      data: { dashboard: this.dashboard, widget },
+      data: { dashboard: this.dashboard, widget, mode: 'edit' },
       autoFocus: false
     });
     dialogRef.afterClosed().subscribe((widgetDetails) => {

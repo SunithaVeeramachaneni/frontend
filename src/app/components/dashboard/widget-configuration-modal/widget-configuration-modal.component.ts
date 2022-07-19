@@ -53,6 +53,7 @@ import { cloneDeep } from 'lodash';
 export interface WidgetConfigurationModalData {
   dashboard: Dashboard;
   widget?: Widget;
+  mode?: 'edit';
 }
 
 @Component({
@@ -264,7 +265,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     this.chartConfig = this.reportConfigService.updateChartConfig(
       this.selectedReport,
       this.chartConfig,
-      true,
+      this.data.mode === 'edit' ? false : true,
       false,
       false
     );
@@ -410,7 +411,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
           this.chartConfig = this.reportConfigService.updateChartConfig(
             this.selectedReport,
             this.chartConfig,
-            true,
+            this.data.mode === 'edit' ? false : true,
             false
           );
         }

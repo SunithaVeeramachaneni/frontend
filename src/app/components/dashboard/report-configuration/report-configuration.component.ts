@@ -56,6 +56,7 @@ import { DynamictableFilterService } from '@innovapptive.com/dynamictable';
 import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-report-configuration',
@@ -146,7 +147,8 @@ export class ReportConfigurationComponent implements OnInit {
     private dynamictableFilterService: DynamictableFilterService,
     public dialog: MatDialog,
     private fb: FormBuilder,
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,
+    private headerService: HeaderService
   ) {}
 
   get reportName() {
@@ -185,7 +187,7 @@ export class ReportConfigurationComponent implements OnInit {
         });
         this.reportName.patchValue(newValue);
         this.breadcrumbService.set('@reportConfiguration', { label: newValue });
-        this.commonService.setHeaderTitle(newValue);
+        this.headerService.setHeaderTitle(newValue);
       });
 
     this.undoRedoUtil = new UndoRedoUtil();
@@ -264,7 +266,7 @@ export class ReportConfigurationComponent implements OnInit {
                 ? this.reportName.value
                 : `${this.reportName.value} *`
           });
-          this.commonService.setHeaderTitle(
+          this.headerService.setHeaderTitle(
             this.reportConfiguration && this.reportConfiguration.id
               ? this.reportName.value
               : `${this.reportName.value} *`

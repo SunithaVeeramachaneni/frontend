@@ -22,7 +22,7 @@ export const tenants: Tenant[] = [
         baseUrl: 'https://baseurltest.com',
         oauth2Url: 'https://oauth2urltest.com',
         username: 'username',
-        password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
+        password: 'password', // AES encrypted string
         grantType: 'grantType',
         clientId: 'clientId',
         scope: {
@@ -33,7 +33,7 @@ export const tenants: Tenant[] = [
         saml: {
           oauth2Url: 'https://oauth2urltest.com',
           grantType: 'https://granttypetest.com',
-          clientSecret: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
+          clientSecret: 'password', // AES encrypted string
           resource: 'resource',
           tokenUse: 'tokenUse',
           tokenType: 'tokenType'
@@ -62,7 +62,7 @@ export const tenants: Tenant[] = [
       host: 'host',
       port: 1234,
       user: 'user',
-      password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
+      password: 'password', // AES encrypted string
       database: 'Tenantname',
       dialect: 'dialect'
     },
@@ -70,7 +70,7 @@ export const tenants: Tenant[] = [
       host: 'host',
       port: 12345,
       user: 'user',
-      password: 'U2FsdGVkX1/jzQzjSDwhGSxNNNeXk5uULcqqJGPhKOg=', // AES encrypted string
+      password: 'password', // AES encrypted string
       database: 'Tenantname'
     },
     noOfLicenses: 20,
@@ -78,10 +78,13 @@ export const tenants: Tenant[] = [
     modules: ['Dashboard'],
     logDBType: 'logDBType',
     logLevel: 'logLevel',
+    tenantLogo: null,
+    tenantLogoName: null,
     isActive: true,
     createdBy: 'admin@innovapptive.com',
     createdAt: '2022-05-04 12:00:00',
-    updatedAt: '2022-05-04 12:00:00'
+    updatedAt: '2022-05-04 12:00:00',
+    collaborationType: 'msteams'
   }
 ];
 
