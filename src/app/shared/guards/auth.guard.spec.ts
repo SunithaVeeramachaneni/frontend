@@ -7,7 +7,7 @@ import {
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
-import { CommonService } from '../services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 import { AuthGuard } from './auth.guard';
 import { loginResponses, loginResponses$ } from './auth.guard.mock';
@@ -15,7 +15,7 @@ import { loginResponses, loginResponses$ } from './auth.guard.mock';
 describe('AuthGuard', () => {
   let guard: AuthGuard;
   let oidcSecurityServiceSpy: OidcSecurityService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let routerStateSnapshotSpy: RouterStateSnapshot;
   let router: Router;
 
@@ -23,7 +23,7 @@ describe('AuthGuard', () => {
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
       'checkAuthMultiple'
     ]);
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [
+    loginServiceSpy = jasmine.createSpyObj('CommonService', [
       'performPostLoginActions'
     ]);
     routerStateSnapshotSpy = jasmine.createSpyObj('RouterStateSnapshot', [], {
@@ -39,8 +39,8 @@ describe('AuthGuard', () => {
           useValue: oidcSecurityServiceSpy
         },
         {
-          provide: CommonService,
-          useValue: commonServiceSpy
+          provide: LoginService,
+          useValue: loginServiceSpy
         },
         {
           provide: RouterStateSnapshot,
@@ -66,7 +66,7 @@ describe('AuthGuard', () => {
       .canActivate(new ActivatedRouteSnapshot(), routerStateSnapshotSpy)
       .subscribe((response) => {
         expect(response).toBe(true);
-        expect(commonServiceSpy.performPostLoginActions).toHaveBeenCalledWith(
+        expect(loginServiceSpy.performPostLoginActions).toHaveBeenCalledWith(
           {
             configId,
             userData

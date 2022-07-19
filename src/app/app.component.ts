@@ -16,15 +16,19 @@ import {
   permissions as perms
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
-import { ChatService } from './shared/components/collaboration/chats/chat.service';
-import { environment } from './../environments/environment';
 import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
-import { Permission } from './interfaces';
-
+import { Permission, Tenant } from './interfaces';
+import { LoginService } from './components/login/services/login.service';
+import { HeaderService } from './shared/services/header.service';
+import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
+import { TenantService } from './components/tenant-management/services/tenant.service';
+import { ImageUtils } from './shared/utils/imageUtils';
+import { Buffer } from 'buffer';
 
 const {
   dashboard,
@@ -164,19 +168,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   menuOpenClose = false;
 
   constructor(
-    private authHeaderService: AuthHeaderService,
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService,
-    private chatService: ChatService,
     private oidcSecurityService: OidcSecurityService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private loginService: LoginService,
+    private authHeaderService: AuthHeaderService,
+    private chatService: ChatService,
+    private headerService: HeaderService,
+    private tenantService: TenantService,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
     const ref = this;
-    this.commonService.isUserAuthenticated$
+    this.loginService.isUserAuthenticated$
       .pipe(
         tap(
           (isUserAuthenticated) =>
@@ -184,13 +192,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         ),
         filter((isUserAuthenticated) => isUserAuthenticated),
         take(1),
-        mergeMap(() => this.usersService.getLoggedInUser$())
+        mergeMap(() => {
+          const { tenantId } = this.tenantService.getTenantInfo();
+          return combineLatest([
+            this.usersService.getLoggedInUser$(),
+            this.headerService.getTenantLogoByTenantId$(tenantId)
+          ]);
+        })
       )
-      .subscribe((data) => {
+      .subscribe(([data, { tenantLogo }]) => {
+        this.tenantService.setTenantInfo({
+          tenantLogo: tenantLogo
+            ? this.imageUtils.getImageSrc(Buffer.from(tenantLogo).toString())
+            : tenantLogo
+        } as Tenant);
         this.commonService.setUserInfo(data);
         let userID;
         if (data.collaborationType === 'slack') {
-          if (data.UserSlackDetail.slackID) {
+          if (data.UserSlackDetail?.slackID) {
             userID = data.UserSlackDetail.slackID;
           }
         } else if (data.collaborationType === 'msteams') {

@@ -13,6 +13,7 @@ import { CommonService } from '../services/common.service';
 import { Buffer } from 'buffer';
 import * as hash from 'object-hash';
 import { AppService } from '../services/app.services';
+import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +22,15 @@ export class HttpRequestInterceptor implements HttpInterceptor {
   constructor(
     private oidcSecurityService: OidcSecurityService,
     private appService: AppService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private tenantService: TenantService
   ) {}
 
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const { tenantId } = this.commonService.getTenantInfo();
+    const { tenantId } = this.tenantService.getTenantInfo();
     const configId = tenantId;
     if (request.headers.get('authorization') === null) {
       const protectedResource = this.getProtectedResource(request.url);

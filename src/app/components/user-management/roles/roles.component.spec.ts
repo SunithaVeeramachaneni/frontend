@@ -17,6 +17,7 @@ import { RolesComponent } from './roles.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { PermissionsComponent } from '../permissions/permissions.component';
 import { MatDialog } from '@angular/material/dialog';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 describe('RolesComponent', () => {
   let component: RolesComponent;
@@ -24,6 +25,7 @@ describe('RolesComponent', () => {
   let rolesPermissionsServiceSpy: RolesPermissionsService;
   let dialogSpy: MatDialog;
   let toastServiceSpy: ToastService;
+  let headerServiceSpy: ToastService;
 
   const role = {
     id: 1,
@@ -96,6 +98,9 @@ describe('RolesComponent', () => {
       ]
     );
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    headerServiceSpy = jasmine.createSpyObj('HeaderService', [
+      'setHeaderTitle'
+    ]);
 
     await TestBed.configureTestingModule({
       declarations: [RolesComponent, MockComponent(PermissionsComponent)],
@@ -116,6 +121,7 @@ describe('RolesComponent', () => {
       ],
       providers: [
         { provide: ToastService, useValue: toastServiceSpy },
+        { provide: HeaderService, useValue: headerServiceSpy },
         {
           provide: RolesPermissionsService,
           useValue: rolesPermissionsServiceSpy

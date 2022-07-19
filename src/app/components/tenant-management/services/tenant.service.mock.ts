@@ -78,6 +78,8 @@ export const tenants: Tenant[] = [
     modules: ['Dashboard'],
     logDBType: 'logDBType',
     logLevel: 'logLevel',
+    tenantLogo: null,
+    tenantLogoName: null,
     isActive: true,
     createdBy: 'admin@innovapptive.com',
     createdAt: '2022-05-04 12:00:00',

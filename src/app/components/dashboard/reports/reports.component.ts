@@ -27,7 +27,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { BreadcrumbService } from 'xng-breadcrumb';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-reports',
@@ -37,7 +37,6 @@ import { BreadcrumbService } from 'xng-breadcrumb';
 })
 export class ReportsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
-  headerTitle$: Observable<string>;
   readonly routingUrls = routingUrls;
   readonly perms = perms;
   selectedReportSegmentControl = new FormControl('all');
@@ -100,7 +99,7 @@ export class ReportsComponent implements OnInit {
     private reportConfigService: ReportConfigurationService,
     private router: Router,
     private commonService: CommonService,
-    private breadcrumbService: BreadcrumbService
+    private headerService: HeaderService
   ) {}
 
   fetchReports() {
@@ -206,7 +205,7 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
-      tap(() => this.commonService.setHeaderTitle(routingUrls.reports.title))
+      tap(() => this.headerService.setHeaderTitle(routingUrls.reports.title))
     );
     this.fetchReports();
 
@@ -363,7 +362,7 @@ export class ReportsComponent implements OnInit {
     if (
       this.commonService.checkUserHasPermission(permissions, 'VIEW_REPORTS')
     ) {
-      menuActions.push(   {
+      menuActions.push({
         title: 'Preview',
         action: 'preview'
       });

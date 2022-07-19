@@ -18,6 +18,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-inactive-users',
@@ -167,13 +168,14 @@ export class InactiveUsersComponent implements OnInit {
   constructor(
     private usersService: UsersService,
     private roleService: RolesPermissionsService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private headerService: HeaderService
   ) {}
 
   ngOnInit() {
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
-        this.commonService.setHeaderTitle(routingUrls.inActiveUsers.title)
+        this.headerService.setHeaderTitle(routingUrls.inActiveUsers.title)
       )
     );
 

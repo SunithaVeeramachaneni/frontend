@@ -1,12 +1,20 @@
 import { TestBed } from '@angular/core/testing';
+import { SseService } from 'src/app/shared/services/sse.service';
 
 import { ImportService } from './import.service';
 
-describe('SseService', () => {
+describe('ImportService', () => {
   let service: ImportService;
+  let sseServiceSpy: SseService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    sseServiceSpy = jasmine.createSpyObj('SseService', [
+      'getEventSourceWithPost',
+      'closeEventSource'
+    ]);
+    TestBed.configureTestingModule({
+      providers: [{ provide: SseService, useValue: sseServiceSpy }]
+    });
     service = TestBed.inject(ImportService);
   });
 

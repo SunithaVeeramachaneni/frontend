@@ -16,6 +16,7 @@ import {
 import { NgxMatIntlTelInputModule } from 'ngx-mat-intl-tel-input';
 import { AppMaterialModules } from 'src/app/material.module';
 import {
+  profileImageBase64,
   userInfo,
   userInfo$
 } from 'src/app/shared/components/header/header.component.mock';
@@ -35,8 +36,6 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 const { firstName, lastName, title, email, roles, profileImage, contact } =
   userInfo;
-const base64String =
-  'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -98,8 +97,10 @@ describe('ProfileComponent', () => {
     profileDe = fixture.debugElement;
     profileEl = profileDe.nativeElement;
     (imageUtilsSpy.getImageSrc as jasmine.Spy)
-      .withArgs(base64String)
-      .and.returnValue(`data:image/jpeg;base64,${base64String}`);
+      .withArgs(profileImageBase64)
+      .and.returnValue({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
     fixture.detectChanges();
   });
 
@@ -116,9 +117,9 @@ describe('ProfileComponent', () => {
       component.ngOnInit();
 
       expect(component.userInfo).toEqual(userInfo);
-      expect(component.profileImage).toBe(
-        `data:image/jpeg;base64,${base64String}`
-      );
+      expect(component.profileImage).toEqual({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       expect(component.profileForm.getRawValue()).toEqual({
         firstName,
         lastName,
@@ -222,9 +223,9 @@ describe('ProfileComponent', () => {
     });
 
     it('should change existing profile photo', () => {
-      (imageUtilsSpy.getImageSrc as jasmine.Spy).and.returnValue(
-        `data:image/jpeg;base64,${base64String}`
-      );
+      (imageUtilsSpy.getImageSrc as jasmine.Spy).and.returnValue({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       const buttons = profileEl.querySelectorAll('button');
       buttons[0].click();
       fixture.detectChanges();
@@ -236,9 +237,9 @@ describe('ProfileComponent', () => {
       inputDebugEl.nativeElement.dispatchEvent(new InputEvent('change'));
       fixture.detectChanges();
 
-      expect(component.profileImage).toBe(
-        `data:image/jpeg;base64,${base64String}`
-      );
+      expect(component.profileImage).toEqual({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       expect(component.disableRemoveProfile).toBeFalse();
     });
   });
@@ -253,7 +254,7 @@ describe('ProfileComponent', () => {
         .withArgs(defaultProfile)
         .and.returnValue(
           of({
-            base64Response: `data:image/jpeg;base64,${base64String}`
+            base64Response: `data:image/jpeg;base64,${profileImageBase64}`
           }).toPromise()
         );
       const buttons = profileEl.querySelectorAll('button');
@@ -266,7 +267,7 @@ describe('ProfileComponent', () => {
       flush();
 
       expect(component.profileForm.get('profileImage').value).toBe(
-        base64String
+        profileImageBase64
       );
       expect(component.profileForm.get('profileImage').dirty).toBeTrue();
       expect(component.disableRemoveProfile).toBeTrue();
@@ -288,7 +289,7 @@ describe('ProfileComponent', () => {
       spyOn(component.profileForm, 'reset');
       const userProfile = {
         contact: '+918123456788',
-        profileImage: base64String
+        profileImage: profileImageBase64
       };
       (userServiceSpy.updateUserProfile$ as jasmine.Spy)
         .withArgs(userInfo.id, userProfile)

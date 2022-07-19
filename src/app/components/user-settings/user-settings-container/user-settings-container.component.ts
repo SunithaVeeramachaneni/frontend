@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { HeaderService } from 'src/app/shared/services/header.service';
 
 @Component({
   selector: 'app-user-settings-container',
@@ -7,9 +7,9 @@ import { CommonService } from 'src/app/shared/services/common.service';
   styleUrls: ['./user-settings-container.component.css']
 })
 export class UserSettingsContainerComponent implements OnInit {
-  constructor(private commonService: CommonService) {}
+  constructor(private headerService: HeaderService) {}
 
   ngOnInit(): void {
-    this.commonService.setHeaderTitle('Your Settings');
+    this.headerService.setHeaderTitle('Your Settings');
   }
 }

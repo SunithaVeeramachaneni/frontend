@@ -1,3 +1,13 @@
+$blue-color: #3d5afe;
+$white-color: #ffffff;
+$black-color: #000000;
+$gray-600: #757575;
+$gray-900: #212121;
+$font-size-14: 14px;
+$border: 1px solid;
+$border-color: #e0e0e0;
+$blue-color: #3d5afe;
+
 .m-t-minus-25 {
   margin-top: -25px;
 }
@@ -26,8 +36,8 @@
 
 .cancel-btn {
   float: right;
-  color: #3d5afe;
-  border: 1px solid #3d5afe;
+  color: $blue-color;
+  border: 1px solid $blue-color;
   background-color: #ffffff;
   box-shadow: none;
   margin-right: 14px;
@@ -35,7 +45,7 @@
 
 .next-btn {
   float: right;
-  background-color: #3d5afe;
+  background-color: $blue-color;
   box-shadow: none;
   color: #ffffff;
 }
@@ -43,7 +53,7 @@
 .save-btn,
 .edit-btn {
   float: right;
-  background-color: #3d5afe;
+  background-color: $blue-color;
   box-shadow: none;
   color: #ffffff;
 }
@@ -56,15 +66,12 @@
 
 .sub-headings {
   margin: 10px 0 10px 0;
-  font-size: 14px;
+  font-size: $font-size-14;
   font-weight: 500;
 }
 
 .main-content {
   width: 87%;
-  ::ng-deep .mat-tab-label {
-    width: 20%;
-  }
 }
 
 .prevbtn {
@@ -125,4 +132,175 @@
   border: none;
   background: transparent;
   cursor: auto;
+}
+
+.assets {
+  text-align: center;
+  margin-top: 25px;
+
+  .browse-btn {
+    color: $blue-color;
+    border: 1px solid $blue-color;
+    background-color: $white-color;
+    box-shadow: none;
+  }
+
+  .browse-btn:disabled {
+    color: $gray-600;
+    border: 1px solid $gray-600;
+    background-color: $white-color;
+    box-shadow: none;
+  }
+
+  .m-10 {
+    margin: 10px;
+  }
+
+  .m-4 {
+    margin: 4px;
+  }
+
+  .m-t-20 {
+    margin-top: 20px;
+  }
+
+  .remove-btn {
+    color: $blue-color;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background-color: transparent;
+  }
+
+  .remove-btn:disabled {
+    color: $gray-600;
+  }
+
+  .info1 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    color: $gray-600;
+    line-height: 28px;
+    letter-spacing: 0.35px;
+  }
+
+  .info2 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: $font-size-14;
+    color: $gray-900;
+    line-height: 28px;
+    letter-spacing: 0.35px;
+  }
+
+  .info3 {
+    font-style: normal;
+    font-weight: 500;
+    font-size: $font-size-14;
+    color: $gray-900;
+    line-height: 22px;
+  }
+
+  .info4 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: $font-size-14;
+    color: $gray-600;
+    line-height: 20px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0px 0px 15px 15px rgba(0, 0, 0, 0.05);
+    align-items: center;
+    height: 75px;
+
+    .title {
+      font-style: normal;
+      font-weight: 700;
+      font-size: 20px;
+      margin: 0;
+      padding: 16px;
+      color: $black-color;
+      line-height: 32px;
+      text-align: left;
+    }
+
+    .apps-icon {
+      padding: 12px 10px 0 0;
+    }
+
+    .user {
+      border-top: $border;
+      border-left: $border;
+      border-bottom: $border;
+      border-color: $border-color;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+      float: right;
+    }
+
+    .profile {
+      width: 35px;
+      padding: 7px 10px 2px 10px;
+      height: 35px;
+    }
+
+    .without-company-logo {
+      border: 1px dashed $border-color;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      float: right;
+      padding: 5px 10px;
+    }
+
+    .with-company-logo {
+      border-top: $border;
+      border-right: $border;
+      border-bottom: $border;
+      border-color: $border-color;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+      float: right;
+      height: 48px;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .helper {
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
+
+    .logo-comes-here-text {
+      font-weight: 600;
+      font-size: $font-size-14;
+      line-height: 15px;
+      text-align: center;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: $black-color;
+      opacity: 0.3;
+    }
+
+    .logo {
+      max-height: 44px;
+      max-width: 126px;
+      vertical-align: middle;
+    }
+  }
+}
+
+.ideal-dimension-text {
+  letter-spacing: 0.35px;
+  color: $gray-600;
+  font-size: 15px;
+}
+
+.ideal-dimension-width-height {
+  letter-spacing: 0.35px;
+  font-size: 15px;
 }

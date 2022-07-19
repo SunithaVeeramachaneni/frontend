@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { Count, ErrorInfo, TableColumn, Tenant } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
@@ -10,7 +12,29 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class TenantService {
+  private tenantInfo: Tenant = {} as Tenant;
+  private tenantsInfo: Tenant[] = [];
+  private tenantInfoSubject = new BehaviorSubject<Tenant>({} as Tenant);
+  tenantInfo$ = this.tenantInfoSubject.asObservable();
+
   constructor(private appService: AppService) {}
+
+  setTenantInfo(tenantInfo: Tenant) {
+    this.tenantInfoSubject.next({ ...this.tenantInfo, ...tenantInfo });
+    this.tenantInfo = { ...this.tenantInfo, ...tenantInfo };
+  }
+
+  getTenantInfo() {
+    return this.tenantInfo;
+  }
+
+  setTenantsInfo(tenantsInfo: Tenant[]) {
+    this.tenantsInfo = tenantsInfo;
+  }
+
+  getTenantsInfo() {
+    return this.tenantsInfo;
+  }
 
   createTenant$ = (
     tenant: Tenant,
@@ -73,6 +97,14 @@ export class TenantService {
       id,
       info
     );
+
+  getTenantsInfo$ = (info: ErrorInfo = {} as ErrorInfo): Observable<Tenant[]> =>
+    this.appService
+      ._getResp(environment.userRoleManagementApiUrl, 'catalogs/info', info)
+      .pipe(
+        tap((tenants) => this.setTenantsInfo(cloneDeep(tenants))),
+        shareReplay(1)
+      );
 
   updateConfigOptionsFromColumns(
     columns: TableColumn[],

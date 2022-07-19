@@ -14,6 +14,7 @@ import { map } from 'rxjs/operators';
 import { Tenant } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { TenantService } from '../tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +31,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private oidcSecurityService: OidcSecurityService,
     private commonService: CommonService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tenantService: TenantService
   ) {}
 
   ngOnInit() {
@@ -51,7 +53,7 @@ export class LoginComponent implements OnInit {
       .valueChanges.pipe(
         map((value) => {
           if (value.trim()) {
-            return this.commonService
+            return this.tenantService
               .getTenantsInfo()
               .filter(
                 ({ tenantName, tenantDomainName }) =>
@@ -77,7 +79,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid && this.loginForm.dirty) {
       let { companyOrDomainName } = this.loginForm.value;
       companyOrDomainName = companyOrDomainName.trim().toLowerCase();
-      const tenantInfo = this.commonService.getTenantsInfo().find((tenant) => {
+      const tenantInfo = this.tenantService.getTenantsInfo().find((tenant) => {
         const { tenantName, tenantDomainName } = tenant;
         return (
           tenantName.trim().toLowerCase() === companyOrDomainName ||
@@ -89,7 +91,7 @@ export class LoginComponent implements OnInit {
 
       this.commonService.setProtectedResources(node);
       this.commonService.setProtectedResources(sap);
-      this.commonService.setTenantInfo(tenantInfo);
+      this.tenantService.setTenantInfo(tenantInfo);
       sessionStorage.setItem('companyOrDomainName', companyOrDomainName);
       sessionStorage.setItem('returnUrl', this.returnUrl);
       this.oidcSecurityService.authorize(configId);
@@ -101,7 +103,7 @@ export class LoginComponent implements OnInit {
       let value = control.value as string;
       if (value) {
         value = value.trim().toLowerCase();
-        const tenantInfo = this.commonService
+        const tenantInfo = this.tenantService
           .getTenantsInfo()
           .find((tenant) => {
             const { tenantName, tenantDomainName } = tenant;
