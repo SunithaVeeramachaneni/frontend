@@ -42,7 +42,7 @@ interface Message {
   from: any;
   timestamp: string;
   message: string;
-  attachments: [];
+  attachments: any[];
   chatId: string;
   messageType: string;
 }
