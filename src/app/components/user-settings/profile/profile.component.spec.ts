@@ -98,7 +98,9 @@ describe('ProfileComponent', () => {
     profileEl = profileDe.nativeElement;
     (imageUtilsSpy.getImageSrc as jasmine.Spy)
       .withArgs(profileImageBase64)
-      .and.returnValue(`data:image/jpeg;base64,${profileImageBase64}`);
+      .and.returnValue({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
     fixture.detectChanges();
   });
 
@@ -115,9 +117,9 @@ describe('ProfileComponent', () => {
       component.ngOnInit();
 
       expect(component.userInfo).toEqual(userInfo);
-      expect(component.profileImage).toBe(
-        `data:image/jpeg;base64,${profileImageBase64}`
-      );
+      expect(component.profileImage).toEqual({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       expect(component.profileForm.getRawValue()).toEqual({
         firstName,
         lastName,
@@ -221,9 +223,9 @@ describe('ProfileComponent', () => {
     });
 
     it('should change existing profile photo', () => {
-      (imageUtilsSpy.getImageSrc as jasmine.Spy).and.returnValue(
-        `data:image/jpeg;base64,${profileImageBase64}`
-      );
+      (imageUtilsSpy.getImageSrc as jasmine.Spy).and.returnValue({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       const buttons = profileEl.querySelectorAll('button');
       buttons[0].click();
       fixture.detectChanges();
@@ -235,9 +237,9 @@ describe('ProfileComponent', () => {
       inputDebugEl.nativeElement.dispatchEvent(new InputEvent('change'));
       fixture.detectChanges();
 
-      expect(component.profileImage).toBe(
-        `data:image/jpeg;base64,${profileImageBase64}`
-      );
+      expect(component.profileImage).toEqual({
+        changingThisBreaksApplicationSecurity: `data:image/jpeg;base64,${profileImageBase64}`
+      });
       expect(component.disableRemoveProfile).toBeFalse();
     });
   });
