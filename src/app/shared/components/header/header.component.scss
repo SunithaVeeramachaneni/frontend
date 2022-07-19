@@ -50,8 +50,7 @@
 .header-cols {
   display: flex;
   align-items: center;
-  position: absolute;
-  right: 15px;
+  justify-content: end;
 }
 
 .width-auto {
@@ -139,7 +138,7 @@
   position: relative;
   top: -50px;
   height: 0px;
-  left: 40px;
+  left: 0px;
 }
 
 ::ng-deep xng-breadcrumb .xng-breadcrumb-trail {

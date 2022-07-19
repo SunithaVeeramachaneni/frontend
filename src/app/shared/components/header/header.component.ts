@@ -33,7 +33,8 @@ import { TenantService } from 'src/app/components/tenant-management/services/ten
 export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('collabButton', { read: ElementRef })
   public collabButtonRef: ElementRef;
-  @Output() SideNavToggle = new EventEmitter();
+  @Output() sideNavToggle = new EventEmitter();
+  @Output() outsideClickTrigger = new EventEmitter();
 
   headerTitle$: Observable<string>;
 
@@ -145,7 +146,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openSidenav() {
-    this.SideNavToggle.emit();
+    this.sideNavToggle.emit();
+  }
+
+  closeSidenav() {
+    this.outsideClickTrigger.emit();
   }
 
   minimize(e) {

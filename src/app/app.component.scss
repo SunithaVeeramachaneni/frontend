@@ -1,6 +1,7 @@
 .mat-drawer-content {
   overflow: hidden;
   background-color: #f2f2f2;
+  margin: 0 !important;
 }
 
 .mat-drawer {
@@ -58,6 +59,7 @@ li {
   color: #2a3eb1;
   background: #f0f3ff;
   border-radius: 8px;
+  width: 95%;
 }
 
 .sidebar-icons {
@@ -166,17 +168,15 @@ mat-sidenav {
   width: 260px;
   background-color: #ffffff;
   margin-top: 65px;
+  -webkit-transform: translate3d(-100%, 0px, 0px);
+  transform: translate3d(-100%, 0px, 0px);
+  visibility: visible;
+  transition: all 0.5s ease 0s;
+  -webkit-transition: all 0.5s ease 0s;
 }
 
-::ng-deep mat-sidenav:not(.mat-drawer-opened) {
-  transform: translate3d(0, 0, 0) !important;
-  visibility: visible !important;
-  width: 75px !important;
-  overflow: hidden;
-}
-
-::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
-  background-color: transparent;
+.menu-close {
+  width: 75px;
 }
 
 ::ng-deep .sidebar-menu-items .mat-list-item-content {
