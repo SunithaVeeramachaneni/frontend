@@ -4,8 +4,7 @@ $black-color: #000000;
 $gray-600: #757575;
 $gray-900: #212121;
 $font-size-14: 14px;
-$border: 1px solid;
-$border-color: #e0e0e0;
+$border: 1px solid #e0e0e0;
 $blue-color: #3d5afe;
 
 .m-t-minus-25 {
@@ -236,7 +235,6 @@ $blue-color: #3d5afe;
       border-top: $border;
       border-left: $border;
       border-bottom: $border;
-      border-color: $border-color;
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
       float: right;
@@ -249,7 +247,7 @@ $blue-color: #3d5afe;
     }
 
     .without-company-logo {
-      border: 1px dashed $border-color;
+      border: $border;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;
@@ -260,7 +258,6 @@ $blue-color: #3d5afe;
       border-top: $border;
       border-right: $border;
       border-bottom: $border;
-      border-color: $border-color;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       float: right;
