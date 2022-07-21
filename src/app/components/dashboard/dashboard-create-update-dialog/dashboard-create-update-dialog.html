@@ -28,6 +28,10 @@
       {{ 'fieldMaximumLength' | translate : { name: 'dashboardTitle' |
       translate, length: f.dashboardName.errors?.maxlength.requiredLength } }}
     </mat-error>
+    <mat-error *ngIf="f.dashboardName.errors?.exists">
+      {{ 'dashboardExists' | translate : { name:
+      f.dashboardName.errors?.existingName | translate } }}
+    </mat-error>
     <mat-checkbox
       class="width-100"
       [(ngModel)]="isDefault"
