@@ -199,7 +199,7 @@
     border-bottom: 1px solid #e0e0e0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    height: 48px;
+    height: 49px;
     white-space: nowrap;
     text-align: center;
   }
@@ -265,7 +265,7 @@
     font-size: 16px;
     text-align: center;
     color: #000000;
-    white-space: nowrap;
+    word-wrap: break-word;
     margin: 10px 0 7px 0;
   }
 
@@ -276,7 +276,7 @@
     margin: 0 0 7px 0;
     text-align: center;
     color: #8f8f8f;
-    white-space: nowrap;
+    word-wrap: break-word;
   }
 
   .loggedin-user-email {
@@ -286,7 +286,7 @@
     margin: 0;
     text-align: center;
     color: #8f8f8f;
-    white-space: nowrap;
+    word-wrap: break-word;
   }
 
   .profile-signout {
