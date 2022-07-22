@@ -21,6 +21,7 @@ import {
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, map } from 'rxjs/operators';
 import { Dashboard } from 'src/app/interfaces';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { DashboardService } from '../services/dashboard.service';
 
 export interface DashboardCreateUpdateDialogData {
@@ -54,7 +55,8 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(20)
+          Validators.maxLength(20),
+          WhiteSpaceValidator.noWhiteSpace
         ],
         this.checkIfDashboardNameExists()
       )
@@ -75,13 +77,16 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
         debounceTime(1000),
         distinctUntilChanged(),
         map((dashboards) => {
-          const forbidden =
-            dashboards.findIndex(
-              (db: any) => db.name === control.value.trim()
-            ) >= 0;
-          return forbidden
-            ? { exists: true, existingName: control.value.trim() }
-            : null;
+          let existingDashboard: any = null;
+          existingDashboard = dashboards.find(
+            (db: any) => db.name === control.value.trim()
+          );
+          if (
+            this.dialogData.dialogMode === 'EDIT' &&
+            this.dialogData.data.name === control.value.trim()
+          )
+            existingDashboard = null;
+          return existingDashboard ? { exists: true } : null;
         })
       );
   }
@@ -92,7 +97,7 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
   createDashboard(event: any) {
     event.stopPropagation();
     this.dialogRef.close({
-      name: this.dashboardForm.value.dashboardName,
+      name: this.dashboardForm.value.dashboardName.trim(),
       isDefault: this.isDefault
     });
   }
