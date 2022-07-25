@@ -61,5 +61,6 @@
   "title": "Title",
   "saveReportAs": "Save Report As",
   "stackBy": "Stack By",
-  "copy": "Copy"
+  "copy": "Copy",
+  "dashboardTitleExists": "Dashboard Title already exists"
 }
