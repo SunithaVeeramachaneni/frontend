@@ -23,6 +23,7 @@ export class DashboardService {
     subtractWidth: 0
   });
 
+  private dashboards: Dashboard[] = [];
   dashboardsAction$ = this.dashboardsSubject.asObservable();
   updateGridOptionsAction$ = this.updateGridOptionsSubject.asObservable();
   dashboardSelectionChanged$ =
@@ -89,8 +90,12 @@ export class DashboardService {
   ): Observable<Dashboard[]> =>
     this.appService._getResp(environment.dashboardApiUrl, 'dashboards', info);
 
-  updateDashboards = (dashboards: Dashboard[]) =>
+  updateDashboards = (dashboards: Dashboard[]) => {
     this.dashboardsSubject.next(dashboards);
+    this.dashboards = dashboards;
+  };
+
+  getDashboards = () => this.dashboards;
 
   updateGridOptions = (options: UpdateGridOptions) => {
     this.updateGridOptionsSubject.next(options);
