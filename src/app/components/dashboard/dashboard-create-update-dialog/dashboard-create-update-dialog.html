@@ -16,17 +16,24 @@
       <input matInput type="text" formControlName="dashboardName" />
     </mat-form-field>
     <mat-error
-      *ngIf="f.dashboardName.errors?.required && f.dashboardName.touched"
+      *ngIf="f.dashboardName.errors?.required && f.dashboardName.touched || f.dashboardName.errors?.noWhiteSpace"
     >
       {{ 'fieldRequired' | translate: { name: 'dashboardTitle' | translate } }}
     </mat-error>
-    <mat-error *ngIf="f.dashboardName.errors?.minlength">
+    <mat-error
+      *ngIf="f.dashboardName.errors?.minlength && !f.dashboardName.errors?.noWhiteSpace"
+    >
       {{ 'fieldMinimumLength' | translate : { name: 'dashboardTitle' |
       translate, length: f.dashboardName.errors?.minlength.requiredLength } }}
     </mat-error>
-    <mat-error *ngIf="f.dashboardName.errors?.maxlength">
+    <mat-error
+      *ngIf="f.dashboardName.errors?.maxlength && !f.dashboardName.errors?.noWhiteSpace"
+    >
       {{ 'fieldMaximumLength' | translate : { name: 'dashboardTitle' |
       translate, length: f.dashboardName.errors?.maxlength.requiredLength } }}
+    </mat-error>
+    <mat-error *ngIf="f.dashboardName.errors?.exists">
+      {{ 'dashboardTitleExists' | translate }}
     </mat-error>
     <mat-checkbox
       class="width-100"
