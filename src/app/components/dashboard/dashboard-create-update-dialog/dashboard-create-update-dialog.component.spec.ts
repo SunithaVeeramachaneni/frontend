@@ -13,15 +13,20 @@ import {
   TranslateLoader,
   TranslateModule
 } from '@ngx-translate/core';
+import { DashboardService } from '../services/dashboard.service';
 
 describe('CreateUpdateDashboardDialogComponent', () => {
   let component: CreateUpdateDashboardDialogComponent;
   let fixture: ComponentFixture<CreateUpdateDashboardDialogComponent>;
   let dialogRefSpy: MatDialogRef<CreateUpdateDashboardDialogComponent>;
   let dashboardCreateUpdateDialogData: DashboardCreateUpdateDialogData;
+  let dashboardServiceSpy: DashboardService;
 
   beforeEach(async () => {
     dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
+    dashboardServiceSpy = jasmine.createSpyObj('DashboardService', [
+      'getDashboards'
+    ]);
     dashboardCreateUpdateDialogData = {
       dialogMode: 'CREATE',
       data: dashboards[0]
@@ -43,6 +48,7 @@ describe('CreateUpdateDashboardDialogComponent', () => {
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefSpy },
+        { provide: DashboardService, useValue: dashboardServiceSpy },
         {
           provide: MAT_DIALOG_DATA,
           useValue: dashboardCreateUpdateDialogData
@@ -54,6 +60,9 @@ describe('CreateUpdateDashboardDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateUpdateDashboardDialogComponent);
     component = fixture.componentInstance;
+    (dashboardServiceSpy.getDashboards as jasmine.Spy)
+      .withArgs()
+      .and.returnValue(dashboards);
     fixture.detectChanges();
   });
 

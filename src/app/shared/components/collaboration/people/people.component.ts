@@ -48,7 +48,7 @@ export class PeopleComponent implements OnInit {
                 validUsers.push(user);
               }
             } else if (userInfo.collaborationType === 'msteams') {
-              // This is a temporary check to restrict the user selection...
+              //@TODO: This is a temporary check to restrict the user selection...
               if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
                 validUsers.push(user);
               }

@@ -54,13 +54,21 @@ export class CreateGroupComponent implements OnInit {
         const validUsers = [];
         initial.data.forEach((user) => {
           const userInfo = this.loginService.getLoggedInUserInfo();
+          let isCurrentUser = false;
+          if (user.email === userInfo.email) {
+            isCurrentUser = true;
+          }
+
           if (userInfo.collaborationType === 'slack') {
-            if (user.slackDetail) {
+            if (user.slackDetail && !isCurrentUser) {
               validUsers.push(user);
             }
           } else if (userInfo.collaborationType === 'msteams') {
             // This is a temporary check to restrict the user selection...
-            if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
+            if (
+              user.email.endsWith('@ym27j.onmicrosoft.com') &&
+              !isCurrentUser
+            ) {
               validUsers.push(user);
             }
           }
@@ -107,7 +115,7 @@ export class CreateGroupComponent implements OnInit {
     groupName = groupName.replace(/[^a-zA-Z ]/g, '');
     groupName = groupName.replaceAll(/\s/g, '');
     this.chatService
-      .createConversation$(groupName, invitedUsers, info)
+      .createConversation$(groupName, invitedUsers, 'group', info)
       .subscribe(
         (resp) => {
           if (resp.ok) {

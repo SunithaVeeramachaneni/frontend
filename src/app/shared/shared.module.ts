@@ -26,6 +26,7 @@ import { CheckUserHasPermissionDirective } from './directives/check-user-has-per
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { PermissionsRevokeInfoModalComponent } from './components/permissions-re
     ReactiveFormsModule,
     CommonModule,
     DragDropModule,
+    OverlayModule,
     AppMaterialModules,
     BreadcrumbModule,
     NgxShimmerLoadingModule,
