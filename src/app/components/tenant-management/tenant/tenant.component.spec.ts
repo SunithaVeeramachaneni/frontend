@@ -16,7 +16,6 @@ import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { Tenant } from 'src/app/interfaces';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
@@ -25,10 +24,13 @@ import { cloneDeep } from 'lodash';
 
 import { TenantComponent } from './tenant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { profileImageBase64 } from 'src/app/shared/components/header/header.component.mock';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { LoginService } from '../../login/services/login.service';
+import {
+  profileImageBase64,
+  userInfo$
+} from '../../login/services/login.service.mock';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
@@ -45,7 +47,6 @@ const updateTenant = {
   rdbms: restRdbms,
   nosql: restNosql
 } as Tenant;
-declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
@@ -57,7 +58,7 @@ describe('TenantComponent', () => {
   let toastServiceSpy: ToastService;
   let spinnerSpy: NgxSpinnerService;
   let activatedRouteSpy: ActivatedRoute;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let headerServiceSpy: HeaderService;
   let imageUtilsSpy: ImageUtils;
   let router: Router;
@@ -78,8 +79,8 @@ describe('TenantComponent', () => {
       data: of({}),
       queryParams: of({})
     });
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['decrypt'], {
-      permissionsAction$: permissions$
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
@@ -124,8 +125,8 @@ describe('TenantComponent', () => {
           useValue: activatedRouteSpy
         },
         {
-          provide: CommonService,
-          useValue: commonServiceSpy
+          provide: LoginService,
+          useValue: loginServiceSpy
         },
         {
           provide: HeaderService,

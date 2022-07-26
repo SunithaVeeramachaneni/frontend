@@ -24,6 +24,8 @@ import { CreateGroupComponent } from './components/collaboration/chats/create-gr
 import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
     CreateGroupComponent,
     CallsComponent,
     NumberToKMPipe,
-    CheckUserHasPermissionDirective
+    CheckUserHasPermissionDirective,
+    AccessDeniedComponent,
+    PermissionsRevokeInfoModalComponent
   ],
   imports: [
     FormsModule,

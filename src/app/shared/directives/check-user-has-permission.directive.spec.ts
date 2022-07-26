@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { LoginService } from 'src/app/components/login/services/login.service';
+import { userInfo$ } from 'src/app/components/login/services/login.service.mock';
 import { CommonService } from '../services/common.service';
 import { permissions$ } from '../services/common.service.mock';
 import { SharedModule } from '../shared.module';
@@ -13,17 +15,17 @@ class TestCheckUserHasPermissionDirectiveComponent {}
 describe('TestCheckUserHasPermissionDirectiveHostComponent', () => {
   let component: TestCheckUserHasPermissionDirectiveComponent;
   let fixture: ComponentFixture<TestCheckUserHasPermissionDirectiveComponent>;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
 
   beforeEach(async () => {
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      permissionsAction$: permissions$
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
 
     await TestBed.configureTestingModule({
       declarations: [TestCheckUserHasPermissionDirectiveComponent],
       imports: [SharedModule],
-      providers: [{ provide: CommonService, useValue: commonServiceSpy }]
+      providers: [{ provide: LoginService, useValue: loginServiceSpy }]
     }).compileComponents();
   });
 

@@ -3,38 +3,34 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
+import { LoginService } from 'src/app/components/login/services/login.service';
+import {
+  userAuthData$,
+  userInfo$
+} from 'src/app/components/login/services/login.service.mock';
 import { AppMaterialModules } from 'src/app/material.module';
 import { BreadcrumbModule } from 'xng-breadcrumb';
 import { CommonService } from '../../services/common.service';
-import { permissions$ } from '../../services/common.service.mock';
 import { HeaderService } from '../../services/header.service';
 import { ChatService } from '../collaboration/chats/chat.service';
 
 import { HeaderComponent } from './header.component';
-import {
-  userInfo$,
-  openCollabWindow$,
-  userAuthData$
-} from './header.component.mock';
+import { openCollabWindow$ } from './header.component.mock';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let headerServiceSpy: HeaderService;
   let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let oidcSecurityServiceSpy: OidcSecurityService;
   let chatServiceSpy: ChatService;
 
   beforeEach(async () => {
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setCurrentRouteUrl', 'setTranslateLanguage'],
-      {
-        minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$,
-        userInfo$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [
+      'setCurrentRouteUrl',
+      'setTranslateLanguage'
+    ]);
 
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'getInstallationURL$'
@@ -50,6 +46,10 @@ describe('HeaderComponent', () => {
         openCollabWindow$
       }
     );
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$,
+      userInfo$
+    });
 
     await TestBed.configureTestingModule({
       declarations: [HeaderComponent],
@@ -63,7 +63,8 @@ describe('HeaderComponent', () => {
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: OidcSecurityService, useValue: oidcSecurityServiceSpy },
         { provide: ChatService, useValue: chatServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(HeaderComponent);

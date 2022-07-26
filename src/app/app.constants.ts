@@ -1,30 +1,123 @@
+export const permissions = Object.freeze({
+  viewDashboards: 'VIEW_DASHBOARDS',
+  createDashboard: 'CREATE_DASHBOARD',
+  updateDashboard: 'UPDATE_DASHBOARD',
+  deleteDashboard: 'DELETE_DASHBOARD',
+  copyDashboard: 'COPY_DASHBOARD',
+  viewReports: 'VIEW_REPORTS',
+  createReport: 'CREATE_REPORT',
+  updateReport: 'UPDATE_REPORT',
+  deleteReport: 'DELETE_REPORT',
+  copyReport: 'COPY_REPORT',
+  reportExportToExcel: 'REPORT_EXPORT_TO_EXCEL',
+  viewTenants: 'VIEW_TENANTS',
+  createTenant: 'CREATE_TENANT',
+  updateTenant: 'UPDATE_TENANT',
+  viewInactiveTenants: 'VIEW_INACTIVE_TENANTS',
+  viewMaintenanceControlCenter: 'VIEW_MAINTENANCE_CONTROL_CENTER',
+  assignWorkOrders: 'ASSIGN_WORK_ORDERS',
+  viewSparePartsControlCenter: 'VIEW_SPARE_PARTS_CONTROL_CENTER',
+  assignPickList: 'ASSIGN_PICKLIST',
+  viewUsers: 'VIEW_USERS',
+  createUser: 'CREATE_USER',
+  updateUser: 'UPDATE_USER',
+  deactivateUser: 'DEACTIVATE_USER',
+  viewRoles: 'VIEW_ROLES',
+  createRole: 'CREATE_ROLE',
+  updateRole: 'UPDATE_ROLE',
+  deleteRole: 'DELETE_ROLE',
+  copyRole: 'COPY_ROLE',
+  viewInactiveUsers: 'VIEW_INACTIVE_USERS',
+  viewWorkInstructions: 'VIEW_WORK_INSTRUCTIONS',
+  createWorkInstruction: 'CREATE_WORK_INSTRUCTION',
+  updateWorkInstruction: 'UPDATE_WORK_INSTRUCTION',
+  publishWorkInstruction: 'PUBLISH_WORK_INSTRUCTION',
+  deleteWorkInstruction: 'DELETE_WORK_INSTRUCTION',
+  importWorkInstruction: 'IMPORT_WORK_INSTRUCTION',
+  copyWorkInstruction: 'COPY_WORK_INSTRUCTION',
+  createCategory: 'CREATE_CATEGORY',
+  updateCategory: 'UPDATE_CATEGORY',
+  deleteCategory: 'DELETE_CATEGORY',
+  viewFiles: 'VIEW_FILES',
+  updateFile: 'UPDATE_FILE',
+  deleteFile: 'DELETE_FILE'
+});
+
 export const routingUrls = {
-  dashboard: { url: '/dashboard', title: 'Dashboard' },
-  reports: { url: '/dashboard/reports', title: 'Reports' },
-  maintenance: { url: '/maintenance', title: 'Maintenance Control Center' },
-  spareParts: { url: '/spare-parts', title: 'Spare Parts Control Center' },
+  dashboard: {
+    url: '/dashboard',
+    title: 'Dashboard',
+    permission: permissions.viewDashboards
+  },
+  reports: {
+    url: '/dashboard/reports',
+    title: 'Reports',
+    permission: permissions.viewReports
+  },
+  maintenance: {
+    url: '/maintenance',
+    title: 'Maintenance Control Center',
+    permission: permissions.viewMaintenanceControlCenter
+  },
+  spareParts: {
+    url: '/spare-parts',
+    title: 'Spare Parts Control Center',
+    permission: permissions.viewSparePartsControlCenter
+  },
   workInstructions: {
     url: '/work-instructions',
-    title: 'Work Instructions Authoring'
+    title: 'Work Instructions Authoring',
+    permission: permissions.viewWorkInstructions
   },
-  drafts: { url: '/work-instructions/drafts', title: 'Drafts' },
-  favorites: { url: '/work-instructions/favorites', title: 'Favorites' },
-  published: { url: '/work-instructions/published', title: 'Published' },
-  recents: { url: '/work-instructions/recents', title: 'Recents' },
-  files: { url: '/work-instructions/files', title: 'Files' },
-  userManagement: { url: '/user-management', title: 'User Management' },
+  drafts: {
+    url: '/work-instructions/drafts',
+    title: 'Drafts',
+    permission: permissions.viewWorkInstructions
+  },
+  favorites: {
+    url: '/work-instructions/favorites',
+    title: 'Favorites',
+    permission: permissions.viewWorkInstructions
+  },
+  published: {
+    url: '/work-instructions/published',
+    title: 'Published',
+    permission: permissions.viewWorkInstructions
+  },
+  recents: {
+    url: '/work-instructions/recents',
+    title: 'Recents',
+    permission: permissions.viewWorkInstructions
+  },
+  files: {
+    url: '/work-instructions/files',
+    title: 'Files',
+    permission: permissions.viewFiles
+  },
+  userManagement: {
+    url: '/user-management',
+    title: 'User Management',
+    permission: permissions.viewUsers
+  },
   rolesPermissions: {
     url: '/user-management/roles-permissions',
-    title: 'Roles & Permissions'
+    title: 'Roles & Permissions',
+    permission: permissions.viewRoles
   },
   inActiveUsers: {
     url: '/user-management/inactive-users',
-    title: 'Inactive Users'
+    title: 'Inactive Users',
+    permission: permissions.viewInactiveUsers
   },
-  tenantManagement: { url: '/tenant-management', title: 'Tenant Management' },
+  tenantManagement: {
+    url: '/tenant-management',
+    title: 'Tenant Management',
+    permission: permissions.viewTenants
+  },
   inActiveTenants: {
     url: '/tenant-management/inactive-tenants',
-    title: 'Inactive Tenants'
+    title: 'Inactive Tenants',
+    permission: permissions.viewTenants
   }
 };
 
@@ -92,50 +185,6 @@ export const superAdminIcon =
 export const superAdminText = 'Super Admin';
 
 export const userRolePermissions = 'UserRolePermissions';
-
-export const permissions = Object.freeze({
-  viewDashboards: 'VIEW_DASHBOARDS',
-  createDashboard: 'CREATE_DASHBOARD',
-  updateDashboard: 'UPDATE_DASHBOARD',
-  deleteDashboard: 'DELETE_DASHBOARD',
-  copyDashboard: 'COPY_DASHBOARD',
-  viewReports: 'VIEW_REPORTS',
-  createReport: 'CREATE_REPORT',
-  updateReport: 'UPDATE_REPORT',
-  deleteReport: 'DELETE_REPORT',
-  copyReport: 'COPY_REPORT',
-  reportExportToExcel: 'REPORT_EXPORT_TO_EXCEL',
-  viewTenants: 'VIEW_TENANTS',
-  createTenant: 'CREATE_TENANT',
-  updateTenant: 'UPDATE_TENANT',
-  viewMaintenanceControlCenter: 'VIEW_MAINTENANCE_CONTROL_CENTER',
-  assignWorkOrders: 'ASSIGN_WORK_ORDERS',
-  viewSparePartsControlCenter: 'VIEW_SPARE_PARTS_CONTROL_CENTER',
-  assignPickList: 'ASSIGN_PICKLIST',
-  viewUsers: 'VIEW_USERS',
-  createUser: 'CREATE_USER',
-  updateUser: 'UPDATE_USER',
-  deactivateUser: 'DEACTIVATE_USER',
-  viewRoles: 'VIEW_ROLES',
-  createRole: 'CREATE_ROLE',
-  updateRole: 'UPDATE_ROLE',
-  deleteRole: 'DELETE_ROLE',
-  copyRole: 'COPY_ROLE',
-  viewInactiveUsers: 'VIEW_INACTIVE_USERS',
-  viewWorkInstructions: 'VIEW_WORK_INSTRUCTIONS',
-  createWorkInstruction: 'CREATE_WORK_INSTRUCTION',
-  updateWorkInstruction: 'UPDATE_WORK_INSTRUCTION',
-  publishWorkInstruction: 'PUBLISH_WORK_INSTRUCTION',
-  deleteWorkInstruction: 'DELETE_WORK_INSTRUCTION',
-  importWorkInstruction: 'IMPORT_WORK_INSTRUCTION',
-  copyWorkInstruction: 'COPY_WORK_INSTRUCTION',
-  createCategory: 'CREATE_CATEGORY',
-  updateCategory: 'UPDATE_CATEGORY',
-  deleteCategory: 'DELETE_CATEGORY',
-  viewFiles: 'VIEW_FILES',
-  updateFile: 'UPDATE_FILE',
-  deleteFile: 'DELETE_FILE'
-});
 
 export const defaultProfile = 'assets/user-management-icons/Vector.png';
 

@@ -6,7 +6,7 @@ import { AppService } from '../../../services/app.services';
 import { environment } from '../../../../../environments/environment';
 
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CommonService } from '../../../services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class ChatService {
 
   constructor(
     private appService: AppService,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   newMessageReceived = (message: any) => {
@@ -55,7 +55,7 @@ export class ChatService {
     userId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._getResp(apiURL, `conversations/${userId}`, info);
   };
@@ -64,7 +64,7 @@ export class ChatService {
     conversationId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._getResp(
       apiURL,
@@ -78,7 +78,7 @@ export class ChatService {
     userId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
       apiURL,
@@ -93,7 +93,7 @@ export class ChatService {
     invitedUsers: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._postData(
       apiURL,
@@ -108,7 +108,7 @@ export class ChatService {
     formData: FormData,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService.uploadFile(
       apiURL,
@@ -122,7 +122,7 @@ export class ChatService {
     fileId: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Blob> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService._downloadFile(
       apiURL,
@@ -135,7 +135,7 @@ export class ChatService {
     messageIds: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
     return this.appService.patchData(
       apiURL,

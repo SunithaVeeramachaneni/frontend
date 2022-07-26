@@ -1,34 +1,26 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as CryptoJS from 'crypto-js';
-import { Permission, ProtectedResource, UserDetails } from 'src/app/interfaces';
+import { ProtectedResource, UserInfo } from 'src/app/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonService {
   private protectedResources: ProtectedResource[] = [];
-  private userInfo = {} as UserDetails;
+  private permissionRevokeModalStatus = { isOpen: false };
 
-  private minimizeSidebarSubject = new BehaviorSubject<boolean>(true);
   private currentRouteUrlSubject = new BehaviorSubject<string>('');
   private translateLanguageSubject = new BehaviorSubject<string>('');
-  private permissionsSubject = new BehaviorSubject<Permission[]>([]);
+  private userInfoSubject = new BehaviorSubject<UserInfo>({} as UserInfo);
+  private displayPermissionRevokeSubject = new BehaviorSubject<boolean>(false);
 
-  private userInfoSubject = new BehaviorSubject<UserDetails>({} as UserDetails);
-
-  minimizeSidebarAction$ = this.minimizeSidebarSubject.asObservable();
   currentRouteUrlAction$ = this.currentRouteUrlSubject.asObservable();
   translateLanguageAction$ = this.translateLanguageSubject.asObservable();
-  permissionsAction$ = this.permissionsSubject.asObservable();
   userInfo$ = this.userInfoSubject.asObservable();
+  displayPermissionRevoke$ = this.displayPermissionRevokeSubject.asObservable();
 
   constructor() {}
-
-  minimizeSidebar(minimize: boolean) {
-    this.minimizeSidebarSubject.next(minimize);
-  }
 
   setCurrentRouteUrl(value: string) {
     this.currentRouteUrlSubject.next(value);
@@ -49,36 +41,15 @@ export class CommonService {
     this.translateLanguageSubject.next(value);
   }
 
-  getUserName(): string {
-    const { firstName, lastName } = this.userInfo;
-    return `${firstName} ${lastName}`;
+  displayPermissionRevoke(display: boolean) {
+    this.displayPermissionRevokeSubject.next(display);
   }
 
-  decrypt(value: string, key: string) {
-    const bytes = CryptoJS.AES.decrypt(value.toString(), key);
-    return bytes.toString(CryptoJS.enc.Utf8);
+  setPermisionRevokeModalStatus(isOpen: boolean) {
+    this.permissionRevokeModalStatus.isOpen = isOpen;
   }
 
-  setPermissions(permissions: Permission[]) {
-    this.permissionsSubject.next(permissions);
-  }
-
-  checkUserHasPermission(permissions: Permission[], checkPermissions: string) {
-    if (checkPermissions) {
-      const hasPermission = permissions.find((per) =>
-        checkPermissions.includes(per.name)
-      );
-      return hasPermission ? true : false;
-    }
-    return true;
-  }
-
-  setUserInfo(userInfo: UserDetails) {
-    this.userInfoSubject.next(userInfo);
-    this.userInfo = userInfo;
-  }
-
-  getUserInfo(): UserDetails {
-    return this.userInfo;
+  getPermisionRevokeModalStatus(): boolean {
+    return this.permissionRevokeModalStatus.isOpen;
   }
 }

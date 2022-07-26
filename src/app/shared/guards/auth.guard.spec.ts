@@ -7,7 +7,9 @@ import {
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { of } from 'rxjs';
+import { permissions } from 'src/app/app.constants';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { userInfo$ } from 'src/app/components/login/services/login.service.mock';
 
 import { AuthGuard } from './auth.guard';
 import { loginResponses, loginResponses$ } from './auth.guard.mock';
@@ -23,12 +25,16 @@ describe('AuthGuard', () => {
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
       'checkAuthMultiple'
     ]);
-    loginServiceSpy = jasmine.createSpyObj('CommonService', [
-      'performPostLoginActions'
-    ]);
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
+      ['performPostLoginActions'],
+      {
+        loggedInUserInfo$: userInfo$
+      }
+    );
     routerStateSnapshotSpy = jasmine.createSpyObj('RouterStateSnapshot', [], {
       snapshot: {},
-      url: '/dashboard'
+      url: '/home'
     });
 
     TestBed.configureTestingModule({
@@ -61,19 +67,19 @@ describe('AuthGuard', () => {
     (oidcSecurityServiceSpy.checkAuthMultiple as jasmine.Spy)
       .withArgs()
       .and.returnValue(loginResponses$);
+    const route = new ActivatedRouteSnapshot();
+    route.data = { permissions: [permissions.viewDashboards] };
 
-    guard
-      .canActivate(new ActivatedRouteSnapshot(), routerStateSnapshotSpy)
-      .subscribe((response) => {
-        expect(response).toBe(true);
-        expect(loginServiceSpy.performPostLoginActions).toHaveBeenCalledWith(
-          {
-            configId,
-            userData
-          },
-          [loginResponses[1].configId, loginResponses[2].configId]
-        );
-      });
+    guard.canActivate(route, routerStateSnapshotSpy).subscribe((response) => {
+      expect(response).toBe(true);
+      expect(loginServiceSpy.performPostLoginActions).toHaveBeenCalledWith(
+        {
+          configId,
+          userData
+        },
+        [loginResponses[1].configId, loginResponses[2].configId]
+      );
+    });
   });
 
   it('should return observable of false, if user is not authenticated', () => {
@@ -87,7 +93,7 @@ describe('AuthGuard', () => {
       .subscribe((response) => {
         expect(response).toBe(false);
         expect(navigateSpy).toHaveBeenCalledWith(['/login'], {
-          queryParams: { returnUrl: '/dashboard' }
+          queryParams: { returnUrl: '/home' }
         });
       });
   });

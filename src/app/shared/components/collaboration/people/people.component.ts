@@ -8,6 +8,7 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
   selector: 'app-people',
@@ -25,8 +26,8 @@ export class PeopleComponent implements OnInit {
   constructor(
     public uploadDialog: MatDialog,
     private peopleService: PeopleService,
-    private commonService: CommonService,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
@@ -39,11 +40,11 @@ export class PeopleComponent implements OnInit {
         if (users.length) {
           const validUsers = [];
           users.forEach((user) => {
-            const userInfo = this.commonService.getUserInfo();
+            const userInfo = this.loginService.getLoggedInUserInfo();
             if (userInfo.collaborationType === 'slack') {
-              if (user.UserSlackDetail) {
+              if (user.slackDetail) {
                 user.collaborationDisabled =
-                  !user.UserSlackDetail || !user.UserSlackDetail.slackID;
+                  !user.slackDetail || !user.slackDetail.slackID;
                 validUsers.push(user);
               }
             } else if (userInfo.collaborationType === 'msteams') {

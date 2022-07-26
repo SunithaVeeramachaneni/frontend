@@ -31,10 +31,11 @@ import {
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { NgxSpinnerComponent } from 'ngx-spinner';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { ImportService } from './services/import.service';
+import { LoginService } from '../login/services/login.service';
+import { userInfo$ } from '../login/services/login.service.mock';
 
 const categoryDetails = [
   {
@@ -188,6 +189,7 @@ describe('WorkInstructionsComponent', () => {
   let headerServiceSpy: HeaderService;
   let breadcrumbService: BreadcrumbService;
   let importServiceSpy: ImportService;
+  let loginServiceSpy: LoginService;
   let homeDe: DebugElement;
   let homeEl: HTMLElement;
 
@@ -211,9 +213,7 @@ describe('WorkInstructionsComponent', () => {
     });
     overlayServiceSpy = jasmine.createSpyObj('OverlayService', ['open']);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      currentRouteUrlAction$: of('/work-instructions'),
-      minimizeSidebarAction$: of(false),
-      permissionsAction$: permissions$
+      currentRouteUrlAction$: of('/work-instructions')
     });
     headerServiceSpy = jasmine.createSpyObj(
       'HeaderService',
@@ -222,6 +222,9 @@ describe('WorkInstructionsComponent', () => {
         headerTitleAction$: of(routingUrls.workInstructions.title)
       }
     );
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
     importServiceSpy = jasmine.createSpyObj('ImportService', ['importFile']);
 
     TestBed.configureTestingModule({
@@ -252,6 +255,7 @@ describe('WorkInstructionsComponent', () => {
         { provide: OverlayService, useValue: overlayServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         { provide: ImportService, useValue: importServiceSpy }
       ]
     }).compileComponents();

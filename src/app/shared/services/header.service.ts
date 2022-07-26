@@ -27,14 +27,4 @@ export class HeaderService {
       info,
       queryParams
     );
-
-  getTenantLogoByTenantId$ = (
-    tenantId: string,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._getRespById(
-      environment.userRoleManagementApiUrl,
-      `catalogs/${tenantId}/logo`,
-      ''
-    );
 }

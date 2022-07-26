@@ -13,7 +13,8 @@
   "dueThisWeek": "Due This Week",
   "dueThisMonth": "Due This Month",
   "custom": "Custom",
-
   "selectConversationToSendMessage": "Please select a conversation to send message",
-  "selectUserToCreateGroup": "Please select a user to add to the Group"
+  "selectUserToCreateGroup": "Please select a user to add to the Group",
+  "accessDenied": "Access Denied",
+  "dontHavePermission": "You don't have permission to access this {url} page"
 }

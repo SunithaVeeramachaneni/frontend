@@ -6,22 +6,20 @@ import {
   OnInit
 } from '@angular/core';
 import { CommonService } from './shared/services/common.service';
-import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter, mergeMap, take, tap } from 'rxjs/operators';
 import {
   defaultLanguage,
   routingUrls,
   bigInnovaIcon,
-  smallInnovaIcon,
-  permissions as perms
+  smallInnovaIcon
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
-import { OidcSecurityService, UserDataResult } from 'angular-auth-oidc-client';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
-import { Permission, Tenant } from './interfaces';
+import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
-import { HeaderService } from './shared/services/header.service';
 import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
@@ -29,6 +27,10 @@ import { AuthHeaderService } from './shared/services/authHeader.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { ImageUtils } from './shared/utils/imageUtils';
 import { Buffer } from 'buffer';
+import { ErrorHandlerService } from './shared/error-handler/error-handler.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { PermissionsRevokeInfoModalComponent } from './shared/components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 const {
   dashboard,
@@ -62,12 +64,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: dashboard.url,
       imageName: 'dashboard',
       showSubMenu: false,
-      permission: perms.viewDashboards,
+      permission: dashboard.permission,
       subPages: [
         {
           title: reports.title,
           url: reports.url,
-          permission: perms.viewReports
+          permission: reports.permission
         }
       ],
       disable: false
@@ -77,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: tenantManagement.url,
       imageName: 'tenant-management',
       showSubMenu: false,
-      permission: perms.viewTenants,
+      permission: tenantManagement.permission,
       subPages: null,
       disable: false
     },
@@ -86,17 +88,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: userManagement.url,
       imageName: 'user-management',
       showSubMenu: false,
-      permission: perms.viewUsers,
+      permission: userManagement.permission,
       subPages: [
         {
           title: rolesPermissions.title,
           url: rolesPermissions.url,
-          permission: perms.viewRoles
+          permission: rolesPermissions.permission
         },
         {
           title: inActiveUsers.title,
           url: inActiveUsers.url,
-          permission: perms.viewInactiveUsers
+          permission: inActiveUsers.permission
         }
       ],
       disable: false
@@ -106,7 +108,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: maintenance.url,
       imageName: 'maintenance',
       showSubMenu: false,
-      permission: perms.viewMaintenanceControlCenter,
+      permission: maintenance.permission,
       subPages: null,
       disable: false
     },
@@ -115,7 +117,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: spareParts.url,
       imageName: 'spare-parts',
       showSubMenu: false,
-      permission: perms.viewSparePartsControlCenter,
+      permission: spareParts.permission,
       subPages: null,
       disable: false
     },
@@ -124,32 +126,32 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       url: workInstructions.url,
       imageName: 'work-instructions',
       showSubMenu: false,
-      permission: perms.viewWorkInstructions,
+      permission: workInstructions.permission,
       subPages: [
         {
           title: favorites.title,
           url: favorites.url,
-          permission: perms.viewWorkInstructions
+          permission: favorites.permission
         },
         {
           title: drafts.title,
           url: drafts.url,
-          permission: perms.viewWorkInstructions
+          permission: drafts.permission
         },
         {
           title: published.title,
           url: published.url,
-          permission: perms.viewWorkInstructions
+          permission: published.permission
         },
         {
           title: recents.title,
           url: recents.url,
-          permission: perms.viewWorkInstructions
+          permission: recents.permission
         },
         {
           title: files.title,
           url: files.url,
-          permission: perms.viewFiles
+          permission: files.permission
         }
       ],
       disable: false
@@ -161,11 +163,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   currentRouteUrl: string;
   selectedMenu: string;
   eventSource: any;
-  permissions$: Observable<Permission[]>;
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
   menuOpenClose = false;
+  userInfo$: Observable<UserInfo>;
 
   constructor(
     private commonService: CommonService,
@@ -177,9 +179,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private loginService: LoginService,
     private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
-    private headerService: HeaderService,
     private tenantService: TenantService,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private errorHandlerService: ErrorHandlerService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -195,64 +198,76 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         mergeMap(() => {
           const { tenantId } = this.tenantService.getTenantInfo();
           return combineLatest([
-            this.usersService.getLoggedInUser$(),
-            this.headerService.getTenantLogoByTenantId$(tenantId)
+            this.usersService.getLoggedInUser$().pipe(
+              tap((userInfo) => {
+                if (Object.keys(userInfo).length) {
+                  this.loginService.setLoggedInUserInfo(userInfo);
+                }
+              })
+            ),
+            this.tenantService.getTenantLogoByTenantId$(tenantId).pipe(
+              tap(({ tenantLogo }) =>
+                this.tenantService.setTenantInfo({
+                  tenantLogo: tenantLogo
+                    ? this.imageUtils.getImageSrc(
+                        Buffer.from(tenantLogo).toString()
+                      )
+                    : tenantLogo
+                } as Tenant)
+              )
+            )
           ]);
         })
       )
-      .subscribe(([data, { tenantLogo }]) => {
-        this.tenantService.setTenantInfo({
-          tenantLogo: tenantLogo
-            ? this.imageUtils.getImageSrc(Buffer.from(tenantLogo).toString())
-            : tenantLogo
-        } as Tenant);
-        this.commonService.setUserInfo(data);
-        let userID;
-        if (data.collaborationType === 'slack') {
-          if (data.UserSlackDetail?.slackID) {
-            userID = data.UserSlackDetail.slackID;
+      .subscribe(([userInfo]) => {
+        if (Object.keys(userInfo).length) {
+          let userID;
+          if (userInfo.collaborationType === 'slack') {
+            if (userInfo.slackDetail?.slackID) {
+              userID = userInfo.slackDetail.slackID;
+            }
+          } else if (userInfo.collaborationType === 'msteams') {
+            userID = userInfo.email;
           }
-        } else if (data.collaborationType === 'msteams') {
-          userID = data.email;
-        }
 
-        const SSE_URL = `${environment.userRoleManagementApiUrl}${data.collaborationType}/sse/${userID}`;
+          const SSE_URL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
 
-        const { authorization, tenantid } =
-          this.authHeaderService.getAuthHeaders(SSE_URL);
-        this.eventSource = new EventSourcePolyfill(SSE_URL, {
-          headers: {
-            authorization,
-            tenantid
-          }
-        });
-        this.eventSource.onmessage = async (event: any) => {
-          const eventData = JSON.parse(event.data);
-          if (!eventData.isHeartbeat) {
-            const processedMessageIds = [];
-            eventData.forEach((evt: any) => {
-              const { message } = evt;
-              if (
-                !message.isHeartbeat &&
-                (message.eventType === 'message' ||
-                  message.messageType === 'message')
-              ) {
-                const audio = new Audio('../assets/audio/notification.mp3');
-                audio.play();
-                processedMessageIds.push(evt.id);
-                const iscollabWindowOpen =
-                  ref.chatService.getCollaborationWindowStatus();
-                if (iscollabWindowOpen) {
-                  ref.chatService.newMessageReceived(message);
-                } else {
-                  let unreadCount = ref.chatService.getUnreadMessageCount();
-                  unreadCount = unreadCount + 1;
-                  ref.chatService.setUnreadMessageCount(unreadCount);
+          const { authorization, tenantid } =
+            this.authHeaderService.getAuthHeaders(SSE_URL);
+          this.eventSource = new EventSourcePolyfill(SSE_URL, {
+            headers: {
+              authorization,
+              tenantid
+            }
+          });
+          this.eventSource.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              const processedMessageIds = [];
+              eventData.forEach((evt: any) => {
+                const { message } = evt;
+                if (
+                  !message.isHeartbeat &&
+                  (message.eventType === 'message' ||
+                    message.messageType === 'message')
+                ) {
+                  const audio = new Audio('../assets/audio/notification.mp3');
+                  audio.play();
+                  processedMessageIds.push(evt.id);
+                  const iscollabWindowOpen =
+                    ref.chatService.getCollaborationWindowStatus();
+                  if (iscollabWindowOpen) {
+                    ref.chatService.newMessageReceived(message);
+                  } else {
+                    let unreadCount = ref.chatService.getUnreadMessageCount();
+                    unreadCount = unreadCount + 1;
+                    ref.chatService.setUnreadMessageCount(unreadCount);
+                  }
                 }
-              }
-            });
-          }
-        };
+              });
+            }
+          };
+        }
       });
 
     this.router.events
@@ -269,76 +284,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.translateService.use(defaultLanguage);
     this.commonService.setTranslateLanguage(defaultLanguage);
 
-    this.oidcSecurityService.userData$
-      .pipe(
-        take(2),
-        filter((user) => user.allUserData.length !== 0),
-        mergeMap((res: UserDataResult) => {
-          const {
-            userData: { email }
-          } = res.allUserData.find(({ userData }) => userData);
-          return this.usersService
-            .getUserPermissionsByEmail$(email)
-            .pipe(
-              tap((permissions) =>
-                this.commonService.setPermissions(permissions)
-              )
-            );
-        })
-      )
-      .subscribe();
+    this.userInfo$ = this.loginService.loggedInUserInfo$;
 
-    this.permissions$ = this.commonService.permissionsAction$;
-
-    combineLatest([
-      this.commonService.permissionsAction$.pipe(
-        filter((permissions) => permissions.length !== 0)
-      ),
-      this.router.events.pipe(
-        filter((event) => event instanceof NavigationStart)
-      )
-    ])
-      .pipe(
-        tap(([permissions, event]: [Permission[], NavigationStart]) => {
-          const returnUrl = sessionStorage.getItem('returnUrl');
-          if (returnUrl) {
-            sessionStorage.removeItem('returnUrl');
-            this.router.navigate([returnUrl]);
-          } else if (event.url === '/') {
-            this.navigateToModule(
-              permissions,
-              perms.viewDashboards,
-              'dashboards'
-            );
-            this.navigateToModule(
-              permissions,
-              perms.viewTenants,
-              'tenant-management'
-            );
-            this.navigateToModule(
-              permissions,
-              perms.viewMaintenanceControlCenter,
-              'maintenance'
-            );
-            this.navigateToModule(
-              permissions,
-              perms.viewSparePartsControlCenter,
-              'spare-parts'
-            );
-            this.navigateToModule(
-              permissions,
-              perms.viewUsers,
-              'user-management'
-            );
-            this.navigateToModule(
-              permissions,
-              perms.viewWorkInstructions,
-              'work-instructions'
-            );
-          }
-        })
-      )
-      .subscribe();
+    this.commonService.displayPermissionRevoke$.subscribe((display) => {
+      if (display && !this.commonService.getPermisionRevokeModalStatus()) {
+        this.commonService.setPermisionRevokeModalStatus(true);
+        const dialogRef = this.dialog.open(PermissionsRevokeInfoModalComponent);
+        dialogRef.afterClosed().subscribe(() => {
+          this.commonService.setPermisionRevokeModalStatus(false);
+        });
+      }
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -387,7 +343,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     menuPermission: string
   ) {
     if (
-      permissions.length &&
+      permissions?.length &&
       this.menuHasSubMenu[menuPermission] === undefined
     ) {
       const subMenuPermission = subMenus?.find((subMenu) =>
@@ -400,19 +356,23 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.menuHasSubMenu[menuPermission];
   }
 
-  navigateToModule(
-    permissions: Permission[],
-    permission: string,
-    routePath: string
-  ) {
-    if (!this.isNavigated && permissions.length) {
-      const found = permissions.find((perm) => perm.name === permission);
-      if (found) {
-        if (permission !== perms.viewDashboards) {
-          this.router.navigate([routePath]);
-        }
-        this.isNavigated = true;
-      }
+  handleError(error: HttpErrorResponse) {
+    return;
+    const { tenantId } = this.tenantService.getTenantInfo();
+    this.oidcSecurityService.logoffAndRevokeTokens(tenantId).subscribe();
+    sessionStorage.clear();
+    const message = this.errorHandlerService.getErrorMessage(error);
+    let loginError: string;
+    switch (message) {
+      case 'Inactive user':
+        loginError = 'userDeactivated';
+        break;
+      case 'Unknown user':
+        loginError = 'unknownUser';
+        break;
+      default:
+        loginError = 'somethingWentWrong';
     }
+    sessionStorage.setItem('loginError', loginError);
   }
 }

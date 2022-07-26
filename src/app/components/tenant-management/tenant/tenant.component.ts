@@ -42,7 +42,6 @@ import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-valid
 import { TenantService } from '../services/tenant.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 
-declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
@@ -90,7 +89,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
       | any;
   }>;
   tenantHeader = 'Adding Tenant...';
-  encryptionKey = ENCRYPTION_KEY;
   editTenant = true;
   editQueryParam = true;
   tenantLogo: string | SafeResourceUrl;

@@ -1,0 +1,25 @@
+$gray-600: #757575;
+$white-color: #ffffff;
+
+.access-denied-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: $white-color;
+  height: calc(100% - 79px);
+}
+
+.info1 {
+  font-style: normal;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.info2 {
+  font-style: normal;
+  font-weight: 400;
+  color: $gray-600;
+  line-height: 20px;
+  font-size: 14px;
+}
