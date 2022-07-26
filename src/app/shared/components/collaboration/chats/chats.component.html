@@ -96,18 +96,52 @@
           <b class="userName">{{ selectedConversation.topic }} </b>
           <div mat-line class="userDescription groupDescription">
             <span
-              *ngFor="let member of selectedConversation.members; let i = index"
+              *ngFor="
+                let member of selectedConversation.members | slice: 0:2;
+                let i = index
+              "
             >
-              {{ member.firstName }},
-              <button *ngIf="i === 3">More</button>
+              {{ member.firstName }}<span *ngIf="i < 1">, </span>
             </span>
+            <div *ngIf="selectedConversation.members.length > 2">
+              <div
+                (click)="isOpen = !isOpen"
+                cdkOverlayOrigin
+                #trigger="cdkOverlayOrigin"
+                class="showMoreBtn"
+              >
+                +{{ selectedConversation.members.length - 2 }} More
+              </div>
+
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayHasBackdrop]="true"
+                cdkConnectedOverlayPanelClass="custom-popover"
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                cdkConnectedOverlayWidth="400px"
+                [cdkConnectedOverlayOpen]="isOpen"
+                [cdkConnectedOverlayOrigin]="trigger"
+                (backdropClick)="isOpen = false"
+              >
+                <div class="shom-more-members">
+                  <ul
+                    *ngFor="
+                      let member of selectedConversation.members
+                        | slice: 2:selectedConversation.members.length;
+                      let i = index
+                    "
+                  >
+                    <li>
+                      {{ member.firstName }}
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </div>
           </div>
         </div>
       </div>
       <div>
-        <button mat-icon-button color="primary">
-          <mat-icon>people_alt</mat-icon>
-        </button>
         <button
           disabled
           mat-icon-button
@@ -279,8 +313,8 @@
         </div>
       </div>
     </div>
-    <mat-divider class="horiz-divider"></mat-divider>
-    <div class="chatBottom">
+    <div class="chatBottom" *ngIf="conversationHistoryLoaded">
+      <mat-divider class="horiz-divider"></mat-divider>
       <div class="messageInputBar">
         <input
           #uploadFile

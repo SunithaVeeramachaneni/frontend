@@ -24,7 +24,7 @@ interface SendReceiveMessages {
   channel: any;
 }
 interface UpdateConversations {
-  action: 'update_latest_message' | '';
+  action: 'update_latest_message' | 'create_conversation' | '';
   message: any;
   channel: any;
 }
@@ -55,13 +55,16 @@ interface Message {
 export class ChatsComponent implements OnInit, OnDestroy {
   @Input() targetUser: any;
 
+  isOpen = false;
+
   selectedView = 'CHAT';
   messageText = '';
   messageDeliveryProgress = false;
   downloadInProgress = false;
   conversations: any = [];
-  selectedConversation: any;
+  selectedConversation: Conversation;
   conversationHistory: any = [];
+  conversationHistoryLoaded = false;
 
   activeUsers: any = [];
 
@@ -125,16 +128,49 @@ export class ChatsComponent implements OnInit, OnDestroy {
               }
             });
             if (this.targetUser) {
+              let conversationExists = false;
               conversations.forEach((conv) => {
-                if (
-                  conv.chatType === 'oneOnOne' &&
-                  conv.userInfo.email === this.targetUser.email
-                ) {
-                  this.setSelectedConversation(conv);
-                } else {
-                  // TODO: Create a DM conversation with this.targetUser and set it as selected conversation
+                if (conv.chatType === 'oneOnOne') {
+                  if (conv.userInfo.email === this.targetUser.email) {
+                    conversationExists = true;
+                    this.setSelectedConversation(conv);
+                  }
                 }
               });
+
+              if (!conversationExists) {
+                const info: ErrorInfo = {
+                  displayToast: true,
+                  failureResponse: 'throwError'
+                };
+                const invitedUsers = [];
+                if (userInfo.collaborationType === 'slack') {
+                  if (
+                    this.targetUser.UserSlackDetail &&
+                    this.targetUser.UserSlackDetail.slackID
+                  ) {
+                    invitedUsers.push(this.targetUser.UserSlackDetail.slackID);
+                  }
+                } else if (userInfo.collaborationType === 'msteams') {
+                  invitedUsers.push(this.targetUser.email);
+                }
+                this.chatService
+                  .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                  .subscribe((resp) => {
+                    if (resp.ok) {
+                      resp.userInfo.profileImage = this.imageUtils.getImageSrc(
+                        Buffer.from(resp.userInfo.profileImage).toString()
+                      );
+
+                      this.updateConversations$.next({
+                        action: 'create_conversation',
+                        message: resp,
+                        channel: ''
+                      });
+                      this.setSelectedConversation(resp);
+                    }
+                  });
+              }
             } else {
               this.setSelectedConversation(conversations[0]);
             }
@@ -155,6 +191,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
               conv.latest = message;
             }
           });
+        } else if (action === 'create_conversation') {
+          conversationsList.unshift(message);
         }
         return conversationsList;
       }),
@@ -210,6 +248,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     };
     this.sendReceiveMessages$.next({ action: '', message: '', channel: '' });
     this.conversationHistory = [];
+    this.conversationHistoryLoaded = false;
     this.selectedConversation = conversation;
 
     this.conversationHistoryInit$ = this.chatService
@@ -217,6 +256,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .pipe(
         // eslint-disable-next-line arrow-body-style
         mergeMap((history) => {
+          this.conversationHistoryLoaded = true;
           if (history.length) {
             history.forEach((message) => {
               const members = this.selectedConversation.members;
@@ -378,7 +418,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
                 id: this.selectedConversation.id,
                 from: response.from,
                 timestamp: response.createdDateTime,
-                message: `${this.selectedConversation.userInfo.firstName} Uploaded a file.`,
+                message: response.message,
                 attachments: response.attachments || [],
                 chatId: this.selectedConversation.id,
                 messageType: 'message'
