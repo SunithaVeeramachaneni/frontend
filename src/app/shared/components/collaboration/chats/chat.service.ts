@@ -91,6 +91,7 @@ export class ChatService {
   createConversation$ = (
     groupName: string,
     invitedUsers: any,
+    chatType: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.commonService.getUserInfo();
@@ -98,7 +99,7 @@ export class ChatService {
     return this.appService._postData(
       apiURL,
       `conversations`,
-      { groupName, invitedUsers },
+      { groupName, invitedUsers, chatType },
       info
     );
   };

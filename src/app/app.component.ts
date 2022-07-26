@@ -229,17 +229,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.eventSource.onmessage = async (event: any) => {
           const eventData = JSON.parse(event.data);
           if (!eventData.isHeartbeat) {
-            const processedMessageIds = [];
             eventData.forEach((evt: any) => {
               const { message } = evt;
               if (
-                !message.isHeartbeat &&
-                (message.eventType === 'message' ||
-                  message.messageType === 'message')
+                message.eventType === 'message' ||
+                message.messageType === 'message'
               ) {
-                const audio = new Audio('../assets/audio/notification.mp3');
-                audio.play();
-                processedMessageIds.push(evt.id);
                 const iscollabWindowOpen =
                   ref.chatService.getCollaborationWindowStatus();
                 if (iscollabWindowOpen) {
@@ -249,6 +244,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
                   unreadCount = unreadCount + 1;
                   ref.chatService.setUnreadMessageCount(unreadCount);
                 }
+                const audio = new Audio('../assets/audio/notification.mp3');
+                audio.play();
               }
             });
           }

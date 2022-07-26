@@ -24,6 +24,7 @@ import { CreateGroupComponent } from './components/collaboration/chats/create-gr
 import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
     ReactiveFormsModule,
     CommonModule,
     DragDropModule,
+    OverlayModule,
     AppMaterialModules,
     BreadcrumbModule,
     NgxShimmerLoadingModule,
