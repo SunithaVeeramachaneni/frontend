@@ -146,10 +146,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
                 const invitedUsers = [];
                 if (userInfo.collaborationType === 'slack') {
                   if (
-                    this.targetUser.UserSlackDetail &&
-                    this.targetUser.UserSlackDetail.slackID
+                    this.targetUser.slackDetail &&
+                    this.targetUser.slackDetail.slackID
                   ) {
-                    invitedUsers.push(this.targetUser.UserSlackDetail.slackID);
+                    invitedUsers.push(this.targetUser.slackDetail.slackID);
                   }
                 } else if (userInfo.collaborationType === 'msteams') {
                   invitedUsers.push(this.targetUser.email);
