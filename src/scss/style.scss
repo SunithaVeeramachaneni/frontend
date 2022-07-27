@@ -11,7 +11,6 @@
 
 html * {
   font-family: 'Roboto', sans-serif;
-  font-size: 14px;
 }
 
 .modal {
@@ -25,7 +24,7 @@ html * {
 li.breadcrumb-item {
   font-style: normal;
   font-weight: normal;
-
+  font-size: 14px;
   line-height: 19px;
   color: #1351d8;
 }
@@ -174,7 +173,7 @@ li.breadcrumb-item.active span {
 .editor-listvalues {
   text-align: left;
   padding-left: 10px;
-
+  font-size: 14px;
   font-weight: 500;
 }
 .custom-header-height .mat-tab-label {
