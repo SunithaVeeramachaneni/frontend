@@ -11,6 +11,7 @@
 
 html * {
   font-family: 'Roboto', sans-serif;
+  font-size: 14px;
 }
 
 .modal {
@@ -24,7 +25,7 @@ html * {
 li.breadcrumb-item {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+
   line-height: 19px;
   color: #1351d8;
 }
@@ -173,7 +174,7 @@ li.breadcrumb-item.active span {
 .editor-listvalues {
   text-align: left;
   padding-left: 10px;
-  font-size: 14px;
+
   font-weight: 500;
 }
 .custom-header-height .mat-tab-label {
@@ -586,7 +587,7 @@ button.mat-menu-item {
 
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+
   color: #7d7d7d;
 }
 
@@ -601,7 +602,7 @@ button.mat-menu-item {
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+
   color: #000000;
 }
 
@@ -674,7 +675,6 @@ button.mat-menu-item {
 
 .mat-dialog-container {
   padding: 0 !important;
-  border-radius: 15px !important;
 }
 
 .tableMain {
