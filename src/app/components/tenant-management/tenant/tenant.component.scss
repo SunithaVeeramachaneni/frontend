@@ -281,12 +281,13 @@ $blue-color: #3d5afe;
     .logo-comes-here-text {
       font-weight: 600;
       font-size: $font-size-14;
-      line-height: 15px;
+      line-height: 18px;
       text-align: center;
       letter-spacing: 0.4px;
       text-transform: uppercase;
       color: $black-color;
       opacity: 0.3;
+      white-space: nowrap;
     }
 
     .logo {
