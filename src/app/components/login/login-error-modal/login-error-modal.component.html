@@ -1,0 +1,10 @@
+<div class="login-error-modal">
+  <p class="title" translate="alert"></p>
+  <p class="info m-b-2">{{ email }}</p>
+  <p>
+    <span class="info2">{{ reason | translate }}</span
+    >&nbsp;
+    <span class="info3" translate="contactAdmin"></span>
+  </p>
+  <button class="okay-btn" (click)="close()">{{ 'okay' | translate }}</button>
+</div>

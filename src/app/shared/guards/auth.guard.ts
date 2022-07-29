@@ -9,6 +9,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable, of } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { CommonService } from '../services/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private oidcSecurityService: OidcSecurityService,
     private router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private commonService: CommonService
   ) {}
 
   canActivate(
@@ -38,11 +40,13 @@ export class AuthGuard implements CanActivate {
             )
             .filter((id) => id);
           // Checking user is having permission to access the route
+          this.commonService.setDisplayLoader(true);
           return this.loginService.loggedInUserInfo$.pipe(
             filter(
               (userInfo) => userInfo && Object.keys(userInfo).length !== 0
             ),
             map(({ permissions }) => {
+              this.commonService.setDisplayLoader(false);
               if (route.data.permissions) {
                 const exists = permissions.find((permission) =>
                   route.data.permissions.includes(permission.name)

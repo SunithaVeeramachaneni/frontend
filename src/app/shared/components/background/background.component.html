@@ -1,0 +1,21 @@
+<div class="background-container">
+  <h1 class="background-heading">
+    <span [innerHTML]="'backgroundHeader' | translate"></span>
+  </h1>
+  <img
+    src="assets/shared/powered_by.svg"
+    alt="innovapptive logo"
+    class="logo"
+  />
+  <ng-content></ng-content>
+  <img
+    src="assets/shared/graphics_left.svg"
+    alt="graphics left"
+    class="graphics-left"
+  />
+  <img
+    src="assets/shared/graphics_right.svg"
+    alt="graphics right"
+    class="graphics-right"
+  />
+</div>

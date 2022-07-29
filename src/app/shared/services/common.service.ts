@@ -14,11 +14,13 @@ export class CommonService {
   private translateLanguageSubject = new BehaviorSubject<string>('');
   private userInfoSubject = new BehaviorSubject<UserInfo>({} as UserInfo);
   private displayPermissionRevokeSubject = new BehaviorSubject<boolean>(false);
+  private displayLoaderSubject = new BehaviorSubject<boolean>(false);
 
   currentRouteUrlAction$ = this.currentRouteUrlSubject.asObservable();
   translateLanguageAction$ = this.translateLanguageSubject.asObservable();
   userInfo$ = this.userInfoSubject.asObservable();
   displayPermissionRevoke$ = this.displayPermissionRevokeSubject.asObservable();
+  displayLoader$ = this.displayLoaderSubject.asObservable();
 
   constructor() {}
 
@@ -51,5 +53,9 @@ export class CommonService {
 
   getPermisionRevokeModalStatus(): boolean {
     return this.permissionRevokeModalStatus.isOpen;
+  }
+
+  setDisplayLoader(display: boolean) {
+    this.displayLoaderSubject.next(display);
   }
 }

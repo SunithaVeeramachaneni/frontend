@@ -28,7 +28,6 @@ import {
   defaultCategoryName,
   routingUrls
 } from '../../../app.constants';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { LoginService } from '../../login/services/login.service';
 import { userInfo$ } from '../../login/services/login.service.mock';

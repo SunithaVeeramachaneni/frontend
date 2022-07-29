@@ -11,6 +11,7 @@ import { TenantService } from '../../tenant-management/services/tenant.service';
 })
 export class LoginService {
   private loggedInUserInfo = {} as UserInfo;
+  private loggedInEmail: string;
 
   private isUserAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private loggedInUserInfoSubject = new BehaviorSubject<UserInfo>(
@@ -38,7 +39,11 @@ export class LoginService {
     configUserDataResult: ConfigUserDataResult,
     configIds: string[]
   ) => {
-    const { configId } = configUserDataResult;
+    const {
+      configId,
+      userData: { email }
+    } = configUserDataResult;
+    this.loggedInEmail = email;
     const tenantInfo = this.tenantService
       .getTenantsInfo()
       .find((tenant) => tenant.tenantId === configId);
@@ -70,5 +75,9 @@ export class LoginService {
 
   getLoggedInUserInfo(): UserInfo {
     return this.loggedInUserInfo;
+  }
+
+  getLoggedInEmail(): string {
+    return this.loggedInEmail;
   }
 }

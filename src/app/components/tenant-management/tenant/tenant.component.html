@@ -525,21 +525,24 @@
 
             <p class="m-0">
               <mat-form-field appearance="outline" class="width-100">
-                <mat-label translate>scope</mat-label>
+                <mat-label translate>scopes</mat-label>
                 <textarea
                   matInput
-                  [placeholder]="'scope' | translate"
-                  formControlName="scope"
+                  cdkTextareaAutosize
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="5"
+                  [placeholder]="'scopes' | translate"
+                  formControlName="scopes"
                 ></textarea>
               </mat-form-field>
               <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.scope.name">
+                <mat-error *ngIf="errors.erps.sap.scopes.name">
                   {{
-                    errors.erps.sap.scope.name
+                    errors.erps.sap.scopes.name
                       | translate
                         : {
-                            name: 'scope' | translate,
-                            length: errors.erps.sap.scope.length
+                            name: 'scopes' | translate,
+                            length: errors.erps.sap.scopes.length
                           }
                   }}
                 </mat-error>

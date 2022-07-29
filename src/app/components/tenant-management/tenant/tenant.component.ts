@@ -372,8 +372,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         const { urls: sapUrls } = sap;
         const { urls: nodeUrls } = node;
 
-        tenant.erps.sap.scope = JSON.stringify(
-          tenant.erps.sap.scope,
+        tenant.erps.sap.scopes = JSON.stringify(
+          tenant.erps.sap.scopes,
           null,
           ' '
         );
@@ -487,7 +487,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           WhiteSpaceValidator.noWhiteSpace
         ]
       ],
-      scope: [
+      scopes: [
         '',
         [
           Validators.required,
@@ -646,7 +646,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   saveTenant() {
     if (this.tenantForm.valid && this.tenantForm.dirty) {
       const { id, ...tenant } = this.tenantForm.getRawValue();
-      tenant.erps.sap.scope = JSON.parse(tenant.erps.sap.scope);
+      tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
       this.spinner.show();
 
       if (id) {
@@ -754,9 +754,23 @@ export class TenantComponent implements OnInit, AfterViewInit {
           }
 
           if (
-            json.race.trim() === '' ||
-            json.mWorkOrder.trim() === '' ||
-            json.mInventory.trim() === ''
+            !json.race.hasOwnProperty('scope') ||
+            !json.race.hasOwnProperty('collection') ||
+            !json.mWorkOrder.hasOwnProperty('scope') ||
+            !json.mWorkOrder.hasOwnProperty('collection') ||
+            !json.mInventory.hasOwnProperty('scope') ||
+            !json.mInventory.hasOwnProperty('collection')
+          ) {
+            return { invalidScope: true };
+          }
+
+          if (
+            json.race.scope.trim() === '' ||
+            json.race.collection.trim() === '' ||
+            json.mWorkOrder.scope.trim() === '' ||
+            json.mWorkOrder.collection.trim() === '' ||
+            json.mInventory.scope.trim() === '' ||
+            json.mInventory.collection.trim() === ''
           ) {
             return { invalidScope: true };
           }

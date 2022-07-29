@@ -27,6 +27,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { BackgroundComponent } from './components/background/background.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     AccessDeniedComponent,
-    PermissionsRevokeInfoModalComponent
+    PermissionsRevokeInfoModalComponent,
+    BackgroundComponent
   ],
   imports: [
     FormsModule,
@@ -71,7 +73,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
     CommonFilterComponent,
     HeaderComponent,
     NumberToKMPipe,
-    CheckUserHasPermissionDirective
+    CheckUserHasPermissionDirective,
+    BackgroundComponent
   ],
   providers: [DatePipe]
 })

@@ -137,7 +137,13 @@
           this.currentRouteUrl === '/login' || isUserAuthenticated === false
       }"
     >
-      <router-outlet></router-outlet>
+      <router-outlet>
+        <ngx-shimmer-loading
+          *ngIf="displayLoader$ | async"
+          [width]="'100%'"
+          [height]="'100vh'"
+        ></ngx-shimmer-loading>
+      </router-outlet>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -13,13 +13,17 @@ import { ToastService } from '../toast';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { ErrorHandlerService } from './error-handler.service';
 import { CommonService } from '../services/common.service';
+import { Router } from '@angular/router';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(
     private toasterService: ToastService,
     private errorHandlerService: ErrorHandlerService,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private router: Router,
+    private loginService: LoginService
   ) {}
 
   intercept(
@@ -35,8 +39,26 @@ export class HttpErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         console.error(error);
         const text = this.errorHandlerService.getErrorMessage(error);
-        if (text === 'Access Denied') {
+        if (text.toLowerCase() === 'access denied') {
           this.commonService.displayPermissionRevoke(true);
+        } else if (text.toLowerCase() === 'inactive user') {
+          this.loginService.setUserAuthenticated(false);
+          this.commonService.setDisplayLoader(false);
+          this.router.navigate(['login/inactive-user'], {
+            queryParams: {
+              email: this.loginService.getLoggedInEmail(),
+              reason: 'inactive'
+            }
+          });
+        } else if (text.toLowerCase() === 'unknown user') {
+          this.loginService.setUserAuthenticated(false);
+          this.commonService.setDisplayLoader(false);
+          this.router.navigate(['login/unknown-user'], {
+            queryParams: {
+              email: this.loginService.getLoggedInEmail(),
+              reason: 'unknown'
+            }
+          });
         } else if (displayToast) {
           this.toasterService.show({
             text,

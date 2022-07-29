@@ -15,7 +15,6 @@ import {
   smallInnovaIcon
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UsersService } from './components/user-management/services/users.service';
 import { combineLatest, Observable } from 'rxjs';
 import { Permission, Tenant, UserInfo } from './interfaces';
@@ -27,8 +26,6 @@ import { AuthHeaderService } from './shared/services/authHeader.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { ImageUtils } from './shared/utils/imageUtils';
 import { Buffer } from 'buffer';
-import { ErrorHandlerService } from './shared/error-handler/error-handler.service';
-import { HttpErrorResponse } from '@angular/common/http';
 import { PermissionsRevokeInfoModalComponent } from './shared/components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -168,20 +165,20 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   isUserAuthenticated = false;
   menuOpenClose = false;
   userInfo$: Observable<UserInfo>;
+  displayLoader$: Observable<boolean>;
+  displayLoader: boolean;
 
   constructor(
     private commonService: CommonService,
     private router: Router,
     private cdrf: ChangeDetectorRef,
     private translateService: TranslateService,
-    private oidcSecurityService: OidcSecurityService,
     private usersService: UsersService,
     private loginService: LoginService,
     private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
     private tenantService: TenantService,
     private imageUtils: ImageUtils,
-    private errorHandlerService: ErrorHandlerService,
     private dialog: MatDialog
   ) {}
 
@@ -192,7 +189,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         tap(
           (isUserAuthenticated) =>
             (this.isUserAuthenticated = isUserAuthenticated)
-        ),
+        )
+      )
+      .subscribe();
+
+    this.loginService.isUserAuthenticated$
+      .pipe(
         filter((isUserAuthenticated) => isUserAuthenticated),
         take(1),
         mergeMap(() => {
@@ -286,12 +288,21 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.commonService.displayPermissionRevoke$.subscribe((display) => {
       if (display && !this.commonService.getPermisionRevokeModalStatus()) {
         this.commonService.setPermisionRevokeModalStatus(true);
-        const dialogRef = this.dialog.open(PermissionsRevokeInfoModalComponent);
+        const dialogRef = this.dialog.open(
+          PermissionsRevokeInfoModalComponent,
+          {
+            disableClose: true
+          }
+        );
         dialogRef.afterClosed().subscribe(() => {
           this.commonService.setPermisionRevokeModalStatus(false);
         });
       }
     });
+
+    this.displayLoader$ = this.commonService.displayLoader$.pipe(
+      tap((display) => (this.displayLoader = display))
+    );
   }
 
   ngAfterViewChecked(): void {
@@ -351,25 +362,5 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return hasPermission;
     }
     return this.menuHasSubMenu[menuPermission];
-  }
-
-  handleError(error: HttpErrorResponse) {
-    return;
-    const { tenantId } = this.tenantService.getTenantInfo();
-    this.oidcSecurityService.logoffAndRevokeTokens(tenantId).subscribe();
-    sessionStorage.clear();
-    const message = this.errorHandlerService.getErrorMessage(error);
-    let loginError: string;
-    switch (message) {
-      case 'Inactive user':
-        loginError = 'userDeactivated';
-        break;
-      case 'Unknown user':
-        loginError = 'unknownUser';
-        break;
-      default:
-        loginError = 'somethingWentWrong';
-    }
-    sessionStorage.setItem('loginError', loginError);
   }
 }

@@ -3,8 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { userInfo$ } from 'src/app/components/login/services/login.service.mock';
-import { CommonService } from '../services/common.service';
-import { permissions$ } from '../services/common.service.mock';
 import { SharedModule } from '../shared.module';
 
 @Component({

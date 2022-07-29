@@ -993,50 +993,50 @@ describe('TenantComponent', () => {
             });
           });
 
-          describe('scope', () => {
+          describe('scopes', () => {
             it('should validate require', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: ''
+                    scopes: ''
                   }
                 }
               });
 
-              expect(component.tenantForm.get('erps.sap.scope').errors).toEqual(
-                {
-                  required: true
-                }
-              );
+              expect(
+                component.tenantForm.get('erps.sap.scopes').errors
+              ).toEqual({
+                required: true
+              });
             });
 
-            it('should validate valid scope', () => {
+            it('should validate valid scopes', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: '{}'
+                    scopes: '{}'
                   }
                 }
               });
 
-              expect(component.tenantForm.get('erps.sap.scope').errors).toEqual(
-                {
-                  invalidScope: true
-                }
-              );
+              expect(
+                component.tenantForm.get('erps.sap.scopes').errors
+              ).toEqual({
+                invalidScope: true
+              });
             });
 
             it('should validate noWhiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: '  '
+                    scopes: '  '
                   }
                 }
               });
 
               expect(
-                component.tenantForm.get('erps.sap.scope').errors.noWhiteSpace
+                component.tenantForm.get('erps.sap.scopes').errors.noWhiteSpace
               ).toBeTrue();
             });
           });
@@ -2434,8 +2434,8 @@ describe('TenantComponent', () => {
 
     it('should patch form with tenant data', () => {
       const newTenant = cloneDeep(createTenant);
-      newTenant.erps.sap.scope = JSON.stringify(
-        newTenant.erps.sap.scope,
+      newTenant.erps.sap.scopes = JSON.stringify(
+        newTenant.erps.sap.scopes,
         null,
         ' '
       );
@@ -2593,8 +2593,8 @@ describe('TenantComponent', () => {
     let newTenant: Tenant;
     beforeEach(() => {
       newTenant = cloneDeep(createTenant);
-      newTenant.erps.sap.scope = JSON.stringify(
-        newTenant.erps.sap.scope,
+      newTenant.erps.sap.scopes = JSON.stringify(
+        newTenant.erps.sap.scopes,
         null,
         ' '
       );
@@ -2715,7 +2715,7 @@ describe('TenantComponent', () => {
 
       component.tenantForm.markAsDirty();
       const rawValue = component.tenantForm.getRawValue();
-      rawValue.erps.sap.scope = JSON.parse(rawValue.erps.sap.scope);
+      rawValue.erps.sap.scopes = JSON.parse(rawValue.erps.sap.scopes);
       // eslint-disable-next-line @typescript-eslint/no-shadow
       const { id, tenantId, tenantName, rdbms, nosql, ...restTenant } =
         rawValue;
@@ -2885,30 +2885,30 @@ describe('TenantComponent', () => {
       expect(component.scopeValidator).toBeDefined();
     });
 
-    it('should return null if scope is empty', () => {
+    it('should return null if scopes are empty', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: ''
+            scopes: ''
           }
         }
       });
 
       expect(
-        component.tenantForm.get('erps.sap.scope').errors.invalidScope
+        component.tenantForm.get('erps.sap.scopes').errors.invalidScope
       ).toBeUndefined();
     });
 
-    it('should return invalidScope true if scope is empty', () => {
+    it('should return invalidScope true if scopes are empty', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: '{}'
+            scopes: '{}'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
@@ -2917,42 +2917,43 @@ describe('TenantComponent', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: '{"race": "", "mWorkOrder": "", "mInventory":""}'
+            scopes:
+              '{"race": { "scope": "", "collection": "" }, "mWorkOrder": { "scope": "", "collection": "" }, "mInventory": { "scope": "", "collection": "" }}'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
 
-    it('should return invalidScope true if scope is invalid', () => {
+    it('should return invalidScope true if scopes are invalid', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope:
-              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory}'
+            scopes:
+              '{"race": { "scope": "race", "collection": "collection" }, "mWorkOrder": { "scope": "mWorkOrder", "collection": "collection" }, "mInventory": { "scope": "mInventory", "collection": "collection ] }'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
 
-    it('should return null if scope is valid', () => {
+    it('should return null if scopes is valid', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope:
-              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory"}'
+            scopes:
+              '{"race": { "scope": "race", "collection": "collection" }, "mWorkOrder": { "scope": "mWorkOrder", "collection": "collection" }, "mInventory": { "scope": "mInventory", "collection": "collection" } }'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toBeNull();
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toBeNull();
     });
   });
 
