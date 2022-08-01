@@ -41,6 +41,8 @@ import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { TenantService } from '../services/tenant.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { Tenant } from 'src/app/interfaces';
+import { cloneDeep } from 'lodash';
 
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
@@ -66,7 +68,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
   slackConfiguration: FormGroup;
   msTeamsConfiguration: FormGroup;
 
-  tenantData: any;
+  tenantData: Tenant;
 
   products = ['MWORKORDER', 'MINVENTORY'];
   modules = [
@@ -366,37 +368,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
 
     this.route.data.subscribe(({ tenant }) => {
-      if (tenant && Object.keys(tenant).length) {
-        this.tenantData = tenant;
-        const { sap, node } = tenant.protectedResources;
-        const { urls: sapUrls } = sap;
-        const { urls: nodeUrls } = node;
-
-        tenant.erps.sap.scopes = JSON.stringify(
-          tenant.erps.sap.scopes,
-          null,
-          ' '
-        );
-
-        if (tenant.tenantLogo) {
-          const tenantLogo = Buffer.from(tenant.tenantLogo).toString();
-          this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
-          tenant.tenantLogo = tenantLogo;
-        }
-
-        this.tenantForm.patchValue(tenant);
-        (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
-          'urls',
-          this.fb.array(this.setUrls(sapUrls))
-        );
-        (
-          this.tenantForm.get('protectedResources.node') as FormGroup
-        ).setControl('urls', this.fb.array(this.setUrls(nodeUrls)));
-        this.tenantForm.get('tenantId').disable();
-        this.tenantForm.get('tenantName').disable();
-        this.tenantForm.get('tenantDomainName').disable();
-        this.tenantForm.get('tenantAdmin').disable();
-      }
+      this.tenantData = tenant;
+      this.setTenantFormData();
     });
 
     this.route.queryParams.subscribe((params) => {
@@ -433,6 +406,41 @@ export class TenantComponent implements OnInit, AfterViewInit {
       shareReplay(1)
     );
     this.maskClientSecret();
+  }
+
+  setTenantFormData() {
+    if (this.tenantData && Object.keys(this.tenantData).length) {
+      const tenant = cloneDeep(this.tenantData);
+      const { sap, node } = tenant.protectedResources;
+      const { urls: sapUrls } = sap;
+      const { urls: nodeUrls } = node;
+
+      tenant.erps.sap.scopes = JSON.stringify(
+        tenant.erps.sap.scopes,
+        null,
+        ' '
+      );
+
+      if (tenant.tenantLogo) {
+        const tenantLogo = Buffer.from(tenant.tenantLogo).toString();
+        this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+        tenant.tenantLogo = tenantLogo;
+      }
+
+      this.tenantForm.patchValue(tenant);
+      (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
+        'urls',
+        this.fb.array(this.setUrls(sapUrls))
+      );
+      (this.tenantForm.get('protectedResources.node') as FormGroup).setControl(
+        'urls',
+        this.fb.array(this.setUrls(nodeUrls))
+      );
+      this.tenantForm.get('tenantId').disable();
+      this.tenantForm.get('tenantName').disable();
+      this.tenantForm.get('tenantDomainName').disable();
+      this.tenantForm.get('tenantAdmin').disable();
+    }
   }
 
   buildErps(): FormGroup {
@@ -724,6 +732,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     if (this.editQueryParam) {
       this.router.navigate(['/tenant-management']);
     } else {
+      this.setTenantFormData();
       this.tenantForm.disable();
       this.editTenant = false;
     }

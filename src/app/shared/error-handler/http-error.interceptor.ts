@@ -44,7 +44,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         } else if (text.toLowerCase() === 'inactive user') {
           this.loginService.setUserAuthenticated(false);
           this.commonService.setDisplayLoader(false);
-          this.router.navigate(['login/inactive-user'], {
+          this.router.navigate(['login/inactive'], {
             queryParams: {
               email: this.loginService.getLoggedInEmail(),
               reason: 'inactive'
@@ -53,7 +53,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         } else if (text.toLowerCase() === 'unknown user') {
           this.loginService.setUserAuthenticated(false);
           this.commonService.setDisplayLoader(false);
-          this.router.navigate(['login/unknown-user'], {
+          this.router.navigate(['login/unknown'], {
             queryParams: {
               email: this.loginService.getLoggedInEmail(),
               reason: 'unknown'

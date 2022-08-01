@@ -9,14 +9,14 @@ const routes: Routes = [
     component: LoginComponent
   },
   {
-    path: 'inactive-user',
+    path: 'inactive',
     component: LoginErrorComponent,
     data: {
       breadcrumb: { skip: true }
     }
   },
   {
-    path: 'unknown-user',
+    path: 'unknown',
     component: LoginErrorComponent,
     data: {
       breadcrumb: { skip: true }

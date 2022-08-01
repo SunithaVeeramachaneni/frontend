@@ -2434,6 +2434,7 @@ describe('TenantComponent', () => {
 
     it('should patch form with tenant data', () => {
       const newTenant = cloneDeep(createTenant);
+      const cloneTenant = cloneDeep(tenant);
       newTenant.erps.sap.scopes = JSON.stringify(
         newTenant.erps.sap.scopes,
         null,
@@ -2458,7 +2459,7 @@ describe('TenantComponent', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantDomainName: 'tenantDomainName' })
         .and.returnValue(of({ count: 0 }));
-
+      spyOn(component, 'setTenantFormData').and.callThrough();
       (
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')
           .get as jasmine.Spy
@@ -2466,6 +2467,7 @@ describe('TenantComponent', () => {
 
       component.ngOnInit();
 
+      expect(component.setTenantFormData).toHaveBeenCalledWith();
       expect(component.tenantForm.getRawValue()).toEqual({
         ...newTenant,
         id
@@ -2523,6 +2525,12 @@ describe('TenantComponent', () => {
   describe('ngAfterViewInit', () => {
     it('should define function', () => {
       expect(component.ngAfterViewInit).toBeDefined();
+    });
+  });
+
+  describe('setTenantFormData', () => {
+    it('should define function', () => {
+      expect(component.setTenantFormData).toBeDefined();
     });
   });
 
@@ -2829,6 +2837,7 @@ describe('TenantComponent', () => {
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParams')
           .get as jasmine.Spy
       ).and.returnValue(of({ edit: false }));
+      spyOn(component, 'setTenantFormData');
       const navigateSpy = spyOn(router, 'navigate');
       component.ngOnInit();
       tenantDe
@@ -2840,6 +2849,7 @@ describe('TenantComponent', () => {
         .triggerEventHandler('click', null);
 
       expect(navigateSpy).not.toHaveBeenCalled();
+      expect(component.setTenantFormData).toHaveBeenCalledWith();
       expect(component.tenantForm.disabled).toBeTrue();
       expect(component.editTenant).toBeFalse();
     });
