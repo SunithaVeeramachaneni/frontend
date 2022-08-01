@@ -22,6 +22,7 @@ export class CreateGroupComponent implements OnInit {
 
   selectedUsers: any[] = [];
   groupName = '';
+  groupCreationInProgress = false;
 
   constructor(
     private peopleService: PeopleService,
@@ -94,7 +95,18 @@ export class CreateGroupComponent implements OnInit {
       this.selectedUsers.splice(index, 1);
     }
   };
+  onGroupCreateEnter = (groupName, selectedUsers) => {
+    if (
+      groupName &&
+      groupName.length &&
+      selectedUsers &&
+      selectedUsers.length
+    ) {
+      this.startConversation(groupName, selectedUsers);
+    }
+  };
   startConversation = (groupName: string, selectedUsers: any) => {
+    this.groupCreationInProgress = true;
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -118,10 +130,12 @@ export class CreateGroupComponent implements OnInit {
       .subscribe(
         (resp) => {
           if (resp.ok) {
+            this.groupCreationInProgress = false;
             this.handleGroupCreation.emit(resp);
           }
         },
         (err) => {
+          this.groupCreationInProgress = false;
           // TODO: Display toasty messsage
         }
       );
