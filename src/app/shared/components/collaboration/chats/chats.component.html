@@ -337,6 +337,7 @@
             class="messageInput"
             placeholder="Enter Message.."
             autocomplete="off"
+            [disabled]="messageDeliveryProgress"
             [(ngModel)]="messageText"
             (keyup.enter)="onMessageEnter(selectedConversation, messageText)"
           />

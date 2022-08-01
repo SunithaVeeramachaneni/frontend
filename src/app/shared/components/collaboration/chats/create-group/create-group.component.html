@@ -64,6 +64,8 @@
             placeholder="Group Name"
             [(ngModel)]="groupName"
             autocomplete="off"
+            [disabled]="groupCreationInProgress"
+            (keyup.enter)="onGroupCreateEnter(groupName, selectedUsers)"
           />
           <button
             mat-flat-button
