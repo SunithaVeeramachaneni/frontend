@@ -15,7 +15,8 @@ import {
   Report,
   ReportConfiguration,
   RowLevelActionEvent,
-  TableEvent
+  TableEvent,
+  UserInfo
 } from 'src/app/interfaces';
 import { ReportConfigurationListModalComponent } from '../report-configuration-list-modal/report-configuration-list-modal.component';
 import { ReportService } from '../services/report.service';
@@ -28,6 +29,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-reports',
@@ -87,7 +89,7 @@ export class ReportsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   debouncedSearchReports = debounce(() => this.fetchReports(), 1);
-  permissions$: Observable<Permission[]>;
+  userInfo$: Observable<UserInfo>;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
 
@@ -99,7 +101,8 @@ export class ReportsComponent implements OnInit {
     private reportConfigService: ReportConfigurationService,
     private router: Router,
     private commonService: CommonService,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private loginService: LoginService
   ) {}
 
   fetchReports() {
@@ -209,8 +212,8 @@ export class ReportsComponent implements OnInit {
     );
     this.fetchReports();
 
-    this.permissions$ = this.commonService.permissionsAction$.pipe(
-      tap((permissions) => this.prepareMenuActions(permissions))
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
   }
 
@@ -359,9 +362,7 @@ export class ReportsComponent implements OnInit {
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
 
-    if (
-      this.commonService.checkUserHasPermission(permissions, 'VIEW_REPORTS')
-    ) {
+    if (this.loginService.checkUserHasPermission(permissions, 'VIEW_REPORTS')) {
       menuActions.push({
         title: 'Preview',
         action: 'preview'
@@ -369,7 +370,7 @@ export class ReportsComponent implements OnInit {
     }
 
     if (
-      this.commonService.checkUserHasPermission(permissions, 'UPDATE_REPORT')
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_REPORT')
     ) {
       menuActions.push({
         title: 'Edit',
@@ -378,7 +379,7 @@ export class ReportsComponent implements OnInit {
     }
 
     if (
-      this.commonService.checkUserHasPermission(
+      this.loginService.checkUserHasPermission(
         permissions,
         'REPORT_EXPORT_TO_EXCEL'
       )
@@ -389,7 +390,7 @@ export class ReportsComponent implements OnInit {
       });
     }
 
-    if (this.commonService.checkUserHasPermission(permissions, 'COPY_REPORT')) {
+    if (this.loginService.checkUserHasPermission(permissions, 'COPY_REPORT')) {
       menuActions.push({
         title: 'Copy',
         action: 'copy'
@@ -397,7 +398,7 @@ export class ReportsComponent implements OnInit {
     }
 
     if (
-      this.commonService.checkUserHasPermission(permissions, 'DELETE_REPORT')
+      this.loginService.checkUserHasPermission(permissions, 'DELETE_REPORT')
     ) {
       menuActions.push({
         title: 'Delete',

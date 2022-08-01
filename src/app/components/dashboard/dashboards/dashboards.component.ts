@@ -15,13 +15,13 @@ import {
 } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Dashboard, ErrorInfo } from 'src/app/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { CreateUpdateDashboardDialogComponent } from '../dashboard-create-update-dialog/dashboard-create-update-dialog.component';
 import { ConfirmDialog } from '../confirm-dialog/confirm-dialog.component';
 import { DashboardService } from '../services/dashboard.service';
 import { ToastService } from 'src/app/shared/toast';
 import { AlertDialog } from '../alert-dialog/alert-dialog.component';
 import { permissions } from 'src/app/app.constants';
+import { LoginService } from '../../login/services/login.service';
 
 interface CreateUpdateDeleteDashboard {
   type: 'create' | 'update' | 'delete' | 'mark_default' | 'copy';
@@ -66,7 +66,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toast: ToastService,
     private dashboardService: DashboardService,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -260,7 +260,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       .createDashboard$({
         name,
         isDefault,
-        createdBy: this.commonService.getUserName()
+        createdBy: this.loginService.getLoggedInUserName()
       })
       .subscribe(
         (response) => {
@@ -369,7 +369,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.dashboardService.createDashboard$({
       name: 'Dashboard 1',
       isDefault: true,
-      createdBy: this.commonService.getUserName()
+      createdBy: this.loginService.getLoggedInUserName()
     });
 
   handleDashboardActions(event) {

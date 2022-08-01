@@ -13,7 +13,13 @@
   "dueThisWeek": "Due This Week",
   "dueThisMonth": "Due This Month",
   "custom": "Custom",
-
   "selectConversationToSendMessage": "Please select a conversation to send message",
-  "selectUserToCreateGroup": "Please select a user to add to the Group"
+  "selectUserToCreateGroup": "Please select a user to add to the Group",
+  "accessDenied": "Access Denied",
+  "dontHavePermission": "You don't have permission to access this {url} page",
+  "okay": "Okay",
+  "permissionsRevokeTitle": "Permission changes!",
+  "permissionsRevokeInfo": "There’re a few permission changes made to the role you’re associated with.",
+  "contactAdmin": "Contact your Admin for more info.",
+  "backgroundHeader": "Let's get <br/> empowered"
 }

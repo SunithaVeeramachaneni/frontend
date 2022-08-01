@@ -8,6 +8,7 @@ import {
   Role,
   TableEvent,
   UserDetails,
+  UserInfo,
   UserTable
 } from 'src/app/interfaces';
 import { UsersService } from '../services/users.service';
@@ -28,8 +29,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserDeleteModalComponent } from '../user-delete-modal/user-delete-modal.component';
 import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-modal.component';
 import { RolesPermissionsService } from '../services/roles-permissions.service';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { Buffer } from 'buffer';
+import { LoginService } from '../../login/services/login.service';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
@@ -182,7 +183,7 @@ export class UsersComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   roles;
-  permissions$: Observable<Permission[]>;
+  loggedInUserInfo$: Observable<UserInfo>;
   readonly perms = perms;
 
   constructor(
@@ -190,7 +191,7 @@ export class UsersComponent implements OnInit {
     private roleService: RolesPermissionsService,
     public dialog: MatDialog,
     private toast: ToastService,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
@@ -204,8 +205,8 @@ export class UsersComponent implements OnInit {
     this.rolesList$ = this.roleService
       .getRolesWithPermissions$()
       .pipe(shareReplay(1));
-    this.permissions$ = this.commonService.permissionsAction$.pipe(
-      tap((permissions) => this.prepareMenuActions(permissions))
+    this.loggedInUserInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
   }
 
@@ -493,7 +494,7 @@ export class UsersComponent implements OnInit {
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];
 
-    if (this.commonService.checkUserHasPermission(permissions, 'UPDATE_USER')) {
+    if (this.loginService.checkUserHasPermission(permissions, 'UPDATE_USER')) {
       menuActions.push({
         title: 'Edit',
         action: 'edit'
@@ -501,7 +502,7 @@ export class UsersComponent implements OnInit {
     }
 
     if (
-      this.commonService.checkUserHasPermission(permissions, 'DEACTIVATE_USER')
+      this.loginService.checkUserHasPermission(permissions, 'DEACTIVATE_USER')
     ) {
       menuActions.push({
         title: 'Deactivate',

@@ -10,11 +10,7 @@ import { CommonService } from './shared/services/common.service';
 import { NgxSpinnerComponent } from 'ngx-spinner';
 import { MockComponent } from 'ng-mocks';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import {
-  openCollabWindow$,
-  userAuthData$
-} from './shared/components/header/header.component.mock';
-import { permissions$ } from './shared/services/common.service.mock';
+import { openCollabWindow$ } from './shared/components/header/header.component.mock';
 import { UsersService } from './components/user-management/services/users.service';
 import { SharedModule } from './shared/shared.module';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
@@ -22,6 +18,10 @@ import { AuthHeaderService } from './shared/services/authHeader.service';
 import { HeaderService } from './shared/services/header.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { LoginService } from './components/login/services/login.service';
+import {
+  permissions$,
+  userAuthData$
+} from './components/login/services/login.service.mock';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -39,14 +39,10 @@ describe('AppComponent', () => {
   let appEl: HTMLElement;
 
   beforeEach(async () => {
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['setCurrentRouteUrl', 'setTranslateLanguage'],
-      {
-        minimizeSidebarAction$: of(false),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [
+      'setCurrentRouteUrl',
+      'setTranslateLanguage'
+    ]);
 
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'getInstallationURL$'

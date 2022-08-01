@@ -28,8 +28,9 @@ import {
   defaultCategoryName,
   routingUrls
 } from '../../../app.constants';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
+import { LoginService } from '../../login/services/login.service';
 
 const categoryDetails = [
   {
@@ -135,6 +136,7 @@ describe('PublishedComponent', () => {
   let base64HelperServiceSpy: Base64HelperService;
   let commonServiceSpy: CommonService;
   let headerServiceSpy: HeaderService;
+  let loginServiceSpy: LoginService;
   let publishedDe: DebugElement;
   let publishedEl: HTMLElement;
 
@@ -155,12 +157,14 @@ describe('PublishedComponent', () => {
       'getBase64Image'
     ]);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      currentRouteUrlAction$: of('/work-instructions/published'),
-      permissionsAction$: permissions$
+      currentRouteUrlAction$: of('/work-instructions/published')
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
     ]);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
 
     TestBed.configureTestingModule({
       declarations: [PublishedComponent, DropDownFilterPipe, TimeAgoPipe],
@@ -181,7 +185,8 @@ describe('PublishedComponent', () => {
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   }));

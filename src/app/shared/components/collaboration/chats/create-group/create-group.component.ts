@@ -7,6 +7,7 @@ import { ChatService } from '../chat.service';
 import { ImageUtils } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
   selector: 'app-create-group',
@@ -26,9 +27,9 @@ export class CreateGroupComponent implements OnInit {
 
   constructor(
     private peopleService: PeopleService,
-    private commonService: CommonService,
     private chatService: ChatService,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
@@ -53,14 +54,14 @@ export class CreateGroupComponent implements OnInit {
       map(([initial]) => {
         const validUsers = [];
         initial.data.forEach((user) => {
-          const userInfo = this.commonService.getUserInfo();
+          const userInfo = this.loginService.getLoggedInUserInfo();
           let isCurrentUser = false;
           if (user.email === userInfo.email) {
             isCurrentUser = true;
           }
 
           if (userInfo.collaborationType === 'slack') {
-            if (user.UserSlackDetail && !isCurrentUser) {
+            if (user.slackDetail && !isCurrentUser) {
               validUsers.push(user);
             }
           } else if (userInfo.collaborationType === 'msteams') {
@@ -113,10 +114,10 @@ export class CreateGroupComponent implements OnInit {
     };
     const invitedUsers = [];
     selectedUsers.forEach((user) => {
-      const userInfo = this.commonService.getUserInfo();
+      const userInfo = this.loginService.getLoggedInUserInfo();
       if (userInfo.collaborationType === 'slack') {
-        if (user.UserSlackDetail && user.UserSlackDetail.slackID) {
-          invitedUsers.push(user.UserSlackDetail.slackID);
+        if (user.slackDetail && user.slackDetail.slackID) {
+          invitedUsers.push(user.slackDetail.slackID);
         }
       } else if (userInfo.collaborationType === 'msteams') {
         invitedUsers.push(user.email);

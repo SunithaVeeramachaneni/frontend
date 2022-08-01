@@ -148,6 +148,7 @@ $blue-color: #3d5afe;
 
   .remove-btn:disabled {
     color: $gray-600;
+    cursor: auto;
   }
 
   .info1 {
@@ -283,4 +284,8 @@ $blue-color: #3d5afe;
 .ideal-dimension-width-height {
   letter-spacing: 0.35px;
   font-size: 110%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

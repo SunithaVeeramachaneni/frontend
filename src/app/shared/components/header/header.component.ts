@@ -10,12 +10,11 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { CommonService } from '../../services/common.service';
 import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
-import { ErrorInfo, UserDetails } from '../../../interfaces';
+import { UserInfo } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CollabDialogComponent } from '../collaboration/CollabDialog';
@@ -24,6 +23,7 @@ import { ImageUtils } from '../../utils/imageUtils';
 import { Buffer } from 'buffer';
 import { Router } from '@angular/router';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
   selector: 'app-header',
@@ -42,31 +42,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.headerService.setHeaderTitle(menu);
   }
 
-  sidebarMinimize = false;
   unreadMessageCount: number;
   slackVerification$: Observable<any>;
   msTeamsSignIn$: Observable<any>;
 
-  userInfo$: Observable<UserDetails>;
+  userInfo$: Observable<UserInfo>;
   eventSource: any;
   tenantLogo: any;
   isOpen = false;
-  fontSize = 14;
-  private minimizeSidebarActionSubscription: Subscription;
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
 
   constructor(
     public uploadDialog: MatDialog,
     private headerService: HeaderService,
-    private commonService: CommonService,
     public oidcSecurityService: OidcSecurityService,
     private chatService: ChatService,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
     private router: Router,
     private imageUtils: ImageUtils,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private loginService: LoginService
   ) {}
 
   openDialog(): void {
@@ -124,13 +121,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.slackVerification$ = this.headerService
       .getInstallationURL$(queryParams)
       .pipe(map((url) => url));
-    this.minimizeSidebarActionSubscription =
-      this.commonService.minimizeSidebarAction$.subscribe((data) => {
-        this.sidebarMinimize = data;
-      });
 
-    this.userInfo$ = this.commonService.userInfo$.pipe(
-      filter((userInfo) => Object.keys(userInfo).length !== 0),
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      filter((userInfo) => userInfo && Object.keys(userInfo).length !== 0),
       tap((userInfo) => {
         const loggedInUser = {
           first_name: userInfo.firstName,
@@ -153,15 +146,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.outsideClickTrigger.emit();
   }
 
-  minimize(e) {
-    this.sidebarMinimize = e;
-    this.commonService.minimizeSidebar(this.sidebarMinimize);
-  }
-
   ngOnDestroy(): void {
-    if (this.minimizeSidebarActionSubscription) {
-      this.minimizeSidebarActionSubscription.unsubscribe();
-    }
     if (this.collabWindowSubscription) {
       this.collabWindowSubscription.unsubscribe();
     }

@@ -18,6 +18,8 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { LoginErrorComponent } from './login-error/login-error.component';
+import { LoginErrorModalComponent } from './login-error-modal/login-error-modal.component';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/login/', '.json');
 
@@ -44,7 +46,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     }),
     DynamictableModule
   ],
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, LoginErrorComponent, LoginErrorModalComponent],
   exports: [],
   entryComponents: []
 })

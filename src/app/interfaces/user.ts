@@ -1,5 +1,6 @@
 import { Column } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { TableColumn } from './report-details';
+import { Permission } from './roles-permissions';
 
 export interface User {
   first_name: string;
@@ -29,9 +30,12 @@ export interface UserDetails {
   updatedAt?: string;
   roles: any[];
   displayRoles?: string;
-  collaborationType?: string;
-  slackConfiguration?: any;
-  msTeamsConfiguration?: any;
+}
+
+export interface UserInfo extends UserDetails {
+  slackDetail: any;
+  collaborationType: string;
+  permissions: Permission[];
 }
 
 export interface UserTable {

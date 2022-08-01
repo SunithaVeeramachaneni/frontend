@@ -11,6 +11,8 @@ import { CustomStepperComponent } from './overview.component';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { State } from '../../../state/app.state';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { userInfo$ } from '../../login/services/login.service.mock';
+import { LoginService } from '../../login/services/login.service';
 
 const sid = 1234;
 
@@ -20,6 +22,7 @@ describe('CustomStepperComponent', () => {
   let instructionServiceSpy: InstructionService;
   let activatedRouteSpy: ActivatedRoute;
   let wiCommonServiceSpy: WiCommonService;
+  let loginServiceSpy: LoginService;
   let customStepperDe: DebugElement;
   let customStepperEl: HTMLElement;
   let store: MockStore<State>;
@@ -48,6 +51,9 @@ describe('CustomStepperComponent', () => {
       'currentImgFromPreviewSection',
       'currentStepDetails'
     ]);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -59,6 +65,7 @@ describe('CustomStepperComponent', () => {
         { provide: InstructionService, useValue: instructionServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         provideMockStore()
       ]
     }).compileComponents();

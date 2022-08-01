@@ -30,8 +30,9 @@ import {
   defaultCategoryName,
   routingUrls
 } from '../../../app.constants';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 
 const categoryDetails = [
   {
@@ -141,6 +142,7 @@ describe('CategoryWiseInstructionsComponent', () => {
   let commonServiceSpy: CommonService;
   let headerServiceSpy: HeaderService;
   let breadcrumbServiceSpy: BreadcrumbService;
+  let loginServiceSpy: LoginService;
   let wiComponentDe: DebugElement;
   let wiComponentEl: HTMLElement;
 
@@ -164,13 +166,15 @@ describe('CategoryWiseInstructionsComponent', () => {
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
       currentRouteUrlAction$: of(
         `/work-instructions/category/${defaultCategoryId}`
-      ),
-      permissionsAction$: permissions$
+      )
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
     ]);
     breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -202,7 +206,8 @@ describe('CategoryWiseInstructionsComponent', () => {
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
         { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   }));
