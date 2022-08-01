@@ -124,16 +124,16 @@ $white1: #f5f5f5;
     margin-right: 10px;
   }
   .attachmentItem {
-    font-size: 10pt;
+    font-size: 90%;
     background: #ebf5f8;
     border-radius: 5px;
     width: 99% !important;
     .attachmentTitle {
-      font-size: 10pt;
+      font-size: 90%;
       font-weight: 450;
     }
     .attachmentSubTitle {
-      font-size: 8pt;
+      font-size: 70%;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -182,7 +182,7 @@ $white1: #f5f5f5;
       .audioRecord {
         color: $white;
         border-radius: 8px;
-        font-size: 8pt;
+        font-size: 70%;
         height: auto;
         margin-left: 5px;
       }
@@ -214,7 +214,7 @@ $white1: #f5f5f5;
   }
 }
 .userIcon {
-  font-size: 50px !important;
+  font-size: 450%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -252,7 +252,7 @@ $white1: #f5f5f5;
 .timeAgoLabel {
   margin-left: 5px;
   color: gray;
-  font-size: 8pt;
+  font-size: 70%;
   background: #f0f0f0;
   padding: 5px;
   border-radius: 10px;
@@ -282,7 +282,7 @@ $white1: #f5f5f5;
 }
 
 .attachmentItemMeeting {
-  font-size: 10pt;
+  font-size: 90%;
   display: flex;
   background: #cde7d9;
   border-radius: 5px;
@@ -291,11 +291,11 @@ $white1: #f5f5f5;
   margin-top: 5px;
 
   .attachmentTitle {
-    font-size: 10pt;
+    font-size: 90%;
     font-weight: 450;
   }
   .attachmentSubTitle {
-    font-size: 8pt;
+    font-size: 70%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -319,7 +319,7 @@ $white1: #f5f5f5;
   }
 }
 .group-icon {
-  font-size: 30pt;
+  font-size: 360%;
   border: 0.5px solid #ece9e2;
 }
 .mt-10 {
@@ -336,7 +336,7 @@ $white1: #f5f5f5;
   align-items: flex-end;
   margin-bottom: 10px;
   .timestamp {
-    font-size: 8pt;
+    font-size: 70%;
     color: $gray1;
   }
   .message {
@@ -346,7 +346,7 @@ $white1: #f5f5f5;
     border-radius: 5px;
     font-style: normal;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 90%;
     max-width: 70%;
     word-break: break-word;
     p {
@@ -362,7 +362,7 @@ $white1: #f5f5f5;
   align-items: flex-start;
   margin-bottom: 10px;
   .timestamp {
-    font-size: 8pt;
+    font-size: 70%;
     color: $gray1;
   }
   .message {
@@ -371,7 +371,7 @@ $white1: #f5f5f5;
     border-radius: 5px;
     font-style: normal;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 90%;
     max-width: 70%;
     word-break: break-word;
     p {
@@ -413,6 +413,6 @@ p {
 }
 
 .groupMessageFrom {
-  font-size: 8pt;
+  font-size: 70%;
   color: #757575;
 }

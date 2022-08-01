@@ -62,12 +62,12 @@ export class UsersComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: true,
-      titleStyle: { 'font-weight': '500' },
+      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'title',
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: true,

@@ -317,7 +317,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
     const headerTitle = this.tenantForm.get('tenantName').value
       ? this.tenantForm.get('tenantName').value
-      : `Addding Tenant...`;
+      : `Adding Tenant...`;
     this.headerService.setHeaderTitle(headerTitle);
     this.breadcrumbService.set('@tenantName', {
       label: headerTitle
@@ -356,7 +356,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
-      const displayName = tenantName.trim() ? tenantName : 'Addding Tenant...';
+      const displayName = tenantName.trim() ? tenantName : 'Adding Tenant...';
       this.tenantHeader = displayName;
       this.breadcrumbService.set('@tenantName', { label: displayName });
       this.headerService.setHeaderTitle(displayName);

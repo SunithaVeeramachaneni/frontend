@@ -15,16 +15,16 @@
   padding: 15px 0px;
   color: #000000;
   background: #fff;
-  font-size: 1.5rem;
-
+  font-size: 200%;
   font-weight: 600;
 }
+
 .mat-icon-circle {
-  font-size: 35px;
+  font-size: 300%;
   vertical-align: middle;
   position: relative;
-  left: -10px;
-  top: -5px;
+  left: -15px;
+  top: -10px;
   color: #bdbdbd;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .arrow {
-  font-size: 16px;
+  font-size: 120%;
   position: relative;
   top: 3px;
   cursor: pointer;
@@ -54,7 +54,7 @@ table {
 }
 
 td {
-  font-size: 14px;
+  font-size: 100%;
 }
 
 thead th {
@@ -63,21 +63,21 @@ thead th {
   text-align: left;
   font-weight: 500;
   color: #000;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 tbody th {
   text-align: left;
   font-weight: 500;
   color: #000;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 tbody td {
   color: #212121;
   text-align: left;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
 }
 
 tbody tr td:nth-child(5) {

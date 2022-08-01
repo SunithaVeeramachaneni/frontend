@@ -3,7 +3,7 @@
   class="height-100"
 >
   <ng-container>
-    <div class="all-dashboards">
+    <div class="all-dashboards custom-form-field-white-color">
       <div class="left" *ngIf="displayAllDashboards && dashboardMode === 'ALL'">
         <mat-form-field
           appearance="outline"
@@ -24,9 +24,9 @@
               <a class="dropdown-dashboard-name-ellipsis"
                 >{{ dashboard.name | translate }}
               </a>
-              <span class="dropdwon-dashboard-default">
+              <a class="dropdwon-dashboard-default">
                 {{ dashboard.isDefault === true ? '(default)' : '' }}
-              </span>
+              </a>
             </mat-option>
           </mat-select>
         </mat-form-field>

@@ -16,22 +16,20 @@
 .widget-config-title {
   font-style: normal;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 110%;
   color: #000000;
   margin-bottom: 0px;
 }
 
 .report-name {
   margin: 0;
-  font-size: 18px;
+  font-size: 110%;
   font-weight: 500;
-
   line-height: 35px;
 }
 
 .description-title {
-  font-size: 15px;
-
+  font-size: 90%;
   line-height: 15px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -41,8 +39,7 @@
 }
 
 .created-time-by {
-  font-size: 15px;
-
+  font-size: 90%;
   line-height: 32px;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -84,7 +81,7 @@
 
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
 }
 

@@ -143,8 +143,8 @@ export class TenantService {
         showMenuOptions: false,
         hideable: true,
         stickable: true,
-        titleStyle: {},
-        subtitleStyle: { 'font-size': '8pt', color: 'darkgray' },
+        titleStyle: { 'font-size': '90%' },
+        subtitleStyle: { 'font-size': '80%', color: 'darkgray' },
         hasPreTextImage: false,
         hasPostTextImage: false
       };

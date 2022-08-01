@@ -16,7 +16,7 @@
   border-radius: 4px;
   display: inline-flex;
   font-family: Lato, sans-serif;
-  font-size: 16px;
+  font-size: 120%;
   font-weight: 600;
   height: 48px;
   justify-content: center;
@@ -41,7 +41,7 @@
 .header-title {
   font-style: normal;
   font-weight: 500;
-  font-size: 22px;
+  font-size: 140%;
   margin-left: 10px;
   color: #000000;
   line-height: 42px;
@@ -50,7 +50,7 @@
 .header-cols {
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 .width-auto {
@@ -79,7 +79,7 @@
 
 .arrow-icon {
   margin-top: 10px;
-  font-size: 45px;
+  font-size: 400%;
 }
 
 .create-new-ins {
@@ -88,7 +88,7 @@
 
 .create-new-ins-btn {
   padding: 0 10px 0 10px;
-  font-size: 14px;
+  font-size: 100%;
 }
 
 .sidebar-minimize-icons {
@@ -125,7 +125,6 @@
 }
 
 ::ng-deep xng-breadcrumb {
-  font-size: 12px;
   margin-left: 45px;
   margin-bottom: 10px;
 }
@@ -144,10 +143,12 @@
 ::ng-deep xng-breadcrumb .xng-breadcrumb-trail {
   margin-bottom: 0px;
   color: rgba(0, 0, 0, 0.6);
+  font-size: 90%;
 }
 
 ::ng-deep xng-breadcrumb .xng-breadcrumb-link {
   color: #3d5afe;
+  font-size: 90%;
 }
 
 ::ng-deep xng-breadcrumb .xng-breadcrumb-link:hover {
@@ -214,7 +215,7 @@
 
   .logo-comes-here-text {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 100%;
     line-height: 15px;
     text-align: center;
     letter-spacing: 0.4px;
@@ -264,7 +265,7 @@
   .loggedin-user-name {
     font-style: normal;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 120%;
     text-align: center;
     color: #000000;
     word-wrap: break-word;
@@ -274,7 +275,7 @@
   .loggedin-user-role {
     font-style: normal;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 100%;
     margin: 0 0 7px 0;
     text-align: center;
     color: #8f8f8f;
@@ -284,7 +285,7 @@
   .loggedin-user-email {
     font-style: normal;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 90%;
     margin: 0 14px;
     text-align: center;
     color: #8f8f8f;
@@ -293,7 +294,7 @@
 
   .profile-signout {
     font-weight: 400;
-    font-size: 16px;
+    font-size: 120%;
     color: #000000;
   }
 }

@@ -1,6 +1,6 @@
 <div class="main-container" *ngIf="permissions$ | async">
   <div class="users-header">
-    <span class="custom-mat-form-field-gray-color">
+    <span class="custom-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-form-field">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>
         <input
@@ -19,11 +19,11 @@
       *appCheckUserHasPermission="[perms.createUser]"
       translate="addUserBtn"
     ></button>
-    <span class="users-count" *ngIf="userCount$ | async as userCount">
-      <span class="no-of-records" *ngIf="userCount.count">
+    <span class="no-of-users" *ngIf="userCount$ | async as userCount">
+      <span class="users-count" *ngIf="userCount.count">
         {{ userCount.count }}
       </span>
-      <span class="no-of-records" *ngIf="!userCount.count">0</span>
+      <span class="users-count" *ngIf="!userCount.count">0</span>
       <span class="users-text">{{
         'usersPlural'
           | translate
