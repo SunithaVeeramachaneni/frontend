@@ -63,9 +63,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,
@@ -87,9 +87,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,
@@ -111,9 +111,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,
@@ -135,9 +135,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,
@@ -159,9 +159,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,
@@ -183,9 +183,9 @@ export const configOptions: ConfigOptions = {
       showMenuOptions: false,
       hideable: true,
       stickable: true,
-      titleStyle: {},
+      titleStyle: { 'font-size': '90%' },
       subtitleStyle: {
-        'font-size': '8pt',
+        'font-size': '80%',
         color: 'darkgray'
       },
       hasPreTextImage: false,

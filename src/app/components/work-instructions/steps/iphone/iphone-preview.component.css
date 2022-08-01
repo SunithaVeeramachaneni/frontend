@@ -40,7 +40,7 @@
 
 .ipad-view-default-content p {
   color: #76767b;
-  font-size: 16px;
+  font-size: 120%;
 
   padding: 0 10px;
   text-align: center;
@@ -121,7 +121,7 @@
   padding: 0.5em;
   color: white;
   font-weight: bold;
-  font-size: 3em;
+  font-size: 100%;
   user-select: none;
   height: 100%;
   opacity: 80%;
@@ -289,7 +289,7 @@
   margin-right: -25px;
 }
 .header-title {
-  font-size: 14px;
+  font-size: 100%;
   font-weight: 600;
   margin-top: -7px;
 }
@@ -326,7 +326,7 @@
   padding: 7px 0 0px 0px;
   border-radius: 50%;
   margin-right: 10px;
-  font-size: 16px;
+  font-size: 120%;
 }
 
 .icon-background-more {
@@ -336,7 +336,7 @@
   height: 25px;
   padding: 7px 6px 0px 0px;
   border-radius: 50%;
-  font-size: 16px;
+  font-size: 120%;
 }
 
 .icons {
@@ -419,22 +419,22 @@
   padding-left: 5px;
   position: relative;
   top: 7px;
+  margin: 0;
 }
 .editor-icons {
   position: relative;
   top: 3px;
-  font-size: 14px;
+  font-size: 100%;
 }
 .editor-header {
   color: white;
   padding: 3px;
   border-radius: 7px;
-  font-size: 11px;
 }
 .editor-step-title {
   text-align: left;
   padding-left: 10px;
-  font-size: 20px;
+  font-size: 160%;
   font-weight: 600;
 
   margin-bottom: 3px;
@@ -443,13 +443,13 @@
 .iPhone-editor-step-title {
   text-align: left;
   padding-left: 80px;
-  font-size: 20px;
+  font-size: 160%;
   font-weight: 600;
 
   margin-bottom: 3px;
 }
 .editor-listvalues .bullet-icon {
-  font-size: 12px;
+  font-size: 80%;
   padding: 0;
   width: auto;
   position: relative;
@@ -460,6 +460,8 @@
   position: relative;
   left: -7px;
   top: -1px;
+  font-size: 85%;
+  font-weight: 500;
 }
 
 .steps-data-iphone {
@@ -485,7 +487,7 @@
 
 .status-bar-left {
   text-align: left;
-  font-size: 10px;
+  font-size: 60%;
   font-weight: bolder;
   margin-left: 10px;
   margin-top: 2px;
@@ -501,7 +503,7 @@
 }
 
 .status-bar-icons {
-  font-size: 12px;
+  font-size: 80%;
   font-weight: bolder;
   width: 10px;
   margin-right: 3px;
@@ -516,7 +518,7 @@
 
 .status-bar-icons-battery {
   transform: rotate(90deg);
-  font-size: 13px;
+  font-size: 90%;
   font-weight: bolder;
   width: 15px;
   height: 10px;
@@ -525,7 +527,7 @@
 }
 
 .status-bar-text {
-  font-size: 9px;
+  font-size: 50%;
   font-weight: bolder;
   position: relative;
   top: -2px;
@@ -568,6 +570,7 @@
   text-align: left;
   font-weight: bold;
   margin: 0 10px;
+  font-size: 130%;
 }
 .header-tab {
   background-color: #e5e5e5;
@@ -585,7 +588,7 @@
   right: -5px;
 }
 .header-tab-icon {
-  font-size: 18px;
+  font-size: 140%;
   margin: 2px 5px 0px 0px;
   width: 20px;
 }
@@ -596,7 +599,7 @@
 }
 
 .header-tab-subtitle {
-  font-size: 14px;
+  font-size: 100%;
   font-weight: 600;
   text-align: left;
   color: black;
@@ -607,8 +610,7 @@
 }
 
 .header-tab-data {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 80%;
   text-align: left;
   color: #484a4d;
   pointer-events: none;
@@ -638,7 +640,7 @@
   border-radius: 50%;
   background-color: #e5e5e5;
   border: none;
-  font-size: 12px;
+  font-size: 80%;
   position: relative;
   top: 5px;
   cursor: default;
@@ -646,7 +648,7 @@
 .header-step-title {
   font-style: normal;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 90%;
   letter-spacing: 0.8px;
   color: #25282b;
   padding-left: 2px;

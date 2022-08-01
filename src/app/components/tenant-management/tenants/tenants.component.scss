@@ -11,20 +11,15 @@
   }
 }
 
-.tenant-header {
-  border-bottom: 1px solid #e7e7e7;
-  padding-bottom: 2px;
-}
-
 .select-products {
   margin: 14px;
   position: relative;
-  top: 4px;
+  top: 8px;
 }
 
 .search-field {
   position: relative;
-  top: 5px;
+  top: 8px;
 }
 
 .count-of-tenants {
@@ -34,7 +29,7 @@
 
 .tenant-count {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 110%;
   color: #212121;
   position: relative;
   right: 7px;
@@ -42,7 +37,7 @@
 
 .tenant-text {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 110%;
   color: #9e9e9e;
 }
 
@@ -57,27 +52,7 @@
 .tenant-content {
   height: 75vh;
   width: 100%;
-}
-
-.mat-select-products {
-  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
-    padding: 2px 0 8px 0 !important;
-  }
-
-  ::ng-deep .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  ::ng-deep
-    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  ::ng-deep .mat-select-arrow {
-    margin-top: 10px !important;
-  }
+  border-top: 1px solid #e7e7e7;
 }
 
 .count-loading {

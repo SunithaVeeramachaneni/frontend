@@ -11,7 +11,7 @@
 .reset-filters-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   line-height: 150%;
   letter-spacing: 0.15px;
   position: relative;
@@ -24,7 +24,7 @@
 .apply-filters-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   letter-spacing: 0.15px;
   float: right;
   border-radius: 4px;
@@ -40,7 +40,7 @@
 .common-filter-search {
   padding: 0;
 
-  font-size: 14px;
+  font-size: 100%;
 }
 
 .common-filter-icon {
@@ -110,7 +110,7 @@
 .filter-modal-heading {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   line-height: 150%;
   align-items: center;
   letter-spacing: 0.15px;
@@ -130,13 +130,4 @@
   .mat-list-item
   .mat-list-item-content {
   padding: 0 !important;
-}
-
-.dynamic-filters-div {
-  ::ng-deep .mat-form-field-label-wrapper {
-    top: -24px !important;
-  }
-  ::ng-deep.mat-form-field-flex > .mat-form-field-infix {
-    padding: 1px 0px 11px 0px !important;
-  }
 }

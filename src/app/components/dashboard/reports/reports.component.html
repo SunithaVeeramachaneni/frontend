@@ -1,7 +1,7 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.reports.url">
     <ng-container *ngIf="userInfo$ | async">
-      <div class="reports-body">
+      <div class="reports-body custom-form-field-gray-color">
         <div class="dis-flex">
           <div class="width-40 toggle-btns">
             <mat-button-toggle-group
@@ -36,7 +36,7 @@
               }}
             </span>
           </div>
-          <div class="width-60 custom-mat-form-field-gray-color">
+          <div class="width-60">
             <button
               class="new-report-btn"
               (click)="openDialog()"

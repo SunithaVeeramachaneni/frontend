@@ -2,7 +2,7 @@
   <div *ngIf="currentRouteUrl === routingUrls.inActiveUsers.url">
     <div class="inactive-users-main-container">
       <div class="inactive-users-header">
-        <div class="width-60 custom-mat-form-field-gray-color">
+        <div class="width-60 custom-form-field-gray-color">
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input
@@ -14,13 +14,13 @@
           </mat-form-field>
         </div>
         <span
-          class="inactive-users-count"
+          class="no-of-inactive-users"
           *ngIf="userCount$ | async as userCount"
         >
-          <span class="no-of-records" *ngIf="userCount.count">
+          <span class="inactive-users-count" *ngIf="userCount.count">
             {{ userCount.count }}
           </span>
-          <span class="no-of-records" *ngIf="!userCount.count">0</span>
+          <span class="inactive-users-count" *ngIf="!userCount.count">0</span>
           <span class="inactive-users-text">{{
             'inactiveUsersPlural'
               | translate

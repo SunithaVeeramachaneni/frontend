@@ -1,4 +1,7 @@
-<div class="report-configuration" [formGroup]="reportNameAndDescForm">
+<div
+  class="report-configuration custom-form-field-gray-color"
+  [formGroup]="reportNameAndDescForm"
+>
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -128,7 +131,7 @@
             </div>
           </div>
         </div>
-        <div class="width-50 text-align-right m-t-5 m-r-10 no-wrap">
+        <div class="width-50 text-align-right m-t-3 m-r-10 no-wrap">
           <button
             mat-stroked-button
             color="primary"
@@ -322,7 +325,7 @@
           (backdropClick)="isPopoverOpen = false"
         >
           <div class="settings-modal">
-            <div class="header custom-mat-form-select">
+            <div class="header">
               <app-chart-variant
                 [report]="reportConfiguration"
                 [chartConfig]="chartConfig"

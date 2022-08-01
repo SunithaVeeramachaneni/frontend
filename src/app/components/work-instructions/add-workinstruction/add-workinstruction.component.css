@@ -24,7 +24,7 @@ input[type='text']:focus {
 }
 
 .wi-status-container ul.wi-title li {
-  padding: 14px 10px;
+  padding: 20px 10px;
   list-style-type: none;
 }
 
@@ -38,7 +38,7 @@ input[type='text']:focus {
 
   font-style: normal;
   font-weight: 600;
-  font-size: 24px;
+  font-size: 200%;
   line-height: 28px;
   color: #000000;
   display: inline-flex;
@@ -68,7 +68,7 @@ input[type='text']:focus {
   cursor: pointer;
   width: 100%;
   background: none;
-  font-size: 22px;
+  font-size: 140%;
   font-weight: 500;
 }
 
@@ -107,7 +107,7 @@ input[type='text']:focus {
 .message {
   font-style: normal;
   font-weight: normal;
-  font-size: 16px;
+  font-size: 120%;
   line-height: 19px;
   display: flex;
   align-items: center;
@@ -127,7 +127,7 @@ input[type='text']:focus {
   left: -8px;
   top: 18px;
   color: #dc3545;
-  font-size: 12px;
+  font-size: 80%;
   white-space: nowrap;
 }
 
@@ -170,7 +170,7 @@ input[type='text']:focus {
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
@@ -184,7 +184,7 @@ input[type='text']:focus {
 .publish {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;

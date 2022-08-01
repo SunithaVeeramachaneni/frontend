@@ -1,6 +1,5 @@
-
-
-.delete, .modal-close {
+.delete,
+.modal-close {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -16,7 +15,7 @@
   display: inline-block;
   flex-grow: 0;
   flex-shrink: 0;
-  font-size: 0;
+  font-size: 0%;
   height: 20px;
   max-height: 20px;
   max-width: 20px;
@@ -28,9 +27,12 @@
   width: 20px;
 }
 
-.delete::before, .modal-close::before, .delete::after, .modal-close::after {
+.delete::before,
+.modal-close::before,
+.delete::after,
+.modal-close::after {
   background-color: white;
-  content: "";
+  content: '';
   display: block;
   left: 50%;
   position: absolute;
@@ -39,25 +41,32 @@
   transform-origin: center center;
 }
 
-.delete::before, .modal-close::before {
+.delete::before,
+.modal-close::before {
   height: 2px;
   width: 50%;
 }
 
-.delete::after, .modal-close::after {
+.delete::after,
+.modal-close::after {
   height: 50%;
   width: 2px;
 }
 
-.delete:hover, .modal-close:hover, .delete:focus, .modal-close:focus {
+.delete:hover,
+.modal-close:hover,
+.delete:focus,
+.modal-close:focus {
   background-color: rgba(10, 10, 10, 0.3);
 }
 
-.delete:active, .modal-close:active {
+.delete:active,
+.modal-close:active {
   background-color: rgba(10, 10, 10, 0.4);
 }
 
-.is-small.delete, .is-small.modal-close {
+.is-small.delete,
+.is-small.modal-close {
   height: 16px;
   max-height: 16px;
   max-width: 16px;
@@ -66,7 +75,8 @@
   width: 16px;
 }
 
-.is-medium.delete, .is-medium.modal-close {
+.is-medium.delete,
+.is-medium.modal-close {
   height: 24px;
   max-height: 24px;
   max-width: 24px;
@@ -75,7 +85,8 @@
   width: 24px;
 }
 
-.is-large.delete, .is-large.modal-close {
+.is-large.delete,
+.is-large.modal-close {
   height: 32px;
   max-height: 32px;
   max-width: 32px;
@@ -84,7 +95,10 @@
   width: 32px;
 }
 
-.modal, .modal-background, .is-overlay, .hero-video {
+.modal,
+.modal-background,
+.is-overlay,
+.hero-video {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -113,7 +127,6 @@
 .modal-content,
 .modal-card {
   margin: 0 20px;
-  max-height: calc(100vh - 160px);
   overflow: auto;
   position: relative;
   width: 100%;
@@ -166,7 +179,7 @@
   color: #363636;
   flex-grow: 1;
   flex-shrink: 0;
-  font-size: 1.5rem;
+  font-size: 200%;
   line-height: 1;
 }
 

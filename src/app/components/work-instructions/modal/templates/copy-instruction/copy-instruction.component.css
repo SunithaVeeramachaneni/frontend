@@ -7,13 +7,13 @@
 
 .copy-header {
   margin: 5px;
-  font-size: 16px;
+  font-size: 120%;
 }
 
 .main-heading {
   font-style: normal;
   font-weight: 600;
-  font-size: 1.5em;
+  font-size: 200%;
   color: #25282b;
   padding: 20px 20px 10px 20px;
 }
@@ -30,7 +30,7 @@
 
   font-style: normal;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 120%;
   color: #25282b;
 }
 .recent-wi-img {
@@ -85,7 +85,7 @@
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 24px;
   display: flex;
   align-items: center;
@@ -116,7 +116,7 @@
 .tabs-recent-title {
   font-style: normal;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 21px;
   color: #25282b;
 }
@@ -124,7 +124,7 @@
 .tabs-recent-subtitle {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: #76767b;
@@ -145,7 +145,7 @@
 .tab-recent-add-title {
   font-style: normal;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 90%;
   line-height: 20px;
   display: flex;
   align-items: center;
@@ -167,7 +167,7 @@
 
 .star-icon {
   position: relative;
-  font-size: 7em;
+  font-size: 100%;
   text-align: center;
   margin: 0 auto;
   padding-left: 220px;
@@ -202,7 +202,7 @@
 .data {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
@@ -221,14 +221,14 @@
 
 .draft-icon {
   font-weight: 500;
-  font-size: 18px;
+  font-size: 140%;
   position: relative;
   top: 2px;
 }
 
 .favorite-icon {
   font-weight: 500;
-  font-size: 22px;
+  font-size: 180%;
   position: relative;
   top: 3px;
 }
@@ -237,7 +237,7 @@
   background: #cccccc;
   padding: 5px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 80%;
 
   font-style: normal;
   font-weight: normal;
@@ -259,7 +259,7 @@
 .dropdown-item-title {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 19px;
   color: #25282b;
   padding-left: 10px;
@@ -334,7 +334,7 @@
 
   font-style: normal;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 110%;
   display: flex;
   align-items: center;
   letter-spacing: 0.15px;
@@ -391,7 +391,7 @@
 h5.modal-title {
   font-style: normal;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 21px;
   color: rgb(37, 40, 43);
   margin-top: 0;

@@ -6,7 +6,7 @@
 
 .roles-header {
   text-align: right;
-  padding: 10px;
+  padding: 10px 15px;
   border-bottom: 1px solid #e7e7e7;
 }
 
@@ -30,7 +30,7 @@
 
 .roles-count {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   color: #212121;
   position: relative;
   right: 7px;
@@ -38,7 +38,7 @@
 
 .roles-text {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   color: #9e9e9e;
 }
 
@@ -74,14 +74,14 @@
   color: #3d5afe;
   border: 1px solid #bdbdbd;
   float: right;
-  margin: 10px 5px;
+  margin: 15px 10px 0 0;
 }
 
 .save-role-btn {
   background-color: #3d5afe;
   color: #ffffff;
   float: right;
-  margin: 10px 5px;
+  margin: 15px 15px 0 0;
   box-shadow: none;
 }
 
@@ -105,7 +105,7 @@
 
 .role-count {
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 80%;
   background: rgba(61, 90, 254, 0.08);
   border-radius: 20px;
   position: absolute;

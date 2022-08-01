@@ -2404,10 +2404,10 @@ describe('TenantComponent', () => {
 
     it('should set header title', () => {
       expect(headerServiceSpy.setHeaderTitle).toHaveBeenCalledWith(
-        'Addding Tenant...'
+        'Adding Tenant...'
       );
       expect(breadcrumbServiceSpy.set).toHaveBeenCalledWith('@tenantName', {
-        label: 'Addding Tenant...'
+        label: 'Adding Tenant...'
       });
     });
 

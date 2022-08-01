@@ -14,7 +14,6 @@
 
 .search-form-field {
   float: right;
-  margin-right: 10px;
   margin-top: 5px;
 }
 
@@ -53,7 +52,7 @@
 .headings {
   font-style: normal;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 160%;
   letter-spacing: 0.15px;
   color: #212121;
 }
@@ -65,16 +64,16 @@
 .new-report-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 100%;
   letter-spacing: 0.15px;
   color: #ffffff;
   border: 1px solid #3d5afe;
   border-radius: 4px;
   background-color: #3d5afe;
-  height: 39px;
+  height: 35px;
   padding: 0px 14px;
   float: right;
-  margin: 8px 10px 0 0;
+  margin: 12px;
   cursor: pointer;
 }
 
@@ -90,7 +89,7 @@
 .text {
   font-style: normal;
   font-weight: normal;
-  font-size: 19px;
+  font-size: 150%;
   text-align: center;
   color: #000000;
   opacity: 0.5;
@@ -104,7 +103,7 @@
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   color: #757575;
 }
 
@@ -119,7 +118,7 @@ th {
   padding-left: 10px;
 }
 
-::ng-deep .dashboard-body .mat-elevation-z8 {
+::ng-deep .reports-body .mat-elevation-z8 {
   box-shadow: none;
 }
 
@@ -129,9 +128,9 @@ th {
 
 .toggle-btns {
   ::ng-deep .mat-button-toggle-group {
-    height: 34px;
+    height: 35px;
     align-items: center;
-    border: 1px solid #f2f2f2;
+    border: none;
   }
   ::ng-deep .mat-button-toggle {
     width: 80px;
@@ -139,5 +138,5 @@ th {
 }
 
 .toogle-btn-text {
-  font-size: 13px;
+  font-size: 90%;
 }

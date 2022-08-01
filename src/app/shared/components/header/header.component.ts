@@ -50,7 +50,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   eventSource: any;
   tenantLogo: any;
   isOpen = false;
-
   private collabWindowSubscription: Subscription;
   private unreadCountSubscription: Subscription;
 

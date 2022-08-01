@@ -11,28 +11,30 @@
 }
 
 .more-users {
-  position: relative;
-  top: -2px;
   float: right;
+  margin-top: 4px;
 }
 
 .count-of-users {
   margin: 0 15px;
 }
 
-.users-count {
-  font-weight: 500;
-  font-size: 16px;
-  color: #212121;
+.no-of-users {
   position: relative;
   top: 10px;
   float: right;
-  margin: 0 10px 0 0px;
+  margin: 5px 10px 0 0px;
+}
+
+.users-count {
+  font-weight: 500;
+  font-size: 110%;
+  color: #212121;
 }
 
 .users-text {
   font-weight: 500;
-  font-size: 16px;
+  font-size: 110%;
   color: #9e9e9e;
   margin-left: 5px;
 }
@@ -41,6 +43,7 @@
   background: #3d5afe;
   color: #ffffff;
   float: right;
+  margin-top: 5px;
 }
 
 .users-content {
