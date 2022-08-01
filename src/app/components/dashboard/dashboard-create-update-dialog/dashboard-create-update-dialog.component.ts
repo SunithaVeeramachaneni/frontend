@@ -5,9 +5,12 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
 import {
@@ -15,7 +18,9 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA
 } from '@angular/material/dialog';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { Dashboard } from 'src/app/interfaces';
+import { DashboardService } from '../services/dashboard.service';
 
 export interface DashboardCreateUpdateDialogData {
   dialogMode: string;
@@ -36,7 +41,8 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateUpdateDashboardDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public dialogData: DashboardCreateUpdateDialogData,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dashboardService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +50,9 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
       dashboardName: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20)
+        Validators.maxLength(20),
+        WhiteSpaceValidator.noWhiteSpace,
+        this.checkIfDashboardTitleExists()
       ])
     });
     if (this.dialogData.dialogMode === 'EDIT') {
@@ -57,13 +65,29 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
     return this.dashboardForm.controls;
   }
 
+  checkIfDashboardTitleExists(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      let existingDashboard: any = null;
+      existingDashboard = this.dashboardService
+        .getDashboards()
+        .find((db: any) => db.name === control.value.trim());
+      if (
+        this.dialogData.dialogMode === 'EDIT' &&
+        this.dialogData.data.name === control.value.trim()
+      ) {
+        existingDashboard = null;
+      }
+      return existingDashboard ? { exists: true } : null;
+    };
+  }
+
   onNoClick(): void {
     this.dialogRef.close();
   }
   createDashboard(event: any) {
     event.stopPropagation();
     this.dialogRef.close({
-      name: this.dashboardForm.value.dashboardName,
+      name: this.dashboardForm.value.dashboardName.trim(),
       isDefault: this.isDefault
     });
   }

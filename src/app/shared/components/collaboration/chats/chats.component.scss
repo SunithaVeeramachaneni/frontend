@@ -70,23 +70,28 @@ $white1: #f5f5f5;
     }
     .userTitle {
       margin-left: 15px;
+      white-space: nowrap;
+      width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       .userName {
-        width: 175px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 175px;
       }
       .userDescription {
         width: 200px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: flex;
       }
     }
   }
   .conversationBody {
     width: 100%;
-    max-height: 60vh;
+    min-height: 55vh;
     overflow-y: auto;
     overflow-x: hidden;
     word-break: break-all;
@@ -415,4 +420,35 @@ p {
 .groupMessageFrom {
   font-size: 70%;
   color: #757575;
+}
+
+.shom-more-members:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
+  border-bottom: 15px solid $white;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.shom-more-members {
+  background-color: $white;
+  border-radius: 8px;
+  box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
+  padding: 16px 0px;
+  width: 210px;
+  position: relative;
+  top: 10px;
+  left: -50px;
+}
+
+.showMoreBtn {
+  color: $blue;
+  cursor: pointer;
+  margin-left: 3px;
 }
