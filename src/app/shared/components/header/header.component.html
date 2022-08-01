@@ -4,11 +4,9 @@
   </button>
 
   <div class="width-50" (click)="closeSidenav()">
-    <div class="sidebar-minimize-icons">
-      <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
-        {{ headerTitle }}
-      </h6>
-    </div>
+    <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
+      {{ headerTitle }}
+    </h6>
     <div class="breadcrumbs">
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
