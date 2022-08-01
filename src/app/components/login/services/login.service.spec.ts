@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { tenantsInfo } from 'src/app/auth-config.service.mock';
-import { userAuthData } from 'src/app/shared/components/header/header.component.mock';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TenantService } from '../../tenant-management/services/tenant.service';
 
 import { LoginService } from './login.service';
+import { userAuthData } from './login.service.mock';
 
 describe('LoginService', () => {
   let service: LoginService;

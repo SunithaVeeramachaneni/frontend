@@ -1,0 +1,62 @@
+$gray-600: #757575;
+$white-color: #ffffff;
+$red-color: #f44336;
+
+.login-error-modal {
+  width: 455px;
+  height: auto;
+  overflow: hidden;
+  padding: 44px;
+  background: $white-color;
+  border-radius: 4px;
+
+  p {
+    margin: 0 0 16px 0;
+  }
+
+  .m-b-2 {
+    margin-bottom: 2px;
+  }
+
+  .title {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .info {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+  }
+
+  .info2 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: $red-color;
+  }
+
+  .info3 {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: $gray-600;
+  }
+
+  .okay-btn {
+    background-color: #006bb5;
+    border: none;
+    color: $white-color;
+    width: 100px;
+    height: 35px;
+    float: right;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 27px;
+  }
+}

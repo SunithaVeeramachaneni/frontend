@@ -16,7 +16,6 @@ import { NgxSpinnerComponent, NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { Tenant } from 'src/app/interfaces';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
@@ -25,10 +24,13 @@ import { cloneDeep } from 'lodash';
 
 import { TenantComponent } from './tenant.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { profileImageBase64 } from 'src/app/shared/components/header/header.component.mock';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { LoginService } from '../../login/services/login.service';
+import {
+  profileImageBase64,
+  userInfo$
+} from '../../login/services/login.service.mock';
 
 const [tenant] = tenants;
 const { id, isActive, createdBy, createdAt, updatedAt, ...createTenant } =
@@ -45,7 +47,6 @@ const updateTenant = {
   rdbms: restRdbms,
   nosql: restNosql
 } as Tenant;
-declare const ENCRYPTION_KEY: string;
 const regUrl =
   '^(http://www.|https://www.|http://|https://)[a-z0-9]+([-.]{1}[a-z0-9]+)*.([a-z]{2,5}|[0-9]{1,3})(:[0-9]{1,5})?(/.*)?$';
 
@@ -57,7 +58,7 @@ describe('TenantComponent', () => {
   let toastServiceSpy: ToastService;
   let spinnerSpy: NgxSpinnerService;
   let activatedRouteSpy: ActivatedRoute;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let headerServiceSpy: HeaderService;
   let imageUtilsSpy: ImageUtils;
   let router: Router;
@@ -78,8 +79,8 @@ describe('TenantComponent', () => {
       data: of({}),
       queryParams: of({})
     });
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['decrypt'], {
-      permissionsAction$: permissions$
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
@@ -124,8 +125,8 @@ describe('TenantComponent', () => {
           useValue: activatedRouteSpy
         },
         {
-          provide: CommonService,
-          useValue: commonServiceSpy
+          provide: LoginService,
+          useValue: loginServiceSpy
         },
         {
           provide: HeaderService,
@@ -992,50 +993,50 @@ describe('TenantComponent', () => {
             });
           });
 
-          describe('scope', () => {
+          describe('scopes', () => {
             it('should validate require', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: ''
+                    scopes: ''
                   }
                 }
               });
 
-              expect(component.tenantForm.get('erps.sap.scope').errors).toEqual(
-                {
-                  required: true
-                }
-              );
+              expect(
+                component.tenantForm.get('erps.sap.scopes').errors
+              ).toEqual({
+                required: true
+              });
             });
 
-            it('should validate valid scope', () => {
+            it('should validate valid scopes', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: '{}'
+                    scopes: '{}'
                   }
                 }
               });
 
-              expect(component.tenantForm.get('erps.sap.scope').errors).toEqual(
-                {
-                  invalidScope: true
-                }
-              );
+              expect(
+                component.tenantForm.get('erps.sap.scopes').errors
+              ).toEqual({
+                invalidScope: true
+              });
             });
 
             it('should validate noWhiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
-                    scope: '  '
+                    scopes: '  '
                   }
                 }
               });
 
               expect(
-                component.tenantForm.get('erps.sap.scope').errors.noWhiteSpace
+                component.tenantForm.get('erps.sap.scopes').errors.noWhiteSpace
               ).toBeTrue();
             });
           });
@@ -2433,8 +2434,9 @@ describe('TenantComponent', () => {
 
     it('should patch form with tenant data', () => {
       const newTenant = cloneDeep(createTenant);
-      newTenant.erps.sap.scope = JSON.stringify(
-        newTenant.erps.sap.scope,
+      const cloneTenant = cloneDeep(tenant);
+      newTenant.erps.sap.scopes = JSON.stringify(
+        newTenant.erps.sap.scopes,
         null,
         ' '
       );
@@ -2457,7 +2459,7 @@ describe('TenantComponent', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantDomainName: 'tenantDomainName' })
         .and.returnValue(of({ count: 0 }));
-
+      spyOn(component, 'setTenantFormData').and.callThrough();
       (
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')
           .get as jasmine.Spy
@@ -2465,6 +2467,7 @@ describe('TenantComponent', () => {
 
       component.ngOnInit();
 
+      expect(component.setTenantFormData).toHaveBeenCalledWith();
       expect(component.tenantForm.getRawValue()).toEqual({
         ...newTenant,
         id
@@ -2522,6 +2525,12 @@ describe('TenantComponent', () => {
   describe('ngAfterViewInit', () => {
     it('should define function', () => {
       expect(component.ngAfterViewInit).toBeDefined();
+    });
+  });
+
+  describe('setTenantFormData', () => {
+    it('should define function', () => {
+      expect(component.setTenantFormData).toBeDefined();
     });
   });
 
@@ -2592,8 +2601,8 @@ describe('TenantComponent', () => {
     let newTenant: Tenant;
     beforeEach(() => {
       newTenant = cloneDeep(createTenant);
-      newTenant.erps.sap.scope = JSON.stringify(
-        newTenant.erps.sap.scope,
+      newTenant.erps.sap.scopes = JSON.stringify(
+        newTenant.erps.sap.scopes,
         null,
         ' '
       );
@@ -2714,7 +2723,7 @@ describe('TenantComponent', () => {
 
       component.tenantForm.markAsDirty();
       const rawValue = component.tenantForm.getRawValue();
-      rawValue.erps.sap.scope = JSON.parse(rawValue.erps.sap.scope);
+      rawValue.erps.sap.scopes = JSON.parse(rawValue.erps.sap.scopes);
       // eslint-disable-next-line @typescript-eslint/no-shadow
       const { id, tenantId, tenantName, rdbms, nosql, ...restTenant } =
         rawValue;
@@ -2828,6 +2837,7 @@ describe('TenantComponent', () => {
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'queryParams')
           .get as jasmine.Spy
       ).and.returnValue(of({ edit: false }));
+      spyOn(component, 'setTenantFormData');
       const navigateSpy = spyOn(router, 'navigate');
       component.ngOnInit();
       tenantDe
@@ -2839,6 +2849,7 @@ describe('TenantComponent', () => {
         .triggerEventHandler('click', null);
 
       expect(navigateSpy).not.toHaveBeenCalled();
+      expect(component.setTenantFormData).toHaveBeenCalledWith();
       expect(component.tenantForm.disabled).toBeTrue();
       expect(component.editTenant).toBeFalse();
     });
@@ -2884,30 +2895,30 @@ describe('TenantComponent', () => {
       expect(component.scopeValidator).toBeDefined();
     });
 
-    it('should return null if scope is empty', () => {
+    it('should return null if scopes are empty', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: ''
+            scopes: ''
           }
         }
       });
 
       expect(
-        component.tenantForm.get('erps.sap.scope').errors.invalidScope
+        component.tenantForm.get('erps.sap.scopes').errors.invalidScope
       ).toBeUndefined();
     });
 
-    it('should return invalidScope true if scope is empty', () => {
+    it('should return invalidScope true if scopes are empty', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: '{}'
+            scopes: '{}'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
@@ -2916,42 +2927,43 @@ describe('TenantComponent', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope: '{"race": "", "mWorkOrder": "", "mInventory":""}'
+            scopes:
+              '{"race": { "scope": "", "collection": "" }, "mWorkOrder": { "scope": "", "collection": "" }, "mInventory": { "scope": "", "collection": "" }}'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
 
-    it('should return invalidScope true if scope is invalid', () => {
+    it('should return invalidScope true if scopes are invalid', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope:
-              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory}'
+            scopes:
+              '{"race": { "scope": "race", "collection": "collection" }, "mWorkOrder": { "scope": "mWorkOrder", "collection": "collection" }, "mInventory": { "scope": "mInventory", "collection": "collection ] }'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toEqual({
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toEqual({
         invalidScope: true
       });
     });
 
-    it('should return null if scope is valid', () => {
+    it('should return null if scopes is valid', () => {
       component.tenantForm.patchValue({
         erps: {
           sap: {
-            scope:
-              '{"race": "race", "mWorkOrder": "mWorkOrder", "mInventory":"mInventory"}'
+            scopes:
+              '{"race": { "scope": "race", "collection": "collection" }, "mWorkOrder": { "scope": "mWorkOrder", "collection": "collection" }, "mInventory": { "scope": "mInventory", "collection": "collection" } }'
           }
         }
       });
 
-      expect(component.tenantForm.get('erps.sap.scope').errors).toBeNull();
+      expect(component.tenantForm.get('erps.sap.scopes').errors).toBeNull();
     });
   });
 

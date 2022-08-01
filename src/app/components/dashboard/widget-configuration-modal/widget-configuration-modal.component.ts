@@ -49,6 +49,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
 import { cloneDeep } from 'lodash';
+import { LoginService } from '../../login/services/login.service';
 
 export interface WidgetConfigurationModalData {
   dashboard: Dashboard;
@@ -126,7 +127,8 @@ export class WidgetConfigurationModalComponent implements OnInit {
     private dialogRef: MatDialogRef<WidgetConfigurationModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: WidgetConfigurationModalData,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -296,7 +298,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
     const { datasetFields, countFields, ...chartDetails } = this.chartConfig;
     const { id: reportId, filtersApplied } = this.selectedReport;
     const { id: dashboardId } = this.data.dashboard;
-    const createdBy = this.commonService.getUserName();
+    const createdBy = this.loginService.getLoggedInUserName();
     const isTable = this.chartVarient === 'table' ? true : false;
     const groupBy = this.reportConfigurationForTable.groupBy;
     const columns: Column[] = this.configOptions.allColumns;

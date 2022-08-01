@@ -1,0 +1,12 @@
+<div class="access-denied-container">
+  <p class="info1">{{ 'accessDenied' | translate }}</p>
+  <p class="info2">
+    {{
+      'dontHavePermission'
+        | translate
+          : {
+              url: url
+            }
+    }}
+  </p>
+</div>

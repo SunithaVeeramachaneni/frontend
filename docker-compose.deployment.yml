@@ -61,7 +61,6 @@ services:
       dockerfile: .docker/nginx.${DEPLOYMENT_ENV}.dockerfile
       args:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
-        - ENCRYPTION_KEY=${ENCRYPTION_KEY}
         - TENANTS_COUNT=${TENANTS_COUNT}
     restart: always
     ports:
@@ -245,10 +244,6 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - SLACK_CLIENT_ID=${SLACK_CLIENT_ID}
-      - SLACK_CLIENT_SECRET=${SLACK_CLIENT_SECRET}
-      - CLIENT_SIGNING_SECRET=${CLIENT_SIGNING_SECRET}
-      - SLACK_STATE_SECRET=${SLACK_STATE_SECRET}
     ports:
       - '8007:8007'
     networks:

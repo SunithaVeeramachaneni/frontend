@@ -1,18 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { Buffer } from 'buffer';
 import { Base64HelperService } from '../../work-instructions/services/base64-helper.service';
 import { UsersService } from '../../user-management/services/users.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { UserDetails } from 'src/app/interfaces';
+import { UserInfo } from 'src/app/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { NgxMatIntlTelInputComponent } from 'ngx-mat-intl-tel-input';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-profile',
@@ -26,17 +26,17 @@ export class ProfileComponent implements OnInit {
   profileImage: string | SafeResourceUrl;
   profileEditMode = false;
   disableRemoveProfile = false;
-  userInfo: UserDetails;
+  userInfo: UserInfo;
 
   constructor(
     private fb: FormBuilder,
-    private commonService: CommonService,
     private base64Service: Base64HelperService,
     private userService: UsersService,
     private spinner: NgxSpinnerService,
     private toast: ToastService,
     private imageUtils: ImageUtils,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit {
       contact: [{ value: '', disabled: true }]
     });
 
-    this.commonService.userInfo$.subscribe((userInfo) => {
+    this.loginService.loggedInUserInfo$.subscribe((userInfo) => {
       if (Object.keys(userInfo).length) {
         const {
           firstName,
@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit {
           lastName,
           title,
           email,
-          roles: roles.map((role) => role.name).join(','),
+          roles: roles.map((role) => role.name).join(', '),
           profileImage: Buffer.from(profileImage).toString(),
           contact
         });
@@ -94,7 +94,7 @@ export class ProfileComponent implements OnInit {
       cancelReportRef.afterClosed().subscribe((res) => {
         if (res === 'yes') {
           this.profileEditMode = false;
-          this.commonService.setUserInfo(this.userInfo);
+          this.loginService.setLoggedInUserInfo(this.userInfo);
           this.profileForm.controls.contact.disable();
           if (this.userInfo.contact === null) {
             this.conatct.reset();
@@ -103,7 +103,7 @@ export class ProfileComponent implements OnInit {
       });
     } else {
       this.profileEditMode = false;
-      this.commonService.setUserInfo(this.userInfo);
+      this.loginService.setLoggedInUserInfo(this.userInfo);
       this.profileForm.controls.contact.disable();
     }
   }
@@ -154,7 +154,7 @@ export class ProfileComponent implements OnInit {
           if (Object.keys(response).length) {
             this.profileForm.reset(this.profileForm.getRawValue());
             this.userInfo = { ...this.userInfo, ...response };
-            this.commonService.setUserInfo(this.userInfo);
+            this.loginService.setLoggedInUserInfo(this.userInfo);
             this.toast.show({
               text: `Profile updated successfully`,
               type: 'success'

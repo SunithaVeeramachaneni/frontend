@@ -1,6 +1,6 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div *ngIf="currentRouteUrl === routingUrls.reports.url">
-    <ng-container *ngIf="permissions$ | async">
+    <ng-container *ngIf="userInfo$ | async">
       <div class="reports-body">
         <div class="dis-flex">
           <div class="width-40 toggle-btns">

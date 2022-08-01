@@ -147,7 +147,6 @@ export class AddWorkinstructionComponent
       .select(getSteps)
       .subscribe((steps) => (this.steps = steps));
 
-    this.commonService.minimizeSidebar(true);
     this.stepDetailsSaveSubscription =
       this.wiCommonSvc.stepDetailsSaveAction$.subscribe((data) => {
         this.saveStatus = data;

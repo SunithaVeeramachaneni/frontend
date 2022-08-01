@@ -1,8 +1,4 @@
-<div class="login-main-page">
-  <h1 class="login-heading">
-    <span [innerHTML]="'loginHeader' | translate"></span>
-  </h1>
-
+<app-background>
   <form
     class="centered"
     [formGroup]="loginForm"
@@ -86,14 +82,4 @@
       translate="next"
     ></button>
   </form>
-  <img
-    src="assets/login/graphics_left.svg"
-    alt="graphics left"
-    class="graphics-left"
-  />
-  <img
-    src="assets/login/graphics_right.svg"
-    alt="graphics right"
-    class="graphics-right"
-  />
-</div>
+</app-background>

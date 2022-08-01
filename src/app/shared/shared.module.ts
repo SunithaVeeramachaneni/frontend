@@ -24,7 +24,10 @@ import { CreateGroupComponent } from './components/collaboration/chats/create-gr
 import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { BackgroundComponent } from './components/background/background.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,10 @@ import { OverlayModule } from '@angular/cdk/overlay';
     CreateGroupComponent,
     CallsComponent,
     NumberToKMPipe,
-    CheckUserHasPermissionDirective
+    CheckUserHasPermissionDirective,
+    AccessDeniedComponent,
+    PermissionsRevokeInfoModalComponent,
+    BackgroundComponent
   ],
   imports: [
     FormsModule,
@@ -67,7 +73,8 @@ import { OverlayModule } from '@angular/cdk/overlay';
     CommonFilterComponent,
     HeaderComponent,
     NumberToKMPipe,
-    CheckUserHasPermissionDirective
+    CheckUserHasPermissionDirective,
+    BackgroundComponent
   ],
   providers: [DatePipe]
 })
