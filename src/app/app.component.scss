@@ -197,6 +197,12 @@ mat-sidenav {
   }
 }
 
-::ng-deep .sidebar-loader .ngx-shimmer {
-  margin: 5px 12px;
+::ng-deep .sidebar-close-loader .ngx-shimmer {
+  margin: 5px 16px;
+  width: 55% !important;
+}
+
+::ng-deep .sidebar-open-loader .ngx-shimmer {
+  margin: 5px 13px;
+  width: 90% !important;
 }

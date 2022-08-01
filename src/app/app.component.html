@@ -149,8 +149,10 @@
 </mat-sidenav-container>
 <ng-template #loadingMenu>
   <ngx-shimmer-loading
-    [width]="'55%'"
     [height]="'40px'"
-    class="sidebar-loader"
+    [ngClass]="{
+      'sidebar-close-loader': menuOpenClose === false,
+      'sidebar-open-loader': menuOpenClose === true
+    }"
   ></ngx-shimmer-loading>
 </ng-template>
