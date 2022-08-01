@@ -1,6 +1,6 @@
 .user-modal {
   width: 480px;
-  height: 430px;
+  height: 450px;
   overflow: hidden;
   padding: 20px;
   background: #ffffff;
@@ -10,6 +10,11 @@
 .dialog-close-btn {
   float: right;
   cursor: pointer;
+}
+
+.title {
+  font-size: 120%;
+  font-weight: 500;
 }
 
 .image-upload > input {

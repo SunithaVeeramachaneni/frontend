@@ -4,10 +4,13 @@
   margin-top: -30px;
 
   .background-heading {
-    padding: 22px;
+    padding: 50px 30px;
     font-weight: 800;
-    font-size: 44px;
     letter-spacing: 1.5px;
+
+    span {
+      font-size: 250%;
+    }
   }
 
   .logo {

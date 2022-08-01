@@ -1,7 +1,7 @@
 .kit-number {
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 100%;
   line-height: 19px;
   align-items: center;
   color: #000000;
@@ -10,7 +10,7 @@
 .date-priority-label {
   font-style: normal;
   font-weight: normal;
-  font-size: 13px;
+  font-size: 85%;
   line-height: 19px;
   display: flex;
   align-items: center;
@@ -21,7 +21,7 @@
 .parts-available-label {
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 14px;
   align-items: center;
   text-align: center;
@@ -35,7 +35,7 @@
 .waiting-on-parts-label {
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 14px;
   align-items: center;
   text-align: center;
@@ -59,6 +59,11 @@
   padding-top: 3px;
   font-weight: 500;
   color: black;
+  font-size: 90%;
+}
+
+.assignee-text {
+  font-size: 100%;
 }
 
 .list-icons {

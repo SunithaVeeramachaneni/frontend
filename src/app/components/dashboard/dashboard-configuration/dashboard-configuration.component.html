@@ -37,9 +37,9 @@
             <a class="dropdown-dashboard-name-ellipsis">
               {{ dashboard.name | translate }}
             </a>
-            <span class="dropdwon-dashboard-default">{{
-              dashboard.isDefault === true ? '(default)' : ''
-            }}</span>
+            <a class="dropdwon-dashboard-default">
+              {{ dashboard.isDefault === true ? '(default)' : '' }}
+            </a>
           </mat-option>
         </ng-template>
       </ng-container>

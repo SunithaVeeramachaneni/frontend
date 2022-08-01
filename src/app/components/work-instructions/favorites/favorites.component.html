@@ -1,6 +1,6 @@
 <ng-container *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <div
-    class="favorites-main custom-mat-form-field-gray-color"
+    class="favorites-main custom-form-field-gray-color"
     *ngIf="
       currentRouteUrl === routingUrls.favorites.url ||
       currentRouteUrl.indexOf(routeWithSearch) === 0

@@ -3,7 +3,6 @@ $white-color: #ffffff;
 $black-color: #000000;
 $gray-600: #757575;
 $gray-900: #212121;
-$font-size-14: 14px;
 $border: 1px solid #e0e0e0;
 $blue-color: #3d5afe;
 
@@ -18,6 +17,11 @@ $blue-color: #3d5afe;
 .main-tenant-container {
   background-color: #ffffff;
   position: relative;
+  height: 100%;
+
+  ::ng-deep .mat-tab-label {
+    opacity: 1;
+  }
 }
 
 .tenant-header {
@@ -27,7 +31,7 @@ $blue-color: #3d5afe;
 
 .adding-tenant-text {
   font-weight: 500;
-  font-size: 24px;
+  font-size: 150%;
   color: #000000;
   position: relative;
   top: 5px;
@@ -59,13 +63,13 @@ $blue-color: #3d5afe;
 
 .scroll-content {
   overflow-y: scroll;
-  height: 60vh;
+  height: 65vh;
   padding: 10px;
 }
 
 .sub-headings {
   margin: 10px 0 10px 0;
-  font-size: $font-size-14;
+  font-size: 100%;
   font-weight: 500;
 }
 
@@ -86,35 +90,6 @@ $blue-color: #3d5afe;
 .nextbtn {
   display: flex;
   border-bottom: 1px solid #cccccc;
-}
-
-.custom-mat-form-field-white-color {
-  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-    border-radius: 8px;
-    background: #ffffff;
-  }
-
-  ::ng-deep .mat-form-field-label-wrapper {
-    top: -24px !important;
-  }
-  ::ng-deep.mat-form-field-flex > .mat-form-field-infix {
-    padding: 2px 0px 10px 0px !important;
-  }
-
-  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
-    margin: 0;
-  }
-
-  ::ng-deep
-    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  ::ng-deep .mat-select-arrow {
-    margin-top: 10px;
-  }
 }
 
 .add-url-icon {
@@ -165,7 +140,7 @@ $blue-color: #3d5afe;
 
   .remove-btn {
     color: $blue-color;
-    font-size: 13px;
+    font-size: 90%;
     font-weight: 500;
     border: none;
     background-color: transparent;
@@ -179,7 +154,7 @@ $blue-color: #3d5afe;
   .info1 {
     font-style: normal;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 110%;
     color: $gray-600;
     line-height: 28px;
     letter-spacing: 0.35px;
@@ -188,7 +163,7 @@ $blue-color: #3d5afe;
   .info2 {
     font-style: normal;
     font-weight: 400;
-    font-size: $font-size-14;
+    font-size: 100%;
     color: $gray-900;
     line-height: 28px;
     letter-spacing: 0.35px;
@@ -197,7 +172,7 @@ $blue-color: #3d5afe;
   .info3 {
     font-style: normal;
     font-weight: 500;
-    font-size: $font-size-14;
+    font-size: 100%;
     color: $gray-900;
     line-height: 22px;
   }
@@ -205,7 +180,7 @@ $blue-color: #3d5afe;
   .info4 {
     font-style: normal;
     font-weight: 400;
-    font-size: $font-size-14;
+    font-size: 100%;
     color: $gray-600;
     line-height: 20px;
   }
@@ -220,7 +195,7 @@ $blue-color: #3d5afe;
     .title {
       font-style: normal;
       font-weight: 700;
-      font-size: 20px;
+      font-size: 160%;
       margin: 0;
       padding: 16px;
       color: $black-color;
@@ -282,7 +257,7 @@ $blue-color: #3d5afe;
 
     .logo-comes-here-text {
       font-weight: 600;
-      font-size: $font-size-14;
+      font-size: 100%;
       line-height: 18px;
       text-align: center;
       letter-spacing: 0.4px;
@@ -303,12 +278,12 @@ $blue-color: #3d5afe;
 .ideal-dimension-text {
   letter-spacing: 0.35px;
   color: $gray-600;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 .ideal-dimension-width-height {
   letter-spacing: 0.35px;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 .cursor-pointer {

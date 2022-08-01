@@ -6,7 +6,7 @@
 >
 </ngx-spinner>
 
-<div class="modal-card p-10 copy-ins custom-mat-form-field-gray-color">
+<div class="modal-card p-10 copy-ins custom-form-field-gray-color">
   <h1 mat-dialog-title class="copy-header">
     Copy Work Instructions
     <button (click)="cancel()" class="cancel-icon">
@@ -114,7 +114,7 @@
             >
               <app-dummy #favourites [value]="result"></app-dummy>
               <tr *ngFor="let obj of result">
-                <td class="copy-ins-coverimages">
+                <td class="width-10 copy-ins-coverimages">
                   <img
                     class="coverImg"
                     [hidden]="!getImageSrc(obj.Cover_Image, obj.Id)"
@@ -122,12 +122,12 @@
                     alt=""
                   />
                 </td>
-                <td>
+                <td class="width-70">
                   <span class="tabs-recent-title">{{ obj.WI_Name }}</span
                   ><br />
                   <span class="tabs-recent-subtitle">{{ obj.categories }}</span>
                 </td>
-                <td>
+                <td class="width-20">
                   <button
                     class="tabs-recent-add"
                     data-dismiss="modal"

@@ -15,17 +15,16 @@
   padding: 15px 0px;
   color: #000000;
   background: #fff;
-  font-size: 1.5rem;
-
+  font-size: 200%;
   font-weight: 600;
 }
 
 .mat-icon-circle {
-  font-size: 35px;
+  font-size: 300%;
   vertical-align: middle;
   position: relative;
-  left: -10px;
-  top: -5px;
+  left: -15px;
+  top: -10px;
   color: #bdbdbd;
 }
 .mat-icon-star {
@@ -37,7 +36,7 @@
 }
 
 .arrow {
-  font-size: 16px;
+  font-size: 120%;
   position: relative;
   top: 3px;
   cursor: pointer;
@@ -54,7 +53,7 @@ table {
 }
 
 td {
-  font-size: 14px;
+  font-size: 100%;
 }
 
 thead th {
@@ -63,21 +62,21 @@ thead th {
   text-align: left;
   font-weight: 500;
   color: #000;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 tbody th {
   text-align: left;
   font-weight: 500;
   color: #000;
-  font-size: 15px;
+  font-size: 110%;
 }
 
 tbody td {
   color: #212121;
   text-align: left;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
 }
 
 tbody tr td:nth-child(5) {
@@ -97,7 +96,7 @@ tbody tr td:nth-child(5) {
 .create-wi-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 120%;
   line-height: 28px;
   letter-spacing: 0.15px;
   color: #3d5afe;
@@ -120,7 +119,7 @@ tbody tr td:nth-child(5) {
 .files-data {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 19px;
   align-items: center;
   color: #76767b;
@@ -129,7 +128,7 @@ tbody tr td:nth-child(5) {
 .files-names {
   font-style: normal;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 110%;
   line-height: 21px;
   color: #25282b;
 }
@@ -144,7 +143,7 @@ tbody tr td:nth-child(5) {
 .save-files-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 22px;
   padding: 5px 10px;
   letter-spacing: 0.5px;
@@ -157,7 +156,7 @@ tbody tr td:nth-child(5) {
 .cancel-files-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 22px;
   padding: 5px 10px;
   letter-spacing: 0.5px;

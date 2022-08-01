@@ -1,4 +1,4 @@
-<div class="filter-form-fields custom-mat-form-select">
+<div class="filter-form-fields">
   <mat-form-field appearance="outline" class="width-100">
     <mat-icon matPrefix>search</mat-icon>
     <input
@@ -16,7 +16,7 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <form [formGroup]="filtersForm" class="dynamic-filters-div">
+  <form [formGroup]="filtersForm" class="custom-form-field-gray-color">
     <mat-list
       role="list"
       *ngFor="let filterForm of filters.controls; let i = index"
