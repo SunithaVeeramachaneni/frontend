@@ -14,9 +14,10 @@ import {
   TableColumn,
   TableEvent,
   Tenant,
-  TenantData
+  TenantData,
+  UserInfo
 } from 'src/app/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { LoginService } from '../../login/services/login.service';
 import { TenantService } from '../services/tenant.service';
 
 @Component({
@@ -86,7 +87,7 @@ export class TenantsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   deactivate = false;
-  permissions$: Observable<Permission[]>;
+  userInfo$: Observable<UserInfo>;
   readonly perms = perms;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
@@ -94,7 +95,7 @@ export class TenantsComponent implements OnInit {
   constructor(
     private tenantService: TenantService,
     private router: Router,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   ngOnInit(): void {
@@ -152,8 +153,8 @@ export class TenantsComponent implements OnInit {
       })
     );
 
-    this.permissions$ = this.commonService.permissionsAction$.pipe(
-      tap((permissions) => this.prepareMenuActions(permissions))
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
   }
 
@@ -215,7 +216,7 @@ export class TenantsComponent implements OnInit {
     const menuActions = [];
 
     if (
-      this.commonService.checkUserHasPermission(permissions, 'UPDATE_TENANT')
+      this.loginService.checkUserHasPermission(permissions, 'UPDATE_TENANT')
     ) {
       menuActions.push({
         title: 'Edit',

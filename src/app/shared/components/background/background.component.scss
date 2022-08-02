@@ -1,0 +1,33 @@
+.background-container {
+  background: #f0f7ff;
+  height: 100vh;
+  margin-top: -30px;
+
+  .background-heading {
+    padding: 50px 30px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+
+    span {
+      font-size: 250%;
+    }
+  }
+
+  .logo {
+    position: absolute;
+    right: 20px;
+    top: 55px;
+  }
+
+  .graphics-left {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .graphics-right {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+}

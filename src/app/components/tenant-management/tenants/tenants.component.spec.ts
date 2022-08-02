@@ -15,11 +15,6 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
 import { defaultLimit } from 'src/app/app.constants';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
-import {
-  permissions,
-  permissions$
-} from 'src/app/shared/services/common.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { TenantService } from '../services/tenant.service';
 import {
@@ -31,12 +26,14 @@ import { TenantsComponent } from './tenants.component';
 import { columns, configOptions } from './tenants.component.mock';
 import { cloneDeep } from 'lodash';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo, userInfo$ } from '../../login/services/login.service.mock';
 
 describe('TenantsComponent', () => {
   let component: TenantsComponent;
   let fixture: ComponentFixture<TenantsComponent>;
   let tenantServiceSpy: TenantService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let router: Router;
   let tenantsDe: DebugElement;
   let tenantsEl: HTMLElement;
@@ -49,11 +46,11 @@ describe('TenantsComponent', () => {
       'getTenantsCount$',
       'updateConfigOptionsFromColumns'
     ]);
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
       ['checkUserHasPermission'],
       {
-        permissionsAction$: permissions$
+        loggedInUserInfo$: userInfo$
       }
     );
     await TestBed.configureTestingModule({
@@ -77,7 +74,7 @@ describe('TenantsComponent', () => {
       providers: [
         TranslateService,
         { provide: TenantService, useValue: tenantServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   });
@@ -103,8 +100,8 @@ describe('TenantsComponent', () => {
     (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
       .withArgs(columns, { ...configOptionsCopy, allColumns: [] })
       .and.returnValue(configOptionsCopy);
-    (commonServiceSpy.checkUserHasPermission as jasmine.Spy)
-      .withArgs(permissions, 'UPDATE_TENANT')
+    (loginServiceSpy.checkUserHasPermission as jasmine.Spy)
+      .withArgs(userInfo.permissions, 'UPDATE_TENANT')
       .and.returnValue(true);
     fixture.detectChanges();
   });
@@ -143,9 +140,11 @@ describe('TenantsComponent', () => {
     });
 
     it('should prepare config options menu actions', () => {
-      component.permissions$.subscribe((response) => {
-        expect(response).toEqual(permissions);
-        expect(prepareMenuActionsSpy).toHaveBeenCalledWith(response);
+      component.userInfo$.subscribe((response) => {
+        expect(response).toEqual(userInfo);
+        expect(prepareMenuActionsSpy).toHaveBeenCalledWith(
+          userInfo.permissions
+        );
       });
     });
   });
@@ -259,7 +258,7 @@ describe('TenantsComponent', () => {
 
     it('should update config options, if user has update tenant permission', () => {
       (prepareMenuActionsSpy as jasmine.Spy).and.callThrough();
-      component.prepareMenuActions(permissions);
+      component.prepareMenuActions(userInfo.permissions);
 
       expect(component.configOptions).toEqual({
         ...configOptionsCopy,
@@ -277,11 +276,11 @@ describe('TenantsComponent', () => {
 
     it('should not update config options, if user doesnt have update tenant permission', () => {
       (prepareMenuActionsSpy as jasmine.Spy).and.callThrough();
-      (commonServiceSpy.checkUserHasPermission as jasmine.Spy)
-        .withArgs(permissions, 'UPDATE_TENANT')
+      (loginServiceSpy.checkUserHasPermission as jasmine.Spy)
+        .withArgs(userInfo.permissions, 'UPDATE_TENANT')
         .and.returnValue(false);
 
-      component.prepareMenuActions(permissions);
+      component.prepareMenuActions(userInfo.permissions);
 
       expect(component.configOptions).toEqual(configOptionsCopy);
     });

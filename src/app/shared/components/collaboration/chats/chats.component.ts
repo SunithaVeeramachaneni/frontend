@@ -16,7 +16,7 @@ import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | '';
@@ -95,7 +95,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private emitterService: EmitterService,
-    private commonService: CommonService,
+    private loginService: LoginService,
     private imageUtils: ImageUtils
   ) {}
 
@@ -113,7 +113,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
         this.addMessageToConversation(event);
       });
 
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.chatService
       .getConversations$(userInfo.email)
       .pipe(
@@ -147,10 +147,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
                 const invitedUsers = [];
                 if (userInfo.collaborationType === 'slack') {
                   if (
-                    this.targetUser.UserSlackDetail &&
-                    this.targetUser.UserSlackDetail.slackID
+                    this.targetUser.slackDetail &&
+                    this.targetUser.slackDetail.slackID
                   ) {
-                    invitedUsers.push(this.targetUser.UserSlackDetail.slackID);
+                    invitedUsers.push(this.targetUser.slackDetail.slackID);
                   }
                 } else if (userInfo.collaborationType === 'msteams') {
                   invitedUsers.push(this.targetUser.email);
@@ -360,7 +360,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   isLoggedInUser = (user) => {
-    const userInfo = this.commonService.getUserInfo();
+    const userInfo = this.loginService.getLoggedInUserInfo();
     return userInfo.email === user.email;
   };
 

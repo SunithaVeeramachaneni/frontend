@@ -29,8 +29,9 @@ import {
   routingUrls
 } from '../../../app.constants';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
+import { LoginService } from '../../login/services/login.service';
 
 const categoryDetails = [
   {
@@ -137,6 +138,7 @@ describe('DraftsComponent', () => {
   let commonServiceSpy: CommonService;
   let headerServiceSpy: HeaderService;
   let activatedRouteSpy: ActivatedRoute;
+  let loginServiceSpy: LoginService;
   let draftsDe: DebugElement;
   let draftsEl: HTMLElement;
 
@@ -157,14 +159,16 @@ describe('DraftsComponent', () => {
       'getBase64Image'
     ]);
     commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      currentRouteUrlAction$: of('/work-instructions/drafts'),
-      permissionsAction$: permissions$
+      currentRouteUrlAction$: of('/work-instructions/drafts')
     });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
     ]);
     activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [], {
       queryParamMap: of(convertToParamMap({}))
+    });
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
 
     TestBed.configureTestingModule({
@@ -187,7 +191,8 @@ describe('DraftsComponent', () => {
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: CommonService, useValue: commonServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
-        { provide: ActivatedRoute, useValue: activatedRouteSpy }
+        { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   }));

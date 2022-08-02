@@ -12,9 +12,13 @@ describe('RequestInterceptorService', () => {
   let commonServiceSpy: CommonService;
 
   beforeEach(() => {
-    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', ['getConfiguration']);
+    oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [
+      'getConfiguration'
+    ]);
     appServiceSpy = jasmine.createSpyObj('AppService', ['postRefreshToken']);
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['getProtectedResources']);
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [
+      'getProtectedResources'
+    ]);
 
     TestBed.configureTestingModule({
       providers: [

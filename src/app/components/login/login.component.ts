@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import * as hash from 'object-hash';
 import { Tenant } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -36,7 +37,8 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams.returnUrl;
+    const returnUrl = this.route.snapshot.queryParams.returnUrl;
+    this.returnUrl = returnUrl ? returnUrl : '';
     this.loginForm = this.fb.group({
       companyOrDomainName: [
         '',
@@ -88,6 +90,9 @@ export class LoginComponent implements OnInit {
       });
       const { tenantId: configId, protectedResources } = tenantInfo;
       const { node, sap } = protectedResources || {};
+
+      sessionStorage.removeItem(hash(node.urls));
+      sessionStorage.removeItem(hash(sap.urls));
 
       this.commonService.setProtectedResources(node);
       this.commonService.setProtectedResources(sap);

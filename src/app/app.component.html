@@ -18,45 +18,57 @@
         class="menu-item"
         *ngFor="let menuitem of menus; let i = index"
       >
-        <li
-          routerLinkActive="selected"
-          routerDirection="root"
-          title="{{ menuitem.title }}"
-          *appCheckUserHasPermission="[menuitem.permission]"
-          class="dis-flex"
-        >
-          <a
-            mat-list-item
-            class="menu-name"
-            [routerLink]="menuitem.url"
-            routerLinkActive="active"
-            (click)="selectedListElement(menuitem.title)"
+        <ng-container *ngIf="userInfo$ | async as userInfo; else loadingMenu">
+          <li
+            routerLinkActive="selected"
+            routerDirection="root"
+            title="{{ menuitem.title }}"
+            *appCheckUserHasPermission="[menuitem.permission]"
+            class="dis-flex"
           >
-            <img
-              [src]="
-                getImage(menuitem.imageName, selectedMenu === menuitem.title)
+            <a
+              mat-list-item
+              class="menu-name"
+              [routerLink]="menuitem.url"
+              routerLinkActive="active"
+              (click)="selectedListElement(menuitem.title)"
+            >
+              <img
+                [src]="
+                  getImage(menuitem.imageName, selectedMenu === menuitem.title)
+                "
+                class="sidebar-icons"
+              />
+              <span class="menu-title" *ngIf="menuOpenClose">
+                {{ menuitem.title }}
+              </span>
+            </a>
+            <ng-container
+              *ngIf="
+                checkUserHasSubMenusPermissions(
+                  userInfo.permissions,
+                  menuitem.subPages,
+                  menuitem.permission
+                )
               "
-              class="sidebar-icons"
-            />
-            <span class="menu-title" *ngIf="menuOpenClose">
-              {{ menuitem.title }}
-            </span>
-          </a>
-          <a
-            *ngIf="menuitem.subPages !== null && menuOpenClose"
-            class="arrow-margin"
-            (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
-          >
-            <img
-              src="assets/sidebar-icons/right-arrow.svg"
-              [hidden]="menuitem.showSubMenu === true"
-            />
-            <img
-              src="assets/sidebar-icons/down-arrow.svg"
-              [hidden]="menuitem.showSubMenu === false"
-            />
-          </a>
-        </li>
+            >
+              <a
+                *ngIf="menuitem.subPages !== null && menuOpenClose"
+                class="arrow-margin"
+                (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
+              >
+                <img
+                  src="assets/sidebar-icons/right-arrow.svg"
+                  [hidden]="menuitem.showSubMenu === true"
+                />
+                <img
+                  src="assets/sidebar-icons/down-arrow.svg"
+                  [hidden]="menuitem.showSubMenu === false"
+                />
+              </a>
+            </ng-container>
+          </li>
+        </ng-container>
 
         <div
           *ngIf="
@@ -64,11 +76,11 @@
           "
           class="m-l-70"
         >
-          <ng-container *ngIf="permissions$ | async as permissions">
+          <ng-container *ngIf="userInfo$ | async as userInfo">
             <ng-container
               *ngIf="
                 checkUserHasSubMenusPermissions(
-                  permissions,
+                  userInfo.permissions,
                   menuitem.subPages,
                   menuitem.permission
                 )
@@ -125,7 +137,22 @@
           this.currentRouteUrl === '/login' || isUserAuthenticated === false
       }"
     >
-      <router-outlet></router-outlet>
+      <router-outlet>
+        <ngx-shimmer-loading
+          *ngIf="displayLoader$ | async"
+          [width]="'100%'"
+          [height]="'100%'"
+        ></ngx-shimmer-loading>
+      </router-outlet>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<ng-template #loadingMenu>
+  <ngx-shimmer-loading
+    [height]="'40px'"
+    [ngClass]="{
+      'sidebar-close-loader': menuOpenClose === false,
+      'sidebar-open-loader': menuOpenClose === true
+    }"
+  ></ngx-shimmer-loading>
+</ng-template>

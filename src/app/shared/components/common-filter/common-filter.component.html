@@ -1,4 +1,4 @@
-<span class="custom-mat-form-field-gray-color">
+<span class="custom-form-field-gray-color">
   <mat-form-field appearance="outline" class="search-bar">
     <mat-icon matPrefix class="search-icon">search</mat-icon>
     <input
@@ -31,7 +31,7 @@
   (backdropClick)="isPopoverOpen = true"
 >
   <div
-    class="filter-modal"
+    class="filter-modal custom-form-field-white-color"
     *ngIf="
       this.title === 'Spare Parts Control Center' ||
       this.title === 'Maintenance Control Center'
@@ -44,7 +44,7 @@
       </button>
     </div>
     <form #form="ngForm">
-      <div class="filter-form-fields custom-mat-form-select">
+      <div class="filter-form-fields">
         <mat-form-field appearance="outline" class="mat-field">
           <mat-label>{{ 'showOverdue' | translate }}</mat-label>
           <mat-select
@@ -169,7 +169,10 @@
     </form>
   </div>
 
-  <div class="filter-report-modal" *ngIf="this.title === undefined">
+  <div
+    class="filter-report-modal custom-form-field-white-color"
+    *ngIf="this.title === undefined"
+  >
     <div class="m-b-10 filter-header">
       <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
       <button class="filter-modal-cancel" (click)="isPopoverOpen = false">
@@ -177,10 +180,7 @@
       </button>
     </div>
     <form>
-      <div
-        class="filter-form-fields custom-mat-form-select"
-        style="max-height: 350px"
-      >
+      <div class="filter-form-fields" style="max-height: 350px">
         <mat-form-field appearance="outline" class="width-100">
           <mat-icon matPrefix>search</mat-icon>
           <input

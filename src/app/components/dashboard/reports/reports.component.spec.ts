@@ -22,6 +22,8 @@ import { ReportsComponent } from './reports.component';
 import { configOptions, reports, reports$ } from './reports.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 
 describe('ReportsComponent', () => {
   let component: ReportsComponent;
@@ -31,6 +33,7 @@ describe('ReportsComponent', () => {
   let reportConfigServiceSpy: ReportConfigurationService;
   let toastServiceSpy: ToastService;
   let headerServiceSpy: HeaderService;
+  let loginServiceSpy: LoginService;
 
   beforeEach(async () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
@@ -56,6 +59,9 @@ describe('ReportsComponent', () => {
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
     ]);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
 
     await TestBed.configureTestingModule({
       declarations: [ReportsComponent],
@@ -84,7 +90,8 @@ describe('ReportsComponent', () => {
           useValue: reportConfigServiceSpy
         },
         { provide: ToastService, useValue: toastServiceSpy },
-        { provide: HeaderService, useValue: headerServiceSpy }
+        { provide: HeaderService, useValue: headerServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   });

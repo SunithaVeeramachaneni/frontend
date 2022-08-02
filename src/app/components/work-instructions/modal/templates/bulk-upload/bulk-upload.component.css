@@ -31,10 +31,11 @@ ul.bulk-upload-instructions-list li {
 .building-wi {
   font-style: normal;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 130%;
   line-height: 32px;
   letter-spacing: 0.15px;
   color: rgba(0, 0, 0, 0.87);
+  margin: 0;
 }
 .hrline-modal {
   margin: 0px 0px 0px -20px;
@@ -43,7 +44,7 @@ ul.bulk-upload-instructions-list li {
 .cancel-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -55,7 +56,7 @@ ul.bulk-upload-instructions-list li {
 .publishnow-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -66,7 +67,7 @@ ul.bulk-upload-instructions-list li {
 .okay-btn {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
   text-transform: uppercase;

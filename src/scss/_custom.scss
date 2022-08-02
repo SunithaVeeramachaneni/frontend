@@ -319,8 +319,7 @@ a {
 .custom-modal-card .modal-card-head {
   background: none;
   border-bottom: 0;
-
-  font-size: 1rem;
+  font-size: 120%;
   font-weight: 700;
   padding: 10px 20px 0 20px;
 }
@@ -441,7 +440,7 @@ a {
 
 .no-records {
   text-align: center;
-  font-size: 16px;
+  font-size: 120%;
   font-weight: 600;
 
   background: white;
@@ -450,7 +449,7 @@ a {
 
 .no-search-records {
   text-align: center;
-  font-size: 16px;
+  font-size: 120%;
   font-weight: 600;
   position: relative;
   left: 150%;
@@ -473,7 +472,7 @@ a {
 }
 
 .steps-block {
-  height: calc(100vh - 110px);
+  height: calc(100vh - 130px);
   overflow-y: scroll;
   overflow-x: hidden;
   border-bottom: 1px solid #cccccc;
@@ -595,7 +594,7 @@ body {
 }
 
 .mat-error {
-  font-size: 12px;
+  font-size: 80%;
   color: #f44336;
   margin-bottom: 10px;
 }
@@ -658,7 +657,7 @@ body {
 
   font-style: normal;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 110%;
   display: flex;
   align-items: center;
   letter-spacing: 0.15px;

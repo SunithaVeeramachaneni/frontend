@@ -1,4 +1,7 @@
-<div class="dashboard-body" *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+<div
+  class="dashboard-body"
+  *ngIf="currentRouteUrl$ | async as currentRouteUrl"
+>
   <ng-container *ngIf="currentRouteUrl === routingUrls.dashboard.url">
     <app-dashboards></app-dashboards>
   </ng-container>

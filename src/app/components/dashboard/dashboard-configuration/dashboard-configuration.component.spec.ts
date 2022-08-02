@@ -14,10 +14,10 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ToastService } from 'src/app/shared/toast';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 import {
   dashboards,
   dashboards$
@@ -34,18 +34,14 @@ describe('DashboardConfigurationComponent', () => {
   let fixture: ComponentFixture<DashboardConfigurationComponent>;
   let dialogSpy: MatDialog;
   let spinnerSpy: NgxSpinnerService;
-  let commonServiceSpy: CommonService;
   let widgetServiceSpy: WidgetService;
   let dashboardServiceSpy: DashboardService;
+  let loginServiceSpy: LoginService;
   let toastSpy: ToastService;
 
   beforeEach(async () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      minimizeSidebarAction$: of(true),
-      permissionsAction$: permissions$
-    });
     widgetServiceSpy = jasmine.createSpyObj('WidgetService', [
       'updateWidget$',
       'getDahboardWidgetsWithReport$',
@@ -63,6 +59,9 @@ describe('DashboardConfigurationComponent', () => {
         })
       }
     );
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -88,10 +87,10 @@ describe('DashboardConfigurationComponent', () => {
         TranslateService,
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
         { provide: WidgetService, useValue: widgetServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         { provide: ToastService, useValue: toastSpy }
       ]
     }).compileComponents();
@@ -129,18 +128,14 @@ describe('TestDashboardConfigurationHostComponent', () => {
   let fixture: ComponentFixture<TestDashboardConfigurationHostComponent>;
   let dialogSpy: MatDialog;
   let spinnerSpy: NgxSpinnerService;
-  let commonServiceSpy: CommonService;
   let widgetServiceSpy: WidgetService;
   let dashboardServiceSpy: DashboardService;
+  let loginServiceSpy: LoginService;
   let toastSpy: ToastService;
 
   beforeEach(async () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
     spinnerSpy = jasmine.createSpyObj('NgxSpinnerService', ['show', 'hide']);
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      minimizeSidebarAction$: of(true),
-      permissionsAction$: permissions$
-    });
     widgetServiceSpy = jasmine.createSpyObj('WidgetService', [
       'updateWidget$',
       'getDahboardWidgetsWithReport$',
@@ -158,6 +153,9 @@ describe('TestDashboardConfigurationHostComponent', () => {
         })
       }
     );
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -184,10 +182,10 @@ describe('TestDashboardConfigurationHostComponent', () => {
         TranslateService,
         { provide: MatDialog, useValue: dialogSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
         { provide: WidgetService, useValue: widgetServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         { provide: ToastService, useValue: toastSpy }
       ]
     }).compileComponents();

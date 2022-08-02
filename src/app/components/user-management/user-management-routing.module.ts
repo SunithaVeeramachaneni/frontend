@@ -4,22 +4,36 @@ import { RolesComponent } from './roles/roles.component';
 
 import { UserManagementContainerComponent } from './user-management-container/user-management-container.component';
 import { InactiveUsersComponent } from './inactive-users/inactive-users.component';
+import { AuthGuard } from 'src/app/shared/guards/auth.guard';
+import { permissions } from 'src/app/app.constants';
 
 const routes: Routes = [
   {
     path: '',
     component: UserManagementContainerComponent,
-    data: { breadcrumb: { label: 'User Management' } },
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: { label: 'User Management' },
+      permissions: [permissions.viewUsers]
+    },
     children: [
       {
         path: 'roles-permissions',
         component: RolesComponent,
-        data: { breadcrumb: { label: 'Roles & Permissions' } }
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Roles & Permissions' },
+          permissions: [permissions.viewRoles]
+        }
       },
       {
         path: 'inactive-users',
         component: InactiveUsersComponent,
-        data: { breadcrumb: { label: 'Inactive Users' } }
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Inactive Users' },
+          permissions: [permissions.viewInactiveUsers]
+        }
       }
     ]
   }

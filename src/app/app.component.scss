@@ -28,7 +28,7 @@ li {
 .menu-item li {
   font-style: normal;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 110%;
   color: #76767b;
   cursor: pointer;
   padding: 4px 0;
@@ -49,7 +49,7 @@ li {
 .submenu {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   color: #8b96cc;
   cursor: pointer;
   height: 42px !important;
@@ -111,7 +111,7 @@ li.selected .sidebar-icons {
 
 .menu-name {
   color: #727caf;
-  font-size: 14px;
+  font-size: 100%;
 }
 
 .menu-name.active {
@@ -195,4 +195,14 @@ mat-sidenav {
   ::ng-deep .mat-list-base {
     padding-top: 0 !important;
   }
+}
+
+::ng-deep .sidebar-close-loader .ngx-shimmer {
+  margin: 10px 16px 0 16px;
+  width: 55% !important;
+}
+
+::ng-deep .sidebar-open-loader .ngx-shimmer {
+  margin: 10px 13px 0 13px;
+  width: 90% !important;
 }

@@ -30,8 +30,8 @@ import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
-import { CommonService } from 'src/app/shared/services/common.service';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 
 const categoryDetails = [
   {
@@ -113,7 +113,7 @@ describe('CategoriesComponent', () => {
   let base64HelperServiceSpy: Base64HelperService;
   let cdrfSpy: ChangeDetectorRef;
   let wiCommonServiceSpy: WiCommonService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let categoriesDe: DebugElement;
   let categoriesEl: HTMLElement;
   let catSubscribeComponent = CategoryComponent;
@@ -151,8 +151,8 @@ describe('CategoriesComponent', () => {
         fetchCategoriesAction$: of(true)
       }
     );
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      permissionsAction$: permissions$
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
 
     TestBed.configureTestingModule({
@@ -176,7 +176,7 @@ describe('CategoriesComponent', () => {
         { provide: ChangeDetectorRef, useValue: cdrfSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: WiCommonService, useValue: wiCommonServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         provideMockStore()
       ]
     }).compileComponents();

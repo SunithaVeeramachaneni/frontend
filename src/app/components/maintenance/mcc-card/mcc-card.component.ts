@@ -1,7 +1,6 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   EventEmitter,
   OnInit,
   Input,
@@ -9,11 +8,11 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { Observable } from 'rxjs';
-import { Permission } from 'src/app/interfaces';
+import { Permission, UserInfo } from 'src/app/interfaces';
 import { tap } from 'rxjs/operators';
 import { permissions as perms } from 'src/app/app.constants';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-mcc-card',
@@ -25,19 +24,19 @@ export class MCCCardComponent implements OnInit {
   @Input('workOrder') workOrder;
   @Output('assign') assign = new EventEmitter();
   isDropdownOpen = false;
-  permissions$: Observable<Permission[]>;
+  userInfo$: Observable<UserInfo>;
   permissions: Permission[];
   readonly perms = perms;
 
   constructor(
     public translateService: TranslateService,
     private sanitizer: DomSanitizer,
-    private commonService: CommonService
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
-    this.permissions$ = this.commonService.permissionsAction$.pipe(
-      tap((permissions) => (this.permissions = permissions))
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      tap(({ permissions = [] }) => (this.permissions = permissions))
     );
   }
 
@@ -46,7 +45,7 @@ export class MCCCardComponent implements OnInit {
   }
   getImageSrc = (source: string) => {
     if (source) {
-      let base64Image = 'data:image/jpeg;base64,' + source;
+      const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
   };
@@ -57,7 +56,7 @@ export class MCCCardComponent implements OnInit {
   };
 
   checkUserHasPermission(checkPermissions: string) {
-    return this.commonService.checkUserHasPermission(
+    return this.loginService.checkUserHasPermission(
       this.permissions,
       checkPermissions
     );

@@ -1,5 +1,5 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { CommonService } from '../services/common.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Directive({
   selector: '[appCheckUserHasPermission]'
@@ -8,9 +8,24 @@ export class CheckUserHasPermissionDirective {
   @Input()
   set appCheckUserHasPermission(permissions: string[]) {
     if (permissions) {
-      this.commonService.permissionsAction$.subscribe((perms) => {
+      this.permissions = permissions;
+      this.updateView();
+    }
+  }
+  hasView = false;
+  permissions: string[];
+
+  constructor(
+    private templateRef: TemplateRef<any>,
+    private container: ViewContainerRef,
+    private loginService: LoginService
+  ) {}
+
+  updateView() {
+    this.loginService.loggedInUserInfo$.subscribe(
+      ({ permissions: perms = [] }) => {
         const hasPermission = perms.find((per) =>
-          permissions.includes(per.name)
+          this.permissions.includes(per.name)
         );
         if (hasPermission && !this.hasView) {
           this.container.createEmbeddedView(this.templateRef);
@@ -19,14 +34,7 @@ export class CheckUserHasPermissionDirective {
           this.container.clear();
           this.hasView = false;
         }
-      });
-    }
+      }
+    );
   }
-  hasView = false;
-
-  constructor(
-    private templateRef: TemplateRef<any>,
-    private container: ViewContainerRef,
-    private commonService: CommonService
-  ) {}
 }
