@@ -60,6 +60,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   selectedView = 'CHAT';
   messageText = '';
   messageDeliveryProgress = false;
+  attachmentUploadInProgress = false;
   downloadInProgress = false;
   conversations: any = [];
   selectedConversation: Conversation;
@@ -186,11 +187,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
         const { action, message, channel } = updateConversation;
         const conversationsList = initial.data;
         if (action === 'update_latest_message' && channel?.length) {
-          conversationsList.forEach((conv) => {
+          let convIndex;
+          conversationsList.forEach((conv, index) => {
             if (conv.id === channel) {
+              convIndex = index;
               conv.latest = message;
+              conv.latest.unread = true;
             }
           });
+          if (convIndex && convIndex > -1) {
+            const latestConv = conversationsList[convIndex];
+            conversationsList.splice(convIndex, 1);
+            conversationsList.unshift(latestConv);
+          }
         } else if (action === 'create_conversation') {
           conversationsList.unshift(message);
         }
@@ -223,7 +232,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
       return;
     }
     this.downloadInProgress = true;
-    this.chatService.downloadFileSlack$(file.url_private, info).subscribe(
+
+    this.chatService.downloadAttachment$(file, info).subscribe(
       (data) => {
         const url = window.URL.createObjectURL(data);
         const a = document.createElement('a');
@@ -250,6 +260,20 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.conversationHistory = [];
     this.conversationHistoryLoaded = false;
     this.selectedConversation = conversation;
+    this.selectedConversation.latest.unread = false;
+    this.selectedConversation.latest.unreadCount = 0;
+    if (
+      this.selectedConversation.members &&
+      this.selectedConversation.members.length
+    ) {
+      this.selectedConversation.members.forEach((member) => {
+        setTimeout(() => {
+          member.profileImage = this.imageUtils.getImageSrc(
+            Buffer.from(member.profileImage).toString()
+          );
+        }, 0);
+      });
+    }
 
     this.conversationHistoryInit$ = this.chatService
       .getConversationHistory$(conversation.id, info)
@@ -393,10 +417,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   selectFile() {
+    this.attachmentUploadInProgress = false;
     const fileUpload = document.getElementById(
       'uploadFile'
     ) as HTMLInputElement;
     fileUpload.onchange = () => {
+      this.attachmentUploadInProgress = true;
       // Note: enable the below for loop if we need to support uploading of multiple files.
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       // for (let index = 0; index < fileUpload.files.length; index++) {
@@ -412,6 +438,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
         .uploadFileToConversation$(conversationId, formData, info)
         .subscribe(
           (response) => {
+            this.attachmentUploadInProgress = false;
             this.sendReceiveMessages$.next({
               action: 'send',
               message: {
@@ -427,6 +454,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
             });
           },
           (err) => {
+            this.attachmentUploadInProgress = false;
             // TODO: Display toasty message
           }
         );

@@ -441,10 +441,48 @@ p {
   border-radius: 8px;
   box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
   padding: 16px 0px;
-  width: 210px;
+  width: 275px;
   position: relative;
   top: 10px;
-  left: -50px;
+  left: -80px;
+  .memberList {
+    margin: 0px;
+    padding: 0px 15px;
+  }
+}
+
+.unreadMessage {
+  font-weight: 800 !important;
+}
+.member {
+  display: flex;
+  align-items: center;
+  padding: 5px 0px;
+  .memberName {
+    font-weight: 500;
+  }
+  .memberTitle {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .icon-button {
+    background: none;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    width: 40px;
+    border-radius: 45px;
+    margin-top: -15px;
+    margin-right: 10px;
+  }
+  .icon-button .icon {
+    width: 35px !important;
+    height: 35px !important;
+    border-radius: 45px;
+    margin-top: 20px;
+  }
 }
 
 .showMoreBtn {

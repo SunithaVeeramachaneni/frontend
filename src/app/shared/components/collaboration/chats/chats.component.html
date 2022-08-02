@@ -49,8 +49,14 @@
               >{{ conversation.topic }}
             </b>
           </div>
-          <div mat-line>
-            {{ conversation.latest.message }}
+          <div
+            mat-line
+            [innerHTML]="conversation.latest.message"
+            [ngClass]="{
+              unreadMessage: conversation.latest.unread === true
+            }"
+          >
+            <!-- {{ conversation.latest.message }} -->
           </div>
           <mat-divider class="horiz-dividerConv"></mat-divider>
         </mat-list-item>
@@ -124,15 +130,25 @@
                 (backdropClick)="isOpen = false"
               >
                 <div class="shom-more-members">
-                  <ul
-                    *ngFor="
-                      let member of selectedConversation.members
-                        | slice: 2:selectedConversation.members.length;
-                      let i = index
-                    "
-                  >
-                    <li>
-                      {{ member.firstName }}
+                  <ul class="memberList">
+                    <li
+                      *ngFor="
+                        let member of selectedConversation.members
+                          | slice: 2:selectedConversation.members.length;
+                        let i = index
+                      "
+                      class="member"
+                    >
+                      <div class="icon-button" mat-list-icon>
+                        <img class="icon" [src]="member.profileImage" />
+                      </div>
+                      <div mat-line>
+                        <div class="memberName">
+                          {{ member.firstName }} {{ member.lastName }}
+                        </div>
+                        <div class="memberTitle">{{ member.title }}</div>
+                      </div>
+                      <mat-divider class="horiz-divider"></mat-divider>
                     </li>
                   </ul>
                 </div>
@@ -142,6 +158,11 @@
         </div>
       </div>
       <div>
+        <!--
+          TODO: UX/Wireframe to be provided for enabling this...  
+          <button mat-icon-button color="primary">
+          <mat-icon>group_add</mat-icon>
+        </button> -->
         <button
           disabled
           mat-icon-button
@@ -329,7 +350,14 @@
           (click)="selectFile()"
           class="attachmentIconBtn"
         >
-          <mat-icon class="attachmentIcon">attach_file</mat-icon>
+          <mat-icon class="attachmentIcon" *ngIf="!attachmentUploadInProgress"
+            >attach_file</mat-icon
+          >
+          <mat-spinner
+            *ngIf="attachmentUploadInProgress"
+            strokeWidth="5"
+            diameter="25"
+          ></mat-spinner>
         </button>
         <div class="messageInputGroup">
           <input

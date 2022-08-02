@@ -119,12 +119,18 @@ export class ChatService {
     );
   };
 
-  downloadFileSlack$ = (
-    fileId: string,
+  downloadAttachment$ = (
+    file: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<Blob> => {
     const userInfo = this.commonService.getUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    let fileId: string;
+    if (userInfo.collaborationType === 'msteams') {
+      fileId = file.name;
+    } else if (userInfo.collaborationType === 'slack') {
+      fileId = file.url_private;
+    }
     return this.appService._downloadFile(
       apiURL,
       `files/download?url=${fileId}`,
