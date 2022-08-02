@@ -51,6 +51,20 @@ describe('TestCheckUserHasPermissionDirectiveHostComponent', () => {
     expect(fixture.debugElement.queryAll(By.css('div')).length).toEqual(0);
   });
 
+  it('should include else template if permissions are not present', () => {
+    fixture = TestBed.overrideComponent(
+      TestCheckUserHasPermissionDirectiveComponent,
+      {
+        set: {
+          template: `<div *appCheckUserHasPermission="['VIEW_DASHBOARDS_UNKOWN_PERMISSION']; else permissionNotAvailable"></div><ng-template #permissionNotAvailable><p>permissionNotAvailable</p></ng-template>`
+        }
+      }
+    ).createComponent(TestCheckUserHasPermissionDirectiveComponent);
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.queryAll(By.css('p')).length).toEqual(1);
+  });
+
   it('should not include div if permissions are empty', () => {
     fixture = TestBed.overrideComponent(
       TestCheckUserHasPermissionDirectiveComponent,

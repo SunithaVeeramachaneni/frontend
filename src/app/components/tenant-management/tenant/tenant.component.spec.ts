@@ -2433,23 +2433,6 @@ describe('TenantComponent', () => {
     });
 
     it('should patch form with tenant data', () => {
-      const newTenant = cloneDeep(createTenant);
-      const cloneTenant = cloneDeep(tenant);
-      newTenant.erps.sap.scopes = JSON.stringify(
-        newTenant.erps.sap.scopes,
-        null,
-        ' '
-      );
-
-      newTenant.msTeamsConfiguration = {
-        msTeamsTenantID: '',
-        msTeamsClientID: '',
-        msTeamsClientSecret: '',
-        msTeamsSharepointSiteID: '',
-        msTeamsRSAPrivateKey: '',
-        msTeamsRSAPublicKey: ''
-      };
-
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantId: 'tenantId' })
         .and.returnValue(of({ count: 0 }));
@@ -2459,7 +2442,7 @@ describe('TenantComponent', () => {
       (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
         .withArgs({ tenantDomainName: 'tenantDomainName' })
         .and.returnValue(of({ count: 0 }));
-      spyOn(component, 'setTenantFormData').and.callThrough();
+      spyOn(component, 'setTenantFormData');
       (
         Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')
           .get as jasmine.Spy
@@ -2467,22 +2450,8 @@ describe('TenantComponent', () => {
 
       component.ngOnInit();
 
+      expect(component.tenantData).toEqual(tenant);
       expect(component.setTenantFormData).toHaveBeenCalledWith();
-      expect(component.tenantForm.getRawValue()).toEqual({
-        ...newTenant,
-        id
-      });
-      expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
-      expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
-      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
-      expect(
-        component.tenantForm.get('tenantAdmin.firstName').disabled
-      ).toBeTrue();
-      expect(
-        component.tenantForm.get('tenantAdmin.lastName').disabled
-      ).toBeTrue();
-      expect(component.tenantForm.get('tenantAdmin.title').disabled).toBeTrue();
-      expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
     });
 
     it('should not disable from, if edit query param is true', () => {
@@ -2531,6 +2500,55 @@ describe('TenantComponent', () => {
   describe('setTenantFormData', () => {
     it('should define function', () => {
       expect(component.setTenantFormData).toBeDefined();
+    });
+
+    fit('should set tenant form data', () => {
+      const newTenant = cloneDeep(createTenant);
+      newTenant.erps.sap.scopes = JSON.stringify(
+        newTenant.erps.sap.scopes,
+        null,
+        ' '
+      );
+      newTenant.msTeamsConfiguration = {
+        msTeamsTenantID: '',
+        msTeamsClientID: '',
+        msTeamsClientSecret: '',
+        msTeamsSharepointSiteID: '',
+        msTeamsRSAPrivateKey: '',
+        msTeamsRSAPublicKey: ''
+      };
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantId: 'tenantId' })
+        .and.returnValue(of({ count: 0 }));
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantName: 'tenantName' })
+        .and.returnValue(of({ count: 0 }));
+      (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
+        .withArgs({ tenantDomainName: 'tenantDomainName' })
+        .and.returnValue(of({ count: 0 }));
+      spyOn(component, 'setTenantFormData').and.callThrough();
+      (
+        Object.getOwnPropertyDescriptor(activatedRouteSpy, 'data')
+          .get as jasmine.Spy
+      ).and.returnValue(of({ tenant }));
+
+      component.ngOnInit();
+
+      expect(component.tenantForm.getRawValue()).toEqual({
+        ...newTenant,
+        id
+      });
+      expect(component.tenantForm.get('tenantId').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantName').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantDomainName').disabled).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.firstName').disabled
+      ).toBeTrue();
+      expect(
+        component.tenantForm.get('tenantAdmin.lastName').disabled
+      ).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.title').disabled).toBeTrue();
+      expect(component.tenantForm.get('tenantAdmin.email').disabled).toBeTrue();
     });
   });
 
