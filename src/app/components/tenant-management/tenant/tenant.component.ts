@@ -425,6 +425,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         const tenantLogo = Buffer.from(tenant.tenantLogo).toString();
         this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
         tenant.tenantLogo = tenantLogo;
+      } else {
+        this.tenantLogo = '';
       }
 
       this.tenantForm.patchValue(tenant);
@@ -666,6 +668,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           .subscribe((response) => {
             this.spinner.hide();
             if (Object.keys(response).length) {
+              this.tenantData = { id, ...tenant };
               this.tenantForm.reset(this.tenantForm.getRawValue());
               this.toast.show({
                 text: `Tenant '${tenantName}' updated successfully`,
