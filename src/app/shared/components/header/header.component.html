@@ -4,16 +4,21 @@
   </button>
 
   <div class="width-50" (click)="closeSidenav()">
-    <h6 class="header-title" *ngIf="this.headerTitle$ | async as headerTitle">
-      {{ headerTitle }}
-    </h6>
+    <div>
+      <h6
+        class="header-title"
+        *ngIf="this.headerTitle$ | async as headerTitle; else headerLoading"
+      >
+        {{ headerTitle }}
+      </h6>
+    </div>
     <div class="breadcrumbs">
       <xng-breadcrumb separator=">"></xng-breadcrumb>
     </div>
   </div>
   <div
     class="header-cols width-50"
-    *ngIf="userInfo$ | async as userDetails"
+    *ngIf="userInfo$ | async as userDetails; else userDetailsLoading"
     (click)="closeSidenav()"
   >
     <div *ngIf="userDetails.collaborationType === 'msteams'">
@@ -148,3 +153,20 @@ Logo comes
     </ng-template>
   </div>
 </mat-toolbar>
+<ng-template #headerLoading>
+  <div class="header-loading">
+    <ngx-shimmer-loading
+      [width]="'40%'"
+      [height]="'30px'"
+    ></ngx-shimmer-loading>
+  </div>
+</ng-template>
+
+<ng-template #userDetailsLoading>
+  <div class="user-details-loading">
+    <ngx-shimmer-loading
+      [width]="'100%'"
+      [height]="'50px'"
+    ></ngx-shimmer-loading>
+  </div>
+</ng-template>

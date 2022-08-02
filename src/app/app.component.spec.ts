@@ -22,6 +22,7 @@ import {
   permissions$,
   userAuthData$
 } from './components/login/services/login.service.mock';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -82,7 +83,8 @@ describe('AppComponent', () => {
         RouterTestingModule,
         AppMaterialModules,
         BrowserAnimationsModule,
-        SharedModule
+        SharedModule,
+        NgxShimmerLoadingModule
       ],
       declarations: [AppComponent, MockComponent(NgxSpinnerComponent)],
       providers: [

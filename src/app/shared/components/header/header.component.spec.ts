@@ -2,6 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import {
@@ -57,7 +58,8 @@ describe('HeaderComponent', () => {
         AppMaterialModules,
         BreadcrumbModule,
         RouterTestingModule,
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        NgxShimmerLoadingModule
       ],
       providers: [
         { provide: HeaderService, useValue: headerServiceSpy },

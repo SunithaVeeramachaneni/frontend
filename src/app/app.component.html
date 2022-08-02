@@ -22,7 +22,7 @@
           routerLinkActive="selected"
           routerDirection="root"
           title="{{ menuitem.title }}"
-          *appCheckUserHasPermission="[menuitem.permission]"
+          *appCheckUserHasPermission="[menuitem.permission]; else loadingMenu"
           class="dis-flex"
         >
           <a
@@ -141,9 +141,18 @@
         <ngx-shimmer-loading
           *ngIf="displayLoader$ | async"
           [width]="'100%'"
-          [height]="'100vh'"
+          [height]="'100%'"
         ></ngx-shimmer-loading>
       </router-outlet>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<ng-template #loadingMenu>
+  <ngx-shimmer-loading
+    [height]="'40px'"
+    [ngClass]="{
+      'sidebar-close-loader': menuOpenClose === false,
+      'sidebar-open-loader': menuOpenClose === true
+    }"
+  ></ngx-shimmer-loading>
+</ng-template>
