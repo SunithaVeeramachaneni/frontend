@@ -283,7 +283,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.translateService.use(defaultLanguage);
     this.commonService.setTranslateLanguage(defaultLanguage);
 
-    this.userInfo$ = this.loginService.loggedInUserInfo$;
+    this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
+      filter((userInfo) => userInfo && Object.keys(userInfo).length !== 0)
+    );
 
     this.commonService.displayPermissionRevoke$.subscribe((display) => {
       if (display && !this.commonService.getPermisionRevokeModalStatus()) {
