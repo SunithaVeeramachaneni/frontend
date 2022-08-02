@@ -18,31 +18,31 @@
         class="menu-item"
         *ngFor="let menuitem of menus; let i = index"
       >
-        <li
-          routerLinkActive="selected"
-          routerDirection="root"
-          title="{{ menuitem.title }}"
-          *appCheckUserHasPermission="[menuitem.permission]; else loadingMenu"
-          class="dis-flex"
-        >
-          <a
-            mat-list-item
-            class="menu-name"
-            [routerLink]="menuitem.url"
-            routerLinkActive="active"
-            (click)="selectedListElement(menuitem.title)"
+        <ng-container *ngIf="userInfo$ | async as userInfo; else loadingMenu">
+          <li
+            routerLinkActive="selected"
+            routerDirection="root"
+            title="{{ menuitem.title }}"
+            *appCheckUserHasPermission="[menuitem.permission]"
+            class="dis-flex"
           >
-            <img
-              [src]="
-                getImage(menuitem.imageName, selectedMenu === menuitem.title)
-              "
-              class="sidebar-icons"
-            />
-            <span class="menu-title" *ngIf="menuOpenClose">
-              {{ menuitem.title }}
-            </span>
-          </a>
-          <ng-container *ngIf="userInfo$ | async as userInfo">
+            <a
+              mat-list-item
+              class="menu-name"
+              [routerLink]="menuitem.url"
+              routerLinkActive="active"
+              (click)="selectedListElement(menuitem.title)"
+            >
+              <img
+                [src]="
+                  getImage(menuitem.imageName, selectedMenu === menuitem.title)
+                "
+                class="sidebar-icons"
+              />
+              <span class="menu-title" *ngIf="menuOpenClose">
+                {{ menuitem.title }}
+              </span>
+            </a>
             <ng-container
               *ngIf="
                 checkUserHasSubMenusPermissions(
@@ -67,8 +67,8 @@
                 />
               </a>
             </ng-container>
-          </ng-container>
-        </li>
+          </li>
+        </ng-container>
 
         <div
           *ngIf="

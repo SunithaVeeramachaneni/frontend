@@ -12,15 +12,8 @@ export class CheckUserHasPermissionDirective {
       this.updateView();
     }
   }
-  @Input() set appCheckUserHasPermissionElse(
-    elseTemplateRef: TemplateRef<unknown>
-  ) {
-    this.elseTemplateRef = elseTemplateRef;
-    this.updateView();
-  }
   hasView = false;
   permissions: string[];
-  elseTemplateRef: TemplateRef<unknown>;
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -34,11 +27,12 @@ export class CheckUserHasPermissionDirective {
         const hasPermission = perms.find((per) =>
           this.permissions.includes(per.name)
         );
-        this.container.clear();
-        if (hasPermission) {
+        if (hasPermission && !this.hasView) {
           this.container.createEmbeddedView(this.templateRef);
-        } else if (this.elseTemplateRef) {
-          this.container.createEmbeddedView(this.elseTemplateRef);
+          this.hasView = true;
+        } else {
+          this.container.clear();
+          this.hasView = false;
         }
       }
     );
