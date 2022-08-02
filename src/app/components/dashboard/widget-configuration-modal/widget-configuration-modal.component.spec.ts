@@ -3,7 +3,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { dashboards } from '../dashboards/dashboards.component.mock';
 import { reports$ } from '../reports/reports.component.mock';
@@ -15,13 +14,15 @@ import {
   WidgetConfigurationModalComponent,
   WidgetConfigurationModalData
 } from './widget-configuration-modal.component';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 
 describe('WidgetConfigurationModalComponent', () => {
   let component: WidgetConfigurationModalComponent;
   let fixture: ComponentFixture<WidgetConfigurationModalComponent>;
   let reportServiceSpy: ReportService;
   let reportConfigServiceSpy: ReportConfigurationService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let dialogRefSpy: MatDialogRef<WidgetConfigurationModalComponent>;
   let widgetConfigurationData: WidgetConfigurationModalData;
 
@@ -39,6 +40,9 @@ describe('WidgetConfigurationModalComponent', () => {
       ]
     );
     dialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
     widgetConfigurationData = {
       dashboard: dashboards[0]
     };
@@ -62,6 +66,10 @@ describe('WidgetConfigurationModalComponent', () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: widgetConfigurationData
+        },
+        {
+          provide: LoginService,
+          useValue: loginServiceSpy
         }
       ]
     }).compileComponents();

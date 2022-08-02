@@ -6,20 +6,6 @@
   width: 200px;
 }
 
-.login-main-page {
-  background: #f0f7ff;
-  height: 100vh;
-  margin-top: -30px;
-
-}
-
-.login-heading {
-  padding: 22px;
-  font-weight: 800;
-  font-size: 44px;
-  letter-spacing: 1.5px;
-}
-
 .centered {
   position: absolute;
   top: 50%;
@@ -30,6 +16,10 @@
   z-index: 100;
   padding: 25px;
   box-shadow: 0 0 15px #d3d3d3;
+
+  h2 {
+    font-size: 130%;
+  }
 }
 
 .company-or-domain-input {
@@ -46,7 +36,7 @@
 
 .cant-access-text {
   color: #006bb5;
-  font-size: 14px;
+  font-size: 100%;
   cursor: pointer;
 }
 
@@ -58,16 +48,4 @@
   height: 35px;
   float: right;
   margin-top: 45px;
-}
-
-.graphics-left {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.graphics-right {
-  position: absolute;
-  bottom: 0;
-  right: 0;
 }

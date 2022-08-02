@@ -11,6 +11,7 @@
 
 html * {
   font-family: 'Roboto', sans-serif;
+  font-size: 14px;
 }
 
 .modal {
@@ -24,7 +25,7 @@ html * {
 li.breadcrumb-item {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 19px;
   color: #1351d8;
 }
@@ -85,7 +86,7 @@ li.breadcrumb-item.active span {
   padding: 0px;
   cursor: pointer;
   box-sizing: border-box;
-  opacity: 0.9;
+  opacity: 1;
   min-width: auto !important;
   text-align: center;
   display: inline-flex;
@@ -163,17 +164,19 @@ li.breadcrumb-item.active span {
 .editor-ol {
   list-style-type: decimal;
   list-style-position: inside;
+  padding: 0;
 }
 
 .editor-ul {
   list-style-type: disc;
   list-style-position: inside;
+  padding: 0;
 }
 
 .editor-listvalues {
   text-align: left;
   padding-left: 10px;
-  font-size: 14px;
+  font-size: 100%;
   font-weight: 500;
 }
 .custom-header-height .mat-tab-label {
@@ -331,41 +334,7 @@ textarea.mat-input-element {
 button.mat-menu-item {
   width: 100%;
   height: 40px;
-}
-
-.custom-mat-form-field-gray-color {
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    border-radius: 8px;
-    background: #f2f2f2;
-  }
-
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 1px 0px 8px 0px;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-wrapper {
-    margin: 0;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    opacity: 0;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline-start,
-  .mat-form-field-appearance-outline .mat-form-field-outline-end {
-    border: none !important;
-    min-width: 0;
-  }
+  font-size: 100%;
 }
 
 .categories-grid {
@@ -431,155 +400,6 @@ button.mat-menu-item {
   }
 }
 
-.custom-mat-form-select {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.4em 0px !important;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-}
-
-.dashboard-formfield {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.5em 0px !important;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #ffffff;
-    border-radius: 4px;
-  }
-
-  .mat-select-arrow {
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid;
-    margin: 0px 4px;
-    position: relative;
-    top: 4px;
-  }
-}
-
-.dashboard-body {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.6em 0px !important;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #eeeeee;
-    border-radius: 4px;
-  }
-}
-
-.report-configuration {
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    border-radius: 8px;
-    background: #f2f2f2;
-  }
-
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 1px 0px 8px 0px !important;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-wrapper {
-    margin: 0;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
-    opacity: 0;
-  }
-
-  // .mat-form-field-appearance-outline .mat-form-field-outline-start,
-  // .mat-form-field-appearance-outline .mat-form-field-outline-end {
-  //   border: 1px solid #f2f2f2;
-  //   min-width: 5px;
-  // }
-}
-
-.filters-div {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.6em 0 !important;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #eeeeee;
-    border-radius: 4px;
-  }
-
-  .mat-select-arrow {
-    margin: 7px 0px 0px 0px;
-  }
-}
-
-.outline-div {
-  .mat-form-field-flex > .mat-form-field-infix {
-    padding: 0.2em 0px 0.6em 0 !important;
-  }
-
-  .mat-form-field-label-wrapper {
-    top: -1.5em;
-  }
-
-  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
-    .mat-form-field-label {
-    transform: translateY(-1.1em) scale(0.75);
-    width: 133.33333%;
-  }
-
-  .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: #eeeeee;
-    border-radius: 4px;
-  }
-}
-
 .mat-button-toggle {
   background: #f2f2f2;
   border: none;
@@ -590,18 +410,10 @@ button.mat-menu-item {
   color: #7d7d7d;
 }
 
-.mat-button-toggle-group-appearance-standard
-  .mat-button-toggle
-  + .mat-button-toggle {
-  border-left: 1px solid #e5e5e5;
-}
-
 .mat-button-toggle-checked {
   background: #f2f2f2;
-
   font-style: normal;
   font-weight: 500;
-
   color: #000000;
 }
 
@@ -640,11 +452,6 @@ button.mat-menu-item {
   margin-right: -10px !important;
 }
 
-// .table-column {
-//   min-width: 140px !important;
-//   width: auto !important;
-// }
-
 .mat-column-tenantName {
   font-weight: 500;
 }
@@ -652,11 +459,6 @@ button.mat-menu-item {
 .mat-column-createdAt {
   color: #757575;
 }
-
-// .inactive-users-main-container .table-column {
-//   min-width: 140px !important;
-//   width: 100% !important;
-// }
 
 .sidebar-menu-panel {
   min-height: auto !important;
@@ -701,4 +503,59 @@ button.mat-menu-item {
 
 .actions-column {
   min-width: 2% !important;
+}
+
+.custom-form-field-gray-color {
+  .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.2em 0px 0.6em 0px !important;
+  }
+
+  .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: #eeeeee;
+    border-radius: 4px;
+  }
+
+  .mat-select-arrow {
+    margin-top: 10px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start,
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border: none;
+  }
+}
+
+.custom-form-field-white-color {
+  .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.2em 0px 0.6em 0px !important;
+  }
+
+  .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: #ffffff;
+    border-radius: 4px;
+  }
+
+  .mat-select-arrow {
+    margin-top: 10px !important;
+  }
 }

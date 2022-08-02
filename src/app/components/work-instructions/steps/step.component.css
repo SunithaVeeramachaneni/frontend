@@ -43,7 +43,7 @@
 
 .header-btn {
   position: absolute;
-  top: calc(100vh - 43px);
+  top: calc(100vh - 60px);
   width: 160px;
   height: 36px;
   background: #ffffff;
@@ -51,7 +51,7 @@
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
@@ -65,7 +65,7 @@
 
 .step-btn {
   position: absolute;
-  top: calc(100vh - 40px);
+  top: calc(100vh - 60px);
   right: 20px;
   width: 160px;
   height: 36px;
@@ -74,7 +74,7 @@
 
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
@@ -148,7 +148,7 @@ input:focus {
 
 .btn-hide-show-preview {
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   text-transform: uppercase;
   color: #76767b;
   background: transparent;

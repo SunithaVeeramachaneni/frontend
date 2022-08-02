@@ -1,59 +1,75 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { HomeComponent } from './home/home.component';
+import { AccessDeniedComponent } from './shared/components/access-denied/access-denied.component';
+
 export const routes: Routes = [
   {
     path: 'login',
     loadChildren: () =>
-      import('./components/login/login.module').then((m) => m.LoginModule)
+      import('./components/login/login.module').then((m) => m.LoginModule),
+    data: {
+      breadcrumb: { skip: true }
+    }
+  },
+  {
+    path: 'access-denied',
+    component: AccessDeniedComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: { skip: true }
+    }
+  },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: { skip: true }
+    }
   },
   {
     path: 'dashboard',
     loadChildren: () =>
       import('./components/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'tenant-management',
     loadChildren: () =>
       import('./components/tenant-management/tenant-management.module').then(
         (m) => m.TenantManagementModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'work-instructions',
     loadChildren: () =>
       import('./components/work-instructions/work-instructions.module').then(
         (m) => m.WorkInstructionsPageModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'maintenance',
     loadChildren: () =>
       import('./components/maintenance/maintenance.module').then(
         (m) => m.MaintenanceModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'spare-parts',
     loadChildren: () =>
       import('./components/spare-parts/spare-parts.module').then(
         (m) => m.SparePartsModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'user-management',
     loadChildren: () =>
       import('./components/user-management/user-management.module').then(
         (m) => m.UserManagementModule
-      ),
-    canActivate: [AuthGuard]
+      )
   },
   {
     path: 'user-settings',
@@ -65,11 +81,10 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'home',
     pathMatch: 'full'
   }
 ];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

@@ -25,10 +25,16 @@ export const tenants: Tenant[] = [
         password: 'password', // AES encrypted string
         grantType: 'grantType',
         clientId: 'clientId',
-        scope: {
-          race: 'racescope',
-          mWorkOrder: 'wrokorderscope',
-          mInventory: 'inventoryscope'
+        scopes: {
+          race: { scope: 'racescope', collection: 'racecollection' },
+          mWorkOrder: {
+            scope: 'wrokorderscope',
+            collection: 'workordercollection'
+          },
+          mInventory: {
+            scope: 'inventoryscope',
+            collection: 'inventorycollection'
+          }
         },
         saml: {
           oauth2Url: 'https://oauth2urltest.com',

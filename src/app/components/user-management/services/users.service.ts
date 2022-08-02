@@ -12,7 +12,8 @@ import {
   UserDetails,
   Role,
   Permission,
-  UserProfile
+  UserProfile,
+  UserInfo
 } from '../../../interfaces';
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -73,7 +74,9 @@ export class UsersService {
     }
   };
 
-  getLoggedInUser$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any> => {
+  getLoggedInUser$ = (
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<UserInfo> => {
     const { displayToast, failureResponse = {} } = info;
     return this.appService._getResp(
       environment.userRoleManagementApiUrl,

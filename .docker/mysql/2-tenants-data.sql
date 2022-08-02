@@ -20,7 +20,9 @@ insert into catalogs (
   logLevel,
   createdBy,
   createdAt,
-  slackTeamID
+  slackTeamID,
+  collaborationType,
+  slackConfiguration
 ) values(
   "f8e6f04b-2b9f-43ab-ba8a-b4c367088723",
   "Innovapptive",
@@ -121,7 +123,15 @@ insert into catalogs (
   "off",
   "admin@innovapptive.com",
   "2022-05-10 12:00:00",
-  "T78857ZCK"
+  "T78857ZCK",
+  "slack",
+  '{
+    "slackTeamID": "T78857ZCKDev",
+    "slackClientID": "246277271427.3457776076497",
+    "slackClientSecret": "",
+    "slackClientStateSecret": "",
+    "slackClientSigningSecret": ""
+  }'
 );
 
 CREATE DATABASE Innovapptive;

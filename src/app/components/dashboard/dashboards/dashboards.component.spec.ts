@@ -4,7 +4,6 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppMaterialModules } from 'src/app/material.module';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { DashboardConfigurationComponent } from '../dashboard-configuration/dashboard-configuration.component';
 import { DashboardService } from '../services/dashboard.service';
@@ -14,7 +13,8 @@ import { dashboards, dashboards$ } from './dashboards.component.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { userInfo$ } from '../../login/services/login.service.mock';
+import { LoginService } from '../../login/services/login.service';
 
 const info: ErrorInfo = {
   displayToast: true,
@@ -26,7 +26,7 @@ describe('DashboardsComponent', () => {
   let fixture: ComponentFixture<DashboardsComponent>;
   let dialogSpy: MatDialog;
   let dashboardServiceSpy: DashboardService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let toastSpy: ToastService;
 
   beforeEach(async () => {
@@ -38,9 +38,13 @@ describe('DashboardsComponent', () => {
         dashboardSelectionChanged$: of('')
       }
     );
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['getUserName'], {
-      permissionsAction$: permissions$
-    });
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
+      ['getLoggedInUserName'],
+      {
+        loggedInUserInfo$: userInfo$
+      }
+    );
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
@@ -57,7 +61,7 @@ describe('DashboardsComponent', () => {
       providers: [
         { provide: MatDialog, useValue: dialogSpy },
         { provide: DashboardService, useValue: dashboardServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         { provide: ToastService, useValue: toastSpy }
       ]
     }).compileComponents();

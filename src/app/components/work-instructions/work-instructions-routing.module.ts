@@ -8,57 +8,149 @@ import { PublishedComponent } from './published/published.component';
 import { RecentsComponent } from './recents/recents.component';
 import { MediaFilesComponent } from './files/files.component';
 import { WorkInstructionsComponent } from './work-instructions.component';
+import { AuthGuard } from 'src/app/shared/guards/auth.guard';
+import { permissions } from 'src/app/app.constants';
 
 const routes: Routes = [
   {
     path: '',
     component: WorkInstructionsComponent,
-    data: { breadcrumb: { label: 'Work Instructions Authoring' } },
+    canActivate: [AuthGuard],
+    data: {
+      breadcrumb: { label: 'Work Instructions Authoring' },
+      permissions: [permissions.viewWorkInstructions]
+    },
     children: [
       {
         path: 'create',
         component: AddWorkinstructionComponent,
-        data: { breadcrumb: { label: 'Create Work Instruction' } }
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Create Work Instruction' },
+          permissions: [permissions.createWorkInstruction]
+        }
       },
       {
         path: 'edit/:id',
         component: AddWorkinstructionComponent,
-        data: { breadcrumb: { label: 'Edit Work Instruction' } }
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Edit Work Instruction' },
+          permissions: [permissions.updateWorkInstruction]
+        }
       },
       {
         path: 'drafts',
-        data: { breadcrumb: { label: 'Drafts' } },
+        data: {
+          breadcrumb: { label: 'Drafts' },
+          permissions: [permissions.viewWorkInstructions]
+        },
         component: DraftsComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       },
       {
         path: 'favorites',
-        data: { breadcrumb: { label: 'Favorites' } },
+        data: {
+          breadcrumb: { label: 'Favorites' },
+          permissions: [permissions.viewWorkInstructions]
+        },
         component: FavoritesComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       },
       {
         path: 'published',
-        data: { breadcrumb: { label: 'Published' } },
+        data: {
+          breadcrumb: { label: 'Published' },
+          permissions: [permissions.viewWorkInstructions]
+        },
         component: PublishedComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       },
       {
         path: 'recents',
-        data: { breadcrumb: { label: 'Recents' } },
+        data: {
+          breadcrumb: { label: 'Recents' },
+          permissions: [permissions.viewWorkInstructions]
+        },
         component: RecentsComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       },
       {
         path: 'category/:cid',
         component: CategoryWiseInstructionsComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        data: {
+          permissions: [permissions.viewWorkInstructions]
+        },
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       },
       {
         path: 'files',
-        data: { breadcrumb: { label: 'Files' } },
+        data: {
+          breadcrumb: { label: 'Files' },
+          permissions: [permissions.viewFiles]
+        },
         component: MediaFilesComponent,
-        children: [{ path: ':id', component: AddWorkinstructionComponent }]
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: ':id',
+            component: AddWorkinstructionComponent,
+            canActivate: [AuthGuard],
+            data: {
+              permissions: [permissions.updateWorkInstruction]
+            }
+          }
+        ]
       }
     ]
   }

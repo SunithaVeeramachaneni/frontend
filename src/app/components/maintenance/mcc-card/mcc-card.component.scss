@@ -1,7 +1,7 @@
 .kit-number {
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 100%;
   line-height: 19px;
   align-items: center;
   color: #000000;
@@ -17,7 +17,7 @@
 .date-priority-label {
   font-style: normal;
   font-weight: normal;
-  font-size: 13px;
+  font-size: 85%;
   line-height: 19px;
   align-items: center;
   color: #76767b;
@@ -39,8 +39,7 @@
   background: #f2f2f2;
   border: none;
   color: black;
-  font-size: 15px;
-
+  font-size: 100%;
   font-weight: 600;
   cursor: pointer;
 }
@@ -68,7 +67,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 27px;
   align-items: center;
   text-align: center;
@@ -81,7 +80,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 27px;
   align-items: center;
   text-align: center;
@@ -94,7 +93,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 27px;
   align-items: center;
   text-align: center;
@@ -107,7 +106,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 27px;
   align-items: center;
   text-align: center;
@@ -122,7 +121,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 15px;
   align-items: center;
   text-align: center;
@@ -137,7 +136,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 15px;
   align-items: center;
   text-align: center;
@@ -152,7 +151,7 @@
   border-radius: 5px;
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 80%;
   line-height: 15px;
   align-items: center;
   text-align: center;
@@ -161,12 +160,11 @@
 }
 
 .show-operations-btn {
-  padding: 10px;
+  padding: 0 10px 10px;
   text-transform: initial;
-
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 95%;
   color: #76767b;
   letter-spacing: 0;
   background-color: white;
@@ -174,8 +172,8 @@
 }
 
 .down-up-arrow {
-  font-size: 22px;
-  top: 5px;
+  font-size: 170%;
+  top: 7px;
   position: relative;
 }
 
@@ -200,7 +198,7 @@
 .assign-user-name {
   font-style: normal;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 100%;
   line-height: 16px;
   color: #000000;
   width: 100%;
@@ -224,7 +222,7 @@
 .inprogress-user-name {
   font-style: normal;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 100%;
   line-height: 16px;
   color: #76767b;
   width: 100%;

@@ -73,7 +73,6 @@ export class WorkInstructionsComponent
   }>;
   readonly routingUrls = routingUrls;
   readonly permissions = permissions;
-  public sidebarMinimize: boolean;
   private fetchWISubscription: Subscription;
 
   @ViewChild('recentDrafts', { static: false }) set drafts(
@@ -124,9 +123,6 @@ export class WorkInstructionsComponent
     this.fetchWISubscription = this.wiCommonService.fetchWIAction$.subscribe(
       () => this.getAllFavsDraftsAndRecentIns()
     );
-    this.commonService.minimizeSidebarAction$.subscribe((data) => {
-      this.sidebarMinimize = data;
-    });
   }
 
   ngAfterViewChecked(): void {

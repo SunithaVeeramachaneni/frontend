@@ -44,7 +44,6 @@ import {
   defaultCountFieldName,
   permissions
 } from '../../../app.constants';
-import { CommonService } from 'src/app/shared/services/common.service';
 import {
   Column,
   ConfigOptions
@@ -57,6 +56,7 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-report-configuration',
@@ -142,13 +142,13 @@ export class ReportConfigurationComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private router: Router,
     private toast: ToastService,
-    private commonService: CommonService,
     private route: ActivatedRoute,
     private dynamictableFilterService: DynamictableFilterService,
     public dialog: MatDialog,
     private fb: FormBuilder,
     private breadcrumbService: BreadcrumbService,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private loginService: LoginService
   ) {}
 
   get reportName() {
@@ -191,7 +191,6 @@ export class ReportConfigurationComponent implements OnInit {
       });
 
     this.undoRedoUtil = new UndoRedoUtil();
-    this.commonService.minimizeSidebar(true);
 
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
@@ -521,7 +520,8 @@ export class ReportConfigurationComponent implements OnInit {
 
     this.spinner.show();
     if (id === undefined || params.saveAs) {
-      this.reportConfiguration.createdBy = this.commonService.getUserName();
+      this.reportConfiguration.createdBy =
+        this.loginService.getLoggedInUserName();
       this.reportConfigService
         .saveReport$(this.reportConfiguration)
         .subscribe((response) => {

@@ -12,6 +12,7 @@ import {
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { tenantsInfo } from 'src/app/auth-config.service.mock';
 import { AppMaterialModules } from 'src/app/material.module';
+import { BackgroundComponent } from 'src/app/shared/components/background/background.component';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TenantService } from '../tenant-management/services/tenant.service';
 import { LoginComponent } from './login.component';
@@ -38,7 +39,7 @@ describe('LoginComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
+      declarations: [LoginComponent, BackgroundComponent],
       imports: [
         ReactiveFormsModule,
         AppMaterialModules,

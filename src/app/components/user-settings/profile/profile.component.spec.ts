@@ -15,11 +15,6 @@ import {
 } from '@ngx-translate/core';
 import { NgxMatIntlTelInputModule } from 'ngx-mat-intl-tel-input';
 import { AppMaterialModules } from 'src/app/material.module';
-import {
-  profileImageBase64,
-  userInfo,
-  userInfo$
-} from 'src/app/shared/components/header/header.component.mock';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ToastService } from 'src/app/shared/toast';
 import { UsersService } from '../../user-management/services/users.service';
@@ -33,6 +28,12 @@ import { MockComponent } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 import { defaultProfile } from 'src/app/app.constants';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import {
+  profileImageBase64,
+  userInfo,
+  userInfo$
+} from '../../login/services/login.service.mock';
+import { LoginService } from '../../login/services/login.service';
 
 const { firstName, lastName, title, email, roles, profileImage, contact } =
   userInfo;
@@ -40,7 +41,7 @@ const { firstName, lastName, title, email, roles, profileImage, contact } =
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
   let base64ServiceSpy: Base64HelperService;
   let userServiceSpy: UsersService;
   let toastSpy: ToastService;
@@ -51,9 +52,13 @@ describe('ProfileComponent', () => {
   let profileEl: HTMLElement;
 
   beforeEach(async () => {
-    commonServiceSpy = jasmine.createSpyObj('CommonService', ['setUserInfo'], {
-      userInfo$
-    });
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
+      ['setLoggedInUserInfo'],
+      {
+        loggedInUserInfo$: userInfo$
+      }
+    );
     base64ServiceSpy = jasmine.createSpyObj('Base64HelperService', [
       'getBase64ImageFromSourceUrl'
     ]);
@@ -80,7 +85,7 @@ describe('ProfileComponent', () => {
         })
       ],
       providers: [
-        { provide: CommonService, useValue: commonServiceSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         { provide: Base64HelperService, useValue: base64ServiceSpy },
         { provide: UsersService, useValue: userServiceSpy },
         { provide: ToastService, useValue: toastSpy },
@@ -174,7 +179,9 @@ describe('ProfileComponent', () => {
       fixture.detectChanges();
 
       expect(component.profileEditMode).toBeFalse();
-      expect(commonServiceSpy.setUserInfo).toHaveBeenCalledWith(userInfo);
+      expect(loginServiceSpy.setLoggedInUserInfo).toHaveBeenCalledWith(
+        userInfo
+      );
       expect(component.profileForm.get('contact').disabled).toBeTrue();
     });
 
@@ -193,7 +200,9 @@ describe('ProfileComponent', () => {
       fixture.detectChanges();
 
       expect(component.profileEditMode).toBeFalse();
-      expect(commonServiceSpy.setUserInfo).toHaveBeenCalledWith(userInfo);
+      expect(loginServiceSpy.setLoggedInUserInfo).toHaveBeenCalledWith(
+        userInfo
+      );
       expect(component.profileForm.get('contact').disabled).toBeTrue();
     });
 
@@ -212,7 +221,7 @@ describe('ProfileComponent', () => {
       fixture.detectChanges();
 
       expect(component.profileEditMode).toBeTrue();
-      expect(commonServiceSpy.setUserInfo).not.toHaveBeenCalled();
+      expect(loginServiceSpy.setLoggedInUserInfo).not.toHaveBeenCalled();
       expect(component.profileForm.get('contact').enabled).toBeTrue();
     });
   });

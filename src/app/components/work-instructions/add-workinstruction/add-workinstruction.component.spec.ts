@@ -38,8 +38,9 @@ import { ErrorHandlerService } from '../../../shared/error-handler/error-handler
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Location } from '@angular/common';
 import { defaultCategoryId, defaultCategoryName } from '../../../app.constants';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { LoginService } from '../../login/services/login.service';
+import { userInfo$ } from '../../login/services/login.service.mock';
 
 const categoryDetails = [
   {
@@ -165,6 +166,7 @@ describe('AddWorkinstructionComponent', () => {
   let activatedRouteSpy: ActivatedRoute;
   let breadcrumbServiceSpy: BreadcrumbService;
   let locationSpy: Location;
+  let loginServiceSpy: LoginService;
   let addWIDe: DebugElement;
   let addWIEl: HTMLElement;
   let store: MockStore<State>;
@@ -181,15 +183,9 @@ describe('AddWorkinstructionComponent', () => {
         stepDetailsSaveAction$: of('All Changes Saved')
       }
     );
-    commonServiceSpy = jasmine.createSpyObj(
-      'CommonService',
-      ['minimizeSidebar'],
-      {
-        minimizeSidebarAction$: of(false),
-        currentRouteUrlAction$: of('work-instructions/create'),
-        permissionsAction$: permissions$
-      }
-    );
+    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
+      currentRouteUrlAction$: of('work-instructions/create')
+    });
     headerServiceSpy = jasmine.createSpyObj('HeaderService', [
       'setHeaderTitle'
     ]);
@@ -220,6 +216,9 @@ describe('AddWorkinstructionComponent', () => {
     });
     breadcrumbServiceSpy = jasmine.createSpyObj('BreadcrumbService', ['set']);
     locationSpy = jasmine.createSpyObj('Location', ['back']);
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
+    });
 
     TestBed.configureTestingModule({
       declarations: [
@@ -245,6 +244,7 @@ describe('AddWorkinstructionComponent', () => {
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
         { provide: BreadcrumbService, useValue: breadcrumbServiceSpy },
         { provide: Location, useValue: locationSpy },
+        { provide: LoginService, useValue: loginServiceSpy },
         provideMockStore()
       ]
     }).compileComponents();
@@ -409,7 +409,6 @@ describe('AddWorkinstructionComponent', () => {
       component.ngOnInit();
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        expect(commonServiceSpy.minimizeSidebar).toHaveBeenCalledWith(true);
         expect(component.saveStatus).toBe('All Changes Saved');
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({ instruction: editWI })
@@ -435,7 +434,6 @@ describe('AddWorkinstructionComponent', () => {
       component.ngOnInit();
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        expect(commonServiceSpy.minimizeSidebar).toHaveBeenCalledWith(true);
         expect(component.saveStatus).toBe('All Changes Saved');
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({
@@ -473,7 +471,6 @@ describe('AddWorkinstructionComponent', () => {
       component.ngOnInit();
       fixture.detectChanges();
       fixture.whenStable().then(() => {
-        expect(commonServiceSpy.minimizeSidebar).toHaveBeenCalledWith(true);
         expect(component.saveStatus).toBe('All Changes Saved');
         expect(store.dispatch).toHaveBeenCalledOnceWith(
           InstructionActions.updateInstruction({

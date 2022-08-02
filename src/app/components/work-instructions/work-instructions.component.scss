@@ -55,7 +55,7 @@
 .data {
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 100%;
   align-items: center;
   letter-spacing: 0.25px;
   text-transform: uppercase;
@@ -89,10 +89,9 @@
   position: relative;
   top: 3px;
   left: 2px;
-
   font-style: normal;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 120%;
   color: #000000;
 }
 
@@ -138,7 +137,7 @@
 .recent-title {
   font-style: normal;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 110%;
   line-height: 18px;
   color: #25282b;
   max-width: 100%;
@@ -173,7 +172,7 @@
 .recent-subtitle {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 95%;
   line-height: 10px;
   letter-spacing: 0.25px;
   color: #76767b;
@@ -184,7 +183,7 @@
 .recent-edited {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 95%;
   line-height: 20px;
   text-align: right;
   letter-spacing: 0.25px;
@@ -194,7 +193,7 @@
 .seeall {
   font-style: normal;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 90%;
   line-height: 15px;
   align-items: center;
   text-align: center;
@@ -228,14 +227,14 @@
 
 .draft-icon {
   font-weight: 600;
-  font-size: 18px;
+  font-size: 120%;
   position: relative;
   top: 2px;
 }
 
 .favorite-icon {
   font-weight: 600;
-  font-size: 22px;
+  font-size: 120%;
   position: relative;
   top: 3px;
 }
@@ -244,7 +243,7 @@
   background: #cccccc;
   padding: 7px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 80%;
 
   font-style: normal;
   font-weight: normal;
@@ -266,7 +265,7 @@
 .dropdown-item-title {
   font-style: normal;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 100%;
   line-height: 19px;
   color: #25282b;
   position: relative;

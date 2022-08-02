@@ -1,6 +1,6 @@
-<div class="main-tenant-container" *ngIf="permissions$ | async">
+<div class="main-tenant-container" *ngIf="userInfo$ | async">
   <div class="tenant-header">
-    <span class="mat-select-products select-products">
+    <span class="custom-form-field-white-color select-products">
       <mat-form-field appearance="outline">
         <mat-label translate>product</mat-label>
         <mat-select [(value)]="selectedProduct" multiple disabled>
@@ -10,7 +10,7 @@
         </mat-select>
       </mat-form-field>
     </span>
-    <span class="custom-mat-form-field-gray-color search-field">
+    <span class="custom-form-field-gray-color search-field">
       <mat-form-field appearance="outline">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>
         <input matInput type="text" placeholder="Search" disabled />

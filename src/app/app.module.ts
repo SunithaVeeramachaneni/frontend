@@ -55,6 +55,8 @@ import { defaultLanguage } from './app.constants';
 import localeEn from '@angular/common/locales/en';
 import { LoginService } from './components/login/services/login.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { HomeComponent } from './home/home.component';
 
 registerLocaleData(localeEn, 'en');
 
@@ -62,7 +64,7 @@ export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http);
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, HomeComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -96,7 +98,8 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    })
+    }),
+    NgxShimmerLoadingModule
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

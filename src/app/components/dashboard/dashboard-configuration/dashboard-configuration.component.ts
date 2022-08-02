@@ -302,15 +302,10 @@ export class DashboardConfigurationComponent implements OnInit {
 
   ngOnInit(): void {
     this.dashboards$ = this.dashboardService.dashboardsAction$;
-    this.mimimizeSidebar$ = this.commonService.minimizeSidebarAction$.pipe(
-      tap(() =>
-        this.dashboardService.updateGridOptions({
-          update: true,
-          subtractWidth: 150
-        })
-      )
-    );
-
+    this.dashboardService.updateGridOptions({
+      update: true,
+      subtractWidth: 150
+    });
     this.interval$ = this.dashboardService.updateGridOptionsAction$.pipe(
       filter(({ update }) => update),
       switchMap(({ subtractWidth }) =>

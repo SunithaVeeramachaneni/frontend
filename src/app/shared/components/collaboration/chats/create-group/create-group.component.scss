@@ -134,16 +134,16 @@ $hover-bg-color: #b7b9bc2e;
     margin-right: 10px;
   }
   .attachmentItem {
-    font-size: 10pt;
+    font-size: 90%;
     background: #ebf5f8;
     border-radius: 5px;
     width: 99% !important;
     .attachmentTitle {
-      font-size: 10pt;
+      font-size: 90%;
       font-weight: 450;
     }
     .attachmentSubTitle {
-      font-size: 8pt;
+      font-size: 70%;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -195,7 +195,7 @@ $hover-bg-color: #b7b9bc2e;
       .audioRecord {
         color: $white-color;
         border-radius: 8px;
-        font-size: 8pt;
+        font-size: 70%;
         background: $blue-color;
         margin-left: 5px;
       }

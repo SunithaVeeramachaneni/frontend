@@ -5,8 +5,8 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { MockComponent } from 'ng-mocks';
 import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
-import { CommonService } from 'src/app/shared/services/common.service';
-import { permissions$ } from 'src/app/shared/services/common.service.mock';
+import { LoginService } from 'src/app/components/login/services/login.service';
+import { userInfo$ } from 'src/app/components/login/services/login.service.mock';
 import { SharedModule } from 'src/app/shared/shared.module';
 import Swal from 'sweetalert2';
 import { ErrorInfo } from '../../../../../interfaces';
@@ -58,7 +58,7 @@ describe('CategoryComponent', () => {
   let errorHandlerServiceSpy: ErrorHandlerService;
   let categoryServiceSpy: CategoryService;
   let base64HelperServiceSpy: Base64HelperService;
-  let commonServiceSpy: CommonService;
+  let loginServiceSpy: LoginService;
 
   beforeEach(waitForAsync(() => {
     myOverlayRefSpy = jasmine.createSpyObj('MyOverlayRef', ['close'], {
@@ -79,8 +79,8 @@ describe('CategoryComponent', () => {
       'getBase64ImageData',
       'getBase64Image'
     ]);
-    commonServiceSpy = jasmine.createSpyObj('CommonService', [], {
-      permissionsAction$: permissions$
+    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
+      loggedInUserInfo$: userInfo$
     });
 
     TestBed.configureTestingModule({
@@ -93,7 +93,7 @@ describe('CategoryComponent', () => {
         { provide: CategoryService, useValue: categoryServiceSpy },
         { provide: Base64HelperService, useValue: base64HelperServiceSpy },
         { provide: ErrorHandlerService, useValue: errorHandlerServiceSpy },
-        { provide: CommonService, useValue: commonServiceSpy }
+        { provide: LoginService, useValue: loginServiceSpy }
       ]
     }).compileComponents();
   }));

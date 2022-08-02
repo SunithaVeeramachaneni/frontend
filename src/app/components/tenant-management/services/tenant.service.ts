@@ -106,6 +106,17 @@ export class TenantService {
         shareReplay(1)
       );
 
+  getTenantLogoByTenantId$ = (
+    tenantId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getRespById(
+      environment.userRoleManagementApiUrl,
+      `catalogs/${tenantId}/logo`,
+      '',
+      info
+    );
+
   updateConfigOptionsFromColumns(
     columns: TableColumn[],
     configOptions: ConfigOptions
@@ -143,8 +154,8 @@ export class TenantService {
         showMenuOptions: false,
         hideable: true,
         stickable: true,
-        titleStyle: {},
-        subtitleStyle: { 'font-size': '8pt', color: 'darkgray' },
+        titleStyle: { 'font-size': '90%' },
+        subtitleStyle: { 'font-size': '80%', color: 'darkgray' },
         hasPreTextImage: false,
         hasPostTextImage: false
       };
