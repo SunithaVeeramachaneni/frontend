@@ -2502,7 +2502,7 @@ describe('TenantComponent', () => {
       expect(component.setTenantFormData).toBeDefined();
     });
 
-    fit('should set tenant form data', () => {
+    it('should set tenant form data', () => {
       const newTenant = cloneDeep(createTenant);
       newTenant.erps.sap.scopes = JSON.stringify(
         newTenant.erps.sap.scopes,
