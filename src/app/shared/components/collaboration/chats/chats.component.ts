@@ -294,6 +294,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
           this.conversationHistoryLoaded = true;
           if (history.length) {
             history.forEach((message) => {
+              if (message.message) {
+                message.message = message.message.replace(
+                  '<p>',
+                  '<p class="m-0">'
+                );
+              }
               const members = this.selectedConversation.members;
               const user = members.find(
                 (member) => member.userId === message.from.id
