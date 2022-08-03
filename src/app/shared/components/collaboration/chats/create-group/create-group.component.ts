@@ -84,6 +84,7 @@ export class CreateGroupComponent implements OnInit {
   };
 
   selectUser = (user: any) => {
+    user.selected = true;
     const index = this.selectedUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       return;
@@ -91,6 +92,7 @@ export class CreateGroupComponent implements OnInit {
     this.selectedUsers.push(user);
   };
   removeParticipant = (user) => {
+    user.selected = false;
     const index = this.selectedUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       this.selectedUsers.splice(index, 1);

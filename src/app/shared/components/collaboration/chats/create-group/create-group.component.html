@@ -15,6 +15,9 @@
         <mat-list-item
           *ngFor="let user of activeUsers; let i = index"
           class="peopleList"
+          [ngClass]="{
+            selectedUser: user.selected === true
+          }"
           (click)="selectUser(user)"
         >
           <div class="icon-button" mat-list-icon>
