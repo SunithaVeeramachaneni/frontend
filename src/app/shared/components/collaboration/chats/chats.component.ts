@@ -120,11 +120,22 @@ export class ChatsComponent implements OnInit, OnDestroy {
         mergeMap((conversations) => {
           if (conversations.length) {
             conversations.forEach((conv) => {
+              if (conv.latest && conv.latest.message) {
+                conv.latest.message = conv.latest.message.replace(
+                  '<p>',
+                  '<p class="m-0">'
+                );
+              }
+
               if (conv.chatType === 'oneOnOne') {
                 conv.userInfo.profileImage = this.imageUtils.getImageSrc(
                   Buffer.from(conv.userInfo.profileImage).toString()
                 );
               } else if (conv.chatType === 'group') {
+                if (!(conv.topic && conv.topic.length)) {
+                  const firstNames = conv.members.map((m) => m.firstName);
+                  conv.topic = firstNames.join(', ');
+                }
                 conv.userInfo.profileImage = '';
               }
             });
