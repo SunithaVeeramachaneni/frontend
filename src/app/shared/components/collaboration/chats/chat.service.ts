@@ -76,6 +76,7 @@ export class ChatService {
   sendMessage$ = (
     message: string,
     userId: string,
+    formData: FormData,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
@@ -83,7 +84,7 @@ export class ChatService {
     return this.appService._postData(
       apiURL,
       `channels/${userId}/messages`,
-      { message },
+      formData,
       info
     );
   };

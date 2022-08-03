@@ -58,12 +58,20 @@ export class ChatsComponent implements OnInit, OnDestroy {
   isOpen = false;
 
   selectedView = 'CHAT';
+
+  showAttachmentPreview = false;
+  uploadedFiles: any = [];
+  selectedAttachment: any;
+
   messageText = '';
   messageDeliveryProgress = false;
   attachmentUploadInProgress = false;
   downloadInProgress = false;
   conversations: any = [];
   selectedConversation: Conversation;
+
+  conversationMode = 'CREATE_GROUP';
+
   conversationHistory: any = [];
   conversationHistoryLoaded = false;
 
@@ -222,8 +230,18 @@ export class ChatsComponent implements OnInit, OnDestroy {
     );
   }
 
+  addPeopleToConversation = (conversation: Conversation) => {
+    this.selectedView = 'CREATE_UPDATE_GROUP';
+    if (conversation.chatType === 'group') {
+      this.conversationMode = 'ADD_GROUP_MEMBERS';
+    } else if (conversation.chatType === 'oneOnOne') {
+      this.conversationMode = 'CREATE_GROUP_WITH_USER';
+    }
+  };
+
   createGroup = () => {
-    this.selectedView = 'CREATE_GROUP';
+    this.selectedView = 'CREATE_UPDATE_GROUP';
+    this.conversationMode = 'CREATE_GROUP';
   };
 
   handleGroupCreation = (event) => {
@@ -263,6 +281,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   setSelectedConversation = async (conversation: any) => {
+    this.showAttachmentPreview = false;
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -393,27 +412,33 @@ export class ChatsComponent implements OnInit, OnDestroy {
       failureResponse: 'throwError'
     };
     this.messageDeliveryProgress = true;
-    this.chatService.sendMessage$(message, targetUser.id, info).subscribe(
-      (response) => {
-        if (response && Object.keys(response).length) {
-          response.user = response.from.user;
-          this.sendReceiveMessages$.next({
-            action: 'send',
-            message: response,
-            channel: response.chatId
-          });
-          this.messageText = '';
+    const selectedFiles = this.uploadedFiles.map((f) => f.file);
+    const formData = new FormData();
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append('attachments', selectedFiles[i]);
+    }
+    formData.append('message', message);
+    this.chatService
+      .sendMessage$(message, targetUser.id, formData, info)
+      .subscribe(
+        (response) => {
+          if (response && Object.keys(response).length) {
+            response.user = response.from.user;
+            this.sendReceiveMessages$.next({
+              action: 'send',
+              message: response,
+              channel: response.chatId
+            });
+            this.messageText = '';
+            this.messageDeliveryProgress = false;
+            this.closePreview();
+          }
+        },
+        (err) => {
           this.messageDeliveryProgress = false;
         }
-      },
-      (err) => {
-        this.messageDeliveryProgress = false;
-        // this.toast.show({
-        //   text: 'Error occured while creating dashboard',
-        //   type: 'warning'
-        // });
-      }
-    );
+      );
   };
 
   openVideoCallDialog = (selectedConversation: any) => {
@@ -433,11 +458,63 @@ export class ChatsComponent implements OnInit, OnDestroy {
     });
   };
 
-  selectFile() {
+  isImageType(type: string) {
+    return (
+      type === 'image/png' || type === 'image/jpeg' || type === 'image/pjpeg'
+    );
+  }
+  setSelectedAttachment(attachment: any) {
+    this.selectedAttachment = attachment;
+  }
+
+  removeAttachment(attachment: any) {
+    const index = this.uploadedFiles.findIndex(
+      (f) => f.name === attachment.name
+    );
+    if (index > -1) {
+      this.uploadedFiles.splice(index, 1);
+    }
+  }
+
+  closePreview() {
+    this.showAttachmentPreview = false;
+    this.uploadedFiles = [];
+  }
+  openAttachments() {
     this.attachmentUploadInProgress = false;
     const fileUpload = document.getElementById(
       'uploadFile'
     ) as HTMLInputElement;
+    fileUpload.click();
+    fileUpload.onchange = () => {
+      this.showAttachmentPreview = true;
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
+      for (let index = 0; index < fileUpload.files.length; index++) {
+        const fileObj = fileUpload.files[index];
+        const objURL = URL.createObjectURL(fileObj);
+        const uploadedFile = {
+          src: this.imageUtils.safeObjURL(objURL),
+          file: fileObj,
+          name: fileObj.name,
+          size: fileObj.size,
+          type: fileObj.type,
+          isImage: this.isImageType(fileObj.type)
+        };
+        this.uploadedFiles.push(uploadedFile);
+        if (index === 0) {
+          this.selectedAttachment = uploadedFile;
+        }
+      }
+    };
+  }
+
+  selectFile() {
+    this.showAttachmentPreview = true;
+    this.attachmentUploadInProgress = false;
+    const fileUpload = document.getElementById(
+      'uploadFile'
+    ) as HTMLInputElement;
+    fileUpload.click();
     fileUpload.onchange = () => {
       this.attachmentUploadInProgress = true;
       // Note: enable the below for loop if we need to support uploading of multiple files.
@@ -477,7 +554,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
         );
       // }
     };
-    fileUpload.click();
   }
 
   addMessageToConversation = (message) => {

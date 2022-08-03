@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { PeopleService } from '../../people/people.service';
@@ -6,7 +6,6 @@ import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
 import { ImageUtils } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
@@ -15,6 +14,9 @@ import { LoginService } from 'src/app/components/login/services/login.service';
   styleUrls: ['./create-group.component.scss']
 })
 export class CreateGroupComponent implements OnInit {
+  @Input() selectedConversation: any;
+  @Input() conversationMode: string;
+
   @Output() handleGroupCreation = new EventEmitter<any>();
   @Output() viewChangeListener = new EventEmitter<any>();
 

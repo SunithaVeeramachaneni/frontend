@@ -3,7 +3,7 @@
     <div class="searchBar">
       <input matInput placeholder="Search Users" disabled class="searchInput" />
       <button mat-icon-button class="searchMore" [matMenuTriggerFor]="menu">
-        <mat-icon>more_vert</mat-icon>
+        <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="createGroup()">Create Group</button>
@@ -63,8 +63,14 @@
       </mat-list>
     </div>
   </div>
-  <div class="conversationContent" *ngIf="selectedConversation">
-    <div class="conversationHead">
+  <div
+    class="conversationContent"
+    [ngClass]="{
+      attachmentPreviewBG: showAttachmentPreview
+    }"
+    *ngIf="selectedConversation"
+  >
+    <div class="conversationHead" *ngIf="!showAttachmentPreview">
       <div class="displayFlex">
         <div
           class="icon-button"
@@ -158,11 +164,6 @@
         </div>
       </div>
       <div>
-        <!--
-          TODO: UX/Wireframe to be provided for enabling this...  
-          <button mat-icon-button color="primary">
-          <mat-icon>group_add</mat-icon>
-        </button> -->
         <button
           disabled
           mat-icon-button
@@ -179,9 +180,35 @@
         >
           <mat-icon>videocam</mat-icon>
         </button>
+        <button
+          mat-icon-button
+          color="primary"
+          class="searchMore"
+          [matMenuTriggerFor]="menu"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button
+            mat-menu-item
+            (click)="addPeopleToConversation(selectedConversation)"
+          >
+            Add People
+          </button>
+        </mat-menu>
       </div>
     </div>
-    <mat-divider class="horiz-divider"></mat-divider>
+    <div class="conversationHead" *ngIf="showAttachmentPreview">
+      <div class="displayFlex">
+        <button mat-icon-button (click)="closePreview()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-divider
+      class="horiz-divider"
+      *ngIf="!showAttachmentPreview"
+    ></mat-divider>
     <div
       class="conversationBody"
       id="conversationHistory"
@@ -192,154 +219,225 @@
         else loadingHistory
       "
     >
-      <div *ngFor="let message of conversationHistory; let i = index">
-        <div class="conversationMessage" *ngIf="!isLoggedInUser(message.from)">
-          <!-- <div class="conv-user-icon">
+      <div *ngIf="!showAttachmentPreview">
+        <div *ngFor="let message of conversationHistory; let i = index">
+          <div
+            class="conversationMessage"
+            *ngIf="!isLoggedInUser(message.from)"
+          >
+            <!-- <div class="conv-user-icon">
             <span class="icon"></span>
             <img class="icon" [src]="message.from.profileImage" />
           </div> -->
-          <div class="nameAndMessage">
-            <div *ngIf="message.messageType === 'meeting'">
-              <div class="attachmentItemMeeting">
-                <mat-icon mat-list-icon>videocam</mat-icon>
-                <div mat-line class="attachmentTitle">
-                  {{ message.from.firstName }}
-                  {{ message.from.lastName }} is Inviting you for a meeting.
-                </div>
-                <div mat-line class="attachmentSubTitle">
-                  <div class="downloadBtn" (click)="openMeetingLink(message)">
-                    <mat-icon>videocam</mat-icon
-                    ><span class="downloadLabel">Join the meeting</span>
+            <div class="nameAndMessage">
+              <div *ngIf="message.messageType === 'meeting'">
+                <div class="attachmentItemMeeting">
+                  <mat-icon mat-list-icon>videocam</mat-icon>
+                  <div mat-line class="attachmentTitle">
+                    {{ message.from.firstName }}
+                    {{ message.from.lastName }} is Inviting you for a meeting.
+                  </div>
+                  <div mat-line class="attachmentSubTitle">
+                    <div class="downloadBtn" (click)="openMeetingLink(message)">
+                      <mat-icon>videocam</mat-icon
+                      ><span class="downloadLabel">Join the meeting</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="messageContainerNonLoggedIn">
-              <span class="groupMessageFrom"
-                >{{ message.from.firstName }} {{ message.from.lastName }}</span
-              >
-              <div
-                [innerHtml]="message.message"
-                *ngIf="message.message && message.message.length"
-                class="message"
-              ></div>
-              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
-              <div *ngIf="message.attachments && message.attachments.length">
-                <mat-list>
-                  <mat-list-item
-                    *ngFor="let file of message.attachments"
-                    class="attachmentItem"
-                  >
-                    <mat-icon mat-list-icon>folder</mat-icon>
-                    <div mat-line class="attachmentTitle">{{ file.name }}</div>
-                    <div mat-line class="attachmentSubTitle">
-                      <div>
-                        Size:
-                        {{ file.size / 1024 | number: '1.0-0' }} KB
+              <div class="messageContainerNonLoggedIn">
+                <span class="groupMessageFrom"
+                  >{{ message.from.firstName }}
+                  {{ message.from.lastName }}</span
+                >
+                <div
+                  [innerHtml]="message.message"
+                  *ngIf="message.message && message.message.length"
+                  class="message"
+                ></div>
+                <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+                <div *ngIf="message.attachments && message.attachments.length">
+                  <mat-list>
+                    <mat-list-item
+                      *ngFor="let file of message.attachments"
+                      class="attachmentItem"
+                    >
+                      <mat-icon mat-list-icon>folder</mat-icon>
+                      <div mat-line class="attachmentTitle">
+                        {{ file.name }}
                       </div>
-                      <div
-                        *ngIf="!downloadInProgress"
-                        class="downloadBtn"
-                        (click)="downloadFile(file)"
-                      >
-                        <mat-icon>cloud_download</mat-icon
-                        ><span class="downloadLabel">Download</span>
+                      <div mat-line class="attachmentSubTitle">
+                        <div>
+                          Size:
+                          {{ file.size / 1024 | number: '1.0-0' }} KB
+                        </div>
+                        <div
+                          *ngIf="!downloadInProgress"
+                          class="downloadBtn"
+                          (click)="downloadFile(file)"
+                        >
+                          <mat-icon>cloud_download</mat-icon
+                          ><span class="downloadLabel">Download</span>
+                        </div>
+                        <div *ngIf="downloadInProgress" class="downloadBtn">
+                          <mat-spinner
+                            strokeWidth="5"
+                            diameter="25"
+                          ></mat-spinner>
+                          <span class="downloadLabel">Downloading...</span>
+                        </div>
                       </div>
-                      <div *ngIf="downloadInProgress" class="downloadBtn">
-                        <mat-spinner
-                          strokeWidth="5"
-                          diameter="25"
-                        ></mat-spinner>
-                        <span class="downloadLabel">Downloading...</span>
-                      </div>
-                    </div>
-                  </mat-list-item>
-                </mat-list>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
               </div>
             </div>
+          </div>
+          <div
+            class="conversationMessageCurrentUser"
+            *ngIf="isLoggedInUser(message.from)"
+          >
+            <div
+              class="nameAndMessage"
+              [ngClass]="{
+                loggedInUser: isLoggedInUser(message.from)
+              }"
+            >
+              <div *ngIf="message.messageType === 'meeting'">
+                <div class="attachmentItemMeeting">
+                  <!-- <div mat-line>{{ message.text }}</div> -->
+                  <mat-icon mat-list-icon>videocam</mat-icon>
+                  <div mat-line class="attachmentTitle">
+                    {{ message.from.firstName }}
+                    {{ message.from.lastName }} is Inviting you for a meeting.
+                  </div>
+                  <div mat-line class="attachmentSubTitle">
+                    <div class="downloadBtn" (click)="openMeetingLink(message)">
+                      <mat-icon>videocam</mat-icon
+                      ><span class="downloadLabel">Join the meeting</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="messageContainer">
+                <div
+                  [innerHtml]="message.message"
+                  *ngIf="message.message && message.message.length"
+                  class="message"
+                ></div>
+                <div *ngIf="message.attachments && message.attachments.length">
+                  <mat-list>
+                    <mat-list-item
+                      *ngFor="let file of message.attachments"
+                      class="attachmentItem"
+                    >
+                      <mat-icon mat-list-icon>folder</mat-icon>
+                      <div mat-line class="attachmentTitle">
+                        {{ file.name }}
+                      </div>
+                      <div mat-line class="attachmentSubTitle">
+                        <div>
+                          Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                        </div>
+                        <div
+                          *ngIf="!downloadInProgress"
+                          class="downloadBtn"
+                          (click)="downloadFile(file)"
+                        >
+                          <mat-icon>cloud_download</mat-icon
+                          ><span class="downloadLabel">Download</span>
+                        </div>
+                        <div *ngIf="downloadInProgress" class="downloadBtn">
+                          <mat-spinner
+                            strokeWidth="5"
+                            diameter="25"
+                          ></mat-spinner>
+                          <span class="downloadLabel">Downloading...</span>
+                        </div>
+                      </div>
+                    </mat-list-item>
+                  </mat-list>
+                </div>
+                <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+              </div>
+            </div>
+            <!-- <div class="conv-user-icon">
+            <span class="icon"></span>
+            <img class="icon" [src]="message.from.profileImage" />
+          </div> -->
           </div>
         </div>
-        <div
-          class="conversationMessageCurrentUser"
-          *ngIf="isLoggedInUser(message.from)"
-        >
+      </div>
+      <div *ngIf="showAttachmentPreview" class="attachmentPreview">
+        <div class="previewContainer">
+          <img
+            class="previewImg"
+            *ngIf="
+              selectedAttachment &&
+              selectedAttachment.src &&
+              selectedAttachment.isImage
+            "
+            [src]="selectedAttachment.src"
+          />
+          <embed
+            class="previewImg"
+            *ngIf="
+              selectedAttachment &&
+              selectedAttachment.src &&
+              !selectedAttachment.isImage
+            "
+            [src]="selectedAttachment.src"
+          />
+        </div>
+        <div class="attachmentsList">
           <div
-            class="nameAndMessage"
-            [ngClass]="{
-              loggedInUser: isLoggedInUser(message.from)
-            }"
+            class="attachmentsListItem"
+            *ngFor="let attachment of uploadedFiles"
+            (click)="setSelectedAttachment(attachment)"
           >
-            <div *ngIf="message.messageType === 'meeting'">
-              <div class="attachmentItemMeeting">
-                <!-- <div mat-line>{{ message.text }}</div> -->
-                <mat-icon mat-list-icon>videocam</mat-icon>
-                <div mat-line class="attachmentTitle">
-                  {{ message.from.firstName }}
-                  {{ message.from.lastName }} is Inviting you for a meeting.
-                </div>
-                <div mat-line class="attachmentSubTitle">
-                  <div class="downloadBtn" (click)="openMeetingLink(message)">
-                    <mat-icon>videocam</mat-icon
-                    ><span class="downloadLabel">Join the meeting</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="messageContainer">
-              <div
-                [innerHtml]="message.message"
-                *ngIf="message.message && message.message.length"
-                class="message"
-              ></div>
-              <div *ngIf="message.attachments && message.attachments.length">
-                <mat-list>
-                  <mat-list-item
-                    *ngFor="let file of message.attachments"
-                    class="attachmentItem"
-                  >
-                    <mat-icon mat-list-icon>folder</mat-icon>
-                    <div mat-line class="attachmentTitle">
-                      {{ file.name }}
-                    </div>
-                    <div mat-line class="attachmentSubTitle">
-                      <div>
-                        Size: {{ file.size / 1024 | number: '1.0-0' }} KB
-                      </div>
-                      <div
-                        *ngIf="!downloadInProgress"
-                        class="downloadBtn"
-                        (click)="downloadFile(file)"
-                      >
-                        <mat-icon>cloud_download</mat-icon
-                        ><span class="downloadLabel">Download</span>
-                      </div>
-                      <div *ngIf="downloadInProgress" class="downloadBtn">
-                        <mat-spinner
-                          strokeWidth="5"
-                          diameter="25"
-                        ></mat-spinner>
-                        <span class="downloadLabel">Downloading...</span>
-                      </div>
-                    </div>
-                  </mat-list-item>
-                </mat-list>
-              </div>
-              <span class="timestamp">{{ message.timestamp | timeAgo }}</span>
+            <mat-icon
+              class="removeAttachmentIcon"
+              (click)="removeAttachment(attachment)"
+              >cancel</mat-icon
+            >
+            <mat-icon *ngIf="attachment.isImage" class="font-5rem"
+              >image</mat-icon
+            >
+            <mat-icon
+              *ngIf="attachment.type === 'application/pdf'"
+              class="font-5rem"
+              >picture_as_pdf</mat-icon
+            >
+            <mat-icon
+              *ngIf="
+                attachment.type ===
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+              "
+              class="font-5rem"
+              >description</mat-icon
+            >
+            <div class="attachmentDetail">
+              <span class="attachmentTitle">{{ attachment.name }}</span>
+              <span class="attachmentSize">
+                Size:
+                {{ attachment.size / 1024 | number: '1.0-0' }} KB</span
+              >
             </div>
           </div>
-          <!-- <div class="conv-user-icon">
-            <span class="icon"></span>
-            <img class="icon" [src]="message.from.profileImage" />
-          </div> -->
         </div>
       </div>
     </div>
-    <div class="chatBottom" *ngIf="conversationHistoryLoaded">
+
+    <div
+      class="chatBottom"
+      *ngIf="conversationHistoryLoaded || showAttachmentPreview"
+    >
       <mat-divider class="horiz-divider"></mat-divider>
       <div class="messageInputBar">
         <input
           #uploadFile
           type="file"
+          multiple
           id="uploadFile"
           class="hidden-input"
           accept="image/jpeg, .jpeg, image/png, .png, image/pjpeg, .jpg, .docx, .pdf"
@@ -347,7 +445,7 @@
 
         <button
           for="uploadFile"
-          (click)="selectFile()"
+          (click)="openAttachments()"
           class="attachmentIconBtn"
         >
           <mat-icon class="attachmentIcon" *ngIf="!attachmentUploadInProgress"
@@ -402,10 +500,12 @@
     <span translate>selectConversationToSendMessage</span>
   </div>
 </div>
-<div *ngIf="selectedView === 'CREATE_GROUP'">
+<div *ngIf="selectedView === 'CREATE_UPDATE_GROUP'">
   <app-create-group
     (handleGroupCreation)="handleGroupCreation($event)"
     (viewChangeListener)="handleViewChange($event)"
+    selectedConversation="{{ selectedConversation }}"
+    conversationMode="{{ conversationMode }}"
   ></app-create-group>
 </div>
 
