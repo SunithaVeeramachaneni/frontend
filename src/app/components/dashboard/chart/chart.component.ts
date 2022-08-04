@@ -65,6 +65,9 @@ export class ChartComponent {
       }
     },
     plugins: {
+      legend: {
+        position: 'right'
+      },
       title: {
         display: true,
         text: ''
@@ -264,10 +267,10 @@ export class ChartComponent {
             {
               data: Object.values(sortedObject),
               label: this.datasetField.displayName,
-              backgroundColor: backgroundColors[0],
-              borderColor: backgroundColors[0],
-              hoverBackgroundColor: backgroundColors[0],
-              hoverBorderColor: backgroundColors[0],
+              backgroundColor: '#4C5CB4',
+              borderColor: '#4C5CB4',
+              hoverBackgroundColor: '#4C5CB4',
+              hoverBorderColor: '#4C5CB4',
               barPercentage: 1
             }
           ]
@@ -280,12 +283,12 @@ export class ChartComponent {
             {
               data: Object.values(sortedObject),
               label: this.datasetField.displayName,
-              backgroundColor: backgroundColors[0],
-              borderColor: backgroundColors[0],
-              pointBackgroundColor: backgroundColors[0],
-              pointBorderColor: backgroundColors[0],
-              pointHoverBackgroundColor: backgroundColors[0],
-              pointHoverBorderColor: backgroundColors[0]
+              backgroundColor: '#4C5CB4',
+              borderColor: '#4C5CB4',
+              pointBackgroundColor: '#4C5CB4',
+              pointBorderColor: '#4C5CB4',
+              pointHoverBackgroundColor: '#4C5CB4',
+              pointHoverBorderColor: '#4C5CB4'
             }
           ]
         };
@@ -297,25 +300,26 @@ export class ChartComponent {
           (value) => value.toLowerCase() === wrenchTimeName.toLowerCase()
         );
         if (index !== -1) {
-          const backgColors = this.getColors(
-            labels,
-            index,
-            'rgb(248, 209, 72)'
-          );
-          const hoverBackgColors = this.getColors(
-            labels,
-            index,
-            'rgb(255, 57, 0)'
-          );
+          // const backgColors = this.getColors(
+          //   labels,
+          //   index,
+          //   'rgb(248, 209, 72)'
+          // );
+          // const hoverBackgColors = this.getColors(
+          //   labels,
+          //   index,
+          //   'rgb(255, 57, 0)'
+          // );
+          const colors = this.getRandomColors(labels);
           return {
             labels,
             datasets: [
               {
                 data: Object.values(sortedObject),
                 label: this.datasetField.displayName,
-                backgroundColor: backgColors,
-                hoverBackgroundColor: hoverBackgColors,
-                hoverBorderColor: hoverBackgColors,
+                backgroundColor: colors,
+                hoverBackgroundColor: colors,
+                hoverBorderColor: colors,
                 hoverOffset: 4
               }
             ]
