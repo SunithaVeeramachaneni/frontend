@@ -16,7 +16,12 @@
     </mat-autocomplete>
   </mat-form-field>
 
-  <form [formGroup]="filtersForm" class="custom-form-field-gray-color">
+  <form
+    [formGroup]="filtersForm"
+    id="filtersForm"
+    (ngSubmit)="onSave()"
+    class="custom-form-field-gray-color"
+  >
     <mat-list
       role="list"
       *ngFor="let filterForm of filters.controls; let i = index"
@@ -101,9 +106,8 @@
         [cdkConnectedOverlayOrigin]="trigger"
         (backdropClick)="isfilterTooltipOpen[i] = false"
       >
-        <form
+        <div
           [formGroupName]="i"
-          (ngSubmit)="onSave()"
           class="filter-input-modal"
           [ngStyle]="{
             top: this.dynamicFilterModalTopPosition
@@ -269,12 +273,13 @@
               class="save-btn"
               mat-raised-button
               type="submit"
+              form="filtersForm"
               [disabled]="filterForm.invalid"
             >
               Save
             </button>
           </div>
-        </form>
+        </div>
       </ng-template>
     </mat-list>
   </form>
