@@ -1,7 +1,4 @@
-<div
-  class="report-configuration custom-form-field-gray-color"
-  [formGroup]="reportNameAndDescForm"
->
+<div class="report-configuration" [formGroup]="reportNameAndDescForm">
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -10,7 +7,7 @@
       class="column1"
       [ngStyle]="{ display: showPreview ? 'none' : 'block' }"
     >
-      <div class="report-name-col dis-flex">
+      <div class="report-name-col dis-flex custom-form-field-gray-color">
         <div class="width-80 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
@@ -83,7 +80,10 @@
       <div class="table-filter-panel height-100">
         <mat-tab-group class="outline-filter-tabs">
           <mat-tab label="OUTLINE">
-            <cwp-table-filter-panel [configOptions]="configOptions">
+            <cwp-table-filter-panel
+              [configOptions]="configOptions"
+              class="custom-form-field-gray-color"
+            >
             </cwp-table-filter-panel>
           </mat-tab>
           <mat-tab label="FILTER" class="height-100">
@@ -98,7 +98,10 @@
         </mat-tab-group>
       </div>
     </div>
-    <div class="column2" [ngStyle]="{ width: showPreview ? '98.8%' : '76%' }">
+    <div
+      class="column2 custom-form-field-gray-color"
+      [ngStyle]="{ width: showPreview ? '98.8%' : '76%' }"
+    >
       <div class="dis-flex">
         <div class="width-50">
           <app-common-filter

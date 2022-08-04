@@ -190,7 +190,7 @@ export class ChartComponent {
   };
 
   prepareChartData = (): ChartData<ChartType> => {
-    const { backgroundColors, type = 'bar', isStacked } = this.chartConfig;
+    const { type = 'bar', isStacked } = this.chartConfig;
     if (isStacked) {
       const datasetObject = {};
       const distinct = [];
@@ -300,26 +300,26 @@ export class ChartComponent {
           (value) => value.toLowerCase() === wrenchTimeName.toLowerCase()
         );
         if (index !== -1) {
-          // const backgColors = this.getColors(
-          //   labels,
-          //   index,
-          //   'rgb(248, 209, 72)'
-          // );
-          // const hoverBackgColors = this.getColors(
-          //   labels,
-          //   index,
-          //   'rgb(255, 57, 0)'
-          // );
-          const colors = this.getRandomColors(labels);
+          const backgColors = this.getColors(
+            labels,
+            index,
+            'rgb(248, 209, 72)'
+          );
+          const hoverBackgColors = this.getColors(
+            labels,
+            index,
+            'rgb(255, 57, 0)'
+          );
+          //const colors = this.getRandomColors(labels);
           return {
             labels,
             datasets: [
               {
                 data: Object.values(sortedObject),
                 label: this.datasetField.displayName,
-                backgroundColor: colors,
-                hoverBackgroundColor: colors,
-                hoverBorderColor: colors,
+                backgroundColor: backgColors,
+                hoverBackgroundColor: hoverBackgColors,
+                hoverBorderColor: hoverBackgColors,
                 hoverOffset: 4
               }
             ]
