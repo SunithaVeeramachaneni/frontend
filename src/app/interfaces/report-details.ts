@@ -35,7 +35,6 @@ export interface ChartDetail {
   type: ChartType;
   indexAxis: 'x' | 'y';
   isStacked: boolean;
-  backgroundColors: string[];
   showLegends: boolean;
   showValues: boolean;
   datasetFieldName: string;

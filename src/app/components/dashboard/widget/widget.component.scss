@@ -31,3 +31,9 @@
 ::ng-deep .table-wrapper .mat-elevation-z8 {
   box-shadow: none;
 }
+
+.table-wrapper {
+  ::ng-deep .table-column {
+    width: 20%;
+  }
+}

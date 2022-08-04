@@ -2,6 +2,10 @@
   height: 85%;
   overflow-y: scroll;
   padding-right: 10px;
+
+  ::ng-deep .mat-list-item-content {
+    padding: 0;
+  }
 }
 
 .datepicker {
