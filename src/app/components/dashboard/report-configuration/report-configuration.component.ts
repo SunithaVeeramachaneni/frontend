@@ -116,7 +116,6 @@ export class ReportConfigurationComponent implements OnInit {
     type: 'bar',
     isStacked: false,
     indexAxis: 'y',
-    backgroundColors: ['rgba(61, 90, 254, 0.5)'],
     showLegends: false,
     showValues: false,
     datasetFieldName: '',
