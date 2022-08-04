@@ -300,17 +300,10 @@ export class ChartComponent {
           (value) => value.toLowerCase() === wrenchTimeName.toLowerCase()
         );
         if (index !== -1) {
-          const backgColors = this.getColors(
-            labels,
-            index,
-            'rgb(248, 209, 72)'
-          );
-          const hoverBackgColors = this.getColors(
-            labels,
-            index,
-            'rgb(255, 57, 0)'
-          );
-          //const colors = this.getRandomColors(labels);
+          const colors = this.getRandomColors(labels);
+          const backgColors = this.getColors(labels, index, colors);
+          const hoverBackgColors = this.getColors(labels, index, colors);
+
           return {
             labels,
             datasets: [
@@ -346,12 +339,12 @@ export class ChartComponent {
     }
   };
 
-  getColors = (labels: string[], index: number, color: string) =>
+  getColors = (labels: string[], index: number, color: string[]) =>
     labels.map((label, labelIndex) => {
       if (labelIndex === index) {
         return 'rgb(47, 202, 81)';
       } else {
-        return color;
+        return color[labelIndex];
       }
     });
 
