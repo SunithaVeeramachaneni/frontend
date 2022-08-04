@@ -1,6 +1,7 @@
 $white-color: #ffffff;
 $light-gray: #eeeeee;
 $blue-color: #1a66ff;
+$light-blue: #3d5afe14;
 $hover-bg-color: #b7b9bc2e;
 
 .chatsBody {
@@ -208,6 +209,9 @@ $hover-bg-color: #b7b9bc2e;
     cursor: pointer;
     background: $hover-bg-color;
   }
+}
+.selectedUser {
+  background: $light-blue;
 }
 
 .centerText {
