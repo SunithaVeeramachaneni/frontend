@@ -33,28 +33,35 @@
   </div>
 </div>
 <div mat-dialog-content class="dialogContent">
+  <mat-button-toggle-group
+    [ngClass]="{
+      'hideButtonGroup':hideButtonGroup
+    }"
+    #group="matButtonToggleGroup"
+    name="collaborationMode"
+    aria-label="Collaboration Mode"
+    class="buttonGroup"
+    [value]="selectedTab"
+    (change)="onValChange(group.value)"
+  >
+    <mat-button-toggle class="btnGroupBtn" value="chats"
+      >Chats</mat-button-toggle
+    >
+    <mat-button-toggle class="btnGroupBtn" value="calls" disabled
+      >Calls</mat-button-toggle
+    >
+    <mat-button-toggle class="btnGroupBtn" value="peoples"
+      >People</mat-button-toggle
+    >
+  </mat-button-toggle-group>
+
   <div class="dialogBody">
     <div>
-      <mat-button-toggle-group
-        #group="matButtonToggleGroup"
-        name="collaborationMode"
-        aria-label="Collaboration Mode"
-        class="buttonGroup"
-        [value]="selectedTab"
-        (change)="onValChange(group.value)"
-      >
-        <mat-button-toggle class="btnGroupBtn" value="chats"
-          >Chats</mat-button-toggle
-        >
-        <mat-button-toggle class="btnGroupBtn" value="calls" disabled
-          >Calls</mat-button-toggle
-        >
-        <mat-button-toggle class="btnGroupBtn" value="peoples"
-          >People</mat-button-toggle
-        >
-      </mat-button-toggle-group>
       <div *ngIf="selectedTab ==='chats'" class="tabContent">
-        <app-chats [targetUser]="selectedUser"></app-chats>
+        <app-chats
+          [targetUser]="selectedUser"
+          (viewChangeHandler)="handleViewChange($event)"
+        ></app-chats>
       </div>
       <div *ngIf="selectedTab ==='calls'" class="tabContent">
         <app-calls [targetUser]="selectedUser"></app-calls>

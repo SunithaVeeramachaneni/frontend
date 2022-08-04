@@ -105,6 +105,21 @@ export class ChatService {
     );
   };
 
+  addMembersToConversation$ = (
+    chatId: string,
+    members: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._postData(
+      apiURL,
+      `conversations/${chatId}/members`,
+      { members },
+      info
+    );
+  };
+
   uploadFileToConversation$ = (
     conversationId: string,
     formData: FormData,

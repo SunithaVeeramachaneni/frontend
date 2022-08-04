@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 import { ChatService } from './chat.service';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
@@ -53,6 +60,9 @@ interface Message {
   styleUrls: ['./chats.component.scss']
 })
 export class ChatsComponent implements OnInit, OnDestroy {
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() viewChangeHandler = new EventEmitter<any>();
+
   @Input() targetUser: any;
 
   isOpen = false;
@@ -66,7 +76,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
   messageText = '';
   messageDeliveryProgress = false;
   attachmentUploadInProgress = false;
+
   downloadInProgress = false;
+  downloadingFileName: string;
+
   conversations: any = [];
   selectedConversation: Conversation;
 
@@ -232,6 +245,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   addPeopleToConversation = (conversation: Conversation) => {
     this.selectedView = 'CREATE_UPDATE_GROUP';
+    this.viewChangeHandler.emit({ hideButtonGroup: true });
     if (conversation.chatType === 'group') {
       this.conversationMode = 'ADD_GROUP_MEMBERS';
     } else if (conversation.chatType === 'oneOnOne') {
@@ -242,14 +256,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
   createGroup = () => {
     this.selectedView = 'CREATE_UPDATE_GROUP';
     this.conversationMode = 'CREATE_GROUP';
+    this.viewChangeHandler.emit({ hideButtonGroup: true });
   };
 
   handleGroupCreation = (event) => {
     // TODO: Add the created group to the existing groups/conversations...
     this.selectedView = 'CHAT';
+    this.viewChangeHandler.emit({ hideButtonGroup: false });
   };
   handleViewChange = ($event) => {
     this.selectedView = $event.view;
+    if (this.selectedView === 'CHAT') {
+      this.viewChangeHandler.emit({ hideButtonGroup: false });
+    }
   };
 
   downloadFile = (file: any) => {
@@ -261,6 +280,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       return;
     }
     this.downloadInProgress = true;
+    this.downloadingFileName = file.name;
 
     this.chatService.downloadAttachment$(file, info).subscribe(
       (data) => {

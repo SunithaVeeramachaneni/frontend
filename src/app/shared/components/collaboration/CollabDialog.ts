@@ -22,6 +22,7 @@ export class CollabDialogComponent implements OnInit {
   public callType: string;
 
   isMaximized: boolean;
+  hideButtonGroup = false;
 
   private positionRelativeToElement: ElementRef;
 
@@ -41,6 +42,13 @@ export class CollabDialogComponent implements OnInit {
     this.dialogRef.updatePosition(matDialogConfig.position);
     this.selectedTab = 'chats';
     this.isMaximized = false;
+  }
+  handleViewChange(event) {
+    if (event.hideButtonGroup && event.hideButtonGroup === true) {
+      this.hideButtonGroup = true;
+    } else {
+      this.hideButtonGroup = false;
+    }
   }
 
   handleTextMessaging(targetUser: any) {

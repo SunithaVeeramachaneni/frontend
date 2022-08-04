@@ -40,25 +40,30 @@
           >
             <mat-icon class="icon group-icon">groups</mat-icon>
           </div>
-          <div mat-line>
-            <b *ngIf="conversation.chatType === 'oneOnOne'"
+          <div mat-line class="convTitle">
+            <span *ngIf="conversation.chatType === 'oneOnOne'" class="convName"
               >{{ conversation.userInfo.firstName }}
               {{ conversation.userInfo.lastName }}
-            </b>
-            <b *ngIf="conversation.chatType === 'group'"
+            </span>
+            <span *ngIf="conversation.chatType === 'group'" class="convName"
               >{{ conversation.topic }}
-            </b>
+            </span>
+            <span class="timeAgo">
+              {{ conversation.latest.createdDateTime | timeAgo }}
+            </span>
           </div>
           <div
+            class="convDesc"
             mat-line
-            [innerHTML]="conversation.latest.message"
+            [innerHTML]="
+              conversation.latest.message ? conversation.latest.message : ''
+            "
             [ngClass]="{
               unreadMessage: conversation.latest.unread === true
             }"
           >
             <!-- {{ conversation.latest.message }} -->
           </div>
-          <mat-divider class="horiz-dividerConv"></mat-divider>
         </mat-list-item>
       </mat-list>
     </div>
@@ -93,10 +98,10 @@
           class="userTitle"
           *ngIf="selectedConversation.chatType === 'oneOnOne'"
         >
-          <b class="userName"
+          <span class="userName"
             >{{ selectedConversation.userInfo.firstName }}
             {{ selectedConversation.userInfo.lastName }}
-          </b>
+          </span>
           <div mat-line class="userDescription">
             {{ selectedConversation.userInfo?.title }}
           </div>
@@ -105,7 +110,7 @@
           class="userTitle groupTitle"
           *ngIf="selectedConversation.chatType === 'group'"
         >
-          <b class="userName">{{ selectedConversation.topic }} </b>
+          <span class="userName">{{ selectedConversation.topic }} </span>
           <div mat-line class="userDescription groupDescription">
             <span
               *ngFor="
@@ -199,10 +204,11 @@
       </div>
     </div>
     <div class="conversationHead" *ngIf="showAttachmentPreview">
-      <div class="displayFlex">
+      <div class="displayFlex alignCenter">
         <button mat-icon-button (click)="closePreview()">
           <mat-icon>close</mat-icon>
         </button>
+        <span>{{ selectedAttachment.name }}</span>
       </div>
     </div>
     <mat-divider
@@ -246,7 +252,9 @@
                 </div>
               </div>
               <div class="messageContainerNonLoggedIn">
-                <span class="groupMessageFrom"
+                <span
+                  class="groupMessageFrom"
+                  *ngIf="selectedConversation.chatType !== 'oneOnOne'"
                   >{{ message.from.firstName }}
                   {{ message.from.lastName }}</span
                 >
@@ -331,28 +339,31 @@
                       *ngFor="let file of message.attachments"
                       class="attachmentItem"
                     >
-                      <mat-icon mat-list-icon>folder</mat-icon>
-                      <div mat-line class="attachmentTitle">
-                        {{ file.name }}
-                      </div>
-                      <div mat-line class="attachmentSubTitle">
-                        <div>
-                          Size: {{ file.size / 1024 | number: '1.0-0' }} KB
+                      <div class="attachmentItemRow">
+                        <div class="iconAndTitle">
+                          <mat-icon>folder</mat-icon>
+                          <div class="attachmentTitle">
+                            {{ file.name }}
+                          </div>
                         </div>
                         <div
                           *ngIf="!downloadInProgress"
                           class="downloadBtn"
                           (click)="downloadFile(file)"
                         >
-                          <mat-icon>cloud_download</mat-icon
-                          ><span class="downloadLabel">Download</span>
+                          <mat-icon>arrow_circle_down</mat-icon>
                         </div>
-                        <div *ngIf="downloadInProgress" class="downloadBtn">
+                        <div
+                          *ngIf="
+                            downloadInProgress &&
+                            downloadingFileName === file.name
+                          "
+                          class="downloadBtn"
+                        >
                           <mat-spinner
                             strokeWidth="5"
                             diameter="25"
                           ></mat-spinner>
-                          <span class="downloadLabel">Downloading...</span>
                         </div>
                       </div>
                     </mat-list-item>
@@ -394,6 +405,9 @@
             class="attachmentsListItem"
             *ngFor="let attachment of uploadedFiles"
             (click)="setSelectedAttachment(attachment)"
+            [ngClass]="{
+              selectedAttachment: attachment.name === selectedAttachment.name
+            }"
           >
             <mat-icon
               class="removeAttachmentIcon"
@@ -416,13 +430,6 @@
               class="font-5rem"
               >description</mat-icon
             >
-            <div class="attachmentDetail">
-              <span class="attachmentTitle">{{ attachment.name }}</span>
-              <span class="attachmentSize">
-                Size:
-                {{ attachment.size / 1024 | number: '1.0-0' }} KB</span
-              >
-            </div>
           </div>
         </div>
       </div>
@@ -448,14 +455,12 @@
           (click)="openAttachments()"
           class="attachmentIconBtn"
         >
-          <mat-icon class="attachmentIcon" *ngIf="!attachmentUploadInProgress"
+          <mat-icon class="attachmentAddIcon" *ngIf="showAttachmentPreview"
+            >add</mat-icon
+          >
+          <mat-icon class="attachmentIcon" *ngIf="!showAttachmentPreview"
             >attach_file</mat-icon
           >
-          <mat-spinner
-            *ngIf="attachmentUploadInProgress"
-            strokeWidth="5"
-            diameter="25"
-          ></mat-spinner>
         </button>
         <div class="messageInputGroup">
           <input
@@ -504,8 +509,8 @@
   <app-create-group
     (handleGroupCreation)="handleGroupCreation($event)"
     (viewChangeListener)="handleViewChange($event)"
-    selectedConversation="{{ selectedConversation }}"
-    conversationMode="{{ conversationMode }}"
+    [selectedConversation]="selectedConversation"
+    [conversationMode]="conversationMode"
   ></app-create-group>
 </div>
 
