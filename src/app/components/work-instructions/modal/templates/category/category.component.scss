@@ -52,7 +52,7 @@
 .form-headings {
   font-style: normal;
   font-weight: normal;
-  font-size: 120%;
+  font-size: 110%;
   line-height: 19px;
   color: #25282b;
   margin-bottom: 7px;
@@ -101,7 +101,7 @@ label {
 .uploadfilecontainertitle {
   font-style: normal;
   font-weight: normal;
-  font-size: 120%;
+  font-size: 110%;
   line-height: 19px;
   color: #76767b;
   padding-top: 8px;
@@ -191,6 +191,7 @@ label {
 .upload-img {
   position: relative;
   left: -10px;
+  top: 2px;
 }
 
 .text-required {

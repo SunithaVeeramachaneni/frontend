@@ -1,22 +1,31 @@
 <div class="filter-form-fields">
-  <mat-form-field appearance="outline" class="width-100">
-    <mat-icon matPrefix>search</mat-icon>
-    <input
-      type="text"
-      placeholder="Add Filter"
-      matInput
-      [matAutocomplete]="autoCompleteFilter"
-    />
-    <mat-autocomplete #autoCompleteFilter="matAutocomplete">
-      <mat-option *ngFor="let col of dropdownReportColumns; let index = index">
-        <div (click)="addFilter(col, index)">
-          {{ col.displayName }}
-        </div>
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
+  <div class="custom-form-field-gray-color">
+    <mat-form-field appearance="outline" class="width-100">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Add Filter"
+        matInput
+        [matAutocomplete]="autoCompleteFilter"
+      />
+      <mat-autocomplete #autoCompleteFilter="matAutocomplete">
+        <mat-option
+          *ngFor="let col of dropdownReportColumns; let index = index"
+        >
+          <div (click)="addFilter(col, index)">
+            {{ col.displayName }}
+          </div>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
 
-  <form [formGroup]="filtersForm" class="custom-form-field-gray-color">
+  <form
+    [formGroup]="filtersForm"
+    id="filtersForm"
+    (ngSubmit)="onSave()"
+    class="custom-form-field-white-color"
+  >
     <mat-list
       role="list"
       *ngFor="let filterForm of filters.controls; let i = index"
@@ -101,9 +110,8 @@
         [cdkConnectedOverlayOrigin]="trigger"
         (backdropClick)="isfilterTooltipOpen[i] = false"
       >
-        <form
+        <div
           [formGroupName]="i"
-          (ngSubmit)="onSave()"
           class="filter-input-modal"
           [ngStyle]="{
             top: this.dynamicFilterModalTopPosition
@@ -269,12 +277,13 @@
               class="save-btn"
               mat-raised-button
               type="submit"
+              form="filtersForm"
               [disabled]="filterForm.invalid"
             >
               Save
             </button>
           </div>
-        </form>
+        </div>
       </ng-template>
     </mat-list>
   </form>
