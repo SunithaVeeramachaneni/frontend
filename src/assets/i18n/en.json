@@ -24,5 +24,10 @@
   "backgroundHeader": "Let's get <br/> empowered",
   "addParticipants": "Add Participants",
   "createGroup": "Create Group",
-  "updateGroup": "Update Group"
+  "updateGroup": "Update Group",
+  "innoChatTitle": "Inno Chat",
+  "chats": "Chats",
+  "calls": "Calls",
+  "people": "People",
+  "participants": "Participants"
 }
