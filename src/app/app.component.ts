@@ -251,9 +251,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
                   message.eventType === 'message' ||
                   message.messageType === 'message'
                 ) {
-                  const iscollabWindowOpen =
+                  const collaborationWindowStatus =
                     ref.chatService.getCollaborationWindowStatus();
-                  if (iscollabWindowOpen) {
+                  if (collaborationWindowStatus.isOpen) {
                     ref.chatService.newMessageReceived(message);
                   } else {
                     let unreadCount = ref.chatService.getUnreadMessageCount();

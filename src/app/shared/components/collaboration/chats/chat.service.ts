@@ -12,16 +12,21 @@ import { LoginService } from 'src/app/components/login/services/login.service';
   providedIn: 'root'
 })
 export class ChatService {
-  private collabWindowOpenStatus = false;
+  private collabWindowOpenStatus = { isOpen: false, isCollapsed: false };
   private unreadMessageCount = 0;
 
   private newMessageReceivedSubject = new BehaviorSubject<any>({});
   private collaborationWindowSubject = new BehaviorSubject<any>({});
+  private collabWindowCollapseExpandSubject = new BehaviorSubject<any>({});
+
   private openCollaborationWindowSubject = new BehaviorSubject<any>({});
   private unreadCountSubject = new BehaviorSubject<number>(0);
 
   newMessageReceivedAction$ = this.newMessageReceivedSubject.asObservable();
   collaborationWindowAction$ = this.collaborationWindowSubject.asObservable();
+  collabWindowCollapseExpandAction$ =
+    this.collabWindowCollapseExpandSubject.asObservable();
+
   openCollabWindow$ = this.openCollaborationWindowSubject.asObservable();
   unreadCount$ = this.unreadCountSubject.asObservable();
 
@@ -34,8 +39,12 @@ export class ChatService {
     this.newMessageReceivedSubject.next(message);
   };
 
+  expandCollaborationWindow = () => {
+    this.collabWindowCollapseExpandSubject.next({ expand: true });
+  };
+
   collaborationWindowAction = (action: any) => {
-    this.collabWindowOpenStatus = action.isOpen;
+    this.collabWindowOpenStatus = action;
     this.collaborationWindowSubject.next(action);
   };
 
