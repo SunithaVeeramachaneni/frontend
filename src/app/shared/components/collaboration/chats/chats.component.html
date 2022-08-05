@@ -270,29 +270,34 @@
                       *ngFor="let file of message.attachments"
                       class="attachmentItem"
                     >
-                      <mat-icon mat-list-icon>folder</mat-icon>
-                      <div mat-line class="attachmentTitle">
-                        {{ file.name }}
-                      </div>
-                      <div mat-line class="attachmentSubTitle">
-                        <div>
-                          Size:
-                          {{ file.size / 1024 | number: '1.0-0' }} KB
+                      <div class="attachmentItemRow">
+                        <div class="iconAndTitle">
+                          <mat-icon>folder</mat-icon>
+                          <div class="attachmentTitle">
+                            {{ file.name }}
+                          </div>
                         </div>
                         <div
-                          *ngIf="!downloadInProgress"
+                          *ngIf="
+                            !downloadInProgress ||
+                            downloadingFileRef !== message.id
+                          "
                           class="downloadBtn"
-                          (click)="downloadFile(file)"
+                          (click)="downloadFile(file, message.id)"
                         >
-                          <mat-icon>cloud_download</mat-icon
-                          ><span class="downloadLabel">Download</span>
+                          <mat-icon>arrow_circle_down</mat-icon>
                         </div>
-                        <div *ngIf="downloadInProgress" class="downloadBtn">
+                        <div
+                          *ngIf="
+                            downloadInProgress &&
+                            downloadingFileRef === message.id
+                          "
+                          class="downloadBtn"
+                        >
                           <mat-spinner
                             strokeWidth="5"
                             diameter="25"
                           ></mat-spinner>
-                          <span class="downloadLabel">Downloading...</span>
                         </div>
                       </div>
                     </mat-list-item>
@@ -347,16 +352,19 @@
                           </div>
                         </div>
                         <div
-                          *ngIf="!downloadInProgress"
+                          *ngIf="
+                            !downloadInProgress ||
+                            downloadingFileRef !== message.id
+                          "
                           class="downloadBtn"
-                          (click)="downloadFile(file)"
+                          (click)="downloadFile(file, message.id)"
                         >
                           <mat-icon>arrow_circle_down</mat-icon>
                         </div>
                         <div
                           *ngIf="
                             downloadInProgress &&
-                            downloadingFileName === file.name
+                            downloadingFileRef === message.id
                           "
                           class="downloadBtn"
                         >

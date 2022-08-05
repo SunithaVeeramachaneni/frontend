@@ -78,7 +78,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   attachmentUploadInProgress = false;
 
   downloadInProgress = false;
-  downloadingFileName: string;
+  downloadingFileRef: string;
 
   conversations: any = [];
   selectedConversation: Conversation;
@@ -271,7 +271,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     }
   };
 
-  downloadFile = (file: any) => {
+  downloadFile = (file: any, refId: string) => {
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -280,7 +280,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       return;
     }
     this.downloadInProgress = true;
-    this.downloadingFileName = file.name;
+    this.downloadingFileRef = refId;
 
     this.chatService.downloadAttachment$(file, info).subscribe(
       (data) => {
@@ -292,10 +292,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
         a.click();
         a.remove();
         this.downloadInProgress = false;
+        this.downloadingFileRef = undefined;
       },
       (err) => {
         //
         this.downloadInProgress = false;
+        this.downloadingFileRef = undefined;
       }
     );
   };
