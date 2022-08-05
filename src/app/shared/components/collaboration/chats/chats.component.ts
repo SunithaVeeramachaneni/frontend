@@ -131,7 +131,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
     this.newMessageReceivedSubscription =
       this.chatService.newMessageReceivedAction$.subscribe((event) => {
-        this.addMessageToConversation(event);
+        if (event.messageType === 'GROUP_CREATED_EVENT') {
+          this.updateConversations$.next({
+            action: 'create_conversation',
+            message: event,
+            channel: ''
+          });
+        } else {
+          this.addMessageToConversation(event);
+        }
       });
 
     const userInfo = this.loginService.getLoggedInUserInfo();
