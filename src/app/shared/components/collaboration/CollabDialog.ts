@@ -23,6 +23,7 @@ export class CollabDialogComponent implements OnInit {
 
   isMaximized: boolean;
   hideButtonGroup = false;
+  dialogCollapsed = false;
 
   private positionRelativeToElement: ElementRef;
 
@@ -72,16 +73,28 @@ export class CollabDialogComponent implements OnInit {
   closeCollabDialog(): void {
     this.dialogRef.close();
   }
+  collapseCollabDialog(): void {
+    this.isMaximized = false;
+    this.dialogCollapsed = true;
+    this.dialogRef.updateSize('200px', '100px');
+    this.dialogRef.removePanelClass('overlay-max');
+    this.dialogRef.removePanelClass('overlay-min');
+    this.dialogRef.addPanelClass('bottomRight');
+  }
   maximizeCollabDialog(): void {
+    this.dialogCollapsed = false;
     this.isMaximized = true;
     this.dialogRef.updateSize('100vw', '100vh');
     this.dialogRef.removePanelClass('overlay-min');
+    this.dialogRef.removePanelClass('bottomRight');
     this.dialogRef.addPanelClass('overlay-max');
   }
   minimizeCollabDialog(): void {
+    this.dialogCollapsed = false;
     this.isMaximized = false;
     this.dialogRef.updateSize('750px', 'auto');
     this.dialogRef.removePanelClass('overlay-max');
+    this.dialogRef.removePanelClass('bottomRight');
     this.dialogRef.addPanelClass('overlay-min');
   }
 }

@@ -2,6 +2,7 @@
   mat-dialog-title
   class="dialogTitle"
   cdkDrag
+  [cdkDragDisabled]="dialogCollapsed"
   cdkDragRootElement=".cdk-overlay-pane"
   cdkDragHandle
   cdkDragBoundary="body"
@@ -11,9 +12,17 @@
     <div>
       <button
         mat-icon-button
+        class="closeBtn"
+        (click)="collapseCollabDialog()"
+        *ngIf="!dialogCollapsed"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button
+        mat-icon-button
         class="closeBtn rotate90"
         (click)="minimizeCollabDialog()"
-        *ngIf="isMaximized"
+        *ngIf="isMaximized || dialogCollapsed"
       >
         <mat-icon>unfold_less</mat-icon>
       </button>
@@ -21,7 +30,7 @@
         mat-icon-button
         class="closeBtn rotate90"
         (click)="maximizeCollabDialog()"
-        *ngIf="!isMaximized"
+        *ngIf="!isMaximized && !dialogCollapsed"
       >
         <mat-icon>unfold_more</mat-icon>
       </button>
@@ -32,7 +41,11 @@
     </div>
   </div>
 </div>
-<div mat-dialog-content class="dialogContent">
+<div
+  mat-dialog-content
+  class="dialogContent"
+  [ngClass]="{ displayNone: dialogCollapsed }"
+>
   <mat-button-toggle-group
     [ngClass]="{
       'hideButtonGroup':hideButtonGroup

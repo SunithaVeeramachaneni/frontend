@@ -20,6 +20,17 @@ $white: #ffffff;
   margin-right: 180px !important;
   height: auto !important;
 }
+
+::ng-deep .bottomRight {
+  position: fixed !important;
+  right: 0px !important;
+  bottom: 0px !important;
+  width: 300px !important;
+  height: 48px !important;
+  margin-right: 0px !important;
+  transform: none !important;
+}
+
 .dialogTitle {
   background: $white;
   margin: 0px;
@@ -81,4 +92,8 @@ $white: #ffffff;
 
 .hideButtonGroup {
   display: none;
+}
+
+.displayNone {
+  display: none !important;
 }
