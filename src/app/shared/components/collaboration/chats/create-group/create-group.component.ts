@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { PeopleService } from '../../people/people.service';
@@ -6,7 +6,6 @@ import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
 import { ImageUtils } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Component({
@@ -15,6 +14,9 @@ import { LoginService } from 'src/app/components/login/services/login.service';
   styleUrls: ['./create-group.component.scss']
 })
 export class CreateGroupComponent implements OnInit {
+  @Input() selectedConversation: any;
+  @Input() conversationMode: string;
+
   @Output() handleGroupCreation = new EventEmitter<any>();
   @Output() viewChangeListener = new EventEmitter<any>();
 
@@ -24,6 +26,7 @@ export class CreateGroupComponent implements OnInit {
   selectedUsers: any[] = [];
   groupName = '';
   groupCreationInProgress = false;
+  newUsersAddedToGroup = false;
 
   constructor(
     private peopleService: PeopleService,
@@ -53,13 +56,12 @@ export class CreateGroupComponent implements OnInit {
     this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
       map(([initial]) => {
         const validUsers = [];
+        const userInfo = this.loginService.getLoggedInUserInfo();
         initial.data.forEach((user) => {
-          const userInfo = this.loginService.getLoggedInUserInfo();
           let isCurrentUser = false;
           if (user.email === userInfo.email) {
             isCurrentUser = true;
           }
-
           if (userInfo.collaborationType === 'slack') {
             if (user.slackDetail && !isCurrentUser) {
               validUsers.push(user);
@@ -74,6 +76,28 @@ export class CreateGroupComponent implements OnInit {
             }
           }
         });
+
+        if (
+          this.conversationMode === 'CREATE_GROUP_WITH_USER' ||
+          this.conversationMode === 'ADD_GROUP_MEMBERS'
+        ) {
+          // add selected conversation members.... remove current user..
+
+          let memberEmails = this.selectedConversation.members.map(
+            (m) => m.email
+          );
+          memberEmails = memberEmails.filter((m) => m.email !== userInfo.email);
+          validUsers.forEach((user) => {
+            if (memberEmails.indexOf(user.email) > -1) {
+              user.disabled = true;
+              user.selected = true;
+              this.selectedUsers.push(user);
+            }
+          });
+          if (this.conversationMode === 'ADD_GROUP_MEMBERS') {
+            this.groupName = this.selectedConversation.topic;
+          }
+        }
         return validUsers;
       })
     );
@@ -83,14 +107,16 @@ export class CreateGroupComponent implements OnInit {
     this.viewChangeListener.emit({ view: 'CHAT' });
   };
 
-  selectUser = (user: any) => {
+  addParticipant = (user: any) => {
     user.selected = true;
     const index = this.selectedUsers.findIndex((u) => u.id === user.id);
     if (index > -1) {
       return;
     }
     this.selectedUsers.push(user);
+    this.newUsersAddedToGroup = true;
   };
+
   removeParticipant = (user) => {
     user.selected = false;
     const index = this.selectedUsers.findIndex((u) => u.id === user.id);
@@ -115,8 +141,8 @@ export class CreateGroupComponent implements OnInit {
       failureResponse: 'throwError'
     };
     const invitedUsers = [];
+    const userInfo = this.loginService.getLoggedInUserInfo();
     selectedUsers.forEach((user) => {
-      const userInfo = this.loginService.getLoggedInUserInfo();
       if (userInfo.collaborationType === 'slack') {
         if (user.slackDetail && user.slackDetail.slackID) {
           invitedUsers.push(user.slackDetail.slackID);
@@ -125,9 +151,11 @@ export class CreateGroupComponent implements OnInit {
         invitedUsers.push(user.email);
       }
     });
+    if (userInfo.collaborationType === 'slack') {
+      groupName = groupName.replace(/[^a-zA-Z ]/g, '');
+      groupName = groupName.replaceAll(/\s/g, '');
+    }
 
-    groupName = groupName.replace(/[^a-zA-Z ]/g, '');
-    groupName = groupName.replaceAll(/\s/g, '');
     this.chatService
       .createConversation$(groupName, invitedUsers, 'group', info)
       .subscribe(
@@ -136,6 +164,30 @@ export class CreateGroupComponent implements OnInit {
             this.groupCreationInProgress = false;
             this.handleGroupCreation.emit(resp);
           }
+        },
+        (err) => {
+          this.groupCreationInProgress = false;
+          // TODO: Display toasty messsage
+        }
+      );
+  };
+  updateGroupMembers = () => {
+    // Note - Shiva: This works only for MS Teams, need to figure out a way for making it work for Slack as well...
+    if (!this.newUsersAddedToGroup) {
+      return;
+    }
+    this.groupCreationInProgress = true;
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    const members = this.selectedUsers.map((user) => user.email);
+    this.chatService
+      .addMembersToConversation$(this.selectedConversation.id, members, info)
+      .subscribe(
+        (resp) => {
+          this.groupCreationInProgress = false;
+          this.handleGroupCreation.emit(resp);
         },
         (err) => {
           this.groupCreationInProgress = false;

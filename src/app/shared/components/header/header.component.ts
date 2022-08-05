@@ -67,8 +67,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   openDialog(): void {
-    const dialogAlreadyOpened = this.chatService.getCollaborationWindowStatus();
-    if (dialogAlreadyOpened) {
+    const collaborationWindowStatus =
+      this.chatService.getCollaborationWindowStatus();
+    if (collaborationWindowStatus.isOpen) {
+      if (collaborationWindowStatus.isCollapsed) {
+        this.chatService.expandCollaborationWindow();
+      }
       return;
     }
     this.unreadMessageCount = 0;
@@ -82,13 +86,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterOpened().subscribe(() => {
       this.chatService.collaborationWindowAction({
-        isOpen: true
+        isOpen: true,
+        isCollapsed: false
       });
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       this.chatService.collaborationWindowAction({
-        isOpen: false
+        isOpen: false,
+        isCollapsed: false
       });
     });
   }
