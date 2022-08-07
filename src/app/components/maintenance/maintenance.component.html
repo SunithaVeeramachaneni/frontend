@@ -2,7 +2,71 @@
   <div class="header-filters">
     <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
     </app-date-segment>
-
+    <div class="custom-form-field-white-color" [formGroup]="filterGroup">
+      <mat-form-field appearance="outline" style="margin-left: 15px">
+        <mat-label>Plants</mat-label>
+        <mat-select multiple formControlName="plants">
+          <mat-select-trigger>
+            {{ plants.value[0]?.desc }}
+            <span *ngIf="plants.value?.length > 1">
+              ( +{{ plants.value.length - 1 }}
+              {{ plants.value?.length === 2 ? 'more' : 'more' }})
+            </span>
+          </mat-select-trigger>
+          <mat-option
+            #allSelected
+            (click)="toggleAllSelection()"
+            [value]="0"
+            class="filter-option"
+            >All</mat-option
+          >
+          <ng-container *ngIf="allPlants$ | async">
+            <mat-option
+              *ngFor="let plant of plantsList"
+              [value]="plant"
+              #matOption
+              (click)="togglePerPlant(matOption.selected, plant.id)"
+              class="filter-option"
+            >
+              <p class="filter-option-id">
+                {{ plant.id }}
+              </p>
+              <p class="filter-option-desc">{{ plant.desc }}</p>
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" style="margin-left: 15px">
+        <mat-label>Work Centers</mat-label>
+        <mat-select multiple formControlName="workCenters">
+          <mat-select-trigger>
+            {{ workCenters.value[0]?.desc }}
+            <span *ngIf="workCenters.value?.length > 1">
+              ( +{{ workCenters.value.length - 1 }}
+              {{ workCenters.value?.length === 2 ? 'more' : 'more' }})
+            </span>
+          </mat-select-trigger>
+          <ng-container *ngIf="allWorkCenters$ | async">
+            <div *ngFor="let workCenterByPlant of currentWorkCenters">
+              <mat-option
+                *ngFor="let workcenter of workCenterByPlant.workCenters"
+                #matOption
+                [value]="workcenter"
+                class="filter-option"
+                (click)="filterWorkOrders(matOption.selected, workcenter.id)"
+              >
+                <p class="filter-option-id">
+                  {{ workcenter.id }}
+                </p>
+                <p class="filter-option-desc">
+                  {{ workcenter.desc }}
+                </p></mat-option
+              >
+            </div>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div style="position: absolute; right: 20px">
       <app-common-filter
         [title]="headerTitle"

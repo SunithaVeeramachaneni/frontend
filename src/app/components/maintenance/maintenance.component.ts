@@ -3,10 +3,12 @@ import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  ViewChild
 } from '@angular/core';
 import { MaintenanceService } from './maintenance.service';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
+import { Plant } from '../../interfaces/plant';
 import {
   BehaviorSubject,
   combineLatest,
@@ -15,8 +17,15 @@ import {
   Subscription,
   throwError
 } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { map, startWith, mergeMap, retryWhen, take } from 'rxjs/operators';
+import {
+  FormBuilder,
+  FormControl,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors
+} from '@angular/forms';
+import { MatOption } from '@angular/material/core';
+import { map, startWith, mergeMap, retryWhen, take, tap } from 'rxjs/operators';
 import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -32,6 +41,19 @@ import { MatDialog } from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MaintenanceComponent implements OnInit, OnDestroy {
+  @ViewChild('allSelected') private allSelected: MatOption;
+  filterGroup = this.fb.group({
+    plants: new FormControl([], [this.matSelectValidator()]),
+    workCenters: new FormControl([])
+  });
+  get plants() {
+    return this.filterGroup.get('plants');
+  }
+  get workCenters() {
+    return this.filterGroup.get('workCenters');
+  }
+
+  public currentWorkCenters: any = [];
   public workOrderList$: Observable<WorkOrders>;
   public updateWorkOrderList$: Observable<WorkOrders>;
   public combinedWorkOrderList$: Observable<WorkOrders>;
@@ -85,16 +107,21 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   ];
 
   public workCenter: string[] = [];
+  public plantsList = [];
+  public workCentersList = [];
 
   public assign: string[] = [];
 
   public showOperationsList = {};
   public base64Code: any;
+  private allPlants$: Observable<Plant[]>;
+  private allWorkCenters$: Observable<any>;
   private workCenterSubscription: Subscription;
   private technicianSubscription: Subscription;
   hideList = true;
   showFilters = false;
   constructor(
+    private fb: FormBuilder,
     private maintenanceSvc: MaintenanceService,
     private sanitizer: DomSanitizer,
     private _commonFilterService: CommonFilterService,
@@ -102,14 +129,60 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     public dialog: MatDialog
   ) {}
 
+  matSelectValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null =>
+      !control.value.length ? { selectOne: { value: control.value } } : null;
+  }
+
+  togglePerPlant(notSelected: boolean, id: any) {
+    if (this.allSelected.selected) {
+      this.allSelected.deselect();
+    }
+    if (
+      this.filterGroup.controls.plants.value.length === this.plantsList.length
+    ) {
+      this.allSelected.select();
+    }
+    this.workCenterFilter(notSelected, id);
+  }
+
+  toggleAllSelection() {
+    if (this.allSelected.selected) {
+      this.filterGroup.controls.plants.patchValue([...this.plantsList, 0]);
+      this.currentWorkCenters = this.workCentersList;
+    } else {
+      this.filterGroup.controls.plants.patchValue([this.plantsList[0]]);
+      this.currentWorkCenters = [
+        this.workCentersList.find(
+          (item) => item.plantId === this.plantsList[0].id
+        )
+      ];
+    }
+  }
+
   ngOnInit() {
     this._commonFilterService.clearFilter();
     this.dateRange$ = new BehaviorSubject(
       this._dateSegmentService.getStartAndEndDate('month')
     );
-    this.workCenterSubscription = this.maintenanceSvc
-      .getAllWorkCenters()
-      .subscribe((resp) => (this.workCenterList = resp));
+    this.plantsList = this.maintenanceSvc.getPlants();
+    if (!this.plantsList.length) {
+      this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
+        tap((resp) => {
+          this.plantsList = resp;
+          this.filterGroup.controls.plants.patchValue([...this.plantsList, 0]);
+        })
+      );
+    }
+    this.workCenterList = this.maintenanceSvc.getWorkCenters();
+    if (!this.workCenterList.length) {
+      this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters().pipe(
+        tap((resp) => {
+          this.workCentersList = resp;
+          this.currentWorkCenters = this.workCentersList;
+        })
+      );
+    }
     this.technicianSubscription = this.maintenanceSvc
       .getTechnicians()
       .subscribe((resp) => {
@@ -134,6 +207,28 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
       const base64Image = 'data:image/jpeg;base64,' + source;
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
+  };
+
+  workCenterFilter = (notSelected: boolean, id: any) => {
+    if (notSelected) {
+      const workCenterByPlant = this.workCentersList.find(
+        (item: any) => item.plantId === id
+      );
+      this.currentWorkCenters = [...this.currentWorkCenters, workCenterByPlant];
+      this.currentWorkCenters.sort(
+        (a, b) => parseInt(a.plantId, 10) - parseInt(b.plantId, 10)
+      );
+    } else {
+      this.currentWorkCenters = this.currentWorkCenters.filter(
+        (item: any) => item.plantId !== id
+      );
+    }
+  };
+
+  filterWorkOrders = (notSelected: boolean, id: any) => {
+    console.log(notSelected);
+    console.log(id);
+    console.log(this.filterGroup.get('workCenters').value);
   };
 
   dateRangeEventHandler($event: any) {
@@ -205,6 +300,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
               this.filterKitStatus(workOrder.kitStatusText, filterObj.kitStatus)
           );
         }
+        console.log(filtered);
         return filtered;
       })
     );

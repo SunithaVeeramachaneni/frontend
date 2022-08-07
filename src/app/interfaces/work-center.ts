@@ -1,4 +1,8 @@
+interface WorkCenterList {
+  id: string;
+  desc: string;
+}
 export interface WorkCenter {
-    workCenterKey: string,
-    workCenterDesc: string
+  plantId: string;
+  workCenters: WorkCenterList[];
 }

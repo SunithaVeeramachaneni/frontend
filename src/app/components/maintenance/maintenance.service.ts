@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 
 import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
+import { Plant } from 'src/app/interfaces/plant';
 import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
@@ -20,8 +21,11 @@ export class MaintenanceService {
 
   private technicians$: Observable<any>;
   public workOrderBSubject: BehaviorSubject<any>;
+  public allPlants$: Observable<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
+  public plants: any = [];
+  public workCenters: any = [];
 
   closeEventSource(): void {
     this.sseService.closeEventSource();
@@ -76,24 +80,43 @@ export class MaintenanceService {
     });
   }
 
+  getAllPlants = () => {
+    const rawObservable$ = this._appService._getRespFromGateway(
+      environment.mccAbapApiUrl,
+      'plants'
+    );
+
+    this.allPlants$ = rawObservable$.pipe(
+      map((rawPlantsData) => {
+        const allPlants: any = [];
+        Object.keys(rawPlantsData).map((key) => {
+          const plant: Plant = {
+            id: key,
+            desc: rawPlantsData[key]
+          };
+
+          allPlants.push(plant);
+        });
+        this.setPlants(allPlants);
+        return allPlants;
+      }),
+      share()
+    );
+    return this.allPlants$;
+  };
+
   getAllWorkCenters = () => {
     const rawObservable$ = this._appService._getRespFromGateway(
       environment.mccAbapApiUrl,
-      `workCenters/${1000}`
+      `workCenters`
     );
     this.workCenters$ = rawObservable$.pipe(
       map((rawWorkCenters) => {
         const workCenters: WorkCenter[] = [];
-
-        rawWorkCenters.forEach((rawWorkCenter) => {
-          const workCenter: WorkCenter = {
-            workCenterDesc: '',
-            workCenterKey: ''
-          };
-          workCenter.workCenterDesc = rawWorkCenter.ARBPLDesc;
-          workCenter.workCenterKey = rawWorkCenter.ARBPLKey;
-          workCenters.push(workCenter);
+        Object.keys(rawWorkCenters).map((key) => {
+          workCenters.push(rawWorkCenters[key]);
         });
+        this.setWorkCenters(workCenters);
         return workCenters;
       }),
       share()
@@ -143,17 +166,21 @@ export class MaintenanceService {
       mergeMap((workCenters) =>
         from(workCenters).pipe(
           mergeMap((workCenter) =>
-            this._appService
-              ._getRespFromGateway(
-                environment.mccAbapApiUrl,
-                `technicians/'${workCenter.workCenterKey}'`
+            from(workCenter.workCenters).pipe(
+              mergeMap((wC) =>
+                this._appService
+                  ._getRespFromGateway(
+                    environment.mccAbapApiUrl,
+                    `technicians/'${wC.id}'`
+                  )
+                  .pipe(
+                    tap((data) => {}),
+                    map((technicians) => ({
+                      [wC.id]: this.cleanTechnicians(technicians)
+                    }))
+                  )
               )
-              .pipe(
-                tap((data) => {}),
-                map((technicians) => ({
-                  [workCenter.workCenterKey]: this.cleanTechnicians(technicians)
-                }))
-              )
+            )
           )
         )
       ),
@@ -260,4 +287,16 @@ export class MaintenanceService {
 
     return card;
   };
+
+  setPlants = (plants: any) => {
+    this.plants = plants;
+  };
+
+  getPlants = () => this.plants;
+
+  setWorkCenters = (workCenters: any) => {
+    this.workCenters = workCenters;
+  };
+
+  getWorkCenters = () => this.workCenters;
 }
