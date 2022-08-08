@@ -6,7 +6,7 @@
 
 .roles-header {
   text-align: right;
-  padding: 10px 15px;
+  padding: 7px;
   border-bottom: 1px solid #e7e7e7;
 }
 
@@ -62,26 +62,29 @@
 }
 
 .roles-title {
-  margin-top: 10px;
+  position: relative;
+  top: 5px;
 }
 
 .search-form-field {
   width: 95%;
-  margin: 10px 10px 0 10px;
+  margin: 0px 10px;
+  position: relative;
+  top: 5px;
 }
 
 .copy-role-btn {
   color: #3d5afe;
   border: 1px solid #bdbdbd;
   float: right;
-  margin: 15px 10px 0 0;
+  margin: 10px 10px 0 0;
 }
 
 .save-role-btn {
   background-color: #3d5afe;
   color: #ffffff;
   float: right;
-  margin: 15px 15px 0 0;
+  margin: 10px 10px 0 0;
   box-shadow: none;
 }
 
