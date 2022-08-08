@@ -2,18 +2,27 @@
   mat-dialog-title
   class="dialogTitle"
   cdkDrag
+  [cdkDragDisabled]="dialogCollapsed"
   cdkDragRootElement=".cdk-overlay-pane"
   cdkDragHandle
   cdkDragBoundary="body"
 >
   <div class="dialogHeader">
-    <div class="headerTitle">Inno Chat</div>
+    <div class="headerTitle" translate>innoChatTitle</div>
     <div>
+      <button
+        mat-icon-button
+        class="closeBtn"
+        (click)="collapseCollabDialog()"
+        *ngIf="!dialogCollapsed"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
       <button
         mat-icon-button
         class="closeBtn rotate90"
         (click)="minimizeCollabDialog()"
-        *ngIf="isMaximized"
+        *ngIf="isMaximized || dialogCollapsed"
       >
         <mat-icon>unfold_less</mat-icon>
       </button>
@@ -21,7 +30,7 @@
         mat-icon-button
         class="closeBtn rotate90"
         (click)="maximizeCollabDialog()"
-        *ngIf="!isMaximized"
+        *ngIf="!isMaximized && !dialogCollapsed"
       >
         <mat-icon>unfold_more</mat-icon>
       </button>
@@ -32,29 +41,40 @@
     </div>
   </div>
 </div>
-<div mat-dialog-content class="dialogContent">
+<div
+  mat-dialog-content
+  class="dialogContent"
+  [ngClass]="{ displayNone: dialogCollapsed }"
+>
+  <mat-button-toggle-group
+    [ngClass]="{
+      'hideButtonGroup':hideButtonGroup
+    }"
+    #group="matButtonToggleGroup"
+    name="collaborationMode"
+    aria-label="Collaboration Mode"
+    class="buttonGroup"
+    [value]="selectedTab"
+    (change)="onValChange(group.value)"
+  >
+    <mat-button-toggle class="btnGroupBtn" value="chats" translate
+      >chats</mat-button-toggle
+    >
+    <mat-button-toggle class="btnGroupBtn" value="calls" disabled translate
+      >calls</mat-button-toggle
+    >
+    <mat-button-toggle class="btnGroupBtn" value="peoples" translate
+      >people</mat-button-toggle
+    >
+  </mat-button-toggle-group>
+
   <div class="dialogBody">
     <div>
-      <mat-button-toggle-group
-        #group="matButtonToggleGroup"
-        name="collaborationMode"
-        aria-label="Collaboration Mode"
-        class="buttonGroup"
-        [value]="selectedTab"
-        (change)="onValChange(group.value)"
-      >
-        <mat-button-toggle class="btnGroupBtn" value="chats"
-          >Chats</mat-button-toggle
-        >
-        <mat-button-toggle class="btnGroupBtn" value="calls" disabled
-          >Calls</mat-button-toggle
-        >
-        <mat-button-toggle class="btnGroupBtn" value="peoples"
-          >People</mat-button-toggle
-        >
-      </mat-button-toggle-group>
       <div *ngIf="selectedTab ==='chats'" class="tabContent">
-        <app-chats [targetUser]="selectedUser"></app-chats>
+        <app-chats
+          [targetUser]="selectedUser"
+          (viewChangeHandler)="handleViewChange($event)"
+        ></app-chats>
       </div>
       <div *ngIf="selectedTab ==='calls'" class="tabContent">
         <app-calls [targetUser]="selectedUser"></app-calls>

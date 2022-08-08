@@ -21,5 +21,13 @@
   "permissionsRevokeTitle": "Permission changes!",
   "permissionsRevokeInfo": "There’re a few permission changes made to the role you’re associated with.",
   "contactAdmin": "Contact your Admin for more info.",
-  "backgroundHeader": "Let's get <br/> empowered"
+  "backgroundHeader": "Let's get <br/> empowered",
+  "addParticipants": "Add Participants",
+  "createGroup": "Create Group",
+  "updateGroup": "Update Group",
+  "innoChatTitle": "Inno Chat",
+  "chats": "Chats",
+  "calls": "Calls",
+  "people": "People",
+  "participants": "Participants"
 }
