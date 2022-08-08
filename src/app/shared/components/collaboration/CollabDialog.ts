@@ -50,7 +50,7 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
     const matDialogConfig = new MatDialogConfig();
     const rect: DOMRect =
       this.positionRelativeToElement.nativeElement.getBoundingClientRect();
-    matDialogConfig.position = { right: `180px`, top: `${rect.bottom + 2}px` };
+    matDialogConfig.position = { right: `100px`, top: `${rect.bottom + 2}px` };
     this.dialogRef.updatePosition(matDialogConfig.position);
     this.selectedTab = 'chats';
     this.isMaximized = false;

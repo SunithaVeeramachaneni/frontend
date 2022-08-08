@@ -62,5 +62,8 @@
   "saveReportAs": "Save Report As",
   "stackBy": "Stack By",
   "copy": "Copy",
-  "dashboardTitleExists": "Dashboard Title already exists"
+  "dashboardTitleExists": "Dashboard Title already exists",
+  "errorDeletingText": "Error Deleting Dashboard",
+  "cannotDeleteText": "Selected dashboard is marked as default, change the default dashboard and delete it",
+  "widgetsText": "Widgets"
 }

@@ -22,32 +22,26 @@
     (click)="closeSidenav()"
   >
     <div *ngIf="userDetails.collaborationType === 'msteams'">
-      <button
+      <mat-icon
         #collabButton
         class="collabButton"
-        mat-icon-button
-        color="primary"
         aria-label="Collaboration Dialog trigger button"
         (click)="openDialog()"
         *ngIf="unreadMessageCount > 0"
         [matBadge]="unreadMessageCount"
-        matBadgePosition="after"
         matBadgeColor="warn"
-        matBadgeOverlap="true"
       >
-        <mat-icon>chat_bubble_outline</mat-icon>
-      </button>
-      <button
+        chat_bubble_outline
+      </mat-icon>
+      <mat-icon
         #collabButton
         class="collabButton"
-        mat-icon-button
-        color="primary"
         aria-label="Collaboration Dialog trigger button"
         (click)="openDialog()"
         *ngIf="unreadMessageCount <= 0"
       >
-        <mat-icon>chat_bubble_outline</mat-icon>
-      </button>
+        chat_bubble_outline
+      </mat-icon>
     </div>
     <div *ngIf="userDetails.collaborationType === 'slack'">
       <div *ngIf="slackVerification$ | async as slackVerification">
@@ -80,22 +74,18 @@
           </svg>
           Connect to Slack
         </div>
-        <button
+        <mat-icon
           *ngIf="slackVerification.slackInstalled"
           #collabButton
           class="collabButton"
-          mat-icon-button
-          color="primary"
           aria-label="Collaboration Dialog trigger button"
           (click)="openDialog()"
           [matBadge]="unreadMessageCount"
           [matBadgeDisabled]="unreadMessageCount < 1"
-          matBadgePosition="after"
           matBadgeColor="warn"
-          matBadgeOverlap="true"
         >
-          <mat-icon>chat_bubble_outline</mat-icon>
-        </button>
+          chat_bubble_outline
+        </mat-icon>
       </div>
     </div>
 
@@ -105,15 +95,13 @@
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"
     >
-      <div class="user">
+      <div
+        [ngClass]="{
+          'user-with-logo': tenantLogo,
+          'user-without-logo': !tenantLogo
+        }"
+      >
         <img [src]="profileImage(userDetails.profileImage)" class="profile" />
-      </div>
-      <div class="without-company-logo" *ngIf="!tenantLogo">
-        <pre class="logo-comes-here-text">
-Logo comes
-  here
-      </pre
-        >
       </div>
       <div class="with-company-logo" *ngIf="tenantLogo">
         <span class="helper"> </span>
@@ -131,7 +119,13 @@ Logo comes
       [cdkConnectedOverlayOrigin]="trigger"
       (backdropClick)="isOpen = false"
     >
-      <div class="header-profile-menu">
+      <div
+        class="header-profile-menu"
+        [ngClass]="{
+          'header-profile-menu-with-logo': tenantLogo,
+          'header-profile-menu-without-logo': !tenantLogo
+        }"
+      >
         <img
           [src]="profileImage(userDetails.profileImage)"
           class="profile-image"
