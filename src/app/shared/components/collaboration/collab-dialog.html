@@ -46,27 +46,37 @@
   class="dialogContent"
   [ngClass]="{ displayNone: dialogCollapsed }"
 >
-  <mat-button-toggle-group
-    [ngClass]="{
-      'hideButtonGroup':hideButtonGroup
-    }"
-    #group="matButtonToggleGroup"
+  <div
+    [ngClass]="{ 'hideButtonGroup' : hideButtonGroup }"
     name="collaborationMode"
     aria-label="Collaboration Mode"
     class="buttonGroup"
-    [value]="selectedTab"
-    (change)="onValChange(group.value)"
   >
-    <mat-button-toggle class="btnGroupBtn" value="chats" translate
-      >chats</mat-button-toggle
-    >
-    <mat-button-toggle class="btnGroupBtn" value="calls" disabled translate
-      >calls</mat-button-toggle
-    >
-    <mat-button-toggle class="btnGroupBtn" value="peoples" translate
-      >people</mat-button-toggle
-    >
-  </mat-button-toggle-group>
+    <button
+      mat-button
+      class="btnGroupBtn"
+      [ngClass]="{'activeTab': selectedTab==='chats'}"
+      (click)="setSelectedTab('chats')"
+      translate="chats"
+    ></button>
+    <mat-divider class="groupBtnDivider"></mat-divider>
+    <button
+      mat-button
+      class="btnGroupBtn"
+      [ngClass]="{'activeTab': selectedTab==='calls'}"
+      (click)="setSelectedTab('calls')"
+      disabled
+      translate="calls"
+    ></button>
+    <mat-divider class="groupBtnDivider"></mat-divider>
+    <button
+      mat-button
+      class="btnGroupBtn"
+      [ngClass]="{'activeTab': selectedTab==='people'}"
+      (click)="setSelectedTab('people')"
+      translate="people"
+    ></button>
+  </div>
 
   <div class="dialogBody">
     <div>
@@ -79,7 +89,7 @@
       <div *ngIf="selectedTab ==='calls'" class="tabContent">
         <app-calls [targetUser]="selectedUser"></app-calls>
       </div>
-      <div *ngIf="selectedTab ==='peoples'" class="tabContent">
+      <div *ngIf="selectedTab ==='people'" class="tabContent">
         <app-people
           (handleTextMessaging)="handleTextMessaging($event)"
           (handleAudioMessaging)="handleAudioMessaging($event)"
