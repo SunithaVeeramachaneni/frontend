@@ -1,4 +1,7 @@
 $white: #ffffff;
+$light-gray: #f2f2f2;
+$black: #000000;
+$gray1: #7d7d7d;
 
 .rotate90 {
   transform: rotate(90deg);
@@ -59,12 +62,14 @@ $white: #ffffff;
   background-color: $white;
   min-height: 88vh !important;
   .buttonGroup {
-    background: $white;
-    height: 15px;
-    padding: 10px 20px;
+    background: $light-gray;
     border-radius: 5px;
     margin-left: 15px;
+    margin-top: 10px;
     position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
   .dialogBody {
     height: 88vh;
@@ -78,7 +83,7 @@ $white: #ffffff;
 ::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
 .mat-button-toggle-group-appearance-standard {
   border-radius: 5px;
-  background: #f2f2f2;
+  background: $light-gray;
   height: 35px;
   width: fit-content;
   margin: 10px 0px;
@@ -87,13 +92,24 @@ $white: #ffffff;
   flex-direction: row;
 }
 .btnGroupBtn {
-  background: $white;
+  color: $gray1;
+  font-weight: 400;
 }
 
 .hideButtonGroup {
-  display: none;
+  display: none !important;
 }
 
 .displayNone {
   display: none !important;
+}
+
+.groupBtnDivider {
+  background: #cccccc;
+  width: 1px;
+  height: 20px;
+}
+.activeTab {
+  font-weight: 500;
+  color: $black;
 }
