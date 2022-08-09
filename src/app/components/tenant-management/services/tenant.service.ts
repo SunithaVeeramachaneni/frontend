@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { Count, ErrorInfo, TableColumn, Tenant } from 'src/app/interfaces';

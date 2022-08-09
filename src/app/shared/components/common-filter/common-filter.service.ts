@@ -1,20 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonFilterService {
-
-  constructor() { }
+  constructor() {}
   private commonFilterSubject = new BehaviorSubject<any>({
-    "priority": [],
-    "kitStatus": [],
-    "workCenter": [],
-    "assign": [],
-    "search":"",
-    "showOverdue": "",
+    priority: [],
+    kitStatus: [],
+    workCenter: [],
+    assign: [],
+    search: '',
+    showOverdue: ''
   });
 
   commonFilterAction$ = this.commonFilterSubject.asObservable();
@@ -25,17 +23,14 @@ export class CommonFilterService {
 
   clearFilter() {
     let emptyObject = {
-      "priority": [],
-      "kitStatus": [],
-      "workCenter": [],
-      "assign": [],
-      "search":"",
-      "showOverdue": "",
-    }
+      priority: [],
+      kitStatus: [],
+      workCenter: [],
+      assign: [],
+      search: '',
+      showOverdue: ''
+    };
 
-    this.commonFilterSubject.next(emptyObject)
-
+    this.commonFilterSubject.next(emptyObject);
   }
-
-
 }
