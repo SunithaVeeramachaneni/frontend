@@ -3,6 +3,7 @@ $light-gray: #eeeeee;
 $blue-color: #1a66ff;
 $light-blue: #3d5afe14;
 $hover-bg-color: #b7b9bc2e;
+$gray1: #9e9e9e;
 
 .chatsBody {
   display: flex;
@@ -72,7 +73,6 @@ $hover-bg-color: #b7b9bc2e;
   width: 100%;
   flex-direction: column;
   background: $white-color !important;
-  margin-top: -60px;
   height: 85vh;
   .conversationHead {
     display: flex;
@@ -175,6 +175,12 @@ $hover-bg-color: #b7b9bc2e;
     height: 520px;
     overflow: auto;
     overflow-x: hidden;
+    .participantLabel {
+      font-weight: 500;
+      font-size: 92%;
+      padding: 10px 20px;
+      display: flex;
+    }
   }
   .chatBottom {
     .messageInputBar {
@@ -219,4 +225,20 @@ $hover-bg-color: #b7b9bc2e;
   justify-content: center;
   align-content: space-around;
   align-items: center;
+  color: $gray1;
+  font-weight: 400;
+}
+
+.displayInline {
+  display: inline;
+}
+
+.userName {
+  font-weight: 500;
+}
+.userTitle {
+  color: $gray1;
+}
+.closeBtn {
+  color: $gray1;
 }

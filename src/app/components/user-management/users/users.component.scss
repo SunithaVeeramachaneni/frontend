@@ -6,13 +6,18 @@
 }
 
 .users-header {
-  padding: 10px 10px 0 10px;
   border-bottom: 1px solid #e7e7e7;
+}
+
+.search {
+  position: relative;
+  top: 4px;
+  left: 10px;
 }
 
 .more-users {
   float: right;
-  margin-top: 4px;
+  margin-top: 7px;
 }
 
 .count-of-users {
@@ -20,10 +25,8 @@
 }
 
 .no-of-users {
-  position: relative;
-  top: 10px;
   float: right;
-  margin: 5px 10px 0 0px;
+  margin: 18px 10px 0 0;
 }
 
 .users-count {
@@ -43,7 +46,7 @@
   background: #3d5afe;
   color: #ffffff;
   float: right;
-  margin-top: 5px;
+  margin: 10px 10px 0 0;
 }
 
 .users-content {

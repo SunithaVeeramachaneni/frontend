@@ -33,6 +33,11 @@
 
 .collabButton {
   margin: 0px 15px;
+  position: relative;
+  top: 10px;
+  color: rgba(0, 0, 0, 0.54);
+  cursor: pointer;
+
   & ::ng-deep .mat-button-focus-overlay {
     background-color: transparent;
   }
@@ -169,12 +174,17 @@
 }
 
 .header-cols {
-  .user {
+  .user-with-logo {
     border-top: 1px solid #e0e0e0;
     border-left: 1px solid #e0e0e0;
     border-bottom: 1px solid #e0e0e0;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+    padding: 0 7px;
+    height: 49px;
+  }
+
+  .user-without-logo {
     padding: 0 7px;
     height: 49px;
   }
@@ -185,14 +195,6 @@
     position: relative;
     top: 5px;
     border-radius: 50%;
-  }
-
-  .without-company-logo {
-    border: 1px dashed #e0e0e0;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    padding: 0 10px;
-    height: 49px;
   }
 
   .with-company-logo {
@@ -231,10 +233,24 @@
     vertical-align: middle;
   }
 }
-.header-profile-menu:after {
+.header-profile-menu-with-logo:after {
   content: '';
   position: absolute;
   left: 0;
+  right: 0;
+  top: -12px;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
+  border-bottom: 15px solid #ffffff;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.header-profile-menu-without-logo:after {
+  content: '';
+  position: absolute;
+  left: 160px;
   right: 0;
   top: -12px;
   margin: 0 auto;

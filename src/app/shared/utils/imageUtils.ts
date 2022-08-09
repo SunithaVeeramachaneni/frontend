@@ -13,4 +13,7 @@ export class ImageUtils {
       return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
     }
   }
+  safeObjURL(objURL: string) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(objURL);
+  }
 }

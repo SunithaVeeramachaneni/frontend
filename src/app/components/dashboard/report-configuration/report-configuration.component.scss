@@ -154,6 +154,10 @@
 .report-name-col {
   width: 100%;
   padding: 0 10px;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-gap {
+    border: 1px solid transparent;
+  }
 }
 
 .filters-col {
