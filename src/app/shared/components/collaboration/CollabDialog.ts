@@ -87,7 +87,7 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
     this.selectedUser = targetUser;
   }
 
-  onValChange(val: string) {
+  setSelectedTab(val: string) {
     this.selectedTab = val;
   }
   closeCollabDialog(): void {

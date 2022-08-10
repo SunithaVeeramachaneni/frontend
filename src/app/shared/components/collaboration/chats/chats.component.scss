@@ -1,16 +1,5 @@
-$blue: #1a66ff;
-$blue2: #0391fd;
-$blue-main: #3d5afe;
-$blue3-hover: #7dbef6;
-$blue-secondary: #637bfe;
-$white: #ffffff;
-$gray: #eeeeee;
-$gray1: #9e9e9e;
-$gray-shadow: #111;
-$white1: #f5f5f5;
-$gray-bg: #212121;
-$black: #000000;
-$light-gray: #757575;
+@use './../../../../../scss/colors.scss' as colors;
+
 .chatsBody {
   display: flex;
 }
@@ -23,7 +12,7 @@ $light-gray: #757575;
 }
 
 .activeSendBtn {
-  color: $blue;
+  color: colors.$blue;
 }
 
 .disabled {
@@ -32,8 +21,8 @@ $light-gray: #757575;
 .conversationListItem {
   cursor: pointer;
   .convTitle {
-    font-weight: 700;
-    display: flex;
+    font-weight: 700 !important;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     .convName {
@@ -44,12 +33,16 @@ $light-gray: #757575;
     }
     .timeAgo {
       font-weight: 400;
-      color: $light-gray;
+      color: colors.$light-gray;
       font-size: xx-small;
     }
   }
   .convDesc {
-    color: $light-gray;
+    color: colors.$light-gray;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
   }
   &:hover {
     cursor: pointer;
@@ -61,7 +54,7 @@ $light-gray: #757575;
   justify-content: center;
   align-content: space-around;
   align-items: center;
-  color: $gray1;
+  color: colors.$gray1;
   font-weight: 400;
 }
 .conversationContent {
@@ -69,7 +62,7 @@ $light-gray: #757575;
   width: 100%;
   height: 82vh;
   flex-direction: column;
-  background: $white !important;
+  background: colors.$white !important;
   border-left: 5px solid #f2f2f2;
   margin-top: 10px;
   .conversationHead {
@@ -111,7 +104,7 @@ $light-gray: #757575;
         text-overflow: ellipsis;
         display: flex;
         font-weight: 400;
-        color: $light-gray;
+        color: colors.$light-gray;
       }
     }
   }
@@ -165,7 +158,7 @@ $light-gray: #757575;
       align-items: center;
       width: 250px;
       justify-content: space-between;
-      background: $white;
+      background: colors.$white;
       padding: 5px;
       border-radius: 5px;
       .iconAndTitle {
@@ -173,7 +166,7 @@ $light-gray: #757575;
         align-items: center;
       }
       .downloadBtn {
-        color: $blue-main;
+        color: colors.$blue-main;
         cursor: pointer;
       }
     }
@@ -185,7 +178,7 @@ $light-gray: #757575;
       white-space: nowrap;
       text-overflow: ellipsis;
       font-weight: 400;
-      color: $black;
+      color: colors.$black;
     }
     .attachmentSubTitle {
       font-size: 70%;
@@ -197,12 +190,12 @@ $light-gray: #757575;
         display: flex;
         align-items: center;
         padding: 0px 5px;
-        background: $blue2;
+        background: colors.$blue2;
         border-radius: 5px;
-        color: $white;
+        color: colors.$white;
 
         &:hover {
-          background: $blue3-hover;
+          background: colors.$blue3-hover;
         }
         .downloadLabel {
           margin-left: 5px;
@@ -227,17 +220,17 @@ $light-gray: #757575;
         margin-left: 5px;
         border-radius: 5px;
         width: 100%;
-        background: $gray;
-        color: $black;
+        background: colors.$gray;
+        color: colors.$black;
       }
       .messageInput {
         padding: 10px;
-        background: $gray;
+        background: colors.$gray;
         border-radius: 5px;
       }
       .audioRecord {
-        color: $white;
-        background: $blue2;
+        color: colors.$white;
+        background: colors.$blue2;
         border-radius: 8px;
         font-size: 70%;
         height: auto;
@@ -248,7 +241,7 @@ $light-gray: #757575;
 }
 .conversationsList {
   width: 40%;
-  background: $white;
+  background: colors.$white;
   border-radius: 15px;
   max-width: 400px;
   min-width: 250px;
@@ -259,11 +252,11 @@ $light-gray: #757575;
     .searchInput {
       border-radius: 5px;
       padding: 10px;
-      background: $white1;
+      background: colors.$white1;
       margin-left: 15px;
     }
     .searchMore {
-      color: $blue;
+      color: colors.$blue;
     }
   }
   .userList {
@@ -322,22 +315,22 @@ $light-gray: #757575;
   width: 100px;
   margin: 0 auto;
   height: 100px;
-  background-color: $white1;
+  background-color: colors.$white1;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 40px;
   &.top {
-    box-shadow: 0px -15px 10px -15px $gray-shadow;
+    box-shadow: 0px -15px 10px -15px colors.$gray-shadow;
   }
   &.bottom {
-    box-shadow: 0px 15px 10px -15px $gray-shadow;
+    box-shadow: 0px 15px 10px -15px colors.$gray-shadow;
   }
   &.left {
-    box-shadow: -15px 0px 10px -15px $gray-shadow;
+    box-shadow: -15px 0px 10px -15px colors.$gray-shadow;
   }
   &.right {
-    box-shadow: 15px 0px 10px -15px $gray-shadow;
+    box-shadow: 15px 0px 10px -15px colors.$gray-shadow;
   }
 }
 
@@ -364,12 +357,12 @@ $light-gray: #757575;
       display: flex;
       align-items: center;
       padding: 0px 5px;
-      background: $blue2;
+      background: colors.$blue2;
       border-radius: 5px;
-      color: $white;
+      color: colors.$white;
 
       &:hover {
-        background: $blue3-hover;
+        background: colors.$blue3-hover;
       }
       .downloadLabel {
         margin-left: 5px;
@@ -403,11 +396,11 @@ $light-gray: #757575;
   align-items: flex-end;
   .timestamp {
     font-size: 70%;
-    color: $gray1;
+    color: colors.$gray1;
   }
   .message {
-    background: $blue-main;
-    color: $white;
+    background: colors.$blue-main;
+    color: colors.$white;
     padding: 5px 10px;
     border-radius: 5px;
     font-style: normal;
@@ -429,10 +422,10 @@ $light-gray: #757575;
   margin-bottom: 10px;
   .timestamp {
     font-size: 70%;
-    color: $gray1;
+    color: colors.$gray1;
   }
   .message {
-    background: $white1;
+    background: colors.$white1;
     padding: 5px 10px;
     border-radius: 5px;
     font-style: normal;
@@ -462,7 +455,7 @@ p {
   width: 300px;
 }
 .attachmentIconBtn {
-  background: $gray;
+  background: colors.$gray;
   padding: 10px 10px;
   border-radius: 5px;
   margin: 0px 5px;
@@ -471,10 +464,10 @@ p {
 
 .attachmentIcon {
   transform: rotate(45deg);
-  color: $blue-main;
+  color: colors.$blue-main;
 }
 .attachmentAddIcon {
-  color: $blue-main;
+  color: colors.$blue-main;
 }
 
 .hidden-input {
@@ -483,7 +476,7 @@ p {
 
 .groupMessageFrom {
   font-size: 70%;
-  color: $light-gray;
+  color: colors.$light-gray;
 }
 
 .shom-more-members:after {
@@ -495,13 +488,13 @@ p {
   margin: 0 auto;
   width: 0;
   height: 0;
-  border-bottom: 15px solid $white;
+  border-bottom: 15px solid colors.$white;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
 }
 
 .shom-more-members {
-  background-color: $white;
+  background-color: colors.$white;
   border-radius: 8px;
   box-shadow: 6px 4px 84px rgba(0, 0, 0, 0.15);
   padding: 16px 0px;
@@ -517,6 +510,10 @@ p {
 
 .unreadMessage {
   font-weight: 800 !important;
+  width: 130px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .member {
   display: flex;
@@ -530,7 +527,7 @@ p {
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: $gray1;
+    color: colors.$gray1;
     font-weight: 400;
     font-size: 75%;
   }
@@ -553,14 +550,14 @@ p {
 }
 
 .showMoreBtn {
-  color: $blue;
+  color: colors.$blue;
   cursor: pointer;
   margin-left: 3px;
 }
 
 .attachmentPreviewBG {
-  background: $gray-bg !important;
-  color: $white;
+  background: colors.$gray-bg !important;
+  color: colors.$white;
   margin: 0px;
   height: auto;
 }
@@ -595,7 +592,7 @@ p {
       padding: 5px 5px;
       position: relative;
       // &:hover {
-      //   background: $blue3-hover;
+      //   background: colors.$blue3-hover;
       // }
       .font-5rem {
         font-size: 5rem;
@@ -605,7 +602,7 @@ p {
         position: absolute;
         right: 0px;
         top: 0px;
-        color: $blue-main;
+        color: colors.$blue-main;
         z-index: 999999;
       }
       .attachmentDetail {
@@ -614,24 +611,35 @@ p {
         flex-direction: column;
         white-space: nowrap;
         .attachmentTitle {
-          // color: $white;
+          // color: colors.$white;
           font-size: 80%;
         }
         .attachmentSize {
-          // color: $white1;
+          // color: colors.$white1;
           font-size: 75%;
         }
       }
     }
     .selectedAttachment {
-      border: 2px solid $blue-secondary;
+      border: 2px solid colors.$blue-secondary;
     }
   }
 }
 
 .searchMore {
-  color: $blue;
+  color: colors.$blue;
 }
 .alignCenter {
   align-items: center;
+}
+
+.unreadCount {
+  background: colors.$red-main;
+  color: colors.$white;
+  border-radius: 45px;
+  width: 20px;
+  display: flex;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
 }

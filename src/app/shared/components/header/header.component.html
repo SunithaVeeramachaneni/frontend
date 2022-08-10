@@ -75,14 +75,22 @@
           Connect to Slack
         </div>
         <mat-icon
-          *ngIf="slackVerification.slackInstalled"
           #collabButton
           class="collabButton"
           aria-label="Collaboration Dialog trigger button"
           (click)="openDialog()"
+          *ngIf="slackVerification.slackInstalled && unreadMessageCount > 0"
           [matBadge]="unreadMessageCount"
-          [matBadgeDisabled]="unreadMessageCount < 1"
           matBadgeColor="warn"
+        >
+          chat_bubble_outline
+        </mat-icon>
+        <mat-icon
+          #collabButton
+          class="collabButton"
+          aria-label="Collaboration Dialog trigger button"
+          (click)="openDialog()"
+          *ngIf="slackVerification.slackInstalled && unreadMessageCount <= 0"
         >
           chat_bubble_outline
         </mat-icon>

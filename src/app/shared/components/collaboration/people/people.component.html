@@ -1,6 +1,15 @@
 <div class="peoplesTabBody">
   <div class="searchBar">
-    <input matInput placeholder="Search Users" disabled class="searchInput" />
+    <input
+      matInput
+      placeholder="{{ 'searchPeople' | translate }}"
+      name="searchKey"
+      id="searchKey"
+      [(ngModel)]="searchKey"
+      (ngModelChange)="this.searchKeyUpdate.next($event)"
+      autocomplete="off"
+      class="searchInput"
+    />
     <button mat-icon-button class="searchMore">
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -8,6 +17,7 @@
   <div
     class="userList"
     *ngIf="activeUsers$ | async as activeUsers; else loadingUsers"
+    (scroll)="onPeopleListScrolled($event)"
   >
     <mat-list>
       <mat-list-item

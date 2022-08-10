@@ -1,4 +1,4 @@
-$white: #ffffff;
+@use './../../../../scss/colors.scss' as colors;
 
 .rotate90 {
   transform: rotate(90deg);
@@ -32,7 +32,7 @@ $white: #ffffff;
 }
 
 .dialogTitle {
-  background: $white;
+  background: colors.$white;
   margin: 0px;
   cursor: move;
   .dialogHeader {
@@ -42,29 +42,31 @@ $white: #ffffff;
     background: #2a3eb1;
     padding: 4px 15px;
     .headerTitle {
-      color: $white;
+      color: colors.$white;
     }
     .buttonGroup {
       box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
         0 0px 0px 0 #747474;
     }
     .closeBtn {
-      color: $white;
+      color: colors.$white;
     }
   }
 }
 .dialogContent {
   margin: 0px;
   padding: 0px 0px;
-  background-color: $white;
+  background-color: colors.$white;
   min-height: 88vh !important;
   .buttonGroup {
-    background: $white;
-    height: 15px;
-    padding: 10px 20px;
+    background: colors.$white2;
     border-radius: 5px;
     margin-left: 15px;
+    margin-top: 10px;
     position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
   }
   .dialogBody {
     height: 88vh;
@@ -78,7 +80,7 @@ $white: #ffffff;
 ::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
 .mat-button-toggle-group-appearance-standard {
   border-radius: 5px;
-  background: #f2f2f2;
+  background: colors.$white2;
   height: 35px;
   width: fit-content;
   margin: 10px 0px;
@@ -86,14 +88,28 @@ $white: #ffffff;
   align-items: center;
   flex-direction: row;
 }
+::ng-deep .mat-button-focus-overlay {
+  background-color: transparent !important;
+}
 .btnGroupBtn {
-  background: $white;
+  color: colors.$dark-gray;
+  font-weight: 400;
 }
 
 .hideButtonGroup {
-  display: none;
+  display: none !important;
 }
 
 .displayNone {
   display: none !important;
+}
+
+.groupBtnDivider {
+  background: #cccccc;
+  width: 1px;
+  height: 20px;
+}
+.activeTab {
+  font-weight: 500;
+  color: colors.$black;
 }
