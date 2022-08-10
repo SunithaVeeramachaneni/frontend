@@ -52,17 +52,19 @@
               {{ conversation.latest.createdDateTime | timeAgo }}
             </span>
           </div>
-          <div
-            class="convDesc"
-            mat-line
-            [innerHTML]="
-              conversation.latest.message ? conversation.latest.message : ''
-            "
-            [ngClass]="{
-              unreadMessage: conversation.latest.unread === true
-            }"
-          >
-            <!-- {{ conversation.latest.message }} -->
+          <div class="convDesc" mat-line>
+            <span [ngClass]="{ unreadCount: conversation.unreadCount }">
+              {{ conversation.unreadCount }}</span
+            >
+            <span
+              [innerHTML]="
+                conversation.latest.message ? conversation.latest.message : ''
+              "
+              [ngClass]="{
+                unreadMessage: conversation.latest.unread === true
+              }"
+            >
+            </span>
           </div>
         </mat-list-item>
         <div *ngIf="appendingConversations">

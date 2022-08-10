@@ -4,7 +4,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  ViewEncapsulation
 } from '@angular/core';
 import { ChatService } from './chat.service';
 import * as moment from 'moment';
@@ -35,6 +36,7 @@ interface UpdateConversations {
     | 'update_latest_message'
     | 'create_conversation'
     | 'append_conversations'
+    | 'reset_unread_count'
     | '';
   message: any;
   channel: any;
@@ -47,6 +49,7 @@ interface Conversation {
   topic: string;
   members: any[];
   latest: any;
+  unreadCount?: number | 0;
 }
 interface Message {
   id: string;
@@ -61,7 +64,8 @@ interface Message {
 @Component({
   selector: 'app-chats',
   templateUrl: 'chats.component.html',
-  styleUrls: ['./chats.component.scss']
+  styleUrls: ['./chats.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ChatsComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -222,6 +226,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
               convIndex = index;
               conv.latest = message;
               conv.latest.unread = true;
+              if (conv.unreadCount) {
+                conv.unreadCount = conv.unreadCount + 1;
+              } else {
+                conv.unreadCount = 1;
+              }
+              conv.latest.message = conv.latest.message.replace(
+                '<p>',
+                '<p class="m-0">'
+              );
             }
           });
           if (convIndex && convIndex > -1) {
@@ -231,6 +244,13 @@ export class ChatsComponent implements OnInit, OnDestroy {
           }
         } else if (action === 'create_conversation') {
           conversationsList.unshift(message);
+        } else if (action === 'reset_unread_count') {
+          conversationsList.forEach((conv) => {
+            if (conv.id === message.id) {
+              conv.unreadCount = undefined;
+              conv.unread = false;
+            }
+          });
         } else if (action === 'append_conversations') {
           const newConversations = this.formatConversations(message);
           initial.data = initial.data.concat(newConversations);
@@ -445,6 +465,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.conversationHistory = [];
     this.conversationHistoryLoaded = false;
     this.selectedConversation = conversation;
+    this.updateConversations$.next({
+      action: 'reset_unread_count',
+      message: conversation,
+      channel: ''
+    });
     this.selectedConversation.latest.unread = false;
     this.selectedConversation.latest.unreadCount = 0;
     if (
