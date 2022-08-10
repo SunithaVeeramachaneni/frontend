@@ -3,7 +3,11 @@
     <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
     </app-date-segment>
     <div class="custom-form-field-white-color">
-      <mat-form-field appearance="outline" style="margin-left: 15px">
+      <mat-form-field
+        appearance="outline"
+        style="margin-left: 15px"
+        *ngIf="allPlants$ | async as plantsList; else loadingPlants"
+      >
         <mat-label>Plants</mat-label>
         <mat-select
           multiple
@@ -23,30 +27,35 @@
               {{ plantFilter.value?.length === 2 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
-          <ng-container *ngIf="allPlants$ | async as plantsList">
-            <mat-option
-              #allSelectedPlants
-              [value]="0"
-              class="filter-option"
-              (click)="toggleAllSelection('plants')"
-              >All</mat-option
-            >
-            <mat-option
-              *ngFor="let plant of plantsList"
-              [value]="plant"
-              #matOption
-              class="filter-option"
-              (click)="togglePerPlant('plants')"
-            >
-              <p class="filter-option-id">
-                {{ plant.id }}
-              </p>
-              <p class="filter-option-desc">{{ plant.desc }}</p>
-            </mat-option>
-          </ng-container>
+          <mat-option
+            #allSelectedPlants
+            [value]="0"
+            class="filter-option"
+            (click)="toggleAllSelection('plants')"
+            >All</mat-option
+          >
+          <mat-option
+            *ngFor="let plant of plantsList"
+            [value]="plant"
+            #matOption
+            class="filter-option"
+            (click)="togglePerPlant('plants')"
+          >
+            <p class="filter-option-id">
+              {{ plant.id }}
+            </p>
+            <p class="filter-option-desc">{{ plant.desc }}</p>
+          </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field appearance="outline" style="margin-left: 15px">
+      <mat-form-field
+        appearance="outline"
+        style="margin-left: 15px"
+        *ngIf="
+          currentWorkCenters$ | async as workCenters;
+          else loadingWorkCenters
+        "
+      >
         <mat-label>Work Centers</mat-label>
         <mat-select
           multiple
@@ -69,31 +78,29 @@
               {{ workCenterFilter.value?.length === 2 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
-          <ng-container *ngIf="currentWorkCenters$ | async as workCenters">
+          <mat-option
+            #allSelectedWorkCenters
+            [value]="0"
+            class="filter-option"
+            (click)="toggleAllSelection('workCenters')"
+            >All</mat-option
+          >
+          <div *ngFor="let workCenterByPlant of workCenters">
             <mat-option
-              #allSelectedWorkCenters
-              [value]="0"
+              *ngFor="let workcenter of workCenterByPlant.workCenters"
+              #matOption
+              [value]="workcenter"
               class="filter-option"
-              (click)="toggleAllSelection('workCenters')"
-              >All</mat-option
+              (click)="togglePerPlant('workCenters')"
             >
-            <div *ngFor="let workCenterByPlant of workCenters">
-              <mat-option
-                *ngFor="let workcenter of workCenterByPlant.workCenters"
-                #matOption
-                [value]="workcenter"
-                class="filter-option"
-                (click)="togglePerPlant('workCenters')"
-              >
-                <p class="filter-option-id">
-                  {{ workcenter.id }}
-                </p>
-                <p class="filter-option-desc">
-                  {{ workcenter.desc }}
-                </p></mat-option
-              >
-            </div>
-          </ng-container>
+              <p class="filter-option-id">
+                {{ workcenter.id }}
+              </p>
+              <p class="filter-option-desc">
+                {{ workcenter.desc }}
+              </p></mat-option
+            >
+          </div>
         </mat-select>
       </mat-form-field>
     </div>
@@ -210,7 +217,22 @@
     </mat-grid-tile>
   </mat-grid-list>
 </div>
-
+<ng-template #loadingPlants>
+  <ngx-shimmer-loading
+    [width]="'180px'"
+    [height]="'50%'"
+    style="margin: 0 10px; position: relative; top: 5px"
+  >
+  </ngx-shimmer-loading>
+</ng-template>
+<ng-template #loadingWorkCenters>
+  <ngx-shimmer-loading
+    [width]="'180px'"
+    [height]="'50%'"
+    style="margin: 0 10px; position: relative; top: 5px"
+  >
+  </ngx-shimmer-loading>
+</ng-template>
 <ng-template #loadingRecords>
   <div class="ghost-loading-mcc-spcc-container">
     <div class="width-25 columns">
