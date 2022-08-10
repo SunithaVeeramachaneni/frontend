@@ -14,6 +14,7 @@ $gray1: #9e9e9e;
   border-right: 2px solid #f2f2f2;
   max-width: 400px;
   .searchBar {
+    margin-top: 0px !important;
     display: flex;
     .searchInput {
       border-radius: 5px;

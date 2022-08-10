@@ -4,7 +4,8 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output,
+  ViewEncapsulation
 } from '@angular/core';
 import { ChatService } from './chat.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,12 +26,17 @@ import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
 
 interface SendReceiveMessages {
-  action: 'send' | 'receive' | '';
+  action: 'send' | 'receive' | 'append_history' | '';
   message: any;
   channel: any;
 }
 interface UpdateConversations {
-  action: 'update_latest_message' | 'create_conversation' | '';
+  action:
+    | 'update_latest_message'
+    | 'create_conversation'
+    | 'append_conversations'
+    | 'reset_unread_count'
+    | '';
   message: any;
   channel: any;
 }
@@ -42,6 +48,7 @@ interface Conversation {
   topic: string;
   members: any[];
   latest: any;
+  unreadCount?: number | 0;
 }
 interface Message {
   id: string;
@@ -56,7 +63,8 @@ interface Message {
 @Component({
   selector: 'app-chats',
   templateUrl: 'chats.component.html',
-  styleUrls: ['./chats.component.scss']
+  styleUrls: ['./chats.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ChatsComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
@@ -67,6 +75,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
   isOpen = false;
 
   selectedView = 'CHAT';
+  lastScrollLeft = 0;
+  conversationsSkipToken: string;
+  conversationHistorySkipToken: string;
 
   showAttachmentPreview = false;
   uploadedFiles: any = [];
@@ -75,6 +86,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
   messageText = '';
   messageDeliveryProgress = false;
   attachmentUploadInProgress = false;
+
+  appendingConversations = false;
+  appendingConvHistory = false;
 
   downloadInProgress = false;
   downloadingFileRef: string;
@@ -142,89 +156,68 @@ export class ChatsComponent implements OnInit, OnDestroy {
       });
 
     const userInfo = this.loginService.getLoggedInUserInfo();
-    this.conversationsInitial$ = this.chatService
-      .getConversations$(userInfo.email)
-      .pipe(
-        mergeMap((conversations) => {
-          if (conversations.length) {
+    this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
+      mergeMap((conversations: any) => {
+        if (conversations.length) {
+          conversations = this.formatConversations(conversations);
+          if (this.targetUser) {
+            let conversationExists = false;
             conversations.forEach((conv) => {
-              if (conv.latest && conv.latest.message) {
-                conv.latest.message = conv.latest.message.replace(
-                  '<p>',
-                  '<p class="m-0">'
-                );
-              }
-
               if (conv.chatType === 'oneOnOne') {
-                conv.userInfo.profileImage = this.imageUtils.getImageSrc(
-                  Buffer.from(conv.userInfo.profileImage).toString()
-                );
-              } else if (conv.chatType === 'group') {
-                if (!(conv.topic && conv.topic.length)) {
-                  const firstNames = conv.members.map((m) => m.firstName);
-                  conv.topic = firstNames.join(', ');
+                if (conv.userInfo.email === this.targetUser.email) {
+                  conversationExists = true;
+                  this.setSelectedConversation(conv);
                 }
-                conv.userInfo.profileImage = '';
               }
             });
-            if (this.targetUser) {
-              let conversationExists = false;
-              conversations.forEach((conv) => {
-                if (conv.chatType === 'oneOnOne') {
-                  if (conv.userInfo.email === this.targetUser.email) {
-                    conversationExists = true;
-                    this.setSelectedConversation(conv);
-                  }
-                }
-              });
 
-              if (!conversationExists) {
-                const info: ErrorInfo = {
-                  displayToast: true,
-                  failureResponse: 'throwError'
-                };
-                const invitedUsers = [];
-                if (userInfo.collaborationType === 'slack') {
-                  if (
-                    this.targetUser.slackDetail &&
-                    this.targetUser.slackDetail.slackID
-                  ) {
-                    invitedUsers.push(this.targetUser.slackDetail.slackID);
-                  }
-                } else if (userInfo.collaborationType === 'msteams') {
-                  invitedUsers.push(this.targetUser.email);
+            if (!conversationExists) {
+              const info: ErrorInfo = {
+                displayToast: true,
+                failureResponse: 'throwError'
+              };
+              const invitedUsers = [];
+              if (userInfo.collaborationType === 'slack') {
+                if (
+                  this.targetUser.slackDetail &&
+                  this.targetUser.slackDetail.slackID
+                ) {
+                  invitedUsers.push(this.targetUser.slackDetail.slackID);
                 }
-                this.chatService
-                  .createConversation$(null, invitedUsers, 'oneOnOne', info)
-                  .subscribe((resp) => {
-                    if (resp.ok) {
-                      resp.userInfo.profileImage = this.imageUtils.getImageSrc(
-                        Buffer.from(resp.userInfo.profileImage).toString()
-                      );
-
-                      this.updateConversations$.next({
-                        action: 'create_conversation',
-                        message: resp,
-                        channel: ''
-                      });
-                      this.setSelectedConversation(resp);
-                    }
-                  });
+              } else if (userInfo.collaborationType === 'msteams') {
+                invitedUsers.push(this.targetUser.email);
               }
-            } else {
-              this.setSelectedConversation(conversations[0]);
+              this.chatService
+                .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                .subscribe((resp) => {
+                  if (resp.ok) {
+                    resp.userInfo.profileImage = this.imageUtils.getImageSrc(
+                      Buffer.from(resp.userInfo.profileImage).toString()
+                    );
+
+                    this.updateConversations$.next({
+                      action: 'create_conversation',
+                      message: resp,
+                      channel: ''
+                    });
+                    this.setSelectedConversation(resp);
+                  }
+                });
             }
-            return of({ data: conversations });
+          } else {
+            this.setSelectedConversation(conversations[0]);
           }
-        })
-      );
+          return of({ data: conversations });
+        }
+      })
+    );
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
       this.updateConversations$
     ]).pipe(
       map(([initial, updateConversation]) => {
         const { action, message, channel } = updateConversation;
-        const conversationsList = initial.data;
+        let conversationsList = initial.data;
         if (action === 'update_latest_message' && channel?.length) {
           let convIndex;
           conversationsList.forEach((conv, index) => {
@@ -232,6 +225,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
               convIndex = index;
               conv.latest = message;
               conv.latest.unread = true;
+              if (conv.unreadCount) {
+                conv.unreadCount = conv.unreadCount + 1;
+              } else {
+                conv.unreadCount = 1;
+              }
+              conv.latest.message = conv.latest.message.replace(
+                '<p>',
+                '<p class="m-0">'
+              );
             }
           });
           if (convIndex && convIndex > -1) {
@@ -241,6 +243,17 @@ export class ChatsComponent implements OnInit, OnDestroy {
           }
         } else if (action === 'create_conversation') {
           conversationsList.unshift(message);
+        } else if (action === 'reset_unread_count') {
+          conversationsList.forEach((conv) => {
+            if (conv.id === message.id) {
+              conv.unreadCount = undefined;
+              conv.unread = false;
+            }
+          });
+        } else if (action === 'append_conversations') {
+          const newConversations = this.formatConversations(message);
+          initial.data = initial.data.concat(newConversations);
+          conversationsList = initial.data;
         }
         return conversationsList;
       }),
@@ -249,6 +262,85 @@ export class ChatsComponent implements OnInit, OnDestroy {
       })
     );
   }
+
+  fetchConversations = (email: string, skipToken?: string) => {
+    if (skipToken) {
+      this.appendingConversations = true;
+    }
+    const conversations = this.chatService
+      .getConversations$(email, skipToken)
+      .pipe(
+        mergeMap((data: any) => {
+          this.appendingConversations = false;
+          this.conversationsSkipToken = data.skipToken;
+          return of(data.conversations);
+        })
+      );
+    return conversations;
+  };
+
+  fetchConversationHistory = (convId: string, skipToken?: string) => {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    if (skipToken) {
+      this.appendingConvHistory = true;
+    }
+    const convHistory = this.chatService
+      .getConversationHistory$(convId, skipToken, info)
+      .pipe(
+        mergeMap((data: any) => {
+          this.appendingConvHistory = false;
+          this.conversationHistorySkipToken = data.skipToken;
+          return of(data.history);
+        })
+      );
+    return convHistory;
+  };
+
+  formatConversations = (conversations: any) => {
+    conversations.forEach((conv) => {
+      if (conv.latest && conv.latest.message) {
+        conv.latest.message = conv.latest.message.replace(
+          '<p>',
+          '<p class="m-0">'
+        );
+      }
+
+      if (conv.chatType === 'oneOnOne') {
+        conv.userInfo.profileImage = this.imageUtils.getImageSrc(
+          Buffer.from(conv.userInfo.profileImage).toString()
+        );
+      } else if (conv.chatType === 'group') {
+        if (!(conv.topic && conv.topic.length)) {
+          const firstNames = conv.members.map((m) => m.firstName);
+          conv.topic = firstNames.join(', ');
+        }
+        conv.userInfo.profileImage = '';
+      }
+    });
+    return conversations;
+  };
+  formatConversationHistory = (history: any) => {
+    history.forEach((message) => {
+      if (message.message) {
+        message.message = message.message.replace('<p>', '<p class="m-0">');
+      }
+      const members = this.selectedConversation.members;
+      const user = members.find((member) => member.userId === message.from.id);
+      if (user) {
+        message.from = user;
+        setTimeout(() => {
+          message.from.profileImage = this.imageUtils.getImageSrc(
+            Buffer.from(message.from.profileImage).toString()
+          );
+        }, 0);
+      }
+      message.isMeeting = false;
+    });
+    return history;
+  };
 
   addPeopleToConversation = (conversation: Conversation) => {
     this.selectedView = 'CREATE_UPDATE_GROUP';
@@ -309,6 +401,59 @@ export class ChatsComponent implements OnInit, OnDestroy {
     );
   };
 
+  onConversationsListScrolled(event: any) {
+    const element = event.target;
+    const isBottomReached =
+      Math.abs(element.scrollHeight) -
+        Math.abs(element.scrollTop) -
+        Math.abs(element.clientHeight) <=
+      1;
+
+    const documentScrollLeft = element.scrollLeft;
+    if (this.lastScrollLeft !== documentScrollLeft) {
+      this.lastScrollLeft = documentScrollLeft;
+      return;
+    }
+
+    if (isBottomReached) {
+      if (this.appendingConversations) return;
+      const userInfo = this.loginService.getLoggedInUserInfo();
+      if (this.conversationsSkipToken) {
+        this.fetchConversations(
+          userInfo.email,
+          this.conversationsSkipToken
+        ).subscribe((data) => {
+          this.updateConversations$.next({
+            action: 'append_conversations',
+            message: data,
+            channel: ''
+          });
+        });
+      }
+    }
+  }
+  onConversationHistoryScrolled(event: any) {
+    const element = event.target;
+    const isTopReached = Math.abs(element.scrollTop) === 0;
+    if (isTopReached) {
+      if (this.appendingConvHistory) return;
+      if (this.appendingConversations) return;
+
+      if (this.conversationHistorySkipToken) {
+        this.fetchConversationHistory(
+          this.selectedConversation.id,
+          this.conversationHistorySkipToken
+        ).subscribe((data) => {
+          this.sendReceiveMessages$.next({
+            action: 'append_history',
+            message: data,
+            channel: ''
+          });
+        });
+      }
+    }
+  }
+
   setSelectedConversation = async (conversation: any) => {
     this.showAttachmentPreview = false;
     const info: ErrorInfo = {
@@ -319,6 +464,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.conversationHistory = [];
     this.conversationHistoryLoaded = false;
     this.selectedConversation = conversation;
+    this.updateConversations$.next({
+      action: 'reset_unread_count',
+      message: conversation,
+      channel: ''
+    });
     this.selectedConversation.latest.unread = false;
     this.selectedConversation.latest.unreadCount = 0;
     if (
@@ -334,40 +484,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.conversationHistoryInit$ = this.chatService
-      .getConversationHistory$(conversation.id, info)
-      .pipe(
-        // eslint-disable-next-line arrow-body-style
-        mergeMap((history) => {
-          this.conversationHistoryLoaded = true;
-          if (history.length) {
-            history.forEach((message) => {
-              if (message.message) {
-                message.message = message.message.replace(
-                  '<p>',
-                  '<p class="m-0">'
-                );
-              }
-              const members = this.selectedConversation.members;
-              const user = members.find(
-                (member) => member.userId === message.from.id
-              );
-              if (user) {
-                message.from = user;
-                setTimeout(() => {
-                  message.from.profileImage = this.imageUtils.getImageSrc(
-                    Buffer.from(message.from.profileImage).toString()
-                  );
-                }, 0);
-              }
-              message.isMeeting = false;
-            });
-            return of({ data: history });
-          }
+    this.conversationHistoryInit$ = this.fetchConversationHistory(
+      conversation.id
+    ).pipe(
+      mergeMap((history) => {
+        this.conversationHistoryLoaded = true;
+        if (history.length) {
+          history = this.formatConversationHistory(history);
           return of({ data: history });
-        }),
-        catchError(() => of({ data: [] }))
-      );
+        }
+        return of({ data: history });
+      }),
+      catchError(() => of({ data: [] }))
+    );
 
     this.conversationHistory$ = combineLatest([
       this.conversationHistoryInit$,
@@ -416,6 +545,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
             });
           }
 
+          return initial.data;
+        } else if (action === 'append_history') {
+          const newMessages = this.formatConversationHistory(message);
+          initial.data = [...newMessages, ...initial.data];
           return initial.data;
         } else {
           return initial.data;

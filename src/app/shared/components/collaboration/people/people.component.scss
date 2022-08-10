@@ -1,10 +1,11 @@
 .peoplesTabBody {
   background: #ffffff !important;
-  top: 100px;
+  top: 50px;
   position: absolute;
-  width: 100%;
+  position: relative;
   .searchBar {
     display: flex;
+    padding: 0px 15px;
     .searchInput {
       border-radius: 5px;
       padding: 10px;

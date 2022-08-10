@@ -88,6 +88,9 @@
   align-items: center;
   flex-direction: row;
 }
+::ng-deep .mat-button-focus-overlay {
+  background-color: transparent !important;
+}
 .btnGroupBtn {
   color: colors.$dark-gray;
   font-weight: 400;
