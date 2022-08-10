@@ -5,7 +5,7 @@
     <div class="custom-form-field-white-color">
       <mat-form-field
         appearance="outline"
-        style="margin-left: 15px"
+        style="margin: 0 10px"
         *ngIf="allPlants$ | async as plantsList; else loadingPlants"
       >
         <mat-label>Plants</mat-label>
@@ -48,9 +48,10 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+    </div>
+    <div class="custom-form-field-white-color">
       <mat-form-field
         appearance="outline"
-        style="margin-left: 15px"
         *ngIf="
           currentWorkCenters$ | async as workCenters;
           else loadingWorkCenters
@@ -218,20 +219,16 @@
   </mat-grid-list>
 </div>
 <ng-template #loadingPlants>
-  <ngx-shimmer-loading
-    [width]="'180px'"
-    [height]="'50%'"
-    style="margin: 0 10px; position: relative; top: 5px"
-  >
-  </ngx-shimmer-loading>
+  <span style="margin: 0 10px; position: relative; top: 5px">
+    <ngx-shimmer-loading [width]="'180px'" [height]="'35px'">
+    </ngx-shimmer-loading>
+  </span>
 </ng-template>
 <ng-template #loadingWorkCenters>
-  <ngx-shimmer-loading
-    [width]="'180px'"
-    [height]="'50%'"
-    style="margin: 0 10px; position: relative; top: 5px"
-  >
-  </ngx-shimmer-loading>
+  <span style="position: relative; top: 5px">
+    <ngx-shimmer-loading [width]="'180px'" [height]="'35px'">
+    </ngx-shimmer-loading>
+  </span>
 </ng-template>
 <ng-template #loadingRecords>
   <div class="ghost-loading-mcc-spcc-container">
