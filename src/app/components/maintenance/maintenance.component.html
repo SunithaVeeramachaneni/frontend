@@ -2,31 +2,41 @@
   <div class="header-filters">
     <app-date-segment (dateRangeEvent)="dateRangeEventHandler($event)">
     </app-date-segment>
-    <div class="custom-form-field-white-color" [formGroup]="filterGroup">
+    <div class="custom-form-field-white-color">
       <mat-form-field appearance="outline" style="margin-left: 15px">
         <mat-label>Plants</mat-label>
-        <mat-select multiple formControlName="plants">
+        <mat-select
+          multiple
+          [formControl]="plantFilter"
+          [compareWith]="compareFn"
+        >
           <mat-select-trigger>
-            {{ plants.value[0]?.desc }}
-            <span *ngIf="plants.value?.length > 1">
-              ( +{{ plants.value.length - 1 }}
-              {{ plants.value?.length === 2 ? 'more' : 'more' }})
+            {{
+              allSelectedPlants?.selected ? 'All' : plantFilter.value[0]?.desc
+            }}
+            <span
+              *ngIf="
+                plantFilter.value?.length > 1 && !allSelectedPlants?.selected
+              "
+            >
+              ( +{{ plantFilter.value.length - 1 }}
+              {{ plantFilter.value?.length === 2 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
-          <mat-option
-            #allSelected
-            (click)="toggleAllSelection()"
-            [value]="0"
-            class="filter-option"
-            >All</mat-option
-          >
-          <ng-container *ngIf="allPlants$ | async">
+          <ng-container *ngIf="allPlants$ | async as plantsList">
+            <mat-option
+              #allSelectedPlants
+              [value]="0"
+              class="filter-option"
+              (click)="toggleAllSelection('plants')"
+              >All</mat-option
+            >
             <mat-option
               *ngFor="let plant of plantsList"
               [value]="plant"
               #matOption
-              (click)="togglePerPlant(matOption.selected, plant.id)"
               class="filter-option"
+              (click)="togglePerPlant('plants')"
             >
               <p class="filter-option-id">
                 {{ plant.id }}
@@ -38,22 +48,42 @@
       </mat-form-field>
       <mat-form-field appearance="outline" style="margin-left: 15px">
         <mat-label>Work Centers</mat-label>
-        <mat-select multiple formControlName="workCenters">
+        <mat-select
+          multiple
+          [formControl]="workCenterFilter"
+          [compareWith]="compareFn"
+        >
           <mat-select-trigger>
-            {{ workCenters.value[0]?.desc }}
-            <span *ngIf="workCenters.value?.length > 1">
-              ( +{{ workCenters.value.length - 1 }}
-              {{ workCenters.value?.length === 2 ? 'more' : 'more' }})
+            {{
+              allSelectedWorkCenters?.selected
+                ? 'All'
+                : workCenterFilter.value[0]?.desc
+            }}
+            <span
+              *ngIf="
+                workCenterFilter.value?.length > 1 &&
+                !allSelectedWorkCenters?.selected
+              "
+            >
+              ( +{{ workCenterFilter.value.length - 1 }}
+              {{ workCenterFilter.value?.length === 2 ? 'more' : 'more' }})
             </span>
           </mat-select-trigger>
-          <ng-container *ngIf="allWorkCenters$ | async">
-            <div *ngFor="let workCenterByPlant of currentWorkCenters">
+          <ng-container *ngIf="currentWorkCenters$ | async as workCenters">
+            <mat-option
+              #allSelectedWorkCenters
+              [value]="0"
+              class="filter-option"
+              (click)="toggleAllSelection('workCenters')"
+              >All</mat-option
+            >
+            <div *ngFor="let workCenterByPlant of workCenters">
               <mat-option
                 *ngFor="let workcenter of workCenterByPlant.workCenters"
                 #matOption
                 [value]="workcenter"
                 class="filter-option"
-                (click)="filterWorkOrders(matOption.selected, workcenter.id)"
+                (click)="togglePerPlant('workCenters')"
               >
                 <p class="filter-option-id">
                   {{ workcenter.id }}

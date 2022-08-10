@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, combineLatest, from, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
 import { map, mergeMap, reduce, share, tap } from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
@@ -24,8 +24,8 @@ export class MaintenanceService {
   public allPlants$: Observable<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
-  public plants: any = [];
-  public workCenters: any = [];
+  public plants: Plant[];
+  public workCenters: WorkCenter[];
 
   closeEventSource(): void {
     this.sseService.closeEventSource();
@@ -269,6 +269,7 @@ export class MaintenanceService {
       dueDate: workOrder.dueDate,
       operations: workOrder.operations,
       workCenter: workOrder.workCenter,
+      plant: workOrder.plant,
       technician: workOrder.technician,
       estimatedTime: null,
       actualTime: null,
