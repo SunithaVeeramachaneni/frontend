@@ -1,12 +1,24 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import {
+  catchError,
+  map,
+  mergeMap,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/operators';
 import { PeopleService } from '../../people/people.service';
 import { Buffer } from 'buffer';
 import { ChatService } from '../chat.service';
 import { ImageUtils } from '../../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { defaultLimit } from 'src/app/app.constants';
+
+interface UpdatePeople {
+  action: 'add_people' | 'add_people_search' | '';
+  data: any;
+}
 
 @Component({
   selector: 'app-create-group',
@@ -23,6 +35,18 @@ export class CreateGroupComponent implements OnInit {
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
 
+  skip = 0;
+  limit = defaultLimit;
+  lastScrollLeft = 0;
+  searchKey = '';
+  searchKeyUpdate = new Subject<string>();
+  fetchActiveUsersInprogress = false;
+
+  updatePeople$ = new BehaviorSubject<UpdatePeople>({
+    action: '',
+    data: {} as any
+  });
+
   selectedUsers: any[] = [];
   groupName = '';
   groupCreationInProgress = false;
@@ -33,74 +57,126 @@ export class CreateGroupComponent implements OnInit {
     private chatService: ChatService,
     private imageUtils: ImageUtils,
     private loginService: LoginService
-  ) {}
+  ) {
+    this.searchKeyUpdate
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((value) => {
+        this.fetchActiveUsers(true).subscribe((data) => {
+          const validUsers = this.formatUsers(data);
+          this.updatePeople$.next({
+            action: 'add_people_search',
+            data: validUsers
+          });
+        });
+      });
+  }
 
   ngOnInit() {
-    const info: ErrorInfo = {
-      displayToast: true,
-      failureResponse: 'throwError'
-    };
-    this.activeUsersInitial$ = this.peopleService.getUsers$(info).pipe(
+    this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
       mergeMap((users) => {
+        this.fetchActiveUsersInprogress = false;
         if (users.length) {
-          users.forEach((user) => {
-            user.profileImage = this.imageUtils.getImageSrc(
-              Buffer.from(user.profileImage).toString()
-            );
-          });
-          return of({ data: users });
+          const validUsers = this.formatUsers(users);
+          return of({ data: validUsers });
         }
       }),
       catchError(() => of({ data: [] }))
     );
-    this.activeUsers$ = combineLatest([this.activeUsersInitial$]).pipe(
-      map(([initial]) => {
-        const validUsers = [];
-        const userInfo = this.loginService.getLoggedInUserInfo();
-        initial.data.forEach((user) => {
-          let isCurrentUser = false;
-          if (user.email === userInfo.email) {
-            isCurrentUser = true;
-          }
-          if (userInfo.collaborationType === 'slack') {
-            if (user.slackDetail && !isCurrentUser) {
-              validUsers.push(user);
-            }
-          } else if (userInfo.collaborationType === 'msteams') {
-            // This is a temporary check to restrict the user selection...
-            if (
-              user.email.endsWith('@ym27j.onmicrosoft.com') &&
-              !isCurrentUser
-            ) {
-              validUsers.push(user);
-            }
-          }
-        });
-
-        if (
-          this.conversationMode === 'CREATE_GROUP_WITH_USER' ||
-          this.conversationMode === 'ADD_GROUP_MEMBERS'
-        ) {
-          // add selected conversation members.... remove current user..
-
-          let memberEmails = this.selectedConversation.members.map(
-            (m) => m.email
-          );
-          memberEmails = memberEmails.filter((m) => m.email !== userInfo.email);
-          validUsers.forEach((user) => {
-            if (memberEmails.indexOf(user.email) > -1) {
-              user.disabled = true;
-              user.selected = true;
-              this.selectedUsers.push(user);
-            }
-          });
-          if (this.conversationMode === 'ADD_GROUP_MEMBERS') {
-            this.groupName = this.selectedConversation.topic;
-          }
+    this.activeUsers$ = combineLatest([
+      this.activeUsersInitial$,
+      this.updatePeople$
+    ]).pipe(
+      map(([initial, updatePeople]) => {
+        this.fetchActiveUsersInprogress = false;
+        const { action, data } = updatePeople;
+        let peopleList = initial.data;
+        if (action === 'add_people') {
+          peopleList = peopleList.concat(data);
+        } else if (action === 'add_people_search') {
+          peopleList = [];
+          peopleList = data;
         }
-        return validUsers;
+        this.skip = peopleList ? peopleList.length : this.skip;
+        return peopleList;
       })
     );
+  }
+
+  fetchActiveUsers = (isDebounceSearchEvent: boolean = false) => {
+    this.fetchActiveUsersInprogress = true;
+    // TODO: Increase skip and limits
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: 'throwError'
+    };
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    let includeSlackDetails = false;
+    if (userInfo.collaborationType === 'slack') {
+      includeSlackDetails = true;
+    }
+    if (isDebounceSearchEvent) {
+      this.skip = 0;
+    }
+    return this.peopleService.getUsers$(
+      {
+        skip: this.skip,
+        limit: this.limit,
+        isActive: true,
+        searchKey: this.searchKey
+      },
+      includeSlackDetails,
+      info
+    );
+  };
+
+  formatUsers = (users: any) => {
+    const validUsers = [];
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    users.forEach((user) => {
+      if (userInfo.collaborationType === 'slack') {
+        if (user.slackDetail) {
+          user.collaborationDisabled =
+            !user.slackDetail || !user.slackDetail.slackID;
+          validUsers.push(user);
+        }
+      } else if (userInfo.collaborationType === 'msteams') {
+        //@TODO: This is a temporary check to restrict the user selection...
+        if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
+          validUsers.push(user);
+        }
+      }
+    });
+    validUsers.forEach((user) => {
+      user.profileImage = this.imageUtils.getImageSrc(
+        Buffer.from(user.profileImage).toString()
+      );
+    });
+    return validUsers;
+  };
+
+  onPeopleListScrolled(event: any) {
+    const element = event.target;
+    const isBottomReached =
+      Math.abs(element.scrollHeight) -
+        Math.abs(element.scrollTop) -
+        Math.abs(element.clientHeight) <=
+      1;
+
+    const documentScrollLeft = element.scrollLeft;
+    if (this.lastScrollLeft !== documentScrollLeft) {
+      this.lastScrollLeft = documentScrollLeft;
+      return;
+    }
+
+    if (isBottomReached) {
+      if (this.fetchActiveUsersInprogress) return;
+      this.fetchActiveUsers().subscribe((data) => {
+        this.updatePeople$.next({
+          action: 'add_people',
+          data
+        });
+      });
+    }
   }
 
   switchToConversationsView = () => {
