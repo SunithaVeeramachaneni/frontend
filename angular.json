@@ -4,10 +4,10 @@
     "analytics": "59cd7bdb-c04d-46c1-b17a-57a4d58730ef"
   },
   "version": 1,
-  "defaultProject": "app",
+  "defaultProject": "cwp",
   "newProjectRoot": "projects",
   "projects": {
-    "app": {
+    "cwp": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -27,7 +27,8 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
@@ -50,7 +51,9 @@
               "quill-delta-to-html",
               "buffer",
               "exceljs"
-            ]
+            ],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "development": {
@@ -77,7 +80,12 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": {
+                "scripts": true,
+                "styles": true,
+                "hidden": true,
+                "vendor": true
+              },
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -160,20 +168,20 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "cwp:build"
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build:development"
+              "browserTarget": "cwp:build:development"
             },
             "production": {
-              "browserTarget": "app:build:production"
+              "browserTarget": "cwp:build:production"
             },
             "testing": {
-              "browserTarget": "app:build:testing"
+              "browserTarget": "cwp:build:testing"
             },
             "staging": {
-              "browserTarget": "app:build:staging"
+              "browserTarget": "cwp:build:staging"
             },
             "ci": {
               "progress": false
@@ -183,7 +191,7 @@
         "extract-i18n": {
           "builder": "@angular-builders/custom-webpack:extract-i18n",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "cwp:build"
           }
         },
         "test": {
@@ -207,7 +215,8 @@
             ],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ]
           },
           "configurations": {
@@ -230,23 +239,23 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "app:serve"
+            "devServerTarget": "cwp:serve"
           },
           "configurations": {
             "devlopment": {
-              "devServerTarget": "app:serve:devlopment"
+              "devServerTarget": "cwp:serve:devlopment"
             },
             "production": {
-              "devServerTarget": "app:serve:production"
+              "devServerTarget": "cwp:serve:production"
             },
             "testing": {
-              "devServerTarget": "app:serve:testing"
+              "devServerTarget": "cwp:serve:testing"
             },
             "staging": {
-              "devServerTarget": "app:serve:staging"
+              "devServerTarget": "cwp:serve:staging"
             },
             "ci": {
-              "devServerTarget": "app:serve:ci"
+              "devServerTarget": "cwp:serve:ci"
             }
           }
         }

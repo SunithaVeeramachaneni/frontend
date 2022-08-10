@@ -66,17 +66,11 @@ export const customTranslateLoader = (http: HttpClient) =>
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     SharedModule,
     AppMaterialModules,
     ErrorHandlerModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production
-    }),
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({
       name: 'CWP',
@@ -84,7 +78,6 @@ export const customTranslateLoader = (http: HttpClient) =>
       logOnly: environment.production
     }),
     ToastModule.forRoot(),
-    NgxSpinnerModule,
     AuthConfigModule,
     TranslateModule.forRoot({
       loader: {
@@ -98,7 +91,11 @@ export const customTranslateLoader = (http: HttpClient) =>
         useClass: TranslateMessageFormatCompiler
       }
     }),
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerImmediately'
+    })
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },

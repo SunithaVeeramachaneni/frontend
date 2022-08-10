@@ -14,6 +14,7 @@
           [matMenuTriggerFor]="menu"
           class="more-roles"
           *appCheckUserHasPermission="[perms.deleteRole]"
+          aria-label="More Options"
         >
           <mat-icon>more_horiz</mat-icon>
         </button>
@@ -93,6 +94,7 @@
                 [matMenuTriggerFor]="submenu"
                 class="more-items"
                 *appCheckUserHasPermission="[perms.copyRole, perms.deleteRole]"
+                aria-label="More Options"
               >
                 <mat-icon>more_horiz</mat-icon>
               </button>
