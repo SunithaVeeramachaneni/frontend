@@ -62,7 +62,7 @@ describe('Maintenance service', () => {
 
   it('needs to process raw list of work centers and return them', () => {
     let workCenters;
-    let gateWayParams = `workCenters/${1000}`;
+    let gateWayParams = `workCenters`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
       .withArgs(environment.mccAbapApiUrl, gateWayParams)
       .and.returnValue(rawARBPLs$);
@@ -74,7 +74,7 @@ describe('Maintenance service', () => {
   });
 
   it('needs to process raw technicians and return them', () => {
-    let gateWayParams = `workCenters/${1000}`;
+    let gateWayParams = `workCenters`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
       .withArgs(environment.mccAbapApiUrl, gateWayParams)
       .and.returnValue(rawARBPLs$)
@@ -103,7 +103,7 @@ describe('Maintenance service', () => {
   });
 
   it('needs to process raw data and return Work Order Cards', () => {
-    let gateWayParams = `workCenters/${1000}`;
+    let gateWayParams = `workCenters`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
       .withArgs(environment.mccAbapApiUrl, gateWayParams)
       .and.returnValue(rawARBPLs$)
@@ -151,7 +151,7 @@ describe('Maintenance service', () => {
   });
 
   it('should get work order by id', async () => {
-    let gateWayParams = `workCenters/${1000}`;
+    let gateWayParams = `workCenters`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
       .withArgs(environment.mccAbapApiUrl, gateWayParams)
       .and.returnValue(rawARBPLs$)

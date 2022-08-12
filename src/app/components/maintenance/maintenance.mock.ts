@@ -8,6 +8,7 @@ export const unassignedWorkOrder1: WorkOrder = {
   priorityNumber: 5,
   priorityStatus: 'High',
   colour: '1B6603',
+  plant: '1000',
   workOrderID: 58369,
   workOrderDesc: 'Mock Description',
   workCenter: 'ELEKTRIK',
@@ -41,6 +42,7 @@ const assignedWorkOrder1: WorkOrder = {
   priorityNumber: 3,
   priorityStatus: 'Medium',
   colour: 'B0D450',
+  plant: '1000',
   workOrderID: 58370,
   workOrderDesc: 'Mock Description 2',
   workCenter: 'MECHANIK',
@@ -74,6 +76,7 @@ const inProgressWorkOrder1: WorkOrder = {
   priorityNumber: 3,
   priorityStatus: 'Medium',
   colour: 'B0D450',
+  plant: '1000',
   workOrderID: 58371,
   workOrderDesc: 'Mock Description 3',
   workCenter: 'MECHANIK',
@@ -107,6 +110,7 @@ const inProgressWorkOrder2: WorkOrder = {
   priorityNumber: 3,
   priorityStatus: 'Medium',
   colour: 'B0D450',
+  plant: '1000',
   workOrderID: 58372,
   workOrderDesc: 'Fake Description 5',
   workCenter: 'ARBITRARY',
@@ -140,6 +144,7 @@ const completedWorkOrder1: WorkOrder = {
   priorityNumber: 3,
   priorityStatus: 'Medium',
   colour: 'B0D450',
+  plant: '1000',
   workOrderID: 58373,
   workOrderDesc: 'Mock Description 4',
   workCenter: 'ELEKTRIK',
@@ -180,6 +185,7 @@ export const unassignedWorkOrder1Card = {
   priorityText: 'High',
   priorityNumber: 5,
   kitStatusText: 'Waiting On Parts',
+  plant: '1000',
   workOrderID: 58369,
   headerText: '58369 - Mock Description',
   workCenterInfo: 'ELEKTRIK -  ELEKTRIK1',
@@ -212,6 +218,7 @@ const assignedWorkOrder1Card = {
   priorityText: 'Medium',
   priorityNumber: 3,
   kitStatusText: 'Waiting On Parts',
+  plant: '1000',
   workOrderID: 58370,
   headerText: '58370 - Mock Description 2',
   workCenterInfo: 'MECHANIK -  MEKHANIK1',
@@ -250,6 +257,7 @@ const inProgressWorkOrder1Card = {
   priorityText: 'Medium',
   priorityNumber: 3,
   kitStatusText: null,
+  plant: '1000',
   workOrderID: 58371,
   headerText: '58371 - Mock Description 3',
   workCenterInfo: 'MECHANIK -  MEKHANIK2',
@@ -288,6 +296,7 @@ const inProgressWorkOrder2Card = {
   priorityText: 'Medium',
   priorityNumber: 3,
   kitStatusText: null,
+  plant: '1000',
   workOrderID: 58372,
   headerText: '58372 - Fake Description 5',
   workCenterInfo: 'ARBITRARY -  ARBITRARY2',
@@ -326,6 +335,7 @@ const completedWorkOrder1Card = {
   priorityText: 'Medium',
   priorityNumber: 3,
   kitStatusText: null,
+  plant: '1000',
   workOrderID: 58373,
   headerText: '58373 - Mock Description 4',
   workCenterInfo: 'ELEKTRIK -  ELEKTRIK1',
@@ -369,31 +379,41 @@ export const expectedWorkOrders$ = of({
 
 export const rawARBPLs$ = of([
   {
-    ARBPLKey: 'ELEKTRIK',
-    ARBPLDesc: 'Electrical Maintenance'
-  },
-  {
-    ARBPLKey: 'MECHANIK',
-    ARBPLDesc: 'Mechanical Maintenance'
-  },
-  {
-    ARBPLKey: 'ARBITRARY',
-    ARBPLDesc: 'Arbitrary Maintenance'
+    plantId: '1000',
+    workCenters: [
+      {
+        id: 'ELEKTRIK',
+        desc: 'Electrical Maintenance'
+      },
+      {
+        id: 'MECHANIK',
+        desc: 'Mechanical Maintenance'
+      },
+      {
+        id: 'ARBITRARY',
+        desc: 'Arbitrary Maintenance'
+      }
+    ]
   }
 ]);
 
 export const expectedARBPLs$ = of([
   {
-    workCenterKey: 'ELEKTRIK',
-    workCenterDesc: 'Electrical Maintenance'
-  },
-  {
-    workCenterKey: 'MECHANIK',
-    workCenterDesc: 'Mechanical Maintenance'
-  },
-  {
-    workCenterKey: 'ARBITRARY',
-    workCenterDesc: 'Arbitrary Maintenance'
+    plantId: '1000',
+    workCenters: [
+      {
+        id: 'ELEKTRIK',
+        desc: 'Electrical Maintenance'
+      },
+      {
+        id: 'MECHANIK',
+        desc: 'Mechanical Maintenance'
+      },
+      {
+        id: 'ARBITRARY',
+        desc: 'Arbitrary Maintenance'
+      }
+    ]
   }
 ]);
 

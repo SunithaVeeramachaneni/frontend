@@ -180,14 +180,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     this.isDataLoading = false;
     this.commonFilterService.clearFilter();
     this.filterObj$ = this.commonFilterService.commonFilterAction$;
-    this.allPlants$ = of(this.maintenanceSvc.getPlants()).pipe(
-      mergeMap((plants) => {
-        if (!plants) {
-          return this.maintenanceSvc.getAllPlants();
-        }
-        return of(plants);
-      }),
-      tap((plants) => this.plantFilter.patchValue([...plants, 0]))
+    this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
+      tap((plants) => {
+        this.allPlants = plants;
+        this.plantFilter.patchValue([...plants, 0]);
+      })
     );
     this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters();
     this.currentWorkCenters$ = combineLatest([

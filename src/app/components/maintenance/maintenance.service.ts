@@ -1,6 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import { map, mergeMap, reduce, share, tap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  from,
+  Observable,
+  of,
+  Subject
+} from 'rxjs';
+import { map, mergeMap, reduce, share, takeUntil, tap } from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
@@ -13,6 +20,7 @@ import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
+  private destroy$ = new Subject();
   constructor(
     private zone: NgZone,
     private _appService: AppService,
@@ -177,7 +185,8 @@ export class MaintenanceService {
                     tap((data) => {}),
                     map((technicians) => ({
                       [wC.id]: this.cleanTechnicians(technicians)
-                    }))
+                    })),
+                    takeUntil(this.destroy$)
                   )
               )
             )
@@ -300,4 +309,10 @@ export class MaintenanceService {
   };
 
   getWorkCenters = () => this.workCenters;
+
+  destroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.destroy$ = new Subject();
+  }
 }

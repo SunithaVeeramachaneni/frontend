@@ -135,12 +135,16 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         this.allSelectedPlants.select();
       }
     } else {
+      console.log(this.workCenterFilter.value.length);
+      console.log(this.currentWorkCenters);
       if (this.allSelectedWorkCenters.selected) {
         this.allSelectedWorkCenters.deselect();
       }
-      if (
-        this.workCenterFilter.value.length === this.currentWorkCenters.length
-      ) {
+      let workCenterFilterLength = 0;
+      this.currentWorkCenters.forEach((wC) => {
+        workCenterFilterLength += wC.workCenters.length;
+      });
+      if (this.workCenterFilter.value.length === workCenterFilterLength) {
         this.allSelectedWorkCenters.select();
       }
     }
@@ -182,14 +186,11 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     this.dateRange$ = new BehaviorSubject(
       this._dateSegmentService.getStartAndEndDate('month')
     );
-    this.allPlants$ = of(this.maintenanceSvc.getPlants()).pipe(
-      mergeMap((plants) => {
-        if (!plants) {
-          return this.maintenanceSvc.getAllPlants();
-        }
-        return of(plants);
-      }),
-      tap((plants) => this.plantFilter.patchValue([...plants, 0]))
+    this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
+      tap((plants) => {
+        this.allPlants = plants;
+        this.plantFilter.patchValue([...plants, 0]);
+      })
     );
     this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters();
     this.technicianSubscription = this.maintenanceSvc
@@ -221,7 +222,6 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         return currentWorkCenters;
       })
     );
-    this.currentWorkCenters$.subscribe();
     this.filter = new FormControl('');
     this.filter$ = this.filter.valueChanges.pipe(startWith(''));
     this.overdueFilter = new FormControl('');
@@ -233,6 +233,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.technicianSubscription.unsubscribe();
     this.maintenanceSvc.closeEventSource();
+    this.maintenanceSvc.destroy();
   }
 
   getImageSrc = (source: string) => {

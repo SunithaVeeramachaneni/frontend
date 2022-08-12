@@ -50,60 +50,61 @@
       </mat-form-field>
     </div>
     <div class="custom-form-field-white-color">
-      <mat-form-field
-        appearance="outline"
+      <ng-container
         *ngIf="
           currentWorkCenters$ | async as workCenters;
           else loadingWorkCenters
         "
       >
-        <mat-label>Work Centers</mat-label>
-        <mat-select
-          multiple
-          [formControl]="workCenterFilter"
-          [compareWith]="compareFn"
-        >
-          <mat-select-trigger>
-            {{
-              allSelectedWorkCenters?.selected
-                ? 'All'
-                : workCenterFilter.value[0]?.desc
-            }}
-            <span
-              *ngIf="
-                workCenterFilter.value?.length > 1 &&
-                !allSelectedWorkCenters?.selected
-              "
-            >
-              ( +{{ workCenterFilter.value.length - 1 }}
-              {{ workCenterFilter.value?.length === 2 ? 'more' : 'more' }})
-            </span>
-          </mat-select-trigger>
-          <mat-option
-            #allSelectedWorkCenters
-            [value]="0"
-            class="filter-option"
-            (click)="toggleAllSelection('workCenters')"
-            >All</mat-option
+        <mat-form-field appearance="outline">
+          <mat-label>Work Centers</mat-label>
+          <mat-select
+            multiple
+            [formControl]="workCenterFilter"
+            [compareWith]="compareFn"
           >
-          <div *ngFor="let workCenterByPlant of workCenters">
+            <mat-select-trigger>
+              {{
+                allSelectedWorkCenters?.selected
+                  ? 'All'
+                  : workCenterFilter.value[0]?.desc
+              }}
+              <span
+                *ngIf="
+                  workCenterFilter.value?.length > 1 &&
+                  !allSelectedWorkCenters?.selected
+                "
+              >
+                ( +{{ workCenterFilter.value.length - 1 }}
+                {{ workCenterFilter.value?.length === 2 ? 'more' : 'more' }})
+              </span>
+            </mat-select-trigger>
             <mat-option
-              *ngFor="let workcenter of workCenterByPlant.workCenters"
-              #matOption
-              [value]="workcenter"
+              #allSelectedWorkCenters
+              [value]="0"
               class="filter-option"
-              (click)="togglePerPlant('workCenters')"
+              (click)="toggleAllSelection('workCenters')"
+              >All</mat-option
             >
-              <p class="filter-option-id">
-                {{ workcenter.id }}
-              </p>
-              <p class="filter-option-desc">
-                {{ workcenter.desc }}
-              </p></mat-option
-            >
-          </div>
-        </mat-select>
-      </mat-form-field>
+            <div *ngFor="let workCenterByPlant of workCenters">
+              <mat-option
+                *ngFor="let workcenter of workCenterByPlant.workCenters"
+                #matOption
+                [value]="workcenter"
+                class="filter-option"
+                (click)="togglePerPlant('workCenters')"
+              >
+                <p class="filter-option-id">
+                  {{ workcenter.id }}
+                </p>
+                <p class="filter-option-desc">
+                  {{ workcenter.desc }}
+                </p></mat-option
+              >
+            </div>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
     </div>
     <div style="position: absolute; right: 20px">
       <app-common-filter
