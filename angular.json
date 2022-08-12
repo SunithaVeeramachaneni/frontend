@@ -49,8 +49,7 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "quill-delta-to-html",
-              "buffer",
-              "exceljs"
+              "buffer"
             ],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"

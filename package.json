@@ -48,8 +48,6 @@
     "chartjs-plugin-datalabels": "^2.0.0",
     "date-fns": "^2.29.1",
     "event-source-polyfill": "^1.0.26",
-    "exceljs": "^4.3.0",
-    "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
     "libphonenumber-js": "^1.10.7",
     "lodash-es": "^4.17.21",

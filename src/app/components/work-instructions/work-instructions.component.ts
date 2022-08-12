@@ -9,10 +9,8 @@ import {
   ViewChild
 } from '@angular/core';
 import { InstructionService } from './services/instruction.service';
-import { combineLatest, Observable, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { ExcelService } from './services/excel.service';
-import * as ExcelJs from 'exceljs/dist/exceljs.min.js';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { ComponentType } from '@angular/cdk/portal';
 import { BulkUploadComponent } from './modal/templates/bulk-upload/bulk-upload.component';
 import { OverlayService } from './modal/overlay.service';
@@ -28,6 +26,7 @@ import { CommonService } from '../../shared/services/common.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { permissions, routingUrls } from '../../app.constants';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { downloadFile } from 'src/app/shared/utils/fileUtils';
 
 @Component({
   selector: 'app-work-instructions',
@@ -48,7 +47,6 @@ export class WorkInstructionsComponent
     recents: null,
     favs: null
   };
-  workbook = new ExcelJs.Workbook();
   recentsConfig: any = {
     id: 'recents',
     currentPage: 1,
@@ -92,7 +90,6 @@ export class WorkInstructionsComponent
   }
 
   constructor(
-    private excelSrv: ExcelService,
     private instructionSvc: InstructionService,
     private overlayService: OverlayService,
     private base64HelperService: Base64HelperService,
@@ -161,24 +158,29 @@ export class WorkInstructionsComponent
   }
 
   exportAsXLSX(): void {
-    this.workbook = new ExcelJs.Workbook();
-    const SheetProperties = {
-      defaultRowHeight: 100,
-      tabColor: { argb: 'b2b2b2' }
-    };
-    const sheets = [
-      this.workbook.addWorksheet('WorkInstruction_Sample_1', {
-        properties: SheetProperties
-      }),
-      this.workbook.addWorksheet('WorkInstruction_Sample_2', {
-        properties: SheetProperties
-      })
-    ];
-    this.excelSrv.exportAsExcelFile(
-      this.workbook,
-      sheets,
-      'WorkInstruction_Sample_Template.xlsx'
-    );
+    this.instructionSvc
+      .getAllBusinessObjects()
+      .pipe(
+        mergeMap((businessObjects) => {
+          let objects = [];
+          for (const businessObject of businessObjects) {
+            objects = [...objects, businessObject.FIELDDESCRIPTION];
+          }
+          if (objects.length) {
+            return this.instructionSvc
+              .downloadSampleInstructionTemplate({
+                businessObjects: objects
+              })
+              .pipe(
+                tap((data) =>
+                  downloadFile(data, 'WorkInstruction_Sample_Template')
+                )
+              );
+          }
+          return of(businessObjects);
+        })
+      )
+      .subscribe();
   }
 
   getAllFavsDraftsAndRecentIns() {
