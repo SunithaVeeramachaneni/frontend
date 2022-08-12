@@ -135,8 +135,6 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         this.allSelectedPlants.select();
       }
     } else {
-      console.log(this.workCenterFilter.value.length);
-      console.log(this.currentWorkCenters);
       if (this.allSelectedWorkCenters.selected) {
         this.allSelectedWorkCenters.deselect();
       }
