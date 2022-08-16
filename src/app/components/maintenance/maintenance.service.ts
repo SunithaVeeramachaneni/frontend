@@ -105,7 +105,6 @@ export class MaintenanceService {
 
           allPlants.push(plant);
         });
-        this.setPlants(allPlants);
         return allPlants;
       }),
       share()
@@ -124,7 +123,6 @@ export class MaintenanceService {
         Object.keys(rawWorkCenters).map((key) => {
           workCenters.push(rawWorkCenters[key]);
         });
-        this.setWorkCenters(workCenters);
         return workCenters;
       }),
       share()
@@ -297,18 +295,6 @@ export class MaintenanceService {
 
     return card;
   };
-
-  setPlants = (plants: any) => {
-    this.plants = plants;
-  };
-
-  getPlants = () => this.plants;
-
-  setWorkCenters = (workCenters: any) => {
-    this.workCenters = workCenters;
-  };
-
-  getWorkCenters = () => this.workCenters;
 
   destroy() {
     this.destroy$.next();
