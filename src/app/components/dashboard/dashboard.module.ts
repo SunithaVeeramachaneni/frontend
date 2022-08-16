@@ -3,7 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
-import { AppMaterialModules } from '../../material.module';
 import { GridsterModule } from 'angular-gridster2';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
@@ -38,6 +37,23 @@ import { WidgetDeleteModalComponent } from './widget-delete-modal/widget-delete-
 import { AlertDialog } from './alert-dialog/alert-dialog.component';
 import { ReportSaveAsModalComponent } from './report-save-as-modal/report-save-as-modal.component';
 import { DynamicFiltersComponent } from './dynamic-filters/dynamic-filters.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatListModule } from '@angular/material/list';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -49,7 +65,23 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReactiveFormsModule,
     DashboardRoutingModule,
     SharedModule,
-    AppMaterialModules,
+    MatMenuModule,
+    MatDividerModule,
+    MatSelectModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatButtonToggleModule,
+    MatListModule,
+    MatAutocompleteModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    OverlayModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

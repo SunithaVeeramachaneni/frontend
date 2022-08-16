@@ -7,19 +7,13 @@ import {
   HashLocationStrategy,
   registerLocaleData
 } from '@angular/common';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ToastModule } from './shared/toast';
-import { NgxSpinnerModule } from 'ngx-spinner';
-
 import { AuthConfigModule } from './auth-config.module';
 import {
   AuthInterceptor,
@@ -27,11 +21,7 @@ import {
   OidcSecurityService,
   PublicEventsService
 } from 'angular-auth-oidc-client';
-import {
-  HttpClient,
-  HttpClientModule,
-  HTTP_INTERCEPTORS
-} from '@angular/common/http';
+import { HttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpTimeoutInterceptor } from './interceptors/http-timeout.interceptor';
 import { HttpRequestInterceptor } from './shared/interceptor/http-request.interceptor';
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
@@ -43,7 +33,6 @@ import { AppService } from './shared/services/app.services';
 import { Buffer } from 'buffer';
 import * as hash from 'object-hash';
 import { SharedModule } from './shared/shared.module';
-import { AppMaterialModules } from './material.module';
 import {
   TranslateCompiler,
   TranslateLoader,
@@ -56,6 +45,8 @@ import localeEn from '@angular/common/locales/en';
 import { LoginService } from './components/login/services/login.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 
 registerLocaleData(localeEn, 'en');
 
@@ -69,7 +60,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
-    AppMaterialModules,
+    MatSidenavModule,
+    MatListModule,
     ErrorHandlerModule,
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({

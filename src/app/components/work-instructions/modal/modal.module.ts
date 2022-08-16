@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { OverlayComponent } from './overlay/overlay.component';
 import { DeleteCategoryComponent } from './templates/delete-category/delete-category.component';
 import { CategoryComponent } from './templates/category/category.component';
-import { AppMaterialModules } from '../../../material.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { AlertComponent } from './alert/alert.component';
@@ -18,6 +17,13 @@ import { NgpSortModule } from 'ngp-sort-pipe';
 import { StoreModule } from '@ngrx/store';
 import { bulkuploadReducer } from './state/bulkupload.reducer';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -32,7 +38,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     CommonModule,
     ReactiveFormsModule,
     OverlayModule,
-    AppMaterialModules,
+    MatIconModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTabsModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
     AlertModule,
     Ng2SearchPipeModule,
