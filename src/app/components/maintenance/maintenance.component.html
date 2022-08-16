@@ -8,7 +8,7 @@
         style="margin: 0 10px"
         *ngIf="allPlants$ | async as plantsList; else loadingPlants"
       >
-        <mat-label>Plants</mat-label>
+        <mat-label>{{ 'plants' | translate }}</mat-label>
         <mat-select
           multiple
           [formControl]="plantFilter"
@@ -57,7 +57,7 @@
         "
       >
         <mat-form-field appearance="outline">
-          <mat-label>Work Centers</mat-label>
+          <mat-label>{{ 'workCenters' | translate }}</mat-label>
           <mat-select
             multiple
             [formControl]="workCenterFilter"

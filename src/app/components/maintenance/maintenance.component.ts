@@ -121,11 +121,6 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     public dialog: MatDialog
   ) {}
 
-  matSelectValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null =>
-      !control.value.length ? { selectOne: { value: control.value } } : null;
-  }
-
   togglePerPlant(input: string, id: any) {
     if (input === 'plants') {
       if (this.allSelectedPlants.selected) {

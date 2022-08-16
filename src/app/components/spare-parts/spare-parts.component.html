@@ -4,7 +4,7 @@
     </app-date-segment>
     <div class="custom-form-field-white-color">
       <mat-form-field appearance="outline" style="margin-left: 15px">
-        <mat-label>Plants</mat-label>
+        <mat-label>{{ 'plants' | translate }}</mat-label>
         <mat-select
           multiple
           [formControl]="plantFilter"
@@ -47,7 +47,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" style="margin-left: 15px">
-        <mat-label>Work Centers</mat-label>
+        <mat-label>{{ 'workCenters' | translate }}</mat-label>
         <mat-select
           multiple
           [formControl]="workCenterFilter"
