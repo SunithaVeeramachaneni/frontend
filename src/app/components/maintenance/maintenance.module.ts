@@ -26,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -42,6 +43,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatProgressBarModule,
     MatButtonModule,
     MatSelectModule,
+    MatDialogModule,
     SharedModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
