@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 const role1 = {
   id: 4,

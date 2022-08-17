@@ -8,7 +8,6 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ChatService } from './chat.service';
-import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
@@ -816,12 +815,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
     } else {
       // this.setSelectedConversation(conversations[0]);
     }
-  };
-
-  getLocalDateFromEpoch = (epochTS) => {
-    const d = new Date(0);
-    d.setUTCSeconds(epochTS);
-    return moment(d).fromNow();
   };
 
   triggerCall = async (conv) => {

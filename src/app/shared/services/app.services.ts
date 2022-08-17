@@ -99,10 +99,12 @@ export class AppService {
     return this.http.post<any>(url, formData);
   }
 
-  _downloadFile(
+  downloadFile(
     apiUrl: string,
     urlStr: string,
-    info: ErrorInfo = {} as ErrorInfo
+    info: ErrorInfo = {} as ErrorInfo,
+    isGetRequest: boolean = true,
+    data: any = {}
   ): Observable<any> {
     const url = this.prepareUrl(apiUrl, urlStr);
     const { displayToast = true, failureResponse = {} } = info;
@@ -110,7 +112,14 @@ export class AppService {
       displayToast,
       failureResponse
     });
-    return this.http.get<any>(url, {
+
+    if (isGetRequest) {
+      return this.http.get<any>(url, {
+        ...httpOptions,
+        responseType: 'blob' as 'json'
+      });
+    }
+    return this.http.post<any>(url, data, {
       ...httpOptions,
       responseType: 'blob' as 'json'
     });

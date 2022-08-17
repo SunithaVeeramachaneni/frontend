@@ -164,7 +164,7 @@ export class ChatService {
     } else if (userInfo.collaborationType === 'slack') {
       fileId = file.url_private;
     }
-    return this.appService._downloadFile(
+    return this.appService.downloadFile(
       apiURL,
       `files/download?url=${fileId}`,
       info
