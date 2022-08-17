@@ -36,6 +36,7 @@ export interface UserInfo extends UserDetails {
   slackDetail: any;
   collaborationType: string;
   permissions: Permission[];
+  online?: boolean | false;
 }
 
 export interface UserTable {

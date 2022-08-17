@@ -19,6 +19,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ToastModule } from './shared/toast';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UserIdleModule } from 'angular-user-idle';
 
 import { AuthConfigModule } from './auth-config.module';
 import {
@@ -99,7 +100,9 @@ export const customTranslateLoader = (http: HttpClient) =>
         useClass: TranslateMessageFormatCompiler
       }
     }),
-    NgxShimmerLoadingModule
+    NgxShimmerLoadingModule,
+    // 180seconds.. 3mins
+    UserIdleModule.forRoot({ idle: 180, timeout: 30, ping: 30 })
   ],
   providers: [
     { provide: LocationStrategy, useClass: HashLocationStrategy },
