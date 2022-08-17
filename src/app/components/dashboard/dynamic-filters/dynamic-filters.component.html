@@ -84,6 +84,7 @@
         cdkOverlayOrigin
         #trigger="cdkOverlayOrigin"
         style="display: none"
+        aria-label="Dummy"
       >
         {{ isOpen ? 'Close' : 'Open' }}
       </button>
@@ -125,8 +126,12 @@
               class="filter-modal-cancel"
               type="button"
               (click)="isfilterTooltipOpen[i] = false"
+              aria-label="Close Filter"
             >
-              <img src="../../../../assets/img/svg/cancel-icon.svg" />
+              <img
+                src="../../../../assets/img/svg/cancel-icon.svg"
+                alt="Close Filter"
+              />
             </button>
           </div>
           <div>
@@ -189,6 +194,7 @@
                 <button
                   (focus)="rangePicker.open()"
                   class="select-date-range-btn"
+                  aria-label="Open Date Range"
                 >
                   {{ customBtnText }}
                 </button>
@@ -217,7 +223,11 @@
                   </mat-date-range-input>
                   <mat-date-range-picker #rangePicker>
                     <mat-date-range-picker-actions>
-                      <button mat-button matDateRangePickerCancel>
+                      <button
+                        mat-button
+                        matDateRangePickerCancel
+                        aria-label="Cancel Date Range"
+                      >
                         {{ 'cancel' | translate }}
                       </button>
                       <button
@@ -225,6 +235,7 @@
                         type="submit"
                         color="primary"
                         matDateRangePickerApply
+                        aria-label="Apply Date Range"
                       >
                         {{ 'apply' | translate }}
                       </button>
@@ -279,6 +290,7 @@
               type="submit"
               form="filtersForm"
               [disabled]="filterForm.invalid"
+              aria-label="Save Filter"
             >
               Save
             </button>

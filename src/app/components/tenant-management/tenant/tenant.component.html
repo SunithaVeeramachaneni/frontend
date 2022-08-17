@@ -837,6 +837,7 @@
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
                 <button
+                  type="button"
                   (click)="addUrl('sap')"
                   [disabled]="!this.editTenant"
                   class="add-url-icon"
@@ -853,6 +854,7 @@
                       [formControlName]="i"
                     />
                     <button
+                      type="button"
                       matSuffix
                       (click)="deleteUrl(i, 'sap')"
                       *ngIf="sapUrls.length !== 1"
@@ -1040,6 +1042,7 @@
             <div class="m-0">
               <div formArrayName="urls" class="m-t-minus-25">
                 <button
+                  type="button"
                   (click)="addUrl('node')"
                   [disabled]="!this.editTenant"
                   class="add-url-icon"
@@ -1057,6 +1060,7 @@
                       [formControlName]="i"
                     />
                     <button
+                      type="button"
                       matSuffix
                       *ngIf="nodeUrls.length !== 1"
                       (click)="deleteUrl(i, 'node')"

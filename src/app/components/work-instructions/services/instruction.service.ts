@@ -1336,4 +1336,17 @@ export class InstructionService {
       mergeMap(() => of(category))
     );
   };
+
+  downloadSampleInstructionTemplate(
+    data: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> {
+    return this._appService.downloadFile(
+      environment.wiApiUrl,
+      'instructions/download/sample-template',
+      info,
+      false,
+      data
+    );
+  }
 }

@@ -3,7 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { LoginRoutingModule } from './login-routing.module';
-import { AppMaterialModules } from '../../material.module';
 
 import { LoginComponent } from './login.component';
 import { HttpClient } from '@angular/common/http';
@@ -16,10 +15,11 @@ import {
 } from '@ngx-translate/core';
 import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { LoginErrorComponent } from './login-error/login-error.component';
 import { LoginErrorModalComponent } from './login-error-modal/login-error-modal.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/login/', '.json');
 
@@ -30,7 +30,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReactiveFormsModule,
     LoginRoutingModule,
     SharedModule,
-    AppMaterialModules,
+    MatAutocompleteModule,
+    MatFormFieldModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -43,8 +44,7 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    }),
-    DynamictableModule
+    })
   ],
   declarations: [LoginComponent, LoginErrorComponent, LoginErrorModalComponent],
   exports: [],

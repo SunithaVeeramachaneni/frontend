@@ -1,4 +1,5 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { take } from 'rxjs/operators';
 import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Directive({
@@ -22,8 +23,9 @@ export class CheckUserHasPermissionDirective {
   ) {}
 
   updateView() {
-    this.loginService.loggedInUserInfo$.subscribe(
-      ({ permissions: perms = [] }) => {
+    this.loginService.loggedInUserInfo$
+      .pipe(take(1))
+      .subscribe(({ permissions: perms = [] }) => {
         const hasPermission = perms.find((per) =>
           this.permissions.includes(per.name)
         );
@@ -34,7 +36,6 @@ export class CheckUserHasPermissionDirective {
           this.container.clear();
           this.hasView = false;
         }
-      }
-    );
+      });
   }
 }

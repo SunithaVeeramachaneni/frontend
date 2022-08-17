@@ -12,9 +12,8 @@ import {
   TranslateService
 } from '@ngx-translate/core';
 import { CommonService } from 'src/app/shared/services/common.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AppMaterialModules } from 'src/app/material.module';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -22,6 +21,12 @@ import { HttpClient } from '@angular/common/http';
 import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/tenant-management/', '.json');
@@ -35,10 +40,14 @@ export const customTranslateLoader = (http: HttpClient) =>
   imports: [
     CommonModule,
     TenantManagementRoutingModule,
-    FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    AppMaterialModules,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTabsModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

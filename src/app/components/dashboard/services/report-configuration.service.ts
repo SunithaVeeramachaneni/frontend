@@ -66,7 +66,7 @@ export class ReportConfigurationService {
     data: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._downloadFile(
+    this.appService.downloadFile(
       environment.dashboardApiUrl,
       reportDownloadUrlStr,
       info
