@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './shared/guards/auth.guard';
-import { HomeComponent } from './home/home.component';
 import { AccessDeniedComponent } from './shared/components/access-denied/access-denied.component';
 
 export const routes: Routes = [
@@ -23,11 +22,8 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
-    canActivate: [AuthGuard],
-    data: {
-      breadcrumb: { skip: true }
-    }
+    loadChildren: () =>
+      import('./components/home/home.module').then((m) => m.HomeModule)
   },
   {
     path: 'dashboard',

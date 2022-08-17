@@ -1,19 +1,17 @@
 import {
   Component,
-  OnInit,
   Input,
   Output,
   EventEmitter,
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonFilterService } from './common-filter.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
 import { DateSegmentService } from '../date-segment/date-segment.service';
-import * as moment from 'moment';
 import { debounce } from 'ts-debounce';
 @Component({
   selector: 'app-common-filter',
@@ -254,7 +252,7 @@ export class CommonFilterComponent implements OnChanges {
       this.resetdynamicFiltersBtnDisable = true;
       this.applydynamicFiltersBtnDisable = true;
     }
-    if (this.filtersApplied.length == 0){
+    if (this.filtersApplied.length == 0) {
       this.appliedFilters.emit({
         filters: this.filtersApplied,
         searchKey: this.searchValue
@@ -352,24 +350,5 @@ export class CommonFilterComponent implements OnChanges {
     this.filters.clear();
     this.resetdynamicFiltersBtnDisable = true;
     this.applydynamicFiltersBtnDisable = true;
-  }
-
-  appliedDateRange(start, end) {
-    const sDate = moment(start);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    const eDate = moment(end);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-
-    this.dateRange = {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-
-    const customDate =
-      this.dateRange.startDate.split('T')[0] +
-      ' - ' +
-      this.dateRange.endDate.split('T')[0];
-    this.customBtnText = customDate;
   }
 }

@@ -24,7 +24,7 @@ import {
 
 import { TenantsComponent } from './tenants.component';
 import { columns, configOptions } from './tenants.component.mock';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { userInfo, userInfo$ } from '../../login/services/login.service.mock';

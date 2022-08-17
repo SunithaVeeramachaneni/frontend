@@ -91,4 +91,6 @@ import { PlatformModule } from '@angular/cdk/platform';
   ],
   providers: []
 })
-export class AppMaterialModules {}
+export class AppMaterialModules {
+  // Don't import this module in app/shared/feature modules. Only use it in testing specs if needed
+}

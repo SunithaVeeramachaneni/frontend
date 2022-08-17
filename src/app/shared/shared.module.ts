@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AppMaterialModules } from '../material.module';
 import { CustomPaginationControlsComponent } from './components/custom-pagination-controls/custom-pagination-controls.component';
 import { DummyComponent } from './components/dummy/dummy.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
@@ -28,6 +27,22 @@ import { AccessDeniedComponent } from './components/access-denied/access-denied.
 import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { BackgroundComponent } from './components/background/background.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -58,7 +73,22 @@ import { BackgroundComponent } from './components/background/background.componen
     CommonModule,
     DragDropModule,
     OverlayModule,
-    AppMaterialModules,
+    MatDialogModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonToggleModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatMenuModule,
+    MatSidenavModule,
+    MatListModule,
+    MatBadgeModule,
+    MatSelectModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
     BreadcrumbModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({})

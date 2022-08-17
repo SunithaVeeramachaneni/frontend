@@ -63,6 +63,7 @@
         class="more-icon"
         *ngIf="dashboardDisplayMode !== 'ALL'"
         [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
+        aria-label="More Options"
       >
         <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
       </button>
@@ -147,6 +148,7 @@
               permissions.copyDashboard,
               permissions.deleteDashboard
             ]"
+            aria-label="More Options"
           >
             <mat-icon>more_horiz</mat-icon>
           </button>

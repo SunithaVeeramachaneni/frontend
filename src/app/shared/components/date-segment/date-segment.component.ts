@@ -1,9 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DateSegmentService } from './date-segment.service';
-import * as moment from 'moment';
 import { DateAdapter } from '@angular/material/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DatePipe } from '@angular/common';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-date-segment',
@@ -49,31 +49,21 @@ export class DateSegmentComponent implements OnInit {
   }
 
   appliedDateRange(start, end) {
-    const sDate = moment(start);
-    let eDate;
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    if (!end) {
-      eDate = moment(start);
-      eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-    } else {
-      eDate = moment(end);
-      eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-    }
-
     this.dateRange = {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
+      startDate: `${format(start, 'yyyy-MM-dd')}T00:00:00`,
+      endDate: end
+        ? `${format(end, 'yyyy-MM-dd')}T23:59:59`
+        : `${format(start, 'yyyy-MM-dd')}T23:59:59`
     };
     this.customText = `${this.datePipe.transform(
-      `${sDate}`,
+      `${start}`,
       'dd MMM YYYY',
       '',
       this.translateService.currentLang
     )}`;
     if (end)
       this.customText += `- ${this.datePipe.transform(
-        `${eDate}`,
+        `${end}`,
         'dd MMM YYYY',
         '',
         this.translateService.currentLang

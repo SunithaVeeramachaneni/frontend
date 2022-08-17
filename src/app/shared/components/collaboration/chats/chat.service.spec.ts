@@ -16,7 +16,7 @@ describe('ChatService', () => {
       '_getResp',
       '_postData',
       'uploadFile',
-      '_downloadFile',
+      'downloadFile',
       'patchData'
     ]);
 

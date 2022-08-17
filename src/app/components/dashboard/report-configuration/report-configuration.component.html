@@ -143,6 +143,7 @@
             matTooltipClass=""
             (click)="undo($event)"
             [disabled]="!undoRedoUtil.undoSize()"
+            aria-label="Undo"
           >
             <mat-icon>undo</mat-icon>
           </button>
@@ -154,6 +155,7 @@
             matTooltip="redo"
             matTooltipClass=""
             [disabled]="!undoRedoUtil.redoSize()"
+            aria-label="Redo"
           >
             <mat-icon>redo</mat-icon>
           </button>
@@ -164,8 +166,9 @@
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
+            aria-label="Hide Chart"
           >
-            <img src="assets/dashboard-icons/show_chart.svg" />
+            <img src="assets/dashboard-icons/show_chart.svg" alt="Show Chart" />
           </button>
           <button
             mat-stroked-button
@@ -175,14 +178,17 @@
             (click)="toggleChart()"
             *ngIf="!reportDetails.report?.showChart"
             [disabled]="!reportDetails.report?.groupBy?.length"
+            aria-label="Show Chart"
           >
             <img
               src="assets/dashboard-icons/show_chart.svg"
               *ngIf="reportDetails.report?.groupBy?.length"
+              alt="Show Chart"
             />
             <img
               src="assets/dashboard-icons/show_chart_disabled.svg"
               *ngIf="!reportDetails.report?.groupBy?.length"
+              alt="Show Chart Disabled"
             />
           </button>
           <button
@@ -196,8 +202,12 @@
               permissions.createReport,
               permissions.updateReport
             ]"
+            aria-label="Preview"
           >
-            <img [src]="getImage('preview', showPreview)" />
+            <img
+              [src]="getImage('preview', showPreview)"
+              alt="Toggle Preview"
+            />
           </button>
           <button
             mat-stroked-button
@@ -207,8 +217,9 @@
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
             *appCheckUserHasPermission="[permissions.reportExportToExcel]"
+            aria-label="Export to Excel"
           >
-            <img src="assets/dashboard-icons/export.svg" />
+            <img src="assets/dashboard-icons/export.svg" alt="Export Report" />
             <mat-icon class="export-btn-loader" *ngIf="isExportInProgress">
               <mat-spinner strokeWidth="2" diameter="20"></mat-spinner>
             </mat-icon>
@@ -221,6 +232,7 @@
             [routerLink]="['/dashboard/reports']"
             routerLinkActive="router-link-active"
             translate="cancel"
+            aria-label="Cancel"
           ></button>
 
           <ng-container
@@ -270,6 +282,7 @@
                 "
                 [matMenuTriggerFor]="menu"
                 class="save-button-arrow"
+                aria-label="Save As"
               >
                 <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
               </mat-button-toggle>
@@ -286,6 +299,7 @@
                 !(!reportDetails.report || reportNameAndDescForm.invalid) &&
                   openSaveAsDialog()
               "
+              aria-label="Save As"
             >
               Save As
             </button>
@@ -344,6 +358,7 @@
                 mat-dialog-close
                 [disabled]="isChartVariantApplyDisabled"
                 (click)="applyChartVariantChanges()"
+                aria-label="Apply Chart Variant Changes"
               >
                 Done
               </button>
@@ -352,6 +367,7 @@
                 color="primary"
                 class="yes-no-btn"
                 (click)="isPopoverOpen = false; chartVariantChanges = {}"
+                aria-label="Cancel Chart Variant Changes"
               >
                 Cancel
               </button>

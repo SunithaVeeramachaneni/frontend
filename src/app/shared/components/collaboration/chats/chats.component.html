@@ -2,7 +2,12 @@
   <div class="conversationsList">
     <div class="searchBar">
       <input matInput placeholder="Search Users" disabled class="searchInput" />
-      <button mat-icon-button class="searchMore" [matMenuTriggerFor]="menu">
+      <button
+        mat-icon-button
+        class="searchMore"
+        [matMenuTriggerFor]="menu"
+        aria-label="More Options"
+      >
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #menu="matMenu" xPosition="before">
@@ -204,6 +209,7 @@
           color="primary"
           class="searchMore"
           [matMenuTriggerFor]="menu"
+          aria-label="More Options"
         >
           <mat-icon>more_horiz</mat-icon>
         </button>

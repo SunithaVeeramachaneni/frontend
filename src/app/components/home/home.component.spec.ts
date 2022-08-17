@@ -2,12 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
-import { LoginService } from '../components/login/services/login.service';
-import {
-  permissions,
-  userInfo$
-} from '../components/login/services/login.service.mock';
-import { HeaderService } from '../shared/services/header.service';
+import { LoginService } from '../login/services/login.service';
+import { permissions, userInfo$ } from '../login/services/login.service.mock';
+import { HeaderService } from '../../shared/services/header.service';
 
 import { HomeComponent } from './home.component';
 
