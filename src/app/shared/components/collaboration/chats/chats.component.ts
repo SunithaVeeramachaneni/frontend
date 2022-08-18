@@ -635,7 +635,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .sendMessage$(message, targetUser.id, formData, info)
       .subscribe(
         (response) => {
-          console.log(response);
           this.messageText = '';
           this.messageDeliveryProgress = false;
           this.closePreview();

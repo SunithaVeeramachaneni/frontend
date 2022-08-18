@@ -209,7 +209,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   updateUserPresence = () => {
     if (this.isUserOnline) return;
-    console.log('user is online');
     this.usersService.setUserPresence$().subscribe((resp) => {
       this.userIdle.startWatching();
       this.isUserOnline = true;
