@@ -214,7 +214,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.isUserOnline = true;
       const userInfo = this.loginService.getLoggedInUserInfo();
       userInfo.online = true;
-      this.loginService.setLoggedInUserInfo(userInfo);
+      // this.loginService.setLoggedInUserInfo(userInfo);
     });
   };
 
@@ -228,7 +228,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.isUserOnline = false;
           const userInfo = this.loginService.getLoggedInUserInfo();
           userInfo.online = false;
-          this.loginService.setLoggedInUserInfo(userInfo);
+          // this.loginService.setLoggedInUserInfo(userInfo);
           this.userIdle.stopWatching();
         });
       }
