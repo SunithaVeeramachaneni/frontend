@@ -24,6 +24,9 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { environment } from 'src/environments/environment';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | 'append_history' | '';
@@ -39,6 +42,10 @@ interface UpdateConversations {
     | '';
   message: any;
   channel: any;
+}
+interface UpdateUserPresence {
+  action: 'update_user_presence' | '';
+  data: any;
 }
 
 interface Conversation {
@@ -105,6 +112,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   userMaps: any = [];
 
+  eventSource: any;
+
   conversationsInitial$: Observable<any>;
   conversations$: Observable<Conversation[]>;
 
@@ -122,6 +131,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
     message: {} as any,
     channel: ''
   });
+  updateUserPresence$ = new BehaviorSubject<UpdateUserPresence>({
+    action: 'update_user_presence',
+    data: [] as any
+  });
 
   private newMessageReceivedSubscription: Subscription;
 
@@ -130,7 +143,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private emitterService: EmitterService,
     private loginService: LoginService,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private authHeaderService: AuthHeaderService
   ) {}
 
   ngOnInit() {
@@ -154,6 +168,26 @@ export class ChatsComponent implements OnInit, OnDestroy {
           this.addMessageToConversation(event);
         }
       });
+
+    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
+
+    const { authorization, tenantid } =
+      this.authHeaderService.getAuthHeaders(SSE_URL);
+    this.eventSource = new EventSourcePolyfill(SSE_URL, {
+      headers: {
+        authorization,
+        tenantid
+      }
+    });
+    this.eventSource.onmessage = async (event: any) => {
+      const eventData = JSON.parse(event.data);
+      if (!eventData.isHeartbeat) {
+        this.updateUserPresence$.next({
+          action: 'update_user_presence',
+          data: eventData
+        });
+      }
+    };
 
     const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
@@ -213,9 +247,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
     );
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
-      this.updateConversations$
+      this.updateConversations$,
+      this.updateUserPresence$
     ]).pipe(
-      map(([initial, updateConversation]) => {
+      map(([initial, updateConversation, updateUserPresence]) => {
         const { action, message, channel } = updateConversation;
         let conversationsList = initial.data;
         if (action === 'update_latest_message' && channel?.length) {
@@ -255,6 +290,21 @@ export class ChatsComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(newConversations);
           conversationsList = initial.data;
         }
+
+        if (
+          updateUserPresence &&
+          updateUserPresence.action === 'update_user_presence'
+        ) {
+          const { data } = updateUserPresence;
+          conversationsList.forEach((conv) => {
+            if (conv.chatType === 'oneOnOne') {
+              if (data.indexOf(conv.userInfo.email) > -1) {
+                conv.userInfo.online = true;
+              }
+            }
+          });
+        }
+
         return conversationsList;
       }),
       tap((conversations) => {
@@ -370,7 +420,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     }
   };
 
-  downloadFile = (file: any, refId: string) => {
+  downloadFile = (file: any, refId: string, fileId: string) => {
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -379,7 +429,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       return;
     }
     this.downloadInProgress = true;
-    this.downloadingFileRef = refId;
+    this.downloadingFileRef = `${refId}_${fileId}`;
 
     this.chatService.downloadAttachment$(file, info).subscribe(
       (data) => {
@@ -508,7 +558,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
           let userInfo;
           initial.data.forEach((msg) => {
             if (message.user === msg.user) {
-              userInfo = msg.userInfo;
+              userInfo = msg.from;
             }
           });
 
@@ -563,7 +613,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   onMessageEnter = (targetUser, message) => {
-    if (message && message.length) {
+    if (message && message.trim().length) {
       this.sendMessageToUser(targetUser, message);
     }
   };
@@ -585,16 +635,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .sendMessage$(message, targetUser.id, formData, info)
       .subscribe(
         (response) => {
+          this.messageText = '';
+          this.messageDeliveryProgress = false;
+          this.closePreview();
           if (response && Object.keys(response).length) {
-            response.user = response.from.user;
+            // response.user = response.from.user;
             this.sendReceiveMessages$.next({
               action: 'send',
               message: response,
               channel: response.chatId
             });
-            this.messageText = '';
-            this.messageDeliveryProgress = false;
-            this.closePreview();
           }
         },
         (err) => {

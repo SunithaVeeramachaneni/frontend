@@ -2,6 +2,7 @@ import {
   AfterViewChecked,
   ChangeDetectorRef,
   Component,
+  HostListener,
   OnDestroy,
   OnInit
 } from '@angular/core';
@@ -28,6 +29,9 @@ import { ImageUtils } from './shared/utils/imageUtils';
 import { Buffer } from 'buffer';
 import { PermissionsRevokeInfoModalComponent } from './shared/components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+
+import { UserIdleService } from 'angular-user-idle';
+import { debounce } from './shared/utils/debounceMethod';
 
 const {
   dashboard,
@@ -168,6 +172,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
 
+  isUserOnline = false;
+
   constructor(
     private commonService: CommonService,
     private router: Router,
@@ -179,10 +185,55 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private chatService: ChatService,
     private tenantService: TenantService,
     private imageUtils: ImageUtils,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userIdle: UserIdleService
   ) {}
 
+  @HostListener('document:mousemove', ['$event'])
+  @debounce()
+  onMouseMove(e) {
+    this.updateUserPresence();
+  }
+
+  @HostListener('click', ['$event.target'])
+  @debounce()
+  onClick(e) {
+    this.updateUserPresence();
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  @debounce()
+  keyEvent(event: KeyboardEvent) {
+    this.updateUserPresence();
+  }
+
+  updateUserPresence = () => {
+    if (this.isUserOnline) return;
+    this.usersService.setUserPresence$().subscribe((resp) => {
+      this.userIdle.startWatching();
+      this.isUserOnline = true;
+      const userInfo = this.loginService.getLoggedInUserInfo();
+      userInfo.online = true;
+      this.loginService.setLoggedInUserInfo(userInfo);
+    });
+  };
+
   ngOnInit() {
+    //Start watching for user inactivity.
+    this.userIdle.startWatching();
+    // Start watching when user idle is starting.
+    this.userIdle.onTimerStart().subscribe((count) => {
+      if (count === 1) {
+        this.usersService.removeUserPresence$().subscribe((resp) => {
+          this.isUserOnline = false;
+          const userInfo = this.loginService.getLoggedInUserInfo();
+          userInfo.online = false;
+          this.loginService.setLoggedInUserInfo(userInfo);
+          this.userIdle.stopWatching();
+        });
+      }
+    });
+
     const ref = this;
     this.loginService.isUserAuthenticated$
       .pipe(
