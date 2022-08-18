@@ -43,11 +43,10 @@
   text-align: center;
   width: 93%;
   background: #f2f2f2;
-  margin: 0 auto;
+  margin: 15px auto;
   border-radius: 5px;
   padding: 10px;
   border: 1px dashed #666;
-  margin-bottom: 20px;
 }
 
 .form-input {
@@ -293,7 +292,7 @@
   position: relative;
   flex: 1 1 auto;
   padding: 0.1rem 0rem 0.1rem 1rem;
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-left: -16px;
   margin-right: 0px;
 }
@@ -316,16 +315,15 @@
 
 .filter-dropdowns {
   width: 130px;
-  height: 42px;
+  height: 35px;
   position: relative;
   left: -10px;
   border: 1px solid lightgrey;
   border-radius: 4px;
   background-color: white;
   font: inherit;
-  line-height: 1.5em;
   padding: 0.5em 1.7em 0.5em 1em;
-  margin-top: 7px;
+  margin-top: 12px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -402,6 +400,6 @@ h5.modal-title {
 }
 
 ::ng-deep .copy-ins .mat-tab-body {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 270px;
 }
