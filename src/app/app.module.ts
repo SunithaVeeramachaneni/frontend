@@ -86,8 +86,8 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     NgxShimmerLoadingModule,
-    // 180seconds.. 3mins
-    UserIdleModule.forRoot({ idle: 180, timeout: 30, ping: 30 }),
+    // 150seconds.. 2.5mins
+    UserIdleModule.forRoot({ idle: 150, timeout: 30, ping: 30 }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerImmediately'

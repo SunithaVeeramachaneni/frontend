@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   conatct: NgxMatIntlTelInputComponent;
   profileForm: FormGroup;
   profileImage: string | SafeResourceUrl;
+  profileImageFileName: string;
   profileEditMode = false;
   disableRemoveProfile = false;
   userInfo: UserInfo;
@@ -112,6 +113,7 @@ export class ProfileComponent implements OnInit {
     let base64: string;
     const { files } = event.target as HTMLInputElement;
     const reader = new FileReader();
+    this.profileImageFileName = files[0].name;
     reader.readAsDataURL(files[0]);
     reader.onloadend = () => {
       base64 = reader.result as string;
@@ -147,6 +149,7 @@ export class ProfileComponent implements OnInit {
     if (this.profileForm.valid && this.profileForm.dirty) {
       this.spinner.show();
       const userProfile = this.profileForm.value;
+      userProfile.profileImageFileName = this.profileImageFileName;
       this.userService
         .updateUserProfile$(this.userInfo.id, userProfile)
         .subscribe((response) => {
