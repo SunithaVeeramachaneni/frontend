@@ -55,12 +55,12 @@
 .userPresence {
   position: absolute;
   .statusCircle {
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     // background-color: grey;
     border: 2px solid colors.$white;
-    bottom: 0;
+    bottom: 2px;
     right: 0;
     position: absolute;
   }
