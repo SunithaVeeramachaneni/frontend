@@ -10,6 +10,7 @@ export interface User {
 export interface UserProfile {
   contact: string;
   profileImage: string;
+  profileImageFileName?: string;
 }
 
 export interface UserDetails {
