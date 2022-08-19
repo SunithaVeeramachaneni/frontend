@@ -1,6 +1,6 @@
 interface WorkCenterList {
-  id: string;
-  desc: string;
+  workCenterKey: string;
+  workCenterDesc: string;
 }
 export interface WorkCenter {
   plantId: string;

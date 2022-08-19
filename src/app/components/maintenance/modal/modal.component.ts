@@ -24,6 +24,7 @@ export class ModalComponent implements OnInit {
   public saveDisabled = true;
 
   public workCenter: string;
+  public plant: string;
   public workCenterList: any[];
 
   public assignee: string = '';
@@ -44,7 +45,10 @@ export class ModalComponent implements OnInit {
 
   ngOnInit() {
     this.assigneeList = this.data.techniciansList;
-    this.workCenterList = this.data.workCenterList;
+    this.plant = this.data.plant;
+    this.workCenterList = this.data.workCenterList.find(
+      (item) => item.plantId === this.plant
+    ).workCenters;
     this.defaultWorkCenter = this.data.defaultWorkCenter;
     this.workOrderID = this.data.workOrderID;
     this.priorityNumber = this.data.priorityNumber;

@@ -67,7 +67,7 @@
               {{
                 allSelectedWorkCenters?.selected
                   ? 'All'
-                  : workCenterFilter.value[0]?.desc
+                  : workCenterFilter.value[0]?.workCenterDesc
               }}
               <span
                 *ngIf="
@@ -95,10 +95,10 @@
                 (click)="togglePerPlant('workCenters')"
               >
                 <p class="filter-option-id">
-                  {{ workcenter.id }}
+                  {{ workcenter.workCenterKey }}
                 </p>
                 <p class="filter-option-desc">
-                  {{ workcenter.desc }}
+                  {{ workcenter.workCenterDesc }}
                 </p></mat-option
               >
             </div>

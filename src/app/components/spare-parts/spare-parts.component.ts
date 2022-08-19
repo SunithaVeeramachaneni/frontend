@@ -367,7 +367,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     if (filters.length === 0) {
       return true;
     } else {
-      return filters.some((item) => item.id === workCenter);
+      return filters.some((item) => item.workCenterKey === workCenter);
     }
   };
 

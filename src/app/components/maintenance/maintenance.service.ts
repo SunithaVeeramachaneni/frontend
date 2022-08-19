@@ -168,26 +168,19 @@ export class MaintenanceService {
   }
 
   getTechnicians(info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    this.technicians$ = this.workCenters$.pipe(
-      mergeMap((workCenters) =>
-        from(workCenters).pipe(
-          mergeMap((workCenter) =>
-            from(workCenter.workCenters).pipe(
-              mergeMap((wC) =>
-                this._appService
-                  ._getRespFromGateway(
-                    environment.mccAbapApiUrl,
-                    `technicians/'${wC.id}'`
-                  )
-                  .pipe(
-                    tap((data) => {}),
-                    map((technicians) => ({
-                      [wC.id]: this.cleanTechnicians(technicians)
-                    })),
-                    takeUntil(this.destroy$)
-                  )
+    this.technicians$ = this.allPlants$.pipe(
+      mergeMap((allPlants) =>
+        from(allPlants).pipe(
+          mergeMap((plant: Plant) =>
+            this._appService
+              ._getRespFromGateway(
+                environment.mccAbapApiUrl,
+                `technicians/'${plant.id}'`
               )
-            )
+              .pipe(
+                map((technicians) => this.cleanTechnicians(technicians)),
+                takeUntil(this.destroy$)
+              )
           )
         )
       ),
@@ -197,14 +190,24 @@ export class MaintenanceService {
     return this.technicians$;
   }
 
-  cleanTechnicians = (rawTechnicians): WarehouseTechnician[] => {
-    const technicians = rawTechnicians.map((rawTechnician) => ({
-      personName: rawTechnician.PERNRDesc,
-      personKey: rawTechnician.PERNRKey,
-      image: rawTechnician.FILECONTENT
-    }));
+  cleanTechnicians = (rawTechnicians): any => {
+    const technicians = {};
+    rawTechnicians.forEach((rawTech) => {
+      if (rawTech.ARBPL.length !== 0) {
+        if (!technicians[rawTech.ARBPL]) {
+          technicians[rawTech.ARBPL] = [];
+        } else {
+          technicians[rawTech.ARBPL].push({
+            personName: rawTech.PERNRDesc,
+            personKey: rawTech.PERNRKey,
+            image: rawTech.FILECONTENT
+          });
+        }
+      }
+    });
     return technicians;
   };
+
   setAssigneeAndWorkCenter = (params) => {
     const req = {
       workOrderID: params.workOrderID,
@@ -299,6 +302,8 @@ export class MaintenanceService {
   destroy() {
     this.destroy$.next();
     this.destroy$.complete();
-    this.destroy$ = new Subject();
+    setTimeout(() => {
+      this.destroy$ = new Subject();
+    }, 500);
   }
 }

@@ -185,7 +185,11 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         this.plantFilter.patchValue([...plants, 0]);
       })
     );
-    this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters();
+    this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters().pipe(
+      tap((resp) => {
+        this.workCenterList = resp;
+      })
+    );
     this.technicianSubscription = this.maintenanceSvc
       .getTechnicians()
       .subscribe((resp) => {
@@ -225,8 +229,8 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.technicianSubscription.unsubscribe();
-    this.maintenanceSvc.closeEventSource();
     this.maintenanceSvc.destroy();
+    this.maintenanceSvc.closeEventSource();
   }
 
   getImageSrc = (source: string) => {
@@ -389,7 +393,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     if (filter.length === 0) {
       return true;
     } else {
-      return filter.some((item) => item.id === workCenter);
+      return filter.some((item) => item.workCenterKey === workCenter);
     }
   };
 
@@ -454,7 +458,8 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         defaultWorkCenter: workOrder.workCenter,
         workOrderID: workOrder.workOrderID,
         priorityNumber: workOrder.priorityNumber,
-        priorityText: workOrder.priorityText
+        priorityText: workOrder.priorityText,
+        plant: workOrder.plant
       }
     });
 

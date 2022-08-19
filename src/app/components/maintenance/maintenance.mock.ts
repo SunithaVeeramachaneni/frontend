@@ -207,7 +207,7 @@ export const unassignedWorkOrder1Card = {
       timeProgress: 0.8
     }
   ],
-  workCenter: 'ELEKTRIK',
+  workCenter: '1',
   technician: [],
   estimatedTime: '15 hrs',
   isLoading: false
@@ -377,21 +377,28 @@ export const expectedWorkOrders$ = of({
   completed: [completedWorkOrder1Card]
 });
 
+export const rawWERKS$ = of([
+  {
+    id: '1000',
+    desc: 'Plant 1'
+  }
+]);
+
 export const rawARBPLs$ = of([
   {
     plantId: '1000',
     workCenters: [
       {
-        id: 'ELEKTRIK',
-        desc: 'Electrical Maintenance'
+        workCenterKey: 'ELEKTRIK',
+        workCenterDesc: 'Electrical Maintenance'
       },
       {
-        id: 'MECHANIK',
-        desc: 'Mechanical Maintenance'
+        workCenterKey: 'MECHANIK',
+        workCenterDesc: 'Mechanical Maintenance'
       },
       {
-        id: 'ARBITRARY',
-        desc: 'Arbitrary Maintenance'
+        workCenterKey: 'ARBITRARY',
+        workCenterDesc: 'Arbitrary Maintenance'
       }
     ]
   }
@@ -402,16 +409,16 @@ export const expectedARBPLs$ = of([
     plantId: '1000',
     workCenters: [
       {
-        id: 'ELEKTRIK',
-        desc: 'Electrical Maintenance'
+        workCenterKey: 'ELEKTRIK',
+        workCenterDesc: 'Electrical Maintenance'
       },
       {
-        id: 'MECHANIK',
-        desc: 'Mechanical Maintenance'
+        workCenterKey: 'MECHANIK',
+        workCenterDesc: 'Mechanical Maintenance'
       },
       {
-        id: 'ARBITRARY',
-        desc: 'Arbitrary Maintenance'
+        workCenterKey: 'ARBITRARY',
+        workCenterDesc: 'Arbitrary Maintenance'
       }
     ]
   }
@@ -432,11 +439,13 @@ export const rawTechniciansMECHANIK$ = of([
 
 export const rawTechniciansELEKTRIK$ = of([
   {
+    ARBPL: '1',
     PERNRDesc: 'Ms. C',
     PERNRKey: '003',
     FILECONTENT: '3'
   },
   {
+    ARBPL: '1',
     PERNRDesc: 'Mr. D',
     PERNRKey: '004',
     FILECONTENT: '4'
@@ -452,35 +461,11 @@ export const rawTechniciansARBITRARY$ = of([
 ]);
 
 export const expectedTechnicians$ = of({
-  ELEKTRIK: [
-    {
-      personName: 'Ms. C',
-      personKey: '003',
-      image: '3'
-    },
+  1: [
     {
       personName: 'Mr. D',
       personKey: '004',
       image: '4'
-    }
-  ],
-  MECHANIK: [
-    {
-      personName: 'Mr. A',
-      personKey: '001',
-      image: '1'
-    },
-    {
-      personName: 'Ms. B',
-      personKey: '002',
-      image: '2'
-    }
-  ],
-  ARBITRARY: [
-    {
-      personName: 'Ms. E',
-      personKey: '005',
-      image: '5'
     }
   ]
 });
