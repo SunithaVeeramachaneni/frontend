@@ -26,7 +26,16 @@
         (click)="onTextMessageClick(user)"
       >
         <div class="icon-button" mat-list-icon>
-          <img class="icon" [src]="user.profileImage" />
+          <div class="userPresence">
+            <img class="icon" [src]="user.profileImage" />
+            <div
+              class="statusCircle"
+              [ngClass]="{
+                online: user.online,
+                offline: !user.online
+              }"
+            ></div>
+          </div>
         </div>
         <div mat-line>
           <b>{{ user.firstName }} {{ user.lastName }}</b>

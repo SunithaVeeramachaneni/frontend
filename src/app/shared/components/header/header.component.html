@@ -108,12 +108,20 @@
           'user-with-logo': tenantLogo,
           'user-without-logo': !tenantLogo
         }"
+        class="userPresence"
       >
         <img
           [src]="profileImage(userDetails.profileImage)"
           class="profile"
           alt="Profile Image"
         />
+        <div
+          class="statusCircle"
+          [ngClass]="{
+            online: userDetails.online,
+            offline: !userDetails.online
+          }"
+        ></div>
       </div>
       <div class="with-company-logo" *ngIf="tenantLogo">
         <span class="helper"> </span>

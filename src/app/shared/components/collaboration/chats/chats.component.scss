@@ -230,7 +230,7 @@
       }
       .audioRecord {
         color: colors.$white;
-        background: colors.$blue2;
+        // background: colors.$blue2;
         border-radius: 8px;
         font-size: 70%;
         height: auto;
@@ -642,4 +642,24 @@ p {
   height: 20px;
   align-items: center;
   justify-content: center;
+}
+
+.userPresence {
+  position: absolute;
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    // background-color: grey;
+    border: 2px solid white;
+    bottom: 2px;
+    right: 0;
+    position: absolute;
+  }
+  .online {
+    background-color: colors.$green;
+  }
+  .offline {
+    background-color: colors.$gray;
+  }
 }

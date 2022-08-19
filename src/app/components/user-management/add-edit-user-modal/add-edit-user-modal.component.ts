@@ -80,6 +80,7 @@ export class AddEditUserModalComponent implements OnInit {
   displayedPermissions;
   isPopoverOpen = false;
   profileImage;
+  profileImageFileName;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
   superAdminText = superAdminText;
@@ -227,6 +228,7 @@ export class AddEditUserModalComponent implements OnInit {
   onFileChange(event: any) {
     const { files } = event.target as HTMLInputElement;
     const selectedFile = files[0];
+    this.profileImageFileName = selectedFile.name;
     this.profileImage = this.sant.bypassSecurityTrustUrl(
       window.URL.createObjectURL(selectedFile)
     ) as string;
@@ -255,7 +257,11 @@ export class AddEditUserModalComponent implements OnInit {
 
   save() {
     this.dialogRef.close({
-      user: { ...this.data.user, ...this.userForm.value },
+      user: {
+        ...this.data.user,
+        ...this.userForm.value,
+        profileImageFileName: this.profileImageFileName
+      },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     });
   }
