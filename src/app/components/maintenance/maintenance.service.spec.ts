@@ -89,11 +89,9 @@ describe('Maintenance service', () => {
     let expectedTechnicians;
     expectedTechnicians$.subscribe((resp) => {
       expectedTechnicians = resp;
-      console.log('Expected', JSON.stringify(resp));
     });
     technicians$.subscribe((resp) => {
       technicians = resp;
-      console.log('actual', JSON.stringify(resp));
     });
     expect(isEqual(expectedTechnicians, technicians)).toBeTrue();
   });

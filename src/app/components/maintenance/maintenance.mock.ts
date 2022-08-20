@@ -463,6 +463,11 @@ export const rawTechniciansARBITRARY$ = of([
 export const expectedTechnicians$ = of({
   1: [
     {
+      personName: 'Ms. C',
+      personKey: '003',
+      image: '3'
+    },
+    {
       personName: 'Mr. D',
       personKey: '004',
       image: '4'

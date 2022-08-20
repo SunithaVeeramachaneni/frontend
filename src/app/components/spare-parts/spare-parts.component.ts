@@ -137,9 +137,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
       if (this.allSelectedWorkCenters.selected) {
         this.allSelectedWorkCenters.deselect();
       }
-      if (
-        this.workCenterFilter.value.length === this.currentWorkCenters.length
-      ) {
+      let workCenterFilterLength = 0;
+      this.currentWorkCenters.forEach((wC) => {
+        workCenterFilterLength += wC.workCenters.length;
+      });
+      if (this.workCenterFilter.value.length === workCenterFilterLength) {
         this.allSelectedWorkCenters.select();
       }
     }

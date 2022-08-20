@@ -193,7 +193,7 @@ export class MaintenanceService {
           )
         )
       ),
-      reduce((acc: any, cur) => (acc = { ...acc, ...cur }), {}),
+      reduce((acc: any, cur) => this.accumulateTechnicians(acc, cur)),
       share()
     );
     return this.technicians$;
@@ -205,16 +205,27 @@ export class MaintenanceService {
       if (rawTech.ARBPL.length !== 0) {
         if (!technicians[rawTech.ARBPL]) {
           technicians[rawTech.ARBPL] = [];
-        } else {
-          technicians[rawTech.ARBPL].push({
-            personName: rawTech.ENAME,
-            personKey: rawTech.PERNR,
-            image: rawTech.FILECONTENT
-          });
         }
+        technicians[rawTech.ARBPL].push({
+          personName: rawTech.ENAME,
+          personKey: rawTech.PERNR,
+          image: rawTech.FILECONTENT
+        });
       }
     });
     return technicians;
+  };
+
+  accumulateTechnicians = (acc, cur) => {
+    const accumulator = acc;
+    Object.keys(cur).forEach((key) => {
+      if (accumulator[key]) {
+        accumulator[key] = [...accumulator[key], ...cur[key]];
+      } else {
+        accumulator[key] = cur[key];
+      }
+    });
+    return accumulator;
   };
 
   setAssigneeAndWorkCenter = (params) => {

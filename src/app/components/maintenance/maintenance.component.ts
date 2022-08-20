@@ -383,7 +383,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   };
 
   filterPlant = (plant, filter) => {
-    if (filter.length === 0) return true;
+    if (filter.length === 0) return false;
     else {
       return filter.some((item) => item.id === plant);
     }
@@ -391,7 +391,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
 
   filterWorkCenter = (workCenter, filter) => {
     if (filter.length === 0) {
-      return true;
+      return false;
     } else {
       return filter.some((item) => item.workCenterKey === workCenter);
     }

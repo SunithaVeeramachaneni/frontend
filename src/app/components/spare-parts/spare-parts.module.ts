@@ -21,6 +21,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/spare-parts/', '.json');
@@ -34,6 +35,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatNativeDateModule,
     MatGridListModule,
     MatMenuModule,
+    MatSelectModule,
     MatButtonModule,
     MatProgressBarModule,
     NgxShimmerLoadingModule,
