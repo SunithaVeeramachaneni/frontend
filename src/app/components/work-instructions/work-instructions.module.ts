@@ -28,7 +28,6 @@ import { IpadPreviewComponent } from './steps/ipad/ipad-preview.component';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgxSlickJsModule } from 'ngx-slickjs';
 import { NgxDropzoneModule } from 'ngx-dropzone';
-import { AppMaterialModules } from '../../material.module';
 import { DraftsComponent } from './drafts/drafts.component';
 import { PublishedComponent } from './published/published.component';
 import { RecentsComponent } from './recents/recents.component';
@@ -48,6 +47,22 @@ import {
 import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatCardModule } from '@angular/material/card';
+import { MatRadioModule } from '@angular/material/radio';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/work-instructions/', '.json');
@@ -58,7 +73,22 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormsModule,
     ReactiveFormsModule,
     WorkInstructionsPageRoutingModule,
-    AppMaterialModules,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonToggleModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatGridListModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTabsModule,
+    MatDividerModule,
+    MatSelectModule,
+    MatChipsModule,
+    OverlayModule,
+    MatCardModule,
+    MatRadioModule,
+    MatProgressBarModule,
     SharedModule,
     ModalModule,
     StoreModule.forFeature('workinstruction', instructionReducer),

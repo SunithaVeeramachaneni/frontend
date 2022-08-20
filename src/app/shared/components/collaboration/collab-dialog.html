@@ -12,6 +12,7 @@
     <div>
       <button
         mat-icon-button
+        disableRipple
         class="closeBtn"
         (click)="collapseCollabDialog()"
         *ngIf="!dialogCollapsed"
@@ -20,6 +21,7 @@
       </button>
       <button
         mat-icon-button
+        disableRipple
         class="closeBtn rotate90"
         (click)="minimizeCollabDialog()"
         *ngIf="isMaximized || dialogCollapsed"
@@ -28,6 +30,7 @@
       </button>
       <button
         mat-icon-button
+        disableRipple
         class="closeBtn rotate90"
         (click)="maximizeCollabDialog()"
         *ngIf="!isMaximized && !dialogCollapsed"
@@ -35,7 +38,12 @@
         <mat-icon>unfold_more</mat-icon>
       </button>
 
-      <button mat-icon-button class="closeBtn" (click)="closeCollabDialog()">
+      <button
+        mat-icon-button
+        disableRipple
+        class="closeBtn"
+        (click)="closeCollabDialog()"
+      >
         <mat-icon>close</mat-icon>
       </button>
     </div>

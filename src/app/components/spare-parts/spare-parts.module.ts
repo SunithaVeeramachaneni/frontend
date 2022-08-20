@@ -1,11 +1,10 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { SparePartsRoutingModule } from './spare-parts-routing.module';
 import { SparePartsComponent } from './spare-parts.component';
 import { SharedModule } from '../../shared/shared.module';
-import { AppMaterialModules } from '../../material.module';
 import {
   TranslateLoader,
   TranslateModule,
@@ -17,18 +16,26 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { SPCCCardComponent } from './spcc-card/spcc-card.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/spare-parts/', '.json');
 
 @NgModule({
   imports: [
-    FormsModule,
     ReactiveFormsModule,
     SparePartsRoutingModule,
     CommonModule,
     SharedModule,
-    AppMaterialModules,
+    MatNativeDateModule,
+    MatGridListModule,
+    MatMenuModule,
+    MatButtonModule,
+    MatProgressBarModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

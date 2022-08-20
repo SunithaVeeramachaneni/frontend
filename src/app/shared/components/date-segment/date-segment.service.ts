@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import * as moment from 'moment';
+import {
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfWeek
+} from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -14,39 +19,18 @@ export class DateSegmentService {
     if (date === 'week') return this.weekStartAndEndDate();
   };
 
-  todayStartAndEndDate = () => {
-    const sDate = moment().utcOffset(0);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    const eDate = moment().utcOffset(0);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-    return {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-  };
+  todayStartAndEndDate = () => ({
+    startDate: `${format(new Date(), 'yyyy-MM-dd')}T00:00:00`,
+    endDate: `${format(new Date(), 'yyyy-MM-dd')}T23:59:59`
+  });
 
-  weekStartAndEndDate = () => {
-    const sDate = moment().startOf('week').utcOffset(0);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+  weekStartAndEndDate = () => ({
+    startDate: `${format(startOfWeek(new Date()), 'yyyy-MM-dd', {})}T00:00:00`,
+    endDate: `${format(endOfWeek(new Date()), 'yyyy-MM-dd', {})}T23:59:59`
+  });
 
-    const eDate = moment().endOf('week').utcOffset(0);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-    return {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-  };
-
-  monthStartAndEndDate = () => {
-    const sDate = moment().startOf('month').utcOffset(0);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    const eDate = moment().endOf('month').utcOffset(0);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-
-    return {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-  };
+  monthStartAndEndDate = () => ({
+    startDate: `${format(startOfMonth(new Date()), 'yyyy-MM-dd', {})}T00:00:00`,
+    endDate: `${format(endOfMonth(new Date()), 'yyyy-MM-dd', {})}T23:59:59`
+  });
 }

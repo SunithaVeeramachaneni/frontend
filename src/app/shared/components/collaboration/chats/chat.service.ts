@@ -62,24 +62,32 @@ export class ChatService {
 
   getConversations$ = (
     userId: string,
+    skipToken?: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
-    return this.appService._getResp(apiURL, `conversations/${userId}`, info);
+    let featureURI = `conversations/${userId}`;
+    if (skipToken) {
+      skipToken = encodeURIComponent(skipToken);
+      featureURI = `${featureURI}?skipToken=${skipToken}`;
+    }
+    return this.appService._getResp(apiURL, featureURI, info);
   };
 
   getConversationHistory$ = (
     conversationId: string,
+    skipToken: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
     const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
-    return this.appService._getResp(
-      apiURL,
-      `conversations/${conversationId}/history`,
-      info
-    );
+    let featureURI = `conversations/${conversationId}/history`;
+    if (skipToken) {
+      skipToken = encodeURIComponent(skipToken);
+      featureURI = `${featureURI}?skipToken=${skipToken}`;
+    }
+    return this.appService._getResp(apiURL, featureURI, info);
   };
 
   sendMessage$ = (
@@ -156,7 +164,7 @@ export class ChatService {
     } else if (userInfo.collaborationType === 'slack') {
       fileId = file.url_private;
     }
-    return this.appService._downloadFile(
+    return this.appService.downloadFile(
       apiURL,
       `files/download?url=${fileId}`,
       info

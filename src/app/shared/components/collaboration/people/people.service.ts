@@ -13,11 +13,15 @@ import { environment } from '../../../../../environments/environment';
 })
 export class PeopleService {
   constructor(private appService: AppService, private http: HttpClient) {}
-  getUsers$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
+  getUsers$ = (
+    queryParams: any,
+    includeSlackDetails: boolean,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
     this.appService._getResp(
       environment.userRoleManagementApiUrl,
       'users',
       info,
-      { isActive: true, includeSlackDetails: true }
+      { ...queryParams, isActive: true, includeSlackDetails }
     );
 }

@@ -16,6 +16,7 @@
       #trigger="cdkOverlayOrigin"
       (click)="isPopoverOpen = !isPopoverOpen"
       class="common-filter-icon"
+      alt="Open Filter"
     />
   </mat-form-field>
 </span>
@@ -39,8 +40,15 @@
   >
     <div class="m-b-10 filter-header">
       <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-      <button class="filter-modal-cancel" (click)="isPopoverOpen = false">
-        <img src="../../../../assets/img/svg/cancel-icon.svg" />
+      <button
+        class="filter-modal-cancel"
+        (click)="isPopoverOpen = false"
+        aria-label="Close Filter"
+      >
+        <img
+          src="../../../../assets/img/svg/cancel-icon.svg"
+          alt="Close Filter"
+        />
       </button>
     </div>
     <form #form="ngForm">
@@ -135,7 +143,7 @@
               <img
                 [hidden]="!getImageSrc(assigned.image)"
                 [attr.src]="getImageSrc(assigned.image)"
-                alt=""
+                alt="Profile Image"
                 style="
                   width: 36px;
                   height: 36px;
@@ -154,6 +162,7 @@
         class="apply-filters-btn"
         [disabled]="this.applyBtnDisable"
         (click)="isPopoverOpen = false; searchFilter()"
+        aria-label="Apply Filter"
       >
         {{ 'apply' | translate }}
       </button>
@@ -175,8 +184,15 @@
   >
     <div class="m-b-10 filter-header">
       <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-      <button class="filter-modal-cancel" (click)="isPopoverOpen = false">
-        <img src="../../../../assets/img/svg/cancel-icon.svg" />
+      <button
+        class="filter-modal-cancel"
+        (click)="isPopoverOpen = false"
+        aria-label="Close Filter"
+      >
+        <img
+          src="../../../../assets/img/svg/cancel-icon.svg"
+          alt="Close Filter"
+        />
       </button>
     </div>
     <div class="filter-form-fields" style="max-height: 350px">
@@ -275,8 +291,12 @@
                   class="filter-modal-cancel"
                   type="button"
                   (click)="isfilterTooltipOpen[i] = false"
+                  aria-label="Close Filter"
                 >
-                  <img src="../../../../assets/img/svg/cancel-icon.svg" />
+                  <img
+                    src="../../../../assets/img/svg/cancel-icon.svg"
+                    alt="Close Filter"
+                  />
                 </button>
               </div>
               <div>
@@ -339,6 +359,7 @@
                     <button
                       (focus)="rangePicker.open()"
                       class="select-date-range-btn"
+                      aria-label="Open Date Range"
                     >
                       {{ customBtnText }}
                     </button>
@@ -367,7 +388,11 @@
                       </mat-date-range-input>
                       <mat-date-range-picker #rangePicker>
                         <mat-date-range-picker-actions>
-                          <button mat-button matDateRangePickerCancel>
+                          <button
+                            mat-button
+                            matDateRangePickerCancel
+                            aria-label="Cancel Date Range"
+                          >
                             {{ 'cancel' | translate }}
                           </button>
                           <button
@@ -375,6 +400,7 @@
                             type="submit"
                             color="primary"
                             matDateRangePickerApply
+                            aria-label="Apply Date Range"
                           >
                             {{ 'apply' | translate }}
                           </button>
@@ -429,6 +455,7 @@
                   type="submit"
                   form="filtersForm"
                   [disabled]="filterForm.invalid"
+                  aria-label="Save Filter"
                 >
                   Save
                 </button>
@@ -445,6 +472,7 @@
       (click)="applyFilters()"
       [disabled]="this.applydynamicFiltersBtnDisable"
       type="button"
+      aria-label="Apply Filter"
     >
       {{ 'apply' | translate }}
     </button>
@@ -454,6 +482,7 @@
       class="btn reset-filters-btn"
       [disabled]="this.resetdynamicFiltersBtnDisable"
       (click)="clearFilters()"
+      aria-label="Cancel Filter"
     >
       {{ 'reset' | translate }}
     </button>

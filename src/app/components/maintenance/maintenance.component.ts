@@ -29,10 +29,10 @@ import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
-import * as moment from 'moment';
 import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
 import { MatDialog } from '@angular/material/dialog';
 import { isEqual } from 'lodash-es';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-maintenance',
@@ -411,9 +411,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   };
 
   public filterDate(dueDate, filterDate) {
-    const sDate = moment(dueDate);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    const date = sDate.format('YYYY-MM-DDTHH:mm:ss');
+    const date = `${format(new Date(dueDate), 'yyyy-MM-dd')}T00:00:00`;
     return date >= filterDate.startDate && date <= filterDate.endDate;
   }
 

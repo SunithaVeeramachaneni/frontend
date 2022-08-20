@@ -2,7 +2,12 @@
   <div class="conversationsList">
     <div class="searchBar">
       <input matInput placeholder="Search Users" disabled class="searchInput" />
-      <button mat-icon-button class="searchMore" [matMenuTriggerFor]="menu">
+      <button
+        mat-icon-button
+        class="searchMore"
+        [matMenuTriggerFor]="menu"
+        aria-label="More Options"
+      >
         <mat-icon>more_horiz</mat-icon>
       </button>
       <mat-menu #menu="matMenu" xPosition="before">
@@ -11,7 +16,7 @@
         <button mat-menu-item disabled>Delete Conversations</button>
       </mat-menu>
     </div>
-    <div class="userList">
+    <div class="userList" (scroll)="onConversationsListScrolled($event)">
       <mat-list
         *ngIf="
           conversations$ | async as conversations;
@@ -31,7 +36,16 @@
             mat-list-icon
             *ngIf="conversation.chatType === 'oneOnOne'"
           >
-            <img class="icon" [src]="conversation.userInfo.profileImage" />
+            <div class="userPresence">
+              <img class="icon" [src]="conversation.userInfo.profileImage" />
+              <div
+                class="statusCircle"
+                [ngClass]="{
+                  online: conversation.userInfo.online,
+                  offline: !conversation.userInfo.online
+                }"
+              ></div>
+            </div>
           </div>
           <div
             class="icon-button"
@@ -52,19 +66,33 @@
               {{ conversation.latest.createdDateTime | timeAgo }}
             </span>
           </div>
-          <div
-            class="convDesc"
-            mat-line
-            [innerHTML]="
-              conversation.latest.message ? conversation.latest.message : ''
-            "
-            [ngClass]="{
-              unreadMessage: conversation.latest.unread === true
-            }"
-          >
-            <!-- {{ conversation.latest.message }} -->
+          <div class="convDesc" mat-line>
+            <span [ngClass]="{ unreadCount: conversation.unreadCount }">
+              {{ conversation.unreadCount }}</span
+            >
+            <span
+              [innerHTML]="
+                conversation.latest.message ? conversation.latest.message : ''
+              "
+              [ngClass]="{
+                unreadMessage: conversation.latest.unread === true
+              }"
+            >
+            </span>
           </div>
         </mat-list-item>
+        <div *ngIf="appendingConversations">
+          <ng-template>
+            <div class="p-15">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+              </ngx-shimmer-loading>
+              <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+              </ngx-shimmer-loading>
+              <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+              </ngx-shimmer-loading>
+            </div>
+          </ng-template>
+        </div>
       </mat-list>
     </div>
   </div>
@@ -82,10 +110,19 @@
           mat-list-icon
           *ngIf="selectedConversation.chatType === 'oneOnOne'"
         >
-          <img
-            class="icon mt-10"
-            [src]="selectedConversation.userInfo.profileImage"
-          />
+          <div class="userPresence">
+            <img
+              class="icon mt-10"
+              [src]="selectedConversation.userInfo.profileImage"
+            />
+            <div
+              class="statusCircle"
+              [ngClass]="{
+                online: selectedConversation.userInfo.online,
+                offline: !selectedConversation.userInfo.online
+              }"
+            ></div>
+          </div>
         </div>
         <div
           class="icon-button"
@@ -190,6 +227,7 @@
           color="primary"
           class="searchMore"
           [matMenuTriggerFor]="menu"
+          aria-label="More Options"
         >
           <mat-icon>more_horiz</mat-icon>
         </button>
@@ -217,6 +255,7 @@
     ></mat-divider>
     <div
       class="conversationBody"
+      (scroll)="onConversationHistoryScrolled($event)"
       id="conversationHistory"
       #scrollMe
       [scrollTop]="scrollMe.scrollHeight"
@@ -280,17 +319,17 @@
                         <div
                           *ngIf="
                             !downloadInProgress ||
-                            downloadingFileRef !== message.id
+                            downloadingFileRef !== message.id + '_' + file.id
                           "
                           class="downloadBtn"
-                          (click)="downloadFile(file, message.id)"
+                          (click)="downloadFile(file, message.id, file.id)"
                         >
                           <mat-icon>arrow_circle_down</mat-icon>
                         </div>
                         <div
                           *ngIf="
                             downloadInProgress &&
-                            downloadingFileRef === message.id
+                            downloadingFileRef === message.id + '_' + file.id
                           "
                           class="downloadBtn"
                         >
@@ -354,17 +393,17 @@
                         <div
                           *ngIf="
                             !downloadInProgress ||
-                            downloadingFileRef !== message.id
+                            downloadingFileRef !== message.id + '_' + file.id
                           "
                           class="downloadBtn"
-                          (click)="downloadFile(file, message.id)"
+                          (click)="downloadFile(file, message.id, file.id)"
                         >
                           <mat-icon>arrow_circle_down</mat-icon>
                         </div>
                         <div
                           *ngIf="
                             downloadInProgress &&
-                            downloadingFileRef === message.id
+                            downloadingFileRef === message.id + '_' + file.id
                           "
                           class="downloadBtn"
                         >
@@ -483,7 +522,10 @@
           <div matSuffix>
             <button
               mat-icon-button
-              [disabled]="!messageText.length"
+              [disabled]="
+                !showAttachmentPreview ||
+                (!messageText.trim().length && !showAttachmentPreview)
+              "
               (click)="sendMessageToUser(selectedConversation, messageText)"
             >
               <mat-spinner
@@ -494,8 +536,8 @@
               <mat-icon
                 *ngIf="!messageDeliveryProgress"
                 [ngClass]="{
-                  disableSendBtn: !messageText.length,
-                  activeSendBtn: messageText.length
+                  disableSendBtn: !messageText.trim().length,
+                  activeSendBtn: messageText.trim().length
                 }"
                 >send</mat-icon
               >

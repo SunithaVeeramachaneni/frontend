@@ -87,7 +87,6 @@ li.breadcrumb-item.active span {
   cursor: pointer;
   box-sizing: border-box;
   opacity: 1;
-  min-width: auto !important;
   text-align: center;
   display: inline-flex;
   justify-content: center;
@@ -562,4 +561,8 @@ button.mat-menu-item {
 
 .tableMain tr.mat-header-row {
   height: 42px;
+}
+
+.mat-tab-label .mat-tab-label-content {
+  font-size: 90%;
 }

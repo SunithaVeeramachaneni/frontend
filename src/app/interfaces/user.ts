@@ -10,6 +10,7 @@ export interface User {
 export interface UserProfile {
   contact: string;
   profileImage: string;
+  profileImageFileName?: string;
 }
 
 export interface UserDetails {
@@ -36,6 +37,7 @@ export interface UserInfo extends UserDetails {
   slackDetail: any;
   collaborationType: string;
   permissions: Permission[];
+  online?: boolean | false;
 }
 
 export interface UserTable {

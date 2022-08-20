@@ -4,10 +4,10 @@
     "analytics": "59cd7bdb-c04d-46c1-b17a-57a4d58730ef"
   },
   "version": 1,
-  "defaultProject": "app",
+  "defaultProject": "cwp",
   "newProjectRoot": "projects",
   "projects": {
-    "app": {
+    "cwp": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -25,7 +25,11 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest"
+            ],
             "styles": [
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/plyr/dist/plyr.css",
@@ -45,9 +49,10 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "quill-delta-to-html",
-              "buffer",
-              "exceljs"
-            ]
+              "buffer"
+            ],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "development": {
@@ -85,6 +90,11 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "1MB"
                 }
               ]
             },
@@ -108,6 +118,11 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "1MB"
                 }
               ]
             },
@@ -131,6 +146,11 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "1MB"
                 }
               ]
             },
@@ -142,20 +162,20 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "cwp:build"
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build:development"
+              "browserTarget": "cwp:build:development"
             },
             "production": {
-              "browserTarget": "app:build:production"
+              "browserTarget": "cwp:build:production"
             },
             "testing": {
-              "browserTarget": "app:build:testing"
+              "browserTarget": "cwp:build:testing"
             },
             "staging": {
-              "browserTarget": "app:build:staging"
+              "browserTarget": "cwp:build:staging"
             },
             "ci": {
               "progress": false
@@ -165,7 +185,7 @@
         "extract-i18n": {
           "builder": "@angular-builders/custom-webpack:extract-i18n",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "cwp:build"
           }
         },
         "test": {
@@ -187,7 +207,11 @@
               "node_modules/popper.js/dist/umd/popper.min.js",
               "src/assets/external_api.js"
             ],
-            "assets": ["src/favicon.ico", "src/assets"]
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/manifest.webmanifest"
+            ]
           },
           "configurations": {
             "ci": {
@@ -199,30 +223,33 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "app:serve"
+            "devServerTarget": "cwp:serve"
           },
           "configurations": {
             "devlopment": {
-              "devServerTarget": "app:serve:devlopment"
+              "devServerTarget": "cwp:serve:devlopment"
             },
             "production": {
-              "devServerTarget": "app:serve:production"
+              "devServerTarget": "cwp:serve:production"
             },
             "testing": {
-              "devServerTarget": "app:serve:testing"
+              "devServerTarget": "cwp:serve:testing"
             },
             "staging": {
-              "devServerTarget": "app:serve:staging"
+              "devServerTarget": "cwp:serve:staging"
             },
             "ci": {
-              "devServerTarget": "app:serve:ci"
+              "devServerTarget": "cwp:serve:ci"
             }
           }
         }

@@ -296,9 +296,11 @@ describe('ProfileComponent', () => {
 
     it('should allow user to update the profile, If form is valid & dirty', () => {
       spyOn(component.profileForm, 'reset');
+      component.profileImageFileName = 'dummyFile Img.png';
       const userProfile = {
         contact: '+918123456788',
-        profileImage: profileImageBase64
+        profileImage: profileImageBase64,
+        profileImageFileName: 'dummyFile Img.png'
       };
       (userServiceSpy.updateUserProfile$ as jasmine.Spy)
         .withArgs(userInfo.id, userProfile)

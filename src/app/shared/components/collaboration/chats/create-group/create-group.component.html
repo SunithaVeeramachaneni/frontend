@@ -8,9 +8,18 @@
       <span class="participantsTitle" translate>addParticipants</span>
     </div>
     <div class="searchBar">
-      <input matInput placeholder="Search Users" disabled class="searchInput" />
+      <input
+        matInput
+        placeholder="{{ 'searchPeople' | translate }}"
+        name="searchKey"
+        id="searchKey"
+        [(ngModel)]="searchKey"
+        (ngModelChange)="this.searchKeyUpdate.next($event)"
+        autocomplete="off"
+        class="searchInput"
+      />
     </div>
-    <div class="userList">
+    <div class="userList" (scroll)="onPeopleListScrolled($event)">
       <mat-list *ngIf="activeUsers$ | async as activeUsers; else loadingUsers">
         <mat-list-item
           *ngFor="let user of activeUsers; let i = index"
@@ -97,7 +106,7 @@
             "
             translate
           >
-            createGroup
+            <span translate>createGroup</span>
             <mat-spinner
               class="displayInline"
               *ngIf="groupCreationInProgress"

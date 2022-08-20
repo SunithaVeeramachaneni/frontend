@@ -14,9 +14,7 @@ import {
 import { MaintenanceService } from './maintenance.service';
 import { AppService } from '../../shared/services/app.services';
 import { WorkOrders } from '../../interfaces/work-order';
-import { isEqual, isObject } from 'lodash';
-import * as _ from 'lodash';
-import { HttpClientModule } from '@angular/common/http';
+import { isEqual } from 'lodash-es';
 import { environment } from '../../../environments/environment';
 import { of } from 'rxjs';
 // import { first } from "rxjs/operators";

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { Permission } from '../interfaces';
-import { routingUrls } from '../app.constants';
-import { HeaderService } from '../shared/services/header.service';
-import { LoginService } from '../components/login/services/login.service';
+import { Permission } from '../../interfaces';
+import { routingUrls } from '../../app.constants';
+import { HeaderService } from '../../shared/services/header.service';
+import { LoginService } from '../login/services/login.service';
 
 @Component({
   selector: 'app-home',

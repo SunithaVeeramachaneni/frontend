@@ -11,7 +11,7 @@ describe('ReportConfigurationService', () => {
     appServiceSpy = jasmine.createSpyObj('AppService', [
       '_getRespById',
       '_postData',
-      '_downloadFile',
+      'downloadFile',
       'patchData'
     ]);
 

@@ -21,8 +21,8 @@
 .conversationListItem {
   cursor: pointer;
   .convTitle {
-    font-weight: 700;
-    display: flex;
+    font-weight: 700 !important;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     .convName {
@@ -39,6 +39,10 @@
   }
   .convDesc {
     color: colors.$light-gray;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
   }
   &:hover {
     cursor: pointer;
@@ -226,7 +230,7 @@
       }
       .audioRecord {
         color: colors.$white;
-        background: colors.$blue2;
+        // background: colors.$blue2;
         border-radius: 8px;
         font-size: 70%;
         height: auto;
@@ -506,6 +510,10 @@ p {
 
 .unreadMessage {
   font-weight: 800 !important;
+  width: 130px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .member {
   display: flex;
@@ -623,4 +631,35 @@ p {
 }
 .alignCenter {
   align-items: center;
+}
+
+.unreadCount {
+  background: colors.$red-main;
+  color: colors.$white;
+  border-radius: 45px;
+  width: 20px;
+  display: flex;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.userPresence {
+  position: absolute;
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    // background-color: grey;
+    border: 2px solid white;
+    bottom: 2px;
+    right: 0;
+    position: absolute;
+  }
+  .online {
+    background-color: colors.$green;
+  }
+  .offline {
+    background-color: colors.$gray;
+  }
 }
