@@ -104,7 +104,6 @@ export class SparePartsComponent implements OnInit, OnDestroy {
   ];
 
   public workCenter: string[] = [''];
-  public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
   public assign: string[] = [''];
   public assignList: string[] = [
@@ -190,7 +189,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     );
     this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters();
     this.currentWorkCenters$ = combineLatest([
-      this.allPlants$,
+      this.plantFilter$,
       this.allWorkCenters$
     ]).pipe(
       map(([plantFilters, allWorkCenters]) => {
@@ -307,7 +306,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
                 ) !== -1 &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
               this.filterPlant(workOrder.plant, plantFilters) &&
-              this.filterWorkCenter(workOrder.plant, plantFilters) &&
+              this.filterWorkCenter(workOrder.workCenter, workCenterFilters) &&
               this.filterPriority(workOrder.priorityStatus, filterObj.priority)
           );
         this.isDataLoading = false;
@@ -358,10 +357,10 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     }
   };
 
-  filterPlant = (plant, filter) => {
-    if (filter.length === 0) return true;
+  filterPlant = (plant, filters) => {
+    if (filter.length === 0) return false;
     else {
-      return filter.some((item) => item.id === plant);
+      return filters.some((item) => item.id === plant);
     }
   };
 
