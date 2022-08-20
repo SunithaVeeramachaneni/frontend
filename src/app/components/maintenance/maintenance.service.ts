@@ -7,7 +7,15 @@ import {
   of,
   Subject
 } from 'rxjs';
-import { map, mergeMap, reduce, share, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  mergeMap,
+  reduce,
+  share,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
@@ -179,7 +187,8 @@ export class MaintenanceService {
               )
               .pipe(
                 map((technicians) => this.cleanTechnicians(technicians)),
-                takeUntil(this.destroy$)
+                takeUntil(this.destroy$),
+                catchError((err) => err.message)
               )
           )
         )
@@ -198,8 +207,8 @@ export class MaintenanceService {
           technicians[rawTech.ARBPL] = [];
         } else {
           technicians[rawTech.ARBPL].push({
-            personName: rawTech.PERNRDesc,
-            personKey: rawTech.PERNRKey,
+            personName: rawTech.ENAME,
+            personKey: rawTech.PERNR,
             image: rawTech.FILECONTENT
           });
         }

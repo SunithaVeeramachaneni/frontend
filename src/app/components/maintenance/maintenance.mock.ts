@@ -440,14 +440,14 @@ export const rawTechniciansMECHANIK$ = of([
 export const rawTechniciansELEKTRIK$ = of([
   {
     ARBPL: '1',
-    PERNRDesc: 'Ms. C',
-    PERNRKey: '003',
+    ENAME: 'Ms. C',
+    PERNR: '003',
     FILECONTENT: '3'
   },
   {
     ARBPL: '1',
-    PERNRDesc: 'Mr. D',
-    PERNRKey: '004',
+    ENAME: 'Mr. D',
+    PERNR: '004',
     FILECONTENT: '4'
   }
 ]);

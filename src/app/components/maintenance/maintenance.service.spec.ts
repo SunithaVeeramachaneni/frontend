@@ -21,7 +21,7 @@ import { environment } from '../../../environments/environment';
 import { of } from 'rxjs';
 // import { first } from "rxjs/operators";
 
-fdescribe('Maintenance service', () => {
+describe('Maintenance service', () => {
   let service: MaintenanceService;
   let appServiceSpy: AppService;
   let maintenanceServiceSpy: MaintenanceService;
@@ -91,9 +91,11 @@ fdescribe('Maintenance service', () => {
     let expectedTechnicians;
     expectedTechnicians$.subscribe((resp) => {
       expectedTechnicians = resp;
+      console.log('Expected', JSON.stringify(resp));
     });
     technicians$.subscribe((resp) => {
       technicians = resp;
+      console.log('actual', JSON.stringify(resp));
     });
     expect(isEqual(expectedTechnicians, technicians)).toBeTrue();
   });
