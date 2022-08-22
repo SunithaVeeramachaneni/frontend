@@ -51,6 +51,7 @@
                 placeholder="Search Reports"
                 [(ngModel)]="searchValue"
                 (keyup.enter)="debouncedSearchReports()"
+                autocomplete="off"
               />
             </mat-form-field>
           </div>
