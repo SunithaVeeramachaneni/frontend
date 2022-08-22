@@ -105,7 +105,7 @@ export class MaintenanceService {
     this.allPlants$ = rawObservable$.pipe(
       map((rawPlantsData) => {
         const allPlants: any = [];
-        Object.keys(rawPlantsData).map((key) => {
+        Object.keys(rawPlantsData).forEach((key) => {
           const plant: Plant = {
             id: key,
             desc: rawPlantsData[key]
@@ -128,7 +128,7 @@ export class MaintenanceService {
     this.workCenters$ = rawObservable$.pipe(
       map((rawWorkCenters) => {
         const workCenters: WorkCenter[] = [];
-        Object.keys(rawWorkCenters).map((key) => {
+        Object.keys(rawWorkCenters).forEach((key) => {
           workCenters.push(rawWorkCenters[key]);
         });
         return workCenters;
