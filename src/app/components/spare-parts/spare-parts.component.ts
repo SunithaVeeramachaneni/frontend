@@ -8,10 +8,17 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
+import { MatOption } from '@angular/material/core';
 import { SparepartsService } from './spare-parts.service';
 import { data_test } from './spare-parts-data';
 import { WorkOrder, WorkOrders } from '../../interfaces/scc-work-order';
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  Subscription,
+  of
+} from 'rxjs';
 import { FormControl } from '@angular/forms';
 import {
   map,
@@ -27,6 +34,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { CommonService } from '../../shared/services/common.service';
 import { DateSegmentService } from '../../shared/components/date-segment/date-segment.service';
 import { CommonFilterService } from '../../shared/components/common-filter/common-filter.service';
+import { MaintenanceService } from '../maintenance/maintenance.service';
+import { Plant } from 'src/app/interfaces/plant';
+import { WorkCenter } from 'src/app/interfaces/work-center';
+import { isEqual } from 'lodash-es';
+
 @Component({
   selector: 'app-spare-parts',
   templateUrl: './spare-parts.component.html',
@@ -34,6 +46,13 @@ import { CommonFilterService } from '../../shared/components/common-filter/commo
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SparePartsComponent implements OnInit, OnDestroy {
+  @ViewChild('allSelectedPlants') public allSelectedPlants: MatOption;
+  @ViewChild('allSelectedWorkCenters')
+  public allSelectedWorkCenters: MatOption;
+  public plantFilter: FormControl = new FormControl([]);
+  public workCenterFilter: FormControl = new FormControl([]);
+  public plantFilter$: Observable<Plant[]>;
+  public workCenterFilter$: Observable<WorkCenter[]>;
   subscription: Subscription;
   public emptyWorkOrders: WorkOrders = {
     '1': [],
@@ -45,6 +64,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
   public putWorkOrder$: BehaviorSubject<WorkOrders> = new BehaviorSubject(
     this.emptyWorkOrders
   );
+  private allPlants: Plant[];
+  private currentWorkCenters: WorkCenter[];
+  public allPlants$: Observable<Plant[]>;
+  public allWorkCenters$: Observable<WorkCenter[]>;
+  public currentWorkCenters$: Observable<WorkCenter[]>;
   public workOrderList$ = new BehaviorSubject<WorkOrders>(this.emptyWorkOrders);
   public filteredWorkOrderList$ = new BehaviorSubject<WorkOrders>(null);
   public combineWorkOrderList$: Observable<WorkOrders>;
@@ -80,7 +104,6 @@ export class SparePartsComponent implements OnInit, OnDestroy {
   ];
 
   public workCenter: string[] = [''];
-  public workCenterList: string[] = ['Mechanical', 'Electrical'];
 
   public assign: string[] = [''];
   public assignList: string[] = [
@@ -97,13 +120,99 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     private sparepartsSvc: SparepartsService,
     private sanitizer: DomSanitizer,
     private commonFilterService: CommonFilterService,
-    private dateSegmentService: DateSegmentService
+    private dateSegmentService: DateSegmentService,
+    private maintenanceSvc: MaintenanceService
   ) {}
 
+  togglePerPlant(input: string, id: any) {
+    if (input === 'plants') {
+      if (this.allSelectedPlants.selected) {
+        this.allSelectedPlants.deselect();
+      }
+      if (this.plantFilter.value.length === this.allPlants.length) {
+        this.allSelectedPlants.select();
+      }
+    } else {
+      if (this.allSelectedWorkCenters.selected) {
+        this.allSelectedWorkCenters.deselect();
+      }
+      let workCenterFilterLength = 0;
+      this.currentWorkCenters.forEach((wC) => {
+        workCenterFilterLength += wC.workCenters.length;
+      });
+      if (this.workCenterFilter.value.length === workCenterFilterLength) {
+        this.allSelectedWorkCenters.select();
+      }
+    }
+  }
+
+  toggleAllSelection(input: string) {
+    if (input === 'plants') {
+      if (this.allSelectedPlants.selected) {
+        this.plantFilter.patchValue([...this.allPlants, 0]);
+      } else {
+        this.plantFilter.patchValue([this.allPlants[0]]);
+      }
+      let currentWorkCenters = [];
+      this.currentWorkCenters.forEach((wC) => {
+        currentWorkCenters = [...currentWorkCenters, ...wC.workCenters];
+      });
+      this.workCenterFilter.patchValue([...currentWorkCenters, 0]);
+    } else {
+      if (this.allSelectedWorkCenters.selected) {
+        let currentWorkCenters = [];
+        this.currentWorkCenters.forEach((wC) => {
+          currentWorkCenters = [...currentWorkCenters, ...wC.workCenters];
+        });
+        this.workCenterFilter.patchValue([...currentWorkCenters, 0]);
+      } else {
+        this.workCenterFilter.patchValue([
+          this.currentWorkCenters[0].workCenters[0]
+        ]);
+      }
+    }
+  }
+
   ngOnInit() {
+    this.plantFilter$ = this.plantFilter.valueChanges.pipe(startWith([]));
+    this.workCenterFilter$ = this.workCenterFilter.valueChanges.pipe(
+      startWith([])
+    );
     this.isDataLoading = false;
     this.commonFilterService.clearFilter();
     this.filterObj$ = this.commonFilterService.commonFilterAction$;
+    this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
+      tap((plants) => {
+        this.allPlants = plants;
+        this.plantFilter.patchValue([...plants, 0]);
+      })
+    );
+    this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters();
+    this.currentWorkCenters$ = combineLatest([
+      this.plantFilter$,
+      this.allWorkCenters$
+    ]).pipe(
+      map(([plantFilters, allWorkCenters]) => {
+        let currentWorkCenters: WorkCenter[] = [];
+        let currentWorkCenterFilter: any = [];
+        plantFilters.forEach((plant) => {
+          const wC = allWorkCenters.find(
+            (item: WorkCenter) => item.plantId === plant.id
+          );
+          if (wC) {
+            currentWorkCenters = [...currentWorkCenters, wC];
+            currentWorkCenterFilter = [
+              ...currentWorkCenterFilter,
+              ...wC.workCenters
+            ];
+          }
+        });
+        this.currentWorkCenters = currentWorkCenters;
+        this.workCenterFilter.patchValue([...currentWorkCenterFilter, 0]);
+        return currentWorkCenters;
+      })
+    );
+    this.currentWorkCenters$.subscribe();
     this.dateRange$ = new BehaviorSubject(
       this.dateSegmentService.getStartAndEndDate('month')
     );
@@ -114,6 +223,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sparepartsSvc.stopSeamlessUpdate();
   }
+
+  compareFn(option1: any, option2: any) {
+    return isEqual(option1, option2);
+  }
+
   combineWorkOrders = (
     oldWorkOrders$: Observable<WorkOrders>,
     newWorkOrders$: Observable<WorkOrders>
@@ -170,9 +284,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     );
     const tempFilteredWorkOrderList$ = combineLatest([
       updatedWorkOrderList$,
-      this.filterObj$
+      this.filterObj$,
+      this.plantFilter$,
+      this.workCenterFilter$
     ]).pipe(
-      map(([workOrders, filterObj]) => {
+      map(([workOrders, filterObj, plantFilters, workCenterFilters]) => {
         const filtered: WorkOrders = {
           '1': [],
           '2': [],
@@ -189,6 +305,8 @@ export class SparePartsComponent implements OnInit, OnDestroy {
                   filterObj.search ? filterObj.search.toLowerCase() : ''
                 ) !== -1 &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
+              this.filterPlant(workOrder.plant, plantFilters) &&
+              this.filterWorkCenter(workOrder.workCenter, workCenterFilters) &&
               this.filterPriority(workOrder.priorityStatus, filterObj.priority)
           );
         this.isDataLoading = false;
@@ -236,6 +354,21 @@ export class SparePartsComponent implements OnInit, OnDestroy {
       const startOfDay = Math.floor(Date.now() / interval) * interval;
       const endOfDay = startOfDay + interval - 1; // 23:59:59:9999
       return dueDate >= startOfDay;
+    }
+  };
+
+  filterPlant = (plant, filters) => {
+    if (filter.length === 0) return false;
+    else {
+      return filters.some((item) => item.id === plant);
+    }
+  };
+
+  filterWorkCenter = (workCenter, filters) => {
+    if (filters.length === 0) {
+      return true;
+    } else {
+      return filters.some((item) => item.workCenterKey === workCenter);
     }
   };
 
