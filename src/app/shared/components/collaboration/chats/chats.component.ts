@@ -120,21 +120,24 @@ export class ChatsComponent implements OnInit, OnDestroy {
   conversationHistoryInit$: Observable<any>;
   conversationHistory$: Observable<Message[]>;
 
-  sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
-    action: 'send',
-    message: {} as any,
-    channel: ''
-  });
+  sendReceiveMessages$: BehaviorSubject<SendReceiveMessages> =
+    new BehaviorSubject<SendReceiveMessages>({
+      action: 'send',
+      message: {} as any,
+      channel: ''
+    });
 
-  updateConversations$ = new BehaviorSubject<UpdateConversations>({
-    action: 'update_latest_message',
-    message: {} as any,
-    channel: ''
-  });
-  updateUserPresence$ = new BehaviorSubject<UpdateUserPresence>({
-    action: 'update_user_presence',
-    data: [] as any
-  });
+  updateConversations$: BehaviorSubject<UpdateConversations> =
+    new BehaviorSubject<UpdateConversations>({
+      action: 'update_latest_message',
+      message: {} as any,
+      channel: ''
+    });
+  updateUserPresence$: BehaviorSubject<UpdateUserPresence> =
+    new BehaviorSubject<UpdateUserPresence>({
+      action: 'update_user_presence',
+      data: [] as any
+    });
 
   private newMessageReceivedSubscription: Subscription;
 

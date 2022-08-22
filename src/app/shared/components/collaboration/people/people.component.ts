@@ -139,6 +139,8 @@ export class PeopleComponent implements OnInit {
           peopleList.forEach((user) => {
             if (data.indexOf(user.email) > -1) {
               user.online = true;
+            } else {
+              user.online = false;
             }
           });
         }
