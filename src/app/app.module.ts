@@ -14,7 +14,6 @@ import { environment } from '../environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { ToastModule } from './shared/toast';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserIdleModule } from 'angular-user-idle';
 
 import { AuthConfigModule } from './auth-config.module';
