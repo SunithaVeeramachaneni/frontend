@@ -1,6 +1,21 @@
 import { Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, combineLatest, from, Observable } from 'rxjs';
-import { map, mergeMap, reduce, share, tap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  from,
+  Observable,
+  of,
+  Subject
+} from 'rxjs';
+import {
+  catchError,
+  map,
+  mergeMap,
+  reduce,
+  share,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import { ErrorInfo } from '../../interfaces/error-info';
 import { WorkOrder, WorkOrders } from '../../interfaces/work-order';
 import { AppService } from '../../shared/services/app.services';
@@ -8,10 +23,12 @@ import { environment } from '../../../environments/environment';
 
 import { WarehouseTechnician } from '../../interfaces/warehouse_technicians';
 import { WorkCenter } from '../../interfaces/work-center';
+import { Plant } from 'src/app/interfaces/plant';
 import { SseService } from 'src/app/shared/services/sse.service';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceService {
+  private destroy$ = new Subject();
   constructor(
     private zone: NgZone,
     private _appService: AppService,
@@ -20,8 +37,11 @@ export class MaintenanceService {
 
   private technicians$: Observable<any>;
   public workOrderBSubject: BehaviorSubject<any>;
+  public allPlants$: Observable<any>;
   public workCenters$: Observable<WorkCenter[]>;
   public workOrders$: Observable<WorkOrders>;
+  public plants: Plant[];
+  public workCenters: WorkCenter[];
 
   closeEventSource(): void {
     this.sseService.closeEventSource();
@@ -76,23 +96,40 @@ export class MaintenanceService {
     });
   }
 
+  getAllPlants = () => {
+    const rawObservable$ = this._appService._getRespFromGateway(
+      environment.mccAbapApiUrl,
+      'plants'
+    );
+
+    this.allPlants$ = rawObservable$.pipe(
+      map((rawPlantsData) => {
+        const allPlants: any = [];
+        Object.keys(rawPlantsData).map((key) => {
+          const plant: Plant = {
+            id: key,
+            desc: rawPlantsData[key]
+          };
+
+          allPlants.push(plant);
+        });
+        return allPlants;
+      }),
+      share()
+    );
+    return this.allPlants$;
+  };
+
   getAllWorkCenters = () => {
     const rawObservable$ = this._appService._getRespFromGateway(
       environment.mccAbapApiUrl,
-      `workCenters/${1000}`
+      `workCenters`
     );
     this.workCenters$ = rawObservable$.pipe(
       map((rawWorkCenters) => {
         const workCenters: WorkCenter[] = [];
-
-        rawWorkCenters.forEach((rawWorkCenter) => {
-          const workCenter: WorkCenter = {
-            workCenterDesc: '',
-            workCenterKey: ''
-          };
-          workCenter.workCenterDesc = rawWorkCenter.ARBPLDesc;
-          workCenter.workCenterKey = rawWorkCenter.ARBPLKey;
-          workCenters.push(workCenter);
+        Object.keys(rawWorkCenters).map((key) => {
+          workCenters.push(rawWorkCenters[key]);
         });
         return workCenters;
       }),
@@ -139,38 +176,58 @@ export class MaintenanceService {
   }
 
   getTechnicians(info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    this.technicians$ = this.workCenters$.pipe(
-      mergeMap((workCenters) =>
-        from(workCenters).pipe(
-          mergeMap((workCenter) =>
+    this.technicians$ = this.allPlants$.pipe(
+      mergeMap((allPlants) =>
+        from(allPlants).pipe(
+          mergeMap((plant: Plant) =>
             this._appService
               ._getRespFromGateway(
                 environment.mccAbapApiUrl,
-                `technicians/'${workCenter.workCenterKey}'`
+                `technicians/'${plant.id}'`
               )
               .pipe(
-                tap((data) => {}),
-                map((technicians) => ({
-                  [workCenter.workCenterKey]: this.cleanTechnicians(technicians)
-                }))
+                map((technicians) => this.cleanTechnicians(technicians)),
+                takeUntil(this.destroy$),
+                catchError((err) => err.message)
               )
           )
         )
       ),
-      reduce((acc: any, cur) => (acc = { ...acc, ...cur }), {}),
+      reduce((acc: any, cur) => this.accumulateTechnicians(acc, cur)),
       share()
     );
     return this.technicians$;
   }
 
-  cleanTechnicians = (rawTechnicians): WarehouseTechnician[] => {
-    const technicians = rawTechnicians.map((rawTechnician) => ({
-      personName: rawTechnician.PERNRDesc,
-      personKey: rawTechnician.PERNRKey,
-      image: rawTechnician.FILECONTENT
-    }));
+  cleanTechnicians = (rawTechnicians): any => {
+    const technicians = {};
+    rawTechnicians.forEach((rawTech) => {
+      if (rawTech.ARBPL.length !== 0) {
+        if (!technicians[rawTech.ARBPL]) {
+          technicians[rawTech.ARBPL] = [];
+        }
+        technicians[rawTech.ARBPL].push({
+          personName: rawTech.ENAME,
+          personKey: rawTech.PERNR,
+          image: rawTech.FILECONTENT
+        });
+      }
+    });
     return technicians;
   };
+
+  accumulateTechnicians = (acc, cur) => {
+    const accumulator = acc;
+    Object.keys(cur).forEach((key) => {
+      if (accumulator[key]) {
+        accumulator[key] = [...accumulator[key], ...cur[key]];
+      } else {
+        accumulator[key] = cur[key];
+      }
+    });
+    return accumulator;
+  };
+
   setAssigneeAndWorkCenter = (params) => {
     const req = {
       workOrderID: params.workOrderID,
@@ -242,6 +299,7 @@ export class MaintenanceService {
       dueDate: workOrder.dueDate,
       operations: workOrder.operations,
       workCenter: workOrder.workCenter,
+      plant: workOrder.plant,
       technician: workOrder.technician,
       estimatedTime: null,
       actualTime: null,
@@ -260,4 +318,12 @@ export class MaintenanceService {
 
     return card;
   };
+
+  destroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    setTimeout(() => {
+      this.destroy$ = new Subject();
+    }, 500);
+  }
 }

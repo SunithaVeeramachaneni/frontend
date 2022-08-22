@@ -15,5 +15,7 @@
   "kittingInProgress": "Kitting In Progress",
   "kitsComplete": "Kits Complete",
   "kitsIssued": "Kits Issued",
-  "assignPicklist": "ASSIGN PICKLIST"
+  "assignPicklist": "ASSIGN PICKLIST",
+  "plants": "Plants",
+  "workCenters": "Work Centers"
 }
