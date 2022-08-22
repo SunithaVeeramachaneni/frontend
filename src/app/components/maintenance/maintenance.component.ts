@@ -79,6 +79,9 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   public workCenterFilter$: Observable<WorkCenter[]>;
   public currentWorkCenters$: Observable<WorkCenter[]>;
   public filterObj$: Observable<any>;
+  public allPlants$: Observable<Plant[]>;
+  public allWorkCenters$: Observable<WorkCenter[]>;
+
   public workOrders: Observable<WorkOrder[]>;
   public workCenterList: WorkCenter[];
   public workCenterList$: Observable<WorkCenter[]>;
@@ -108,8 +111,6 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
   public base64Code: any;
   private allPlants: Plant[];
   private currentWorkCenters: WorkCenter[];
-  private allPlants$: Observable<Plant[]>;
-  private allWorkCenters$: Observable<WorkCenter[]>;
   private technicianSubscription: Subscription;
   hideList = true;
   showFilters = false;
@@ -121,7 +122,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     public dialog: MatDialog
   ) {}
 
-  togglePerPlant(input: string, id: any) {
+  togglePerPlant(input: string) {
     if (input === 'plants') {
       if (this.allSelectedPlants.selected) {
         this.allSelectedPlants.deselect();

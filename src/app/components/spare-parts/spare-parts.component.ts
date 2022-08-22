@@ -124,7 +124,7 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     private maintenanceSvc: MaintenanceService
   ) {}
 
-  togglePerPlant(input: string, id: any) {
+  togglePerPlant(input: string) {
     if (input === 'plants') {
       if (this.allSelectedPlants.selected) {
         this.allSelectedPlants.deselect();
