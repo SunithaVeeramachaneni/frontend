@@ -5,56 +5,125 @@
     'permissions-container': rolesWithPermissionsInUsers !== userRolePermissions
   }"
 >
-  <mat-accordion
-    *ngFor="let module of permissions; let i = index"
-    class="dis-flex"
-    multi
-  >
-    <mat-checkbox
-      [checked]="module.checked"
-      [indeterminate]="fewComplete(module)"
-      (change)="setAllChecked($event.checked, module)"
-      [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
-      [ngClass]="{
-        'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
-        'permissions-checkbox':
-          rolesWithPermissionsInUsers !== userRolePermissions
-      }"
-    >
-    </mat-checkbox>
-    <mat-expansion-panel
-      (opened)="panelOpenState[i] = true"
-      (closed)="panelOpenState[i] = false"
-      hideToggle
-      class="permissions-expand"
-      [(expanded)]="panelOpenState[i]"
-    >
-      <mat-expansion-panel-header class="h-40 expansion-header">
-        <mat-panel-title>
-          <div class="my-panel" (click)="$event.stopPropagation()">
-            <span class="module-name">{{ module.name }}</span>
-            <span class="permission-count">
-              {{ module.countOfChecked }} of {{ module.permissions.length }}
-            </span>
-          </div>
-          <mat-icon *ngIf="!panelOpenState[i]"> arrow_right </mat-icon>
-          <mat-icon *ngIf="panelOpenState[i]">arrow_drop_down</mat-icon>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <ul class="m-0 p-0">
-        <li *ngFor="let permission of module.permissions">
-          <mat-checkbox
-            [checked]="permission.checked"
-            (change)="updateAllChecked($event.checked, permission)"
-            [disabled]="rolesWithPermissionsInUsers === userRolePermissions || isEditable === false"
+  <div *ngFor="let module of permissions; let i = index" class="sections">
+    <ng-container>
+      <div class="headers">
+        <mat-checkbox
+          [checked]="module.checked"
+          [indeterminate]="fewComplete(module)"
+          (change)="setAllChecked($event.checked, module)"
+          [disabled]="
+            rolesWithPermissionsInUsers === userRolePermissions ||
+            isEditable === false
+          "
+          [ngClass]="{
+            'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
+            'permissions-checkbox':
+              rolesWithPermissionsInUsers !== userRolePermissions
+          }"
+        >
+        </mat-checkbox>
+        <span class="module-name">{{ module.name }}</span>
+        <span class="permission-count m-r-10">
+          {{ module.countOfChecked }} of {{ module.permissions.length }}
+        </span>
+        <img
+          src="assets/user-management-icons/right-arrow.svg"
+          alt="right-arrow-icon"
+          class="arrow-icons"
+          *ngIf="!opened[i]"
+          (click)="opened[i] = true"
+        />
+        <img
+          src="assets/user-management-icons/down-arrow.svg"
+          alt="down-arrow-icon"
+          class="arrow-icons"
+          *ngIf="opened[i]"
+          (click)="opened[i] = false"
+        />
+      </div>
+      <div class="permissions-body">
+        <ul *ngIf="opened[i] === true">
+          <li
+            *ngFor="let permission of module.permissions"
+            class="list-element"
           >
-            {{ permission.displayName }}
+            <mat-checkbox
+              [checked]="permission.checked"
+              (change)="updateAllChecked($event.checked, permission)"
+              [disabled]="
+                rolesWithPermissionsInUsers === userRolePermissions ||
+                isEditable === false
+              "
+            >
+            </mat-checkbox>
+            <span class="m-r-15 m-l-5">{{ permission.displayName }}</span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+
+    <div>
+      <ng-container
+        *ngFor="let subper of module.subPermissions; let subindex = index"
+      >
+        <div class="sub-headers">
+          <mat-checkbox
+            [checked]="subper.checked"
+            [indeterminate]="fewComplete(subper)"
+            (change)="setAllSubChecked($event.checked, subper)"
+            [disabled]="
+              rolesWithPermissionsInUsers === userRolePermissions ||
+              isEditable === false
+            "
+            [ngClass]="{
+              'p-t-5': rolesWithPermissionsInUsers === userRolePermissions,
+              'permissions-checkbox':
+                rolesWithPermissionsInUsers !== userRolePermissions
+            }"
+          >
           </mat-checkbox>
-        </li>
-      </ul>
-    </mat-expansion-panel>
-  </mat-accordion>
+          <span class="module-name">{{ subper.name }}</span>
+          <span class="permission-count m-r-10">
+            {{ subper.countOfSubChecked }} of {{ subper.permissions.length }}
+          </span>
+          <img
+            src="assets/user-management-icons/right-arrow.svg"
+            alt="right-arrow-icon"
+            class="arrow-icons"
+            *ngIf="!opendedSubPermisssions[subindex]"
+            (click)="opendedSubPermisssions[subindex] = true"
+          />
+          <img
+            src="assets/user-management-icons/down-arrow.svg"
+            alt="down-arrow-icon"
+            class="arrow-icons"
+            *ngIf="opendedSubPermisssions[subindex]"
+            (click)="opendedSubPermisssions[subindex] = false"
+          />
+        </div>
+
+        <div class="permissions-body">
+          <ul *ngIf="opendedSubPermisssions[subindex] === true">
+            <li *ngFor="let sub of subper.permissions" class="list-element">
+              <mat-checkbox
+                [checked]="sub.checked"
+                (change)="updateAllSubChecked($event.checked, sub)"
+                [disabled]="
+                  rolesWithPermissionsInUsers === userRolePermissions ||
+                  isEditable === false
+                "
+              >
+              </mat-checkbox>
+              <span class="m-r-15 m-l-5"> {{ sub.displayName }}</span>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+    </div>
+  </div>
 </div>
+
 <ng-template #loadingPermissionList>
   <div class="p-10">
     <ngx-shimmer-loading [width]="'40%'" [height]="'30px'">
