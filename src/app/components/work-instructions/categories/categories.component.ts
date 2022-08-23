@@ -32,7 +32,7 @@ import { State } from '../../../state/app.state';
 @Component({
   selector: 'app-categories',
   templateUrl: 'categories.component.html',
-  styleUrls: ['./categories.component.css']
+  styleUrls: ['./categories.component.scss']
 })
 export class CategoriesComponent
   implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy

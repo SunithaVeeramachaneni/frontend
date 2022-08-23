@@ -150,7 +150,6 @@
   display: flex;
   align-items: center;
   letter-spacing: 0.25px;
-  text-transform: uppercase;
   color: #1351d8;
 }
 
@@ -316,7 +315,7 @@
 
 .filter-dropdowns {
   width: 130px;
-  height: 42px;
+  height: 38px;
   position: relative;
   left: -10px;
   border: 1px solid lightgrey;
@@ -325,7 +324,7 @@
   font: inherit;
   line-height: 1.5em;
   padding: 0.5em 1.7em 0.5em 1em;
-  margin-top: 7px;
+  margin-top: 10px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -402,6 +401,6 @@ h5.modal-title {
 }
 
 ::ng-deep .copy-ins .mat-tab-body {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 270px;
 }

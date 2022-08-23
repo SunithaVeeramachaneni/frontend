@@ -1,7 +1,4 @@
-input[type='text']:focus {
-  outline: none;
-  caret-color: #007aff;
-}
+@import '../../../../scss/colors.scss';
 
 .wi-status-container {
   height: auto;
@@ -11,10 +8,14 @@ input[type='text']:focus {
   margin-right: -15px;
 }
 
+input[type='text']:focus {
+  outline: none;
+  caret-color: #007aff;
+}
+
 .mat-raised-button,
 .mat-stroked-button {
   color: #76767b;
-  text-transform: uppercase;
 }
 
 .wi-status-container ul.wi-title {
@@ -167,14 +168,12 @@ input[type='text']:focus {
 
 .dis-publish {
   background: #e5e5e5;
-
   font-style: normal;
   font-weight: 500;
   font-size: 100%;
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  text-transform: uppercase;
   color: #76767b;
   position: relative;
   left: 3px;
@@ -188,7 +187,6 @@ input[type='text']:focus {
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  text-transform: uppercase;
   color: #ffffff;
   position: relative;
   left: 3px;
@@ -202,8 +200,8 @@ input[type='text']:focus {
 .publish-btn {
   width: 160px;
   height: 36px;
-  background-color: #1351d8;
-  border-color: #1351d8;
+  background-color: $blue-main;
+  border-color: $blue-main;
 }
 
 .publish-btn-icon {
@@ -214,8 +212,8 @@ input[type='text']:focus {
 
 .btn-primary {
   color: #fff;
-  background-color: #1351d8;
-  border-color: #1351d8;
+  background-color: $blue-main;
+  border-color: $blue-main;
 }
 
 .more_horiz_btn {
