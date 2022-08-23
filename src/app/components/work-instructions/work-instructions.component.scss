@@ -1,3 +1,5 @@
+@import '../../../scss/colors.scss';
+
 .content {
   background-color: #f2f2f2;
   min-height: 100%;
@@ -20,7 +22,7 @@
 
 .work-instructions-header {
   ::ng-deep .mat-button-toggle {
-    background-color: #1351d8;
+    background-color: $blue-main;
   }
 
   ::ng-deep .mat-button-toggle-group {
@@ -48,13 +50,16 @@
   padding-top: 15px;
 }
 
+.create-wi-img {
+  width: 13px;
+}
+
 .data {
   font-style: normal;
   font-weight: 500;
   font-size: 100%;
   align-items: center;
   letter-spacing: 0.25px;
-  text-transform: uppercase;
   color: #ffffff;
   padding-left: 5px;
 }
@@ -195,7 +200,7 @@
   text-align: center;
   letter-spacing: 0.25px;
   text-transform: uppercase;
-  color: #1351d8;
+  color: $blue-main;
   cursor: pointer;
   border: none;
   background: transparent;
@@ -216,7 +221,7 @@
 }
 
 .arrow-button {
-  background-color: #1351d8;
+  background-color: $blue-main;
   border: none;
   border-left: 1px solid #25282b;
 }

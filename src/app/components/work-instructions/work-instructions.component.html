@@ -24,8 +24,12 @@
             routerLink="/work-instructions/create"
             *appCheckUserHasPermission="[permissions.createWorkInstruction]"
           >
-            <img src="assets/work-instructions-icons/svg/createwi.svg" alt="" />
-            <span class="data"> CREATE WORK INSTRUCTION </span>
+            <img
+              src="assets/work-instructions-icons/svg/createwi.svg"
+              alt=""
+              class="create-wi-img"
+            />
+            <span class="data"> Create Work Instruction </span>
           </mat-button-toggle>
           <mat-button-toggle
             [matMenuTriggerFor]="menu"
