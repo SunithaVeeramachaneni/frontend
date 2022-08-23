@@ -1,4 +1,4 @@
-<div class="report-configuration" [formGroup]="reportNameAndDescForm">
+<div class="report-configuration">
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -28,35 +28,37 @@
             <input
               *ngIf="reportDetails.report"
               matInput
-              formControlName="name"
               [disabled]="disableReportName"
-              (keyup.enter)="disableReportName = true"
-              (blur)="disableReportName = true"
+              (keyup.enter)="
+                disableReportName = true; onReportTitleChanged($event)
+              "
+              (blur)="disableReportName = true; onReportTitleChanged($event)"
+              [value]="reportTitle"
+              (ngModel)="(reportTitle)"
+              (ngModelChange)="onReportTitleChanged($event)"
             />
-            <mat-error
-              *ngIf="reportName.errors?.minlength"
-              class="report-name-error"
-            >
-              {{
-                'fieldMinimumLength'
-                  | translate
-                    : {
-                        name: 'name' | translate,
-                        length: reportName.errors?.minlength.requiredLength
-                      }
-              }}
-            </mat-error>
-            <mat-error *ngIf="reportName.errors?.maxlength">
-              {{
-                'fieldMaximumLength'
-                  | translate
-                    : {
-                        name: 'name' | translate,
-                        length: reportName.errors?.maxlength.requiredLength
-                      }
-              }}
-            </mat-error>
           </mat-form-field>
+          <mat-error class="report-name-error" *ngIf="reportTitleMaxLengthErr">
+            {{
+              'fieldMaximumLength'
+                | translate
+                  : {
+                      name: 'name' | translate,
+                      length: 48
+                    }
+            }}
+          </mat-error>
+          <mat-error class="report-name-error" *ngIf="reportTitleMinLengthErr">
+            Error occured
+            {{
+              'fieldMinimumLength'
+                | translate
+                  : {
+                      name: 'name' | translate,
+                      length: 3
+                    }
+            }}
+          </mat-error>
         </div>
 
         <a (click)="favoriteToggle()" class="favorite-toggle width-20">
@@ -246,11 +248,16 @@
                 matTooltip="Save"
                 class="save-button"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 (click)="
-                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                    saveReport({ saveAs: false })
+                  !(
+                    !reportDetails.report ||
+                    reportTitleMinLengthErr ||
+                    reportTitleMaxLengthErr
+                  ) && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
@@ -266,11 +273,16 @@
                 matTooltip="Save"
                 class="save-button"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 (click)="
-                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                    saveReport({ saveAs: false })
+                  !(
+                    !reportDetails.report ||
+                    reportTitleMinLengthErr ||
+                    reportTitleMaxLengthErr
+                  ) && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
@@ -278,7 +290,9 @@
               <mat-button-toggle
                 *ngIf="reportDetails.report?.id"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 [matMenuTriggerFor]="menu"
                 class="save-button-arrow"
@@ -293,11 +307,16 @@
               mat-menu-item
               matTooltip="Save As"
               [disabled]="
-                !reportDetails.report || reportNameAndDescForm.invalid
+                !reportDetails.report ||
+                reportTitleMinLengthErr ||
+                reportTitleMaxLengthErr
               "
               (click)="
-                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                  openSaveAsDialog()
+                !(
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
+                ) && openSaveAsDialog()
               "
               aria-label="Save As"
             >
