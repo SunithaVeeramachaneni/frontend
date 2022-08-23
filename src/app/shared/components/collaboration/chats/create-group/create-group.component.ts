@@ -77,6 +77,31 @@ export class CreateGroupComponent implements OnInit {
         this.fetchActiveUsersInprogress = false;
         if (users.length) {
           const validUsers = this.formatUsers(users);
+
+          const userInfo = this.loginService.getLoggedInUserInfo();
+          if (
+            this.conversationMode === 'CREATE_GROUP_WITH_USER' ||
+            this.conversationMode === 'ADD_GROUP_MEMBERS'
+          ) {
+            // add selected conversation members.... remove current user..
+            let memberEmails = this.selectedConversation.members.map(
+              (m) => m.email
+            );
+            memberEmails = memberEmails.filter(
+              (m) => m.email !== userInfo.email
+            );
+            validUsers.forEach((user) => {
+              if (memberEmails.indexOf(user.email) > -1) {
+                user.disabled = true;
+                user.selected = true;
+                this.selectedUsers.push(user);
+              }
+            });
+            if (this.conversationMode === 'ADD_GROUP_MEMBERS') {
+              this.groupName = this.selectedConversation.topic;
+            }
+          }
+
           return of({ data: validUsers });
         }
       }),
@@ -137,12 +162,16 @@ export class CreateGroupComponent implements OnInit {
         if (user.slackDetail) {
           user.collaborationDisabled =
             !user.slackDetail || !user.slackDetail.slackID;
-          validUsers.push(user);
+          if (userInfo.email !== user.email) {
+            validUsers.push(user);
+          }
         }
       } else if (userInfo.collaborationType === 'msteams') {
         //@TODO: This is a temporary check to restrict the user selection...
         if (user.email.endsWith('@ym27j.onmicrosoft.com')) {
-          validUsers.push(user);
+          if (userInfo.email !== user.email) {
+            validUsers.push(user);
+          }
         }
       }
     });

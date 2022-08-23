@@ -213,8 +213,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.userIdle.startWatching();
       this.isUserOnline = true;
       const userInfo = this.loginService.getLoggedInUserInfo();
-      userInfo.online = true;
-      this.loginService.setLoggedInUserInfo(userInfo);
+      if (Object.keys(userInfo).length) {
+        userInfo.online = true;
+        this.loginService.setLoggedInUserInfo(userInfo);
+      }
     });
   };
 
@@ -227,8 +229,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.usersService.removeUserPresence$().subscribe((resp) => {
           this.isUserOnline = false;
           const userInfo = this.loginService.getLoggedInUserInfo();
-          userInfo.online = false;
-          this.loginService.setLoggedInUserInfo(userInfo);
+          if (Object.keys(userInfo).length) {
+            userInfo.online = false;
+            this.loginService.setLoggedInUserInfo(userInfo);
+          }
           this.userIdle.stopWatching();
         });
       }
@@ -300,7 +304,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
                 const { message } = evt;
                 if (
                   message.eventType === 'message' ||
-                  message.messageType === 'message'
+                  message.messageType === 'message' ||
+                  message.eventType === 'GROUP_CREATED_EVENT' ||
+                  message.messageType === 'GROUP_CREATED_EVENT'
                 ) {
                   const collaborationWindowStatus =
                     ref.chatService.getCollaborationWindowStatus();

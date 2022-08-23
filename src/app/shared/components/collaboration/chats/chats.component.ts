@@ -39,13 +39,10 @@ interface UpdateConversations {
     | 'create_conversation'
     | 'append_conversations'
     | 'reset_unread_count'
+    | 'update_user_presence'
     | '';
   message: any;
   channel: any;
-}
-interface UpdateUserPresence {
-  action: 'update_user_presence' | '';
-  data: any;
 }
 
 interface Conversation {
@@ -120,21 +117,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
   conversationHistoryInit$: Observable<any>;
   conversationHistory$: Observable<Message[]>;
 
-  sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
-    action: 'send',
-    message: {} as any,
-    channel: ''
-  });
+  sendReceiveMessages$: BehaviorSubject<SendReceiveMessages> =
+    new BehaviorSubject<SendReceiveMessages>({
+      action: 'send',
+      message: {} as any,
+      channel: ''
+    });
 
-  updateConversations$ = new BehaviorSubject<UpdateConversations>({
-    action: 'update_latest_message',
-    message: {} as any,
-    channel: ''
-  });
-  updateUserPresence$ = new BehaviorSubject<UpdateUserPresence>({
-    action: 'update_user_presence',
-    data: [] as any
-  });
+  updateConversations$: BehaviorSubject<UpdateConversations> =
+    new BehaviorSubject<UpdateConversations>({
+      action: 'update_latest_message',
+      message: {} as any,
+      channel: ''
+    });
 
   private newMessageReceivedSubscription: Subscription;
 
@@ -182,9 +177,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.eventSource.onmessage = async (event: any) => {
       const eventData = JSON.parse(event.data);
       if (!eventData.isHeartbeat) {
-        this.updateUserPresence$.next({
+        this.updateConversations$.next({
           action: 'update_user_presence',
-          data: eventData
+          message: eventData,
+          channel: ''
         });
       }
     };
@@ -247,10 +243,9 @@ export class ChatsComponent implements OnInit, OnDestroy {
     );
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
-      this.updateConversations$,
-      this.updateUserPresence$
+      this.updateConversations$
     ]).pipe(
-      map(([initial, updateConversation, updateUserPresence]) => {
+      map(([initial, updateConversation]) => {
         const { action, message, channel } = updateConversation;
         let conversationsList = initial.data;
         if (action === 'update_latest_message' && channel?.length) {
@@ -289,16 +284,10 @@ export class ChatsComponent implements OnInit, OnDestroy {
           const newConversations = this.formatConversations(message);
           initial.data = initial.data.concat(newConversations);
           conversationsList = initial.data;
-        }
-
-        if (
-          updateUserPresence &&
-          updateUserPresence.action === 'update_user_presence'
-        ) {
-          const { data } = updateUserPresence;
+        } else if (action === 'update_user_presence') {
           conversationsList.forEach((conv) => {
             if (conv.chatType === 'oneOnOne') {
-              if (data.indexOf(conv.userInfo.email) > -1) {
+              if (message.indexOf(conv.userInfo.email) > -1) {
                 conv.userInfo.online = true;
               }
             }
