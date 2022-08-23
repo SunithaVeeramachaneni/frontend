@@ -31,5 +31,7 @@
   "hideOperations": "Hide {noOfOperations} Operations",
   "actualTime": "Actual {time}",
   "plannedTime": "Planned {time}",
-  "operationsStatus": "{completed} of {total} {total, plural, =0{Operation} one{Operation} other{Operations}} Completed"
+  "operationsStatus": "{completed} of {total} {total, plural, =0{Operation} one{Operation} other{Operations}} Completed",
+  "plants": "Plants",
+  "workCenters": "Work Centers"
 }

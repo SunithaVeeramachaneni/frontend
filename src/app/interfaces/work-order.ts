@@ -10,6 +10,7 @@ export interface WorkOrder {
   workOrderID: number;
   workOrderDesc: string;
   workCenter: string;
+  plant: string;
   equipmentName: string;
   kitStatus: string;
   dueDate: string;
