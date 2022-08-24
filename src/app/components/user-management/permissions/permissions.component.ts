@@ -324,10 +324,10 @@ export class PermissionsComponent implements OnChanges {
         module.permissions = module.permissions.map((per) => {
           per.checked = checked;
           module.subPermissions.forEach((subper) => {
-            subper.checked = true;
-            subper.countOfSubChecked = subper.permissions.length;
+            subper.checked = checked;
+            subper.countOfSubChecked = checked ? subper.permissions.length : 0;
             subper.permissions.forEach((subpermission) => {
-              subpermission.checked = true;
+              subpermission.checked = checked;
             });
           });
           return per;
