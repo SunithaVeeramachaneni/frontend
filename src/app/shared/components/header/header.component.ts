@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public collabButtonRef: ElementRef;
   @Output() sideNavToggle = new EventEmitter();
   @Output() outsideClickTrigger = new EventEmitter();
+  @Output() signOutHandler = new EventEmitter();
 
   headerTitle$: Observable<string>;
 
@@ -162,6 +163,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   signout() {
+    this.signOutHandler.emit();
     this.isOpen = false;
     const { tenantId: configId } = this.tenantService.getTenantInfo();
     this.oidcSecurityService.logoffAndRevokeTokens(configId).subscribe();

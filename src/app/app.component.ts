@@ -207,6 +207,21 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.updateUserPresence();
   }
 
+  @HostListener('window:unload', ['$event'])
+  unloadHandler(event) {
+    this.removeUserPresence();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHander(event) {
+    // return false;
+    // return false; will trigger a confirmation alert asking if you really want to close the application tab/window...
+  }
+
+  onSignOut = () => {
+    this.removeUserPresence();
+  };
+
   updateUserPresence = () => {
     if (this.isUserOnline || !this.isUserAuthenticated) return;
     this.usersService.setUserPresence$().subscribe((resp) => {
@@ -220,21 +235,25 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   };
 
+  removeUserPresence = () => {
+    this.usersService.removeUserPresence$().subscribe((resp) => {
+      this.isUserOnline = false;
+      const userInfo = this.loginService.getLoggedInUserInfo();
+      if (Object.keys(userInfo).length) {
+        userInfo.online = false;
+        this.loginService.setLoggedInUserInfo(userInfo);
+      }
+      this.userIdle.stopWatching();
+    });
+  };
+
   ngOnInit() {
     //Start watching for user inactivity.
     this.userIdle.startWatching();
     // Start watching when user idle is starting.
     this.userIdle.onTimerStart().subscribe((count) => {
       if (count === 1) {
-        this.usersService.removeUserPresence$().subscribe((resp) => {
-          this.isUserOnline = false;
-          const userInfo = this.loginService.getLoggedInUserInfo();
-          if (Object.keys(userInfo).length) {
-            userInfo.online = false;
-            this.loginService.setLoggedInUserInfo(userInfo);
-          }
-          this.userIdle.stopWatching();
-        });
+        this.removeUserPresence();
       }
     });
 

@@ -131,6 +131,7 @@
     <app-header
       (sideNavToggle)="toggleMenu()"
       (outsideClickTrigger)="closeSideNav()"
+      (signOutHandler)="onSignOut()"
       [selectedMenu]="this.selectedMenu"
       [ngClass]="{
         'hide-content': isUserAuthenticated === false
