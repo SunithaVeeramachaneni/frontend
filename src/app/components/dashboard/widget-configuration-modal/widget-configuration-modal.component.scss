@@ -54,18 +54,6 @@
   top: 30%;
 }
 
-.save-btn {
-  position: absolute;
-  bottom: 23%;
-  right: 35%;
-}
-
-.close-btn {
-  position: relative;
-  top: 15px;
-  float: right;
-}
-
 .chart-wrapper {
   height: 260px;
   margin: 10px 0px;
@@ -126,4 +114,9 @@
 
 ::ng-deep .widget-config-modal mat-error {
   margin: 5px 0;
+}
+
+.widget-save-btn {
+  background-color: #3d5afe;
+  color: #ffffff;
 }
