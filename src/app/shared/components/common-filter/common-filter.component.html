@@ -102,59 +102,6 @@
             }}</mat-option>
           </mat-select>
         </mat-form-field>
-
-        <mat-form-field
-          *ngIf="workCenterList"
-          appearance="outline"
-          class="mat-field"
-        >
-          <mat-label>{{ 'workCenter' | translate }}</mat-label>
-          <mat-select
-            name="workCenter"
-            multiple
-            [(ngModel)]="workCenter"
-            (selectionChange)="
-              this.onCenterChange($event); selectedFilterValue($event.value)
-            "
-          >
-            <mat-option
-              *ngFor="let workCenterItem of workCenterList"
-              [value]="workCenterItem"
-              >{{ workCenterItem.workCenterKey }}</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field
-          appearance="outline"
-          class="mat-field"
-          *ngIf="workCenter.length !== 0"
-        >
-          <mat-label>{{ 'assignee' | translate }}</mat-label>
-          <mat-select
-            name="assign"
-            multiple
-            [(ngModel)]="assign"
-            (selectionChange)="selectedFilterValue($event.value)"
-          >
-            <mat-option
-              *ngFor="let assigned of displayedAssigneeList"
-              [value]="assigned"
-            >
-              <img
-                [hidden]="!getImageSrc(assigned.image)"
-                [attr.src]="getImageSrc(assigned.image)"
-                alt="Profile Image"
-                style="
-                  width: 36px;
-                  height: 36px;
-                  border-radius: 50%;
-                  margin-right: 5px;
-                "
-              />
-              {{ assigned.personName }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
       </div>
       <button
         mat-raised-button
