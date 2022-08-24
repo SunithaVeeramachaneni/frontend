@@ -1,7 +1,8 @@
 <div class="report-delete-modal">
   <p class="title">Delete Report?</p>
   <p *ngIf="widgetCount" class="warning-body">
-    Do you want to delete report <b>{{ reportName }}</b> & its
+    Do you want to delete report
+    <span class="widgets-bold-text">{{ reportName }}</span> & its
     <span
       class="widgets-associated-text"
       cdkOverlayOrigin
@@ -63,12 +64,7 @@
   <p class="warning-body">
     <b>Note:</b> Deletion of any report will also delete its widgets
   </p>
-  <button
-    mat-raised-button
-    color="warn"
-    class="yes-no-btn"
-    (click)="deleteReport()"
-  >
+  <button mat-raised-button class="yes-btn" (click)="deleteReport()">
     Yes
   </button>
   <button
