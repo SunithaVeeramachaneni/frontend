@@ -129,6 +129,7 @@ export class ProfileComponent implements OnInit {
 
   removePhoto() {
     this.profileImage = defaultProfile;
+    this.profileImageFileName = 'default.png';
     (async () => {
       const { base64Response } =
         await this.base64Service.getBase64ImageFromSourceUrl(defaultProfile);
