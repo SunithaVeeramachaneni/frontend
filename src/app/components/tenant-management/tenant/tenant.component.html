@@ -1260,6 +1260,27 @@
           <p class="sub-headings" translate>nosql</p>
           <p class="m-0">
             <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>prefix</mat-label>
+              <mat-select formControlName="prefix">
+                <mat-option
+                  *ngFor="let prefix of mongoDBPrefixes"
+                  [value]="prefix"
+                >
+                  {{ prefix }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-error
+              *ngIf="
+                tenantForm.get('nosql.prefix').errors?.required &&
+                tenantForm.get('nosql.prefix').touched
+              "
+            >
+              {{ 'required' | translate: { name: 'prefix' | translate } }}
+            </mat-error>
+          </p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>host</mat-label>
               <input
                 matInput
@@ -1281,7 +1302,12 @@
             </ng-container>
           </p>
 
-          <p class="m-0">
+          <p
+            class="m-0"
+            [hidden]="
+              tenantForm.get('nosql.prefix').value === mongoDBPrefixes[1]
+            "
+          >
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>port</mat-label>
               <input
