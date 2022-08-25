@@ -20,7 +20,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { TenantService } from '../services/tenant.service';
 import { tenants } from '../services/tenant.service.mock';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 import { TenantComponent } from './tenant.component';
 import { SharedModule } from 'src/app/shared/shared.module';

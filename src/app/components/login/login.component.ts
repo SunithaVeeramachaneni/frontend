@@ -16,6 +16,7 @@ import { Tenant } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { TenantService } from '../tenant-management/services/tenant.service';
+import { LoginService } from './services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -33,10 +34,12 @@ export class LoginComponent implements OnInit {
     private oidcSecurityService: OidcSecurityService,
     private commonService: CommonService,
     private route: ActivatedRoute,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private loginService: LoginService
   ) {}
 
   ngOnInit() {
+    this.loginService.setUserAuthenticated(false);
     const returnUrl = this.route.snapshot.queryParams.returnUrl;
     this.returnUrl = returnUrl ? returnUrl : '';
     this.loginForm = this.fb.group({

@@ -16,9 +16,17 @@ import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { defaultLimit } from 'src/app/app.constants';
+import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
+import { environment } from 'src/environments/environment';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface UpdatePeople {
   action: 'add_people' | 'add_people_search' | '';
+  data: any;
+}
+
+interface UpdateUserPresence {
+  action: 'update_user_presence' | '';
   data: any;
 }
 
@@ -35,6 +43,8 @@ export class PeopleComponent implements OnInit {
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
 
+  eventSource: any;
+
   skip = 0;
   limit = defaultLimit;
   lastScrollLeft = 0;
@@ -47,11 +57,17 @@ export class PeopleComponent implements OnInit {
     data: {} as any
   });
 
+  updateUserPresence$ = new BehaviorSubject<UpdateUserPresence>({
+    action: 'update_user_presence',
+    data: [] as any
+  });
+
   constructor(
     public uploadDialog: MatDialog,
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private authHeaderService: AuthHeaderService
   ) {
     this.searchKeyUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
@@ -67,6 +83,26 @@ export class PeopleComponent implements OnInit {
   }
 
   ngOnInit() {
+    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
+
+    const { authorization, tenantid } =
+      this.authHeaderService.getAuthHeaders(SSE_URL);
+    this.eventSource = new EventSourcePolyfill(SSE_URL, {
+      headers: {
+        authorization,
+        tenantid
+      }
+    });
+    this.eventSource.onmessage = async (event: any) => {
+      const eventData = JSON.parse(event.data);
+      if (!eventData.isHeartbeat) {
+        this.updateUserPresence$.next({
+          action: 'update_user_presence',
+          data: eventData
+        });
+      }
+    };
+
     this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
       mergeMap((users) => {
         this.fetchActiveUsersInprogress = false;
@@ -79,9 +115,10 @@ export class PeopleComponent implements OnInit {
     );
     this.activeUsers$ = combineLatest([
       this.activeUsersInitial$,
-      this.updatePeople$
+      this.updatePeople$,
+      this.updateUserPresence$
     ]).pipe(
-      map(([initial, updatePeople]) => {
+      map(([initial, updatePeople, updateUserPresence]) => {
         this.fetchActiveUsersInprogress = false;
         const { action, data } = updatePeople;
         let peopleList = initial.data;
@@ -92,6 +129,22 @@ export class PeopleComponent implements OnInit {
           peopleList = data;
         }
         this.skip = peopleList ? peopleList.length : this.skip;
+
+        if (
+          updateUserPresence &&
+          updateUserPresence.action === 'update_user_presence'
+        ) {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const { data } = updateUserPresence;
+          peopleList.forEach((user) => {
+            if (data.indexOf(user.email) > -1) {
+              user.online = true;
+            } else {
+              user.online = false;
+            }
+          });
+        }
+
         return peopleList;
       })
     );

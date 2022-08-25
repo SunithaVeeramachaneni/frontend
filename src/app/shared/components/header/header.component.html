@@ -1,5 +1,5 @@
 <mat-toolbar class="min-toolbar">
-  <button mat-icon-button (click)="openSidenav()">
+  <button mat-icon-button (click)="openSidenav()" aria-label="Side Menu Toggle">
     <mat-icon>menu</mat-icon>
   </button>
 
@@ -108,8 +108,20 @@
           'user-with-logo': tenantLogo,
           'user-without-logo': !tenantLogo
         }"
+        class="userPresence"
       >
-        <img [src]="profileImage(userDetails.profileImage)" class="profile" />
+        <img
+          [src]="profileImage(userDetails.profileImage)"
+          class="profile"
+          alt="Profile Image"
+        />
+        <div
+          class="statusCircle"
+          [ngClass]="{
+            online: userDetails.online,
+            offline: !userDetails.online
+          }"
+        ></div>
       </div>
       <div class="with-company-logo" *ngIf="tenantLogo">
         <span class="helper"> </span>
@@ -137,6 +149,7 @@
         <img
           [src]="profileImage(userDetails.profileImage)"
           class="profile-image"
+          alt="Profile Image"
         />
         <p class="loggedin-user-name">
           {{ userDetails.firstName }} {{ userDetails.lastName }}

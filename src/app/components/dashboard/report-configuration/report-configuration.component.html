@@ -1,4 +1,4 @@
-<div class="report-configuration" [formGroup]="reportNameAndDescForm">
+<div class="report-configuration">
   <div
     class="content-div"
     *ngIf="reportDetails$ | async as reportDetails; else loading"
@@ -28,35 +28,37 @@
             <input
               *ngIf="reportDetails.report"
               matInput
-              formControlName="name"
               [disabled]="disableReportName"
-              (keyup.enter)="disableReportName = true"
-              (blur)="disableReportName = true"
+              (keyup.enter)="
+                disableReportName = true; onReportTitleChanged($event)
+              "
+              (blur)="disableReportName = true; onReportTitleChanged($event)"
+              [value]="reportTitle"
+              (ngModel)="(reportTitle)"
+              (ngModelChange)="onReportTitleChanged($event)"
             />
-            <mat-error
-              *ngIf="reportName.errors?.minlength"
-              class="report-name-error"
-            >
-              {{
-                'fieldMinimumLength'
-                  | translate
-                    : {
-                        name: 'name' | translate,
-                        length: reportName.errors?.minlength.requiredLength
-                      }
-              }}
-            </mat-error>
-            <mat-error *ngIf="reportName.errors?.maxlength">
-              {{
-                'fieldMaximumLength'
-                  | translate
-                    : {
-                        name: 'name' | translate,
-                        length: reportName.errors?.maxlength.requiredLength
-                      }
-              }}
-            </mat-error>
           </mat-form-field>
+          <mat-error class="report-name-error" *ngIf="reportTitleMaxLengthErr">
+            {{
+              'fieldMaximumLength'
+                | translate
+                  : {
+                      name: 'name' | translate,
+                      length: 48
+                    }
+            }}
+          </mat-error>
+          <mat-error class="report-name-error" *ngIf="reportTitleMinLengthErr">
+            Error occured
+            {{
+              'fieldMinimumLength'
+                | translate
+                  : {
+                      name: 'name' | translate,
+                      length: 3
+                    }
+            }}
+          </mat-error>
         </div>
 
         <a (click)="favoriteToggle()" class="favorite-toggle width-20">
@@ -140,6 +142,7 @@
             matTooltipClass=""
             (click)="undo($event)"
             [disabled]="!undoRedoUtil.undoSize()"
+            aria-label="Undo"
           >
             <mat-icon>undo</mat-icon>
           </button>
@@ -151,6 +154,7 @@
             matTooltip="Redo"
             matTooltipClass=""
             [disabled]="!undoRedoUtil.redoSize()"
+            aria-label="Redo"
           >
             <mat-icon>redo</mat-icon>
           </button>
@@ -161,8 +165,9 @@
             matTooltip="Hide Chart"
             (click)="toggleChart()"
             *ngIf="reportDetails.report?.showChart"
+            aria-label="Hide Chart"
           >
-            <img src="assets/dashboard-icons/show_chart.svg" />
+            <img src="assets/dashboard-icons/show_chart.svg" alt="Show Chart" />
           </button>
           <button
             mat-stroked-button
@@ -172,14 +177,17 @@
             (click)="toggleChart()"
             *ngIf="!reportDetails.report?.showChart"
             [disabled]="!reportDetails.report?.groupBy?.length"
+            aria-label="Show Chart"
           >
             <img
               src="assets/dashboard-icons/show_chart.svg"
               *ngIf="reportDetails.report?.groupBy?.length"
+              alt="Show Chart"
             />
             <img
               src="assets/dashboard-icons/show_chart_disabled.svg"
               *ngIf="!reportDetails.report?.groupBy?.length"
+              alt="Show Chart Disabled"
             />
           </button>
           <button
@@ -193,8 +201,12 @@
               permissions.createReport,
               permissions.updateReport
             ]"
+            aria-label="Preview"
           >
-            <img [src]="getImage('preview', showPreview)" />
+            <img
+              [src]="getImage('preview', showPreview)"
+              alt="Toggle Preview"
+            />
           </button>
           <button
             mat-stroked-button
@@ -206,10 +218,7 @@
             *appCheckUserHasPermission="[permissions.reportExportToExcel]"
             [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
           >
-            <img
-              src="assets/dashboard-icons/export.svg"
-              *ngIf="!isExportInProgress"
-            />
+            <img src="assets/dashboard-icons/export.svg" *ngIf="!isExportInProgress"/>
           </button>
           <button
             mat-stroked-button
@@ -219,6 +228,7 @@
             [routerLink]="['/dashboard/reports']"
             routerLinkActive="router-link-active"
             translate="cancel"
+            aria-label="Cancel"
           ></button>
 
           <ng-container
@@ -232,11 +242,16 @@
                 matTooltip="Save"
                 class="save-button"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 (click)="
-                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                    saveReport({ saveAs: false })
+                  !(
+                    !reportDetails.report ||
+                    reportTitleMinLengthErr ||
+                    reportTitleMaxLengthErr
+                  ) && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
@@ -252,11 +267,16 @@
                 matTooltip="Save"
                 class="save-button"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 (click)="
-                  !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                    saveReport({ saveAs: false })
+                  !(
+                    !reportDetails.report ||
+                    reportTitleMinLengthErr ||
+                    reportTitleMaxLengthErr
+                  ) && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
@@ -264,10 +284,13 @@
               <mat-button-toggle
                 *ngIf="reportDetails.report?.id"
                 [disabled]="
-                  !reportDetails.report || reportNameAndDescForm.invalid
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
                 "
                 [matMenuTriggerFor]="menu"
                 class="save-button-arrow"
+                aria-label="Save As"
               >
                 <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
               </mat-button-toggle>
@@ -278,12 +301,18 @@
               mat-menu-item
               matTooltip="Save As"
               [disabled]="
-                !reportDetails.report || reportNameAndDescForm.invalid
+                !reportDetails.report ||
+                reportTitleMinLengthErr ||
+                reportTitleMaxLengthErr
               "
               (click)="
-                !(!reportDetails.report || reportNameAndDescForm.invalid) &&
-                  openSaveAsDialog()
+                !(
+                  !reportDetails.report ||
+                  reportTitleMinLengthErr ||
+                  reportTitleMaxLengthErr
+                ) && openSaveAsDialog()
               "
+              aria-label="Save As"
             >
               Save As
             </button>
@@ -342,6 +371,7 @@
                 mat-dialog-close
                 [disabled]="isChartVariantApplyDisabled"
                 (click)="applyChartVariantChanges()"
+                aria-label="Apply Chart Variant Changes"
               >
                 Done
               </button>
@@ -350,6 +380,7 @@
                 color="primary"
                 class="yes-no-btn"
                 (click)="isPopoverOpen = false; chartVariantChanges = {}"
+                aria-label="Cancel Chart Variant Changes"
               >
                 Cancel
               </button>

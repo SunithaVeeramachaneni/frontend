@@ -231,4 +231,24 @@ export class UsersService {
       { displayToast, failureResponse }
     );
   };
+
+  setUserPresence$ = (info: ErrorInfo = {} as ErrorInfo) =>
+    this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/current/presence/online`,
+        {},
+        info
+      )
+      .pipe(map((response) => response));
+
+  removeUserPresence$ = (info: ErrorInfo = {} as ErrorInfo) =>
+    this.appService
+      .patchData(
+        environment.userRoleManagementApiUrl,
+        `users/current/presence/offline`,
+        {},
+        info
+      )
+      .pipe(map((response) => response));
 }

@@ -1,3 +1,5 @@
+@use './../../../../scss/colors.scss' as colors;
+
 .min-toolbar {
   background-color: white;
   height: 65px;
@@ -327,4 +329,23 @@
   right: 16px;
   top: 7px;
   width: 200px;
+}
+.userPresence {
+  position: relative !important;
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    // background-color: grey;
+    border: 2px solid colors.$white;
+    bottom: 2px;
+    right: 5px;
+    position: absolute;
+  }
+  .online {
+    background-color: colors.$green;
+  }
+  .offline {
+    background-color: colors.$gray;
+  }
 }

@@ -319,7 +319,16 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   }
 
   copyRoleClickHandler() {
-    this.copyRole(this.selectedRole);
+    this.roleService
+      .getRolePermissionsById$(this.selectedRole.id)
+      .subscribe((pers) => {
+        const permissionIds = [];
+        permissionIds.push(pers);
+        this.copyRole({
+          ...this.selectedRole,
+          permissionIds: permissionIds[0]
+        });
+      });
   }
 
   update(data) {

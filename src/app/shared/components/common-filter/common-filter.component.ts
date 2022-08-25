@@ -1,19 +1,17 @@
 import {
   Component,
-  OnInit,
   Input,
   Output,
   EventEmitter,
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { uniqBy } from 'lodash';
+import { uniqBy } from 'lodash-es';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonFilterService } from './common-filter.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
 import { DateSegmentService } from '../date-segment/date-segment.service';
-import * as moment from 'moment';
 import { debounce } from 'ts-debounce';
 @Component({
   selector: 'app-common-filter',
@@ -25,7 +23,6 @@ export class CommonFilterComponent implements OnChanges {
   @Input() filtersApplied;
   @Input() priorityList;
   @Input() kitStatusList;
-  @Input() workCenterList;
   @Input() technicians;
   @Input() reportColumns;
   @Input() filterOptions;
@@ -42,7 +39,6 @@ export class CommonFilterComponent implements OnChanges {
   public priority = [];
   public showOverdue = '';
   public kitStatus = [];
-  public workCenter = [];
   public assign = [];
   public resetBtnDisable = true;
   public applyBtnDisable = true;
@@ -175,25 +171,12 @@ export class CommonFilterComponent implements OnChanges {
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   };
 
-  onCenterChange = (event) => {
-    const workCenters = event.value;
-    this.displayedAssigneeList = [];
-    workCenters.forEach((workCenter) => {
-      this.displayedAssigneeList = this.arrayUnion(
-        this.technicians[workCenter.workCenterKey],
-        this.displayedAssigneeList,
-        'personName'
-      );
-    });
-  };
-
   searchFilter() {
     this.commonFilterService.searchFilter({
       search: this.searchValue,
       priority: this.priority,
       showOverdue: this.showOverdue,
       kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
       assign: this.assign
     });
   }
@@ -219,7 +202,6 @@ export class CommonFilterComponent implements OnChanges {
       priority: this.priority,
       showOverdue: this.showOverdue,
       kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
       assign: this.assign
     });
     this.applyFilters();
@@ -231,7 +213,6 @@ export class CommonFilterComponent implements OnChanges {
   };
 
   clearFilter = () => {
-    this.workCenter = [];
     this.resetBtnDisable = true;
     this.applyBtnDisable = true;
   };
@@ -254,7 +235,7 @@ export class CommonFilterComponent implements OnChanges {
       this.resetdynamicFiltersBtnDisable = true;
       this.applydynamicFiltersBtnDisable = true;
     }
-    if (this.filtersApplied.length == 0){
+    if (this.filtersApplied.length == 0) {
       this.appliedFilters.emit({
         filters: this.filtersApplied,
         searchKey: this.searchValue
@@ -352,24 +333,5 @@ export class CommonFilterComponent implements OnChanges {
     this.filters.clear();
     this.resetdynamicFiltersBtnDisable = true;
     this.applydynamicFiltersBtnDisable = true;
-  }
-
-  appliedDateRange(start, end) {
-    const sDate = moment(start);
-    sDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-    const eDate = moment(end);
-    eDate.set({ hour: 23, minute: 59, second: 59, millisecond: 0 });
-
-    this.dateRange = {
-      startDate: sDate.format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: eDate.format('YYYY-MM-DDTHH:mm:ss')
-    };
-
-    const customDate =
-      this.dateRange.startDate.split('T')[0] +
-      ' - ' +
-      this.dateRange.endDate.split('T')[0];
-    this.customBtnText = customDate;
   }
 }

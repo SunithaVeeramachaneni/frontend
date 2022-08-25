@@ -68,7 +68,8 @@ export class AddEditUserModalComponent implements OnInit {
       this.checkIfUserExistsInIDP()
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
-    profileImage: new FormControl('')
+    profileImage: new FormControl(''),
+    profileImageFileName: new FormControl('')
   });
   emailValidated = false;
   isValidIDPUser = false;
@@ -230,6 +231,9 @@ export class AddEditUserModalComponent implements OnInit {
     this.profileImage = this.sant.bypassSecurityTrustUrl(
       window.URL.createObjectURL(selectedFile)
     ) as string;
+    this.userForm.patchValue({
+      profileImageFileName: selectedFile.name
+    });
     this.userForm.markAsDirty();
     this.getBase64(selectedFile);
     // const blob = this.dataURItoBlob(base64)
@@ -255,7 +259,10 @@ export class AddEditUserModalComponent implements OnInit {
 
   save() {
     this.dialogRef.close({
-      user: { ...this.data.user, ...this.userForm.value },
+      user: {
+        ...this.data.user,
+        ...this.userForm.value
+      },
       action: this.dialogText === 'addUser' ? 'add' : 'edit'
     });
   }

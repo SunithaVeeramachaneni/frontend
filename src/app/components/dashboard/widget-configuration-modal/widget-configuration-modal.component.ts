@@ -48,7 +48,7 @@ import {
 import { CommonService } from 'src/app/shared/services/common.service';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { LoginService } from '../../login/services/login.service';
 
 export interface WidgetConfigurationModalData {

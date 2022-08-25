@@ -8,7 +8,6 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ChatService } from './chat.service';
-import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 
 import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
@@ -25,6 +24,9 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { environment } from 'src/environments/environment';
+import { EventSourcePolyfill } from 'event-source-polyfill';
+import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | 'append_history' | '';
@@ -37,6 +39,7 @@ interface UpdateConversations {
     | 'create_conversation'
     | 'append_conversations'
     | 'reset_unread_count'
+    | 'update_user_presence'
     | '';
   message: any;
   channel: any;
@@ -106,23 +109,27 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   userMaps: any = [];
 
+  eventSource: any;
+
   conversationsInitial$: Observable<any>;
   conversations$: Observable<Conversation[]>;
 
   conversationHistoryInit$: Observable<any>;
   conversationHistory$: Observable<Message[]>;
 
-  sendReceiveMessages$ = new BehaviorSubject<SendReceiveMessages>({
-    action: 'send',
-    message: {} as any,
-    channel: ''
-  });
+  sendReceiveMessages$: BehaviorSubject<SendReceiveMessages> =
+    new BehaviorSubject<SendReceiveMessages>({
+      action: 'send',
+      message: {} as any,
+      channel: ''
+    });
 
-  updateConversations$ = new BehaviorSubject<UpdateConversations>({
-    action: 'update_latest_message',
-    message: {} as any,
-    channel: ''
-  });
+  updateConversations$: BehaviorSubject<UpdateConversations> =
+    new BehaviorSubject<UpdateConversations>({
+      action: 'update_latest_message',
+      message: {} as any,
+      channel: ''
+    });
 
   private newMessageReceivedSubscription: Subscription;
 
@@ -131,7 +138,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private emitterService: EmitterService,
     private loginService: LoginService,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private authHeaderService: AuthHeaderService
   ) {}
 
   ngOnInit() {
@@ -155,6 +163,27 @@ export class ChatsComponent implements OnInit, OnDestroy {
           this.addMessageToConversation(event);
         }
       });
+
+    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
+
+    const { authorization, tenantid } =
+      this.authHeaderService.getAuthHeaders(SSE_URL);
+    this.eventSource = new EventSourcePolyfill(SSE_URL, {
+      headers: {
+        authorization,
+        tenantid
+      }
+    });
+    this.eventSource.onmessage = async (event: any) => {
+      const eventData = JSON.parse(event.data);
+      if (!eventData.isHeartbeat) {
+        this.updateConversations$.next({
+          action: 'update_user_presence',
+          message: eventData,
+          channel: ''
+        });
+      }
+    };
 
     const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
@@ -255,7 +284,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
           const newConversations = this.formatConversations(message);
           initial.data = initial.data.concat(newConversations);
           conversationsList = initial.data;
+        } else if (action === 'update_user_presence') {
+          conversationsList.forEach((conv) => {
+            if (conv.chatType === 'oneOnOne') {
+              if (message.indexOf(conv.userInfo.email) > -1) {
+                conv.userInfo.online = true;
+              }
+            }
+          });
         }
+
         return conversationsList;
       }),
       tap((conversations) => {
@@ -332,11 +370,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
       const user = members.find((member) => member.userId === message.from.id);
       if (user) {
         message.from = user;
-        setTimeout(() => {
-          message.from.profileImage = this.imageUtils.getImageSrc(
-            Buffer.from(message.from.profileImage).toString()
-          );
-        }, 0);
       }
       message.isMeeting = false;
     });
@@ -371,7 +404,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     }
   };
 
-  downloadFile = (file: any, refId: string) => {
+  downloadFile = (file: any, refId: string, fileId: string) => {
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -380,7 +413,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       return;
     }
     this.downloadInProgress = true;
-    this.downloadingFileRef = refId;
+    this.downloadingFileRef = `${refId}_${fileId}`;
 
     this.chatService.downloadAttachment$(file, info).subscribe(
       (data) => {
@@ -509,7 +542,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
           let userInfo;
           initial.data.forEach((msg) => {
             if (message.user === msg.user) {
-              userInfo = msg.userInfo;
+              userInfo = msg.from;
             }
           });
 
@@ -564,7 +597,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   onMessageEnter = (targetUser, message) => {
-    if (message && message.length) {
+    if (message && message.trim().length) {
       this.sendMessageToUser(targetUser, message);
     }
   };
@@ -586,16 +619,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
       .sendMessage$(message, targetUser.id, formData, info)
       .subscribe(
         (response) => {
+          this.messageText = '';
+          this.messageDeliveryProgress = false;
+          this.closePreview();
           if (response && Object.keys(response).length) {
-            response.user = response.from.user;
+            // response.user = response.from.user;
             this.sendReceiveMessages$.next({
               action: 'send',
               message: response,
               channel: response.chatId
             });
-            this.messageText = '';
-            this.messageDeliveryProgress = false;
-            this.closePreview();
           }
         },
         (err) => {
@@ -765,12 +798,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
     } else {
       // this.setSelectedConversation(conversations[0]);
     }
-  };
-
-  getLocalDateFromEpoch = (epochTS) => {
-    const d = new Date(0);
-    d.setUTCSeconds(epochTS);
-    return moment(d).fromNow();
   };
 
   triggerCall = async (conv) => {

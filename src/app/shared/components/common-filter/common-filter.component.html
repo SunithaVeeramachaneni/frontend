@@ -14,7 +14,7 @@
 <ng-container *ngIf="this.title !== 'Report Configuration'">
   <span class="custom-form-field-gray-color">
     <mat-form-field appearance="outline" class="search-bar">
-      <mat-icon matPrefix class="searchIcon">search</mat-icon>
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
       <input
         matInput
         [placeholder]="'searchWorkOrders' | translate"
@@ -30,6 +30,7 @@
         #trigger="cdkOverlayOrigin"
         (click)="isPopoverOpen = !isPopoverOpen"
         class="common-filter-icon"
+        alt="Open Filter"
       />
     </mat-form-field>
   </span>
@@ -53,8 +54,15 @@
     >
       <div class="m-b-10 filter-header">
         <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-        <button class="filter-modal-cancel" (click)="isPopoverOpen = false">
-          <img src="../../../../assets/img/svg/cancel-icon.svg" />
+        <button
+          class="filter-modal-cancel"
+          (click)="isPopoverOpen = false"
+          aria-label="Close Filter"
+        >
+          <img
+            src="../../../../assets/img/svg/cancel-icon.svg"
+            alt="Close Filter"
+          />
         </button>
       </div>
       <form #form="ngForm">
@@ -108,59 +116,6 @@
               }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <mat-form-field
-            *ngIf="workCenterList"
-            appearance="outline"
-            class="mat-field"
-          >
-            <mat-label>{{ 'workCenter' | translate }}</mat-label>
-            <mat-select
-              name="workCenter"
-              multiple
-              [(ngModel)]="workCenter"
-              (selectionChange)="
-                this.onCenterChange($event); selectedFilterValue($event.value)
-              "
-            >
-              <mat-option
-                *ngFor="let workCenterItem of workCenterList"
-                [value]="workCenterItem"
-                >{{ workCenterItem.workCenterKey }}</mat-option
-              >
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field
-            appearance="outline"
-            class="mat-field"
-            *ngIf="workCenter.length !== 0"
-          >
-            <mat-label>{{ 'assignee' | translate }}</mat-label>
-            <mat-select
-              name="assign"
-              multiple
-              [(ngModel)]="assign"
-              (selectionChange)="selectedFilterValue($event.value)"
-            >
-              <mat-option
-                *ngFor="let assigned of displayedAssigneeList"
-                [value]="assigned"
-              >
-                <img
-                  [hidden]="!getImageSrc(assigned.image)"
-                  [attr.src]="getImageSrc(assigned.image)"
-                  alt=""
-                  style="
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 50%;
-                    margin-right: 5px;
-                  "
-                />
-                {{ assigned.personName }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
         </div>
         <button
           mat-raised-button
@@ -168,6 +123,7 @@
           class="apply-filters-btn"
           [disabled]="this.applyBtnDisable"
           (click)="isPopoverOpen = false; searchFilter()"
+          aria-label="Apply Filter"
         >
           {{ 'apply' | translate }}
         </button>
@@ -189,8 +145,15 @@
     >
       <div class="m-b-10 filter-header">
         <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-        <button class="filter-modal-cancel" (click)="isPopoverOpen = false">
-          <img src="../../../../assets/img/svg/cancel-icon.svg" />
+        <button
+          class="filter-modal-cancel"
+          (click)="isPopoverOpen = false"
+          aria-label="Close Filter"
+        >
+          <img
+            src="../../../../assets/img/svg/cancel-icon.svg"
+            alt="Close Filter"
+          />
         </button>
       </div>
       <div class="filter-form-fields" style="max-height: 350px">
@@ -289,8 +252,12 @@
                     class="filter-modal-cancel"
                     type="button"
                     (click)="isfilterTooltipOpen[i] = false"
+                    aria-label="Close Filter"
                   >
-                    <img src="../../../../assets/img/svg/cancel-icon.svg" />
+                    <img
+                      src="../../../../assets/img/svg/cancel-icon.svg"
+                      alt="Close Filter"
+                    />
                   </button>
                 </div>
                 <div>
@@ -353,6 +320,7 @@
                       <button
                         (focus)="rangePicker.open()"
                         class="select-date-range-btn"
+                        aria-label="Open Date Range"
                       >
                         {{ customBtnText }}
                       </button>
@@ -381,7 +349,11 @@
                         </mat-date-range-input>
                         <mat-date-range-picker #rangePicker>
                           <mat-date-range-picker-actions>
-                            <button mat-button matDateRangePickerCancel>
+                            <button
+                              mat-button
+                              matDateRangePickerCancel
+                              aria-label="Cancel Date Range"
+                            >
                               {{ 'cancel' | translate }}
                             </button>
                             <button
@@ -389,6 +361,7 @@
                               type="submit"
                               color="primary"
                               matDateRangePickerApply
+                              aria-label="Apply Date Range"
                             >
                               {{ 'apply' | translate }}
                             </button>
@@ -443,6 +416,7 @@
                     type="submit"
                     form="filtersForm"
                     [disabled]="filterForm.invalid"
+                    aria-label="Save Filter"
                   >
                     Save
                   </button>
@@ -458,6 +432,7 @@
         (click)="applyFilters()"
         [disabled]="this.applydynamicFiltersBtnDisable"
         type="button"
+        aria-label="Apply Filter"
       >
         {{ 'apply' | translate }}
       </button>
@@ -467,6 +442,7 @@
         class="btn reset-filters-btn"
         [disabled]="this.resetdynamicFiltersBtnDisable"
         (click)="clearFilters()"
+        aria-label="Cancel Filter"
       >
         {{ 'reset' | translate }}
       </button>

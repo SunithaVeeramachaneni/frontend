@@ -7,7 +7,7 @@ import {
   TranslateLoader,
   TranslateModule
 } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
 import { AppMaterialModules } from 'src/app/material.module';
