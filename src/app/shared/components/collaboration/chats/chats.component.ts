@@ -370,11 +370,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
       const user = members.find((member) => member.userId === message.from.id);
       if (user) {
         message.from = user;
-        setTimeout(() => {
-          message.from.profileImage = this.imageUtils.getImageSrc(
-            Buffer.from(message.from.profileImage).toString()
-          );
-        }, 0);
       }
       message.isMeeting = false;
     });

@@ -5,18 +5,14 @@ import {
   OnInit
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
-} from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+
 import {
-  distinctUntilChanged,
+  debounceTime,
   filter,
   map,
   mergeMap,
@@ -67,7 +63,6 @@ import { LoginService } from '../../login/services/login.service';
 export class ReportConfigurationComponent implements OnInit {
   disableReportName = true;
   isPopoverOpen = false;
-  reportNameAndDescForm: FormGroup;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
   isChartVariantApplyDisabled = false;
@@ -100,6 +95,11 @@ export class ReportConfigurationComponent implements OnInit {
   searchKey = '';
   limit = defaultLimit;
   reportConfiguration: ReportConfiguration;
+
+  reportTitle = '';
+  reportTitleMinLengthErr = false;
+  reportTitleMaxLengthErr = false;
+
   reportDefinitionNameOrId: string;
   reportDetailsUrlString: string;
   reportDataCountUrlString: string;
@@ -134,6 +134,8 @@ export class ReportConfigurationComponent implements OnInit {
   showPreview: boolean;
   readonly permissions = permissions;
 
+  reportTitleUpdate = new Subject();
+
   constructor(
     private cdrf: ChangeDetectorRef,
     private reportService: ReportService,
@@ -150,46 +152,45 @@ export class ReportConfigurationComponent implements OnInit {
     private loginService: LoginService
   ) {}
 
-  get reportName() {
-    return this.reportNameAndDescForm.get('name');
-  }
+  onReportTitleChanged = (event) => {
+    this.reportTitleUpdate.next(event);
+  };
 
-  get reportDescription() {
-    return this.reportNameAndDescForm.get('description');
-  }
+  reportTitleChanged = (event) => {
+    const oldValue = this.reportTitle;
+    let newValue = event;
+    let isDomEvent = false;
+    if (event && event.target && event.target.value) {
+      newValue = event.target.value;
+      isDomEvent = true;
+    }
+    this.reportTitle = newValue;
+
+    if (this.reportTitle) {
+      this.reportTitleMinLengthErr = this.reportTitle.length < 3 ? true : false;
+      this.reportTitleMaxLengthErr =
+        this.reportTitle.length > 48 ? true : false;
+    }
+
+    if (isDomEvent) {
+      this.undoRedoUtil.WRITE({
+        eventType: 'REPORT_TITLE',
+        currentValue: newValue,
+        prevValue: oldValue
+      });
+    }
+
+    this.breadcrumbService.set('@reportConfiguration', { label: newValue });
+    this.headerService.setHeaderTitle(newValue);
+  };
 
   ngOnInit() {
-    this.reportNameAndDescForm = this.fb.group({
-      // reportDescription: new FormControl(''),[
-      //   Validators.required,
-      //   Validators.minLength(3),
-      //   Validators.maxLength(48)
-      // ],
-      name: new FormControl('', [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(48)
-      ])
-    });
-
-    this.reportName.valueChanges
-      .pipe(
-        distinctUntilChanged(),
-        pairwise() // gets a pair of old and new value
-      )
-      .subscribe(([oldValue, newValue]) => {
-        this.reportConfiguration.name = newValue;
-        this.undoRedoUtil.WRITE({
-          eventType: 'REPORT_TITLE',
-          currentValue: newValue,
-          prevValue: oldValue
-        });
-        this.reportName.patchValue(newValue);
-        this.breadcrumbService.set('@reportConfiguration', { label: newValue });
-        this.headerService.setHeaderTitle(newValue);
-      });
-
+    this.reportTitleMinLengthErr = false;
+    this.reportTitleMaxLengthErr = false;
     this.undoRedoUtil = new UndoRedoUtil();
+    this.reportTitleUpdate.pipe(debounceTime(1000)).subscribe((data) => {
+      this.reportTitleChanged(data);
+    });
 
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
@@ -257,17 +258,17 @@ export class ReportConfigurationComponent implements OnInit {
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
-          this.reportName.patchValue(this.reportConfiguration.name);
+
           this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
-                ? this.reportName.value
-                : `${this.reportName.value} *`
+                ? this.reportTitle
+                : `${this.reportTitle} *`
           });
           this.headerService.setHeaderTitle(
             this.reportConfiguration && this.reportConfiguration.id
-              ? this.reportName.value
-              : `${this.reportName.value} *`
+              ? this.reportTitle
+              : `${this.reportTitle} *`
           );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
@@ -291,6 +292,8 @@ export class ReportConfigurationComponent implements OnInit {
           const { reportData: scrollData = [] } = scroll;
           loadFilter.reportData = loadFilter.reportData.concat(scrollData);
         }
+
+        this.reportTitleUpdate.next(this.reportConfiguration.name);
 
         this.skip = loadFilter.reportData
           ? loadFilter.reportData.length
@@ -463,7 +466,7 @@ export class ReportConfigurationComponent implements OnInit {
     } else if (operation.eventType === 'FAVORITE_TOGGLE') {
       this.reportConfiguration.isFavorite = operation.isFavorite ? false : true;
     } else if (operation.eventType === 'REPORT_TITLE') {
-      this.reportConfiguration.name = operation.prevValue;
+      this.reportTitleChanged(operation.prevValue);
     }
   };
   redo = (event: Event) => {
@@ -482,17 +485,17 @@ export class ReportConfigurationComponent implements OnInit {
     } else if (operation.eventType === 'FAVORITE_TOGGLE') {
       this.reportConfiguration.isFavorite = operation.isFavorite ? true : false;
     } else if (operation.eventType === 'REPORT_TITLE') {
-      this.reportConfiguration.name = operation.currentValue;
+      this.reportTitleChanged(operation.currentValue);
     }
   };
 
   openSaveAsDialog() {
     const saveAsReportRef = this.dialog.open(ReportSaveAsModalComponent, {
-      data: { name: this.reportName.value }
+      data: { name: this.reportTitle }
     });
     saveAsReportRef.afterClosed().subscribe((name) => {
       if (name) {
-        this.reportConfiguration.name = name;
+        this.reportTitle = name;
         this.saveReport({ saveAs: true });
       }
     });
@@ -676,7 +679,7 @@ export class ReportConfigurationComponent implements OnInit {
         (data) => {
           this.cdrf.markForCheck();
           this.isExportInProgress = false;
-          downloadFile(data, this.reportConfiguration.name);
+          downloadFile(data, this.reportTitle);
           this.toast.show({
             text: 'Report exported successfully',
             type: 'success'
