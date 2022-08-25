@@ -319,7 +319,11 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
                   filterObj.priority
                 ) &&
                 this.filterPlant(workOrder.plant, plantFilter) &&
-                this.filterWorkCenter(workOrder.workCenter, workCenterFilter) &&
+                this.filterWorkCenter(
+                  workOrder.plant,
+                  workOrder.workCenter,
+                  workCenterFilter
+                ) &&
                 this.filterAssignee(
                   workOrder.technician[0],
                   filterObj.assign
@@ -390,11 +394,13 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     }
   };
 
-  filterWorkCenter = (workCenter, filter) => {
+  filterWorkCenter = (plant, workCenter, filter) => {
     if (filter.length === 0) {
       return false;
     } else {
-      return filter.some((item) => item.workCenterKey === workCenter);
+      return filter.some(
+        (item) => item.plantId === plant && item.workCenterKey === workCenter
+      );
     }
   };
 

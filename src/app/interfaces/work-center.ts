@@ -1,4 +1,5 @@
 interface WorkCenterList {
+  plantId: string;
   workCenterKey: string;
   workCenterDesc: string;
 }
