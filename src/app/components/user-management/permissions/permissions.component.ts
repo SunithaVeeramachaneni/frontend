@@ -35,8 +35,7 @@ export class PermissionsComponent implements OnChanges {
   rolesBasedPermissions = [];
   permissions$: BehaviorSubject<any>;
   userRolePermissions = userRolePermissions;
-  opened: boolean[] = [];
-  opendedSubPermisssions: boolean[] = [];
+  opened: any[] = [];
   newPermissionsArray;
 
   constructor() {}
@@ -69,10 +68,10 @@ export class PermissionsComponent implements OnChanges {
       if (changes.allPermissions$.firstChange) {
         this.allPermissions$.pipe(
           tap((allPermissions) => {
-            this.opened = Array(allPermissions.length).fill(true);
-            this.opendedSubPermisssions = Array(allPermissions.length).fill(
-              true
-            );
+            this.opened = Array(allPermissions.length).fill({
+              main: false,
+              sub: []
+            });
           })
         );
       }
@@ -156,6 +155,16 @@ export class PermissionsComponent implements OnChanges {
     );
 
     permissionObservable.subscribe((permissions) => {
+      permissions.forEach((permission) => {
+        const sub = [];
+        permission.subPermissions.forEach(() => {
+          sub.push(false);
+        });
+        this.opened.push({
+          main: false,
+          sub
+        });
+      });
       this.permissions$.next(permissions);
     });
   }
@@ -324,10 +333,10 @@ export class PermissionsComponent implements OnChanges {
         module.permissions = module.permissions.map((per) => {
           per.checked = checked;
           module.subPermissions.forEach((subper) => {
-            subper.checked = true;
-            subper.countOfSubChecked = subper.permissions.length;
+            subper.checked = checked;
+            subper.countOfSubChecked = checked ? subper.permissions.length : 0;
             subper.permissions.forEach((subpermission) => {
-              subpermission.checked = true;
+              subpermission.checked = checked;
             });
           });
           return per;

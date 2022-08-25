@@ -31,19 +31,19 @@
           src="assets/user-management-icons/right-arrow.svg"
           alt="right-arrow-icon"
           class="arrow-icons"
-          *ngIf="!opened[i]"
-          (click)="opened[i] = true"
+          *ngIf="!opened[i].main"
+          (click)="opened[i].main = true"
         />
         <img
           src="assets/user-management-icons/down-arrow.svg"
           alt="down-arrow-icon"
           class="arrow-icons"
-          *ngIf="opened[i]"
-          (click)="opened[i] = false"
+          *ngIf="opened[i].main"
+          (click)="opened[i].main = false"
         />
       </div>
       <div class="permissions-body">
-        <ul *ngIf="opened[i] === true">
+        <ul *ngIf="opened[i].main === true">
           <li
             *ngFor="let permission of module.permissions"
             class="list-element"
@@ -91,20 +91,20 @@
             src="assets/user-management-icons/right-arrow.svg"
             alt="right-arrow-icon"
             class="arrow-icons"
-            *ngIf="!opendedSubPermisssions[subindex]"
-            (click)="opendedSubPermisssions[subindex] = true"
+            *ngIf="!opened[i]['sub'][subindex]"
+            (click)="opened[i]['sub'][subindex] = true; test()"
           />
           <img
             src="assets/user-management-icons/down-arrow.svg"
             alt="down-arrow-icon"
             class="arrow-icons"
-            *ngIf="opendedSubPermisssions[subindex]"
-            (click)="opendedSubPermisssions[subindex] = false"
+            *ngIf="opened[i]['sub'][subindex]"
+            (click)="opened[i]['sub'][subindex] = false; test()"
           />
         </div>
 
         <div class="permissions-body">
-          <ul *ngIf="opendedSubPermisssions[subindex] === true">
+          <ul *ngIf="opened[i]['sub'][subindex] === true">
             <li *ngFor="let sub of subper.permissions" class="list-element">
               <mat-checkbox
                 [checked]="sub.checked"
