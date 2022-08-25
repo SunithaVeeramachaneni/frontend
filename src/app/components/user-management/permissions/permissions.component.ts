@@ -51,7 +51,6 @@ export class PermissionsComponent implements OnChanges {
         changes.selectedRole.currentValue.id
       ) {
         this.opened = [];
-        this.opendedSubPermisssions = [];
       }
     }
 
