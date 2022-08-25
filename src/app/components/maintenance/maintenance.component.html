@@ -44,7 +44,9 @@
             <p class="filter-option-id">
               {{ plant.id }}
             </p>
-            <p class="filter-option-desc">{{ plant.desc }}</p>
+            <p class="filter-option-desc">
+              {{ plant.desc ? plant.desc : '- -' }}
+            </p>
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -96,6 +98,11 @@
               >
                 <p class="filter-option-id">
                   {{ workcenter.workCenterKey }}
+                  <span
+                    style="float: right"
+                    *ngIf="plantFilter.value?.length > 1"
+                    >{{ workCenterByPlant.plantId }}</span
+                  >
                 </p>
                 <p class="filter-option-desc">
                   {{ workcenter.workCenterDesc }}
@@ -112,7 +119,6 @@
         [showOverdueList]="showOverdueList"
         [priorityList]="priorityList"
         [kitStatusList]="kitStatusList"
-        [workCenterList]="workCenterList"
         [technicians]="technicians"
       >
       </app-common-filter>
