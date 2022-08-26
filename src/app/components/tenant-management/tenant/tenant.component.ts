@@ -80,6 +80,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'Work Instructions Authoring'
   ];
   idps = ['azure'];
+  mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
   collaborationTypes = ['slack', 'msteams'];
@@ -254,6 +255,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         dialect: ['', [Validators.required]]
       }),
       nosql: this.fb.group({
+        prefix: ['', [Validators.required]],
         host: [
           '',
           [
@@ -354,6 +356,17 @@ export class TenantComponent implements OnInit, AfterViewInit {
           );
         }
       });
+
+    this.tenantForm.get('nosql.prefix').valueChanges.subscribe((prefix) => {
+      if (prefix === 'mongodb+srv') {
+        this.tenantForm.get('nosql.port').setValidators([]);
+      } else {
+        this.tenantForm
+          .get('nosql.port')
+          .setValidators([Validators.required, Validators.pattern('[0-9]{5}')]);
+      }
+      this.tenantForm.get('nosql.port').updateValueAndValidity();
+    });
 
     this.tenantForm.get('tenantName').valueChanges.subscribe((tenantName) => {
       const displayName = tenantName.trim() ? tenantName : 'Adding Tenant...';
