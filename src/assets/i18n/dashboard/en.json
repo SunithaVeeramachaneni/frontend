@@ -76,5 +76,7 @@
   "note": "Note:",
   "deleteText": "Deletion of any report will also delete its widgets",
   "yesBtn": "Yes",
-  "noBtn": "No"
+  "noBtn": "No",
+  "noReportsFound": "No Reports Found",
+  "noReportObjectsFound": "No Report Objects Found"
 }
