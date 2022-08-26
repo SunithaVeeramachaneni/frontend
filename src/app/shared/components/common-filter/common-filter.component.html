@@ -1,6 +1,6 @@
-<span class="custom-form-field-gray-color">
+<ng-container *ngIf="this.title === 'Report Configuration'">
   <mat-form-field appearance="outline" class="search-bar">
-    <mat-icon matPrefix class="search-icon">search</mat-icon>
+    <mat-icon matPrefix class="searchIcon">search</mat-icon>
     <input
       matInput
       [placeholder]="'searchWorkOrders' | translate"
@@ -9,106 +9,429 @@
       class="common-filter-search"
       autocomplete="off"
     />
-    <img
-      src="../../../../assets/maintenance-icons/filterIcon.svg"
-      matSuffix
-      cdkOverlayOrigin
-      #trigger="cdkOverlayOrigin"
-      (click)="isPopoverOpen = !isPopoverOpen"
-      class="common-filter-icon"
-      alt="Open Filter"
-    />
   </mat-form-field>
-</span>
+</ng-container>
+<ng-container *ngIf="this.title !== 'Report Configuration'">
+  <span class="custom-form-field-gray-color">
+    <mat-form-field appearance="outline" class="search-bar">
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input
+        matInput
+        [placeholder]="'searchWorkOrders' | translate"
+        [(ngModel)]="searchValue"
+        (ngModelChange)="debouncedSearchOrder($event)"
+        class="common-filter-search"
+        autocomplete="off"
+      />
+      <img
+        src="../../../../assets/maintenance-icons/filterIcon.svg"
+        matSuffix
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        (click)="isPopoverOpen = !isPopoverOpen"
+        class="common-filter-icon"
+        alt="Open Filter"
+      />
+    </mat-form-field>
+  </span>
 
-<ng-template
-  cdkConnectedOverlay
-  cdkConnectedOverlayPanelClass="custom-popover"
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  [cdkConnectedOverlayHasBackdrop]="true"
-  [cdkConnectedOverlayOpen]="isPopoverOpen"
-  [cdkConnectedOverlayOrigin]="trigger"
-  cdkConnectedOverlayWidth="400px"
-  (backdropClick)="isPopoverOpen = true"
->
-  <div
-    class="filter-modal custom-form-field-white-color"
-    *ngIf="
-      this.title === 'Spare Parts Control Center' ||
-      this.title === 'Maintenance Control Center'
-    "
+  <ng-template
+    cdkConnectedOverlay
+    cdkConnectedOverlayPanelClass="custom-popover"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOpen]="isPopoverOpen"
+    [cdkConnectedOverlayOrigin]="trigger"
+    cdkConnectedOverlayWidth="400px"
+    (backdropClick)="isPopoverOpen = false"
   >
-    <div class="m-b-10 filter-header">
-      <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-      <button
-        class="filter-modal-cancel"
-        (click)="isPopoverOpen = false"
-        aria-label="Close Filter"
-      >
-        <img
-          src="../../../../assets/img/svg/cancel-icon.svg"
-          alt="Close Filter"
-        />
-      </button>
-    </div>
-    <form #form="ngForm">
-      <div class="filter-form-fields">
-        <mat-form-field appearance="outline" class="mat-field">
-          <mat-label>{{ 'showOverdue' | translate }}</mat-label>
-          <mat-select
-            name="showOverdue"
-            [(ngModel)]="showOverdue"
-            (selectionChange)="selectedFilterValue($event.value)"
-          >
-            <mat-option
-              *ngFor="let showdue of showOverdueList"
-              [value]="showdue"
-            >
-              {{ showdue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="mat-field">
-          <mat-label>{{ 'priority' | translate }}</mat-label>
-          <mat-select
-            name="priority"
-            multiple
-            [(ngModel)]="priority"
-            (selectionChange)="selectedFilterValue($event.value)"
-          >
-            <mat-option
-              *ngFor="let prioritizedItem of priorityList"
-              [value]="prioritizedItem"
-              >{{ prioritizedItem }}</mat-option
-            >
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field
-          *ngIf="kitStatusList"
-          appearance="outline"
-          class="mat-field"
+    <div
+      class="filter-modal custom-form-field-white-color"
+      *ngIf="
+        this.title === 'Spare Parts Control Center' ||
+        this.title === 'Maintenance Control Center'
+      "
+    >
+      <div class="m-b-10 filter-header">
+        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
+        <button
+          class="filter-modal-cancel"
+          (click)="isPopoverOpen = false"
+          aria-label="Close Filter"
         >
-          <mat-label>{{ 'kittingStatus' | translate }}</mat-label>
-          <mat-select
-            name="kitStatus"
-            multiple
-            [(ngModel)]="kitStatus"
-            (selectionChange)="selectedFilterValue($event.value)"
+          <img
+            src="../../../../assets/img/svg/cancel-icon.svg"
+            alt="Close Filter"
+          />
+        </button>
+      </div>
+      <form #form="ngForm">
+        <div class="filter-form-fields">
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>{{ 'showOverdue' | translate }}</mat-label>
+            <mat-select
+              name="showOverdue"
+              [(ngModel)]="showOverdue"
+              (selectionChange)="selectedFilterValue($event.value)"
+            >
+              <mat-option
+                *ngFor="let showdue of showOverdueList"
+                [value]="showdue"
+              >
+                {{ showdue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="mat-field">
+            <mat-label>{{ 'priority' | translate }}</mat-label>
+            <mat-select
+              name="priority"
+              multiple
+              [(ngModel)]="priority"
+              (selectionChange)="selectedFilterValue($event.value)"
+            >
+              <mat-option
+                *ngFor="let prioritizedItem of priorityList"
+                [value]="prioritizedItem"
+                >{{ prioritizedItem }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field
+            *ngIf="kitStatusList"
+            appearance="outline"
+            class="mat-field"
           >
-            <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{
-              kit
-            }}</mat-option>
-          </mat-select>
+            <mat-label>{{ 'kittingStatus' | translate }}</mat-label>
+            <mat-select
+              name="kitStatus"
+              multiple
+              [(ngModel)]="kitStatus"
+              (selectionChange)="selectedFilterValue($event.value)"
+            >
+              <mat-option *ngFor="let kit of kitStatusList" [value]="kit">{{
+                kit
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <button
+          mat-raised-button
+          color="primary"
+          class="apply-filters-btn"
+          [disabled]="this.applyBtnDisable"
+          (click)="isPopoverOpen = false; searchFilter()"
+          aria-label="Apply Filter"
+        >
+          {{ 'apply' | translate }}
+        </button>
+        <button
+          mat-button
+          color="primary"
+          class="reset-filters-btn"
+          [disabled]="this.resetBtnDisable"
+          (click)="form.reset(); clearFilter(); searchFilter()"
+        >
+          {{ 'reset' | translate }}
+        </button>
+      </form>
+    </div>
+
+    <div
+      class="filter-report-modal custom-form-field-white-color"
+      *ngIf="this.title === undefined"
+    >
+      <div class="m-b-10 filter-header">
+        <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
+        <button
+          class="filter-modal-cancel"
+          (click)="isPopoverOpen = false"
+          aria-label="Close Filter"
+        >
+          <img
+            src="../../../../assets/img/svg/cancel-icon.svg"
+            alt="Close Filter"
+          />
+        </button>
+      </div>
+      <div class="filter-form-fields" style="max-height: 350px">
+        <mat-form-field appearance="outline" class="width-100">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Add Filter"
+            matInput
+            [matAutocomplete]="autoCompleteFilter"
+          />
+          <mat-autocomplete #autoCompleteFilter="matAutocomplete">
+            <mat-option
+              *ngFor="let col of dropdownReportColumns; let index = index"
+            >
+              <div (click)="addFilter(col, index)">
+                {{ col.displayName }}
+              </div>
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
+        <form [formGroup]="filtersForm" (ngSubmit)="onSave()" id="filtersForm">
+          <mat-list
+            role="list"
+            *ngFor="let filterForm of filters.controls; let i = index"
+            formArrayName="filters"
+          >
+            <mat-list-item role="listitem">
+              <ng-container [formGroupName]="i">
+                <mat-form-field
+                  appearance="outline"
+                  cdkOverlayOrigin
+                  #trigger="cdkOverlayOrigin"
+                  (click)="openFilterModal(filterForm.value, i)"
+                  class="width-100"
+                  *ngIf="filterForm.value.filterType !== 'daterange'"
+                >
+                  <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                  <input
+                    type="text"
+                    placeholder="{{ filterForm.value.displayName }}"
+                    value="{{ filterForm.value.displayText }}"
+                    matInput
+                  />
+                  <mat-icon
+                    matSuffix
+                    (click)="deleteFilteredField(filterForm.value, i)"
+                    class="delete-icon"
+                  >
+                    delete
+                  </mat-icon>
+                </mat-form-field>
+              </ng-container>
+              <ng-container [formGroupName]="i">
+                <mat-form-field
+                  appearance="outline"
+                  cdkOverlayOrigin
+                  #trigger="cdkOverlayOrigin"
+                  (click)="openFilterModal(filterForm.value, i)"
+                  class="width-100"
+                  *ngIf="filterForm.value.filterType === 'daterange'"
+                >
+                  <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                  <input
+                    type="text"
+                    placeholder="{{ filterForm.value.displayName }}"
+                    value="{{ filterForm.value.displayText }}"
+                    matInput
+                  />
+                  <mat-icon
+                    matSuffix
+                    (click)="deleteFilteredField(filterForm.value, i)"
+                    class="delete-icon"
+                  >
+                    delete
+                  </mat-icon>
+                </mat-form-field>
+              </ng-container>
+            </mat-list-item>
+            <ng-template
+              cdkConnectedOverlay
+              [cdkConnectedOverlayHasBackdrop]="true"
+              cdkConnectedOverlayPanelClass="custom-popover"
+              cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+              cdkConnectedOverlayWidth="400px"
+              [cdkConnectedOverlayOpen]="isfilterTooltipOpen[i]"
+              [cdkConnectedOverlayOrigin]="trigger"
+              (backdropClick)="isfilterTooltipOpen[i] = false"
+            >
+              <div [formGroupName]="i" class="filter-input-modal">
+                <div class="m-b-10">
+                  <span class="filter-modal-heading">
+                    Filter by {{ filterForm.value.displayName }}
+                  </span>
+                  <button
+                    class="filter-modal-cancel"
+                    type="button"
+                    (click)="isfilterTooltipOpen[i] = false"
+                    aria-label="Close Filter"
+                  >
+                    <img
+                      src="../../../../assets/img/svg/cancel-icon.svg"
+                      alt="Close Filter"
+                    />
+                  </button>
+                </div>
+                <div>
+                  <div
+                    *ngIf="
+                      filterForm.value.filterType !== 'multi' &&
+                      filterForm.value.filterType !== 'single' &&
+                      filterForm.value.filterType !== 'daterange'
+                    "
+                  >
+                    <p class="operator-text">Operator</p>
+                    <select
+                      formControlName="operator"
+                      name="operatorType"
+                      class="operator-dropdown"
+                    >
+                      <option
+                        *ngFor="let option of filteredOptionsByType"
+                        value="{{ option }}"
+                      >
+                        {{ option }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div *ngIf="filterForm.value.filterType === 'string'">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <input
+                        type="text"
+                        matInput
+                        name="stringOperand"
+                        formControlName="operand"
+                      />
+                    </mat-form-field>
+                  </div>
+
+                  <div *ngIf="filterForm.value.filterType === 'number'">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <input
+                        type="number"
+                        name="inputValue"
+                        matInput
+                        formControlName="operand"
+                      />
+                    </mat-form-field>
+                  </div>
+
+                  <div *ngIf="filterForm.value.filterType === 'daterange'">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-select name="inputValue" formControlName="operator">
+                        <mat-option
+                          *ngFor="let val of this.filteredOptionsByType"
+                          [value]="val"
+                          >{{ val }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+
+                    <div *ngIf="filterForm.value.operator === 'custom'">
+                      <button
+                        (focus)="rangePicker.open()"
+                        class="select-date-range-btn"
+                        aria-label="Open Date Range"
+                      >
+                        {{ customBtnText }}
+                      </button>
+                      <mat-form-field
+                        appearance="fill"
+                        class="example-form-field"
+                        style="visibility: hidden; width: 0"
+                      >
+                        <mat-date-range-input
+                          [rangePicker]="rangePicker"
+                          formGroupName="operand"
+                          class="datepicker"
+                        >
+                          <input
+                            type="button"
+                            matStartDate
+                            name="startDate"
+                            formControlName="startDate"
+                          />
+                          <input
+                            type="button"
+                            matEndDate
+                            name="endDate"
+                            formControlName="endDate"
+                          />
+                        </mat-date-range-input>
+                        <mat-date-range-picker #rangePicker>
+                          <mat-date-range-picker-actions>
+                            <button
+                              mat-button
+                              matDateRangePickerCancel
+                              aria-label="Cancel Date Range"
+                            >
+                              {{ 'cancel' | translate }}
+                            </button>
+                            <button
+                              mat-raised-button
+                              type="submit"
+                              color="primary"
+                              matDateRangePickerApply
+                              aria-label="Apply Date Range"
+                            >
+                              {{ 'apply' | translate }}
+                            </button>
+                          </mat-date-range-picker-actions>
+                        </mat-date-range-picker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div *ngIf="filterForm.value.filterType === 'multi'">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                      <mat-select
+                        multiple
+                        name="inputValue"
+                        formControlName="operand"
+                      >
+                        <mat-option
+                          *ngFor="
+                            let val of this.filteredOptionsByType[
+                              filterForm.value.name
+                            ]
+                          "
+                          [value]="val"
+                          >{{ val }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <div *ngIf="filterForm.value.filterType === 'single'">
+                    <mat-form-field appearance="outline" class="width-100">
+                      <mat-label>{{ filterForm.value.displayName }}</mat-label>
+                      <mat-select name="inputValue" formControlName="operand">
+                        <mat-option
+                          name="singleOperand"
+                          *ngFor="
+                            let val of this.filteredOptionsByType[
+                              filterForm.value.name
+                            ]
+                          "
+                          [value]="val"
+                          >{{ val }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <button
+                    class="save-btn"
+                    mat-raised-button
+                    type="submit"
+                    form="filtersForm"
+                    [disabled]="filterForm.invalid"
+                    aria-label="Save Filter"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </mat-list>
+        </form>
       </div>
       <button
         mat-raised-button
-        color="primary"
-        class="apply-filters-btn"
-        [disabled]="this.applyBtnDisable"
-        (click)="isPopoverOpen = false; searchFilter()"
+        class="btn apply-filters-btn"
+        (click)="applyFilters()"
+        [disabled]="this.applydynamicFiltersBtnDisable"
+        type="button"
         aria-label="Apply Filter"
       >
         {{ 'apply' | translate }}
@@ -116,322 +439,13 @@
       <button
         mat-button
         color="primary"
-        class="reset-filters-btn"
-        [disabled]="this.resetBtnDisable"
-        (click)="form.reset(); clearFilter(); searchFilter()"
+        class="btn reset-filters-btn"
+        [disabled]="this.resetdynamicFiltersBtnDisable"
+        (click)="clearFilters()"
+        aria-label="Cancel Filter"
       >
         {{ 'reset' | translate }}
       </button>
-    </form>
-  </div>
-
-  <div
-    class="filter-report-modal custom-form-field-white-color"
-    *ngIf="this.title === undefined"
-  >
-    <div class="m-b-10 filter-header">
-      <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-      <button
-        class="filter-modal-cancel"
-        (click)="isPopoverOpen = false"
-        aria-label="Close Filter"
-      >
-        <img
-          src="../../../../assets/img/svg/cancel-icon.svg"
-          alt="Close Filter"
-        />
-      </button>
     </div>
-    <div class="filter-form-fields" style="max-height: 350px">
-      <mat-form-field appearance="outline" class="width-100">
-        <mat-icon matPrefix>search</mat-icon>
-        <input
-          type="text"
-          placeholder="Add Filter"
-          matInput
-          [matAutocomplete]="autoCompleteFilter"
-        />
-        <mat-autocomplete #autoCompleteFilter="matAutocomplete">
-          <mat-option
-            *ngFor="let col of dropdownReportColumns; let index = index"
-          >
-            <div (click)="addFilter(col, index)">
-              {{ col.displayName }}
-            </div>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-      <form [formGroup]="filtersForm" (ngSubmit)="onSave()" id="filtersForm">
-        <mat-list
-          role="list"
-          *ngFor="let filterForm of filters.controls; let i = index"
-          formArrayName="filters"
-        >
-          <mat-list-item role="listitem">
-            <ng-container [formGroupName]="i">
-              <mat-form-field
-                appearance="outline"
-                cdkOverlayOrigin
-                #trigger="cdkOverlayOrigin"
-                (click)="openFilterModal(filterForm.value, i)"
-                class="width-100"
-                *ngIf="filterForm.value.filterType !== 'daterange'"
-              >
-                <mat-label>{{ filterForm.value.displayName }}</mat-label>
-                <input
-                  type="text"
-                  placeholder="{{ filterForm.value.displayName }}"
-                  value="{{ filterForm.value.displayText }}"
-                  matInput
-                />
-                <mat-icon
-                  matSuffix
-                  (click)="deleteFilteredField(filterForm.value, i)"
-                  class="delete-icon"
-                >
-                  delete
-                </mat-icon>
-              </mat-form-field>
-            </ng-container>
-            <ng-container [formGroupName]="i">
-              <mat-form-field
-                appearance="outline"
-                cdkOverlayOrigin
-                #trigger="cdkOverlayOrigin"
-                (click)="openFilterModal(filterForm.value, i)"
-                class="width-100"
-                *ngIf="filterForm.value.filterType === 'daterange'"
-              >
-                <mat-label>{{ filterForm.value.displayName }}</mat-label>
-                <input
-                  type="text"
-                  placeholder="{{ filterForm.value.displayName }}"
-                  value="{{ filterForm.value.displayText }}"
-                  matInput
-                />
-                <mat-icon
-                  matSuffix
-                  (click)="deleteFilteredField(filterForm.value, i)"
-                  class="delete-icon"
-                >
-                  delete
-                </mat-icon>
-              </mat-form-field>
-            </ng-container>
-          </mat-list-item>
-          <ng-template
-            cdkConnectedOverlay
-            [cdkConnectedOverlayHasBackdrop]="true"
-            cdkConnectedOverlayPanelClass="custom-popover"
-            cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-            cdkConnectedOverlayWidth="400px"
-            [cdkConnectedOverlayOpen]="isfilterTooltipOpen[i]"
-            [cdkConnectedOverlayOrigin]="trigger"
-            (backdropClick)="isfilterTooltipOpen[i] = false"
-          >
-            <div [formGroupName]="i" class="filter-input-modal">
-              <div class="m-b-10">
-                <span class="filter-modal-heading">
-                  Filter by {{ filterForm.value.displayName }}
-                </span>
-                <button
-                  class="filter-modal-cancel"
-                  type="button"
-                  (click)="isfilterTooltipOpen[i] = false"
-                  aria-label="Close Filter"
-                >
-                  <img
-                    src="../../../../assets/img/svg/cancel-icon.svg"
-                    alt="Close Filter"
-                  />
-                </button>
-              </div>
-              <div>
-                <div
-                  *ngIf="
-                    filterForm.value.filterType !== 'multi' &&
-                    filterForm.value.filterType !== 'single' &&
-                    filterForm.value.filterType !== 'daterange'
-                  "
-                >
-                  <p class="operator-text">Operator</p>
-                  <select
-                    formControlName="operator"
-                    name="operatorType"
-                    class="operator-dropdown"
-                  >
-                    <option
-                      *ngFor="let option of filteredOptionsByType"
-                      value="{{ option }}"
-                    >
-                      {{ option }}
-                    </option>
-                  </select>
-                </div>
-
-                <div *ngIf="filterForm.value.filterType === 'string'">
-                  <mat-form-field appearance="outline" class="width-100">
-                    <input
-                      type="text"
-                      matInput
-                      name="stringOperand"
-                      formControlName="operand"
-                    />
-                  </mat-form-field>
-                </div>
-
-                <div *ngIf="filterForm.value.filterType === 'number'">
-                  <mat-form-field appearance="outline" class="width-100">
-                    <input
-                      type="number"
-                      name="inputValue"
-                      matInput
-                      formControlName="operand"
-                    />
-                  </mat-form-field>
-                </div>
-
-                <div *ngIf="filterForm.value.filterType === 'daterange'">
-                  <mat-form-field appearance="outline" class="width-100">
-                    <mat-select name="inputValue" formControlName="operator">
-                      <mat-option
-                        *ngFor="let val of this.filteredOptionsByType"
-                        [value]="val"
-                        >{{ val }}</mat-option
-                      >
-                    </mat-select>
-                  </mat-form-field>
-
-                  <div *ngIf="filterForm.value.operator === 'custom'">
-                    <button
-                      (focus)="rangePicker.open()"
-                      class="select-date-range-btn"
-                      aria-label="Open Date Range"
-                    >
-                      {{ customBtnText }}
-                    </button>
-                    <mat-form-field
-                      appearance="fill"
-                      class="example-form-field"
-                      style="visibility: hidden; width: 0"
-                    >
-                      <mat-date-range-input
-                        [rangePicker]="rangePicker"
-                        formGroupName="operand"
-                        class="datepicker"
-                      >
-                        <input
-                          type="button"
-                          matStartDate
-                          name="startDate"
-                          formControlName="startDate"
-                        />
-                        <input
-                          type="button"
-                          matEndDate
-                          name="endDate"
-                          formControlName="endDate"
-                        />
-                      </mat-date-range-input>
-                      <mat-date-range-picker #rangePicker>
-                        <mat-date-range-picker-actions>
-                          <button
-                            mat-button
-                            matDateRangePickerCancel
-                            aria-label="Cancel Date Range"
-                          >
-                            {{ 'cancel' | translate }}
-                          </button>
-                          <button
-                            mat-raised-button
-                            type="submit"
-                            color="primary"
-                            matDateRangePickerApply
-                            aria-label="Apply Date Range"
-                          >
-                            {{ 'apply' | translate }}
-                          </button>
-                        </mat-date-range-picker-actions>
-                      </mat-date-range-picker>
-                    </mat-form-field>
-                  </div>
-                </div>
-
-                <div *ngIf="filterForm.value.filterType === 'multi'">
-                  <mat-form-field appearance="outline" class="width-100">
-                    <mat-label>{{ filterForm.value.displayName }}</mat-label>
-                    <mat-select
-                      multiple
-                      name="inputValue"
-                      formControlName="operand"
-                    >
-                      <mat-option
-                        *ngFor="
-                          let val of this.filteredOptionsByType[
-                            filterForm.value.name
-                          ]
-                        "
-                        [value]="val"
-                        >{{ val }}</mat-option
-                      >
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <div *ngIf="filterForm.value.filterType === 'single'">
-                  <mat-form-field appearance="outline" class="width-100">
-                    <mat-label>{{ filterForm.value.displayName }}</mat-label>
-                    <mat-select name="inputValue" formControlName="operand">
-                      <mat-option
-                        name="singleOperand"
-                        *ngFor="
-                          let val of this.filteredOptionsByType[
-                            filterForm.value.name
-                          ]
-                        "
-                        [value]="val"
-                        >{{ val }}</mat-option
-                      >
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <button
-                  class="save-btn"
-                  mat-raised-button
-                  type="submit"
-                  form="filtersForm"
-                  [disabled]="filterForm.invalid"
-                  aria-label="Save Filter"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </ng-template>
-        </mat-list>
-      </form>
-    </div>
-    <button
-      mat-raised-button
-      color="primary"
-      class="btn apply-filters-btn"
-      (click)="applyFilters()"
-      [disabled]="this.applydynamicFiltersBtnDisable"
-      type="button"
-      aria-label="Apply Filter"
-    >
-      {{ 'apply' | translate }}
-    </button>
-    <button
-      mat-button
-      color="primary"
-      class="btn reset-filters-btn"
-      [disabled]="this.resetdynamicFiltersBtnDisable"
-      (click)="clearFilters()"
-      aria-label="Cancel Filter"
-    >
-      {{ 'reset' | translate }}
-    </button>
-  </div>
-</ng-template>
+  </ng-template>
+</ng-container>

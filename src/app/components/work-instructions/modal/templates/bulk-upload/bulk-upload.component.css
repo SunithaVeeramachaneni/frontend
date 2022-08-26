@@ -47,7 +47,6 @@ ul.bulk-upload-instructions-list li {
   font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
-  text-transform: uppercase;
   color: #76767b;
   background-color: transparent;
   border: none;
@@ -59,7 +58,6 @@ ul.bulk-upload-instructions-list li {
   font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
-  text-transform: uppercase;
   color: #1351d8;
   background-color: transparent;
   border: none;
@@ -70,7 +68,6 @@ ul.bulk-upload-instructions-list li {
   font-size: 100%;
   line-height: 24px;
   letter-spacing: 0.3px;
-  text-transform: uppercase;
   color: #ffffff;
   background: #1351d8;
   border-radius: 4px;

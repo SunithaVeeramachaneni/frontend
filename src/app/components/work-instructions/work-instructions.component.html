@@ -5,7 +5,7 @@
   <div *ngIf="currentRouteUrl === routingUrls.workInstructions.url">
     <div class="bg-white work-instructions-header custom-form-field-gray-color">
       <mat-form-field appearance="outline" class="search-field">
-        <mat-icon matPrefix class="search-icon">search</mat-icon>
+        <mat-icon matPrefix class="searchIcon">search</mat-icon>
         <input
           matInput
           [(ngModel)]="searchCriteria"
@@ -24,8 +24,12 @@
             routerLink="/work-instructions/create"
             *appCheckUserHasPermission="[permissions.createWorkInstruction]"
           >
-            <img src="assets/work-instructions-icons/svg/createwi.svg" alt="" />
-            <span class="data"> CREATE WORK INSTRUCTION </span>
+            <img
+              src="assets/work-instructions-icons/svg/createwi.svg"
+              alt=""
+              class="create-wi-img"
+            />
+            <span class="data"> Create Work Instruction </span>
           </mat-button-toggle>
           <mat-button-toggle
             [matMenuTriggerFor]="menu"

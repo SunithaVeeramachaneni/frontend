@@ -66,7 +66,7 @@ export class ChartComponent {
     },
     plugins: {
       legend: {
-        position: 'right'
+        position: 'bottom'
       },
       title: {
         display: true,

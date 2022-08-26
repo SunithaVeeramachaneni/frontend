@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { Permission } from '../../interfaces';
 import { routingUrls } from '../../app.constants';
 import { HeaderService } from '../../shared/services/header.service';
@@ -25,6 +25,7 @@ export class HomeComponent implements OnInit {
     this.loginService.loggedInUserInfo$
       .pipe(
         filter((userInfo) => userInfo && Object.keys(userInfo).length !== 0),
+        take(1),
         tap(({ permissions }) => {
           this.permissions = permissions;
           const returnUrl = sessionStorage.getItem('returnUrl');

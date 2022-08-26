@@ -61,6 +61,7 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportConfigurationComponent implements OnInit {
+  title = 'Report Configuration';
   disableReportName = true;
   isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;

@@ -310,7 +310,7 @@ describe('WorkInstructionsComponent', () => {
       const matButtonToggle = homeEl.querySelectorAll('mat-button-toggle');
       expect(matButtonToggle.length).toBe(2);
       expect(matButtonToggle[0].textContent).toContain(
-        'CREATE WORK INSTRUCTION'
+        'Create Work Instruction'
       );
       expect(matButtonToggle[0].getAttribute('routerLink')).toBe(
         '/work-instructions/create'
@@ -379,7 +379,7 @@ describe('WorkInstructionsComponent', () => {
       const matButtonToggle = homeEl.querySelectorAll('mat-button-toggle');
       expect(matButtonToggle.length).toBe(2);
       expect(matButtonToggle[0].textContent).toContain(
-        'CREATE WORK INSTRUCTION'
+        'Create Work Instruction'
       );
       expect(matButtonToggle[0].getAttribute('routerLink')).toBe(
         '/work-instructions/create'
@@ -433,7 +433,7 @@ describe('WorkInstructionsComponent', () => {
       const matButtonToggle = homeEl.querySelectorAll('mat-button-toggle');
       expect(matButtonToggle.length).toBe(2);
       expect(matButtonToggle[0].textContent).toContain(
-        'CREATE WORK INSTRUCTION'
+        'Create Work Instruction'
       );
       expect(matButtonToggle[0].getAttribute('routerLink')).toBe(
         '/work-instructions/create'

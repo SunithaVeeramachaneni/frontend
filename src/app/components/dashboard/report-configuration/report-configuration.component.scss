@@ -53,13 +53,6 @@
   margin-bottom: 10px;
 }
 
-.search-icon {
-  position: relative;
-  top: 1px;
-  margin-right: 5px;
-  color: #757575;
-}
-
 .group-by-div {
   border: 1px solid #eeeeee;
   padding: 15px;
@@ -211,12 +204,21 @@
   .report-configuration
   .mat-checkbox-checked.mat-accent
   .mat-checkbox-background {
-  background-color: rgba(0, 0, 0, 0.54) !important;
+  background-color: gray !important;
 }
 
 ::ng-deep .report-configuration .mat-checkbox-frame {
   border-width: 2px;
   border-color: #6e6f75;
+}
+
+::ng-deep
+  .report-configuration
+  .mat-list-base
+  .mat-list-item
+  .mat-list-item-content,
+.mat-list-base .mat-list-option .mat-list-item-content {
+  padding: 5px;
 }
 
 .m-t-3 {
@@ -275,6 +277,41 @@
   ::ng-deep .mat-tab-label {
     height: 36px !important;
     width: 50%;
+    min-width: auto;
     opacity: 1;
   }
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner-class:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 25px;
+  height: 25px;
+  margin-top: -12px;
+  margin-left: -12px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: white;
+  background: transparent;
+  animation: spinner 0.8s linear infinite;
+}
+
+.btn-background {
+  background: rgba(33, 33, 33, 0.5);
+  margin: 0px 3px;
+  border: none;
+  padding: 0px 10px;
+  height: 35px;
+  position: relative;
+  top: -5px;
+  width: 42px;
 }

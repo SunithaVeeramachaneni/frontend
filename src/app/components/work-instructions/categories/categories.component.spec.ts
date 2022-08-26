@@ -265,7 +265,7 @@ describe('CategoriesComponent', () => {
       ).toContain('Categories');
       expect(
         categoriesEl.querySelector('.categories-header').textContent
-      ).toContain('ADD CATEGORY');
+      ).toContain('Add Category');
       expect(
         categoriesEl
           .querySelector('div.categories-row-heading>img')
