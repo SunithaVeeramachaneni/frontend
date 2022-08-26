@@ -92,14 +92,14 @@
             alt="right-arrow-icon"
             class="arrow-icons"
             *ngIf="!opened[i]['sub'][subindex]"
-            (click)="opened[i]['sub'][subindex] = true; test()"
+            (click)="opened[i]['sub'][subindex] = true"
           />
           <img
             src="assets/user-management-icons/down-arrow.svg"
             alt="down-arrow-icon"
             class="arrow-icons"
             *ngIf="opened[i]['sub'][subindex]"
-            (click)="opened[i]['sub'][subindex] = false; test()"
+            (click)="opened[i]['sub'][subindex] = false"
           />
         </div>
 

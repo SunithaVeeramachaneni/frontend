@@ -92,6 +92,10 @@
   color: #25282b;
   margin-bottom: 5px;
   text-decoration: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  width: 90%;
 }
 
 .categories-Wicount {
