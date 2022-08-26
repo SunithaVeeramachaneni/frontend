@@ -41,7 +41,7 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 @Component({
   selector: 'app-add-workinstruction',
   templateUrl: './add-workinstruction.component.html',
-  styleUrls: ['./add-workinstruction.component.css']
+  styleUrls: ['./add-workinstruction.component.scss']
 })
 export class AddWorkinstructionComponent
   implements OnInit, AfterViewInit, OnDestroy

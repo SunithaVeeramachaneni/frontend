@@ -23,7 +23,6 @@ export class CommonFilterComponent implements OnChanges {
   @Input() filtersApplied;
   @Input() priorityList;
   @Input() kitStatusList;
-  @Input() workCenterList;
   @Input() technicians;
   @Input() reportColumns;
   @Input() filterOptions;
@@ -40,7 +39,6 @@ export class CommonFilterComponent implements OnChanges {
   public priority = [];
   public showOverdue = '';
   public kitStatus = [];
-  public workCenter = [];
   public assign = [];
   public resetBtnDisable = true;
   public applyBtnDisable = true;
@@ -173,25 +171,12 @@ export class CommonFilterComponent implements OnChanges {
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64Image);
   };
 
-  onCenterChange = (event) => {
-    const workCenters = event.value;
-    this.displayedAssigneeList = [];
-    workCenters.forEach((workCenter) => {
-      this.displayedAssigneeList = this.arrayUnion(
-        this.technicians[workCenter.workCenterKey],
-        this.displayedAssigneeList,
-        'personName'
-      );
-    });
-  };
-
   searchFilter() {
     this.commonFilterService.searchFilter({
       search: this.searchValue,
       priority: this.priority,
       showOverdue: this.showOverdue,
       kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
       assign: this.assign
     });
   }
@@ -217,7 +202,6 @@ export class CommonFilterComponent implements OnChanges {
       priority: this.priority,
       showOverdue: this.showOverdue,
       kitStatus: this.kitStatus,
-      workCenter: this.workCenter,
       assign: this.assign
     });
     this.applyFilters();
@@ -229,7 +213,6 @@ export class CommonFilterComponent implements OnChanges {
   };
 
   clearFilter = () => {
-    this.workCenter = [];
     this.resetBtnDisable = true;
     this.applyBtnDisable = true;
   };

@@ -81,6 +81,7 @@
   "sapUrls": " SAP URLs",
   "nodeUrls": "Node URLs",
   "url": "URL",
+  "prefix": "Prefix",
   "host": "Host",
   "port": "Port",
   "user": "User",

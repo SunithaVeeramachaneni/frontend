@@ -1,8 +1,4 @@
-<div
-  class="chart-wrapper"
-  [ngStyle]="{ 'height.px': height - 75 }"
-  *ngIf="!widget.isTable"
->
+<div class="chart-wrapper" *ngIf="!widget.isTable">
   <ng-container
     *ngIf="
       chartConfig && chartConfig.countFieldName && chartConfig.datasetFieldName;
