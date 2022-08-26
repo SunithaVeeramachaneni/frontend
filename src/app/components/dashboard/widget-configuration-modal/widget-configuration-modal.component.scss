@@ -1,5 +1,5 @@
 .widget-config-modal {
-  width: 700px;
+  width: 800px;
   max-width: 800px;
   min-height: 430px;
   background: white;
@@ -11,6 +11,7 @@
   border-bottom: 1px solid #e5e5e5;
   height: 345px;
   overflow: hidden;
+  padding-right: 0;
 }
 
 .widget-config-title {
@@ -52,18 +53,6 @@
   text-align: center;
   position: relative;
   top: 30%;
-}
-
-.save-btn {
-  position: absolute;
-  bottom: 23%;
-  right: 35%;
-}
-
-.close-btn {
-  position: relative;
-  top: 15px;
-  float: right;
 }
 
 .chart-wrapper {
@@ -126,4 +115,9 @@
 
 ::ng-deep .widget-config-modal mat-error {
   margin: 5px 0;
+}
+
+.widget-save-btn {
+  background-color: #3d5afe;
+  color: #ffffff;
 }

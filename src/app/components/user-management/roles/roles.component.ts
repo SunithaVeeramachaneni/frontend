@@ -339,13 +339,23 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   saveRole(formData, roleId) {
     const updatedPermissionIDs = [];
     const updatedPermissions = [];
-    for (const module of this.updatedPermissions) {
-      for (const permission of module.permissions) {
-        if (permission.checked === true)
+
+    this.updatedPermissions.forEach((module) => {
+      module.permissions.forEach((permission) => {
+        if (permission.checked === true) {
           updatedPermissionIDs.push(permission.id);
-        updatedPermissions.push(permission);
-      }
-    }
+          updatedPermissions.push(permission);
+        }
+      });
+      module.subPermissions.forEach((subpermission) => {
+        subpermission.permissions.forEach((per) => {
+          if (per.checked === true) {
+            updatedPermissionIDs.push(per.id);
+            updatedPermissions.push(per);
+          }
+        });
+      });
+    });
     this.roleForm.controls.description.markAsPristine();
     this.roleForm.controls.name.markAsPristine();
     this.copyDisabled = false;

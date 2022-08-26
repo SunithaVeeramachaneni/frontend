@@ -1,16 +1,19 @@
 <div class="report-delete-modal">
-  <p class="title">Delete Report?</p>
+  <p class="title" translate="deleteReport"></p>
   <p *ngIf="widgetCount" class="warning-body">
-    Do you want to delete report <b>{{ reportName }}</b> & its
+    <span translate="warningText1"></span>
+    <span class="widgets-bold-text">{{ reportName }}</span>
+    <span translate="warningText2"></span>
     <span
       class="widgets-associated-text"
       cdkOverlayOrigin
       #trigger="cdkOverlayOrigin"
       (click)="isPopoverOpen = !isPopoverOpen"
     >
-      {{ widgetCount }} associated
+      {{ widgetCount }}
     </span>
-    Widgets?
+    <span translate="warningText3"></span>
+    <span translate="warningText4"></span>
     <ng-template
       cdkConnectedOverlay
       cdkConnectedOverlayPanelClass="custom-popover"
@@ -23,7 +26,7 @@
     >
       <div class="widgets-modal">
         <div class="header custom-form-field-gray-color">
-          <span class="widgets-heading">Widgets</span>
+          <span class="widgets-heading" translate="widgets"></span>
           <button (click)="isPopoverOpen = false" class="widgets-cancel">
             <img src="../../../../../assets/img/svg/cancel-icon.svg" />
           </button>
@@ -31,7 +34,7 @@
             appearance="outline"
             style="width: 100%; margin-top: 10px"
           >
-            <mat-icon matPrefix class="search-icon">search</mat-icon>
+            <mat-icon matPrefix class="searchIcon">search</mat-icon>
             <input
               matInput
               [placeholder]="'searchDashboardOrWidgets' | translate"
@@ -57,27 +60,25 @@
     </ng-template>
   </p>
   <p *ngIf="!widgetCount" class="warning-body">
-    Do you want to delete report <b>{{ reportName }}</b
+    <span translate="deleteWarning"></span> <b>{{ reportName }}</b
     >?
   </p>
   <p class="warning-body">
-    <b>Note:</b> Deletion of any report will also delete its widgets
+    <b><span translate="note"></span></b>
+    <span translate="deleteText"></span>
   </p>
   <button
     mat-raised-button
-    color="warn"
-    class="yes-no-btn"
+    class="yes-btn"
     (click)="deleteReport()"
-  >
-    Yes
-  </button>
+    translate="yes"
+  ></button>
   <button
     mat-button
     color="primary"
     class="yes-no-btn"
     autofocus="false"
     mat-dialog-close
-  >
-    No
-  </button>
+    translate="no"
+  ></button>
 </div>
