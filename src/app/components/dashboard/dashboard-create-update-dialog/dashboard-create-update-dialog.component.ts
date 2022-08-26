@@ -70,7 +70,10 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
       let existingDashboard: any = null;
       existingDashboard = this.dashboardService
         .getDashboards()
-        .find((db: any) => db.name === control.value.trim());
+        .find(
+          (db: any) =>
+            db.name.toLowerCase() === control.value.trim().toLowerCase()
+        );
       if (
         this.dialogData.dialogMode === 'EDIT' &&
         this.dialogData.data.name === control.value.trim()

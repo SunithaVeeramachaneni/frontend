@@ -61,14 +61,20 @@ export interface Saml {
 }
 
 export interface Nosql {
+  prefix: string;
   host: string;
-  port: number;
+  port?: number;
   user: string;
   password: string;
   database: string;
 }
 
-export interface Rdbms extends Nosql {
+export interface Rdbms {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
   dialect: string;
 }
 

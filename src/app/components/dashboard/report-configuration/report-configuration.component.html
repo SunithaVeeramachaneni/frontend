@@ -107,11 +107,8 @@
       <div class="dis-flex">
         <div class="width-50">
           <app-common-filter
-            [title]=""
-            [filtersApplied]="reportDetails.report?.filtersApplied"
+            [title]="title"
             [reportColumns]="this.reportColumns"
-            [filterOptions]="reportDetails.report?.filterOptions"
-            (appliedFilters)="applyFilter($event)"
           >
           </app-common-filter>
           <div class="no-of-records">
@@ -141,7 +138,7 @@
             mat-stroked-button
             color="primary"
             class="report-button"
-            matTooltip="undo"
+            matTooltip="Undo"
             matTooltipClass=""
             (click)="undo($event)"
             [disabled]="!undoRedoUtil.undoSize()"
@@ -154,7 +151,7 @@
             color="primary"
             class="report-button"
             (click)="redo($event)"
-            matTooltip="redo"
+            matTooltip="Redo"
             matTooltipClass=""
             [disabled]="!undoRedoUtil.redoSize()"
             aria-label="Redo"
@@ -219,12 +216,14 @@
             [disabled]="!reportDetails.report?.id || isExportInProgress"
             (click)="downloadReport($event)"
             *appCheckUserHasPermission="[permissions.reportExportToExcel]"
+            [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
             aria-label="Export to Excel"
           >
-            <img src="assets/dashboard-icons/export.svg" alt="Export Report" />
-            <mat-icon class="export-btn-loader" *ngIf="isExportInProgress">
-              <mat-spinner strokeWidth="2" diameter="20"></mat-spinner>
-            </mat-icon>
+            <img
+              src="assets/dashboard-icons/export.svg"
+              alt="Export Report"
+              *ngIf="!isExportInProgress"
+            />
           </button>
           <button
             mat-stroked-button

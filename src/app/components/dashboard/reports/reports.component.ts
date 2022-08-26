@@ -237,6 +237,10 @@ export class ReportsComponent implements OnInit {
         this.reportService.deleteReport$(deleteReportID).subscribe((resp) => {
           this.removeReport(deleteReportID);
           this.changeReportCount$.next('decrease');
+          this.toast.show({
+            text: 'Report deleted successfully',
+            type: 'success'
+          });
         });
       }
     });

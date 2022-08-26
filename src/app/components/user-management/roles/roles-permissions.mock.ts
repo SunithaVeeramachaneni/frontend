@@ -96,69 +96,77 @@ export const allPermissions = [
         createdAt: '2022-06-16T17:00:05.000Z',
         updatedAt: '2022-06-16T17:00:05.000Z',
         checked: true
-      },
-      {
-        id: 6,
-        name: 'VIEW_REPORTS',
-        displayName: 'Display Reports',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
-      },
-      {
-        id: 7,
-        name: 'CREATE_REPORT',
-        displayName: 'Create Report',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
-      },
-      {
-        id: 8,
-        name: 'UPDATE_REPORT',
-        displayName: 'Update Report',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
-      },
-      {
-        id: 9,
-        name: 'DELETE_REPORT',
-        displayName: 'Delete Report',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
-      },
-      {
-        id: 10,
-        name: 'COPY_REPORT',
-        displayName: 'Copy Report',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
-      },
-      {
-        id: 11,
-        name: 'REPORT_EXPORT_TO_EXCEL',
-        displayName: 'Export to Excel',
-        moduleName: 'Dashboard',
-        subModuleName: 'Reports',
-        createdAt: '2022-06-16T17:00:05.000Z',
-        updatedAt: '2022-06-16T17:00:05.000Z',
-        checked: true
       }
     ],
-    checked: true
+    checked: true,
+    subPermissions: [
+      {
+        name: 'Reports',
+        checked: true,
+        permissions: [
+          {
+            id: 6,
+            name: 'VIEW_REPORTS',
+            displayName: 'Display Reports',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          },
+          {
+            id: 7,
+            name: 'CREATE_REPORT',
+            displayName: 'Create Report',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          },
+          {
+            id: 8,
+            name: 'UPDATE_REPORT',
+            displayName: 'Update Report',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          },
+          {
+            id: 9,
+            name: 'DELETE_REPORT',
+            displayName: 'Delete Report',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          },
+          {
+            id: 10,
+            name: 'COPY_REPORT',
+            displayName: 'Copy Report',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          },
+          {
+            id: 11,
+            name: 'REPORT_EXPORT_TO_EXCEL',
+            displayName: 'Export to Excel',
+            moduleName: 'Dashboard',
+            subModuleName: 'Reports',
+            createdAt: '2022-06-16T17:00:05.000Z',
+            updatedAt: '2022-06-16T17:00:05.000Z',
+            checked: true
+          }
+        ]
+      }
+    ]
   },
   {
     name: 'User Management',
@@ -202,69 +210,83 @@ export const allPermissions = [
         createdAt: '2022-06-21T09:45:35.000Z',
         updatedAt: '2022-06-21T09:45:35.000Z',
         checked: false
-      },
-      {
-        id: 23,
-        name: 'VIEW_ROLES',
-        displayName: 'Display Roles',
-        moduleName: 'User Management',
-        subModuleName: 'Roles & Permissions',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
-      },
-      {
-        id: 24,
-        name: 'CREATE_ROLE',
-        displayName: 'Create Role',
-        moduleName: 'User Management',
-        subModuleName: 'Roles & Permissions',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
-      },
-      {
-        id: 25,
-        name: 'UPDATE_ROLE',
-        displayName: 'Update Role',
-        moduleName: 'User Management',
-        subModuleName: 'Roles & Permissions',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
-      },
-      {
-        id: 26,
-        name: 'DELETE_ROLE',
-        displayName: 'Delete Role',
-        moduleName: 'User Management',
-        subModuleName: 'Roles & Permissions',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
-      },
-      {
-        id: 27,
-        name: 'COPY_ROLE',
-        displayName: 'Copy Role',
-        moduleName: 'User Management',
-        subModuleName: 'Roles & Permissions',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
-      },
-      {
-        id: 28,
-        name: 'VIEW_INACTIVE_USERS',
-        displayName: 'Display Inactive Users',
-        moduleName: 'User Management',
-        subModuleName: 'Inactive Users',
-        createdAt: '2022-06-21T09:45:35.000Z',
-        updatedAt: '2022-06-21T09:45:35.000Z',
-        checked: false
       }
     ],
-    checked: false
+    checked: false,
+    subPermissions: [
+      {
+        name: 'Roles & Permissions',
+        checked: false,
+        permissions: [
+          {
+            id: 23,
+            name: 'VIEW_ROLES',
+            displayName: 'Display Roles',
+            moduleName: 'User Management',
+            subModuleName: 'Roles & Permissions',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          },
+          {
+            id: 24,
+            name: 'CREATE_ROLE',
+            displayName: 'Create Role',
+            moduleName: 'User Management',
+            subModuleName: 'Roles & Permissions',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          },
+          {
+            id: 25,
+            name: 'UPDATE_ROLE',
+            displayName: 'Update Role',
+            moduleName: 'User Management',
+            subModuleName: 'Roles & Permissions',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          },
+          {
+            id: 26,
+            name: 'DELETE_ROLE',
+            displayName: 'Delete Role',
+            moduleName: 'User Management',
+            subModuleName: 'Roles & Permissions',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          },
+          {
+            id: 27,
+            name: 'COPY_ROLE',
+            displayName: 'Copy Role',
+            moduleName: 'User Management',
+            subModuleName: 'Roles & Permissions',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          }
+        ]
+      },
+      {
+        name: 'Inactive Users',
+        checked: false,
+        permissions: [
+          {
+            id: 28,
+            name: 'VIEW_INACTIVE_USERS',
+            displayName: 'Display Inactive Users',
+            moduleName: 'User Management',
+            subModuleName: 'Inactive Users',
+            createdAt: '2022-06-21T09:45:35.000Z',
+            updatedAt: '2022-06-21T09:45:35.000Z',
+            checked: false
+          }
+        ]
+      }
+    ]
   }
 ];
 export const allPermissions$ = of(allPermissions);

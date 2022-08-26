@@ -1,3 +1,5 @@
+@import '../../../../../../scss/colors.scss';
+
 .modal-card {
   width: 460px;
   background-color: #ffffff;
@@ -142,7 +144,7 @@ label {
 
 /* CHECKED STYLES */
 [type='radio']:checked + img {
-  border: 4px solid #1351d8;
+  border: 4px solid $blue-main;
   border-radius: 4px;
   opacity: 1;
 }
@@ -150,7 +152,7 @@ label {
 .save-btn {
   width: 160px;
   height: 36px;
-  background: #1351d8;
+  background: $blue-main;
   border-radius: 8px;
 
   font-style: normal;
@@ -166,7 +168,7 @@ label {
 }
 
 .save-btn:hover {
-  background-color: #2624ad;
+  background-color: $blue-main;
 }
 
 .save-btn:disabled {
