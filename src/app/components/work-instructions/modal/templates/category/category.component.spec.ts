@@ -135,7 +135,7 @@ describe('CategoryComponent', () => {
         'Upload your own'
       );
       expect(categoryEl.querySelector('.modal-card').textContent).toContain(
-        'SAVE'
+        'Save'
       );
       expect(categoryEl.querySelector('img').getAttribute('src')).toContain(
         'upload.svg'
