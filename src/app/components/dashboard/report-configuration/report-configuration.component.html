@@ -217,8 +217,13 @@
             (click)="downloadReport($event)"
             *appCheckUserHasPermission="[permissions.reportExportToExcel]"
             [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
+            aria-label="Export to Excel"
           >
-            <img src="assets/dashboard-icons/export.svg" *ngIf="!isExportInProgress"/>
+            <img
+              src="assets/dashboard-icons/export.svg"
+              alt="Export Report"
+              *ngIf="!isExportInProgress"
+            />
           </button>
           <button
             mat-stroked-button

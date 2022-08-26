@@ -64,16 +64,6 @@ export class PermissionsComponent implements OnChanges {
 
     if (changes.allPermissions$) {
       this.allPermissions$ = changes.allPermissions$.currentValue;
-      if (changes.allPermissions$.firstChange) {
-        this.allPermissions$.pipe(
-          tap((allPermissions) => {
-            this.opened = Array(allPermissions.length).fill({
-              main: false,
-              sub: []
-            });
-          })
-        );
-      }
     }
 
     const permissionObservable = combineLatest([

@@ -65,5 +65,16 @@
   "dashboardTitleExists": "Dashboard Title already exists",
   "errorDeletingText": "Error Deleting Dashboard",
   "cannotDeleteText": "Selected dashboard is marked as default, change the default dashboard and delete it",
-  "widgetsText": "Widgets"
+  "widgetsText": "Widgets",
+  "deleteReport": "Delete Report?",
+  "warningText1": " Do you want to delete report ",
+  "warningText2": " & its ",
+  "warningText3": " associated ",
+  "warningText4": " Widgets? ",
+  "widgets": "Widgets",
+  "deleteWarning": "Do you want to delete report",
+  "note": "Note:",
+  "deleteText": "Deletion of any report will also delete its widgets",
+  "yesBtn": "Yes",
+  "noBtn": "No"
 }
