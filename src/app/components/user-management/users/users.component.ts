@@ -78,6 +78,7 @@ export class UsersComponent implements OnInit {
       id: 'displayRoles',
       displayName: 'Role',
       type: 'string',
+      isMultiValued: true,
       order: 2,
       hasSubtitle: false,
       showMenuOptions: true,
