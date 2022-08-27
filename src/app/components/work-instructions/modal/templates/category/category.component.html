@@ -36,23 +36,28 @@
                   f.title.errors && (f.title.dirty || f.title.touched)
               }"
             />
-            <div
-              *ngIf="f.title.errors && (f.title.dirty || f.title.touched)"
-              class="invalid-feedback"
-            >
-              <div *ngIf="f.title.errors.required">Title is required</div>
-              <div *ngIf="f.title.errors.minlength">
-                Title must be at least 3 characters
+            <div class="dis-flex h-30">
+              <div
+                *ngIf="f.title.errors && (f.title.dirty || f.title.touched)"
+                class="invalid-feedback m-t-2"
+              >
+                <div *ngIf="f.title.errors.required">Title is required</div>
+                <div *ngIf="f.title.errors.minlength">
+                  Title must be at least 3 characters
+                </div>
+                <div *ngIf="f.title.errors.maxlength">
+                  Title must be at the max of 48 characters
+                </div>
+                <div *ngIf="f.title.errors.categoryNameExists">
+                  Category name already exists
+                </div>
+                <div *ngIf="f.title.errors.pattern">
+                  No special characters are allowed
+                </div>
               </div>
-              <div *ngIf="f.title.errors.maxlength">
-                Title must be at the max of 48 characters
+              <div class="has-text-right char-count max-count m-t-5">
+                {{ f.title.value.length }}/48
               </div>
-              <div *ngIf="f.title.errors.categoryNameExists">
-                Category name already exists
-              </div>
-            </div>
-            <div class="has-text-right char-count">
-              {{ f.title.value.length }}/48
             </div>
           </div>
           <div class="form-group">
