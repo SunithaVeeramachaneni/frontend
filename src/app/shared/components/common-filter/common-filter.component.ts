@@ -54,6 +54,16 @@ export class CommonFilterComponent implements OnChanges {
   public dateRangeText: any;
   public customBtnText = 'Select the Date Range';
 
+  debouncedSearchReport = debounce(
+    (newValue) => this.searchOrder(newValue),
+    2500
+  );
+
+  debouncedSearchOrder = debounce(
+    (newValue) => this.searchOrder(newValue),
+    500
+  );
+
   constructor(
     private formBuilder: FormBuilder,
     private commonFilterService: CommonFilterService,
@@ -181,11 +191,6 @@ export class CommonFilterComponent implements OnChanges {
     });
   }
 
-  debouncedSearchOrder = debounce(
-    (newValue) => this.searchOrder(newValue),
-    2500
-  );
-
   selectedFilterValue(selectedValue) {
     if (selectedValue === '' || selectedValue.length === 0) {
       this.resetBtnDisable = true;
@@ -235,7 +240,7 @@ export class CommonFilterComponent implements OnChanges {
       this.resetdynamicFiltersBtnDisable = true;
       this.applydynamicFiltersBtnDisable = true;
     }
-    if (this.filtersApplied.length == 0) {
+    if (this.filtersApplied.length === 0) {
       this.appliedFilters.emit({
         filters: this.filtersApplied,
         searchKey: this.searchValue
