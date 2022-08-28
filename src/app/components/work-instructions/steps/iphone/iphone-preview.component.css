@@ -283,7 +283,7 @@
 }
 .header-right {
   text-align: right;
-  right: 25px;
+  right: 50px;
 }
 .header-right-icon {
   margin-right: -25px;
@@ -334,9 +334,8 @@
   color: #3678af;
   width: 25px;
   height: 25px;
-  padding: 7px 6px 0px 0px;
   border-radius: 50%;
-  font-size: 120%;
+  font-size: 170%;
 }
 
 .icons {

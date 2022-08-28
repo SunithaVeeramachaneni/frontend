@@ -67,7 +67,8 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.minLength(3),
-          Validators.maxLength(48)
+          Validators.maxLength(48),
+          Validators.pattern(/^[a-zA-Z0-9@&()_ ,./-]+$/)
         ],
         this.validateCategoryName.bind(this)
       ),

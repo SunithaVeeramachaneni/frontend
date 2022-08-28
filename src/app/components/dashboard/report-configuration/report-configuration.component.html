@@ -108,7 +108,9 @@
         <div class="width-50">
           <app-common-filter
             [title]="title"
+            [filtersApplied]="reportDetails.report?.filtersApplied"
             [reportColumns]="this.reportColumns"
+            (appliedFilters)="applyFilter($event)"
           >
           </app-common-filter>
           <div class="no-of-records">
