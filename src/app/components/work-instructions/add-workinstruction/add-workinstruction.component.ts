@@ -215,10 +215,8 @@ export class AddWorkinstructionComponent
           var format = /^[a-zA-Z0-9 @&()_,./-]+$/;
 
           if (!this.wi_title.match(format)) {
-            console.log(this.wi_title);
             this.titleErrors = { ...this.titleErrors, pattern: true };
           } else {
-            console.log(this.wi_title);
             this.titleErrors = { ...this.titleErrors, pattern: false };
           }
           if (
