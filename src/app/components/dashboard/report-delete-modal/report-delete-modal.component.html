@@ -60,7 +60,7 @@
     </ng-template>
   </p>
   <p *ngIf="!widgetCount" class="warning-body">
-    <span translate="deleteWarning"></span> <b>{{ reportName }}</b
+    <span translate="deleteWarning"></span><b> {{ reportName }}</b
     >?
   </p>
   <p class="warning-body">
@@ -69,6 +69,7 @@
   </p>
   <button
     mat-raised-button
+    color="warn"
     class="yes-btn"
     (click)="deleteReport()"
     translate="yes"
