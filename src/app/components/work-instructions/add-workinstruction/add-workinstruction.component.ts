@@ -86,7 +86,12 @@ export class AddWorkinstructionComponent
   public publisheddata = false;
   isWIPublished = false;
   titleTextChanged = new Subject<string>();
-  titleErrors: any = { exists: false, required: false };
+  titleErrors: any = {
+    exists: false,
+    required: false,
+    maxlength: false,
+    pattern: false
+  };
   addOrUpdateTitle = false;
   fileInfo: FileInfo;
   readonly permissions = permissions;
@@ -201,7 +206,27 @@ export class AddWorkinstructionComponent
             this.titleErrors = { ...this.titleErrors, exists: false };
           }
 
-          if (this.addOrUpdateTitle && !this.titleErrors.exists) {
+          if (this.wi_title.length > 50) {
+            this.titleErrors = { ...this.titleErrors, maxLength: true };
+          } else {
+            this.titleErrors = { ...this.titleErrors, maxLength: false };
+          }
+
+          var format = /^[a-zA-Z0-9 @&()_,./-]+$/;
+
+          if (!this.wi_title.match(format)) {
+            console.log(this.wi_title);
+            this.titleErrors = { ...this.titleErrors, pattern: true };
+          } else {
+            console.log(this.wi_title);
+            this.titleErrors = { ...this.titleErrors, pattern: false };
+          }
+          if (
+            this.addOrUpdateTitle &&
+            !this.titleErrors.exists &&
+            !this.titleErrors.maxLength &&
+            !this.titleErrors.pattern
+          ) {
             this.addTitleToInstruction();
           }
         },
