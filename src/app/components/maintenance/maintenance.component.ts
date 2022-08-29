@@ -175,20 +175,24 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     this.dateRange$ = new BehaviorSubject(
       this._dateSegmentService.getStartAndEndDate('month')
     );
+    this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters().pipe(
+      tap((resp) => {
+        this.workCenterList = resp;
+      }),
+      share()
+    );
     this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
       tap((plants) => {
         this.allPlants = plants;
         this.plantFilter.patchValue([...plants, 0]);
-      })
-    );
-    this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters().pipe(
-      tap((resp) => {
-        this.workCenterList = resp;
-      })
+      }),
+      share()
     );
     this.technicianSubscription = this.maintenanceSvc
       .getTechnicians()
+      .pipe(share())
       .subscribe((resp) => {
+        console.log('Resp', resp);
         this.technicians = resp;
       });
     this.currentWorkCenters$ = combineLatest([
@@ -403,7 +407,7 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
       return false;
     } else {
       return filter.some(
-        (item) => item.plantId === plant && item.workCenterKey === workCenter
+        (item) => item.workCenterKey === workCenter && item.plantId === plant
       );
     }
   };
