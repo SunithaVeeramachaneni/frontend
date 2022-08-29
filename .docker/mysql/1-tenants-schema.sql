@@ -27,7 +27,7 @@ create table catalogs(
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NULL,
   slackTeamID VARCHAR(100) NOT NULL,
-  collaborationType VARCHAR(25) DEFAULT NOT NULL,
+  collaborationType VARCHAR(25) NOT NULL,
   slackConfiguration JSON DEFAULT NULL,
   msTeamsConfiguration JSON DEFAULT NULL,
   PRIMARY KEY ( id ),

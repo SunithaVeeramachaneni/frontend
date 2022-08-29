@@ -145,7 +145,10 @@
       class="widget-save-btn"
       (click)="saveWidget()"
       [disabled]="
-        !selectedReport || widgetConfigForm.invalid || !isChartVarientFormValid
+        !selectedReport ||
+        widgetConfigForm.invalid ||
+        widgetConfigForm.pristine ||
+        !isChartVarientFormValid
       "
       *appCheckUserHasPermission="[
         permissions.createDashboard,

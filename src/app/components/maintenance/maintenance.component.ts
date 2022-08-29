@@ -17,14 +17,9 @@ import {
   Subscription,
   throwError
 } from 'rxjs';
-import {
-  FormControl,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors
-} from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
-import { map, startWith, mergeMap, retryWhen, take, tap } from 'rxjs/operators';
+import { map, startWith, retryWhen, tap, catchError } from 'rxjs/operators';
 import { ModalComponent } from './modal/modal.component';
 import { WorkCenter } from '../../interfaces/work-center';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -263,20 +258,29 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
         }),
         retryWhen((error) =>
           error.pipe(
-            mergeMap((err) => {
+            tap((err) => {
               if (err && err.status === 401) {
                 this.maintenanceSvc.closeEventSource();
-                return of(err);
+              } else {
+                throw err;
               }
-              return throwError(err);
             }),
-            take(1)
+            catchError((err) => throwError(err))
           )
         )
       );
     this.combinedWorkOrderList1$ = this.combineWorkOrders(
       this.workOrderList$,
-      this.updateWorkOrderList$
+      this.updateWorkOrderList$.pipe(
+        catchError(() =>
+          of({
+            unassigned: [],
+            assigned: [],
+            inProgress: [],
+            completed: []
+          })
+        )
+      )
     );
     this.combinedWorkOrderList$ = this.combineWorkOrders(
       this.combinedWorkOrderList1$,

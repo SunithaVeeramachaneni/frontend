@@ -73,6 +73,7 @@ export const tenants: Tenant[] = [
       dialect: 'dialect'
     },
     nosql: {
+      prefix: 'mongodb',
       host: 'host',
       port: 12345,
       user: 'user',
