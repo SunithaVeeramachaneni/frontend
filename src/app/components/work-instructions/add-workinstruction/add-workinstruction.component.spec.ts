@@ -289,7 +289,12 @@ describe('AddWorkinstructionComponent', () => {
     expect(component.isWIPublished).toBeDefined();
     expect(component.titleTextChanged).toBeDefined();
     expect(component.titleErrors).toBeDefined();
-    expect(component.titleErrors).toEqual({ exists: false, required: false });
+    expect(component.titleErrors).toEqual({
+      exists: false,
+      required: false,
+      maxLength: false,
+      pattern: false
+    });
   });
 
   describe('template', () => {
@@ -528,7 +533,12 @@ describe('AddWorkinstructionComponent', () => {
         info
       );
       expect(component.addTitleToInstruction).toHaveBeenCalledWith();
-      expect(component.titleErrors).toEqual({ required: false, exists: false });
+      expect(component.titleErrors).toEqual({
+        required: false,
+        exists: false,
+        maxLength: false,
+        pattern: false
+      });
     }));
 
     it(`should handle title text change for add work instruction and set title exists error if work instruction
@@ -566,7 +576,12 @@ describe('AddWorkinstructionComponent', () => {
         info
       );
       expect(component.addTitleToInstruction).not.toHaveBeenCalled();
-      expect(component.titleErrors).toEqual({ required: false, exists: true });
+      expect(component.titleErrors).toEqual({
+        required: false,
+        exists: true,
+        maxLength: false,
+        pattern: false
+      });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title already exists!'
       );
@@ -603,7 +618,12 @@ describe('AddWorkinstructionComponent', () => {
         info
       );
       expect(component.addTitleToInstruction).not.toHaveBeenCalled();
-      expect(component.titleErrors).toEqual({ required: false, exists: false });
+      expect(component.titleErrors).toEqual({
+        required: false,
+        exists: false,
+        maxLength: false,
+        pattern: false
+      });
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to fetch instruction'
       } as HttpErrorResponse);
@@ -1740,7 +1760,12 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.selectedInstruction.WI_Name).toBe(title);
       expect(component.addOrUpdateTitle).toBeTrue();
       expect(component.wi_title).toBe(title);
-      expect(component.titleErrors).toEqual({ exists: false, required: false });
+      expect(component.titleErrors).toEqual({
+        exists: false,
+        required: false,
+        maxLength: false,
+        pattern: false
+      });
     });
 
     it('should set title errors if keyup event happened with out title', () => {
@@ -1759,7 +1784,12 @@ describe('AddWorkinstructionComponent', () => {
       expect(component.titleTextChanged.next).not.toHaveBeenCalled();
       expect(component.selectedInstruction.WI_Name).toBe(title);
       expect(component.addOrUpdateTitle).toBeTrue();
-      expect(component.titleErrors).toEqual({ exists: false, required: true });
+      expect(component.titleErrors).toEqual({
+        exists: false,
+        required: true,
+        maxLength: false,
+        pattern: false
+      });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title is required'
       );
