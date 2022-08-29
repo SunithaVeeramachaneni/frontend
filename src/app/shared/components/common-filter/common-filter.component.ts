@@ -264,7 +264,7 @@ export class CommonFilterComponent implements OnInit, OnChanges {
       filterType: column.filterType,
       name: column.name
     });
-    this.reportColumns$ = of(this.dropdownReportColumns);
+    this.addFilterControl.setValue('');
     this.filters.removeAt(index);
     this.filtersApplied.splice(index, 1);
     if (this.filtersApplied.length === 0) {
