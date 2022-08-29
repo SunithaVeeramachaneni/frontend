@@ -89,7 +89,7 @@ export class AddWorkinstructionComponent
   titleErrors: any = {
     exists: false,
     required: false,
-    maxlength: false,
+    maxLength: false,
     pattern: false
   };
   addOrUpdateTitle = false;
