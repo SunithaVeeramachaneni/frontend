@@ -164,12 +164,17 @@
             placeholder="Add Filter"
             matInput
             [matAutocomplete]="autoCompleteFilter"
+            [formControl]="addFilterControl"
           />
-          <mat-autocomplete #autoCompleteFilter="matAutocomplete">
+          <mat-autocomplete
+            #autoCompleteFilter="matAutocomplete"
+            [displayWith]="displayFn"
+          >
             <mat-option
-              *ngFor="let col of dropdownReportColumns; let index = index"
+              *ngFor="let col of reportColumns$ | async"
+              [value]="col"
             >
-              <div (click)="addFilter(col, index)">
+              <div (click)="addFilter(col)">
                 {{ col.displayName }}
               </div>
             </mat-option>
@@ -197,6 +202,7 @@
                     placeholder="{{ filterForm.value.displayName }}"
                     value="{{ filterForm.value.displayText }}"
                     matInput
+                    autocomplete="off"
                   />
                   <mat-icon
                     matSuffix
@@ -222,6 +228,7 @@
                     placeholder="{{ filterForm.value.displayName }}"
                     value="{{ filterForm.value.displayText }}"
                     matInput
+                    autocomplete="off"
                   />
                   <mat-icon
                     matSuffix
@@ -290,6 +297,7 @@
                         matInput
                         name="stringOperand"
                         formControlName="operand"
+                        autocomplete="off"
                       />
                     </mat-form-field>
                   </div>
@@ -301,13 +309,20 @@
                         name="inputValue"
                         matInput
                         formControlName="operand"
+                        autocomplete="off"
                       />
                     </mat-form-field>
                   </div>
 
                   <div *ngIf="filterForm.value.filterType === 'daterange'">
                     <mat-form-field appearance="outline" class="width-100">
-                      <mat-select name="inputValue" formControlName="operator">
+                      <mat-select
+                        name="inputValue"
+                        formControlName="operator"
+                        (selectionChange)="
+                          updateDateRangeValidation($event.value, filterForm)
+                        "
+                      >
                         <mat-option
                           *ngFor="let val of this.filteredOptionsByType"
                           [value]="val"
@@ -358,7 +373,7 @@
                             </button>
                             <button
                               mat-raised-button
-                              type="submit"
+                              type="button"
                               color="primary"
                               matDateRangePickerApply
                               aria-label="Apply Date Range"
@@ -413,9 +428,10 @@
                   <button
                     class="save-btn"
                     mat-raised-button
-                    type="submit"
+                    type="button"
+                    (click)="onSave()"
                     form="filtersForm"
-                    [disabled]="filterForm.invalid"
+                    [disabled]="filterForm.invalid || filtersForm.pristine"
                     aria-label="Save Filter"
                   >
                     Save

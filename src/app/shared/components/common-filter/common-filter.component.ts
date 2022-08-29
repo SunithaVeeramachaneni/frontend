@@ -4,21 +4,31 @@ import {
   Output,
   EventEmitter,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  OnInit
 } from '@angular/core';
 import { uniqBy } from 'lodash-es';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { CommonFilterService } from './common-filter.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableColumn } from 'src/app/interfaces';
 import { DateSegmentService } from '../date-segment/date-segment.service';
 import { debounce } from 'ts-debounce';
+import { Observable, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { WhiteSpaceValidator } from '../../validators/white-space-validator';
 @Component({
   selector: 'app-common-filter',
   templateUrl: './common-filter.component.html',
   styleUrls: ['./common-filter.component.scss']
 })
-export class CommonFilterComponent implements OnChanges {
+export class CommonFilterComponent implements OnInit, OnChanges {
   @Input() showOverdueList;
   @Input() filtersApplied;
   @Input() priorityList;
@@ -53,6 +63,8 @@ export class CommonFilterComponent implements OnChanges {
   public dateRange: any;
   public dateRangeText: any;
   public customBtnText = 'Select the Date Range';
+  addFilterControl = new FormControl();
+  reportColumns$: Observable<any[]>;
 
   debouncedSearchReport = debounce(
     (newValue) => this.searchOrder(newValue),
@@ -75,13 +87,24 @@ export class CommonFilterComponent implements OnChanges {
     });
   }
 
+  ngOnInit(): void {
+    this.reportColumns$ = this.addFilterControl.valueChanges.pipe(
+      startWith(''),
+      map((value) => (typeof value === 'string' ? value : value.displayName)),
+      map((value) =>
+        value ? this.filter(value) : this.dropdownReportColumns.slice()
+      )
+    );
+  }
+
   get filters(): FormArray {
     return this.filtersForm.controls['filters'] as FormArray;
   }
 
   newFilter(column): FormGroup {
     const { name, displayName, filterType } = column;
-    let operator, operand;
+    let operator;
+    let operand;
     if (column.operator) {
       operator = column.operator;
     }
@@ -94,8 +117,8 @@ export class CommonFilterComponent implements OnChanges {
         displayName: [displayName, Validators.required],
         filterType: [filterType, Validators.required],
         operand: this.formBuilder.group({
-          startDate: operand?.startDate || '',
-          endDate: operand?.endDate || ''
+          startDate: [operand?.startDate || '', Validators.required],
+          endDate: [operand?.endDate || '', Validators.required]
         }),
         operator: [operator || '', Validators.required],
         displayText: [
@@ -119,7 +142,10 @@ export class CommonFilterComponent implements OnChanges {
         name: [name, Validators.required],
         displayName: [displayName, Validators.required],
         filterType: [filterType, Validators.required],
-        operand: [operand || '', Validators.required],
+        operand: [
+          operand || '',
+          [Validators.required, WhiteSpaceValidator.noWhiteSpace]
+        ],
         operator: [operator || '', Validators.required],
         displayText: [operand && operator ? operator + ' ' + operand : '']
       });
@@ -154,16 +180,16 @@ export class CommonFilterComponent implements OnChanges {
             this.dropdownReportColumns &&
             this.dropdownReportColumns.length > 0
           ) {
-            let index = this.dropdownReportColumns.findIndex(
+            const index = this.dropdownReportColumns.findIndex(
               (column) => column.name === filter.column
             );
             if (index > -1) {
-              let displayName = this.dropdownReportColumns[index].displayName;
+              const displayName = this.dropdownReportColumns[index].displayName;
               this.dropdownReportColumns.splice(index, 1);
               this.filters.push(
                 this.newFilter({
                   name: filter.column,
-                  displayName: displayName,
+                  displayName,
                   filterType: filter.type,
                   operator: filter.filters[0].operation,
                   operand: filter.filters[0].operand
@@ -222,10 +248,14 @@ export class CommonFilterComponent implements OnChanges {
     this.applyBtnDisable = true;
   };
 
-  addFilter = (column, index) => {
+  addFilter = (column) => {
+    const index = this.dropdownReportColumns.findIndex(
+      (reportColumn) => reportColumn.displayName === column.displayName
+    );
     this.dropdownReportColumns.splice(index, 1);
     const filter = this.newFilter(column);
     this.filters.push(filter);
+    this.addFilterControl.setValue('');
   };
 
   deleteFilteredField(column, index) {
@@ -234,6 +264,7 @@ export class CommonFilterComponent implements OnChanges {
       filterType: column.filterType,
       name: column.name
     });
+    this.addFilterControl.setValue('');
     this.filters.removeAt(index);
     this.filtersApplied.splice(index, 1);
     if (this.filtersApplied.length === 0) {
@@ -263,6 +294,7 @@ export class CommonFilterComponent implements OnChanges {
         this.applydynamicFiltersBtnDisable = false;
       }
     });
+    this.filtersForm.reset(this.filtersForm.getRawValue());
   }
 
   prepareAppliedFilters() {
@@ -271,8 +303,7 @@ export class CommonFilterComponent implements OnChanges {
     let filterType;
     let name;
     let displayName;
-    for (let index in this.filtersForm.value.filters) {
-      let idx = parseInt(index);
+    this.filtersForm.value.filters.forEach((val, idx) => {
       filterType = this.filters.at(idx).get('filterType').value;
       name = this.filters.at(idx).get('name').value;
       displayName = this.filters.at(idx).get('displayName').value;
@@ -295,8 +326,8 @@ export class CommonFilterComponent implements OnChanges {
             operand = dateFilter;
             this.filters.at(idx).get('displayText').setValue(operator);
           } else if (operator === 'custom') {
-            let startDateISO = operand.startDate.toISOString();
-            let endDateISO = operand.endDate.toISOString();
+            const startDateISO = operand.startDate.toISOString();
+            const endDateISO = operand.endDate.toISOString();
             const customDate =
               startDateISO.split('T')[0] + ' - ' + endDateISO.split('T')[0];
             this.filters.at(idx).get('displayText').setValue(customDate);
@@ -310,20 +341,23 @@ export class CommonFilterComponent implements OnChanges {
         case 'multi':
           operand = this.filters.at(idx).get('operand').value;
           this.filters.at(idx).get('displayText').setValue(operand);
+          break;
         case 'default':
         // do nothing
       }
-      this.filtersApplied.push({
-        column: name,
-        type: filterType,
-        filters: [
-          {
-            operation: operator || null,
-            operand: operand
-          }
-        ]
-      });
-    }
+      if (operand) {
+        this.filtersApplied.push({
+          column: name,
+          type: filterType,
+          filters: [
+            {
+              operation: operator || null,
+              operand
+            }
+          ]
+        });
+      }
+    });
   }
 
   applyFilters() {
@@ -332,11 +366,35 @@ export class CommonFilterComponent implements OnChanges {
       filters: this.filtersApplied,
       searchKey: this.searchValue
     });
+    this.resetdynamicFiltersBtnDisable = true;
+    this.applydynamicFiltersBtnDisable = true;
   }
 
   clearFilters() {
     this.filters.clear();
     this.resetdynamicFiltersBtnDisable = true;
     this.applydynamicFiltersBtnDisable = true;
+  }
+
+  displayFn(reportColumn: any): string {
+    return reportColumn ? reportColumn.displayName : '';
+  }
+
+  updateDateRangeValidation(value, filterForm) {
+    if (value === 'custom') {
+      filterForm.get('operand.startDate').setValidators([Validators.required]);
+      filterForm.get('operand.endDate').setValidators([Validators.required]);
+    } else {
+      filterForm.get('operand.startDate').setValidators([]);
+      filterForm.get('operand.endDate').setValidators([]);
+    }
+    filterForm.get('operand.startDate').updateValueAndValidity();
+    filterForm.get('operand.endDate').updateValueAndValidity();
+  }
+
+  private filter(value: string) {
+    return this.dropdownReportColumns.filter((reportColumn) =>
+      reportColumn.displayName.toLowerCase().includes(value.toLowerCase())
+    );
   }
 }
