@@ -19,7 +19,7 @@ import { environment } from '../../../environments/environment';
 import { of } from 'rxjs';
 // import { first } from "rxjs/operators";
 
-fdescribe('Maintenance service', () => {
+describe('Maintenance service', () => {
   let service: MaintenanceService;
   let appServiceSpy: AppService;
   let maintenanceServiceSpy: MaintenanceService;
