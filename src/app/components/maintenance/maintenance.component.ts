@@ -178,21 +178,17 @@ export class MaintenanceComponent implements OnInit, OnDestroy {
     this.allWorkCenters$ = this.maintenanceSvc.getAllWorkCenters().pipe(
       tap((resp) => {
         this.workCenterList = resp;
-      }),
-      share()
+      })
     );
     this.allPlants$ = this.maintenanceSvc.getAllPlants().pipe(
       tap((plants) => {
         this.allPlants = plants;
         this.plantFilter.patchValue([...plants, 0]);
-      }),
-      share()
+      })
     );
     this.technicianSubscription = this.maintenanceSvc
       .getTechnicians()
-      .pipe(share())
       .subscribe((resp) => {
-        console.log('Resp', resp);
         this.technicians = resp;
       });
     this.currentWorkCenters$ = combineLatest([
