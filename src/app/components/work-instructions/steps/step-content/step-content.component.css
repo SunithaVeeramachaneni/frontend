@@ -182,12 +182,14 @@ h2 {
   color: #1351d8;
   position: relative;
   left: 15px;
+  width: 12px;
 }
 
 .uploadfilecontainertitle .upload-text {
   position: relative;
   left: 15px;
   font-size: 80%;
+  top: -2px;
 }
 
 .uploadfilecontainertitle .drop-att {

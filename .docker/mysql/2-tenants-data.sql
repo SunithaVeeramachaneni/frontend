@@ -110,6 +110,7 @@ insert into catalogs (
     "dialect": "mysql"
   }',
   '{
+    "prefix": "mongodb",
     "host": "mongo-local",
     "port": 27017,
     "user": "admin",

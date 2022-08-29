@@ -8,51 +8,65 @@
 
 <div class="add-instruction-main">
   <div class="wi-status-container" style="display: flex">
-    <div class="p-0" style="width: 40%">
-      <ul class="wi-title width">
-        <li>
-          <h2>
-            <a
-              matTooltip="{{ selectedInstruction.WI_Name }}"
-              matTooltipClass=""
-              class="width"
-            >
-              <input
-                type="text"
-                id="wi_title"
-                [(ngModel)]="selectedInstruction.WI_Name"
-                [disabled]="selectedInstruction.Published === true"
-                class="wi_title_input"
-                placeholder="Untitled Work Instruction"
-                autofocus="true"
-                autocomplete="off"
-                value="{{ selectedInstruction.WI_Name }}"
-                (keyup)="titleChange(selectedInstruction.WI_Name, true)"
-                #workInstructionTitle
-              />
-            </a>
-            <!-- {{ workInstructionTitle.focus() }} -->
-            <span class="wi-title-info-position">
-              <span
-                class="f-left text-danger wi-title-info"
-                *ngIf="titleErrors?.required"
-              >
-                Title is required
-              </span>
-            </span>
-            <span class="wi-title-info-position">
-              <span
-                class="f-left text-danger wi-title-info"
-                *ngIf="titleErrors?.exists"
-              >
-                Title already exists!
-              </span>
-            </span>
-          </h2>
-        </li>
-      </ul>
+    <div class="p-0 width-60 dis-flex">
+      <a
+        matTooltip="{{ selectedInstruction.WI_Name }}"
+        matTooltipClass=""
+        class="work-instruction-title"
+      >
+        <input
+          type="text"
+          id="wi_title"
+          [(ngModel)]="selectedInstruction.WI_Name"
+          [disabled]="selectedInstruction.Published === true"
+          class="wi_title_input"
+          placeholder="Untitled Work Instruction"
+          autofocus="true"
+          autocomplete="off"
+          value="{{ selectedInstruction.WI_Name }}"
+          (keyup)="titleChange(selectedInstruction.WI_Name, true)"
+          #workInstructionTitle
+        />
+      </a>
+      <p class="m-l-10">
+        <!-- {{ workInstructionTitle.focus() }} -->
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="titleErrors?.required"
+          >
+            Title is required
+          </span>
+        </span>
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="titleErrors?.exists"
+          >
+            Title already exists!
+          </span>
+        </span>
+
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="titleErrors?.maxLength"
+          >
+            Title should not exceed 50 charcters
+          </span>
+        </span>
+
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="titleErrors?.pattern"
+          >
+            Title should not contain special characters
+          </span>
+        </span>
+      </p>
     </div>
-    <div class="alignment" style="width: 60%">
+    <div class="alignment width-40">
       <ul class="wi-status display">
         <li class="display">
           <app-player

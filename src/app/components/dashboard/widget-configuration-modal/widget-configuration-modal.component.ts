@@ -377,6 +377,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   }
 
   applyFilter(filtersObj: any) {
+    this.widgetConfigForm.markAsDirty();
     const filtersApplied: FilterApplied[] = filtersObj.filters;
     if (filtersApplied) {
       this.selectedReport = { ...this.selectedReport, filtersApplied };
@@ -386,6 +387,7 @@ export class WidgetConfigurationModalComponent implements OnInit {
   }
 
   onChartVarientChanges = (event: ChartVariantChanges) => {
+    this.widgetConfigForm.markAsDirty();
     const { type: eventType, value, isFormValid } = event;
 
     switch (eventType) {

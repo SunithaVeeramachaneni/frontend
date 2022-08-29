@@ -258,6 +258,15 @@ export class AddEditUserModalComponent implements OnInit {
   }
 
   save() {
+    const profileImageFileName = this.userForm.get(
+      'profileImageFileName'
+    ).value;
+
+    if (!profileImageFileName || !profileImageFileName.length) {
+      this.userForm.patchValue({
+        profileImageFileName: 'default.png'
+      });
+    }
     this.dialogRef.close({
       user: {
         ...this.data.user,
