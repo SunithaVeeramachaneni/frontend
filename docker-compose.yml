@@ -201,6 +201,7 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ODATA_BASIC_AUTH_PASSWORD=${ODATA_BASIC_AUTH_PASSWORD}
     ports:
       - '8004:8004'
     depends_on:
