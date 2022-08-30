@@ -47,7 +47,7 @@ export class MaintenanceService {
 
   assignAllPlantRawObservable = () => {
     const rawObservable$ = this._appService
-      ._getRespFromGateway(environment.mccAbapApiUrl, `plantInfo`)
+      ._getRespFromGateway(environment.mccAbapApiUrl, 'plantsInfo')
       .pipe(share());
     return rawObservable$;
   };
