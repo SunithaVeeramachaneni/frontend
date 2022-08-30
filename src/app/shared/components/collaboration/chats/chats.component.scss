@@ -663,3 +663,16 @@ p {
     background-color: colors.$gray;
   }
 }
+
+.loadMore {
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  color: colors.$blue-secondary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .loadMoreText {
+    padding: 15px;
+  }
+}
