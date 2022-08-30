@@ -82,6 +82,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   lastScrollLeft = 0;
   conversationsSkipToken: string;
   conversationHistorySkipToken: string;
+  conversationsLength = 0;
 
   showAttachmentPreview = false;
   uploadedFiles: any = [];
@@ -241,6 +242,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }
       })
     );
+
     this.conversations$ = combineLatest([
       this.conversationsInitial$,
       this.updateConversations$
@@ -294,6 +296,19 @@ export class ChatsComponent implements OnInit, OnDestroy {
           });
         }
 
+        if (userInfo.collaborationType === 'slack') {
+          if (this.conversationsLength < 8) {
+            setTimeout(() => {
+              this.loadMoreConversations();
+            }, 0);
+          }
+          conversationsList.sort(
+            (a, b) =>
+              new Date(b.latest.createdDateTime).getTime() -
+              new Date(a.latest.createdDateTime).getTime()
+          );
+        }
+
         return conversationsList;
       }),
       tap((conversations) => {
@@ -312,6 +327,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
         mergeMap((data: any) => {
           this.appendingConversations = false;
           this.conversationsSkipToken = data.skipToken;
+          this.conversationsLength += data.conversations.length;
           return of(data.conversations);
         })
       );
@@ -435,6 +451,23 @@ export class ChatsComponent implements OnInit, OnDestroy {
     );
   };
 
+  loadMoreConversations() {
+    if (this.appendingConversations) return;
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    if (this.conversationsSkipToken) {
+      this.fetchConversations(
+        userInfo.email,
+        this.conversationsSkipToken
+      ).subscribe((data) => {
+        this.updateConversations$.next({
+          action: 'append_conversations',
+          message: data,
+          channel: ''
+        });
+      });
+    }
+  }
+
   onConversationsListScrolled(event: any) {
     const element = event.target;
     const isBottomReached =
@@ -450,20 +483,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     }
 
     if (isBottomReached) {
-      if (this.appendingConversations) return;
-      const userInfo = this.loginService.getLoggedInUserInfo();
-      if (this.conversationsSkipToken) {
-        this.fetchConversations(
-          userInfo.email,
-          this.conversationsSkipToken
-        ).subscribe((data) => {
-          this.updateConversations$.next({
-            action: 'append_conversations',
-            message: data,
-            channel: ''
-          });
-        });
-      }
+      this.loadMoreConversations();
     }
   }
   onConversationHistoryScrolled(event: any) {

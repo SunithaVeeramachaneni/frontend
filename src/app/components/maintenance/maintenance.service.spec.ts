@@ -59,7 +59,7 @@ describe('Maintenance service', () => {
     expect(service).toBeTruthy();
   });
 
-  it('needs to process raw list of work centers and return them', () => {
+  xit('needs to process raw list of work centers and return them', () => {
     let workCenters;
     let gateWayParams = `workCenters`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
@@ -72,7 +72,7 @@ describe('Maintenance service', () => {
     expect(isEqual(workCenters, expectedWorkCenters)).toBeTrue();
   });
 
-  it('needs to process raw technicians and return them', () => {
+  xit('needs to process raw technicians and return them', () => {
     let gateWayParams = `plants`;
     (appServiceSpy._getRespFromGateway as jasmine.Spy)
       .withArgs(environment.mccAbapApiUrl, gateWayParams)

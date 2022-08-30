@@ -81,6 +81,14 @@
             </span>
           </div>
         </mat-list-item>
+        <mat-list-item
+          *ngIf="conversations.length < 8 && conversationsSkipToken.length"
+        >
+          <div class="loadMore">
+            <span translate class="loadMoreText">loadingMore</span>
+            <mat-spinner strokeWidth="5" diameter="25"></mat-spinner>
+          </div>
+        </mat-list-item>
         <div *ngIf="appendingConversations">
           <ng-template>
             <div class="p-15">
