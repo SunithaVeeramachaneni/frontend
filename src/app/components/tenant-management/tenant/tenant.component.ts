@@ -518,6 +518,24 @@ export class TenantComponent implements OnInit, AfterViewInit {
           this.scopeValidator()
         ]
       ],
+      basicCredentials: this.fb.group({
+        username: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.noWhiteSpace
+          ]
+        ]
+      }),
       saml: this.fb.group({
         oauth2Url: [
           '',

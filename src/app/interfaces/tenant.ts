@@ -48,6 +48,7 @@ export interface Erp {
   grantType: string;
   clientId: string;
   scopes: Scope | string;
+  basicCredentials: BasicCredentials;
   saml: Saml;
 }
 
@@ -102,4 +103,9 @@ export interface Scope {
 export interface ScopeDeatils {
   scope: string;
   collection: string;
+}
+
+export interface BasicCredentials {
+  username: string;
+  password: string;
 }
