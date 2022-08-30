@@ -122,6 +122,22 @@ export class ChatService {
     );
   };
 
+  openConversation$ = (
+    groupName: string,
+    invitedUsers: any,
+    chatType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    const apiURL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/`;
+    return this.appService._postData(
+      apiURL,
+      `conversations/open`,
+      { groupName, invitedUsers, chatType },
+      info
+    );
+  };
+
   addMembersToConversation$ = (
     chatId: string,
     members: any,

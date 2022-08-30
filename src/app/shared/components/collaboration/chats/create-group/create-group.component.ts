@@ -42,6 +42,9 @@ export class CreateGroupComponent implements OnInit {
   searchKeyUpdate = new Subject<string>();
   fetchActiveUsersInprogress = false;
 
+  peopleTotalCount = 0;
+  peopleLoadedCount = 0;
+
   updatePeople$ = new BehaviorSubject<UpdatePeople>({
     action: '',
     data: {} as any
@@ -73,7 +76,7 @@ export class CreateGroupComponent implements OnInit {
 
   ngOnInit() {
     this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
-      mergeMap((users) => {
+      mergeMap((users: any) => {
         this.fetchActiveUsersInprogress = false;
         if (users.length) {
           const validUsers = this.formatUsers(users);
@@ -142,16 +145,26 @@ export class CreateGroupComponent implements OnInit {
     if (isDebounceSearchEvent) {
       this.skip = 0;
     }
-    return this.peopleService.getUsers$(
-      {
-        skip: this.skip,
-        limit: this.limit,
-        isActive: true,
-        searchKey: this.searchKey
-      },
-      includeSlackDetails,
-      info
-    );
+    return this.peopleService
+      .getUsers$(
+        {
+          skip: this.skip,
+          limit: this.limit,
+          isActive: true,
+          searchKey: this.searchKey
+        },
+        includeSlackDetails,
+        info
+      )
+      .pipe(
+        mergeMap((resp: any) => {
+          if (resp.count) {
+            this.peopleTotalCount = resp.count;
+          }
+          this.peopleLoadedCount += resp.rows.length;
+          return of(resp.rows);
+        })
+      );
   };
 
   formatUsers = (users: any) => {
@@ -198,6 +211,9 @@ export class CreateGroupComponent implements OnInit {
     }
 
     if (isBottomReached) {
+      if (!(this.peopleLoadedCount < this.peopleTotalCount)) {
+        return;
+      }
       if (this.fetchActiveUsersInprogress) return;
       this.fetchActiveUsers().subscribe((data) => {
         this.updatePeople$.next({
@@ -286,7 +302,13 @@ export class CreateGroupComponent implements OnInit {
       displayToast: true,
       failureResponse: 'throwError'
     };
-    const members = this.selectedUsers.map((user) => user.email);
+    const userInfo = this.loginService.getLoggedInUserInfo();
+    let members;
+    if (userInfo.collaborationType === 'slack') {
+      members = this.selectedUsers.map((user) => user.slackDetail.slackID);
+    } else if (userInfo.collaborationType === 'msteams') {
+      members = this.selectedUsers.map((user) => user.email);
+    }
     this.chatService
       .addMembersToConversation$(this.selectedConversation.id, members, info)
       .subscribe(
