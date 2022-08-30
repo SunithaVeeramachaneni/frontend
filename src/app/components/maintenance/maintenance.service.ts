@@ -13,6 +13,7 @@ import {
   mergeMap,
   reduce,
   share,
+  shareReplay,
   takeUntil,
   tap
 } from 'rxjs/operators';
@@ -42,6 +43,14 @@ export class MaintenanceService {
   public workOrders$: Observable<WorkOrders>;
   public plants: Plant[];
   public workCenters: WorkCenter[];
+  public allPlantInfoRawObservable$: Observable<any> = null;
+
+  assignAllPlantRawObservable = () => {
+    const rawObservable$ = this._appService
+      ._getRespFromGateway(environment.mccAbapApiUrl, 'plantsInfo')
+      .pipe(share());
+    return rawObservable$;
+  };
 
   closeEventSource(): void {
     this.sseService.closeEventSource();
@@ -97,21 +106,20 @@ export class MaintenanceService {
   }
 
   getAllPlants = () => {
-    const rawObservable$ = this._appService._getRespFromGateway(
-      environment.mccAbapApiUrl,
-      'plants'
-    );
-
-    this.allPlants$ = rawObservable$.pipe(
-      map((rawPlantsData) => {
+    if (!this.allPlantInfoRawObservable$) {
+      this.allPlantInfoRawObservable$ = this.assignAllPlantRawObservable();
+    }
+    this.allPlants$ = this.allPlantInfoRawObservable$.pipe(
+      map((rawData) => {
         const allPlants: any = [];
-        Object.keys(rawPlantsData).forEach((key) => {
-          const plant: Plant = {
-            id: key,
-            desc: rawPlantsData[key]
-          };
-
-          allPlants.push(plant);
+        rawData.forEach((data) => {
+          if (!allPlants.find((item) => item.id === data.SWERKKey)) {
+            const plant = {
+              id: data.SWERKKey,
+              desc: data.WERKSDesc
+            };
+            allPlants.push(plant);
+          }
         });
         return allPlants;
       }),
@@ -121,15 +129,32 @@ export class MaintenanceService {
   };
 
   getAllWorkCenters = () => {
-    const rawObservable$ = this._appService._getRespFromGateway(
-      environment.mccAbapApiUrl,
-      `workCenters`
-    );
-    this.workCenters$ = rawObservable$.pipe(
-      map((rawWorkCenters) => {
+    if (!this.allPlantInfoRawObservable$) {
+      this.allPlantInfoRawObservable$ = this.assignAllPlantRawObservable();
+    }
+
+    this.workCenters$ = this.allPlantInfoRawObservable$.pipe(
+      map((rawData) => {
         const workCenters: WorkCenter[] = [];
-        Object.keys(rawWorkCenters).forEach((key) => {
-          workCenters.push(rawWorkCenters[key]);
+        rawData.forEach((data) => {
+          let workCenterByPlant = workCenters.find(
+            (item) => item.plantId === data.SWERKKey
+          );
+          if (!workCenterByPlant) {
+            workCenterByPlant = {
+              plantId: data.SWERKKey,
+              workCenters: []
+            };
+            workCenters.push(workCenterByPlant);
+            workCenterByPlant = workCenters.find(
+              (item) => item.plantId === data.SWERKKey
+            );
+          }
+          workCenterByPlant.workCenters.push({
+            plantId: data.SWERKKey,
+            workCenterKey: data.ARBPLKey,
+            workCenterDesc: data.ARBPLDesc
+          });
         });
         return workCenters;
       }),
@@ -176,43 +201,38 @@ export class MaintenanceService {
   }
 
   getTechnicians(info: ErrorInfo = {} as ErrorInfo): Observable<any> {
-    this.technicians$ = this.allPlants$.pipe(
-      mergeMap((allPlants) =>
-        from(allPlants).pipe(
-          mergeMap((plant: Plant) =>
-            this._appService
-              ._getRespFromGateway(
-                environment.mccAbapApiUrl,
-                `technicians/'${plant.id}'`
-              )
-              .pipe(
-                map((technicians) => this.cleanTechnicians(technicians)),
-                takeUntil(this.destroy$),
-                catchError((err) => err.message)
-              )
-          )
-        )
-      ),
-      reduce((acc: any, cur) => this.accumulateTechnicians(acc, cur)),
+    if (!this.allPlantInfoRawObservable$) {
+      this.allPlantInfoRawObservable$ = this.assignAllPlantRawObservable();
+    }
+    this.technicians$ = this.allPlantInfoRawObservable$.pipe(
+      map((rawData: any) => {
+        let allTech = {};
+        rawData.forEach((data) => {
+          const newTech = this.cleanTechnicians(data);
+          allTech = this.accumulateTechnicians(allTech, newTech);
+        });
+        return allTech;
+      }),
       share()
     );
+
     return this.technicians$;
   }
 
-  cleanTechnicians = (rawTechnicians): any => {
+  cleanTechnicians = (rawTechnicians: any) => {
     const technicians = {};
-    rawTechnicians.forEach((rawTech) => {
-      if (rawTech.ARBPL.length !== 0) {
-        if (!technicians[rawTech.ARBPL]) {
-          technicians[rawTech.ARBPL] = [];
-        }
-        technicians[rawTech.ARBPL].push({
-          personName: rawTech.ENAME,
+    if (rawTechnicians.ARBPLKey.length !== 0) {
+      if (!technicians[rawTechnicians.ARBPLKey]) {
+        technicians[rawTechnicians.ARBPLKey] = [];
+      }
+      rawTechnicians.ARBPLToPernr.results.forEach((rawTech) => {
+        technicians[rawTechnicians.ARBPLKey].push({
+          personName: rawTech.PERNRDesc,
           personKey: rawTech.PERNR,
           image: rawTech.FILECONTENT
         });
-      }
-    });
+      });
+    }
     return technicians;
   };
 

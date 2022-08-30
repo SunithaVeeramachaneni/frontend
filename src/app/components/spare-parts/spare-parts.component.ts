@@ -306,7 +306,11 @@ export class SparePartsComponent implements OnInit, OnDestroy {
                 ) !== -1 &&
               this.isOverdue(workOrder.dueDate, filterObj.showOverdue) &&
               this.filterPlant(workOrder.plant, plantFilters) &&
-              this.filterWorkCenter(workOrder.workCenter, workCenterFilters) &&
+              this.filterWorkCenter(
+                workOrder.plant,
+                workOrder.workCenter,
+                workCenterFilters
+              ) &&
               this.filterPriority(workOrder.priorityStatus, filterObj.priority)
           );
         this.isDataLoading = false;
@@ -364,11 +368,13 @@ export class SparePartsComponent implements OnInit, OnDestroy {
     }
   };
 
-  filterWorkCenter = (workCenter, filters) => {
+  filterWorkCenter = (plant, workCenter, filters) => {
     if (filters.length === 0) {
       return true;
     } else {
-      return filters.some((item) => item.workCenterKey === workCenter);
+      return filters.some(
+        (item) => item.workCenterKey === workCenter && item.plantId === plant
+      );
     }
   };
 
