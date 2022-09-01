@@ -355,6 +355,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   fetchConversationHistory = (convId: string, skipToken?: string) => {
+    this.appendingConvHistory = true;
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
