@@ -94,6 +94,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   appendingConversations = false;
   appendingConvHistory = false;
+  lastScrollHeight = 0;
 
   downloadInProgress = false;
   downloadingFileRef: string;
@@ -355,6 +356,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
   };
 
   fetchConversationHistory = (convId: string, skipToken?: string) => {
+    this.appendingConvHistory = true;
     const info: ErrorInfo = {
       displayToast: true,
       failureResponse: 'throwError'
@@ -510,6 +512,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
   }
   onConversationHistoryScrolled(event: any) {
     const element = event.target;
+    this.lastScrollHeight = element.scrollHeight;
+    console.log('scrollHeight before appending history', this.lastScrollHeight);
     const isTopReached = Math.abs(element.scrollTop) === 0;
     if (isTopReached) {
       if (this.appendingConvHistory) return;
@@ -520,6 +524,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
           this.selectedConversation.id,
           this.conversationHistorySkipToken
         ).subscribe((data) => {
+          // scrollHeight: 4737
+          // element.scrollHeight = lastScrollHeight;
           this.sendReceiveMessages$.next({
             action: 'append_history',
             message: data,
