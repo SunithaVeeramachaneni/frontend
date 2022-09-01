@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { Buffer } from 'buffer';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 import { superAdminText } from 'src/app/app.constants';
@@ -119,6 +119,7 @@ export class UsersService {
         queryParams
       )
       .pipe(
+        mergeMap((resp: any) => of(resp.rows)),
         mergeMap((users: UserDetails[]) =>
           from(users).pipe(
             mergeMap((user) =>
