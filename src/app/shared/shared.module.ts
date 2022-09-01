@@ -42,6 +42,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
@@ -87,6 +88,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatBadgeModule,
     MatSelectModule,
     MatDividerModule,
+    MatProgressBarModule,
     MatProgressSpinnerModule,
     MatButtonModule,
     BreadcrumbModule,
