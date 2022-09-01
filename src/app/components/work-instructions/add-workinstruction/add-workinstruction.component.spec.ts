@@ -293,6 +293,7 @@ describe('AddWorkinstructionComponent', () => {
       exists: false,
       required: false,
       maxLength: false,
+      startPattern: false,
       pattern: false
     });
   });
@@ -537,6 +538,7 @@ describe('AddWorkinstructionComponent', () => {
         required: false,
         exists: false,
         maxLength: false,
+        startPattern: false,
         pattern: false
       });
     }));
@@ -580,6 +582,7 @@ describe('AddWorkinstructionComponent', () => {
         required: false,
         exists: true,
         maxLength: false,
+        startPattern: false,
         pattern: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
@@ -622,6 +625,7 @@ describe('AddWorkinstructionComponent', () => {
         required: false,
         exists: false,
         maxLength: false,
+        startPattern: false,
         pattern: false
       });
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
@@ -1764,6 +1768,7 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         required: false,
         maxLength: false,
+        startPattern: false,
         pattern: false
       });
     });
@@ -1788,6 +1793,7 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         required: true,
         maxLength: false,
+        startPattern: false,
         pattern: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
