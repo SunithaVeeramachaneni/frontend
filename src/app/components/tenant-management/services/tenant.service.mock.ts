@@ -36,6 +36,10 @@ export const tenants: Tenant[] = [
             collection: 'inventorycollection'
           }
         },
+        basicCredentials: {
+          username: 'username',
+          password: 'password'
+        },
         saml: {
           oauth2Url: 'https://oauth2urltest.com',
           grantType: 'https://granttypetest.com',

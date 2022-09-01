@@ -35,6 +35,7 @@
   "tenantAdminDetails": "Tenant Admin Details",
   "sapDetails": "SAP Details",
   "sapsamlDetails": "SAP SAML Details",
+  "basicCredentials": "Basic Credentials",
   "nodeDetails": "Node Details",
   "rdbms": "RDBMS",
   "nosql": "NoSQL",

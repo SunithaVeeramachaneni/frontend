@@ -28,7 +28,9 @@
           (click)="setSelectedConversation(conversation)"
           class="conversationListItem"
           [ngClass]="{
-            active: selectedConversation.id === conversation.id
+            active:
+              selectedConversation &&
+              selectedConversation.id === conversation.id
           }"
         >
           <div

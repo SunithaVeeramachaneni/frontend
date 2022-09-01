@@ -45,10 +45,19 @@ insert into catalogs (
       "password": "",
       "grantType": "urn:ietf:params:oauth:grant-type:saml2-bearer",
       "clientId": "cwpuser",
-      "scope": {
-        "race": "/INVCEC/RACE_SRV_0001",
-        "mWorkOrder": "/INVMWO/MWORKORDER_SRV_0001",
-        "mInventory": "/INVMIM/MINVENTORY_2_SRV_0001"
+      "scopes": {
+        "race": {
+          "scope": "/INVCEC/RACE_SRV_0001",
+          "collection": "DFormCollection"
+        },
+        "mInventory": {
+          "scope": "/INVMIM/MINVENTORY_2_SRV_0001",
+          "collection": "WOSparepartsListCollection"
+        },
+        "mWorkOrder": {
+          "scope": "/INVMWO/MWORKORDER_SRV_0001",
+          "collection": "WorkOrdersCollection"
+        }
       },
       "saml": {
         "oauth2Url":

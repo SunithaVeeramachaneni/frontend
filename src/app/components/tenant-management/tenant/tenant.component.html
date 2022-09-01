@@ -548,8 +548,75 @@
                 </mat-error>
               </ng-container>
             </p>
-            <p class="sub-headings" translate>sapsamlDetails</p>
+            <p class="sub-headings" translate>basicCredentials</p>
+            <div formGroupName="basicCredentials">
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label translate>username</mat-label>
+                  <input
+                    matInput
+                    [placeholder]="'username' | translate"
+                    formControlName="username"
+                  />
+                </mat-form-field>
+                <ng-container *ngIf="validationErrors$ | async as errors">
+                  <mat-error
+                    *ngIf="errors.erps.sap.basicCredentials.username.name"
+                  >
+                    {{
+                      errors.erps.sap.basicCredentials.username.name
+                        | translate
+                          : {
+                              name: 'username' | translate,
+                              length:
+                                errors.erps.sap.basicCredentials.username.length
+                            }
+                    }}
+                  </mat-error>
+                </ng-container>
+              </p>
 
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label translate>password</mat-label>
+                  <input
+                    matInput
+                    [placeholder]="'password' | translate"
+                    [type]="hidePasswordERPS ? 'password' : 'text'"
+                    formControlName="password"
+                  />
+                  <button
+                    type="button"
+                    mat-icon-button
+                    matSuffix
+                    (click)="hidePasswordERPS = !hidePasswordERPS"
+                    [attr.aria-label]="'Hide password ERPS'"
+                    [attr.aria-pressed]="hidePasswordERPS"
+                    [disabled]="!this.editTenant"
+                  >
+                    <mat-icon>
+                      {{ hidePasswordERPS ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                  </button>
+                </mat-form-field>
+                <ng-container *ngIf="validationErrors$ | async as errors">
+                  <mat-error
+                    *ngIf="errors.erps.sap.basicCredentials.password.name"
+                  >
+                    {{
+                      errors.erps.sap.basicCredentials.password.name
+                        | translate
+                          : {
+                              name: 'password' | translate,
+                              length:
+                                errors.erps.sap.basicCredentials.password.length
+                            }
+                    }}
+                  </mat-error>
+                </ng-container>
+              </p>
+            </div>
+            <p class="sub-headings" translate>sapsamlDetails</p>
             <div formGroupName="saml">
               <p class="m-0">
                 <mat-form-field appearance="outline" class="width-100">
