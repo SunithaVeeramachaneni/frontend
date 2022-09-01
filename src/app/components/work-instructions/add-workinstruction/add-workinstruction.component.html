@@ -41,27 +41,48 @@
         <span class="wi-title-info-position">
           <span
             class="f-left text-danger wi-title-info"
-            *ngIf="titleErrors?.exists"
+            *ngIf="!titleErrors?.required && titleErrors?.maxLength"
           >
-            Title already exists!
+            Title should not exceed 80 charcters
           </span>
         </span>
-
         <span class="wi-title-info-position">
           <span
             class="f-left text-danger wi-title-info"
-            *ngIf="titleErrors?.maxLength"
+            *ngIf="
+              !titleErrors?.required &&
+              !titleErrors?.maxLength &&
+              titleErrors?.startPattern
+            "
           >
-            Title should not exceed 50 charcters
+            Title should not start with special characters
           </span>
         </span>
-
         <span class="wi-title-info-position">
           <span
             class="f-left text-danger wi-title-info"
-            *ngIf="titleErrors?.pattern"
+            *ngIf="
+              !titleErrors?.required &&
+              !titleErrors?.maxLength &&
+              !titleErrors?.startPattern &&
+              titleErrors?.pattern
+            "
           >
             Title should not contain special characters
+          </span>
+        </span>
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="
+              !titleErrors?.required &&
+              !titleErrors?.maxLength &&
+              !titleErrors?.startPattern &&
+              !titleErrors?.pattern &&
+              titleErrors?.exists
+            "
+          >
+            Title already exists!
           </span>
         </span>
       </p>
@@ -138,7 +159,13 @@
         </li>
         <li>
           <button
-            [disabled]="!receivedInstruction"
+            [disabled]="
+              !receivedInstruction ||
+              titleErrors?.required ||
+              titleErrors?.maxLength ||
+              titleErrors?.startPattern ||
+              titleErrors?.pattern
+            "
             [ngClass]="{
               'fnt-white': receivedInstruction,
               save: !isWIPublished
@@ -148,7 +175,15 @@
             class="b-r-8 publish-btn"
             *appCheckUserHasPermission="[permissions.publishWorkInstruction]"
           >
-            <span *ngIf="!receivedInstruction">
+            <span
+              *ngIf="
+                !receivedInstruction ||
+                titleErrors?.required ||
+                titleErrors?.maxLength ||
+                titleErrors?.startPattern ||
+                titleErrors?.pattern
+              "
+            >
               <img
                 alt="upload"
                 src="assets/work-instructions-icons/svg/upload.svg"
@@ -156,7 +191,15 @@
               />
               <span class="dis-publish">Publish</span>
             </span>
-            <span *ngIf="receivedInstruction">
+            <span
+              *ngIf="
+                receivedInstruction &&
+                !titleErrors?.required &&
+                !titleErrors?.maxLength &&
+                !titleErrors?.startPattern &&
+                !titleErrors?.pattern
+              "
+            >
               <img
                 alt="upload"
                 src="assets/work-instructions-icons/svg/upload-white.png"
