@@ -18,6 +18,7 @@ export interface CountField {
 export interface AppDatasetField {
   name: string;
   displayName: string;
+  type: string;
   visible: boolean;
 }
 

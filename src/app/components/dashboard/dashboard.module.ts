@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { GridsterModule } from 'angular-gridster2';
@@ -101,6 +101,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     NgxShimmerLoadingModule,
     NgxSpinnerModule
   ],
+  providers: [DatePipe],
   declarations: [
     ReportConfigurationListModalComponent,
     ReportDeleteModalComponent,
