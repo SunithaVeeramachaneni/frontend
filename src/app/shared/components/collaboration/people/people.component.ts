@@ -45,6 +45,9 @@ export class PeopleComponent implements OnInit {
 
   eventSource: any;
 
+  peopleTotalCount = 0;
+  peopleLoadedCount = 0;
+
   skip = 0;
   limit = defaultLimit;
   lastScrollLeft = 0;
@@ -104,7 +107,7 @@ export class PeopleComponent implements OnInit {
     };
 
     this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
-      mergeMap((users) => {
+      mergeMap((users: any) => {
         this.fetchActiveUsersInprogress = false;
         if (users.length) {
           const validUsers = this.formatUsers(users);
@@ -165,16 +168,26 @@ export class PeopleComponent implements OnInit {
     if (isDebounceSearchEvent) {
       this.skip = 0;
     }
-    return this.peopleService.getUsers$(
-      {
-        skip: this.skip,
-        limit: this.limit,
-        isActive: true,
-        searchKey: this.searchKey
-      },
-      includeSlackDetails,
-      info
-    );
+    return this.peopleService
+      .getUsers$(
+        {
+          skip: this.skip,
+          limit: this.limit,
+          isActive: true,
+          searchKey: this.searchKey
+        },
+        includeSlackDetails,
+        info
+      )
+      .pipe(
+        mergeMap((resp: any) => {
+          if (resp.count) {
+            this.peopleTotalCount = resp.count;
+          }
+          this.peopleLoadedCount += resp.rows.length;
+          return of(resp.rows);
+        })
+      );
   };
 
   formatUsers = (users: any) => {
@@ -217,6 +230,9 @@ export class PeopleComponent implements OnInit {
     }
 
     if (isBottomReached) {
+      if (!(this.peopleLoadedCount < this.peopleTotalCount)) {
+        return;
+      }
       if (this.fetchActiveUsersInprogress) return;
       this.fetchActiveUsers().subscribe((data) => {
         const validUsers = this.formatUsers(data);
