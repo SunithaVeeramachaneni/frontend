@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgChartsModule } from 'ng2-charts';
@@ -10,14 +11,13 @@ describe('ChartComponent', () => {
   let component: ChartComponent;
   let fixture: ComponentFixture<ChartComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [ChartComponent],
-        imports: [NgChartsModule]
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [ChartComponent],
+      imports: [NgChartsModule],
+      providers: [DatePipe]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChartComponent);
@@ -47,14 +47,13 @@ describe('TestChartHostComponent', () => {
   let component: TestChartHostComponent;
   let fixture: ComponentFixture<TestChartHostComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [ChartComponent, TestChartHostComponent],
-        imports: [NgChartsModule]
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [ChartComponent, TestChartHostComponent],
+      imports: [NgChartsModule],
+      providers: [DatePipe]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TestChartHostComponent);
