@@ -184,7 +184,7 @@ export class ReportConfigurationService {
         titleStyle: {},
         subtitleStyle: {},
         hasPreTextImage: false,
-        hasPostTextImage: false,
+        hasPostTextImage: false
       };
     });
     return { ...configOptions, allColumns, groupByColumns };
@@ -292,6 +292,7 @@ export class ReportConfigurationService {
       newDatasetFields.push({
         name: groupField,
         displayName: column?.displayName,
+        type: column?.type,
         visible: false
       });
     }

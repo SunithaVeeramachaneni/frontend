@@ -663,16 +663,19 @@ export const chartConfig: AppChartConfig = {
     {
       name: 'userLocation',
       displayName: 'Location',
+      type: 'string',
       visible: true
     },
     {
       name: 'roles',
       displayName: 'Role',
+      type: 'string',
       visible: false
     },
     {
       name: 'objectType',
       displayName: 'Object Type',
+      type: 'string',
       visible: false
     }
   ],

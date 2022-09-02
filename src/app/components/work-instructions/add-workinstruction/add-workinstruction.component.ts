@@ -6,7 +6,7 @@ import {
   OnDestroy,
   AfterViewInit
 } from '@angular/core';
-import { combineLatest, Observable, Subscription } from 'rxjs';
+import { combineLatest, of, Subscription } from 'rxjs';
 import { InstructionService } from '../services/instruction.service';
 import Swal from 'sweetalert2';
 import { ActivatedRoute } from '@angular/router';
@@ -90,6 +90,7 @@ export class AddWorkinstructionComponent
     exists: false,
     required: false,
     maxLength: false,
+    startPattern: false,
     pattern: false
   };
   addOrUpdateTitle = false;
@@ -188,12 +189,39 @@ export class AddWorkinstructionComponent
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        switchMap((WI_Name) =>
-          this.instructionsvc.getInstructionsByName(WI_Name, {
-            displayToast: false,
-            failureResponse: 'throwError'
-          })
-        )
+        switchMap((WI_Name) => {
+          if (this.wi_title.length > 80) {
+            this.titleErrors = { ...this.titleErrors, maxLength: true };
+          } else {
+            this.titleErrors = { ...this.titleErrors, maxLength: false };
+          }
+
+          const startFormat = /^[^.|^,|^()]/;
+          if (!this.wi_title.match(startFormat)) {
+            this.titleErrors = { ...this.titleErrors, startPattern: true };
+          } else {
+            this.titleErrors = { ...this.titleErrors, startPattern: false };
+          }
+
+          const format = /^[a-zA-Z0-9\s(),.]+$/;
+          if (!this.wi_title.match(format)) {
+            this.titleErrors = { ...this.titleErrors, pattern: true };
+          } else {
+            this.titleErrors = { ...this.titleErrors, pattern: false };
+          }
+          if (
+            !this.titleErrors.maxLength &&
+            !this.titleErrors.startPattern &&
+            !this.titleErrors.pattern
+          ) {
+            return this.instructionsvc.getInstructionsByName(WI_Name, {
+              displayToast: false,
+              failureResponse: 'throwError'
+            });
+          } else {
+            return of([]);
+          }
+        })
       )
       .subscribe(
         (workInstructions) => {
@@ -206,23 +234,11 @@ export class AddWorkinstructionComponent
             this.titleErrors = { ...this.titleErrors, exists: false };
           }
 
-          if (this.wi_title.length > 50) {
-            this.titleErrors = { ...this.titleErrors, maxLength: true };
-          } else {
-            this.titleErrors = { ...this.titleErrors, maxLength: false };
-          }
-
-          var format = /^[a-zA-Z0-9 @&()_,./-]+$/;
-
-          if (!this.wi_title.match(format)) {
-            this.titleErrors = { ...this.titleErrors, pattern: true };
-          } else {
-            this.titleErrors = { ...this.titleErrors, pattern: false };
-          }
           if (
             this.addOrUpdateTitle &&
             !this.titleErrors.exists &&
             !this.titleErrors.maxLength &&
+            !this.titleErrors.startPattern &&
             !this.titleErrors.pattern
           ) {
             this.addTitleToInstruction();

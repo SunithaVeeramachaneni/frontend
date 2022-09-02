@@ -263,6 +263,10 @@
       class="horiz-divider"
       *ngIf="!showAttachmentPreview"
     ></mat-divider>
+    <mat-progress-bar
+      mode="query"
+      *ngIf="appendingConvHistory"
+    ></mat-progress-bar>
     <div
       class="conversationBody"
       (scroll)="onConversationHistoryScrolled($event)"
