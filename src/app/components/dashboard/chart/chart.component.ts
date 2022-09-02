@@ -9,6 +9,7 @@ import {
   AppDatasetField,
   CountField
 } from 'src/app/interfaces';
+import { DatePipe } from '@angular/common';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -121,7 +122,7 @@ export class ChartComponent {
   private _chartConfig: AppChartConfig;
   private _chartData: AppChartData[];
 
-  constructor() {}
+  constructor(private datePipe: DatePipe) {}
 
   prepareChartDetails = () => {
     if (this.chartData && this.chartConfig) {
@@ -197,6 +198,9 @@ export class ChartComponent {
       const unique = [];
 
       const stackFieldName = this.chartConfig.stackFieldName;
+      const stackField = this.chartConfig.datasetFields.find(
+        (item) => item.name === stackFieldName
+      );
       this.chartData.forEach((data) => {
         if (!unique[data[this.datasetField.name]]) {
           distinct.push(data[this.datasetField.name]);
@@ -205,9 +209,12 @@ export class ChartComponent {
       });
       const datasetFieldMap = {};
       let i = 0;
-      distinct
-        .sort()
-        .forEach((datasetField) => (datasetFieldMap[datasetField] = i++));
+      const newDistinct = distinct.sort().map((datasetField) => {
+        datasetFieldMap[datasetField] = i++;
+        return datasetField !== 'null' && this.datasetField.type === 'date'
+          ? this.datePipe.transform(datasetField, 'short')
+          : datasetField;
+      });
 
       this.chartData.forEach((data) => {
         if (!datasetObject[data[stackFieldName]]) {
@@ -221,11 +228,14 @@ export class ChartComponent {
           datasetFieldMap[data[this.datasetField.name]]
         ] += data.count;
       });
-
       const colors = this.getRandomColors(Object.keys(datasetObject));
       const datasets = Object.keys(datasetObject).map((stackName, index) => {
+        const newLabel =
+          stackName !== 'null' && stackField.type === 'date'
+            ? this.datePipe.transform(stackName, 'short')
+            : stackName;
         const dataset = {
-          label: stackName,
+          label: newLabel,
           data: datasetObject[stackName].countArray,
           backgroundColor: colors[index],
           borderColor: colors[index],
@@ -235,9 +245,8 @@ export class ChartComponent {
         };
         return dataset;
       });
-
       return {
-        labels: distinct,
+        labels: newDistinct,
         datasets
       };
     }
@@ -255,7 +264,11 @@ export class ChartComponent {
     const sortedObject = Object.keys(reducedObject)
       .sort()
       .reduce((acc, val) => {
-        acc[val] = +reducedObject[val].toFixed(2);
+        const value =
+          this.datasetField.type === 'date'
+            ? this.datePipe.transform(val, 'short')
+            : val;
+        acc[value] = +reducedObject[val].toFixed(2);
         return acc;
       }, {});
 
