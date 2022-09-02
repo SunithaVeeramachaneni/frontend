@@ -24,7 +24,7 @@ import { HttpClient } from '@angular/common/http';
 import { Permission, Role } from 'src/app/interfaces';
 import { Observable, of } from 'rxjs';
 import {
-  debounceTime,
+  delay,
   distinctUntilChanged,
   first,
   map,
@@ -122,9 +122,10 @@ export class AddEditUserModalComponent implements OnInit {
     };
   }
   checkIfUserExistsInIDP(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> =>
-      control.valueChanges.pipe(
-        debounceTime(500),
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      control.markAsTouched();
+      return control.valueChanges.pipe(
+        delay(500),
         distinctUntilChanged(),
         switchMap((value) => {
           this.emailValidated = false;
@@ -140,11 +141,12 @@ export class AddEditUserModalComponent implements OnInit {
           } else {
             this.isValidIDPUser = false;
           }
-          this.cdrf.detectChanges();
+          this.cdrf.markForCheck();
           return !this.isValidIDPUser ? { invalid: true } : null;
         }),
         first()
       );
+    };
   }
 
   ngOnInit() {
