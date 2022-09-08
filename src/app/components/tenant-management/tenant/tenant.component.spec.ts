@@ -2486,12 +2486,6 @@ describe('TenantComponent', () => {
     });
   });
 
-  describe('ngAfterViewInit', () => {
-    it('should define function', () => {
-      expect(component.ngAfterViewInit).toBeDefined();
-    });
-  });
-
   describe('setTenantFormData', () => {
     it('should define function', () => {
       expect(component.setTenantFormData).toBeDefined();

@@ -516,7 +516,10 @@ export class AddWorkinstructionComponent
         this.titleErrors = { ...this.titleErrors, whiteSpace: false };
       }
 
-      if (this.wi_title.startsWith(' ') || this.wi_title.endsWith(' ')) {
+      if (
+        this.wi_title.trim() !== '' &&
+        (this.wi_title.startsWith(' ') || this.wi_title.endsWith(' '))
+      ) {
         this.titleErrors = { ...this.titleErrors, trimWhiteSpace: true };
       } else {
         this.titleErrors = { ...this.titleErrors, trimWhiteSpace: false };

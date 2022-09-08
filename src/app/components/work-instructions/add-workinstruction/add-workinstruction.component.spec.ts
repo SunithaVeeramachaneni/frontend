@@ -1770,7 +1770,6 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       expect(component.titleTextChanged.next).toHaveBeenCalledWith(title);
       expect(component.selectedInstruction.WI_Name).toBe(title);
-      expect(component.addOrUpdateTitle).toBeTrue();
       expect(component.wi_title).toBe(title);
       expect(component.titleErrors).toEqual({
         exists: false,
@@ -1798,14 +1797,13 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       expect(component.titleTextChanged.next).not.toHaveBeenCalled();
       expect(component.selectedInstruction.WI_Name).toBe(title);
-      expect(component.addOrUpdateTitle).toBeTrue();
       expect(component.titleErrors).toEqual({
         exists: false,
-        required: true,
+        required: false,
         maxLength: false,
         startPattern: false,
         pattern: false,
-        whiteSpace: false,
+        whiteSpace: true,
         trimWhiteSpace: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
