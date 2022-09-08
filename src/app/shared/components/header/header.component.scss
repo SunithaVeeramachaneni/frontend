@@ -349,3 +349,35 @@
     background-color: colors.$gray;
   }
 }
+
+.apps-icon {
+  position: relative;
+  top: 7px;
+  margin-right: 20px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.apps-popover {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 6px 4px 84px rgb(0 0 0 / 15%);
+  padding: 16px;
+  position: relative;
+  left: 320px;
+  top: 15px;
+}
+
+.apps-popover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
+  border-bottom: 15px solid #ffffff;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}

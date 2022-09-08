@@ -97,6 +97,56 @@
       </div>
     </div>
 
+    <div>
+      <img
+        src="assets/img/svg/apps-icon.svg"
+        alt="app icon"
+        (click)="isAppOpen = !isAppOpen"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        class="apps-icon"
+      />
+
+      <ng-template
+        cdkConnectedOverlay
+        [cdkConnectedOverlayHasBackdrop]="true"
+        cdkConnectedOverlayPanelClass="custom-popover"
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        cdkConnectedOverlayWidth="400px"
+        [cdkConnectedOverlayOpen]="isAppOpen"
+        [cdkConnectedOverlayOrigin]="trigger"
+        (backdropClick)="isAppOpen = false"
+      >
+        <div class="apps-popover">
+          <div class="dis-flex">
+            <a href="https://www.innovapptive.com/" target="_blank">
+              <img
+                src="assets/img/svg/mworkorder-app.svg"
+                alt="mworkorder app icon"
+                class="p-r-15 p-b-15 cursor-pointer"
+              />
+            </a>
+            <a href="https://www.innovapptive.com/" target="_blank">
+              <img
+                src="assets/img/svg/race-app.svg"
+                alt="race app icon"
+                class="p-b-15 cursor-pointer"
+              />
+            </a>
+          </div>
+          <div class="dis-flex">
+            <a href="https://www.innovapptive.com/" target="_blank">
+              <img
+                src="assets/img/svg/minventory-app.svg"
+                alt="minventory app icon"
+                class="cursor-pointer"
+              />
+            </a>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
     <div
       class="dis-flex cursor"
       (click)="isOpen = !isOpen"
