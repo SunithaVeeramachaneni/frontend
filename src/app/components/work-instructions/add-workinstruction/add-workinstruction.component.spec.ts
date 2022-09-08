@@ -294,7 +294,9 @@ describe('AddWorkinstructionComponent', () => {
       required: false,
       maxLength: false,
       startPattern: false,
-      pattern: false
+      pattern: false,
+      whiteSpace: false,
+      trimWhiteSpace: false
     });
   });
 
@@ -539,7 +541,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
     }));
 
@@ -583,7 +587,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: true,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title already exists!'
@@ -626,7 +632,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to fetch instruction'
@@ -1769,7 +1777,9 @@ describe('AddWorkinstructionComponent', () => {
         required: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
     });
 
@@ -1794,7 +1804,9 @@ describe('AddWorkinstructionComponent', () => {
         required: true,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title is required'

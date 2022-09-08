@@ -91,9 +91,10 @@ export class AddWorkinstructionComponent
     required: false,
     maxLength: false,
     startPattern: false,
-    pattern: false
+    pattern: false,
+    whiteSpace: false,
+    trimWhiteSpace: false
   };
-  addOrUpdateTitle = false;
   fileInfo: FileInfo;
   readonly permissions = permissions;
   private titleChangeSubscription: Subscription;
@@ -189,39 +190,12 @@ export class AddWorkinstructionComponent
       .pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        switchMap((WI_Name) => {
-          if (this.wi_title.length > 80) {
-            this.titleErrors = { ...this.titleErrors, maxLength: true };
-          } else {
-            this.titleErrors = { ...this.titleErrors, maxLength: false };
-          }
-
-          const startFormat = /^[^.|^,|^()]/;
-          if (!this.wi_title.match(startFormat)) {
-            this.titleErrors = { ...this.titleErrors, startPattern: true };
-          } else {
-            this.titleErrors = { ...this.titleErrors, startPattern: false };
-          }
-
-          const format = /^[a-zA-Z0-9\s(),.]+$/;
-          if (!this.wi_title.match(format)) {
-            this.titleErrors = { ...this.titleErrors, pattern: true };
-          } else {
-            this.titleErrors = { ...this.titleErrors, pattern: false };
-          }
-          if (
-            !this.titleErrors.maxLength &&
-            !this.titleErrors.startPattern &&
-            !this.titleErrors.pattern
-          ) {
-            return this.instructionsvc.getInstructionsByName(WI_Name, {
-              displayToast: false,
-              failureResponse: 'throwError'
-            });
-          } else {
-            return of([]);
-          }
-        })
+        switchMap((WI_Name) =>
+          this.instructionsvc.getInstructionsByName(WI_Name, {
+            displayToast: false,
+            failureResponse: 'throwError'
+          })
+        )
       )
       .subscribe(
         (workInstructions) => {
@@ -234,13 +208,7 @@ export class AddWorkinstructionComponent
             this.titleErrors = { ...this.titleErrors, exists: false };
           }
 
-          if (
-            this.addOrUpdateTitle &&
-            !this.titleErrors.exists &&
-            !this.titleErrors.maxLength &&
-            !this.titleErrors.startPattern &&
-            !this.titleErrors.pattern
-          ) {
+          if (!this.titleErrors.exists) {
             this.addTitleToInstruction();
           }
         },
@@ -537,12 +505,51 @@ export class AddWorkinstructionComponent
     }
   }
 
-  titleChange = (wiName: string, addOrUpdateTitle: boolean) => {
-    this.addOrUpdateTitle = addOrUpdateTitle;
-    this.wi_title = wiName?.trim();
+  titleChange = (wiName: string) => {
+    this.wi_title = wiName;
     if (this.wi_title) {
       this.titleErrors = { ...this.titleErrors, required: false };
-      this.titleTextChanged.next(this.wi_title);
+
+      if (this.wi_title.trim() === '') {
+        this.titleErrors = { ...this.titleErrors, whiteSpace: true };
+      } else {
+        this.titleErrors = { ...this.titleErrors, whiteSpace: false };
+      }
+
+      if (this.wi_title.startsWith(' ') || this.wi_title.endsWith(' ')) {
+        this.titleErrors = { ...this.titleErrors, trimWhiteSpace: true };
+      } else {
+        this.titleErrors = { ...this.titleErrors, trimWhiteSpace: false };
+      }
+
+      if (this.wi_title.length > 80) {
+        this.titleErrors = { ...this.titleErrors, maxLength: true };
+      } else {
+        this.titleErrors = { ...this.titleErrors, maxLength: false };
+      }
+
+      const startFormat = /^[^.|^,|^()]/;
+      if (!this.wi_title.match(startFormat)) {
+        this.titleErrors = { ...this.titleErrors, startPattern: true };
+      } else {
+        this.titleErrors = { ...this.titleErrors, startPattern: false };
+      }
+
+      const format = /^[a-zA-Z0-9\s(),.]+$/;
+      if (!this.wi_title.match(format)) {
+        this.titleErrors = { ...this.titleErrors, pattern: true };
+      } else {
+        this.titleErrors = { ...this.titleErrors, pattern: false };
+      }
+      if (
+        !this.titleErrors.maxLength &&
+        !this.titleErrors.startPattern &&
+        !this.titleErrors.pattern &&
+        !this.titleErrors.whiteSpace &&
+        !this.titleErrors.trimWhiteSpace
+      ) {
+        this.titleTextChanged.next(this.wi_title);
+      }
     } else {
       this.titleErrors = { ...this.titleErrors, required: true, exists: false };
     }

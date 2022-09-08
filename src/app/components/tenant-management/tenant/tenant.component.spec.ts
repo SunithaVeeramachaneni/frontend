@@ -182,13 +182,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             tenantId: '   '
           });
 
           expect(component.tenantForm.get('tenantId').errors).toEqual({
-            noWhiteSpace: true
+            whiteSpace: true
           });
         });
 
@@ -238,13 +238,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             tenantName: '   '
           });
 
           expect(component.tenantForm.get('tenantName').errors).toEqual({
-            noWhiteSpace: true
+            whiteSpace: true
           });
         });
 
@@ -296,13 +296,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             clientId: '   '
           });
 
           expect(component.tenantForm.get('clientId').errors).toEqual({
-            noWhiteSpace: true
+            whiteSpace: true
           });
         });
       });
@@ -329,13 +329,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             authority: '  '
           });
 
           expect(
-            component.tenantForm.get('authority').errors.noWhiteSpace
+            component.tenantForm.get('authority').errors.whiteSpace
           ).toBeTrue();
         });
 
@@ -372,13 +372,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             redirectUri: '  '
           });
 
           expect(
-            component.tenantForm.get('redirectUri').errors.noWhiteSpace
+            component.tenantForm.get('redirectUri').errors.whiteSpace
           ).toBeTrue();
         });
 
@@ -415,13 +415,13 @@ describe('TenantComponent', () => {
           });
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.tenantForm.patchValue({
             tenantDomainName: '   '
           });
 
           expect(component.tenantForm.get('tenantDomainName').errors).toEqual({
-            noWhiteSpace: true
+            whiteSpace: true
           });
         });
       });
@@ -471,7 +471,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               tenantAdmin: {
                 firstName: '   '
@@ -481,7 +481,7 @@ describe('TenantComponent', () => {
             expect(
               component.tenantForm.get('tenantAdmin.firstName').errors
             ).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -530,7 +530,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               tenantAdmin: {
                 lastName: '   '
@@ -540,7 +540,7 @@ describe('TenantComponent', () => {
             expect(
               component.tenantForm.get('tenantAdmin.lastName').errors
             ).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -589,7 +589,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               tenantAdmin: {
                 title: '   '
@@ -599,7 +599,7 @@ describe('TenantComponent', () => {
             expect(
               component.tenantForm.get('tenantAdmin.title').errors
             ).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -646,7 +646,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               tenantAdmin: {
                 email: '   '
@@ -654,7 +654,7 @@ describe('TenantComponent', () => {
             });
 
             expect(
-              component.tenantForm.get('tenantAdmin.email').errors.noWhiteSpace
+              component.tenantForm.get('tenantAdmin.email').errors.whiteSpace
             ).toBeTrue();
           });
         });
@@ -696,7 +696,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -706,7 +706,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.baseUrl').errors.noWhiteSpace
+                component.tenantForm.get('erps.sap.baseUrl').errors.whiteSpace
               ).toBeTrue();
             });
 
@@ -761,7 +761,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -771,8 +771,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.oauth2Url').errors
-                  .noWhiteSpace
+                component.tenantForm.get('erps.sap.oauth2Url').errors.whiteSpace
               ).toBeTrue();
             });
 
@@ -827,7 +826,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -837,8 +836,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.username').errors
-                  .noWhiteSpace
+                component.tenantForm.get('erps.sap.username').errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -877,7 +875,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -887,8 +885,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.password').errors
-                  .noWhiteSpace
+                component.tenantForm.get('erps.sap.password').errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -927,7 +924,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -937,8 +934,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.grantType').errors
-                  .noWhiteSpace
+                component.tenantForm.get('erps.sap.grantType').errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -977,7 +973,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -987,8 +983,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.clientId').errors
-                  .noWhiteSpace
+                component.tenantForm.get('erps.sap.clientId').errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1026,7 +1021,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 erps: {
                   sap: {
@@ -1036,7 +1031,7 @@ describe('TenantComponent', () => {
               });
 
               expect(
-                component.tenantForm.get('erps.sap.scopes').errors.noWhiteSpace
+                component.tenantForm.get('erps.sap.scopes').errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1080,7 +1075,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1093,7 +1088,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.oauth2Url').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
 
@@ -1154,7 +1149,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1167,7 +1162,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.grantType').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
             });
@@ -1210,7 +1205,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1223,7 +1218,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.clientSecret').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
             });
@@ -1266,7 +1261,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1279,7 +1274,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.resource').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
             });
@@ -1322,7 +1317,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1335,7 +1330,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.tokenUse').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
             });
@@ -1378,7 +1373,7 @@ describe('TenantComponent', () => {
                 });
               });
 
-              it('should validate noWhiteSpace', () => {
+              it('should validate whiteSpace', () => {
                 component.tenantForm.patchValue({
                   erps: {
                     sap: {
@@ -1391,7 +1386,7 @@ describe('TenantComponent', () => {
 
                 expect(
                   component.tenantForm.get('erps.sap.saml.tokenType').errors
-                    .noWhiteSpace
+                    .whiteSpace
                 ).toBeTrue();
               });
             });
@@ -1439,7 +1434,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   sap: {
@@ -1451,7 +1446,7 @@ describe('TenantComponent', () => {
               expect(
                 component.tenantForm.get(
                   'protectedResources.sap.identityMetadata'
-                ).errors.noWhiteSpace
+                ).errors.whiteSpace
               ).toBeTrue();
             });
 
@@ -1511,7 +1506,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   sap: {
@@ -1522,7 +1517,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.sap.issuer').errors
-                  .noWhiteSpace
+                  .whiteSpace
               ).toBeTrue();
             });
 
@@ -1582,7 +1577,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   sap: {
@@ -1593,7 +1588,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.sap.clientId')
-                  .errors.noWhiteSpace
+                  .errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1634,7 +1629,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   sap: {
@@ -1645,7 +1640,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.sap.audience')
-                  .errors.noWhiteSpace
+                  .errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1684,7 +1679,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   sap: {
@@ -1695,7 +1690,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.sap.scope').errors
-                  .noWhiteSpace
+                  .whiteSpace
               ).toBeTrue();
             });
           });
@@ -1740,7 +1735,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   node: {
@@ -1752,7 +1747,7 @@ describe('TenantComponent', () => {
               expect(
                 component.tenantForm.get(
                   'protectedResources.node.identityMetadata'
-                ).errors.noWhiteSpace
+                ).errors.whiteSpace
               ).toBeTrue();
             });
 
@@ -1814,7 +1809,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   node: {
@@ -1825,7 +1820,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.node.issuer')
-                  .errors.noWhiteSpace
+                  .errors.whiteSpace
               ).toBeTrue();
             });
 
@@ -1886,7 +1881,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   node: {
@@ -1897,7 +1892,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.node.clientId')
-                  .errors.noWhiteSpace
+                  .errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1938,7 +1933,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   node: {
@@ -1949,7 +1944,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.node.audience')
-                  .errors.noWhiteSpace
+                  .errors.whiteSpace
               ).toBeTrue();
             });
           });
@@ -1988,7 +1983,7 @@ describe('TenantComponent', () => {
               });
             });
 
-            it('should validate noWhiteSpace', () => {
+            it('should validate whiteSpace', () => {
               component.tenantForm.patchValue({
                 protectedResources: {
                   node: {
@@ -1999,7 +1994,7 @@ describe('TenantComponent', () => {
 
               expect(
                 component.tenantForm.get('protectedResources.node.scope').errors
-                  .noWhiteSpace
+                  .whiteSpace
               ).toBeTrue();
             });
           });
@@ -2032,7 +2027,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               rdbms: {
                 host: '   '
@@ -2040,7 +2035,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('rdbms.host').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -2096,7 +2091,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               rdbms: {
                 user: '   '
@@ -2104,7 +2099,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('rdbms.user').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -2135,7 +2130,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               rdbms: {
                 password: '   '
@@ -2143,7 +2138,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('rdbms.password').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -2189,7 +2184,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               nosql: {
                 host: '   '
@@ -2197,7 +2192,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('nosql.host').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -2253,7 +2248,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               nosql: {
                 user: '   '
@@ -2261,7 +2256,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('nosql.user').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
@@ -2292,7 +2287,7 @@ describe('TenantComponent', () => {
             });
           });
 
-          it('should validate noWhiteSpace', () => {
+          it('should validate whiteSpace', () => {
             component.tenantForm.patchValue({
               nosql: {
                 password: '   '
@@ -2300,7 +2295,7 @@ describe('TenantComponent', () => {
             });
 
             expect(component.tenantForm.get('nosql.password').errors).toEqual({
-              noWhiteSpace: true
+              whiteSpace: true
             });
           });
         });
