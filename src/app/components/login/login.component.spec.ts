@@ -113,13 +113,13 @@ describe('LoginComponent', () => {
           );
         });
 
-        it('should validate noWhiteSpace', () => {
+        it('should validate whiteSpace', () => {
           component.loginForm.patchValue({
             companyOrDomainName: '   '
           });
 
           expect(
-            component.loginForm.get('companyOrDomainName').errors.noWhiteSpace
+            component.loginForm.get('companyOrDomainName').errors.whiteSpace
           ).toBeTrue();
         });
 

@@ -4,25 +4,15 @@
 >
   <p class="title" translate>saveReportAs</p>
   <mat-form-field appearance="outline" class="width-100">
-    <mat-label>Report Name</mat-label>
+    <mat-label translate>reportName</mat-label>
     <input matInput formControlName="name" />
-    <mat-error *ngIf="reportName.errors?.minlength">
+    <mat-error *ngIf="processValidationErrors('name')" class="m-t-5">
       {{
-        'fieldMinimumLength'
+        errors.name.name
           | translate
             : {
-                name: 'name' | translate,
-                length: reportName.errors?.minlength.requiredLength
-              }
-      }}
-    </mat-error>
-    <mat-error *ngIf="reportName.errors?.maxlength">
-      {{
-        'fieldMaximumLength'
-          | translate
-            : {
-                name: 'name' | translate,
-                length: reportName.errors?.maxlength.requiredLength
+                name: 'reportName' | translate,
+                length: errors.name.length
               }
       }}
     </mat-error>

@@ -21,11 +21,12 @@ import Swal from 'sweetalert2';
 import { CategoryService } from '../../../services/category.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ErrorInfo } from '../../../../../interfaces';
+import { ErrorInfo, ValidationError } from '../../../../../interfaces';
 import { Base64HelperService } from '../../../services/base64-helper.service';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { permissions } from 'src/app/app.constants';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-category',
@@ -43,6 +44,7 @@ export class CategoryComponent implements OnInit, AfterViewInit {
   imageHeight = '';
   path: string;
   readonly permissions = permissions;
+  errors: ValidationError = {};
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +70,9 @@ export class CategoryComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(48),
-          Validators.pattern(/^[a-zA-Z0-9 @&()_,./-]+$/)
+          Validators.pattern(/^[a-zA-Z0-9 @&()_,./-]+$/),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ],
         this.validateCategoryName.bind(this)
       ),
@@ -197,5 +201,20 @@ export class CategoryComponent implements OnInit, AfterViewInit {
         return null;
       })
     );
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.frmSubscribe.get(controlName).touched;
+    const errors = this.frmSubscribe.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

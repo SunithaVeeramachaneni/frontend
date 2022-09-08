@@ -13,13 +13,9 @@ import {
   ValidatorFn,
   Validators
 } from '@angular/forms';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA
-} from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
-import { Dashboard } from 'src/app/interfaces';
+import { Dashboard, ValidationError } from 'src/app/interfaces';
 import { DashboardService } from '../services/dashboard.service';
 
 export interface DashboardCreateUpdateDialogData {
@@ -36,6 +32,7 @@ export interface DashboardCreateUpdateDialogData {
 export class CreateUpdateDashboardDialogComponent implements OnInit {
   isDefault: boolean | false;
   dashboardForm: FormGroup;
+  errors: ValidationError = {};
 
   constructor(
     public dialogRef: MatDialogRef<CreateUpdateDashboardDialogComponent>,
@@ -51,7 +48,8 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(20),
-        WhiteSpaceValidator.noWhiteSpace,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace,
         this.checkIfDashboardTitleExists()
       ])
     });
@@ -71,12 +69,11 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
       existingDashboard = this.dashboardService
         .getDashboards()
         .find(
-          (db: any) =>
-            db.name.toLowerCase() === control.value.trim().toLowerCase()
+          (db: any) => db.name.toLowerCase() === control.value.toLowerCase()
         );
       if (
         this.dialogData.dialogMode === 'EDIT' &&
-        this.dialogData.data.name === control.value.trim()
+        this.dialogData.data.name === control.value
       ) {
         existingDashboard = null;
       }
@@ -90,8 +87,23 @@ export class CreateUpdateDashboardDialogComponent implements OnInit {
   createDashboard(event: any) {
     event.stopPropagation();
     this.dialogRef.close({
-      name: this.dashboardForm.value.dashboardName.trim(),
+      name: this.dashboardForm.value.dashboardName,
       isDefault: this.isDefault
     });
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.dashboardForm.get(controlName).touched;
+    const errors = this.dashboardForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }
