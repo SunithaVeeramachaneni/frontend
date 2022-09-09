@@ -1,9 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import { defaultLimit, permissions as perms } from 'src/app/app.constants';
 import {
   CellClickActionEvent,
@@ -29,7 +36,8 @@ import { TenantService } from '../services/tenant.service';
 export class TenantsComponent implements OnInit {
   selectedProduct = ['All Products'];
   products = ['All Products', 'MWorkOrder', 'MInventory'];
-  tenantsOnLoad$: Observable<Tenant[]>;
+  tenantsOnLoadSearch$: Observable<Tenant[]>;
+  tenantsCountOnLoadSearch$: Observable<Count>;
   tenantsOnScroll$: Observable<Tenant[]>;
   deactivateTenant$: BehaviorSubject<DeactivateTenant> =
     new BehaviorSubject<DeactivateTenant>({} as DeactivateTenant);
@@ -87,19 +95,42 @@ export class TenantsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   deactivate = false;
+  deactivateCount = false;
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  searchForm: FormGroup;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
+  private searchTenants$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
   constructor(
     private tenantService: TenantService,
     private router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.tenantsOnLoad$ = this.getTenants();
+    this.searchForm = this.fb.group({
+      products: [''],
+      search: ['']
+    });
+
+    this.tenantsOnLoadSearch$ = this.searchTenants$.pipe(
+      switchMap((search) => {
+        if (search) {
+          this.skip = 0;
+          return this.getTenants();
+        }
+        return this.getTenants();
+      })
+    );
+
+    this.tenantsCountOnLoadSearch$ = this.searchTenants$.pipe(
+      switchMap(() => this.getTenantsCount())
+    );
+
     this.tenantsOnScroll$ = this.fetchData$.pipe(
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -111,7 +142,7 @@ export class TenantsComponent implements OnInit {
     );
 
     this.tenantsData$ = combineLatest([
-      this.tenantsOnLoad$,
+      this.tenantsOnLoadSearch$,
       this.tenantsOnScroll$,
       this.deactivateTenant$
     ]).pipe(
@@ -142,12 +173,14 @@ export class TenantsComponent implements OnInit {
     );
 
     this.tenantsCount$ = combineLatest([
-      this.getTenantsCount(),
+      this.tenantsCountOnLoadSearch$,
       this.deactivateTenant$
     ]).pipe(
       map(([tenantsCount, { deactivate }]) => {
-        if (deactivate) {
+        this.deactivateCount = deactivate;
+        if (this.deactivateCount) {
           tenantsCount.count = tenantsCount.count - 1;
+          this.deactivateCount = false;
         }
         return tenantsCount;
       })
@@ -156,20 +189,27 @@ export class TenantsComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.searchForm
+      .get('search')
+      .valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe(() => {
+        this.searchTenants$.next(true);
+      });
   }
 
   getTenants = () =>
     this.tenantService.getTenants$({
       skip: this.skip,
       limit: this.limit,
-      isActive: true
-      // searchKey: this.searchValue
+      isActive: true,
+      searchKey: this.searchForm.get('search').value
     });
 
   getTenantsCount = () =>
     this.tenantService.getTenantsCount$({
-      isActive: true
-      // searchKey: this.searchValue
+      isActive: true,
+      searchKey: this.searchForm.get('search').value
     });
 
   handleTableEvent(event: TableEvent) {
