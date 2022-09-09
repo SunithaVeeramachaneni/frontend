@@ -43,13 +43,14 @@ import {
   ReportDetails,
   TableColumn,
   TableEvent,
+  ValidationError,
   Widget
 } from 'src/app/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
 import { ReportConfigurationService } from '../services/report-configuration.service';
 import { ReportService } from '../services/report.service';
 import { cloneDeep } from 'lodash-es';
 import { LoginService } from '../../login/services/login.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 export interface WidgetConfigurationModalData {
   dashboard: Dashboard;
@@ -119,11 +120,11 @@ export class WidgetConfigurationModalComponent implements OnInit {
   setSearchReport$ = new Subject<boolean>();
   updateWidget$: Observable<boolean>;
   readonly permissions = permissions;
+  errors: ValidationError = {};
 
   constructor(
     private reportService: ReportService,
     private reportConfigService: ReportConfigurationService,
-    private commonService: CommonService,
     private dialogRef: MatDialogRef<WidgetConfigurationModalComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: WidgetConfigurationModalData,
@@ -137,7 +138,9 @@ export class WidgetConfigurationModalComponent implements OnInit {
       widgetName: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(48)
+        Validators.maxLength(48),
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
       ])
     });
     this.reports$ = this.reportService.getReports$({
@@ -498,4 +501,19 @@ export class WidgetConfigurationModalComponent implements OnInit {
       this.countField = countFieldName;
     }
   };
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.widgetConfigForm.get(controlName).touched;
+    const errors = this.widgetConfigForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
 }

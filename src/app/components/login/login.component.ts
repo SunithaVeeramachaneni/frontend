@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
         '',
         [
           Validators.required,
-          WhiteSpaceValidator.noWhiteSpace,
+          WhiteSpaceValidator.whiteSpace,
           this.companyOrDomaniNameValidator()
         ]
       ]

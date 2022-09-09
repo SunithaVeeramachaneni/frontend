@@ -119,23 +119,13 @@
       <mat-form-field appearance="outline" class="width-90">
         <mat-label translate>title</mat-label>
         <input matInput placeholder="Title" formControlName="chartTitle" />
-        <mat-error *ngIf="f.chartTitle.errors?.minlength">
+        <mat-error *ngIf="processValidationErrors('chartTitle')">
           {{
-            'fieldMinimumLength'
+            errors.chartTitle.name
               | translate
                 : {
                     name: 'title' | translate,
-                    length: f.chartTitle.errors?.minlength.requiredLength
-                  }
-          }}
-        </mat-error>
-        <mat-error *ngIf="f.chartTitle.errors?.maxlength">
-          {{
-            'fieldMaximumLength'
-              | translate
-                : {
-                    name: 'title' | translate,
-                    length: f.chartTitle.errors?.maxlength.requiredLength
+                    length: errors.chartTitle.length
                   }
           }}
         </mat-error>

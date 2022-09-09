@@ -108,7 +108,7 @@ export class DynamicFiltersComponent implements OnInit, OnChanges {
         filterType: [filterType, Validators.required],
         operand: [
           operand || '',
-          [Validators.required, WhiteSpaceValidator.noWhiteSpace]
+          [Validators.required, WhiteSpaceValidator.whiteSpace]
         ],
         operator: [operator || '', Validators.required],
         displayText: [operand && operator ? operator + ' ' + operand : '']

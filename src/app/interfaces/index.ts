@@ -17,3 +17,4 @@ export * from './dashboard';
 export * from './widget';
 export * from './roles-permissions';
 export * from './tenant';
+export * from './validation-error';

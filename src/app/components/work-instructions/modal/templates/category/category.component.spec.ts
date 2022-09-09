@@ -2,6 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DebugElement } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  TranslateFakeLoader,
+  TranslateLoader,
+  TranslateModule,
+  TranslateService
+} from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 import { NgxSpinnerService, NgxSpinnerComponent } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
@@ -85,8 +91,19 @@ describe('CategoryComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [CategoryComponent, MockComponent(NgxSpinnerComponent)],
-      imports: [ReactiveFormsModule, AppMaterialModules, SharedModule],
+      imports: [
+        ReactiveFormsModule,
+        AppMaterialModules,
+        SharedModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        })
+      ],
       providers: [
+        TranslateService,
         { provide: MyOverlayRef, useValue: myOverlayRefSpy },
         { provide: NgxSpinnerService, useValue: spinnerSpy },
         { provide: InstructionService, useValue: instructionServiceSpy },
@@ -155,9 +172,9 @@ describe('CategoryComponent', () => {
       component.f.title.markAsDirty();
       component.f.title.markAsTouched();
       fixture.detectChanges();
-      expect(categoryEl.querySelector('.invalid-feedback').textContent).toBe(
-        'Title is required'
-      );
+      expect(
+        categoryEl.querySelector('.invalid-feedback').textContent
+      ).toContain('required');
 
       component.f.title.setValue('a');
       component.f.title.markAsDirty();
@@ -165,17 +182,17 @@ describe('CategoryComponent', () => {
       fixture.detectChanges();
       expect(
         categoryEl.querySelector('.invalid-feedback').textContent
-      ).toContain('Title must be at least 3 characters');
+      ).toContain('minlength');
 
       component.f.title.setValue(
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi reiciendis quae, a ratione sint culpa ab perspiciatis odio facere aperiam rerum consequatur tempore consectetur totam adipisci magni quibusdam repellendus. Esse?'
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi reiciendis quae, a ratione sint culpa ab perspiciatis odio facere aperiam rerum consequatur tempore consectetur totam adipisci magni quibusdam repellendus. Esse'
       );
       component.f.title.markAsDirty();
       component.f.title.markAsTouched();
       fixture.detectChanges();
       expect(
         categoryEl.querySelector('.invalid-feedback').textContent
-      ).toContain('Title must be at the max of 48 characters');
+      ).toContain('maxlength');
 
       const categoryName = 'TestCategory';
       (instructionServiceSpy.getCategoriesByName as jasmine.Spy)
@@ -195,7 +212,7 @@ describe('CategoryComponent', () => {
       fixture.detectChanges();
       expect(
         categoryEl.querySelector('.invalid-feedback').textContent
-      ).toContain('Category name already exists');
+      ).toContain('categoryNameExists');
     });
   });
 

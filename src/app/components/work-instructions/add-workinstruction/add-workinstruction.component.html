@@ -24,7 +24,7 @@
           autofocus="true"
           autocomplete="off"
           value="{{ selectedInstruction.WI_Name }}"
-          (keyup)="titleChange(selectedInstruction.WI_Name, true)"
+          (keyup)="titleChange(selectedInstruction.WI_Name)"
           #workInstructionTitle
         />
       </a>
@@ -33,7 +33,7 @@
         <span class="wi-title-info-position">
           <span
             class="f-left text-danger wi-title-info"
-            *ngIf="titleErrors?.required"
+            *ngIf="titleErrors?.required || titleErrors?.whiteSpace"
           >
             Title is required
           </span>
@@ -41,7 +41,24 @@
         <span class="wi-title-info-position">
           <span
             class="f-left text-danger wi-title-info"
-            *ngIf="!titleErrors?.required && titleErrors?.maxLength"
+            *ngIf="
+              !titleErrors?.required &&
+              !titleErrors?.whiteSpace &&
+              titleErrors?.trimWhiteSpace
+            "
+          >
+            Title should not start or end with space
+          </span>
+        </span>
+        <span class="wi-title-info-position">
+          <span
+            class="f-left text-danger wi-title-info"
+            *ngIf="
+              !titleErrors?.required &&
+              !titleErrors?.whiteSpace &&
+              !titleErrors?.trimWhiteSpace &&
+              titleErrors?.maxLength
+            "
           >
             Title should not exceed 80 charcters
           </span>
@@ -51,6 +68,8 @@
             class="f-left text-danger wi-title-info"
             *ngIf="
               !titleErrors?.required &&
+              !titleErrors?.whiteSpace &&
+              !titleErrors?.trimWhiteSpace &&
               !titleErrors?.maxLength &&
               titleErrors?.startPattern
             "
@@ -63,6 +82,8 @@
             class="f-left text-danger wi-title-info"
             *ngIf="
               !titleErrors?.required &&
+              !titleErrors?.whiteSpace &&
+              !titleErrors?.trimWhiteSpace &&
               !titleErrors?.maxLength &&
               !titleErrors?.startPattern &&
               titleErrors?.pattern
@@ -76,6 +97,8 @@
             class="f-left text-danger wi-title-info"
             *ngIf="
               !titleErrors?.required &&
+              !titleErrors?.whiteSpace &&
+              !titleErrors?.trimWhiteSpace &&
               !titleErrors?.maxLength &&
               !titleErrors?.startPattern &&
               !titleErrors?.pattern &&
