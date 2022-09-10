@@ -10,7 +10,6 @@ import {
   FormControl,
   FormBuilder,
   Validators,
-  FormArray,
   ValidatorFn,
   AbstractControl,
   ValidationErrors,
@@ -19,12 +18,11 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Buffer } from 'buffer';
-import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { HttpClient } from '@angular/common/http';
-import { Permission, Role } from 'src/app/interfaces';
-import { Observable, of } from 'rxjs';
+import { Permission, Role, ValidationError } from 'src/app/interfaces';
+import { Observable } from 'rxjs';
 import {
-  debounceTime,
+  delay,
   distinctUntilChanged,
   first,
   map,
@@ -47,20 +45,23 @@ export class AddEditUserModalComponent implements OnInit {
       Validators.minLength(3),
       Validators.maxLength(100),
       Validators.pattern('^[a-zA-Z0-9 ]+$'),
-      WhiteSpaceValidator.noWhiteSpace
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
     ]),
     lastName: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(100),
       Validators.pattern('^[a-zA-Z0-9 ]+$'),
-      WhiteSpaceValidator.noWhiteSpace
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
     ]),
     title: new FormControl('', [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(100),
-      WhiteSpaceValidator.noWhiteSpace
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
     ]),
     email: new FormControl(
       '',
@@ -90,12 +91,12 @@ export class AddEditUserModalComponent implements OnInit {
   }
   rolePermissions: Permission[];
   userRolePermissions = userRolePermissions;
+  errors: ValidationError = {};
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddEditUserModalComponent>,
     private sant: DomSanitizer,
-    private roleService: RolesPermissionsService,
     private cdrf: ChangeDetectorRef,
     private usersService: UsersService,
     private http: HttpClient,
@@ -122,9 +123,10 @@ export class AddEditUserModalComponent implements OnInit {
     };
   }
   checkIfUserExistsInIDP(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors> =>
-      control.valueChanges.pipe(
-        debounceTime(500),
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      control.markAsTouched();
+      return control.valueChanges.pipe(
+        delay(500),
         distinctUntilChanged(),
         switchMap((value) => {
           this.emailValidated = false;
@@ -140,11 +142,12 @@ export class AddEditUserModalComponent implements OnInit {
           } else {
             this.isValidIDPUser = false;
           }
-          this.cdrf.detectChanges();
+          this.cdrf.markForCheck();
           return !this.isValidIDPUser ? { invalid: true } : null;
         }),
         first()
       );
+    };
   }
 
   ngOnInit() {
@@ -278,5 +281,20 @@ export class AddEditUserModalComponent implements OnInit {
 
   close() {
     this.dialogRef.close();
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.userForm.get(controlName).touched;
+    const errors = this.userForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

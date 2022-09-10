@@ -109,18 +109,16 @@
               formControlName="tenantId"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.tenantId.name">
-              {{
-                errors.tenantId.name
-                  | translate
-                    : {
-                        name: 'tenantId' | translate,
-                        length: errors.tenantId.length
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('tenantId')">
+            {{
+              errors.tenantId.name
+                | translate
+                  : {
+                      name: 'tenantId' | translate,
+                      length: errors.tenantId.length
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -132,18 +130,16 @@
               formControlName="tenantName"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.tenantName.name">
-              {{
-                errors.tenantName.name
-                  | translate
-                    : {
-                        name: 'tenantName' | translate,
-                        length: errors.tenantName.length
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('tenantName')">
+            {{
+              errors.tenantName.name
+                | translate
+                  : {
+                      name: 'tenantName' | translate,
+                      length: errors.tenantName.length
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -174,18 +170,16 @@
               formControlName="clientId"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.clientId.name">
-              {{
-                errors.clientId.name
-                  | translate
-                    : {
-                        name: 'clientId' | translate,
-                        length: errors.clientId.length
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('clientId')">
+            {{
+              errors.clientId.name
+                | translate
+                  : {
+                      name: 'clientId' | translate,
+                      length: errors.clientId.length
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -197,21 +191,19 @@
               formControlName="authority"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.authority.name">
-              {{
-                errors.authority.name
-                  | translate
-                    : {
-                        name: 'authority' | translate,
-                        length: errors.authority.length,
-                        message:
-                          'invalidUrl'
-                          | translate: { name: 'authority' | translate }
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('authority')">
+            {{
+              errors.authority.name
+                | translate
+                  : {
+                      name: 'authority' | translate,
+                      length: errors.authority.length,
+                      message:
+                        'invalidUrl'
+                        | translate: { name: 'authority' | translate }
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -223,21 +215,19 @@
               formControlName="redirectUri"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.redirectUri.name">
-              {{
-                errors.redirectUri.name
-                  | translate
-                    : {
-                        name: 'redirectUri' | translate,
-                        length: errors.redirectUri.length,
-                        message:
-                          'invalidUrl'
-                          | translate: { name: 'redirectUri' | translate }
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('redirectUri')">
+            {{
+              errors.redirectUri.name
+                | translate
+                  : {
+                      name: 'redirectUri' | translate,
+                      length: errors.redirectUri.length,
+                      message:
+                        'invalidUrl'
+                        | translate: { name: 'redirectUri' | translate }
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="m-0">
@@ -249,18 +239,16 @@
               formControlName="tenantDomainName"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.tenantDomainName.name">
-              {{
-                errors.tenantDomainName.name
-                  | translate
-                    : {
-                        name: 'tenantDomainName' | translate,
-                        length: errors.tenantDomainName.length
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('tenantDomainName')">
+            {{
+              errors.tenantDomainName.name
+                | translate
+                  : {
+                      name: 'tenantDomainName' | translate,
+                      length: errors.tenantDomainName.length
+                    }
+            }}
+          </mat-error>
         </p>
 
         <p class="sub-headings" translate>tenantAdminDetails</p>
@@ -275,18 +263,16 @@
                 formControlName="firstName"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.tenantAdmin.firstName.name">
-                {{
-                  errors.tenantAdmin.firstName.name
-                    | translate
-                      : {
-                          name: 'firstName' | translate,
-                          length: errors.tenantAdmin.firstName.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('tenantAdmin.firstName')">
+              {{
+                errors['tenantAdmin.firstName'].name
+                  | translate
+                    : {
+                        name: 'firstName' | translate,
+                        length: errors['tenantAdmin.firstName'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -298,18 +284,16 @@
                 formControlName="lastName"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.tenantAdmin.lastName.name">
-                {{
-                  errors.tenantAdmin.lastName.name
-                    | translate
-                      : {
-                          name: 'lastName' | translate,
-                          length: errors.tenantAdmin.lastName.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('tenantAdmin.lastName')">
+              {{
+                errors['tenantAdmin.lastName'].name
+                  | translate
+                    : {
+                        name: 'lastName' | translate,
+                        length: errors['tenantAdmin.lastName'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -321,18 +305,16 @@
                 formControlName="title"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.tenantAdmin.title.name">
-                {{
-                  errors.tenantAdmin.title.name
-                    | translate
-                      : {
-                          name: 'title' | translate,
-                          length: errors.tenantAdmin.title.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('tenantAdmin.title')">
+              {{
+                errors['tenantAdmin.title'].name
+                  | translate
+                    : {
+                        name: 'title' | translate,
+                        length: errors['tenantAdmin.title'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -344,18 +326,16 @@
                 formControlName="email"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.tenantAdmin.email.name">
-                {{
-                  errors.tenantAdmin.email.name
-                    | translate
-                      : {
-                          name: 'emailLabel' | translate,
-                          length: errors.tenantAdmin.email.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('tenantAdmin.email')">
+              {{
+                errors['tenantAdmin.email'].name
+                  | translate
+                    : {
+                        name: 'emailLabel' | translate,
+                        length: errors['tenantAdmin.email'].length
+                      }
+              }}
+            </mat-error>
           </p>
         </div>
       </div>
@@ -374,21 +354,19 @@
                   formControlName="baseUrl"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.baseUrl.name">
-                  {{
-                    errors.erps.sap.baseUrl.name
-                      | translate
-                        : {
-                            name: 'baseUrl' | translate,
-                            length: errors.erps.sap.baseUrl.length,
-                            message:
-                              'invalidUrl'
-                              | translate: { name: 'baseUrl' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.baseUrl')">
+                {{
+                  errors['erps.sap.baseUrl'].name
+                    | translate
+                      : {
+                          name: 'baseUrl' | translate,
+                          length: errors['erps.sap.baseUrl'].length,
+                          message:
+                            'invalidUrl'
+                            | translate: { name: 'baseUrl' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -400,21 +378,19 @@
                   formControlName="oauth2Url"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.oauth2Url.name">
-                  {{
-                    errors.erps.sap.oauth2Url.name
-                      | translate
-                        : {
-                            name: 'oauth2Url' | translate,
-                            length: errors.erps.sap.oauth2Url.length,
-                            message:
-                              'invalidUrl'
-                              | translate: { name: 'oauth2Url' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.oauth2Url')">
+                {{
+                  errors['erps.sap.oauth2Url'].name
+                    | translate
+                      : {
+                          name: 'oauth2Url' | translate,
+                          length: errors['erps.sap.oauth2Url'].length,
+                          message:
+                            'invalidUrl'
+                            | translate: { name: 'oauth2Url' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -426,18 +402,16 @@
                   formControlName="username"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.username.name">
-                  {{
-                    errors.erps.sap.username.name
-                      | translate
-                        : {
-                            name: 'username' | translate,
-                            length: errors.erps.sap.username.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.username')">
+                {{
+                  errors['erps.sap.username'].name
+                    | translate
+                      : {
+                          name: 'username' | translate,
+                          length: errors['erps.sap.username'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -463,18 +437,16 @@
                   </mat-icon>
                 </button>
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.password.name">
-                  {{
-                    errors.erps.sap.password.name
-                      | translate
-                        : {
-                            name: 'password' | translate,
-                            length: errors.erps.sap.password.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.password')">
+                {{
+                  errors['erps.sap.password'].name
+                    | translate
+                      : {
+                          name: 'password' | translate,
+                          length: errors['erps.sap.password'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -486,18 +458,16 @@
                   formControlName="grantType"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.grantType.name">
-                  {{
-                    errors.erps.sap.grantType.name
-                      | translate
-                        : {
-                            name: 'grantType' | translate,
-                            length: errors.erps.sap.grantType.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.grantType')">
+                {{
+                  errors['erps.sap.grantType'].name
+                    | translate
+                      : {
+                          name: 'grantType' | translate,
+                          length: errors['erps.sap.grantType'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -509,18 +479,16 @@
                   formControlName="clientId"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.clientId.name">
-                  {{
-                    errors.erps.sap.clientId.name
-                      | translate
-                        : {
-                            name: 'clientId' | translate,
-                            length: errors.erps.sap.clientId.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.clientId')">
+                {{
+                  errors['erps.sap.clientId'].name
+                    | translate
+                      : {
+                          name: 'clientId' | translate,
+                          length: errors['erps.sap.clientId'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -535,18 +503,16 @@
                   formControlName="scopes"
                 ></textarea>
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.erps.sap.scopes.name">
-                  {{
-                    errors.erps.sap.scopes.name
-                      | translate
-                        : {
-                            name: 'scopes' | translate,
-                            length: errors.erps.sap.scopes.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error *ngIf="processValidationErrors('erps.sap.scopes')">
+                {{
+                  errors['erps.sap.scopes'].name
+                    | translate
+                      : {
+                          name: 'scopes' | translate,
+                          length: errors['erps.sap.scopes'].length
+                        }
+                }}
+              </mat-error>
             </p>
             <p class="sub-headings" translate>basicCredentials</p>
             <div formGroupName="basicCredentials">
@@ -559,21 +525,24 @@
                     formControlName="username"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error
-                    *ngIf="errors.erps.sap.basicCredentials.username.name"
-                  >
-                    {{
-                      errors.erps.sap.basicCredentials.username.name
-                        | translate
-                          : {
-                              name: 'username' | translate,
-                              length:
-                                errors.erps.sap.basicCredentials.username.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="
+                    processValidationErrors(
+                      'erps.sap.basicCredentials.username'
+                    )
+                  "
+                >
+                  {{
+                    errors['erps.sap.basicCredentials.username'].name
+                      | translate
+                        : {
+                            name: 'username' | translate,
+                            length:
+                              errors['erps.sap.basicCredentials.username']
+                                .length
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -599,21 +568,24 @@
                     </mat-icon>
                   </button>
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error
-                    *ngIf="errors.erps.sap.basicCredentials.password.name"
-                  >
-                    {{
-                      errors.erps.sap.basicCredentials.password.name
-                        | translate
-                          : {
-                              name: 'password' | translate,
-                              length:
-                                errors.erps.sap.basicCredentials.password.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="
+                    processValidationErrors(
+                      'erps.sap.basicCredentials.password'
+                    )
+                  "
+                >
+                  {{
+                    errors['erps.sap.basicCredentials.password'].name
+                      | translate
+                        : {
+                            name: 'password' | translate,
+                            length:
+                              errors['erps.sap.basicCredentials.password']
+                                .length
+                          }
+                  }}
+                </mat-error>
               </p>
             </div>
             <p class="sub-headings" translate>sapsamlDetails</p>
@@ -627,21 +599,21 @@
                     formControlName="oauth2Url"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.oauth2Url.name">
-                    {{
-                      errors.erps.sap.saml.oauth2Url.name
-                        | translate
-                          : {
-                              name: 'oauth2Url' | translate,
-                              length: errors.erps.sap.saml.oauth2Url.length,
-                              message:
-                                'invalidUrl'
-                                | translate: { name: 'oauth2Url' | translate }
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.oauth2Url')"
+                >
+                  {{
+                    errors['erps.sap.saml.oauth2Url'].name
+                      | translate
+                        : {
+                            name: 'oauth2Url' | translate,
+                            length: errors['erps.sap.saml.oauth2Url'].length,
+                            message:
+                              'invalidUrl'
+                              | translate: { name: 'oauth2Url' | translate }
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -653,18 +625,18 @@
                     formControlName="grantType"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.grantType.name">
-                    {{
-                      errors.erps.sap.saml.grantType.name
-                        | translate
-                          : {
-                              name: 'grantType' | translate,
-                              length: errors.erps.sap.saml.grantType.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.grantType')"
+                >
+                  {{
+                    errors['erps.sap.saml.grantType'].name
+                      | translate
+                        : {
+                            name: 'grantType' | translate,
+                            length: errors['erps.sap.saml.grantType'].length
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -679,18 +651,18 @@
                     (blur)="maskClientSecret()"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.clientSecret.name">
-                    {{
-                      errors.erps.sap.saml.clientSecret.name
-                        | translate
-                          : {
-                              name: 'clientSecret' | translate,
-                              length: errors.erps.sap.saml.clientSecret.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.clientSecret')"
+                >
+                  {{
+                    errors['erps.sap.saml.clientSecret'].name
+                      | translate
+                        : {
+                            name: 'clientSecret' | translate,
+                            length: errors['erps.sap.saml.clientSecret'].length
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -702,18 +674,18 @@
                     formControlName="resource"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.resource.name">
-                    {{
-                      errors.erps.sap.saml.resource.name
-                        | translate
-                          : {
-                              name: 'resource' | translate,
-                              length: errors.erps.sap.saml.resource.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.resource')"
+                >
+                  {{
+                    errors['erps.sap.saml.resource'].name
+                      | translate
+                        : {
+                            name: 'resource' | translate,
+                            length: errors['erps.sap.saml.resource'].length
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -725,18 +697,18 @@
                     formControlName="tokenUse"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.tokenUse.name">
-                    {{
-                      errors.erps.sap.saml.tokenUse.name
-                        | translate
-                          : {
-                              name: 'tokenUse' | translate,
-                              length: errors.erps.sap.saml.tokenUse.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.tokenUse')"
+                >
+                  {{
+                    errors['erps.sap.saml.tokenUse'].name
+                      | translate
+                        : {
+                            name: 'tokenUse' | translate,
+                            length: errors['erps.sap.saml.tokenUse'].length
+                          }
+                  }}
+                </mat-error>
               </p>
 
               <p class="m-0">
@@ -748,18 +720,18 @@
                     formControlName="tokenType"
                   />
                 </mat-form-field>
-                <ng-container *ngIf="validationErrors$ | async as errors">
-                  <mat-error *ngIf="errors.erps.sap.saml.tokenType.name">
-                    {{
-                      errors.erps.sap.saml.tokenType.name
-                        | translate
-                          : {
-                              name: 'tokenType' | translate,
-                              length: errors.erps.sap.saml.tokenType.length
-                            }
-                    }}
-                  </mat-error>
-                </ng-container>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.tokenType')"
+                >
+                  {{
+                    errors['erps.sap.saml.tokenType'].name
+                      | translate
+                        : {
+                            name: 'tokenType' | translate,
+                            length: errors['erps.sap.saml.tokenType'].length
+                          }
+                  }}
+                </mat-error>
               </p>
             </div>
           </div>
@@ -780,26 +752,28 @@
                   formControlName="identityMetadata"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error
-                  *ngIf="errors.protectedResources.sap.identityMetadata.name"
-                >
-                  {{
-                    errors.protectedResources.sap.identityMetadata.name
-                      | translate
-                        : {
-                            name: 'identityMetadata' | translate,
-                            length:
-                              errors.protectedResources.sap.identityMetadata
-                                .length,
-                            message:
-                              'invalidUrl'
-                              | translate
-                                : { name: 'identityMetadata' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors(
+                    'protectedResources.sap.identityMetadata'
+                  )
+                "
+              >
+                {{
+                  errors['protectedResources.sap.identityMetadata'].name
+                    | translate
+                      : {
+                          name: 'identityMetadata' | translate,
+                          length:
+                            errors['protectedResources.sap.identityMetadata']
+                              .length,
+                          message:
+                            'invalidUrl'
+                            | translate
+                              : { name: 'identityMetadata' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -811,21 +785,22 @@
                   formControlName="issuer"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.sap.issuer.name">
-                  {{
-                    errors.protectedResources.sap.issuer.name
-                      | translate
-                        : {
-                            name: 'issuer' | translate,
-                            length: errors.protectedResources.sap.issuer.length,
-                            message:
-                              'invalidUrl'
-                              | translate: { name: 'issuer' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="processValidationErrors('protectedResources.sap.issuer')"
+              >
+                {{
+                  errors['protectedResources.sap.issuer'].name
+                    | translate
+                      : {
+                          name: 'issuer' | translate,
+                          length:
+                            errors['protectedResources.sap.issuer'].length,
+                          message:
+                            'invalidUrl'
+                            | translate: { name: 'issuer' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -837,19 +812,21 @@
                   formControlName="clientId"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.sap.clientId.name">
-                  {{
-                    errors.protectedResources.sap.clientId.name
-                      | translate
-                        : {
-                            name: 'clientId' | translate,
-                            length:
-                              errors.protectedResources.sap.clientId.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors('protectedResources.sap.clientId')
+                "
+              >
+                {{
+                  errors['protectedResources.sap.clientId'].name
+                    | translate
+                      : {
+                          name: 'clientId' | translate,
+                          length:
+                            errors['protectedResources.sap.clientId'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -861,19 +838,21 @@
                   formControlName="audience"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.sap.audience.name">
-                  {{
-                    errors.protectedResources.sap.audience.name
-                      | translate
-                        : {
-                            name: 'audience' | translate,
-                            length:
-                              errors.protectedResources.sap.audience.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors('protectedResources.sap.audience')
+                "
+              >
+                {{
+                  errors['protectedResources.sap.audience'].name
+                    | translate
+                      : {
+                          name: 'audience' | translate,
+                          length:
+                            errors['protectedResources.sap.audience'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -885,18 +864,18 @@
                   formControlName="scope"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.sap.scope.name">
-                  {{
-                    errors.protectedResources.sap.scope.name
-                      | translate
-                        : {
-                            name: 'scope' | translate,
-                            length: errors.protectedResources.sap.scope.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="processValidationErrors('protectedResources.sap.scope')"
+              >
+                {{
+                  errors['protectedResources.sap.scope'].name
+                    | translate
+                      : {
+                          name: 'scope' | translate,
+                          length: errors['protectedResources.sap.scope'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="sub-headings" translate>sapUrls</p>
@@ -935,7 +914,14 @@
                   <mat-error *ngIf="url.errors?.required && url.touched">
                     {{ 'required' | translate: { name: 'url' | translate } }}
                   </mat-error>
-                  <mat-error *ngIf="url.errors?.maxlength && url.touched">
+                  <mat-error
+                    *ngIf="
+                      !url.errors?.whiteSpace &&
+                      !url.errors?.trimWhiteSpace &&
+                      url.errors?.maxlength &&
+                      url.touched
+                    "
+                  >
                     {{
                       'maxlength'
                         | translate
@@ -945,9 +931,18 @@
                             }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="url.errors?.noWhiteSpace && url.touched">
+                  <mat-error *ngIf="url.errors?.whiteSpace && url.touched">
                     {{
-                      'noWhiteSpace'
+                      'whiteSpace'
+                        | translate
+                          : {
+                              name: 'url' | translate
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error *ngIf="url.errors?.trimWhiteSpace && url.touched">
+                    {{
+                      'trimWhiteSpace'
                         | translate
                           : {
                               name: 'url' | translate
@@ -956,7 +951,8 @@
                   </mat-error>
                   <mat-error
                     *ngIf="
-                      !url.errors?.noWhiteSpace &&
+                      !url.errors?.whiteSpace &&
+                      !url.errors?.trimWhiteSpace &&
                       url.errors?.pattern &&
                       url.touched
                     "
@@ -985,25 +981,27 @@
                   formControlName="identityMetadata"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error
-                  *ngIf="errors.protectedResources.node.identityMetadata.name"
-                >
-                  {{
-                    errors.protectedResources.node.identityMetadata.name
-                      | translate
-                        : {
-                            name: 'identityMetadata' | translate,
-                            length:
-                              errors.protectedResources.node.identityMetadata
-                                .length,
-                            message:
-                              'invalidUrl'
-                              | translate: { name: 'issuer' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors(
+                    'protectedResources.node.identityMetadata'
+                  )
+                "
+              >
+                {{
+                  errors['protectedResources.node.identityMetadata'].name
+                    | translate
+                      : {
+                          name: 'identityMetadata' | translate,
+                          length:
+                            errors['protectedResources.node.identityMetadata']
+                              .length,
+                          message:
+                            'invalidUrl'
+                            | translate: { name: 'issuer' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -1015,22 +1013,24 @@
                   formControlName="issuer"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.node.issuer.name">
-                  {{
-                    errors.protectedResources.node.issuer.name
-                      | translate
-                        : {
-                            name: 'issuer' | translate,
-                            length:
-                              errors.protectedResources.node.issuer.length,
-                            message:
-                              'invalidUrl'
-                              | translate: { name: 'issuer' | translate }
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors('protectedResources.node.issuer')
+                "
+              >
+                {{
+                  errors['protectedResources.node.issuer'].name
+                    | translate
+                      : {
+                          name: 'issuer' | translate,
+                          length:
+                            errors['protectedResources.node.issuer'].length,
+                          message:
+                            'invalidUrl'
+                            | translate: { name: 'issuer' | translate }
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -1042,19 +1042,21 @@
                   formControlName="clientId"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.node.clientId.name">
-                  {{
-                    errors.protectedResources.node.clientId.name
-                      | translate
-                        : {
-                            name: 'clientId' | translate,
-                            length:
-                              errors.protectedResources.node.clientId.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors('protectedResources.node.clientId')
+                "
+              >
+                {{
+                  errors['protectedResources.node.clientId'].name
+                    | translate
+                      : {
+                          name: 'clientId' | translate,
+                          length:
+                            errors['protectedResources.node.clientId'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -1066,19 +1068,21 @@
                   formControlName="audience"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.node.audience.name">
-                  {{
-                    errors.protectedResources.node.audience.name
-                      | translate
-                        : {
-                            name: 'audience' | translate,
-                            length:
-                              errors.protectedResources.node.audience.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="
+                  processValidationErrors('protectedResources.node.audience')
+                "
+              >
+                {{
+                  errors['protectedResources.node.audience'].name
+                    | translate
+                      : {
+                          name: 'audience' | translate,
+                          length:
+                            errors['protectedResources.node.audience'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="m-0">
@@ -1090,18 +1094,18 @@
                   formControlName="scope"
                 />
               </mat-form-field>
-              <ng-container *ngIf="validationErrors$ | async as errors">
-                <mat-error *ngIf="errors.protectedResources.node.scope.name">
-                  {{
-                    errors.protectedResources.node.scope.name
-                      | translate
-                        : {
-                            name: 'scope' | translate,
-                            length: errors.protectedResources.node.scope.length
-                          }
-                  }}
-                </mat-error>
-              </ng-container>
+              <mat-error
+                *ngIf="processValidationErrors('protectedResources.node.scope')"
+              >
+                {{
+                  errors['protectedResources.node.scope'].name
+                    | translate
+                      : {
+                          name: 'scope' | translate,
+                          length: errors['protectedResources.node.scope'].length
+                        }
+                }}
+              </mat-error>
             </p>
 
             <p class="sub-headings" translate>nodeUrls</p>
@@ -1141,7 +1145,14 @@
                   <mat-error *ngIf="url.errors?.required && url.touched">
                     {{ 'required' | translate: { name: 'url' | translate } }}
                   </mat-error>
-                  <mat-error *ngIf="url.errors?.maxlength && url.touched">
+                  <mat-error
+                    *ngIf="
+                      !url.errors?.whiteSpace &&
+                      !url.errors?.trimWhiteSpace &&
+                      url.errors?.maxlength &&
+                      url.touched
+                    "
+                  >
                     {{
                       'maxlength'
                         | translate
@@ -1151,9 +1162,18 @@
                             }
                     }}
                   </mat-error>
-                  <mat-error *ngIf="url.errors?.noWhiteSpace && url.touched">
+                  <mat-error *ngIf="url.errors?.whiteSpace && url.touched">
                     {{
-                      'noWhiteSpace'
+                      'whiteSpace'
+                        | translate
+                          : {
+                              name: 'url' | translate
+                            }
+                    }}
+                  </mat-error>
+                  <mat-error *ngIf="url.errors?.trimWhiteSpace && url.touched">
+                    {{
+                      'trimWhiteSpace'
                         | translate
                           : {
                               name: 'url' | translate
@@ -1162,7 +1182,8 @@
                   </mat-error>
                   <mat-error
                     *ngIf="
-                      !url.errors?.noWhiteSpace &&
+                      !url.errors?.whiteSpace &&
+                      !url.errors?.trimWhiteSpace &&
                       url.errors?.pattern &&
                       url.touched
                     "
@@ -1194,18 +1215,16 @@
                 formControlName="host"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.host.name">
-                {{
-                  errors.rdbms.host.name
-                    | translate
-                      : {
-                          name: 'host' | translate,
-                          length: errors.rdbms.host.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('rdbms.host')">
+              {{
+                errors['rdbms.host'].name
+                  | translate
+                    : {
+                        name: 'host' | translate,
+                        length: errors['rdbms.host'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1219,18 +1238,16 @@
                 maxlength="4"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.port.name">
-                {{
-                  errors.rdbms.port.name
-                    | translate
-                      : {
-                          name: 'port' | translate,
-                          message: 'invalidPort' | translate
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('rdbms.port')">
+              {{
+                errors['rdbms.port'].name
+                  | translate
+                    : {
+                        name: 'port' | translate,
+                        message: 'invalidPort' | translate
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1242,18 +1259,16 @@
                 formControlName="user"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.user.name">
-                {{
-                  errors.rdbms.user.name
-                    | translate
-                      : {
-                          name: 'user' | translate,
-                          length: errors.rdbms.user.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('rdbms.user')">
+              {{
+                errors['rdbms.user'].name
+                  | translate
+                    : {
+                        name: 'user' | translate,
+                        length: errors['rdbms.user'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1279,18 +1294,16 @@
                 </mat-icon>
               </button>
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.rdbms.password.name">
-                {{
-                  errors.rdbms.password.name
-                    | translate
-                      : {
-                          name: 'password' | translate,
-                          length: errors.rdbms.password.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('rdbms.password')">
+              {{
+                errors['rdbms.password'].name
+                  | translate
+                    : {
+                        name: 'password' | translate,
+                        length: errors['rdbms.password'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1355,18 +1368,16 @@
                 formControlName="host"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.nosql.host.name">
-                {{
-                  errors.nosql.host.name
-                    | translate
-                      : {
-                          name: 'host' | translate,
-                          length: errors.nosql.host.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('nosql.host')">
+              {{
+                errors['nosql.host'].name
+                  | translate
+                    : {
+                        name: 'host' | translate,
+                        length: errors['nosql.host'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p
@@ -1385,18 +1396,16 @@
                 maxlength="4"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.nosql.port.name">
-                {{
-                  errors.nosql.port.name
-                    | translate
-                      : {
-                          name: 'port' | translate,
-                          message: 'invalidPort' | translate
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('nosql.port')">
+              {{
+                errors['nosql.port'].name
+                  | translate
+                    : {
+                        name: 'port' | translate,
+                        message: 'invalidPort' | translate
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1408,18 +1417,16 @@
                 formControlName="user"
               />
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.nosql.user.name">
-                {{
-                  errors.nosql.user.name
-                    | translate
-                      : {
-                          name: 'user' | translate,
-                          length: errors.nosql.user.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('nosql.user')">
+              {{
+                errors['nosql.user'].name
+                  | translate
+                    : {
+                        name: 'user' | translate,
+                        length: errors['nosql.user'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1445,18 +1452,16 @@
                 </mat-icon>
               </button>
             </mat-form-field>
-            <ng-container *ngIf="validationErrors$ | async as errors">
-              <mat-error *ngIf="errors.nosql.password.name">
-                {{
-                  errors.nosql.password.name
-                    | translate
-                      : {
-                          name: 'password' | translate,
-                          length: errors.nosql.password.length
-                        }
-                }}
-              </mat-error>
-            </ng-container>
+            <mat-error *ngIf="processValidationErrors('nosql.password')">
+              {{
+                errors['nosql.password'].name
+                  | translate
+                    : {
+                        name: 'password' | translate,
+                        length: errors['nosql.password'].length
+                      }
+              }}
+            </mat-error>
           </p>
 
           <p class="m-0">
@@ -1515,12 +1520,15 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  slackConfiguration.get('slackTeamID').errors?.required &&
-                  slackConfiguration.get('slackTeamID').touched
+                  processValidationErrors('slackConfiguration.slackTeamID')
                 "
               >
                 {{
-                  'required' | translate: { name: 'slackTeamID' | translate }
+                  errors['slackConfiguration.slackTeamID'].name
+                    | translate
+                      : {
+                          name: 'slackTeamID' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1535,12 +1543,15 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  slackConfiguration.get('slackClientID').errors?.required &&
-                  slackConfiguration.get('slackClientID').touched
+                  processValidationErrors('slackConfiguration.slackClientID')
                 "
               >
                 {{
-                  'required' | translate: { name: 'slackClientID' | translate }
+                  errors['slackConfiguration.slackClientID'].name
+                    | translate
+                      : {
+                          name: 'slackClientID' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1555,14 +1566,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  slackConfiguration.get('slackClientSecret').errors
-                    ?.required &&
-                  slackConfiguration.get('slackClientSecret').touched
+                  processValidationErrors(
+                    'slackConfiguration.slackClientSecret'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'slackClientSecret' | translate }
+                  errors['slackConfiguration.slackClientSecret'].name
+                    | translate
+                      : {
+                          name: 'slackClientSecret' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1577,15 +1591,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  slackConfiguration.get('slackClientSigningSecret').errors
-                    ?.required &&
-                  slackConfiguration.get('slackClientSigningSecret').touched
+                  processValidationErrors(
+                    'slackConfiguration.slackClientSigningSecret'
+                  )
                 "
               >
                 {{
-                  'required'
+                  errors['slackConfiguration.slackClientSigningSecret'].name
                     | translate
-                      : { name: 'slackClientSigningSecret' | translate }
+                      : {
+                          name: 'slackClientSigningSecret' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1600,14 +1616,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  slackConfiguration.get('slackClientStateSecret').errors
-                    ?.required &&
-                  slackConfiguration.get('slackClientStateSecret').touched
+                  processValidationErrors(
+                    'slackConfiguration.slackClientStateSecret'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'slackClientStateSecret' | translate }
+                  errors['slackConfiguration.slackClientStateSecret'].name
+                    | translate
+                      : {
+                          name: 'slackClientStateSecret' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1627,14 +1646,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsTenantID').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsTenantID').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsTenantID'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsTenantID' | translate }
+                  errors['msTeamsConfiguration.msTeamsTenantID'].name
+                    | translate
+                      : {
+                          name: 'msTeamsTenantID' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1649,14 +1671,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsClientID').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsClientID').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsClientID'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsClientID' | translate }
+                  errors['msTeamsConfiguration.msTeamsClientID'].name
+                    | translate
+                      : {
+                          name: 'msTeamsClientID' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1671,14 +1696,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsClientSecret').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsClientSecret').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsClientSecret'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsClientSecret' | translate }
+                  errors['msTeamsConfiguration.msTeamsClientSecret'].name
+                    | translate
+                      : {
+                          name: 'msTeamsClientSecret' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1693,14 +1721,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsSharepointSiteID').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsSharepointSiteID').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsSharepointSiteID'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsSharepointSiteID' | translate }
+                  errors['msTeamsConfiguration.msTeamsSharepointSiteID'].name
+                    | translate
+                      : {
+                          name: 'msTeamsSharepointSiteID' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1717,14 +1748,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsRSAPrivateKey').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsRSAPrivateKey'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsRSAPrivateKey' | translate }
+                  errors['msTeamsConfiguration.msTeamsRSAPrivateKey'].name
+                    | translate
+                      : {
+                          name: 'msTeamsRSAPrivateKey' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1740,14 +1774,17 @@
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  msTeamsConfiguration.get('msTeamsRSAPublicKey').errors
-                    ?.required &&
-                  msTeamsConfiguration.get('msTeamsRSAPublicKey').touched
+                  processValidationErrors(
+                    'msTeamsConfiguration.msTeamsRSAPublicKey'
+                  )
                 "
               >
                 {{
-                  'required'
-                    | translate: { name: 'msTeamsRSAPublicKey' | translate }
+                  errors['msTeamsConfiguration.msTeamsRSAPublicKey'].name
+                    | translate
+                      : {
+                          name: 'msTeamsRSAPublicKey' | translate
+                        }
                 }}
               </mat-error>
             </p>
@@ -1767,18 +1804,16 @@
               formControlName="noOfLicenses"
             />
           </mat-form-field>
-          <ng-container *ngIf="validationErrors$ | async as errors">
-            <mat-error *ngIf="errors.noOfLicenses.name">
-              {{
-                errors.noOfLicenses.name
-                  | translate
-                    : {
-                        name: 'noOfLicenses' | translate,
-                        message: 'invalidLicenceCount' | translate
-                      }
-              }}
-            </mat-error>
-          </ng-container>
+          <mat-error *ngIf="processValidationErrors('noOfLicenses')">
+            {{
+              errors.noOfLicenses.name
+                | translate
+                  : {
+                      name: 'noOfLicenses' | translate,
+                      message: 'invalidLicenceCount' | translate
+                    }
+            }}
+          </mat-error>
         </p>
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">

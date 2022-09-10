@@ -5,7 +5,7 @@
   <mat-dialog-content class="dialog-content">
     <div class="dis-flex">
       <ng-container *ngIf="updateWidget$ | async"></ng-container>
-      <div
+      <form
         class="custom-form-field-white-color width-50"
         [ngClass]="!selectedReport ? '' : 'border-right'"
         [formGroup]="widgetConfigForm"
@@ -50,29 +50,13 @@
           <mat-form-field appearance="outline" class="width-90">
             <mat-label translate>widgetLabel</mat-label>
             <input type="text" matInput formControlName="widgetName" />
-
-            <mat-error *ngIf="f.widgetName.errors?.required">
+            <mat-error *ngIf="processValidationErrors('widgetName')">
               {{
-                'fieldRequired' | translate: { name: 'widgetLabel' | translate }
-              }}
-            </mat-error>
-            <mat-error *ngIf="f.widgetName.errors?.minlength">
-              {{
-                'fieldMinimumLength'
+                errors.widgetName.name
                   | translate
                     : {
                         name: 'widgetLabel' | translate,
-                        length: f.widgetName.errors?.minlength.requiredLength
-                      }
-              }}
-            </mat-error>
-            <mat-error *ngIf="f.widgetName.errors?.maxlength">
-              {{
-                'fieldMaximumLength'
-                  | translate
-                    : {
-                        name: 'widgetLabel' | translate,
-                        length: f.widgetName.errors?.maxlength.requiredLength
+                        length: errors.widgetName.length
                       }
               }}
             </mat-error>
@@ -85,7 +69,7 @@
             (chartVarientChanges)="onChartVarientChanges($event)"
           ></app-chart-variant>
         </ng-container>
-      </div>
+      </form>
       <div class="width-50">
         <ng-container *ngIf="selectedReport">
           <ng-container

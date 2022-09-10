@@ -22,7 +22,7 @@ import {
   routingUrls,
   superAdminText
 } from 'src/app/app.constants';
-import { Role, ErrorInfo } from 'src/app/interfaces';
+import { Role, ErrorInfo, ValidationError } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { ToastService } from 'src/app/shared/toast';
@@ -78,6 +78,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   usersDoesntExists = [];
   roleMode: string;
   roleFormChanged: { isChanged: boolean };
+  errors: ValidationError = {};
 
   constructor(
     private commonService: CommonService,
@@ -100,14 +101,16 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(100),
-        WhiteSpaceValidator.noWhiteSpace,
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace,
         this.roleNameValidator()
       ]),
       description: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(255),
-        WhiteSpaceValidator.noWhiteSpace
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
       ])
     });
     this.getRoles();
@@ -288,10 +291,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       description: ''
     };
     this.selectedRole = newRole;
-    this.roleForm.enable({ emitEvent: false });
-    this.roleForm.setValue(newRole, { emitEvent: false });
+    this.roleForm.enable();
+    this.roleForm.setValue(newRole);
     this.disableSaveButton = true;
     this.addingRole$.next(true);
+    this.roleForm.reset(this.roleForm.getRawValue());
   }
 
   createDuplicateRole = (roles, copyRole) => {
@@ -462,7 +466,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   roleNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const duplicate = control.value?.trim();
+      const duplicate = control.value;
       if (
         this.selectedRole &&
         this.selectedRole.id &&
@@ -484,11 +488,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.copyDisabled = false;
     this.disableSaveButton = true;
     const { name, description } = role;
-    this.roleForm.setValue({ name, description }, { emitEvent: false });
+    this.roleForm.setValue({ name, description });
     if (name === superAdminText) {
-      this.roleForm.disable({ emitEvent: false });
+      this.roleForm.disable();
     } else {
-      this.roleForm.enable({ emitEvent: false });
+      this.roleForm.enable();
     }
     this.updatedPermissions = [];
 
@@ -499,5 +503,20 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       }),
       shareReplay(1)
     );
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.roleForm.get(controlName).touched;
+    const errors = this.roleForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

@@ -12,6 +12,8 @@ import {
 } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { permissions } from 'src/app/app.constants';
+import { ValidationError } from 'src/app/interfaces';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 export interface ReportData {
   name: string;
@@ -27,6 +29,8 @@ export interface ReportData {
 export class ReportSaveAsModalComponent implements OnInit {
   reportNameAndDescForm: FormGroup;
   readonly permissions = permissions;
+  errors: ValidationError = {};
+
   constructor(
     private dialogRef: MatDialogRef<ReportSaveAsModalComponent>,
     @Inject(MAT_DIALOG_DATA)
@@ -52,7 +56,9 @@ export class ReportSaveAsModalComponent implements OnInit {
       name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(48)
+        Validators.maxLength(48),
+        WhiteSpaceValidator.whiteSpace,
+        WhiteSpaceValidator.trimWhiteSpace
       ])
     });
 
@@ -62,4 +68,19 @@ export class ReportSaveAsModalComponent implements OnInit {
   saveAs = () => {
     this.dialogRef.close(this.reportName.value);
   };
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.reportNameAndDescForm.get(controlName).touched;
+    const errors = this.reportNameAndDescForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
 }

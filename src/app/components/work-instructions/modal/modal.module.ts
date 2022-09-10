@@ -24,6 +24,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     FormsModule,
     NgpSortModule,
     NgxSpinnerModule,
-    StoreModule.forFeature('bulkupload', bulkuploadReducer)
+    StoreModule.forFeature('bulkupload', bulkuploadReducer),
+    TranslateModule.forChild({})
   ],
   exports: [AlertComponent],
   entryComponents: [

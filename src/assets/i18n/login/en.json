@@ -5,7 +5,7 @@
   "next": "Next",
   "required": "{name} is required",
   "maxlength": "{name} must be at the max of {length} characters",
-  "noWhiteSpace": "{name} is required",
+  "whiteSpace": "{name} is required",
   "companyOrDomainName": "Company or Domain",
   "companyOrDomainNamePlaceholder": "Enter Company or Domain",
   "invalidCompanyOrDomaniName": "Invalid Company or Domain",
