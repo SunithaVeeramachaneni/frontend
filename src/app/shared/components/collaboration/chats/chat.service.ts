@@ -22,6 +22,9 @@ export class ChatService {
   private openCollaborationWindowSubject = new BehaviorSubject<any>({});
   private unreadCountSubject = new BehaviorSubject<number>(0);
 
+  private meetingSubject = new BehaviorSubject<any>(null);
+  private endMeetingSubject = new BehaviorSubject<any>(null);
+
   newMessageReceivedAction$ = this.newMessageReceivedSubject.asObservable();
   collaborationWindowAction$ = this.collaborationWindowSubject.asObservable();
   collabWindowCollapseExpandAction$ =
@@ -30,10 +33,21 @@ export class ChatService {
   openCollabWindow$ = this.openCollaborationWindowSubject.asObservable();
   unreadCount$ = this.unreadCountSubject.asObservable();
 
+  meeting$ = this.meetingSubject.asObservable();
+  endMeeting$ = this.endMeetingSubject.asObservable();
+
   constructor(
     private appService: AppService,
     private loginService: LoginService
   ) {}
+
+  setMeeting(meetingInfo: any) {
+    this.meetingSubject.next(meetingInfo);
+  }
+
+  endMeeting(meetingInfo: any) {
+    this.endMeetingSubject.next(meetingInfo);
+  }
 
   newMessageReceived = (message: any) => {
     this.newMessageReceivedSubject.next(message);
@@ -200,6 +214,102 @@ export class ChatService {
       info
     );
   };
+
+  getJaaSJWTToken$ = (
+    isCreateConferenceEvent: boolean,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService._getResp(
+      apiURL,
+      `jaasToken?isCreator=${isCreateConferenceEvent}`,
+      info
+    );
+  };
+
+  createJitsiConference$ = (
+    event: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService._postData(apiURL, `conferences`, event, info);
+  };
+
+  initiateConference$ = (
+    conferenceId: any,
+    invitees: string[],
+    metadata: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService._postData(
+      apiURL,
+      `conferences/${conferenceId}/init`,
+      { invitees, metadata },
+      info
+    );
+  };
+
+  joinConference$ = (
+    conferenceId: any,
+    joinedParticipant: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService.patchData(
+      apiURL,
+      `conferences/${conferenceId}/join`,
+      { joinedParticipant },
+      info
+    );
+  };
+
+  leaveConference$ = (
+    conferenceId: any,
+    leavingParticipant: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService.patchData(
+      apiURL,
+      `conferences/${conferenceId}/leave`,
+      { leavingParticipant },
+      info
+    );
+  };
+
+  deleteJitsiEvent$ = (
+    conferenceId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService._removeData(
+      apiURL,
+      `conferences/${conferenceId}`,
+      info
+    );
+  };
+
+  getConferenceDetails$ = (
+    conferenceId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      `jitsi/conferences/${conferenceId}`,
+      info
+    );
+
+  getCallLog$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'jitsi/conferences/calls/history',
+      info,
+      { ...queryParams }
+    );
 
   triggerCall = (user) => {
     //

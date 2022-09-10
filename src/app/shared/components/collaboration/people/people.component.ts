@@ -1,5 +1,4 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { VideoCallDialogComponent } from '../chats/video-call-dialog/video-call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { PeopleService } from './people.service';
@@ -19,6 +18,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
 
 interface UpdatePeople {
   action: 'add_people' | 'add_people_search' | '';
@@ -257,8 +257,8 @@ export class PeopleComponent implements OnInit {
   onVideoMessageClick = (user: any) => {
     const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
       disableClose: true,
-      hasBackdrop: true,
-      width: '100%',
+      hasBackdrop: false,
+      panelClass: 'video-call-component',
       data: {
         conversation: user
       }

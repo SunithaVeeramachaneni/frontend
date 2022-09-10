@@ -164,6 +164,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   currentRouteUrl: string;
   selectedMenu: string;
   eventSource: any;
+  eventSourceJitsi: any;
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
@@ -342,6 +343,25 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
               });
             }
           };
+          const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/conferences/sse/${userID}`;
+
+          this.eventSourceJitsi = new EventSourcePolyfill(jitsiSseUrl, {
+            headers: {
+              authorization,
+              tenantid
+            }
+          });
+          this.eventSourceJitsi.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              console.log(eventData);
+              if (eventData.eventType === 'INCOMING_CALL') {
+                this.chatService.setMeeting(eventData);
+              } else if (eventData.eventType === 'END_CONFERENCE') {
+                this.chatService.endMeeting(eventData);
+              }
+            }
+          };
         }
       });
 
@@ -420,6 +440,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy() {
     if (this.eventSource) {
       this.eventSource.close();
+    }
+    if (this.eventSourceJitsi) {
+      this.eventSourceJitsi.close();
     }
   }
 

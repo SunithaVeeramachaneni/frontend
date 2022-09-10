@@ -16,13 +16,14 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { CollabDialogComponent } from './components/collaboration/CollabDialog';
 import { UploadDialogComponent } from './components/collaboration/chats/upload-dialog/upload-dialog.component';
-import { VideoCallDialogComponent } from './components/collaboration/chats/video-call-dialog/video-call-dialog.component';
 import { PeopleComponent } from './components/collaboration/people/people.component';
 import { ChatsComponent } from './components/collaboration/chats/chats.component';
 import { CreateGroupComponent } from './components/collaboration/chats/create-group/create-group.component';
 import { CallsComponent } from './components/collaboration/calls/calls.component';
 import { CheckUserHasPermissionDirective } from './directives/check-user-has-permission.directive';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { NgxSpinnerModule } from 'ngx-spinner';
+
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { PermissionsRevokeInfoModalComponent } from './components/permissions-revoke-info-modal/permissions-revoke-info-modal.component';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -44,6 +45,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { AcceptCallComponent } from './components/collaboration/calls/accept-call/accept-call.component';
+import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +67,7 @@ import { MatButtonModule } from '@angular/material/button';
     CallsComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
+    AcceptCallComponent,
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent
@@ -93,9 +97,11 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule,
     BreadcrumbModule,
     NgxShimmerLoadingModule,
+    NgxSpinnerModule,
     TranslateModule.forChild({})
   ],
   exports: [
+    NgxSpinnerModule,
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,

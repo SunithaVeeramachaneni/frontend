@@ -10,7 +10,6 @@ import {
 import { ChatService } from './chat.service';
 import { MatDialog } from '@angular/material/dialog';
 
-import { VideoCallDialogComponent } from './video-call-dialog/video-call-dialog.component';
 import { EmitterService } from '../EmitterService';
 import {
   BehaviorSubject,
@@ -27,6 +26,7 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
+import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | 'append_history' | '';
@@ -146,10 +146,11 @@ export class ChatsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.selectedView = 'CHAT';
     this.emitterService.chatMessageAdded.subscribe((data) => {
-      this.sendMessageToUser(data.data.conversation.userInfo, {
-        type: 'meeting_request',
-        link: data.meetingLink
-      });
+      // this.sendMessageToUser(data.data.conversation.userInfo, {
+      //   type: 'meeting_request',
+      //   link: data.meetingLink
+      // });
+      // this.sendMessageToUser(data.data, data.meetingLink);
     });
 
     this.newMessageReceivedSubscription =
@@ -683,10 +684,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
   openVideoCallDialog = (selectedConversation: any) => {
     const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
       disableClose: true,
-      hasBackdrop: true,
-      width: '100%',
+      hasBackdrop: false,
+      panelClass: 'video-call-component',
       data: {
-        conversation: selectedConversation
+        conversation: selectedConversation,
+        isCreateConferenceEvent: true,
+        conferenceType: 'video'
       }
     });
 

@@ -1,9 +1,82 @@
-.inprogress {
+@use './../../../../../scss/colors.scss' as colors;
+
+.peoplesTabBody {
+  background: #ffffff !important;
+  top: 50px;
+  position: absolute;
+  position: relative;
+  .searchBar {
+    display: flex;
+    padding: 0px 15px;
+    .searchInput {
+      border-radius: 5px;
+      padding: 10px;
+      background: #f5f5f5;
+    }
+    .searchMore {
+      color: #1a66ff;
+    }
+  }
+  .userList {
+    height: 66vh;
+    overflow: auto;
+  }
+}
+.peopleList {
+  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
+.userIcon {
+  font-size: 450%;
   display: flex;
-  align-content: space-around;
-  flex-wrap: nowrap;
-  align-items: center;
   justify-content: center;
-  height: 400px;
-  background: rgb(237, 228, 209);
+  align-items: center;
+}
+
+.icon-button {
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  border-radius: 45px;
+  margin-top: -15px;
+  margin-right: 10px;
+}
+
+.icon-button .icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+}
+.userPresence {
+  position: absolute;
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid colors.$white;
+    bottom: 2px;
+    right: 0;
+    position: absolute;
+  }
+  .online {
+    background-color: colors.$green;
+  }
+  .offline {
+    background-color: colors.$gray;
+  }
+}
+
+.callMade {
+  color: colors.$green-light;
+}
+.callReceived {
+  color: colors.$green-light;
+}
+.callMissed {
+  color: colors.$red-main;
 }

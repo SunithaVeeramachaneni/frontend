@@ -24,6 +24,7 @@ import { Buffer } from 'buffer';
 import { Router } from '@angular/router';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
+import { AcceptCallComponent } from '../collaboration/calls/accept-call/accept-call.component';
 
 @Component({
   selector: 'app-header',
@@ -48,6 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   msTeamsSignIn$: Observable<any>;
 
   userInfo$: Observable<UserInfo>;
+  audio: any;
   eventSource: any;
   tenantLogo: any;
   isOpen = false;
@@ -139,6 +141,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
         localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
       })
     );
+
+    this.chatService.meeting$.subscribe((event) => {
+      if (event) {
+        this.audio = new Audio('assets/audio/calltone.mp3');
+        this.audio.play();
+        this.audio.loop = true;
+        const dialogRef = this.dialog.open(AcceptCallComponent, {
+          disableClose: true,
+          hasBackdrop: true,
+          panelClass: 'accept-call-component',
+          data: {
+            meetingEvent: event,
+            audio: this.audio
+          }
+        });
+      }
+    });
 
     this.tenantService.tenantInfo$.subscribe(
       ({ tenantLogo }) => (this.tenantLogo = tenantLogo)

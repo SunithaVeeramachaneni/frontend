@@ -1,0 +1,51 @@
+<div
+  mat-dialog-title
+  class="dialogTitle"
+  cdkDrag
+  [cdkDragDisabled]="dialogCollapsed"
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  cdkDragBoundary="body"
+>
+  <div class="dialogHeader">
+    <div class="headerTitle" translate>innoChatTitle</div>
+    <div>
+      <button
+        mat-icon-button
+        disableRipple
+        class="closeBtn"
+        (click)="collapseCollabDialog()"
+        *ngIf="!dialogCollapsed"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        disableRipple
+        class="closeBtn rotate90"
+        (click)="minimizeCollabDialog()"
+        *ngIf="isMaximized || dialogCollapsed"
+      >
+        <mat-icon>unfold_less</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        disableRipple
+        class="closeBtn rotate90"
+        (click)="maximizeCollabDialog()"
+        *ngIf="!isMaximized && !dialogCollapsed"
+      >
+        <mat-icon>unfold_more</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<div
+  mat-dialog-content
+  class="dialogContent"
+  [ngClass]="{ displayNone: dialogCollapsed }"
+>
+  <div class="dialogBody">
+    <div id="jaas-container" class="jaasContainer"></div>
+  </div>
+</div>

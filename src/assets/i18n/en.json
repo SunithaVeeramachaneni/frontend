@@ -29,7 +29,10 @@
   "chats": "Chats",
   "calls": "Calls",
   "people": "People",
+  "oneOnOne": "1:1 Direct Call",
+  "group": "Group Call",
   "participants": "Participants",
   "searchPeople": "Search People",
+  "searchCallList": "Search Call List",
   "loadingMore": "Loading More"
 }

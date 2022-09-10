@@ -1,3 +1,94 @@
-<div class="inprogress">
-  We are still building the feature. Please check back later.
+<div class="peoplesTabBody">
+  <div class="searchBar">
+    <input
+      disabled
+      matInput
+      placeholder="{{ 'searchCallList' | translate }}"
+      name="searchKey"
+      id="searchKey"
+      [(ngModel)]="searchKey"
+      (ngModelChange)="this.searchKeyUpdate.next($event)"
+      autocomplete="off"
+      class="searchInput"
+    />
+    <button mat-icon-button class="searchMore" disabled>
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </div>
+  <div
+    class="userList"
+    *ngIf="callList$ | async as callList; else loadingUsers"
+    (scroll)="onPeopleListScrolled($event)"
+  >
+    <mat-list>
+      <mat-list-item
+        *ngFor="let call of callList; let i = index"
+        class="peopleList"
+      >
+        <div class="icon-button" mat-list-icon>
+          <div class="userPresence">
+            <img class="icon" [src]="call.profileImage" />
+          </div>
+        </div>
+        <div mat-line>
+          <b>{{ call.firstName }} {{ call.lastName }}</b>
+        </div>
+        <div mat-line>{{ call.createdAt | timeAgo }}</div>
+        <button
+          *ngIf="call.isInitiator"
+          mat-icon-button
+          color="primary"
+          class="callMade"
+        >
+          <mat-icon>call_made</mat-icon>
+        </button>
+        <button
+          *ngIf="!call.isInitiator"
+          mat-icon-button
+          color="primary"
+          [ngClass]="{
+            callReceived: !call.isInitiator && call.hasJoined,
+            callMissed: !call.isInitiator && !call.hasJoined
+          }"
+        >
+          <mat-icon>call_received</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          color="primary"
+          *ngIf="call.conferenceType === 'audio'"
+        >
+          <mat-icon>phone</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="primary"
+          *ngIf="call.conferenceType === 'video'"
+        >
+          <mat-icon>videocam</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </div>
 </div>
+<ng-template #loadingUsers>
+  <div class="p-15">
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+    <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+    </ngx-shimmer-loading>
+  </div>
+</ng-template>

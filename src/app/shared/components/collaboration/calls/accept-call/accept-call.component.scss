@@ -1,0 +1,45 @@
+.top {
+  color: #000000;
+  font-weight: 500;
+  font-size: 22px;
+  text-align: center;
+  margin: 20px 12px 12px 12px !important;
+  text-transform: capitalize;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+  text-overflow: ellipsis;
+}
+
+.top-next {
+  color: #000000;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  margin: 5px;
+}
+
+.user-img {
+  margin: 25px 50px;
+}
+
+.accept-reject {
+  text-align: center;
+}
+
+.accept-reject-image {
+  margin: 0 25px;
+  cursor: pointer;
+}
+
+::ng-deep .accept-call-component .mat-dialog-container {
+  height: 430px;
+  width: 300px;
+  overflow: hidden;
+  position: absolute;
+  right: 10%;
+  top: 7%;
+}
+.jitsiMeetingDialog .mat-dialog-container {
+  border-radius: 20px !important;
+}
