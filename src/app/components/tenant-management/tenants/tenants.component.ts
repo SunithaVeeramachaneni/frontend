@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
@@ -11,7 +17,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  defaultLimit,
+  permissions as perms,
+  products
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -34,8 +44,9 @@ import { TenantService } from '../services/tenant.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantsComponent implements OnInit {
-  selectedProduct = ['All Products'];
-  products = ['All Products', 'MWorkOrder', 'MInventory'];
+  @ViewChild('allProducts') allProducts: MatOption;
+  allProductsLabel = 'All Products';
+  readonly products = products;
   tenantsOnLoadSearch$: Observable<Tenant[]>;
   tenantsCountOnLoadSearch$: Observable<Count>;
   tenantsOnScroll$: Observable<Tenant[]>;
@@ -113,7 +124,7 @@ export class TenantsComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      products: [''],
+      products: [[this.allProductsLabel, ...products]],
       search: ['']
     });
 
@@ -141,16 +152,16 @@ export class TenantsComponent implements OnInit {
       })
     );
 
+    const initial: TenantData = { data: [] };
+
     this.tenantsData$ = combineLatest([
       this.tenantsOnLoadSearch$,
       this.tenantsOnScroll$,
       this.deactivateTenant$
     ]).pipe(
       map(([tenants, scrollData, { deactivate, id }]) => {
-        const initial: TenantData = {
-          data: tenants
-        };
         if (this.skip === 0) {
+          initial.data = tenants;
           this.configOptions =
             this.tenantService.updateConfigOptionsFromColumns(
               this.columns,
@@ -190,9 +201,8 @@ export class TenantsComponent implements OnInit {
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
 
-    this.searchForm
-      .get('search')
-      .valueChanges.pipe(debounceTime(500), distinctUntilChanged())
+    this.searchForm.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
         this.searchTenants$.next(true);
       });
@@ -203,13 +213,15 @@ export class TenantsComponent implements OnInit {
       skip: this.skip,
       limit: this.limit,
       isActive: true,
-      searchKey: this.searchForm.get('search').value
+      searchKey: this.searchForm.get('search').value,
+      products: this.getProducts()
     });
 
   getTenantsCount = () =>
     this.tenantService.getTenantsCount$({
       isActive: true,
-      searchKey: this.searchForm.get('search').value
+      searchKey: this.searchForm.get('search').value,
+      products: this.getProducts()
     });
 
   handleTableEvent(event: TableEvent) {
@@ -267,5 +279,33 @@ export class TenantsComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  toggleAllProducts() {
+    if (this.allProducts.selected) {
+      this.searchForm.patchValue({
+        products: [this.allProductsLabel, ...products]
+      });
+    } else {
+      this.searchForm.patchValue({
+        products: [products[0]]
+      });
+    }
+  }
+
+  toggleProduct() {
+    if (this.allProducts.selected) {
+      this.allProducts.deselect();
+    }
+    if (this.searchForm.get('products').value.length === products.length) {
+      this.allProducts.select();
+    }
+  }
+
+  getProducts() {
+    const searchProducts = this.searchForm.get('products').value;
+    return searchProducts.length === products.length + 1
+      ? searchProducts.slice(1).join(',')
+      : searchProducts.join(',');
   }
 }
