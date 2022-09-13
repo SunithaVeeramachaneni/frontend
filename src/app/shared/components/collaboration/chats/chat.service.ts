@@ -13,10 +13,15 @@ import { LoginService } from 'src/app/components/login/services/login.service';
 })
 export class ChatService {
   private collabWindowOpenStatus = { isOpen: false, isCollapsed: false };
+  private avConfWindowOpenStatus = { isOpen: false, isCollapsed: false };
+  private acceptCallWindowStatus = { isOpen: false };
   private unreadMessageCount = 0;
 
   private newMessageReceivedSubject = new BehaviorSubject<any>({});
   private collaborationWindowSubject = new BehaviorSubject<any>({});
+  private avConfWindowSubject = new BehaviorSubject<any>({});
+  private acceptCallWindowSubject = new BehaviorSubject<any>({});
+
   private collabWindowCollapseExpandSubject = new BehaviorSubject<any>({});
 
   private openCollaborationWindowSubject = new BehaviorSubject<any>({});
@@ -61,8 +66,18 @@ export class ChatService {
     this.collabWindowOpenStatus = action;
     this.collaborationWindowSubject.next(action);
   };
+  avConfWindowAction = (action: any) => {
+    this.avConfWindowOpenStatus = action;
+    this.avConfWindowSubject.next(action);
+  };
+  acceptCallWindowAction = (action: any) => {
+    this.acceptCallWindowStatus = action;
+    this.acceptCallWindowSubject.next(action);
+  };
 
   getCollaborationWindowStatus = () => this.collabWindowOpenStatus;
+  getAVConfWindowStatus = () => this.avConfWindowOpenStatus;
+  getAcceptCallWindowStatus = () => this.acceptCallWindowStatus;
 
   openCollaborationWindow = (action: any) => {
     this.openCollaborationWindowSubject.next(action);
@@ -278,16 +293,26 @@ export class ChatService {
     );
   };
 
-  deleteJitsiEvent$ = (
-    conferenceId: string,
+  inviteParticipants$ = (
+    conferenceId: any,
+    participants: string[],
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
-    return this.appService._removeData(
+    return this.appService.patchData(
       apiURL,
-      `conferences/${conferenceId}`,
+      `conferences/${conferenceId}/invite`,
+      { participants },
       info
     );
+  };
+
+  deleteJitsiEvent$ = (
+    eventId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const apiURL = `${environment.userRoleManagementApiUrl}jitsi/`;
+    return this.appService._removeData(apiURL, `sse/${eventId}`, info);
   };
 
   getConferenceDetails$ = (

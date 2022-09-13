@@ -4,6 +4,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA
 } from '@angular/material/dialog';
+import { ChatService } from '../../chats/chat.service';
 import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog.component';
 
 @Component({
@@ -19,11 +20,11 @@ export class AcceptCallComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<AcceptCallComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private chatService: ChatService
   ) {}
 
   ngOnInit(): void {
-    console.log(this.data.meetingEvent);
     this.roomName = this.data.meetingEvent?.metadata?.subject;
     this.incomingCallType = this.data.meetingEvent?.metadata?.chatType;
     this.conferenceType = this.data.meetingEvent?.metadata?.conferenceType;
@@ -38,11 +39,17 @@ export class AcceptCallComponent implements OnInit {
   }
 
   rejectIncomingCall = () => {
+    this.chatService.acceptCallWindowAction({
+      isOpen: false
+    });
     this.data.audio.pause();
     this.dialogRef.close();
   };
 
   acceptIncomingCall = () => {
+    this.chatService.acceptCallWindowAction({
+      isOpen: false
+    });
     this.dialogRef.close();
     this.data.audio.pause();
     const dialogRef = this.dialog.open(VideoCallDialogComponent, {

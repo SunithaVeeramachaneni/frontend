@@ -23,8 +23,12 @@
       <mat-list-item
         *ngFor="let user of activeUsers; let i = index"
         class="peopleList"
-        (click)="onTextMessageClick(user)"
       >
+        <mat-checkbox
+          [checked]="user.isSelected"
+          (change)="onUserSelectionChange($event, user)"
+        >
+        </mat-checkbox>
         <div class="icon-button" mat-list-icon>
           <div class="userPresence">
             <img class="icon" [src]="user.profileImage" />
@@ -41,37 +45,26 @@
           <b>{{ user.firstName }} {{ user.lastName }}</b>
         </div>
         <div mat-line>{{ user.title }}</div>
-        <button
-          [disabled]="user.collaborationDisabled"
-          mat-icon-button
-          color="primary"
-          (click)="onTextMessageClick(user)"
-        >
-          <mat-icon *ngIf="!user.collaborationDisabled">chat</mat-icon>
-          <mat-icon
-            *ngIf="user.collaborationDisabled"
-            title="This user is not connected to Slack"
-            >comments_disabled</mat-icon
-          >
-        </button>
-
-        <button
-          mat-icon-button
-          color="primary"
-          (click)="openAudioVideoCallDialog(user, 'audio')"
-        >
-          <mat-icon>phone</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="primary"
-          (click)="openAudioVideoCallDialog(user, 'video')"
-        >
-          <mat-icon>videocam</mat-icon>
-        </button>
-        <mat-divider></mat-divider>
       </mat-list-item>
     </mat-list>
+  </div>
+  <div class="bottomActions">
+    <button
+      mat-stroked-button
+      class="actionBtn"
+      disabled="{{ fetchActiveUsersInprogress }}"
+      color="primary"
+      (click)="cancel()"
+      translate="cancel"
+    ></button>
+    <button
+      mat-raised-button
+      class="actionBtn"
+      disabled="{{ fetchActiveUsersInprogress }}"
+      color="primary"
+      (click)="addPeople()"
+      translate="add"
+    ></button>
   </div>
 </div>
 <ng-template #loadingUsers>

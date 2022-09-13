@@ -681,7 +681,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
       );
   };
 
-  openVideoCallDialog = (selectedConversation: any) => {
+  openAudioVideoCallDialog = (
+    selectedConversation: any,
+    conferenceType: string
+  ) => {
+    const avConfWindowStatus = this.chatService.getAVConfWindowStatus();
+    const iAVConfWindowOpen = avConfWindowStatus.isOpen;
+    if (iAVConfWindowOpen) {
+      return;
+    }
+
     const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
       disableClose: true,
       hasBackdrop: false,
@@ -689,7 +698,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       data: {
         conversation: selectedConversation,
         isCreateConferenceEvent: true,
-        conferenceType: 'video'
+        conferenceType
       }
     });
 

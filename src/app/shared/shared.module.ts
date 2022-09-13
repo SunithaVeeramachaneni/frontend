@@ -47,6 +47,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { AcceptCallComponent } from './components/collaboration/calls/accept-call/accept-call.component';
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
+import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,7 @@ import { VideoCallDialogComponent } from './components/collaboration/calls/video
     CollabDialogComponent,
     UploadDialogComponent,
     VideoCallDialogComponent,
+    AddPeopleToCallComponent,
     PeopleComponent,
     ChatsComponent,
     CreateGroupComponent,
@@ -85,6 +88,7 @@ import { VideoCallDialogComponent } from './components/collaboration/calls/video
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    MatCheckboxModule,
     MatDatepickerModule,
     MatMenuModule,
     MatSidenavModule,

@@ -147,6 +147,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.audio = new Audio('assets/audio/calltone.mp3');
         this.audio.play();
         this.audio.loop = true;
+        this.chatService.acceptCallWindowAction({
+          isOpen: true
+        });
         const dialogRef = this.dialog.open(AcceptCallComponent, {
           disableClose: true,
           hasBackdrop: true,

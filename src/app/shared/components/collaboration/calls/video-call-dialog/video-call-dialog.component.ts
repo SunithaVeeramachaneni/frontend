@@ -1,9 +1,18 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
 import { ChatService } from '../../chats/chat.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import waitFor from 'src/app/shared/utils/waitFor';
+import { MatSidenav } from '@angular/material/sidenav';
+import { Buffer } from 'buffer';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 declare let JitsiMeetExternalAPI: any;
@@ -14,12 +23,26 @@ export interface DialogData {
   meetingEvent?: any;
 }
 
+export interface Conference {
+  id: string;
+  userInfo: any;
+  isGroupCall: boolean;
+  topic: string;
+  members: any[];
+  metadata?: any;
+}
+
 @Component({
   selector: 'app-video-call-dialog',
   templateUrl: './video-call-dialog.component.html',
-  styleUrls: ['./video-call-dialog.component.scss']
+  styleUrls: ['./video-call-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoCallDialogComponent implements OnInit {
+  @ViewChild('sidenav') public sidenav: MatSidenav;
+
+  isSideNavOpen = false;
+
   attachment: any;
   api: any;
   conferenceId: string;
@@ -27,17 +50,21 @@ export class VideoCallDialogComponent implements OnInit {
   allParticipants: any[];
   moderator: any;
 
-  isViewLoaded = false;
-  jaasTokenGenerated = false;
-
   isMaximized: boolean;
   dialogCollapsed = false;
+
+  selectedConference: Conference;
+  isOpen = false;
+
+  isConferenceReadyToJoin = false;
 
   constructor(
     public dialogRef: MatDialogRef<VideoCallDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private chatService: ChatService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private imageUtils: ImageUtils,
+    private spinner: NgxSpinnerService
   ) {}
 
   async ngOnInit() {
@@ -45,25 +72,23 @@ export class VideoCallDialogComponent implements OnInit {
       conversation: { topic, id, chatType, userInfo, members } = {},
       isCreateConferenceEvent = true,
       meetingEvent = {},
-      conferenceType = 'video'
+      conferenceType = 'audio'
     } = this.data;
     const { firstName, lastName, email } =
       this.loginService.getLoggedInUserInfo();
 
     this.chatService.endMeeting$.subscribe((event) => {
       if (event) {
-        console.log('endmeeting event received', event);
-        console.log(this.conferenceId, email);
         if (
           event.receiver === email &&
           event.conferenceId === this.conferenceId
         ) {
-          console.log(event.receiver, 'is leaving...');
           this.dialogRef.close();
         }
       }
     });
 
+    this.spinner.show();
     let conferenceName;
     const isMeetingEvent = Object.keys(meetingEvent).length !== 0;
     if (isMeetingEvent) {
@@ -73,6 +98,28 @@ export class VideoCallDialogComponent implements OnInit {
       );
       const conferenceDetails = await waitFor(conferenceDetailsProm);
       conferenceName = conferenceDetails.metadata.subject;
+      this.selectedConference = conferenceDetails;
+
+      this.selectedConference.members.forEach((user) => {
+        user.profileImage = this.imageUtils.getImageSrc(
+          Buffer.from(user.profileImage).toString()
+        );
+      });
+      if (
+        chatType === 'oneOnOne' &&
+        this.selectedConference.userInfo &&
+        this.selectedConference.userInfo.profileImage
+      ) {
+        this.selectedConference.userInfo.profileImage =
+          this.imageUtils.getImageSrc(
+            Buffer.from(
+              this.selectedConference.userInfo.profileImage
+            ).toString()
+          );
+      }
+
+      this.isConferenceReadyToJoin = true;
+      this.spinner.hide();
     } else if (isCreateConferenceEvent) {
       conferenceName =
         chatType === 'oneOnOne' ? `${firstName} ${lastName}` : `${topic}`;
@@ -84,16 +131,54 @@ export class VideoCallDialogComponent implements OnInit {
       });
       const createdJitsiConf = await waitFor(createdJitsiConfProm);
       this.conferenceId = createdJitsiConf.id;
+
+      if (members && members.length) {
+        let invitees = members.filter((m) => m.email !== email);
+        invitees = invitees.map((i) => i.email);
+
+        const initConfProm = this.chatService.initiateConference$(
+          this.conferenceId,
+          invitees,
+          metadata
+        );
+        const confrenceInitiatedObj = await waitFor(initConfProm);
+        this.selectedConference = confrenceInitiatedObj;
+        this.selectedConference.members.forEach((user) => {
+          user.profileImage = this.imageUtils.getImageSrc(
+            Buffer.from(user.profileImage).toString()
+          );
+        });
+        if (
+          chatType === 'oneOnOne' &&
+          this.selectedConference.userInfo &&
+          this.selectedConference.userInfo.profileImage
+        ) {
+          this.selectedConference.userInfo.profileImage =
+            this.imageUtils.getImageSrc(
+              Buffer.from(
+                this.selectedConference.userInfo.profileImage
+              ).toString()
+            );
+        }
+
+        this.isConferenceReadyToJoin = true;
+        this.spinner.hide();
+      }
     } else {
       return;
     }
+    this.chatService.avConfWindowAction({
+      isOpen: true,
+      isCollapsed: false
+    });
 
     const getJaaSJWTTokenProm = this.chatService.getJaaSJWTToken$(
       isCreateConferenceEvent
     );
     const jaasJWTToken = await waitFor(getJaaSJWTTokenProm);
 
-    this.jaasTokenGenerated = true;
+    const isAudioOnly = conferenceType === 'audio' ? true : false;
+
     const JAAS_APP_ID = 'vpaas-magic-cookie-c9a785fe985444a18ba0c24416de0d6c';
     const JAAS_DOMAIN = '8x8.vc';
     this.api = new JitsiMeetExternalAPI(JAAS_DOMAIN, {
@@ -103,7 +188,8 @@ export class VideoCallDialogComponent implements OnInit {
       height: '100%',
       parentNode: document.querySelector('#jaas-container'),
       configOverwrite: {
-        prejoinPageEnabled: false
+        prejoinPageEnabled: false,
+        startAudioOnly: isAudioOnly
       },
       userInfo: {
         email,
@@ -116,46 +202,83 @@ export class VideoCallDialogComponent implements OnInit {
     });
 
     if (isCreateConferenceEvent) {
-      this.api.executeCommand(
-        'subject',
-        conferenceName ? conferenceName : 'Untitled Conference'
-      );
-      const metadata = {
-        subject: conferenceName,
-        chatType,
-        conferenceType
-      };
-      let invitees = members.filter((m) => m.email !== email);
-      invitees = invitees.map((i) => i.email);
+      setTimeout(() => {
+        this.api.executeCommand(
+          'subject',
+          conferenceName ? conferenceName : 'Untitled Conference'
+        );
+      }, 0);
+    }
+  }
+
+  openSideNav(): void {
+    this.isSideNavOpen = true;
+    this.sidenav.open();
+  }
+
+  onSideNavClose(event): void {
+    if (event && event.type === 'close') {
+      this.sidenav.close();
+      this.isSideNavOpen = false;
+    } else if (
+      event &&
+      event.type === 'add' &&
+      event.data &&
+      Object.keys(event.data).length
+    ) {
+      this.sidenav.close();
+      this.isSideNavOpen = false;
+      const participants = event.data;
       this.chatService
-        .initiateConference$(this.conferenceId, invitees, metadata)
+        .inviteParticipants$(this.conferenceId, participants)
         .subscribe();
     }
   }
 
-  collapseCollabDialog(): void {
+  collapseAVConfDialog(): void {
     this.isMaximized = false;
     this.dialogCollapsed = true;
-    this.dialogRef.updateSize('200px', '100px');
+    this.dialogRef.updateSize('450px', '100px');
     this.dialogRef.removePanelClass('overlay-max');
     this.dialogRef.removePanelClass('overlay-min');
-    this.dialogRef.addPanelClass('bottomRight');
+    const collaborationWindowStatus =
+      this.chatService.getCollaborationWindowStatus();
+    const isCollabWindowCollapsed = collaborationWindowStatus.isCollapsed;
+    if (isCollabWindowCollapsed) {
+      this.dialogRef.addPanelClass('bottomRightVideoCollabCollapsed');
+    } else {
+      this.dialogRef.addPanelClass('bottomRightVideo');
+    }
+    this.chatService.avConfWindowAction({
+      isOpen: true,
+      isCollapsed: true
+    });
   }
 
-  minimizeCollabDialog(): void {
+  minimizeAVConfDialog(): void {
     this.dialogCollapsed = false;
     this.isMaximized = false;
     this.dialogRef.updateSize('750px', 'auto');
     this.dialogRef.removePanelClass('overlay-max');
-    this.dialogRef.removePanelClass('bottomRight');
+    this.dialogRef.removePanelClass('bottomRightVideo');
+    this.dialogRef.removePanelClass('bottomRightVideoCollabCollapsed');
     this.dialogRef.addPanelClass('overlay-min');
+    this.chatService.avConfWindowAction({
+      isOpen: true,
+      isCollapsed: false
+    });
   }
-  maximizeCollabDialog(): void {
+  maximizeAVConfDialog(): void {
     this.dialogCollapsed = false;
     this.isMaximized = true;
     this.dialogRef.updateSize('100vw', '100vh');
     this.dialogRef.removePanelClass('overlay-min');
-    this.dialogRef.removePanelClass('bottomRight');
+    this.dialogRef.removePanelClass('bottomRightVideo');
+    this.dialogRef.removePanelClass('bottomRightVideoCollabCollapsed');
     this.dialogRef.addPanelClass('overlay-max');
+    this.chatService.avConfWindowAction({
+      isOpen: true,
+      isCollapsed: false
+    });
   }
 }

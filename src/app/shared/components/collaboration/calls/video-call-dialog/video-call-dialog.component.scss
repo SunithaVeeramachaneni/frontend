@@ -33,33 +33,55 @@
   height: auto !important;
 }
 
-::ng-deep .bottomRight {
+::ng-deep .bottomRightVideo {
   position: fixed !important;
   right: 0px !important;
-  bottom: 0px !important;
-  width: 300px !important;
-  height: 48px !important;
+  bottom: 0px;
+  width: auto !important;
+  height: 56px !important;
   margin-right: 0px !important;
   transform: none !important;
+  .mat-dialog-container {
+    min-width: 300px !important;
+    overflow: hidden;
+  }
+}
+
+::ng-deep .bottomRightVideoCollabCollapsed {
+  position: fixed !important;
+  right: 0px !important;
+  bottom: 50px;
+  width: auto !important;
+  height: 56px !important;
+  margin-right: 0px !important;
+  transform: none !important;
+  .mat-dialog-container {
+    min-width: 300px !important;
+    overflow: hidden;
+  }
 }
 
 .dialogTitle {
   background: colors.$white;
   margin: 0px;
   cursor: move;
-  .dialogHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #2a3eb1;
-    padding: 4px 15px;
-    .headerTitle {
-      color: colors.$white;
-    }
-    .closeBtn {
-      color: colors.$white;
-    }
+}
+.dialogHeader {
+  background: #2a3eb1;
+  padding: 4px 15px;
+  .headerTitle {
+    color: colors.$white;
+    font-weight: 700;
   }
+  .closeBtn {
+    color: colors.$white;
+  }
+}
+.addPeopleHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
 }
 .dialogContent {
   margin: 0px;
@@ -88,4 +110,110 @@
 
 .displayNone {
   display: none !important;
+}
+.addPeopleBtn {
+  color: colors.$white;
+  border: 1px solid colors.$white;
+  .btnIconAndTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .addPeopleTxt {
+      margin-left: 10px;
+    }
+  }
+}
+.conferenceTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-top: 5px;
+}
+.addPeopleSidenav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  background: white;
+}
+.conversationHead {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  justify-content: space-between;
+  .rightSideActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    align-content: center;
+  }
+  .leftSideActions {
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-top: 5px;
+    .icon-button {
+      background: none;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+      width: 40px;
+      border-radius: 45px;
+      margin-top: 0px;
+      margin-right: 10px;
+      color: white;
+    }
+  }
+  .iconButton {
+    background: none;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    width: 40px;
+    border-radius: 45px;
+  }
+  .iconButton .icon {
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 45px;
+  }
+  .userTitle {
+    margin-left: 15px;
+    white-space: nowrap;
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    color: white;
+    .userName {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 175px;
+      font-weight: 700;
+    }
+    .userDescription {
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      font-weight: 400;
+    }
+  }
+}
+.showMoreBtn {
+  cursor: pointer;
+  margin-left: 8px;
+  text-decoration: underline;
+  color: white;
+}
+.meetingInitiating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: inherit;
 }

@@ -99,7 +99,13 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.updateSize('200px', '100px');
     this.dialogRef.removePanelClass('overlay-max');
     this.dialogRef.removePanelClass('overlay-min');
-    this.dialogRef.addPanelClass('bottomRight');
+    const avConfWindowStatus = this.chatService.getAVConfWindowStatus();
+    const isAVConfWindowCollapsed = avConfWindowStatus.isCollapsed;
+    if (isAVConfWindowCollapsed) {
+      this.dialogRef.addPanelClass('bottomRightAVConfCollapsed');
+    } else {
+      this.dialogRef.addPanelClass('bottomRight');
+    }
     this.chatService.collaborationWindowAction({
       isOpen: true,
       isCollapsed: true
@@ -111,6 +117,7 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.updateSize('100vw', '100vh');
     this.dialogRef.removePanelClass('overlay-min');
     this.dialogRef.removePanelClass('bottomRight');
+    this.dialogRef.removePanelClass('bottomRightAVConfCollapsed');
     this.dialogRef.addPanelClass('overlay-max');
     this.chatService.collaborationWindowAction({
       isOpen: true,
@@ -123,6 +130,7 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.updateSize('750px', 'auto');
     this.dialogRef.removePanelClass('overlay-max');
     this.dialogRef.removePanelClass('bottomRight');
+    this.dialogRef.removePanelClass('bottomRightAVConfCollapsed');
     this.dialogRef.addPanelClass('overlay-min');
     this.chatService.collaborationWindowAction({
       isOpen: true,

@@ -1,0 +1,84 @@
+@use './../../../../../../../scss/colors.scss' as colors;
+
+.peoplesTabBody {
+  background: #ffffff !important;
+  position: absolute;
+  position: relative;
+  padding: 10px;
+  .searchBar {
+    display: flex;
+    padding: 0px 15px;
+    .searchInput {
+      border-radius: 5px;
+      padding: 10px;
+      background: #f5f5f5;
+    }
+    .searchMore {
+      color: #1a66ff;
+    }
+  }
+  .userList {
+    height: 72vh;
+    overflow: auto;
+  }
+}
+.peopleList {
+  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+    background: #b7b9bc2e;
+  }
+}
+.userIcon {
+  font-size: 450%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-button {
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  border-radius: 45px;
+  margin-top: -15px;
+  margin-right: 10px;
+}
+
+.icon-button .icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+}
+.userPresence {
+  position: absolute;
+  .statusCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid colors.$white;
+    bottom: 2px;
+    right: 0;
+    position: absolute;
+  }
+  .online {
+    background-color: colors.$green;
+  }
+  .offline {
+    background-color: colors.$gray;
+  }
+}
+.bottomActions {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  bottom: -50px;
+  right: 0;
+  .actionBtn {
+    margin: 5px;
+  }
+}
