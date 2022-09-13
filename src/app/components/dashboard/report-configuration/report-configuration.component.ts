@@ -293,7 +293,6 @@ export class ReportConfigurationComponent implements OnInit {
           const { reportData: scrollData = [] } = scroll;
           loadFilter.reportData = loadFilter.reportData.concat(scrollData);
         }
-
         this.reportTitleUpdate.next(this.reportConfiguration.name);
 
         this.skip = loadFilter.reportData
@@ -503,7 +502,7 @@ export class ReportConfigurationComponent implements OnInit {
   }
 
   saveReport(params) {
-    const { id, tableDetails = [] } = this.reportConfiguration;
+    const { id, tableDetails = [], name } = this.reportConfiguration;
     const allColumns: Column[] = this.configOptions.allColumns;
     const columnsObj: ColumnObject = allColumns.reduce((acc, val) => {
       acc[val.id] = val;
@@ -520,6 +519,10 @@ export class ReportConfigurationComponent implements OnInit {
       });
       return { ...table, columns };
     });
+
+    if (this.reportConfiguration.name !== this.reportTitle) {
+      this.reportConfiguration.name = this.reportTitle;
+    }
 
     this.spinner.show();
     if (id === undefined || params.saveAs) {
