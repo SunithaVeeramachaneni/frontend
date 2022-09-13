@@ -291,8 +291,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       description: ''
     };
     this.selectedRole = newRole;
-    this.roleForm.enable();
-    this.roleForm.setValue(newRole);
+    this.roleForm.enable({ emitEvent: false });
+    this.roleForm.setValue(newRole, { emitEvent: false });
     this.disableSaveButton = true;
     this.addingRole$.next(true);
     this.roleForm.reset(this.roleForm.getRawValue());
@@ -488,11 +488,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.copyDisabled = false;
     this.disableSaveButton = true;
     const { name, description } = role;
-    this.roleForm.setValue({ name, description });
+    this.roleForm.setValue({ name, description }, { emitEvent: false });
     if (name === superAdminText) {
-      this.roleForm.disable();
+      this.roleForm.disable({ emitEvent: false });
     } else {
-      this.roleForm.enable();
+      this.roleForm.enable({ emitEvent: false });
     }
     this.updatedPermissions = [];
 
