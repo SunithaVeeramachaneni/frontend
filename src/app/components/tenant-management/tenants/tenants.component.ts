@@ -177,7 +177,7 @@ export class TenantsComponent implements OnInit {
           }
         }
 
-        this.skip = initial.data ? initial.data.length : this.skip;
+        this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -303,9 +303,9 @@ export class TenantsComponent implements OnInit {
   }
 
   getProducts() {
-    const searchProducts = this.searchForm.get('products').value;
-    return searchProducts.length === products.length + 1
-      ? searchProducts.slice(1).join(',')
-      : searchProducts.join(',');
+    const selectedProducts = this.searchForm.get('products').value;
+    return selectedProducts.length === products.length + 1
+      ? selectedProducts.slice(1).join(',')
+      : selectedProducts.join(',');
   }
 }
