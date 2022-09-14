@@ -145,12 +145,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.chatService.meeting$.subscribe((event) => {
       if (event) {
         this.audio = new Audio('assets/audio/calltone.mp3');
-        this.audio.play();
+        this.audio.play().then(() => {
+          // TODO
+        });
         this.audio.loop = true;
         this.chatService.acceptCallWindowAction({
           isOpen: true
         });
-        const dialogRef = this.dialog.open(AcceptCallComponent, {
+        this.dialog.open(AcceptCallComponent, {
           disableClose: true,
           hasBackdrop: true,
           panelClass: 'accept-call-component',

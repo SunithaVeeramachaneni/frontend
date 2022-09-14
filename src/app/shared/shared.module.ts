@@ -105,7 +105,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     TranslateModule.forChild({})
   ],
   exports: [
-    NgxSpinnerModule,
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,
