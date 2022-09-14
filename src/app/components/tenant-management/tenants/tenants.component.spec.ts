@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/dot-notation */
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +14,7 @@ import {
 } from '@ngx-translate/core';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { of } from 'rxjs';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, products } from 'src/app/app.constants';
 import { AppMaterialModules } from 'src/app/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { TenantService } from '../services/tenant.service';
@@ -28,6 +29,8 @@ import { cloneDeep } from 'lodash-es';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { LoginService } from '../../login/services/login.service';
 import { userInfo, userInfo$ } from '../../login/services/login.service.mock';
+import { By } from '@angular/platform-browser';
+import { skip } from 'rxjs/operators';
 
 describe('TenantsComponent', () => {
   let component: TenantsComponent;
@@ -91,11 +94,22 @@ describe('TenantsComponent', () => {
       .withArgs({
         skip: 0,
         limit: defaultLimit,
-        isActive: true
+        isActive: true,
+        searchKey: '',
+        products: products.join(',')
       })
       .and.returnValue(formatedTenants$);
+    (tenantServiceSpy.getTenants$ as jasmine.Spy)
+      .withArgs({
+        skip: 1,
+        limit: defaultLimit,
+        isActive: true,
+        searchKey: '',
+        products: products.join(',')
+      })
+      .and.returnValue(of([]));
     (tenantServiceSpy.getTenantsCount$ as jasmine.Spy)
-      .withArgs({ isActive: true })
+      .withArgs({ isActive: true, searchKey: '', products: products.join(',') })
       .and.returnValue(of({ count: formatedTenants.length }));
     (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
       .withArgs(columns, { ...configOptionsCopy, allColumns: [] })
@@ -128,7 +142,9 @@ describe('TenantsComponent', () => {
         expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
           skip: 0,
           limit: defaultLimit,
-          isActive: true
+          isActive: true,
+          searchKey: '',
+          products: products.join(',')
         });
       });
     });
@@ -147,6 +163,17 @@ describe('TenantsComponent', () => {
         );
       });
     });
+
+    xit('should emit search tenants with boolean true, when search form field changes', (done) => {
+      const inputs = tenantsEl.querySelectorAll('input');
+      inputs[0].value = 'search';
+      inputs[0].dispatchEvent(new Event('input'));
+
+      component['searchTenants$'].pipe(skip(1)).subscribe((data) => {
+        expect(data).toBe(true);
+        done();
+      });
+    });
   });
 
   describe('getTenants', () => {
@@ -161,7 +188,9 @@ describe('TenantsComponent', () => {
         expect(tenantServiceSpy.getTenants$).toHaveBeenCalledWith({
           skip: 0,
           limit: defaultLimit,
-          isActive: true
+          isActive: true,
+          searchKey: '',
+          products: products.join(',')
         });
       });
     });
@@ -176,7 +205,9 @@ describe('TenantsComponent', () => {
       component.getTenantsCount().subscribe((response) => {
         expect(response).toEqual({ count: formatedTenants.length });
         expect(tenantServiceSpy.getTenantsCount$).toHaveBeenCalledWith({
-          isActive: true
+          isActive: true,
+          searchKey: '',
+          products: products.join(',')
         });
       });
     });
@@ -192,7 +223,9 @@ describe('TenantsComponent', () => {
         .withArgs({
           skip: 1,
           limit: defaultLimit,
-          isActive: true
+          isActive: true,
+          searchKey: '',
+          products: products.join(',')
         })
         .and.returnValue(of([]));
 
@@ -283,6 +316,108 @@ describe('TenantsComponent', () => {
       component.prepareMenuActions(userInfo.permissions);
 
       expect(component.configOptions).toEqual(configOptionsCopy);
+    });
+  });
+
+  describe('toggleAllProducts', () => {
+    it('should define function', () => {
+      expect(component.toggleAllProducts).toBeDefined();
+    });
+
+    it(`should select first product option, when unselect 'All Products' option`, async () => {
+      const trigger = tenantsDe.query(
+        By.css('.mat-select-trigger')
+      ).nativeElement;
+      trigger.click();
+      await fixture.detectChanges();
+      const options = tenantsDe.queryAll(By.css('.mat-option-text'));
+
+      options[0].nativeElement.click();
+      await fixture.detectChanges();
+
+      expect(component.searchForm.get('products').value).toEqual([products[0]]);
+    });
+
+    it(`should select all options, when select 'All Products' option`, async () => {
+      const trigger = tenantsDe.query(
+        By.css('.mat-select-trigger')
+      ).nativeElement;
+      trigger.click();
+      await fixture.detectChanges();
+      const options = tenantsDe.queryAll(By.css('.mat-option-text'));
+      options[0].nativeElement.click(); // To unselect 'All Products'
+      await fixture.detectChanges();
+
+      options[0].nativeElement.click(); // To select 'All Products'
+      await fixture.detectChanges();
+
+      expect(component.searchForm.get('products').value).toEqual([
+        component.allProductsLabel,
+        ...products
+      ]);
+    });
+  });
+
+  describe('toggleProduct', () => {
+    it('should define function', () => {
+      expect(component.toggleProduct).toBeDefined();
+    });
+
+    it(`should unselect 'All Products' option along with unselected product option, when all products options are in selected state`, async () => {
+      const trigger = tenantsDe.query(
+        By.css('.mat-select-trigger')
+      ).nativeElement;
+      trigger.click();
+      await fixture.detectChanges();
+      const options = tenantsDe.queryAll(By.css('.mat-option-text'));
+
+      options[1].nativeElement.click();
+      await fixture.detectChanges();
+
+      expect(component.searchForm.get('products').value).toEqual(
+        products.slice(1)
+      );
+    });
+
+    it(`should select 'All Products' option along with selected product option, when all products options are in selected state except selected product`, async () => {
+      const trigger = tenantsDe.query(
+        By.css('.mat-select-trigger')
+      ).nativeElement;
+      trigger.click();
+      await fixture.detectChanges();
+      const options = tenantsDe.queryAll(By.css('.mat-option-text'));
+      options[1].nativeElement.click(); // To unselect 'All Products & first product'
+      await fixture.detectChanges();
+
+      options[1].nativeElement.click(); // To select 'first product'
+      await fixture.detectChanges();
+
+      expect(component.searchForm.get('products').value).toEqual([
+        component.allProductsLabel,
+        ...products
+      ]);
+    });
+  });
+
+  describe('getProducts', () => {
+    it('should define function', () => {
+      expect(component.getProducts).toBeDefined();
+    });
+
+    it('should return poroducts in comma separated list', async () => {
+      expect(component.getProducts()).toBe(products.join(','));
+
+      const trigger = tenantsDe.query(
+        By.css('.mat-select-trigger')
+      ).nativeElement;
+      trigger.click();
+      await fixture.detectChanges();
+      const options = tenantsDe.queryAll(By.css('.mat-option-text'));
+
+      options[0].nativeElement.click();
+      await fixture.detectChanges();
+
+      expect(component.getProducts()).toBe(products[0]);
     });
   });
 });

@@ -25,7 +25,7 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Buffer } from 'buffer';
-import { permissions } from 'src/app/app.constants';
+import { permissions, products } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -55,10 +55,8 @@ export class TenantComponent implements OnInit {
   tenantForm: FormGroup;
   slackConfiguration: FormGroup;
   msTeamsConfiguration: FormGroup;
-
   tenantData: Tenant;
-
-  products = ['MWORKORDER', 'MINVENTORY'];
+  readonly products = products;
   modules = [
     'Dashboard',
     'Tenant Management',

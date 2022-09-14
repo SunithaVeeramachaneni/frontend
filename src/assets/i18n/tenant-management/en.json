@@ -105,5 +105,6 @@
   "here": "here",
   "borderNote": "The border indicates the maximum logo area",
   "selectConversationToSendMessage": "Please select a conversation to send message",
-  "selectUserToCreateGroup": "Please select a user to add to the Group"
+  "selectUserToCreateGroup": "Please select a user to add to the Group",
+  "allProducts": "All Products"
 }

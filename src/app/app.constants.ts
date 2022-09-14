@@ -190,3 +190,4 @@ export const defaultProfile = 'assets/user-management-icons/Vector.png';
 
 export const bigInnovaIcon = 'assets/sidebar-icons/innova-big.svg';
 export const smallInnovaIcon = 'assets/sidebar-icons/innova-small.svg';
+export const products = ['MWORKORDER', 'MINVENTORY'];
