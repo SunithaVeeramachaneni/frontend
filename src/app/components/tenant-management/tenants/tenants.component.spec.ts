@@ -163,17 +163,6 @@ describe('TenantsComponent', () => {
         );
       });
     });
-
-    it('should emit search tenants with boolean true, when search form field changes', (done) => {
-      const inputs = tenantsEl.querySelectorAll('input');
-      inputs[0].value = 'search';
-      inputs[0].dispatchEvent(new Event('input'));
-
-      component['searchTenants$'].pipe(skip(1)).subscribe((data) => {
-        expect(data).toBe(true);
-        done();
-      });
-    });
   });
 
   describe('getTenants', () => {
