@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import {
@@ -17,7 +23,6 @@ import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { PeopleService } from '../../../people/people.service';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { ChatService } from '../../../chats/chat.service';
 
 interface UpdatePeople {
   action: 'add_people' | 'add_people_search' | '';
@@ -32,7 +37,8 @@ interface UpdateUserPresence {
 @Component({
   selector: 'app-add-people-to-call',
   templateUrl: 'add-people-to-call.component.html',
-  styleUrls: ['./add-people-to-call.component.scss']
+  styleUrls: ['./add-people-to-call.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddPeopleToCallComponent implements OnInit {
   @Output() sideNavCloseHandler = new EventEmitter<any>();

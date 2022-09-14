@@ -1,4 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit
+} from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -10,7 +15,8 @@ import { VideoCallDialogComponent } from '../video-call-dialog/video-call-dialog
 @Component({
   selector: 'app-accept-call',
   templateUrl: './accept-call.component.html',
-  styleUrls: ['./accept-call.component.scss']
+  styleUrls: ['./accept-call.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AcceptCallComponent implements OnInit {
   roomName: string;
