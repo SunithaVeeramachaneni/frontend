@@ -14,6 +14,8 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { NgxSpinnerService } from 'ngx-spinner';
 
+import { environment } from 'src/environments/environment';
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 declare let JitsiMeetExternalAPI: any;
 export interface DialogData {
@@ -179,10 +181,9 @@ export class VideoCallDialogComponent implements OnInit {
 
     const isAudioOnly = conferenceType === 'audio' ? true : false;
 
-    const JAAS_APP_ID = 'vpaas-magic-cookie-c9a785fe985444a18ba0c24416de0d6c';
     const JAAS_DOMAIN = '8x8.vc';
     this.api = new JitsiMeetExternalAPI(JAAS_DOMAIN, {
-      roomName: `${JAAS_APP_ID}/${this.conferenceId}`,
+      roomName: `${environment.jaasAppID}/${this.conferenceId}`,
       jwt: jaasJWTToken,
       width: '100%',
       height: '100%',
