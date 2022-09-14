@@ -33,38 +33,36 @@
         <div mat-line>
           <b>{{ call.firstName }} {{ call.lastName }}</b>
         </div>
-        <div mat-line>{{ call.createdAt | timeAgo }}</div>
-        <button
-          *ngIf="call.isInitiator"
-          mat-icon-button
-          color="primary"
-          class="callMade"
-        >
-          <mat-icon>call_made</mat-icon>
-        </button>
-        <button
-          *ngIf="!call.isInitiator"
-          mat-icon-button
-          color="primary"
-          [ngClass]="{
-            callReceived: !call.isInitiator && call.hasJoined,
-            callMissed: !call.isInitiator && !call.hasJoined
-          }"
-        >
-          <mat-icon>call_received</mat-icon>
-        </button>
+        <div mat-line>
+          <div *ngIf="call.isInitiator" class="alignCenter">
+            <mat-icon class="callMade">call_made</mat-icon>
+            Outgoing
+          </div>
+          <div *ngIf="!call.isInitiator" class="alignCenter">
+            <mat-icon
+              [ngClass]="{
+                callReceived: !call.isInitiator && call.hasJoined,
+                callMissed: !call.isInitiator && !call.hasJoined
+              }"
+              >call_received</mat-icon
+            >
+            <span *ngIf="!call.isInitiator && call.hasJoined">Incoming</span>
+            <span *ngIf="!call.isInitiator && !call.hasJoined">Missed</span>
+          </div>
+        </div>
+        <div>{{ call.createdAt | timeAgo }}</div>
 
         <button
           mat-icon-button
           color="primary"
-          *ngIf="call.conferenceType === 'audio'"
+          *ngIf="call.conferenceDetails.conferenceType === 'audio'"
         >
           <mat-icon>phone</mat-icon>
         </button>
         <button
           mat-icon-button
           color="primary"
-          *ngIf="call.conferenceType === 'video'"
+          *ngIf="call.conferenceDetails.conferenceType === 'video'"
         >
           <mat-icon>videocam</mat-icon>
         </button>
