@@ -1,5 +1,7 @@
+@use './../../../../../../scss/colors.scss' as colors;
+
 .top {
-  color: #000000;
+  color: colors.$black;
   font-weight: 500;
   font-size: 22px;
   text-align: center;
@@ -12,7 +14,7 @@
 }
 
 .top-next {
-  color: #000000;
+  color: colors.$black;
   font-weight: 500;
   font-size: 14px;
   text-align: center;

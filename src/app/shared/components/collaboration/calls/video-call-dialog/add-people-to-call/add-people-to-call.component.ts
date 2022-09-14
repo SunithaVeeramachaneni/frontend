@@ -246,7 +246,6 @@ export class AddPeopleToCallComponent implements OnInit {
   }
 
   onUserSelectionChange(event: any, user: any) {
-    console.log(event.checked, user);
     if (event.checked) {
       this.selectedUsers.push(user.email);
     } else {

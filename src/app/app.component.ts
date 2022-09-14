@@ -354,7 +354,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.eventSourceJitsi.onmessage = async (event: any) => {
             const eventData = JSON.parse(event.data);
             if (!eventData.isHeartbeat) {
-              console.log(eventData);
               if (eventData.eventType === 'INCOMING_CALL') {
                 // If any other AV call is going on, discard the SSE event, else delete the SSE event...
                 const avConfWindowStatus =

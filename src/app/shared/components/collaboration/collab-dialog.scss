@@ -48,14 +48,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #2a3eb1;
+    background: colors.$blue;
     padding: 4px 15px;
     .headerTitle {
       color: colors.$white;
     }
     .buttonGroup {
-      box-shadow: 0 0px 0px -1px #747474, 0 1px 0px 0 #747474,
-        0 0px 0px 0 #747474;
+      box-shadow: 0 0px 0px -1px colors.$button-grp-border,
+        0 1px 0px 0 colors.$button-grp-border,
+        0 0px 0px 0 colors.$button-grp-border;
     }
     .closeBtn {
       color: colors.$white;
@@ -114,7 +115,7 @@
 }
 
 .groupBtnDivider {
-  background: #cccccc;
+  background: colors.$gray1;
   width: 1px;
   height: 20px;
 }

@@ -67,7 +67,7 @@
   cursor: move;
 }
 .dialogHeader {
-  background: #2a3eb1;
+  background: colors.$blue;
   padding: 4px 15px;
   .headerTitle {
     color: colors.$white;
@@ -135,7 +135,7 @@
   align-items: center;
   justify-content: center;
   width: 350px;
-  background: white;
+  background: colors.$white;
 }
 .conversationHead {
   display: flex;
@@ -152,7 +152,7 @@
   .leftSideActions {
     display: flex;
     align-items: center;
-    color: white;
+    color: colors.$white;
     margin-top: 5px;
     .icon-button {
       background: none;
@@ -163,7 +163,7 @@
       border-radius: 45px;
       margin-top: 0px;
       margin-right: 10px;
-      color: white;
+      color: colors.$white;
     }
   }
   .iconButton {
@@ -186,7 +186,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.5;
-    color: white;
+    color: colors.$white;
     .userName {
       white-space: nowrap;
       overflow: hidden;
@@ -208,7 +208,7 @@
   cursor: pointer;
   margin-left: 8px;
   text-decoration: underline;
-  color: white;
+  color: colors.$white;
 }
 .meetingInitiating {
   display: flex;

@@ -6,7 +6,7 @@
 }
 
 .peoplesTabBody {
-  background: #ffffff !important;
+  background: colors.$white !important;
   top: 50px;
   position: absolute;
   position: relative;
@@ -16,10 +16,10 @@
     .searchInput {
       border-radius: 5px;
       padding: 10px;
-      background: #f5f5f5;
+      background: colors.$white1;
     }
     .searchMore {
-      color: #1a66ff;
+      color: colors.$blue;
     }
   }
   .userList {
@@ -31,7 +31,7 @@
   cursor: pointer;
   &:hover {
     cursor: pointer;
-    background: #b7b9bc2e;
+    background: colors.$hover-bg;
   }
 }
 .userIcon {
