@@ -1,25 +1,28 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { PeopleService } from './people.service';
 import {
   catchError,
   map,
   mergeMap,
-  tap,
   debounceTime,
   distinctUntilChanged
 } from 'rxjs/operators';
 import { Buffer } from 'buffer';
-import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { environment } from 'src/environments/environment';
 import { EventSourcePolyfill } from 'event-source-polyfill';
-import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
-import { ChatService } from '../chats/chat.service';
+import { PeopleService } from '../../../people/people.service';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 interface UpdatePeople {
   action: 'add_people' | 'add_people_search' | '';
@@ -32,14 +35,13 @@ interface UpdateUserPresence {
 }
 
 @Component({
-  selector: 'app-people',
-  templateUrl: 'people.component.html',
-  styleUrls: ['./people.component.scss']
+  selector: 'app-add-people-to-call',
+  templateUrl: 'add-people-to-call.component.html',
+  styleUrls: ['./add-people-to-call.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PeopleComponent implements OnInit {
-  @Output() handleTextMessaging = new EventEmitter<any>();
-  @Output() handleAudioMessaging = new EventEmitter<any>();
-  @Output() handleVideoMessaging = new EventEmitter<any>();
+export class AddPeopleToCallComponent implements OnInit {
+  @Output() sideNavCloseHandler = new EventEmitter<any>();
 
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
@@ -56,6 +58,8 @@ export class PeopleComponent implements OnInit {
   searchKeyUpdate = new Subject<string>();
   fetchActiveUsersInprogress = false;
 
+  selectedUsers = [];
+
   updatePeople$ = new BehaviorSubject<UpdatePeople>({
     action: '',
     data: {} as any
@@ -71,14 +75,14 @@ export class PeopleComponent implements OnInit {
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private loginService: LoginService,
-    private authHeaderService: AuthHeaderService,
-    private chatService: ChatService
+    private authHeaderService: AuthHeaderService
   ) {
     this.searchKeyUpdate
       .pipe(debounceTime(400), distinctUntilChanged())
       .subscribe((value) => {
         this.fetchActiveUsers(true).subscribe((data) => {
           const validUsers = this.formatUsers(data);
+
           this.updatePeople$.next({
             action: 'add_people_search',
             data: validUsers
@@ -193,7 +197,7 @@ export class PeopleComponent implements OnInit {
   };
 
   formatUsers = (users: any) => {
-    const validUsers = [];
+    let validUsers = [];
     const userInfo = this.loginService.getLoggedInUserInfo();
     users.forEach((user) => {
       if (userInfo.collaborationType === 'slack') {
@@ -214,6 +218,7 @@ export class PeopleComponent implements OnInit {
         Buffer.from(user.profileImage).toString()
       );
     });
+    validUsers = validUsers.filter((u) => u.email !== userInfo.email);
     return validUsers;
   };
 
@@ -246,31 +251,22 @@ export class PeopleComponent implements OnInit {
     }
   }
 
-  onTextMessageClick(targetUser) {
-    this.handleTextMessaging.emit({ ...targetUser });
+  onUserSelectionChange(event: any, user: any) {
+    if (event.checked) {
+      this.selectedUsers.push(user.email);
+    } else {
+      const index = this.selectedUsers.indexOf(user.email);
+      if (index > -1) {
+        this.selectedUsers.splice(index, 1);
+      }
+    }
   }
 
-  openAudioVideoCallDialog = (user: any, conferenceType = 'audio') => {
-    const avConfWindowStatus = this.chatService.getAVConfWindowStatus();
-    const iAVConfWindowOpen = avConfWindowStatus.isOpen;
-    if (iAVConfWindowOpen) {
-      return;
-    }
-    const dialogRef = this.uploadDialog.open(VideoCallDialogComponent, {
-      disableClose: true,
-      hasBackdrop: false,
-      panelClass: 'video-call-component',
-      data: {
-        conversation: { chatType: 'oneOnOne', userInfo: user, members: [user] },
-        isCreateConferenceEvent: true,
-        conferenceType
-      }
-    });
+  addPeople() {
+    this.sideNavCloseHandler.emit({ type: 'add', data: this.selectedUsers });
+  }
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        //
-      }
-    });
-  };
+  cancel() {
+    this.sideNavCloseHandler.emit({ type: 'close' });
+  }
 }

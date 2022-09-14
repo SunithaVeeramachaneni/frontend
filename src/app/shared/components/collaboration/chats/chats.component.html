@@ -217,18 +217,16 @@
       </div>
       <div>
         <button
-          disabled
           mat-icon-button
           color="primary"
-          (click)="triggerCall(selectedConversation)"
+          (click)="openAudioVideoCallDialog(selectedConversation, 'audio')"
         >
           <mat-icon>phone</mat-icon>
         </button>
         <button
-          disabled
           mat-icon-button
           color="primary"
-          (click)="openVideoCallDialog(selectedConversation)"
+          (click)="openAudioVideoCallDialog(selectedConversation, 'video')"
         >
           <mat-icon>videocam</mat-icon>
         </button>

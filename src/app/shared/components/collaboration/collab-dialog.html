@@ -73,7 +73,6 @@
       class="btnGroupBtn"
       [ngClass]="{'activeTab': selectedTab==='calls'}"
       (click)="setSelectedTab('calls')"
-      disabled
       translate="calls"
     ></button>
     <mat-divider class="groupBtnDivider"></mat-divider>
@@ -95,7 +94,7 @@
         ></app-chats>
       </div>
       <div *ngIf="selectedTab ==='calls'" class="tabContent">
-        <app-calls [targetUser]="selectedUser"></app-calls>
+        <app-calls></app-calls>
       </div>
       <div *ngIf="selectedTab ==='people'" class="tabContent">
         <app-people

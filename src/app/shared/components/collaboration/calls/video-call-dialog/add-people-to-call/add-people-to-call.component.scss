@@ -1,15 +1,10 @@
-@use './../../../../../scss/colors.scss' as colors;
-
-::ng-deep .video-call-component .mat-dialog-container {
-  width: 100%;
-  overflow: hidden;
-}
+@use './../../../../../../../scss/colors.scss' as colors;
 
 .peoplesTabBody {
   background: colors.$white !important;
-  top: 50px;
   position: absolute;
   position: relative;
+  padding: 10px;
   .searchBar {
     display: flex;
     padding: 0px 15px;
@@ -23,7 +18,7 @@
     }
   }
   .userList {
-    height: 66vh;
+    height: 72vh;
     overflow: auto;
   }
 }
@@ -31,7 +26,7 @@
   cursor: pointer;
   &:hover {
     cursor: pointer;
-    background: colors.$hover-bg;
+    background: colors.$blue3-hover;
   }
 }
 .userIcon {
@@ -63,7 +58,6 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    // background-color: grey;
     border: 2px solid colors.$white;
     bottom: 2px;
     right: 0;
@@ -74,5 +68,17 @@
   }
   .offline {
     background-color: colors.$gray;
+  }
+}
+.bottomActions {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  bottom: -50px;
+  right: 0;
+  .actionBtn {
+    margin: 5px;
   }
 }

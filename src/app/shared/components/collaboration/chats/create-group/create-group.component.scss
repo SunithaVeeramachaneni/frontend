@@ -1,17 +1,12 @@
-$white-color: #ffffff;
-$light-gray: #eeeeee;
-$blue-color: #1a66ff;
-$light-blue: #3d5afe14;
-$hover-bg-color: #b7b9bc2e;
-$gray1: #9e9e9e;
+@use './../../../../../../scss/colors.scss' as colors;
 
 .chatsBody {
   display: flex;
 }
 .conversationsList {
   width: 400px;
-  background: $white-color;
-  border-right: 2px solid #f2f2f2;
+  background: colors.$white;
+  border-right: 2px solid colors.$white2;
   max-width: 400px;
   .searchBar {
     margin-top: 0px !important;
@@ -19,10 +14,10 @@ $gray1: #9e9e9e;
     .searchInput {
       border-radius: 5px;
       padding: 10px;
-      background: $light-gray;
+      background: colors.$gray;
     }
     .searchMore {
-      color: $blue-color;
+      color: colors.$blue;
     }
   }
   .participants {
@@ -44,7 +39,7 @@ $gray1: #9e9e9e;
   border-radius: 15px;
   &:hover {
     cursor: pointer;
-    background: $hover-bg-color;
+    background: colors.$hover-bg;
   }
 }
 
@@ -73,7 +68,7 @@ $gray1: #9e9e9e;
   display: flex;
   width: 100%;
   flex-direction: column;
-  background: $white-color !important;
+  background: colors.$white !important;
   height: 85vh;
   .conversationHead {
     display: flex;
@@ -137,7 +132,7 @@ $gray1: #9e9e9e;
   }
   .attachmentItem {
     font-size: 90%;
-    background: #ebf5f8;
+    background: colors.$attachment-meeting-bg;
     border-radius: 5px;
     width: 99% !important;
     .attachmentTitle {
@@ -154,12 +149,12 @@ $gray1: #9e9e9e;
         display: flex;
         align-items: center;
         padding: 0px 5px;
-        background: #0391fd;
+        background: colors.$blue2;
         border-radius: 5px;
-        color: white;
+        color: colors.$white;
 
         &:hover {
-          background: #7dbef6;
+          background: colors.$blue3-hover;
         }
         .downloadLabel {
           margin-left: 5px;
@@ -193,7 +188,7 @@ $gray1: #9e9e9e;
       }
       .messageInput {
         padding: 10px;
-        background: $light-gray;
+        background: colors.$gray;
         margin-right: 5px;
         border-radius: 5px;
       }
@@ -201,10 +196,10 @@ $gray1: #9e9e9e;
         width: 225px;
       }
       .audioRecord {
-        color: $white-color;
+        color: colors.$white;
         border-radius: 8px;
         font-size: 70%;
-        background: $blue-color;
+        background: colors.$blue;
         margin-left: 5px;
       }
     }
@@ -214,11 +209,11 @@ $gray1: #9e9e9e;
   cursor: pointer;
   &:hover {
     cursor: pointer;
-    background: $hover-bg-color;
+    background: colors.$hover-bg;
   }
 }
 .selectedUser {
-  background: $light-blue;
+  background: colors.$active-bg;
 }
 
 .centerText {
@@ -226,7 +221,7 @@ $gray1: #9e9e9e;
   justify-content: center;
   align-content: space-around;
   align-items: center;
-  color: $gray1;
+  color: colors.$gray1;
   font-weight: 400;
 }
 
@@ -238,8 +233,8 @@ $gray1: #9e9e9e;
   font-weight: 500;
 }
 .userTitle {
-  color: $gray1;
+  color: colors.$gray1;
 }
 .closeBtn {
-  color: $gray1;
+  color: colors.$gray1;
 }
