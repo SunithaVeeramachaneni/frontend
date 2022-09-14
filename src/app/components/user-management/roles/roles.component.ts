@@ -15,8 +15,24 @@ import {
   Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import { mergeMap, tap, map, shareReplay, toArray } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  from,
+  Observable,
+  of,
+  timer
+} from 'rxjs';
+import {
+  mergeMap,
+  tap,
+  map,
+  shareReplay,
+  toArray,
+  startWith,
+  debounceTime,
+  distinctUntilChanged
+} from 'rxjs/operators';
 import {
   permissions as perms,
   routingUrls,
@@ -54,6 +70,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   readonly superAdminText = superAdminText;
 
   rolesList$: Observable<Role[]> = of([]);
+  filteredRolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
   selectedRoleIDList = [];
   permissionsList$: Observable<any>;
@@ -73,12 +90,16 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   addingRole$ = new BehaviorSubject<boolean>(false);
   permissionsTotalLength$: Observable<number>;
   rolesList: Role[] = [];
+  filteredRolesList: Role[] = [];
   readonly perms = perms;
   usersExists = [];
   usersDoesntExists = [];
   roleMode: string;
   roleFormChanged: { isChanged: boolean };
   errors: ValidationError = {};
+  searchRole: FormControl;
+  searchRole$: Observable<string>;
+  selectRole = false;
 
   constructor(
     private commonService: CommonService,
@@ -91,6 +112,19 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.searchRole = new FormControl('');
+    this.searchRole$ = this.searchRole.valueChanges.pipe(
+      startWith(''),
+      debounceTime(500),
+      distinctUntilChanged(),
+      tap((search) => {
+        this.selectRole = true;
+        if (this.roleMode === 'add' && search) {
+          this.roleMode = 'edit';
+          this.addingRole$.next(false);
+        }
+      })
+    );
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
         this.headerService.setHeaderTitle(routingUrls.rolesPermissions.title)
@@ -200,6 +234,30 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       }),
       shareReplay(1)
     );
+
+    this.filteredRolesList$ = combineLatest([
+      this.rolesList$,
+      this.searchRole$
+    ]).pipe(
+      map(([roles, search]) => {
+        const filteredRoles = roles.filter(
+          (roleInfo) =>
+            roleInfo.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+        );
+        return filteredRoles;
+      }),
+      tap((roles) => {
+        if (roles.length) {
+          if (this.selectRole && this.roleMode !== 'add') {
+            this.showSelectedRole(roles[0]);
+            this.selectRole = false;
+          }
+        } else {
+          this.selectedRole = null;
+        }
+        this.filteredRolesList = roles;
+      })
+    );
   }
 
   getAllPermissions() {
@@ -280,6 +338,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         });
       });
   };
+
+  clearSearchAndAddRole() {
+    this.searchRole.setValue('');
+    timer(0).subscribe(() => this.addRole());
+  }
 
   addRole() {
     this.roleMode = 'add';
@@ -411,7 +474,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
               )
             }
           });
-          this.selectedRole = resp;
+          if (this.filteredRolesList.length) {
+            this.selectedRole = resp;
+          } else {
+            this.selectRole = null;
+          }
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.disableSaveButton = true;
           this.toast.show({
