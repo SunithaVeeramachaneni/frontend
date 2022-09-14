@@ -516,14 +516,8 @@ export class UsersComponent implements OnInit {
       });
     }
 
-    this.configOptions.rowLevelActions.menuActions = [
-      ...this.configOptions.rowLevelActions.menuActions,
-      ...menuActions
-    ];
-    this.configOptions.displayActionsColumn = this.configOptions.rowLevelActions
-      .menuActions.length
-      ? true
-      : false;
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
 }

@@ -9,17 +9,17 @@ describe('WhiteSpaceValidator', () => {
   it('should return validation error when form controller contains only spaces', () => {
     const control = { value: '   ' };
 
-    const valiadation = WhiteSpaceValidator.noWhiteSpace(
+    const valiadation = WhiteSpaceValidator.whiteSpace(
       control as AbstractControl
     );
 
-    expect(valiadation).toEqual({ noWhiteSpace: true });
+    expect(valiadation).toEqual({ whiteSpace: true });
   });
 
   it('should return null error when form controller contains data', () => {
     const control = { value: ' abc ' };
 
-    const valiadation = WhiteSpaceValidator.noWhiteSpace(
+    const valiadation = WhiteSpaceValidator.whiteSpace(
       control as AbstractControl
     );
 

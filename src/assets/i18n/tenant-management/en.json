@@ -49,7 +49,8 @@
   "exists": "{name} already exists",
   "min": "{message}",
   "max": "{message}",
-  "noWhiteSpace": "{name} is required",
+  "whiteSpace": "{name} is required",
+  "trimWhiteSpace": "{name} msut not start or end with spaces",
   "invalidPort": "Enter a valid port",
   "invalidLicenceCount": "Enter valid licence count",
   "invalidUrl": "Enter valid {name}",
@@ -104,5 +105,6 @@
   "here": "here",
   "borderNote": "The border indicates the maximum logo area",
   "selectConversationToSendMessage": "Please select a conversation to send message",
-  "selectUserToCreateGroup": "Please select a user to add to the Group"
+  "selectUserToCreateGroup": "Please select a user to add to the Group",
+  "allProducts": "All Products"
 }

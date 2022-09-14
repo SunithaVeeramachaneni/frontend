@@ -1,13 +1,11 @@
 import { TitleCasePipe } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   OnInit,
-  ViewChild,
-  ViewChildren
+  ViewChild
 } from '@angular/core';
 import {
   AbstractControl,
@@ -15,7 +13,6 @@ import {
   FormArray,
   FormBuilder,
   FormControl,
-  FormControlName,
   FormGroup,
   ValidationErrors,
   ValidatorFn,
@@ -24,24 +21,17 @@ import {
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { fromEvent, merge, Observable } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  shareReplay
-} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Buffer } from 'buffer';
-import { permissions } from 'src/app/app.constants';
-import { CommonService } from 'src/app/shared/services/common.service';
+import { permissions, products } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { GenericValidator } from 'src/app/shared/validators/generic-validator';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 import { TenantService } from '../services/tenant.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
-import { Tenant } from 'src/app/interfaces';
+import { Tenant, ValidationError } from 'src/app/interfaces';
 import { cloneDeep } from 'lodash-es';
 
 const regUrl =
@@ -53,10 +43,8 @@ const regUrl =
   styleUrls: ['./tenant.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TenantComponent implements OnInit, AfterViewInit {
+export class TenantComponent implements OnInit {
   @ViewChild('inputClientSecret') inputClientSecret: ElementRef;
-  @ViewChildren(FormControlName, { read: ElementRef })
-  formInputElements: ElementRef[];
   hidePasswordDBMS = true;
   hidePasswordNoSQL = true;
   hidePasswordERPS = true;
@@ -67,10 +55,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
   tenantForm: FormGroup;
   slackConfiguration: FormGroup;
   msTeamsConfiguration: FormGroup;
-
   tenantData: Tenant;
-
-  products = ['MWORKORDER', 'MINVENTORY'];
+  readonly products = products;
   modules = [
     'Dashboard',
     'Tenant Management',
@@ -85,18 +71,12 @@ export class TenantComponent implements OnInit, AfterViewInit {
   logDbTypes = ['rdbms', 'nosql'];
   collaborationTypes = ['slack', 'msteams'];
   logLevels = ['off', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'];
-  validationErrors$: Observable<{
-    [key: string]:
-      | { name: string; length: number }
-      | { [key: string]: { name: string; length: number } }
-      | any;
-  }>;
+  errors: ValidationError = {};
   tenantHeader = 'Adding Tenant...';
   editTenant = true;
   editQueryParam = true;
   tenantLogo: string | SafeResourceUrl;
   readonly permissions = permissions;
-  private genericValidator: GenericValidator;
 
   get sapUrls(): FormArray {
     return this.tenantForm.get('protectedResources.sap.urls') as FormArray;
@@ -108,7 +88,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
     private tenantService: TenantService,
     private toast: ToastService,
@@ -122,7 +101,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.genericValidator = new GenericValidator();
     this.tenantForm = this.fb.group({
       id: [''],
       tenantId: [
@@ -130,7 +108,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ],
         this.validateUnique('tenantId')
       ],
@@ -140,7 +119,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ],
         this.validateUnique('tenantName')
       ],
@@ -150,7 +130,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       authority: [
@@ -159,7 +140,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(255),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       redirectUri: [
@@ -168,7 +150,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(100),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       tenantDomainName: [
@@ -176,7 +159,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ],
         this.validateUnique('tenantDomainName')
       ],
@@ -187,7 +171,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             Validators.required,
             Validators.minLength(3),
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         lastName: [
@@ -196,7 +181,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             Validators.required,
             Validators.minLength(3),
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         title: [
@@ -205,7 +191,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             Validators.required,
             Validators.minLength(3),
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         email: [
@@ -214,7 +201,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             Validators.required,
             Validators.maxLength(100),
             Validators.email,
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ]
       }),
@@ -231,7 +219,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         port: ['', [Validators.required, Validators.pattern('[0-9]{4}')]],
@@ -240,7 +229,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         password: [
@@ -248,7 +238,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace
           ]
         ],
         database: [{ value: '', disabled: true }],
@@ -261,7 +251,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         port: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
@@ -270,7 +261,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         password: [
@@ -278,7 +270,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace
           ]
         ],
         database: [{ value: '', disabled: true }]
@@ -302,19 +294,96 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
 
     this.slackConfiguration = this.fb.group({
-      slackTeamID: ['', [Validators.required]],
-      slackClientID: ['', [Validators.required]],
-      slackClientSecret: ['', [Validators.required]],
-      slackClientSigningSecret: ['', [Validators.required]],
-      slackClientStateSecret: ['', [Validators.required]]
+      slackTeamID: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      slackClientID: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      slackClientSecret: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      slackClientSigningSecret: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      slackClientStateSecret: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ]
     });
     this.msTeamsConfiguration = this.fb.group({
-      msTeamsTenantID: ['', [Validators.required]],
-      msTeamsClientID: ['', [Validators.required]],
-      msTeamsClientSecret: ['', [Validators.required]],
-      msTeamsSharepointSiteID: ['', [Validators.required]],
-      msTeamsRSAPrivateKey: ['', [Validators.required]],
-      msTeamsRSAPublicKey: ['', [Validators.required]]
+      msTeamsTenantID: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      msTeamsClientID: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      msTeamsClientSecret: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      msTeamsSharepointSiteID: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      msTeamsRSAPrivateKey: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ],
+      msTeamsRSAPublicKey: [
+        '',
+        [
+          Validators.required,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ]
+      ]
     });
 
     const headerTitle = this.tenantForm.get('tenantName').value
@@ -339,7 +408,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             );
           }
           this.slackConfiguration.patchValue(
-            this.tenantData.slackConfiguration
+            this.tenantData?.slackConfiguration
           );
         } else if (collabType === 'msteams') {
           if (this.tenantForm.contains('slackConfiguration')) {
@@ -352,7 +421,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
             );
           }
           this.msTeamsConfiguration.patchValue(
-            this.tenantData.msTeamsConfiguration
+            this.tenantData?.msTeamsConfiguration
           );
         }
       });
@@ -402,25 +471,6 @@ export class TenantComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    // Watch for the blur event from any input element on the form.
-    // This is required because the valueChanges does not provide notification on blur
-    const controlBlurs: Observable<any>[] = this.formInputElements.map(
-      (formControl: ElementRef) => fromEvent(formControl.nativeElement, 'blur')
-    );
-
-    // Merge the blur event observable with the valueChanges observable
-    // so we only need to subscribe once.
-    this.validationErrors$ = merge(
-      this.tenantForm.valueChanges,
-      ...controlBlurs
-    ).pipe(
-      map(() => this.genericValidator.processValidations(this.tenantForm)),
-      shareReplay(1)
-    );
-    this.maskClientSecret();
-  }
-
   setTenantFormData() {
     if (this.tenantData && Object.keys(this.tenantData).length) {
       const tenant = cloneDeep(this.tenantData);
@@ -466,7 +516,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(255),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       oauth2Url: [
@@ -475,7 +526,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(255),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       username: [
@@ -483,7 +535,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       password: [
@@ -491,7 +544,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace
         ]
       ],
       grantType: [
@@ -499,7 +552,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       clientId: [
@@ -507,14 +561,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       scopes: [
         '',
         [
           Validators.required,
-          WhiteSpaceValidator.noWhiteSpace,
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace,
           this.scopeValidator()
         ]
       ],
@@ -524,7 +580,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         password: [
@@ -532,7 +589,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace
           ]
         ]
       }),
@@ -543,7 +600,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
             Validators.required,
             Validators.maxLength(255),
             Validators.pattern(regUrl),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         grantType: [
@@ -551,7 +609,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         clientSecret: [
@@ -559,7 +618,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         resource: [
@@ -567,7 +627,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         tokenUse: [
@@ -575,7 +636,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ],
         tokenType: [
@@ -583,7 +645,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           [
             Validators.required,
             Validators.maxLength(100),
-            WhiteSpaceValidator.noWhiteSpace
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
           ]
         ]
       })
@@ -598,7 +661,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(255),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       issuer: [
@@ -607,7 +671,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
           Validators.required,
           Validators.maxLength(100),
           Validators.pattern(regUrl),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       clientId: [
@@ -615,7 +680,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       audience: [
@@ -623,7 +689,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       scope: [
@@ -631,7 +698,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         [
           Validators.required,
           Validators.maxLength(100),
-          WhiteSpaceValidator.noWhiteSpace
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
         ]
       ],
       urls: this.fb.array([this.initUrl()])
@@ -643,7 +711,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
       Validators.required,
       Validators.maxLength(100),
       Validators.pattern(regUrl),
-      WhiteSpaceValidator.noWhiteSpace
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
     ]);
 
   setUrls = (urls: string[]) => urls.map((url) => this.initUrl(url));
@@ -865,5 +934,20 @@ export class TenantComponent implements OnInit, AfterViewInit {
   resetTenantLogo(event: Event) {
     const input = event.target as HTMLInputElement;
     input.value = '';
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.tenantForm.get(controlName).touched;
+    const errors = this.tenantForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

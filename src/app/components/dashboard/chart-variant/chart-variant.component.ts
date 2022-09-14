@@ -21,8 +21,10 @@ import {
 import {
   AppChartConfig,
   ChartVariantChanges,
-  ReportConfiguration
+  ReportConfiguration,
+  ValidationError
 } from 'src/app/interfaces';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 @Component({
   selector: 'app-chart-variant',
@@ -50,7 +52,8 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
   chartVarientForm = this.fb.group({
     chartTitle: new FormControl('', [
       Validators.minLength(3),
-      Validators.maxLength(48)
+      Validators.maxLength(48),
+      WhiteSpaceValidator.trimWhiteSpace
     ]),
     datasetFieldName: [''],
     countFieldName: [''],
@@ -59,7 +62,7 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
     showValues: new FormControl(false),
     showLegends: new FormControl(false)
   });
-
+  errors: ValidationError = {};
   private _report: ReportConfiguration;
   private destroy$ = new Subject();
 
@@ -236,6 +239,21 @@ export class ChartVariantComponent implements OnInit, OnDestroy {
       this.isStacked = true;
     }
   };
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.chartVarientForm.get(controlName).touched;
+    const errors = this.chartVarientForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -43,16 +43,16 @@
     <mat-error
       *ngIf="
         loginForm.get('companyOrDomainName').touched &&
-        loginForm.get('companyOrDomainName').errors?.noWhiteSpace
+        loginForm.get('companyOrDomainName').errors?.whiteSpace
       "
     >
       {{
-        'noWhiteSpace' | translate: { name: 'companyOrDomainName' | translate }
+        'whiteSpace' | translate: { name: 'companyOrDomainName' | translate }
       }}
     </mat-error>
     <mat-error
       *ngIf="
-        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        !loginForm.get('companyOrDomainName').errors?.whiteSpace &&
         loginForm.get('companyOrDomainName').touched &&
         loginForm.get('companyOrDomainName').errors?.maxlength
       "
@@ -69,7 +69,7 @@
     </mat-error>
     <mat-error
       *ngIf="
-        !loginForm.get('companyOrDomainName').errors?.noWhiteSpace &&
+        !loginForm.get('companyOrDomainName').errors?.whiteSpace &&
         loginForm.get('companyOrDomainName').touched &&
         loginForm.get('companyOrDomainName').errors?.invalidCompanyOrDomaniName
       "

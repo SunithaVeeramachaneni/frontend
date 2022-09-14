@@ -294,7 +294,9 @@ describe('AddWorkinstructionComponent', () => {
       required: false,
       maxLength: false,
       startPattern: false,
-      pattern: false
+      pattern: false,
+      whiteSpace: false,
+      trimWhiteSpace: false
     });
   });
 
@@ -539,7 +541,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
     }));
 
@@ -583,7 +587,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: true,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title already exists!'
@@ -626,7 +632,9 @@ describe('AddWorkinstructionComponent', () => {
         exists: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
       expect(errorHandlerServiceSpy.handleError).toHaveBeenCalledWith({
         message: 'Unable to fetch instruction'
@@ -1762,14 +1770,15 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       expect(component.titleTextChanged.next).toHaveBeenCalledWith(title);
       expect(component.selectedInstruction.WI_Name).toBe(title);
-      expect(component.addOrUpdateTitle).toBeTrue();
       expect(component.wi_title).toBe(title);
       expect(component.titleErrors).toEqual({
         exists: false,
         required: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: false,
+        trimWhiteSpace: false
       });
     });
 
@@ -1788,13 +1797,14 @@ describe('AddWorkinstructionComponent', () => {
       fixture.detectChanges();
       expect(component.titleTextChanged.next).not.toHaveBeenCalled();
       expect(component.selectedInstruction.WI_Name).toBe(title);
-      expect(component.addOrUpdateTitle).toBeTrue();
       expect(component.titleErrors).toEqual({
         exists: false,
-        required: true,
+        required: false,
         maxLength: false,
         startPattern: false,
-        pattern: false
+        pattern: false,
+        whiteSpace: true,
+        trimWhiteSpace: false
       });
       expect(addWIEl.querySelector('.wi-title-info').textContent).toContain(
         'Title is required'

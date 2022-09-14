@@ -1,10 +1,27 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { defaultLimit, permissions as perms } from 'src/app/app.constants';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  switchMap,
+  tap
+} from 'rxjs/operators';
+import {
+  defaultLimit,
+  permissions as perms,
+  products
+} from 'src/app/app.constants';
 import {
   CellClickActionEvent,
   Count,
@@ -27,9 +44,11 @@ import { TenantService } from '../services/tenant.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantsComponent implements OnInit {
-  selectedProduct = ['All Products'];
-  products = ['All Products', 'MWorkOrder', 'MInventory'];
-  tenantsOnLoad$: Observable<Tenant[]>;
+  @ViewChild('allProducts') allProducts: MatOption;
+  allProductsLabel = 'All Products';
+  readonly products = products;
+  tenantsOnLoadSearch$: Observable<Tenant[]>;
+  tenantsCountOnLoadSearch$: Observable<Count>;
   tenantsOnScroll$: Observable<Tenant[]>;
   deactivateTenant$: BehaviorSubject<DeactivateTenant> =
     new BehaviorSubject<DeactivateTenant>({} as DeactivateTenant);
@@ -87,19 +106,42 @@ export class TenantsComponent implements OnInit {
   skip = 0;
   limit = defaultLimit;
   deactivate = false;
+  deactivateCount = false;
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  searchForm: FormGroup;
   private fetchData$: BehaviorSubject<TableEvent> =
     new BehaviorSubject<TableEvent>({} as TableEvent);
+  private searchTenants$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
   constructor(
     private tenantService: TenantService,
     private router: Router,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.tenantsOnLoad$ = this.getTenants();
+    this.searchForm = this.fb.group({
+      products: [[this.allProductsLabel, ...products]],
+      search: ['']
+    });
+
+    this.tenantsOnLoadSearch$ = this.searchTenants$.pipe(
+      switchMap((search) => {
+        if (search) {
+          this.skip = 0;
+          return this.getTenants();
+        }
+        return this.getTenants();
+      })
+    );
+
+    this.tenantsCountOnLoadSearch$ = this.searchTenants$.pipe(
+      switchMap(() => this.getTenantsCount())
+    );
+
     this.tenantsOnScroll$ = this.fetchData$.pipe(
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -110,16 +152,16 @@ export class TenantsComponent implements OnInit {
       })
     );
 
+    const initial: TenantData = { data: [] };
+
     this.tenantsData$ = combineLatest([
-      this.tenantsOnLoad$,
+      this.tenantsOnLoadSearch$,
       this.tenantsOnScroll$,
       this.deactivateTenant$
     ]).pipe(
       map(([tenants, scrollData, { deactivate, id }]) => {
-        const initial: TenantData = {
-          data: tenants
-        };
         if (this.skip === 0) {
+          initial.data = tenants;
           this.configOptions =
             this.tenantService.updateConfigOptionsFromColumns(
               this.columns,
@@ -135,19 +177,21 @@ export class TenantsComponent implements OnInit {
           }
         }
 
-        this.skip = initial.data ? initial.data.length : this.skip;
+        this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
 
     this.tenantsCount$ = combineLatest([
-      this.getTenantsCount(),
+      this.tenantsCountOnLoadSearch$,
       this.deactivateTenant$
     ]).pipe(
       map(([tenantsCount, { deactivate }]) => {
-        if (deactivate) {
+        this.deactivateCount = deactivate;
+        if (this.deactivateCount) {
           tenantsCount.count = tenantsCount.count - 1;
+          this.deactivateCount = false;
         }
         return tenantsCount;
       })
@@ -156,20 +200,28 @@ export class TenantsComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
+
+    this.searchForm.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe(() => {
+        this.searchTenants$.next(true);
+      });
   }
 
   getTenants = () =>
     this.tenantService.getTenants$({
       skip: this.skip,
       limit: this.limit,
-      isActive: true
-      // searchKey: this.searchValue
+      isActive: true,
+      searchKey: this.searchForm.get('search').value,
+      products: this.getProducts()
     });
 
   getTenantsCount = () =>
     this.tenantService.getTenantsCount$({
-      isActive: true
-      // searchKey: this.searchValue
+      isActive: true,
+      searchKey: this.searchForm.get('search').value,
+      products: this.getProducts()
     });
 
   handleTableEvent(event: TableEvent) {
@@ -224,14 +276,36 @@ export class TenantsComponent implements OnInit {
       });
     }
 
-    this.configOptions.rowLevelActions.menuActions = [
-      ...this.configOptions.rowLevelActions.menuActions,
-      ...menuActions
-    ];
-    this.configOptions.displayActionsColumn = this.configOptions.rowLevelActions
-      .menuActions.length
-      ? true
-      : false;
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  toggleAllProducts() {
+    if (this.allProducts.selected) {
+      this.searchForm.patchValue({
+        products: [this.allProductsLabel, ...products]
+      });
+    } else {
+      this.searchForm.patchValue({
+        products: [products[0]]
+      });
+    }
+  }
+
+  toggleProduct() {
+    if (this.allProducts.selected) {
+      this.allProducts.deselect();
+    }
+    if (this.searchForm.get('products').value.length === products.length) {
+      this.allProducts.select();
+    }
+  }
+
+  getProducts() {
+    const selectedProducts = this.searchForm.get('products').value;
+    return selectedProducts.length === products.length + 1
+      ? selectedProducts.slice(1).join(',')
+      : selectedProducts.join(',');
   }
 }

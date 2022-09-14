@@ -1,10 +1,35 @@
 <div class="main-tenant-container" *ngIf="userInfo$ | async">
-  <div class="tenant-header">
+  <form class="tenant-header" [formGroup]="searchForm">
     <span class="custom-form-field-white-color select-products">
       <mat-form-field appearance="outline">
         <mat-label translate>product</mat-label>
-        <mat-select [(value)]="selectedProduct" multiple disabled>
-          <mat-option *ngFor="let product of products" [value]="product">
+        <mat-select multiple formControlName="products">
+          <mat-select-trigger>
+            {{ allProducts?.selected ? allProductsLabel : products[0] }}
+            <span
+              *ngIf="
+                searchForm.get('products').value?.length > 1 &&
+                !allProducts?.selected
+              "
+            >
+              ( +{{ searchForm.get('products').value.length - 1 }}
+              {{
+                searchForm.get('products').value.length === 2 ? 'more' : 'more'
+              }})
+            </span>
+          </mat-select-trigger>
+          <mat-option
+            #allProducts
+            [value]="allProductsLabel"
+            class="filter-option"
+            (click)="toggleAllProducts()"
+            >{{ allProductsLabel }}</mat-option
+          >
+          <mat-option
+            *ngFor="let product of products"
+            [value]="product"
+            (click)="toggleProduct()"
+          >
             {{ product }}
           </mat-option>
         </mat-select>
@@ -13,7 +38,13 @@
     <span class="custom-form-field-gray-color search-field">
       <mat-form-field appearance="outline">
         <mat-icon matPrefix class="searchIcon">search</mat-icon>
-        <input matInput type="text" placeholder="Search" disabled />
+        <input
+          matInput
+          type="text"
+          placeholder="Search"
+          formControlName="search"
+          autocomplete="off"
+        />
       </mat-form-field>
     </span>
 
@@ -40,7 +71,7 @@
               }
       }}</span>
     </span>
-  </div>
+  </form>
   <div
     *ngIf="tenantsData$ | async; else loadingTenants"
     class="dis-flex tenant-content"
