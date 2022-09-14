@@ -14,48 +14,28 @@
             <mat-icon
               matSuffix
               class="edit-icon"
-              *ngIf="disableReportName === true"
-              (click)="disableReportName = false"
+              *ngIf="reportNameDisabled"
+              (click)="toggleReportInputField()"
               >edit</mat-icon
             >
             <input
-              *ngIf="!reportDetails.report"
+              [formControl]="reportTitle"
               matInput
-              [disabled]="disableReportName"
-              (keyup.enter)="disableReportName = true"
-              (blur)="disableReportName = true"
-            />
-            <input
-              *ngIf="reportDetails.report"
-              matInput
-              [disabled]="disableReportName"
-              (keyup.enter)="
-                disableReportName = true; onReportTitleChanged($event)
-              "
-              (blur)="disableReportName = true; onReportTitleChanged($event)"
-              [value]="reportTitle"
-              (ngModel)="(reportTitle)"
-              (ngModelChange)="onReportTitleChanged($event)"
+              type="text"
+              (keyup)="updateReportTitleHeaders($event.target.value)"
+              (blur)="toggleReportInputField()"
             />
           </mat-form-field>
-          <mat-error class="report-name-error" *ngIf="reportTitleMaxLengthErr">
+          <mat-error
+            class="report-name-error"
+            *ngIf="processValidationErrors('reportTitle')"
+          >
             {{
-              'fieldMaximumLength'
+              errors.reportTitle.name
                 | translate
                   : {
-                      name: 'name' | translate,
-                      length: 48
-                    }
-            }}
-          </mat-error>
-          <mat-error class="report-name-error" *ngIf="reportTitleMinLengthErr">
-            Error occured
-            {{
-              'fieldMinimumLength'
-                | translate
-                  : {
-                      name: 'name' | translate,
-                      length: 3
+                      name: 'reportName' | translate,
+                      length: errors.reportTitle.length
                     }
             }}
           </mat-error>

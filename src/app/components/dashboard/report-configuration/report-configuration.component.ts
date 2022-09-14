@@ -4,6 +4,7 @@ import {
   Component,
   OnInit
 } from '@angular/core';
+import { FormControl, Validators, ValidationErrors } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,6 +14,7 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 
 import {
   debounceTime,
+  distinctUntilChanged,
   filter,
   map,
   mergeMap,
@@ -52,6 +54,8 @@ import { downloadFile } from '../../../shared/utils/fileUtils';
 import { ReportSaveAsModalComponent } from '../report-save-as-modal/report-save-as-modal.component';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
+import { ValidationError } from 'src/app/interfaces';
 import { LoginService } from '../../login/services/login.service';
 
 @Component({
@@ -61,8 +65,19 @@ import { LoginService } from '../../login/services/login.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportConfigurationComponent implements OnInit {
+  reportTitle: FormControl = new FormControl('', {
+    validators: [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(48),
+      WhiteSpaceValidator.whiteSpace,
+      WhiteSpaceValidator.trimWhiteSpace
+    ],
+    updateOn: 'blur'
+  });
+  errors: ValidationError = {};
+  reportNameDisabled = true;
   title = 'Report Configuration';
-  disableReportName = true;
   isPopoverOpen = false;
   reportDetailsOnLoadFilter$: Observable<ReportDetails>;
   reportDetailsOnScroll$: Observable<ReportDetails>;
@@ -96,10 +111,6 @@ export class ReportConfigurationComponent implements OnInit {
   searchKey = '';
   limit = defaultLimit;
   reportConfiguration: ReportConfiguration;
-
-  reportTitle = '';
-  reportTitleMinLengthErr = false;
-  reportTitleMaxLengthErr = false;
 
   reportDefinitionNameOrId: string;
   reportDetailsUrlString: string;
@@ -153,45 +164,20 @@ export class ReportConfigurationComponent implements OnInit {
     private loginService: LoginService
   ) {}
 
-  onReportTitleChanged = (event) => {
-    this.reportTitleUpdate.next(event);
-  };
-
-  reportTitleChanged = (event) => {
-    const oldValue = this.reportTitle;
-    let newValue = event;
-    let isDomEvent = false;
-    if (event && event.target && event.target.value) {
-      newValue = event.target.value;
-      isDomEvent = true;
-    }
-    this.reportTitle = newValue;
-
-    if (this.reportTitle) {
-      this.reportTitleMinLengthErr = this.reportTitle.length < 3 ? true : false;
-      this.reportTitleMaxLengthErr =
-        this.reportTitle.length > 48 ? true : false;
-    }
-
-    if (isDomEvent) {
-      this.undoRedoUtil.WRITE({
-        eventType: 'REPORT_TITLE',
-        currentValue: newValue,
-        prevValue: oldValue
-      });
-    }
-
-    this.breadcrumbService.set('@reportConfiguration', { label: newValue });
-    this.headerService.setHeaderTitle(newValue);
-  };
-
   ngOnInit() {
-    this.reportTitleMinLengthErr = false;
-    this.reportTitleMaxLengthErr = false;
     this.undoRedoUtil = new UndoRedoUtil();
-    this.reportTitleUpdate.pipe(debounceTime(1000)).subscribe((data) => {
-      this.reportTitleChanged(data);
-    });
+    this.reportTitle.valueChanges
+      .pipe(pairwise())
+      .subscribe(([prev, next]: [any, any]) => {
+        if (!this.processValidationErrors('reportTitle')) {
+          this.undoRedoUtil.WRITE({
+            eventType: 'REPORT_TITLE',
+            currentValue: next,
+            prevValue: prev
+          });
+          this.updateReportTitleHeaders(next);
+        }
+      });
 
     this.reportDetailsOnLoadFilter$ = combineLatest([
       this.reportService.reportDefinitionAction$,
@@ -235,6 +221,15 @@ export class ReportConfigurationComponent implements OnInit {
       switchMap((reportDetails) => reportDetails)
     );
 
+    this.reportDetailsOnLoadFilter$
+      .pipe(
+        tap((loadFilter) => {
+          const { report } = loadFilter;
+          this.reportTitle.patchValue(report ? report.name : '');
+        })
+      )
+      .subscribe();
+
     this.reportDetailsOnScroll$ = this.fetchData$.pipe(
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -263,13 +258,13 @@ export class ReportConfigurationComponent implements OnInit {
           this.breadcrumbService.set('@reportConfiguration', {
             label:
               this.reportConfiguration && this.reportConfiguration.id
-                ? this.reportTitle
-                : `${this.reportTitle} *`
+                ? this.reportTitle.value
+                : `${this.reportTitle.value} *`
           });
           this.headerService.setHeaderTitle(
             this.reportConfiguration && this.reportConfiguration.id
-              ? this.reportTitle
-              : `${this.reportTitle} *`
+              ? this.reportTitle.value
+              : `${this.reportTitle.value} *`
           );
           const { showChart = false, chartDetails } = this.reportConfiguration;
           this.configOptions =
@@ -312,6 +307,36 @@ export class ReportConfigurationComponent implements OnInit {
         )
       )
     );
+  }
+
+  toggleReportInputField = () => {
+    this.reportNameDisabled = !this.reportNameDisabled;
+    //if (this.reportTitle.status === 'DISABLED') this.reportTitle.enable();
+    //else this.reportTitle.disable();
+  };
+
+  updateReportTitleHeaders = (title: string) => {
+    if (title && !Object.keys(this.reportTitle.errors).length) {
+      this.breadcrumbService.set('@reportConfiguration', {
+        label: title
+      });
+      this.headerService.setHeaderTitle(title);
+    }
+  };
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.reportTitle.touched;
+    const errors = this.reportTitle.errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 
   appendChartVariantChanges = (event: ChartVariantChanges) => {
@@ -466,9 +491,14 @@ export class ReportConfigurationComponent implements OnInit {
     } else if (operation.eventType === 'FAVORITE_TOGGLE') {
       this.reportConfiguration.isFavorite = operation.isFavorite ? false : true;
     } else if (operation.eventType === 'REPORT_TITLE') {
-      this.reportTitleChanged(operation.prevValue);
+      this.reportTitle.patchValue(operation.prevValue, { emitEvent: false });
+      this.breadcrumbService.set('@reportConfiguration', {
+        label: operation.prevValue
+      });
+      this.headerService.setHeaderTitle(operation.prevValue);
     }
   };
+
   redo = (event: Event) => {
     event.stopPropagation();
     const operation = this.undoRedoUtil.REDO();
@@ -485,17 +515,23 @@ export class ReportConfigurationComponent implements OnInit {
     } else if (operation.eventType === 'FAVORITE_TOGGLE') {
       this.reportConfiguration.isFavorite = operation.isFavorite ? true : false;
     } else if (operation.eventType === 'REPORT_TITLE') {
-      this.reportTitleChanged(operation.currentValue);
+      this.reportTitle.patchValue(operation.currentValue, {
+        emitEvent: false
+      });
+      this.breadcrumbService.set('@reportConfiguration', {
+        label: operation.currentValue
+      });
+      this.headerService.setHeaderTitle(operation.currentValue);
     }
   };
 
   openSaveAsDialog() {
     const saveAsReportRef = this.dialog.open(ReportSaveAsModalComponent, {
-      data: { name: this.reportTitle }
+      data: { name: this.reportTitle.value }
     });
     saveAsReportRef.afterClosed().subscribe((name) => {
       if (name) {
-        this.reportTitle = name;
+        this.reportTitle.patchValue(name);
         this.saveReport({ saveAs: true });
       }
     });
@@ -520,8 +556,8 @@ export class ReportConfigurationComponent implements OnInit {
       return { ...table, columns };
     });
 
-    if (this.reportConfiguration.name !== this.reportTitle) {
-      this.reportConfiguration.name = this.reportTitle;
+    if (this.reportConfiguration.name !== this.reportTitle.value) {
+      this.reportConfiguration.name = this.reportTitle.value;
     }
 
     this.spinner.show();
@@ -683,7 +719,7 @@ export class ReportConfigurationComponent implements OnInit {
         (data) => {
           this.cdrf.markForCheck();
           this.isExportInProgress = false;
-          downloadFile(data, this.reportTitle);
+          downloadFile(data, this.reportTitle.value);
           this.toast.show({
             text: 'Report exported successfully',
             type: 'success'
