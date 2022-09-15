@@ -19,11 +19,18 @@
               >edit</mat-icon
             >
             <input
+              matInput
+              *ngIf="reportNameDisabled"
+              [value]="reportTitle.value"
+              disabled
+            />
+            <input
               [formControl]="reportTitle"
               matInput
               type="text"
               (keyup)="updateReportTitleHeaders($event.target.value)"
               (blur)="toggleReportInputField()"
+              [hidden]="reportNameDisabled"
             />
           </mat-form-field>
           <mat-error

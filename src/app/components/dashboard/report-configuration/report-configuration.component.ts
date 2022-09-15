@@ -4,7 +4,7 @@ import {
   Component,
   OnInit
 } from '@angular/core';
-import { FormControl, Validators, ValidationErrors } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,8 +13,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 
 import {
-  debounceTime,
-  distinctUntilChanged,
   filter,
   map,
   mergeMap,
@@ -311,12 +309,10 @@ export class ReportConfigurationComponent implements OnInit {
 
   toggleReportInputField = () => {
     this.reportNameDisabled = !this.reportNameDisabled;
-    //if (this.reportTitle.status === 'DISABLED') this.reportTitle.enable();
-    //else this.reportTitle.disable();
   };
 
   updateReportTitleHeaders = (title: string) => {
-    if (title && !Object.keys(this.reportTitle.errors).length) {
+    if (title && !this.processValidationErrors('reportTitle')) {
       this.breadcrumbService.set('@reportConfiguration', {
         label: title
       });
