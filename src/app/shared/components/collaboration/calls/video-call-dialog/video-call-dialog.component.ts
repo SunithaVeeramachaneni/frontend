@@ -36,8 +36,7 @@ export interface Conference {
 @Component({
   selector: 'app-video-call-dialog',
   templateUrl: './video-call-dialog.component.html',
-  styleUrls: ['./video-call-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./video-call-dialog.component.scss']
 })
 export class VideoCallDialogComponent implements OnInit {
   isSideNavOpen = false;
@@ -192,7 +191,8 @@ export class VideoCallDialogComponent implements OnInit {
       parentNode: document.querySelector('#jaas-container'),
       configOverwrite: {
         prejoinPageEnabled: false,
-        startAudioOnly: isAudioOnly
+        startAudioOnly: isAudioOnly,
+        startWithVideoMuted: isAudioOnly
       },
       userInfo: {
         email,
