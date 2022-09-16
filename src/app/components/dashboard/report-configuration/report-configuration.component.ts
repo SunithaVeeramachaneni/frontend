@@ -219,15 +219,6 @@ export class ReportConfigurationComponent implements OnInit {
       switchMap((reportDetails) => reportDetails)
     );
 
-    this.reportDetailsOnLoadFilter$
-      .pipe(
-        tap((loadFilter) => {
-          const { report } = loadFilter;
-          this.reportTitle.patchValue(report ? report.name : '');
-        })
-      )
-      .subscribe();
-
     this.reportDetailsOnScroll$ = this.fetchData$.pipe(
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -252,6 +243,8 @@ export class ReportConfigurationComponent implements OnInit {
           this.reportConfiguration = report
             ? report
             : ({} as ReportConfiguration);
+
+          this.reportTitle.patchValue(report ? report.name : '');
 
           this.breadcrumbService.set('@reportConfiguration', {
             label:
