@@ -37,7 +37,7 @@
   position: fixed !important;
   right: 0px !important;
   bottom: 0px;
-  width: auto !important;
+  width: max-content !important;
   height: 56px !important;
   margin-right: 0px !important;
   transform: none !important;
@@ -69,9 +69,12 @@
 .dialogHeader {
   background: colors.$blue-head;
   padding: 4px 15px;
+  display: flex;
+  align-items: center;
   .headerTitle {
     color: colors.$white;
     font-weight: 700;
+    margin-left: 15px;
   }
   .closeBtn {
     color: colors.$white;
@@ -81,7 +84,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px;
 }
 .dialogContent {
   margin: 0px;
@@ -90,6 +92,9 @@
   min-height: 88vh !important;
   .dialogBody {
     height: 88vh;
+    display: flex;
+    display: flex;
+    flex-direction: row;
   }
 }
 
@@ -216,4 +221,13 @@
   align-items: center;
   align-content: center;
   height: inherit;
+}
+.w-60-pct {
+  width: 60%;
+}
+.w-40-pct {
+  width: 40%;
+}
+.w-100-pct {
+  width: 100%;
 }
