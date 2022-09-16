@@ -82,12 +82,13 @@ describe('InactiveUsersComponent', () => {
       .withArgs({
         skip: 0,
         limit: 25,
-        isActive: false
+        isActive: false,
+        searchKey: ''
       })
       .and.returnValue(of(usersMock));
 
     (usersServiceSpy.getUsersCount$ as jasmine.Spy)
-      .withArgs({ isActive: false })
+      .withArgs({ isActive: false, searchKey: '' })
       .and.returnValue(of({ count: usersMock.length }));
 
     fixture.detectChanges();
@@ -108,13 +109,15 @@ describe('InactiveUsersComponent', () => {
       expect(component.getDisplayedUsers).toBeDefined();
     });
     it('should get users data', () => {
-      spyOn(component, 'getUsers');
-      expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith({
-        skip: 0,
-        limit: 25,
-        isActive: false
-      });
+      component.getDisplayedUsers();
+
       component.users$.subscribe((response) => {
+        expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith({
+          skip: 0,
+          limit: 25,
+          isActive: false,
+          searchKey: ''
+        });
         expect(response.data).toEqual(usersMock);
       });
     });
@@ -132,7 +135,8 @@ describe('InactiveUsersComponent', () => {
         expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith({
           skip: 0,
           limit: 25,
-          isActive: false
+          isActive: false,
+          searchKey: ''
         });
       });
     });
@@ -146,7 +150,8 @@ describe('InactiveUsersComponent', () => {
     it('should get users count', () => {
       component.userCount$.subscribe((response) => {
         expect(usersServiceSpy.getUsersCount$).toHaveBeenCalledWith({
-          isActive: false
+          isActive: false,
+          searchKey: ''
         });
         expect(response).toEqual({ count: usersMock.length });
       });
@@ -163,9 +168,12 @@ describe('InactiveUsersComponent', () => {
         .withArgs({
           skip: 1,
           limit: 25,
-          isActive: false
+          isActive: false,
+          searchKey: ''
         })
         .and.returnValue(of([]));
+      component.fetchUsers$.next({ data: 'load' });
+
       component.handleTableEvent({ data: 'infiniteScroll' });
 
       component.users$.subscribe((response) =>

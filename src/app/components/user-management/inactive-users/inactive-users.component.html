@@ -9,7 +9,8 @@
               matInput
               type="text"
               [placeholder]="'searchUsers' | translate"
-              disabled
+              autocomplete="off"
+              [formControl]="searchUser"
             />
           </mat-form-field>
         </div>

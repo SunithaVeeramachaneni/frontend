@@ -27,7 +27,10 @@
             translate="deleteBtn"
           ></button>
         </mat-menu>
-        <span class="count-of-roles" *ngIf="rolesList$ | async as roles">
+        <span
+          class="count-of-roles"
+          *ngIf="filteredRolesList$ | async as roles"
+        >
           <span class="roles-count">{{ roles ? roles.length : 0 }}</span>
           <span class="roles-text">{{
             'rolesTitleCasePlural'
@@ -40,7 +43,7 @@
         <button
           mat-raised-button
           class="add-role-btn"
-          (click)="addRole()"
+          (click)="clearSearchAndAddRole()"
           translate="addRoleBtn"
           *appCheckUserHasPermission="[perms.createRole]"
         ></button>
@@ -49,13 +52,22 @@
         <div class="width-30 custom-form-field-gray-color roles-left-panel">
           <mat-form-field appearance="outline" class="search-form-field">
             <mat-icon matPrefix class="searchIcon">search</mat-icon>
-            <input matInput type="text" placeholder="Search" disabled />
+            <input
+              matInput
+              type="text"
+              [placeholder]="'search' | translate"
+              [formControl]="searchRole"
+              autocomplete="off"
+            />
           </mat-form-field>
           <mat-list
             role="list"
             class="roles"
-            *ngIf="rolesList$ | async as roles; else loadingRolesList"
+            *ngIf="filteredRolesList$ | async as roles; else loadingRolesList"
           >
+            <div *ngIf="roles.length === 0" class="unselected-role-text">
+              <span translate="noResultsFound"></span>
+            </div>
             <mat-list-item
               *ngFor="let role of roles"
               class="roles-list"
@@ -136,11 +148,7 @@
         </div>
         <div class="width-70 custom-form-field-white-color">
           <div class="roles-right-panel" *ngIf="this.selectedRole !== null">
-            <form
-              [formGroup]="roleForm"
-              (ngSubmit)="saveRole(roleForm.value, this.selectedRole.id)"
-              class="dis-flex"
-            >
+            <form [formGroup]="roleForm" class="dis-flex">
               <div class="width-30">
                 <mat-form-field appearance="outline" class="roles-title m-l-20">
                   <mat-label translate="roleName"></mat-label>
@@ -180,27 +188,28 @@
                   </mat-error>
                 </mat-form-field>
               </div>
-
               <div class="width-40">
                 <ng-container
                   *ngIf="selectedRole?.id === undefined; else updateButton"
                 >
                   <button
                     mat-raised-button
-                    type="submit"
+                    type="button"
                     class="save-role-btn"
                     [disabled]="roleForm.invalid || this.disableSaveButton"
                     translate="saveBtn"
+                    (click)="saveRole(roleForm.value, this.selectedRole.id)"
                     *appCheckUserHasPermission="[perms.createRole]"
                   ></button>
                 </ng-container>
                 <ng-template #updateButton>
                   <button
                     mat-raised-button
-                    type="submit"
+                    type="button"
                     class="save-role-btn"
                     [disabled]="roleForm.invalid || this.disableSaveButton"
                     translate="saveBtn"
+                    (click)="saveRole(roleForm.value, this.selectedRole.id)"
                     *appCheckUserHasPermission="[perms.updateRole]"
                   ></button>
                 </ng-template>
@@ -230,7 +239,10 @@
             </form>
           </div>
 
-          <div *ngIf="this.selectedRole === null" class="unselected-role-text">
+          <div
+            *ngIf="this.selectedRole === null && filteredRolesList.length"
+            class="unselected-role-text"
+          >
             <span translate="noRoles"></span>
           </div>
           <div *ngIf="this.selectedRole !== null">

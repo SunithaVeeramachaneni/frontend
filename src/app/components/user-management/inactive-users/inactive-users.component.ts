@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
 import {
   Count,
+  LoadEvent,
   Role,
+  SearchEvent,
   TableEvent,
   UserDetails,
   UserTable
@@ -11,7 +13,14 @@ import { UsersService } from '../services/users.service';
 import { defaultLimit } from 'src/app/app.constants';
 import { MatTableDataSource } from '@angular/material/table';
 import { routingUrls } from 'src/app/app.constants';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import {
   Column,
   ConfigOptions
@@ -19,6 +28,7 @@ import {
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-inactive-users',
@@ -135,9 +145,8 @@ export class InactiveUsersComponent implements OnInit {
   ];
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
-  fetchUsers$: BehaviorSubject<TableEvent> = new BehaviorSubject<TableEvent>(
-    {} as TableEvent
-  );
+  fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   configOptions: ConfigOptions = {
     tableID: 'usersTable',
     rowsExpandable: false,
@@ -160,10 +169,10 @@ export class InactiveUsersComponent implements OnInit {
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
-  userCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
   roles;
+  searchUser: FormControl;
 
   constructor(
     private usersService: UsersService,
@@ -173,6 +182,18 @@ export class InactiveUsersComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.fetchUsers$.next({ data: 'load' });
+    this.fetchUsers$.next({} as TableEvent);
+    this.searchUser = new FormControl('');
+    this.searchUser.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.fetchUsers$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
         this.headerService.setHeaderTitle(routingUrls.inActiveUsers.title)
@@ -190,13 +211,16 @@ export class InactiveUsersComponent implements OnInit {
   }
 
   getDisplayedUsers() {
-    const initialUsers$ = this.usersService.getUsers$({
-      skip: this.skip,
-      limit: this.limit,
-      isActive: false
-    });
+    const usersOnLoadSearch$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() => {
+        this.skip = 0;
+        return this.getUsers();
+      })
+    );
 
     const onScrollUsers$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           return this.getUsers();
@@ -206,18 +230,23 @@ export class InactiveUsersComponent implements OnInit {
       })
     );
 
-    this.users$ = combineLatest([initialUsers$, onScrollUsers$]).pipe(
+    const initial = {
+      columns: this.columns,
+      data: []
+    };
+    this.users$ = combineLatest([usersOnLoadSearch$, onScrollUsers$]).pipe(
       map(([users, scrollData]) => {
-        const initial = {
-          columns: this.columns,
-          data: users
-        };
         if (this.skip === 0) {
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: 'calc(100vh - 150px)'
+          }; // To fix dynamic table height issue post search with no records & then remove search with records
+          initial.data = users;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
 
-        this.skip = initial.data ? initial.data.length : this.skip;
+        this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -228,19 +257,19 @@ export class InactiveUsersComponent implements OnInit {
     this.usersService.getUsers$({
       skip: this.skip,
       limit: this.limit,
-      isActive: false
+      isActive: false,
+      searchKey: this.searchUser.value
     });
 
   getUserCount = () => {
-    this.userCount$ = this.usersService.getUsersCount$({ isActive: false });
-    this.userCount$ = combineLatest([
-      this.userCount$,
-      this.userCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        count.count += update;
-        return count;
-      })
+    this.userCount$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() =>
+        this.usersService.getUsersCount$({
+          isActive: false,
+          searchKey: this.searchUser.value
+        })
+      )
     );
   };
 
