@@ -190,6 +190,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
       mergeMap((conversations: any) => {
+        conversations = conversations || [];
         if (conversations.length) {
           conversations = this.formatConversations(conversations);
           if (this.targetUser) {
@@ -254,6 +255,8 @@ export class ChatsComponent implements OnInit, OnDestroy {
           } else {
             this.setSelectedConversation(conversations[0]);
           }
+          return of({ data: conversations });
+        } else {
           return of({ data: conversations });
         }
       })
