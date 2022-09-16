@@ -217,10 +217,12 @@
 }
 .meetingInitiating {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
   align-content: center;
   height: inherit;
+  width: 100%;
 }
 .w-60-pct {
   width: 60%;
