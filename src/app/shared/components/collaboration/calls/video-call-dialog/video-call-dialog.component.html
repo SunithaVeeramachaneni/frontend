@@ -1,0 +1,222 @@
+<div
+  mat-dialog-title
+  class="dialogTitle"
+  cdkDrag
+  [cdkDragDisabled]="dialogCollapsed"
+  cdkDragRootElement=".cdk-overlay-pane"
+  cdkDragHandle
+  cdkDragBoundary="body"
+>
+  <div
+    class="dialogHeader"
+    [ngClass]="{
+      displayNone: !isConferenceReadyToJoin,
+      addPeopleHead: isSideNavOpen
+    }"
+  >
+    <div
+      class="conversationHead"
+      [ngClass]="{ 'w-60-pct': isSideNavOpen, 'w-100-pct': !isSideNavOpen }"
+    >
+      <div class="leftSideActions">
+        <div
+          class="icon-button"
+          mat-list-icon
+          *ngIf="selectedConference && !selectedConference.isGroupCall"
+        >
+          <img
+            class="icon mt-10"
+            [src]="selectedConference.userInfo?.profileImage"
+          />
+        </div>
+        <div
+          class="icon-button"
+          mat-list-icon
+          *ngIf="selectedConference && selectedConference.isGroupCall"
+        >
+          <mat-icon class="icon group-icon-head">groups</mat-icon>
+        </div>
+        <div
+          class="userTitle"
+          *ngIf="selectedConference && !selectedConference.isGroupCall"
+        >
+          <span class="userName"
+            >{{ selectedConference.userInfo.firstName }}
+            {{ selectedConference.userInfo.lastName }}
+          </span>
+          <div mat-line class="userDescription">
+            {{ selectedConference.userInfo?.title }}
+          </div>
+        </div>
+        <div
+          class="userTitle groupTitle"
+          *ngIf="selectedConference && selectedConference.isGroupCall"
+        >
+          <span class="userName"
+            >{{ selectedConference.metadata.subject }}
+          </span>
+          <div mat-line class="userDescription groupDescription">
+            <span
+              *ngFor="
+                let member of selectedConference.members | slice: 0:2;
+                let i = index
+              "
+            >
+              {{ member.firstName }}<span *ngIf="i < 1">, </span>
+            </span>
+            <div
+              *ngIf="
+                selectedConference && selectedConference?.members.length > 2
+              "
+            >
+              <div
+                (click)="isOpen = !isOpen"
+                cdkOverlayOrigin
+                #trigger="cdkOverlayOrigin"
+                class="showMoreBtn"
+              >
+                +{{ selectedConference?.members.length - 2 }} More
+              </div>
+
+              <ng-template
+                cdkConnectedOverlay
+                [cdkConnectedOverlayHasBackdrop]="true"
+                cdkConnectedOverlayPanelClass="custom-popover"
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                cdkConnectedOverlayWidth="400px"
+                [cdkConnectedOverlayOpen]="isOpen"
+                [cdkConnectedOverlayOrigin]="trigger"
+                (backdropClick)="isOpen = false"
+              >
+                <div class="shom-more-members">
+                  <ul class="memberList">
+                    <li
+                      *ngFor="
+                        let member of selectedConference.members
+                          | slice: 2:selectedConference?.members.length;
+                        let i = index
+                      "
+                      class="member"
+                    >
+                      <div class="icon-button" mat-list-icon>
+                        <img class="icon" [src]="member.profileImage" />
+                      </div>
+                      <div mat-line>
+                        <div class="memberName">
+                          {{ member.firstName }} {{ member.lastName }}
+                        </div>
+                        <div class="memberTitle">{{ member.title }}</div>
+                      </div>
+                      <mat-divider class="horiz-divider"></mat-divider>
+                    </li>
+                  </ul>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rightSideActions">
+        <button
+          mat-stroked-button
+          class="addPeopleBtn"
+          (click)="openSideNav()"
+          *ngIf="!dialogCollapsed && !isSideNavOpen"
+        >
+          <div class="btnIconAndTitle">
+            <mat-icon>person_add</mat-icon>
+            <span class="addPeopleTxt" translate>addPeople</span>
+          </div>
+        </button>
+        <button
+          mat-icon-button
+          disableRipple
+          class="closeBtn"
+          (click)="collapseAVConfDialog()"
+          *ngIf="!dialogCollapsed"
+        >
+          <mat-icon>remove</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          disableRipple
+          class="closeBtn rotate90"
+          (click)="minimizeAVConfDialog()"
+          *ngIf="isMaximized || dialogCollapsed"
+        >
+          <mat-icon>unfold_less</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          disableRipple
+          class="closeBtn rotate90"
+          (click)="maximizeAVConfDialog()"
+          *ngIf="!isMaximized && !dialogCollapsed"
+        >
+          <mat-icon>unfold_more</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div
+      *ngIf="isSideNavOpen"
+      class="addPeopleHead"
+      [ngClass]="{ 'w-40-pct': isSideNavOpen }"
+    >
+      <div class="headerTitle" translate *ngIf="isSideNavOpen">addPeople</div>
+      <div class="conferenceTitle" *ngIf="isSideNavOpen">
+        <button
+          mat-icon-button
+          disableRipple
+          class="closeBtn"
+          (click)="onSideNavClose({ type: 'close' })"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  mat-dialog-content
+  class="dialogContent"
+  [ngClass]="{ displayNone: dialogCollapsed }"
+>
+  <div class="dialogBody">
+    <div
+      class="meetingInitiating"
+      *ngIf="!isConferenceReadyToJoin"
+      [ngClass]="{ displayNone: isConferenceReadyToJoin }"
+    >
+      <ngx-spinner
+        bdColor="rgba(225,225,225,0.8)"
+        size="large"
+        color="#1ec7c3"
+        type="ball-clip-rotate-pulse"
+        [fullScreen]="false"
+        ><p *ngIf="data.isCreateConferenceEvent">
+          Initiating the {{ data.conversation.chatType | translate }}
+          {{ data.conferenceType }} call....
+        </p>
+        <p *ngIf="!data.isCreateConferenceEvent">
+          Joining the {{ data.conversation?.chatType | translate }}
+          {{ data.conferenceType }} call....
+        </p>
+      </ngx-spinner>
+    </div>
+    <div
+      id="jaas-container"
+      class="jaasContainer"
+      [ngClass]="{
+        displayNone: !isConferenceReadyToJoin,
+        'w-60-pct': isSideNavOpen,
+        'w-100-pct': !isSideNavOpen
+      }"
+    ></div>
+    <div *ngIf="isSideNavOpen" [ngClass]="{ 'w-40-pct': isSideNavOpen }">
+      <app-add-people-to-call
+        [joinedUsers]="joinedUsers"
+        (sideNavCloseHandler)="onSideNavClose($event)"
+      ></app-add-people-to-call>
+    </div>
+  </div>
+</div>

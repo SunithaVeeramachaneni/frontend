@@ -1,0 +1,13 @@
+<div class="container">
+  <p class="top">{{ roomName }}</p>
+  <p class="top-next">{{ conferenceType }} call</p>
+  <img src="assets/img/user.png" width="200" height="200" class="user-img" />
+  <p class="accept-reject">
+    <a (click)="acceptIncomingCall()">
+      <img src="assets/img/accept.png" class="accept-reject-image" />
+    </a>
+    <a (click)="rejectIncomingCall()">
+      <img src="assets/img/reject.png" class="accept-reject-image" />
+    </a>
+  </p>
+</div>

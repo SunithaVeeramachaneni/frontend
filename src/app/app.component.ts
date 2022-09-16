@@ -164,6 +164,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   currentRouteUrl: string;
   selectedMenu: string;
   eventSource: any;
+  eventSourceJitsi: any;
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
@@ -342,6 +343,37 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
               });
             }
           };
+          const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userID}`;
+
+          this.eventSourceJitsi = new EventSourcePolyfill(jitsiSseUrl, {
+            headers: {
+              authorization,
+              tenantid
+            }
+          });
+          this.eventSourceJitsi.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              if (eventData.eventType === 'INCOMING_CALL') {
+                // If any other AV call is going on, discard the SSE event, else delete the SSE event...
+                const avConfWindowStatus =
+                  this.chatService.getAVConfWindowStatus();
+                const acceptCallWindowStatus =
+                  this.chatService.getAcceptCallWindowStatus();
+                const isAVConfWindowOpen = avConfWindowStatus.isOpen;
+                const isAcceptCallWindowOpen = acceptCallWindowStatus.isOpen;
+                if (isAVConfWindowOpen || isAcceptCallWindowOpen) {
+                  // TODO: If the call is not accepted for 10 consecutive SSE events, reject it gracefully with reason 'USER_BUSY_IN_OTHER_CALL'
+                  return;
+                } else {
+                  this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
+                  this.chatService.setMeeting(eventData);
+                }
+              } else if (eventData.eventType === 'END_CONFERENCE') {
+                this.chatService.endMeeting(eventData);
+              }
+            }
+          };
         }
       });
 
@@ -420,6 +452,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   ngOnDestroy() {
     if (this.eventSource) {
       this.eventSource.close();
+    }
+    if (this.eventSourceJitsi) {
+      this.eventSourceJitsi.close();
     }
   }
 
