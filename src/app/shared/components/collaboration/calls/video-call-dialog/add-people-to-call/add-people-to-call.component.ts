@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output
 } from '@angular/core';
@@ -42,6 +43,7 @@ interface UpdateUserPresence {
 })
 export class AddPeopleToCallComponent implements OnInit {
   @Output() sideNavCloseHandler = new EventEmitter<any>();
+  @Input() joinedUsers: any[];
 
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
@@ -191,6 +193,16 @@ export class AddPeopleToCallComponent implements OnInit {
             this.peopleTotalCount = resp.count;
           }
           this.peopleLoadedCount += resp.rows.length;
+
+          if (this.joinedUsers && this.joinedUsers.length) {
+            const joinedUsersEmails = this.joinedUsers.map((u) => u.email);
+            resp.rows.forEach((r) => {
+              if (joinedUsersEmails.indexOf(r.email) > -1) {
+                r.isSelected = true;
+              }
+            });
+          }
+
           return of(resp.rows);
         })
       );
@@ -251,6 +263,22 @@ export class AddPeopleToCallComponent implements OnInit {
     }
   }
 
+  toggleUserSelection(user: any) {
+    if (user.isSelected) {
+      user.isSelected = false;
+      const index = this.selectedUsers.indexOf(user.email);
+      if (index > -1) {
+        this.selectedUsers.splice(index, 1);
+      }
+    } else {
+      const index = this.selectedUsers.indexOf(user.email);
+      if (index < 0) {
+        this.selectedUsers.push(user.email);
+      }
+      user.isSelected = true;
+    }
+  }
+
   onUserSelectionChange(event: any, user: any) {
     if (event.checked) {
       this.selectedUsers.push(user.email);
@@ -267,6 +295,7 @@ export class AddPeopleToCallComponent implements OnInit {
   }
 
   cancel() {
+    this.selectedUsers = [];
     this.sideNavCloseHandler.emit({ type: 'close' });
   }
 }

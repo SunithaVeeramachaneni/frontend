@@ -10,8 +10,8 @@
       autocomplete="off"
       class="searchInput"
     />
-    <button mat-icon-button class="searchMore">
-      <mat-icon>more_vert</mat-icon>
+    <button disabled mat-icon-button class="searchMore">
+      <mat-icon>more_horiz</mat-icon>
     </button>
   </div>
   <div
@@ -19,10 +19,11 @@
     *ngIf="activeUsers$ | async as activeUsers; else loadingUsers"
     (scroll)="onPeopleListScrolled($event)"
   >
-    <mat-list>
-      <mat-list-item
+    <div>
+      <div
         *ngFor="let user of activeUsers; let i = index"
         class="peopleList"
+        (click)="toggleUserSelection(user)"
       >
         <mat-checkbox
           [checked]="user.isSelected"
@@ -41,14 +42,14 @@
             ></div>
           </div>
         </div>
-        <div mat-line>
+        <div class="userNameAndTitle">
           <b>{{ user.firstName }} {{ user.lastName }}</b>
+          <span>{{ user.title }}</span>
         </div>
-        <div mat-line>{{ user.title }}</div>
-      </mat-list-item>
-    </mat-list>
+      </div>
+    </div>
   </div>
-  <div class="bottomActions">
+  <div class="bottomActions" *ngIf="!fetchActiveUsersInprogress">
     <button
       mat-stroked-button
       class="actionBtn"

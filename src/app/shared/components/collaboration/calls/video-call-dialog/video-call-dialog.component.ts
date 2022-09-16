@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Inject,
-  OnInit,
-  ViewChild
+  OnInit
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChatService } from '../../chats/chat.service';
@@ -41,8 +40,6 @@ export interface Conference {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoCallDialogComponent implements OnInit {
-  @ViewChild('sidenav') public sidenav: MatSidenav;
-
   isSideNavOpen = false;
 
   attachment: any;
@@ -51,6 +48,8 @@ export class VideoCallDialogComponent implements OnInit {
 
   allParticipants: any[];
   moderator: any;
+
+  joinedUsers: any[];
 
   isMaximized: boolean;
   dialogCollapsed = false;
@@ -169,6 +168,9 @@ export class VideoCallDialogComponent implements OnInit {
     } else {
       return;
     }
+
+    this.joinedUsers = [...this.selectedConference.members];
+
     this.chatService.avConfWindowAction({
       isOpen: true,
       isCollapsed: false
@@ -214,12 +216,10 @@ export class VideoCallDialogComponent implements OnInit {
 
   openSideNav(): void {
     this.isSideNavOpen = true;
-    this.sidenav.open();
   }
 
   onSideNavClose(event): void {
     if (event && event.type === 'close') {
-      this.sidenav.close();
       this.isSideNavOpen = false;
     } else if (
       event &&
@@ -227,7 +227,6 @@ export class VideoCallDialogComponent implements OnInit {
       event.data &&
       Object.keys(event.data).length
     ) {
-      this.sidenav.close();
       this.isSideNavOpen = false;
       const participants = event.data;
       this.chatService
