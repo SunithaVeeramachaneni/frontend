@@ -30,7 +30,6 @@ import {
   shareReplay,
   toArray,
   startWith,
-  debounceTime,
   distinctUntilChanged
 } from 'rxjs/operators';
 import {
@@ -115,7 +114,6 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.searchRole = new FormControl('');
     this.searchRole$ = this.searchRole.valueChanges.pipe(
       startWith(''),
-      debounceTime(500),
       distinctUntilChanged(),
       tap((search) => {
         this.selectRole = true;
@@ -209,22 +207,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             roles.splice(indexToDelete, 1);
             break;
           case 'copy':
-            const newRole = this.createDuplicateRole(roles, role);
-            const postRole = {
-              ...newRole,
-              permissionIds: newRole.permissionIds.map((p) => p.id)
-            };
-            this.roleService.createRole$(postRole).subscribe((resp) => {
-              if (Object.keys(resp).length) {
-                roles.push({ ...newRole, id: resp.id });
-                this.showSelectedRole(resp);
-                this.toast.show({
-                  text: 'Role copied successfully',
-                  type: 'success'
-                });
-                this.selectedRolePermissions$ = of(postRole.permissionIds);
-              }
-            });
+            roles.push(role);
+            this.showSelectedRole(role);
             break;
         }
         return roles;
@@ -379,9 +363,23 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   };
 
   copyRole(role) {
-    this.rolesListUpdate$.next({
-      action: 'copy',
-      role
+    const newRole = this.createDuplicateRole(this.rolesList, role);
+    const postRole = {
+      ...newRole,
+      permissionIds: newRole.permissionIds.map((p) => p.id)
+    };
+    this.roleService.createRole$(postRole).subscribe((resp) => {
+      if (Object.keys(resp).length) {
+        this.rolesListUpdate$.next({
+          action: 'copy',
+          role: { ...newRole, id: resp.id }
+        });
+        this.toast.show({
+          text: 'Role copied successfully',
+          type: 'success'
+        });
+        this.selectedRolePermissions$ = of(postRole.permissionIds);
+      }
     });
   }
 
@@ -477,7 +475,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
           if (this.filteredRolesList.length) {
             this.selectedRole = resp;
           } else {
-            this.selectRole = null;
+            this.selectedRole = null;
           }
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.disableSaveButton = true;
@@ -549,6 +547,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   showSelectedRole(role: Role) {
     this.roleMode = 'edit';
+    this.selectRole = false;
     this.addingRole$.next(false);
     this.selectedRole = role;
     this.showCancelBtn = false;

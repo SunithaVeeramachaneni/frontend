@@ -9,10 +9,17 @@ import { MatOption } from '@angular/material/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ConfigOptions } from '@innovapptive.com/dynamictable/lib/interfaces';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  filter,
   map,
   switchMap,
   tap
@@ -26,8 +33,10 @@ import {
   CellClickActionEvent,
   Count,
   DeactivateTenant,
+  LoadEvent,
   Permission,
   RowLevelActionEvent,
+  SearchEvent,
   TableColumn,
   TableEvent,
   Tenant,
@@ -110,10 +119,8 @@ export class TenantsComponent implements OnInit {
   userInfo$: Observable<UserInfo>;
   readonly perms = perms;
   searchForm: FormGroup;
-  private fetchData$: BehaviorSubject<TableEvent> =
-    new BehaviorSubject<TableEvent>({} as TableEvent);
-  private searchTenants$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(false);
+  private fetchTenants$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
 
   constructor(
     private tenantService: TenantService,
@@ -123,26 +130,38 @@ export class TenantsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.fetchTenants$.next({ data: 'load' });
+    this.fetchTenants$.next({} as TableEvent);
     this.searchForm = this.fb.group({
       products: [[this.allProductsLabel, ...products]],
       search: ['']
     });
 
-    this.tenantsOnLoadSearch$ = this.searchTenants$.pipe(
-      switchMap((search) => {
-        if (search) {
-          this.skip = 0;
-          return this.getTenants();
-        }
+    this.searchForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.fetchTenants$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
+
+    this.tenantsOnLoadSearch$ = this.fetchTenants$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() => {
+        this.skip = 0;
         return this.getTenants();
       })
     );
 
-    this.tenantsCountOnLoadSearch$ = this.searchTenants$.pipe(
+    this.tenantsCountOnLoadSearch$ = this.fetchTenants$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(() => this.getTenantsCount())
     );
 
-    this.tenantsOnScroll$ = this.fetchData$.pipe(
+    this.tenantsOnScroll$ = this.fetchTenants$.pipe(
+      filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           return this.getTenants();
@@ -200,12 +219,6 @@ export class TenantsComponent implements OnInit {
     this.userInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
     );
-
-    this.searchForm.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe(() => {
-        this.searchTenants$.next(true);
-      });
   }
 
   getTenants = () =>
@@ -225,7 +238,7 @@ export class TenantsComponent implements OnInit {
     });
 
   handleTableEvent(event: TableEvent) {
-    this.fetchData$.next(event);
+    this.fetchTenants$.next(event);
   }
 
   rowLevelActionHandler = (event: RowLevelActionEvent) => {

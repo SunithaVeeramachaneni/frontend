@@ -31,6 +31,7 @@
   "pattern": "{name} doesn't allow special characters",
   "duplicateName": "{name} already exists",
   "email": "Enter a valid email address",
+  "invalid": "Enter a valid email address",
   "addUser": "Add User",
   "editUser": "Edit User",
   "addUserBtn": "Add User",
