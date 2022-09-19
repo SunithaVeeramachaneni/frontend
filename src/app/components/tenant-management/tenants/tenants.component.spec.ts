@@ -114,6 +114,9 @@ describe('TenantsComponent', () => {
     (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
       .withArgs(columns, { ...configOptionsCopy, allColumns: [] })
       .and.returnValue(configOptionsCopy);
+    (tenantServiceSpy.updateConfigOptionsFromColumns as jasmine.Spy)
+      .withArgs(columns, configOptionsCopy)
+      .and.returnValue(configOptionsCopy);
     (loginServiceSpy.checkUserHasPermission as jasmine.Spy)
       .withArgs(userInfo.permissions, 'UPDATE_TENANT')
       .and.returnValue(true);
@@ -164,13 +167,13 @@ describe('TenantsComponent', () => {
       });
     });
 
-    xit('should emit search tenants with boolean true, when search form field changes', (done) => {
+    xit('should emit fetch tenants with search, when search form field changes', (done) => {
       const inputs = tenantsEl.querySelectorAll('input');
       inputs[0].value = 'search';
       inputs[0].dispatchEvent(new Event('input'));
 
-      component['searchTenants$'].pipe(skip(1)).subscribe((data) => {
-        expect(data).toBe(true);
+      component['fetchTenants$'].pipe(skip(2)).subscribe((data) => {
+        expect(data).toBe({ data: 'search' });
         done();
       });
     });
@@ -228,6 +231,7 @@ describe('TenantsComponent', () => {
           products: products.join(',')
         })
         .and.returnValue(of([]));
+      component['fetchTenants$'].next({ data: 'load' });
 
       // TODO: better if we raise this event from UI
       component.handleTableEvent({ data: 'infiniteScroll' });

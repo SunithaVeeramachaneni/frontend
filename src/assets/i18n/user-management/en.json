@@ -1,4 +1,5 @@
 {
+  "search": "Search",
   "searchUsers": "Search Users",
   "deactvate": "Deactivate",
   "inactiveUsers": "Inactive Users",
@@ -12,6 +13,7 @@
   "addingRoleText": "Adding Role...",
   "roleName": "Role",
   "noRoles": " Select any default role from the left to view here.",
+  "noResultsFound": "No search results found.",
   "roleDescription": "Description",
   "description": "Role Description",
   "name": "Role name",
@@ -29,6 +31,7 @@
   "pattern": "{name} doesn't allow special characters",
   "duplicateName": "{name} already exists",
   "email": "Enter a valid email address",
+  "invalid": "Enter a valid email address",
   "addUser": "Add User",
   "editUser": "Edit User",
   "addUserBtn": "Add User",

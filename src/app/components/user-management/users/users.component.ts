@@ -1,11 +1,24 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { shareReplay } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  shareReplay
+} from 'rxjs/operators';
 import {
   CellClickActionEvent,
   Count,
+  LoadEvent,
   Permission,
   Role,
+  SearchEvent,
   TableEvent,
   UserDetails,
   UserInfo,
@@ -31,14 +44,10 @@ import { AddEditUserModalComponent } from '../add-edit-user-modal/add-edit-user-
 import { RolesPermissionsService } from '../services/roles-permissions.service';
 import { Buffer } from 'buffer';
 import { LoginService } from '../../login/services/login.service';
+import { FormControl } from '@angular/forms';
 
 interface UserTableUpdate {
   action: 'add' | 'deactivate' | 'edit' | 'copy' | null;
-  user: UserDetails;
-}
-
-interface ModalInput {
-  roles: any;
   user: UserDetails;
 }
 
@@ -141,9 +150,8 @@ export class UsersComponent implements OnInit {
   ];
   readonly routingUrls = routingUrls;
   currentRouteUrl$: Observable<string>;
-  fetchUsers$: BehaviorSubject<TableEvent> = new BehaviorSubject<TableEvent>(
-    {} as TableEvent
-  );
+  fetchUsers$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
+    new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   configOptions: ConfigOptions = {
     tableID: 'usersTable',
     rowsExpandable: false,
@@ -175,7 +183,7 @@ export class UsersComponent implements OnInit {
   userCount$: Observable<Count>;
   permissionsList$: Observable<any>;
   rolesList$: Observable<Role[]>;
-  userTableUpdate$: BehaviorSubject<UserTableUpdate> =
+  addEditDeactivateUser$: BehaviorSubject<UserTableUpdate> =
     new BehaviorSubject<UserTableUpdate>({
       action: null,
       user: {} as UserDetails
@@ -186,6 +194,9 @@ export class UsersComponent implements OnInit {
   roles;
   loggedInUserInfo$: Observable<UserInfo>;
   readonly perms = perms;
+  searchUser: FormControl;
+  addEditDeactivateUser = false;
+  addDeactivateUserCount = false;
 
   constructor(
     private usersService: UsersService,
@@ -196,6 +207,18 @@ export class UsersComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.fetchUsers$.next({ data: 'load' });
+    this.fetchUsers$.next({} as TableEvent);
+    this.searchUser = new FormControl('');
+    this.searchUser.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.fetchUsers$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
     this.getDisplayedUsers();
     this.getUserCount();
     this.usersService.getRoles$().subscribe((roles) => {
@@ -251,10 +274,18 @@ export class UsersComponent implements OnInit {
           })
           .subscribe((updatedUser) => {
             if (Object.keys(updatedUser).length) {
-              this.userTableUpdate$.next({
-                action: 'edit',
-                user: this.usersService.prepareUser(resp.user, resp.user.roles)
-              });
+              this.addEditDeactivateUser = true;
+              if (this.searchUser.value) {
+                this.fetchUsers$.next({ data: 'search' });
+              } else {
+                this.addEditDeactivateUser$.next({
+                  action: 'edit',
+                  user: this.usersService.prepareUser(
+                    resp.user,
+                    resp.user.roles
+                  )
+                });
+              }
               this.toast.show({
                 text: 'User updated successfully!',
                 type: 'success'
@@ -265,10 +296,18 @@ export class UsersComponent implements OnInit {
       if (resp.action === 'add') {
         this.usersService.createUser$(resp.user).subscribe((createdUser) => {
           if (Object.keys(createdUser).length) {
-            this.userTableUpdate$.next({
-              action: 'add',
-              user: this.usersService.prepareUser(createdUser, resp.user.roles)
-            });
+            this.addEditDeactivateUser = true;
+            if (this.searchUser.value) {
+              this.fetchUsers$.next({ data: 'search' });
+            } else {
+              this.addEditDeactivateUser$.next({
+                action: 'add',
+                user: this.usersService.prepareUser(
+                  createdUser,
+                  resp.user.roles
+                )
+              });
+            }
             this.toast.show({
               text: 'User created successfully!',
               type: 'success'
@@ -288,7 +327,8 @@ export class UsersComponent implements OnInit {
     openDeleteUserModalRef.afterClosed().subscribe((resp) => {
       if (!resp) return;
       this.usersService.deactivateUser$(user.id).subscribe((deletedUser) => {
-        this.userTableUpdate$.next({
+        this.addEditDeactivateUser = true;
+        this.addEditDeactivateUser$.next({
           action: 'deactivate',
           user
         });
@@ -301,14 +341,16 @@ export class UsersComponent implements OnInit {
   }
 
   getDisplayedUsers() {
-    const initialUsers$ = this.usersService.getUsers$({
-      skip: this.skip,
-      limit: this.limit,
-      isActive: true
-      // searchKey: this.searchValue
-    });
+    const usersOnLoadSearch$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() => {
+        this.skip = 0;
+        return this.getUsers();
+      })
+    );
 
     const onScrollUsers$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           return this.getUsers();
@@ -318,59 +360,62 @@ export class UsersComponent implements OnInit {
       })
     );
 
-    const updatedUsers$ = combineLatest([
-      initialUsers$,
-      this.userTableUpdate$
+    const initial = {
+      columns: this.columns,
+      data: []
+    };
+    this.users$ = combineLatest([
+      usersOnLoadSearch$,
+      this.addEditDeactivateUser$,
+      onScrollUsers$
     ]).pipe(
-      map(([users, update]) => {
-        const { user, action } = update;
-        switch (action) {
-          case 'add':
-            this.skip += 1;
-            this.userCountUpdate$.next(+1);
-            users.push(user);
-            this.dataSource = new MatTableDataSource(users);
-            break;
-          case 'deactivate':
-            this.skip -= 1;
-            this.userCountUpdate$.next(-1);
-            if (user.id) {
-              const index = users.findIndex(
-                (iteratedUser) => iteratedUser.id === user.id
-              );
-              if (index > -1) {
-                users.splice(index, 1);
-                this.dataSource = new MatTableDataSource(users);
-              }
-            }
-            break;
-          case 'edit':
-            if (user.id) {
-              const index = users.findIndex(
-                (iteratedUser) => iteratedUser.id === user.id
-              );
-              if (index > -1) {
-                users[index] = user;
-                this.dataSource = new MatTableDataSource(users);
-              }
-            }
-        }
-        this.allUsersList = users;
-        return users;
-      })
-    );
-    this.users$ = combineLatest([updatedUsers$, onScrollUsers$]).pipe(
-      map(([users, scrollData]) => {
-        const initial = {
-          columns: this.columns,
-          data: users
-        };
+      map(([users, update, scrollData]) => {
         if (this.skip === 0) {
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: 'calc(100vh - 150px)'
+          }; // To fix dynamic table height issue post search with no records & then remove search with records
+          initial.data = users;
         } else {
-          initial.data = initial.data.concat(scrollData);
+          if (this.addEditDeactivateUser) {
+            const { user, action } = update;
+            switch (action) {
+              case 'add':
+                this.skip += 1;
+                this.addDeactivateUserCount = true;
+                this.userCountUpdate$.next(+1);
+                initial.data = initial.data.concat(scrollData);
+                break;
+              case 'deactivate':
+                this.skip -= 1;
+                this.addDeactivateUserCount = true;
+                this.userCountUpdate$.next(-1);
+                if (user.id) {
+                  const index = initial.data.findIndex(
+                    (iteratedUser) => iteratedUser.id === user.id
+                  );
+                  if (index > -1) {
+                    initial.data.splice(index, 1);
+                  }
+                }
+                break;
+              case 'edit':
+                if (user.id) {
+                  const index = initial.data.findIndex(
+                    (iteratedUser) => iteratedUser.id === user.id
+                  );
+                  if (index > -1) {
+                    initial.data[index] = user;
+                  }
+                }
+            }
+            this.addEditDeactivateUser = false;
+          } else {
+            initial.data = initial.data.concat(scrollData);
+          }
         }
 
-        this.skip = initial.data ? initial.data.length : this.skip;
+        this.skip = initial.data.length;
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -381,18 +426,29 @@ export class UsersComponent implements OnInit {
     this.usersService.getUsers$({
       skip: this.skip,
       limit: this.limit,
-      isActive: true
-      // searchKey: this.searchValue
+      isActive: true,
+      searchKey: this.searchUser.value
     });
 
   getUserCount = () => {
-    this.userCount$ = this.usersService.getUsersCount$({ isActive: true });
+    this.userCount$ = this.fetchUsers$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() =>
+        this.usersService.getUsersCount$({
+          isActive: true,
+          searchKey: this.searchUser.value
+        })
+      )
+    );
     this.userCount$ = combineLatest([
       this.userCount$,
       this.userCountUpdate$
     ]).pipe(
       map(([count, update]) => {
-        count.count += update;
+        if (this.addDeactivateUserCount) {
+          count.count += update;
+          this.addDeactivateUserCount = false;
+        }
         return count;
       })
     );
@@ -464,7 +520,7 @@ export class UsersComponent implements OnInit {
         if (resp) {
           this.usersService.deactivateUser$(id).subscribe((deactivatedUser) => {
             if (Object.keys(deactivatedUser).length) {
-              this.userTableUpdate$.next({
+              this.addEditDeactivateUser$.next({
                 action: 'deactivate',
                 user: {
                   id,

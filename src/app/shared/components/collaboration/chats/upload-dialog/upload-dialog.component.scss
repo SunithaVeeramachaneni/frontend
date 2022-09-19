@@ -1,3 +1,5 @@
+@use './../../../../../../scss/colors.scss' as colors;
+
 .uploadContainer {
   width: 500px;
   height: 200px;
@@ -5,18 +7,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: azure;
+  background: colors.$white1;
 }
 .uploadInput {
   padding: 5px;
-  background: #bcbcbc;
+  background: colors.$timeago-bg;
   border-radius: 5px 0px 0px 5px;
-  border: 5px solid white;
+  border: 5px solid colors.$white;
 }
 .uploadBtn {
-  background: green;
+  background: colors.$green;
   padding: 5px;
-  color: white;
+  color: colors.$white;
   border-radius: 0px 5px 5px 0px;
   margin-left: -5px;
   text-transform: uppercase;
@@ -28,6 +30,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 0px 15px;
-  background: #e0e0e0;
-  border-bottom: 2px solid #e2e2e2;
+  background: colors.$disabled-color;
+  border-bottom: 2px solid colors.$attachment-bg;
 }

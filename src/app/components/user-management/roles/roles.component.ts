@@ -15,8 +15,23 @@ import {
   Validators
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
-import { mergeMap, tap, map, shareReplay, toArray } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  from,
+  Observable,
+  of,
+  timer
+} from 'rxjs';
+import {
+  mergeMap,
+  tap,
+  map,
+  shareReplay,
+  toArray,
+  startWith,
+  distinctUntilChanged
+} from 'rxjs/operators';
 import {
   permissions as perms,
   routingUrls,
@@ -54,6 +69,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   readonly superAdminText = superAdminText;
 
   rolesList$: Observable<Role[]> = of([]);
+  filteredRolesList$: Observable<Role[]> = of([]);
   selectedRoleList = [];
   selectedRoleIDList = [];
   permissionsList$: Observable<any>;
@@ -73,12 +89,16 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   addingRole$ = new BehaviorSubject<boolean>(false);
   permissionsTotalLength$: Observable<number>;
   rolesList: Role[] = [];
+  filteredRolesList: Role[] = [];
   readonly perms = perms;
   usersExists = [];
   usersDoesntExists = [];
   roleMode: string;
   roleFormChanged: { isChanged: boolean };
   errors: ValidationError = {};
+  searchRole: FormControl;
+  searchRole$: Observable<string>;
+  selectRole = false;
 
   constructor(
     private commonService: CommonService,
@@ -91,6 +111,18 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    this.searchRole = new FormControl('');
+    this.searchRole$ = this.searchRole.valueChanges.pipe(
+      startWith(''),
+      distinctUntilChanged(),
+      tap((search) => {
+        this.selectRole = true;
+        if (this.roleMode === 'add' && search) {
+          this.roleMode = 'edit';
+          this.addingRole$.next(false);
+        }
+      })
+    );
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap(() =>
         this.headerService.setHeaderTitle(routingUrls.rolesPermissions.title)
@@ -175,22 +207,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
             roles.splice(indexToDelete, 1);
             break;
           case 'copy':
-            const newRole = this.createDuplicateRole(roles, role);
-            const postRole = {
-              ...newRole,
-              permissionIds: newRole.permissionIds.map((p) => p.id)
-            };
-            this.roleService.createRole$(postRole).subscribe((resp) => {
-              if (Object.keys(resp).length) {
-                roles.push({ ...newRole, id: resp.id });
-                this.showSelectedRole(resp);
-                this.toast.show({
-                  text: 'Role copied successfully',
-                  type: 'success'
-                });
-                this.selectedRolePermissions$ = of(postRole.permissionIds);
-              }
-            });
+            roles.push(role);
+            this.showSelectedRole(role);
             break;
         }
         return roles;
@@ -199,6 +217,30 @@ export class RolesComponent implements OnInit, AfterViewChecked {
         this.rolesList = rolesList;
       }),
       shareReplay(1)
+    );
+
+    this.filteredRolesList$ = combineLatest([
+      this.rolesList$,
+      this.searchRole$
+    ]).pipe(
+      map(([roles, search]) => {
+        const filteredRoles = roles.filter(
+          (roleInfo) =>
+            roleInfo.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+        );
+        return filteredRoles;
+      }),
+      tap((roles) => {
+        if (roles.length) {
+          if (this.selectRole && this.roleMode !== 'add') {
+            this.showSelectedRole(roles[0]);
+            this.selectRole = false;
+          }
+        } else {
+          this.selectedRole = null;
+        }
+        this.filteredRolesList = roles;
+      })
     );
   }
 
@@ -281,6 +323,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       });
   };
 
+  clearSearchAndAddRole() {
+    this.searchRole.setValue('');
+    timer(0).subscribe(() => this.addRole());
+  }
+
   addRole() {
     this.roleMode = 'add';
     this.copyDisabled = true;
@@ -291,8 +338,8 @@ export class RolesComponent implements OnInit, AfterViewChecked {
       description: ''
     };
     this.selectedRole = newRole;
-    this.roleForm.enable();
-    this.roleForm.setValue(newRole);
+    this.roleForm.enable({ emitEvent: false });
+    this.roleForm.setValue(newRole, { emitEvent: false });
     this.disableSaveButton = true;
     this.addingRole$.next(true);
     this.roleForm.reset(this.roleForm.getRawValue());
@@ -316,9 +363,23 @@ export class RolesComponent implements OnInit, AfterViewChecked {
   };
 
   copyRole(role) {
-    this.rolesListUpdate$.next({
-      action: 'copy',
-      role
+    const newRole = this.createDuplicateRole(this.rolesList, role);
+    const postRole = {
+      ...newRole,
+      permissionIds: newRole.permissionIds.map((p) => p.id)
+    };
+    this.roleService.createRole$(postRole).subscribe((resp) => {
+      if (Object.keys(resp).length) {
+        this.rolesListUpdate$.next({
+          action: 'copy',
+          role: { ...newRole, id: resp.id }
+        });
+        this.toast.show({
+          text: 'Role copied successfully',
+          type: 'success'
+        });
+        this.selectedRolePermissions$ = of(postRole.permissionIds);
+      }
     });
   }
 
@@ -411,7 +472,11 @@ export class RolesComponent implements OnInit, AfterViewChecked {
               )
             }
           });
-          this.selectedRole = resp;
+          if (this.filteredRolesList.length) {
+            this.selectedRole = resp;
+          } else {
+            this.selectedRole = null;
+          }
           this.selectedRolePermissions$ = of(resp.permissionIds);
           this.disableSaveButton = true;
           this.toast.show({
@@ -482,17 +547,18 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   showSelectedRole(role: Role) {
     this.roleMode = 'edit';
+    this.selectRole = false;
     this.addingRole$.next(false);
     this.selectedRole = role;
     this.showCancelBtn = false;
     this.copyDisabled = false;
     this.disableSaveButton = true;
     const { name, description } = role;
-    this.roleForm.setValue({ name, description });
+    this.roleForm.setValue({ name, description }, { emitEvent: false });
     if (name === superAdminText) {
-      this.roleForm.disable();
+      this.roleForm.disable({ emitEvent: false });
     } else {
-      this.roleForm.enable();
+      this.roleForm.enable({ emitEvent: false });
     }
     this.updatedPermissions = [];
 

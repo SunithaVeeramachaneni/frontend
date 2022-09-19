@@ -1,0 +1,235 @@
+@use './../../../../../../scss/colors.scss' as colors;
+
+::ng-deep .video-call-component .mat-dialog-container {
+  min-width: 750px;
+  width: 100% !important;
+  overflow: hidden;
+}
+
+.jaasContainer {
+  position: relative;
+  display: flex;
+  height: 100% !important;
+}
+
+.rotate90 {
+  transform: rotate(90deg);
+}
+.cdk-overlay-pane {
+  width: unset !important;
+  height: unset !important;
+  max-width: 100% !important;
+}
+
+::ng-deep .overlay-max {
+  max-width: 100% !important;
+  height: 100vh !important;
+  margin: 0px !important;
+  display: contents;
+}
+::ng-deep .overlay-min {
+  margin-top: 54.5px !important;
+  margin-right: 180px !important;
+  height: auto !important;
+}
+
+::ng-deep .bottomRightVideo {
+  position: fixed !important;
+  right: 0px !important;
+  bottom: 0px;
+  width: max-content !important;
+  height: 56px !important;
+  margin-right: 0px !important;
+  transform: none !important;
+  .mat-dialog-container {
+    min-width: 300px !important;
+    overflow: hidden;
+  }
+}
+
+::ng-deep .bottomRightVideoCollabCollapsed {
+  position: fixed !important;
+  right: 0px !important;
+  bottom: 50px;
+  width: auto !important;
+  height: 56px !important;
+  margin-right: 0px !important;
+  transform: none !important;
+  .mat-dialog-container {
+    min-width: 300px !important;
+    overflow: hidden;
+  }
+}
+
+.dialogTitle {
+  background: colors.$white;
+  margin: 0px;
+  cursor: move;
+}
+.dialogHeader {
+  background: colors.$blue-head;
+  padding: 4px 15px;
+  display: flex;
+  align-items: center;
+  .headerTitle {
+    color: colors.$white;
+    font-weight: 700;
+    margin-left: 15px;
+  }
+  .closeBtn {
+    color: colors.$white;
+  }
+}
+.addPeopleHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dialogContent {
+  margin: 0px;
+  padding: 0px 0px;
+  background-color: colors.$white;
+  min-height: 88vh !important;
+  .dialogBody {
+    height: 88vh;
+    display: flex;
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+::ng-deep .mat-button-toggle-standalone.mat-button-toggle-appearance-standard,
+.mat-button-toggle-group-appearance-standard {
+  border-radius: 5px;
+  background: colors.$white2;
+  height: 35px;
+  width: fit-content;
+  margin: 10px 0px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+::ng-deep .mat-button-focus-overlay {
+  background-color: transparent !important;
+}
+
+.displayNone {
+  display: none !important;
+}
+.addPeopleBtn {
+  color: colors.$white;
+  border: 1px solid colors.$white;
+  .btnIconAndTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .addPeopleTxt {
+      margin-left: 10px;
+    }
+  }
+}
+.conferenceTitle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-top: 5px;
+}
+.addPeopleSidenav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 350px;
+  background: colors.$white;
+}
+.conversationHead {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  justify-content: space-between;
+  .rightSideActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    align-content: center;
+  }
+  .leftSideActions {
+    display: flex;
+    align-items: center;
+    color: colors.$white;
+    margin-top: 5px;
+    .icon-button {
+      background: none;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+      width: 40px;
+      border-radius: 45px;
+      margin-top: 0px;
+      margin-right: 10px;
+      color: colors.$white;
+    }
+  }
+  .iconButton {
+    background: none;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    width: 40px;
+    border-radius: 45px;
+  }
+  .iconButton .icon {
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 45px;
+  }
+  .userTitle {
+    margin-left: 15px;
+    white-space: nowrap;
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    color: colors.$white;
+    .userName {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 175px;
+      font-weight: 700;
+    }
+    .userDescription {
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      font-weight: 400;
+    }
+  }
+}
+.showMoreBtn {
+  cursor: pointer;
+  margin-left: 8px;
+  text-decoration: underline;
+  color: colors.$white;
+}
+.meetingInitiating {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: inherit;
+  width: 100%;
+}
+.w-60-pct {
+  width: 60%;
+}
+.w-40-pct {
+  width: 40%;
+}
+.w-100-pct {
+  width: 100%;
+}

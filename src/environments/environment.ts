@@ -13,7 +13,8 @@ export const environment = {
   slackAPIUrl: 'http://localhost:8007/slack/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
-  undoRedoOffset: 5
+  undoRedoOffset: 5,
+  jaasAppID: 'vpaas-magic-cookie-c9a785fe985444a18ba0c24416de0d6c'
 };
 
 /*

@@ -5,10 +5,10 @@
 }
 .active {
   cursor: pointer;
-  background: #3d5afe14;
+  background: colors.$active-bg;
 }
 .disablesendbtn {
-  color: #bdbdbd;
+  color: colors.$disabled-color;
 }
 
 .activeSendBtn {
@@ -46,7 +46,7 @@
   }
   &:hover {
     cursor: pointer;
-    background: #b7b9bc2e;
+    background: colors.$hover-bg;
   }
 }
 .centerText {
@@ -63,7 +63,7 @@
   height: 82vh;
   flex-direction: column;
   background: colors.$white !important;
-  border-left: 5px solid #f2f2f2;
+  border-left: 5px solid colors.$white2;
   margin-top: 10px;
   .conversationHead {
     display: flex;
@@ -149,7 +149,7 @@
   }
   .attachmentItem {
     font-size: 90%;
-    background: #eff2ff;
+    background: colors.$attachment-bg;
     border-radius: 5px;
     width: 99% !important;
     .attachmentItemRow {
@@ -304,9 +304,9 @@
 
 .timeAgoLabel {
   margin-left: 5px;
-  color: gray;
+  color: colors.$gray;
   font-size: 70%;
-  background: #f0f0f0;
+  background: colors.$timeago-bg;
   padding: 5px;
   border-radius: 10px;
 }
@@ -337,7 +337,7 @@
 .attachmentItemMeeting {
   font-size: 90%;
   display: flex;
-  background: #cde7d9;
+  background: colors.$attachment-meeting-bg;
   border-radius: 5px;
   width: 300px;
   padding: 15px 12px;
@@ -373,11 +373,11 @@
 }
 .group-icon {
   font-size: 180%;
-  border: 0.5px solid #ece9e2;
+  border: 0.5px solid colors.$icon-border;
 }
 .group-icon-head {
   font-size: 300%;
-  border: 0.5px solid #ece9e2;
+  border: 0.5px solid colors.$icon-border;
 }
 .m-0 {
   margin: 0px;
@@ -588,7 +588,7 @@ p {
       overflow: hidden;
       border-radius: 5px;
       cursor: pointer;
-      color: #212121;
+      color: colors.$gray-bg;
       padding: 5px 5px;
       position: relative;
       // &:hover {
@@ -651,7 +651,7 @@ p {
     height: 12px;
     border-radius: 50%;
     // background-color: grey;
-    border: 2px solid white;
+    border: 2px solid colors.$white;
     bottom: 2px;
     right: 0;
     position: absolute;

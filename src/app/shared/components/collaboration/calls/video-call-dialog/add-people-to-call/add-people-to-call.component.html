@@ -10,8 +10,8 @@
       autocomplete="off"
       class="searchInput"
     />
-    <button mat-icon-button class="searchMore">
-      <mat-icon>more_vert</mat-icon>
+    <button disabled mat-icon-button class="searchMore">
+      <mat-icon>more_horiz</mat-icon>
     </button>
   </div>
   <div
@@ -19,12 +19,17 @@
     *ngIf="activeUsers$ | async as activeUsers; else loadingUsers"
     (scroll)="onPeopleListScrolled($event)"
   >
-    <mat-list>
-      <mat-list-item
+    <div>
+      <div
         *ngFor="let user of activeUsers; let i = index"
         class="peopleList"
-        (click)="onTextMessageClick(user)"
+        (click)="toggleUserSelection(user)"
       >
+        <mat-checkbox
+          [checked]="user.isSelected"
+          (change)="onUserSelectionChange($event, user)"
+        >
+        </mat-checkbox>
         <div class="icon-button" mat-list-icon>
           <div class="userPresence">
             <img class="icon" [src]="user.profileImage" />
@@ -37,41 +42,30 @@
             ></div>
           </div>
         </div>
-        <div mat-line>
+        <div class="userNameAndTitle">
           <b>{{ user.firstName }} {{ user.lastName }}</b>
+          <span>{{ user.title }}</span>
         </div>
-        <div mat-line>{{ user.title }}</div>
-        <button
-          [disabled]="user.collaborationDisabled"
-          mat-icon-button
-          color="primary"
-          (click)="onTextMessageClick(user)"
-        >
-          <mat-icon *ngIf="!user.collaborationDisabled">chat</mat-icon>
-          <mat-icon
-            *ngIf="user.collaborationDisabled"
-            title="This user is not connected to Slack"
-            >comments_disabled</mat-icon
-          >
-        </button>
-
-        <button
-          mat-icon-button
-          color="primary"
-          (click)="openAudioVideoCallDialog(user, 'audio')"
-        >
-          <mat-icon>phone</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="primary"
-          (click)="openAudioVideoCallDialog(user, 'video')"
-        >
-          <mat-icon>videocam</mat-icon>
-        </button>
-        <mat-divider></mat-divider>
-      </mat-list-item>
-    </mat-list>
+      </div>
+    </div>
+  </div>
+  <div class="bottomActions" *ngIf="!fetchActiveUsersInprogress">
+    <button
+      mat-stroked-button
+      class="actionBtn"
+      disabled="{{ fetchActiveUsersInprogress }}"
+      color="primary"
+      (click)="cancel()"
+      translate="cancel"
+    ></button>
+    <button
+      mat-raised-button
+      class="actionBtn"
+      disabled="{{ fetchActiveUsersInprogress }}"
+      color="primary"
+      (click)="addPeople()"
+      translate="add"
+    ></button>
   </div>
 </div>
 <ng-template #loadingUsers>
