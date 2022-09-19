@@ -28,7 +28,7 @@
               [formControl]="reportTitle"
               matInput
               type="text"
-              (keyup)="updateReportTitleHeaders($event.target.value)"
+              (keyup)="updateReportTitleHeaders($event)"
               (blur)="toggleReportInputField()"
               [hidden]="reportNameDisabled"
             />
@@ -235,17 +235,9 @@
               <mat-button-toggle
                 matTooltip="Save"
                 class="save-button"
-                [disabled]="
-                  !reportDetails.report ||
-                  reportTitleMinLengthErr ||
-                  reportTitleMaxLengthErr
-                "
+                [disabled]="!reportDetails.report"
                 (click)="
-                  !(
-                    !reportDetails.report ||
-                    reportTitleMinLengthErr ||
-                    reportTitleMaxLengthErr
-                  ) && saveReport({ saveAs: false })
+                  !!reportDetails.report && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
@@ -260,28 +252,16 @@
               <mat-button-toggle
                 matTooltip="Save"
                 class="save-button"
-                [disabled]="
-                  !reportDetails.report ||
-                  reportTitleMinLengthErr ||
-                  reportTitleMaxLengthErr
-                "
+                [disabled]="!reportDetails.report"
                 (click)="
-                  !(
-                    !reportDetails.report ||
-                    reportTitleMinLengthErr ||
-                    reportTitleMaxLengthErr
-                  ) && saveReport({ saveAs: false })
+                  !!reportDetails.report && saveReport({ saveAs: false })
                 "
               >
                 <span>Save</span>
               </mat-button-toggle>
               <mat-button-toggle
                 *ngIf="reportDetails.report?.id"
-                [disabled]="
-                  !reportDetails.report ||
-                  reportTitleMinLengthErr ||
-                  reportTitleMaxLengthErr
-                "
+                [disabled]="!reportDetails.report"
                 [matMenuTriggerFor]="menu"
                 class="save-button-arrow"
                 aria-label="Save As"
@@ -294,18 +274,8 @@
             <button
               mat-menu-item
               matTooltip="Save As"
-              [disabled]="
-                !reportDetails.report ||
-                reportTitleMinLengthErr ||
-                reportTitleMaxLengthErr
-              "
-              (click)="
-                !(
-                  !reportDetails.report ||
-                  reportTitleMinLengthErr ||
-                  reportTitleMaxLengthErr
-                ) && openSaveAsDialog()
-              "
+              [disabled]="!reportDetails.report"
+              (click)="!!reportDetails.report && openSaveAsDialog()"
               aria-label="Save As"
             >
               Save As

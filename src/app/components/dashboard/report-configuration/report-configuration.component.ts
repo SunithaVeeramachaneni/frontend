@@ -173,7 +173,7 @@ export class ReportConfigurationComponent implements OnInit {
             currentValue: next,
             prevValue: prev
           });
-          this.updateReportTitleHeaders(next);
+          this.updateReportTitleHeaders(null, next);
         }
       });
 
@@ -304,7 +304,13 @@ export class ReportConfigurationComponent implements OnInit {
     this.reportNameDisabled = !this.reportNameDisabled;
   };
 
-  updateReportTitleHeaders = (title: string) => {
+  updateReportTitleHeaders = (
+    event: any = null,
+    reportTitle: string = null
+  ) => {
+    let title;
+    if (event) title = (event.target as HTMLInputElement).value;
+    else title = reportTitle;
     if (title && !this.processValidationErrors('reportTitle')) {
       this.breadcrumbService.set('@reportConfiguration', {
         label: title
