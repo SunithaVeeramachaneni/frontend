@@ -187,7 +187,9 @@
               titleErrors?.required ||
               titleErrors?.maxLength ||
               titleErrors?.startPattern ||
-              titleErrors?.pattern
+              titleErrors?.pattern ||
+              titleErrors?.whiteSpace ||
+              titleErrors?.trimWhiteSpace
             "
             [ngClass]="{
               'fnt-white': receivedInstruction,
@@ -204,7 +206,9 @@
                 titleErrors?.required ||
                 titleErrors?.maxLength ||
                 titleErrors?.startPattern ||
-                titleErrors?.pattern
+                titleErrors?.pattern ||
+                titleErrors?.whiteSpace ||
+                titleErrors?.trimWhiteSpace
               "
             >
               <img
@@ -220,7 +224,9 @@
                 !titleErrors?.required &&
                 !titleErrors?.maxLength &&
                 !titleErrors?.startPattern &&
-                !titleErrors?.pattern
+                !titleErrors?.pattern &&
+                !titleErrors?.whiteSpace &&
+                !titleErrors?.trimWhiteSpace
               "
             >
               <img
