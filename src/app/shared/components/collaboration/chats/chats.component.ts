@@ -10,7 +10,6 @@ import {
 import { ChatService } from './chat.service';
 import { MatDialog } from '@angular/material/dialog';
 
-import { EmitterService } from '../EmitterService';
 import {
   BehaviorSubject,
   combineLatest,
@@ -137,7 +136,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
   constructor(
     public uploadDialog: MatDialog,
     private chatService: ChatService,
-    private emitterService: EmitterService,
     private loginService: LoginService,
     private imageUtils: ImageUtils,
     private authHeaderService: AuthHeaderService
@@ -145,13 +143,6 @@ export class ChatsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.selectedView = 'CHAT';
-    this.emitterService.chatMessageAdded.subscribe((data) => {
-      // this.sendMessageToUser(data.data.conversation.userInfo, {
-      //   type: 'meeting_request',
-      //   link: data.meetingLink
-      // });
-      // this.sendMessageToUser(data.data, data.meetingLink);
-    });
 
     this.newMessageReceivedSubscription =
       this.chatService.newMessageReceivedAction$.subscribe((event) => {
