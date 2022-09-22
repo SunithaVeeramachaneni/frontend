@@ -16,7 +16,7 @@ import {
   mockElementRef
 } from './collaboration-mock';
 
-fdescribe('CollabDialogComponent', () => {
+describe('CollabDialogComponent', () => {
   let component: CollabDialogComponent;
   let fixture: ComponentFixture<CollabDialogComponent>;
 

@@ -16,7 +16,7 @@ import {
 } from '../collaboration-mock';
 import { CallsComponent } from './calls.component';
 
-fdescribe('CallsComponent', () => {
+describe('CallsComponent', () => {
   let component: CallsComponent;
   let fixture: ComponentFixture<CallsComponent>;
 
