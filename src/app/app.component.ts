@@ -32,6 +32,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
+import { PeopleService } from './shared/components/collaboration/people/people.service';
 
 const {
   dashboard,
@@ -165,6 +166,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   selectedMenu: string;
   eventSource: any;
   eventSourceJitsi: any;
+  eventSourceUpdateUserPresence: any;
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
@@ -185,6 +187,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
     private tenantService: TenantService,
+    private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
     private userIdle: UserIdleService
@@ -370,8 +373,34 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
                   this.chatService.setMeeting(eventData);
                 }
               } else if (eventData.eventType === 'END_CONFERENCE') {
+                this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
                 this.chatService.endMeeting(eventData);
               }
+            }
+          };
+
+          // USER PRESENCE SSE
+
+          const updateUserPresenceSSEURL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
+          const authHeaders = this.authHeaderService.getAuthHeaders(
+            updateUserPresenceSSEURL
+          );
+          this.eventSourceUpdateUserPresence = new EventSourcePolyfill(
+            updateUserPresenceSSEURL,
+            {
+              headers: {
+                authorization: authHeaders.authorization,
+                tenantid: authHeaders.tenantid
+              }
+            }
+          );
+          this.eventSourceUpdateUserPresence.onmessage = async (event: any) => {
+            const eventData = JSON.parse(event.data);
+            if (!eventData.isHeartbeat) {
+              this.peopleService.updateUserPresence({
+                action: 'update_user_presence',
+                data: eventData
+              });
             }
           };
         }

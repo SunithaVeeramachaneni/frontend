@@ -22,10 +22,8 @@ import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { environment } from 'src/environments/environment';
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
+import { PeopleService } from '../people/people.service';
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | 'append_history' | '';
@@ -138,7 +136,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private loginService: LoginService,
     private imageUtils: ImageUtils,
-    private authHeaderService: AuthHeaderService
+    private peopleService: PeopleService
   ) {}
 
   ngOnInit() {
@@ -157,26 +155,15 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }
       });
 
-    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
-
-    const { authorization, tenantid } =
-      this.authHeaderService.getAuthHeaders(SSE_URL);
-    this.eventSource = new EventSourcePolyfill(SSE_URL, {
-      headers: {
-        authorization,
-        tenantid
-      }
-    });
-    this.eventSource.onmessage = async (event: any) => {
-      const eventData = JSON.parse(event.data);
-      if (!eventData.isHeartbeat) {
+    this.peopleService.updateUserPresence$.subscribe((event) => {
+      if (event && event.action === 'update_user_presence') {
         this.updateConversations$.next({
           action: 'update_user_presence',
-          message: eventData,
+          message: event.data,
           channel: ''
         });
       }
-    };
+    });
 
     const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(

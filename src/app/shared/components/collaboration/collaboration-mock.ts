@@ -301,3 +301,8 @@ export const selectedConfMock = {
     conferenceType: 'audio'
   }
 };
+
+export const mockGetUsers = of({
+  count: 5,
+  rows: [{ firstName: 'firstname1', email: 'user1email@cbo.com' }]
+});

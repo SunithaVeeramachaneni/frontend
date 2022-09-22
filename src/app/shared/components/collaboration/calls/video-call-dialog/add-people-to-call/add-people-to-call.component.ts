@@ -73,7 +73,6 @@ export class AddPeopleToCallComponent implements OnInit {
   });
 
   constructor(
-    public uploadDialog: MatDialog,
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private loginService: LoginService,
@@ -94,25 +93,11 @@ export class AddPeopleToCallComponent implements OnInit {
   }
 
   ngOnInit() {
-    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
-
-    const { authorization, tenantid } =
-      this.authHeaderService.getAuthHeaders(SSE_URL);
-    this.eventSource = new EventSourcePolyfill(SSE_URL, {
-      headers: {
-        authorization,
-        tenantid
+    this.peopleService.updateUserPresence$.subscribe((event) => {
+      if (event && event.action === 'update_user_presence') {
+        this.updateUserPresence$.next(event);
       }
     });
-    this.eventSource.onmessage = async (event: any) => {
-      const eventData = JSON.parse(event.data);
-      if (!eventData.isHeartbeat) {
-        this.updateUserPresence$.next({
-          action: 'update_user_presence',
-          data: eventData
-        });
-      }
-    };
 
     this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
       mergeMap((users: any) => {
