@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import {
   TranslateFakeLoader,
   TranslateLoader,
@@ -6,33 +7,31 @@ import {
 } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { ChatService } from '../chats/chat.service';
 import {
   mockGetUsers,
   mockUserInfo,
   mockUsers,
   mockUsersMSTeams
-} from '../../../collaboration-mock';
-import { PeopleService } from '../../../people/people.service';
+} from '../collaboration-mock';
+import { PeopleComponent } from './people.component';
+import { PeopleService } from './people.service';
 
-import { AddPeopleToCallComponent } from './add-people-to-call.component';
+describe('PeopleComponent', () => {
+  let component: PeopleComponent;
+  let fixture: ComponentFixture<PeopleComponent>;
 
-describe('AddPeopleToCallComponent', () => {
-  let component: AddPeopleToCallComponent;
-  let fixture: ComponentFixture<AddPeopleToCallComponent>;
-
+  let dialogSpy: MatDialog;
   let peopleServiceSpy: PeopleService;
-  let authHeaderServiceSpy: AuthHeaderService;
-  let loginServiceSpy: LoginService;
   let imageUtilsSpy: ImageUtils;
+  let loginServiceSpy: LoginService;
+  let chatServiceSpy: ChatService;
 
   beforeEach(async () => {
-    loginServiceSpy = jasmine.createSpyObj(
-      'LoginService',
-      ['getLoggedInUserInfo'],
-      {}
-    );
+    dialogSpy = jasmine.createSpyObj('MatDialog', ['close'], {
+      open: () => {}
+    });
     peopleServiceSpy = jasmine.createSpyObj('PeopleService', ['getUsers$'], {
       updateUserPresence$: of({
         action: 'update_user_presence',
@@ -42,25 +41,23 @@ describe('AddPeopleToCallComponent', () => {
     peopleServiceSpy.getUsers$ = jasmine
       .createSpy()
       .and.returnValue(mockGetUsers);
-
-    authHeaderServiceSpy = jasmine.createSpyObj(
-      'AuthHeaderService',
-      ['getAuthHeaders'],
+    imageUtilsSpy = jasmine.createSpyObj('ImageUtils', ['getImageSrc'], {});
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
+      ['getLoggedInUserInfo'],
       {}
     );
-    authHeaderServiceSpy.getAuthHeaders = jasmine.createSpy().and.returnValue({
-      authorization: 'authorizationHeader',
-      tenantid: 'tenantID1'
-    });
-
     loginServiceSpy.getLoggedInUserInfo = jasmine
       .createSpy()
       .and.returnValue(mockUserInfo);
-
-    imageUtilsSpy = jasmine.createSpyObj('ImageUtils', ['getImageSrc'], {});
+    chatServiceSpy = jasmine.createSpyObj(
+      'ChatService',
+      ['getAVConfWindowStatus'],
+      {}
+    );
 
     await TestBed.configureTestingModule({
-      declarations: [AddPeopleToCallComponent],
+      declarations: [PeopleComponent],
       imports: [
         TranslateModule.forRoot({
           loader: {
@@ -70,23 +67,24 @@ describe('AddPeopleToCallComponent', () => {
         })
       ],
       providers: [
-        { provide: AuthHeaderService, useValue: authHeaderServiceSpy },
+        { provide: MatDialog, useValue: dialogSpy },
         { provide: PeopleService, useValue: peopleServiceSpy },
+        { provide: ImageUtils, useValue: imageUtilsSpy },
         { provide: LoginService, useValue: loginServiceSpy },
-        { provide: ImageUtils, useValue: imageUtilsSpy }
+        { provide: ChatService, useValue: chatServiceSpy }
       ]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddPeopleToCallComponent);
+    fixture = TestBed.createComponent(PeopleComponent);
     component = fixture.componentInstance;
-    component.joinedUsers = [
-      { firstName: 'firstname1', email: 'user1email@cbo.com' },
-      { firstName: 'firstname2', email: 'user2email@cbo.com' }
-    ];
-
     fixture.detectChanges();
+  });
+
+  it('should create component - ngOnInit()', () => {
+    component.ngOnInit();
+    expect(component).toBeTruthy();
   });
 
   it('should create component - constructor - searchKeyUpdate', () => {
@@ -204,58 +202,32 @@ describe('AddPeopleToCallComponent', () => {
     component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
   });
 
-  it('toggleUserSelection user.isSelected=true', () => {
-    const user = {
-      firstName: 'user1',
-      email: 'cbouser1@cbo.com',
-      isSelected: true
-    };
-    component.selectedUsers = ['cbouser1@cbo.com', 'cbouser2@cbo.com'];
-    component.toggleUserSelection(user);
-  });
-  it('toggleUserSelection user.isSelected=false', () => {
-    const user = {
-      firstName: 'user1',
-      email: 'cbouser3@cbo.com',
-      isSelected: false
-    };
-    component.selectedUsers = ['cbouser1@cbo.com', 'cbouser2@cbo.com'];
-    component.toggleUserSelection(user);
+  it('onTextMessageClick', () => {
+    const handlTextMsgSpy = spyOn(component.handleTextMessaging, 'emit');
+    component.onTextMessageClick({
+      firstName: 'testuser',
+      email: 'testuser@cbo.com'
+    });
+    expect(handlTextMsgSpy).toHaveBeenCalled();
   });
 
-  it('onUserSelectionChange event.checked=true', () => {
-    const event = {
-      checked: true
-    };
-    const user = {
-      firstName: 'user1',
-      email: 'cbouser3@cbo.com'
-    };
-    component.selectedUsers = ['cbouser1@cbo.com', 'cbouser2@cbo.com'];
-    component.onUserSelectionChange(event, user);
+  it('openAudioVideoCallDialog - isOpen=true', () => {
+    chatServiceSpy.getAVConfWindowStatus = jasmine
+      .createSpy()
+      .and.returnValue({ isOpen: true });
+    const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
+    component.openAudioVideoCallDialog(user, 'audio');
+    expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
   });
 
-  it('onUserSelectionChange event.checked=false', () => {
-    const event = {
-      checked: false
-    };
-    const user = {
-      firstName: 'user1',
-      email: 'cbouser3@cbo.com'
-    };
-    component.selectedUsers = ['cbouser1@cbo.com', 'cbouser3@cbo.com'];
-    component.onUserSelectionChange(event, user);
-  });
-
-  it('addPeople', () => {
-    const closeSpy = spyOn(component.sideNavCloseHandler, 'emit');
-    component.addPeople();
-    expect(closeSpy).toHaveBeenCalled();
-  });
-  it('cancel', () => {
-    const closeSpy = spyOn(component.sideNavCloseHandler, 'emit');
-    component.cancel();
-    expect(component.selectedUsers.length).toEqual(0);
-    expect(closeSpy).toHaveBeenCalled();
+  it('openAudioVideoCallDialog - isOpen=false', () => {
+    chatServiceSpy.getAVConfWindowStatus = jasmine
+      .createSpy()
+      .and.returnValue({ isOpen: false });
+    dialogSpy.open = jasmine.createSpy().and.returnValue({ ok: true });
+    const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
+    component.openAudioVideoCallDialog(user, 'audio');
+    expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
+    expect(dialogSpy.open).toHaveBeenCalled();
   });
 });
