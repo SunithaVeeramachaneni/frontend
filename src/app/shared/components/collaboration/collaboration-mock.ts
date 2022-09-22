@@ -189,10 +189,14 @@ export const mockAcceptCallDialogData = {
   }
 };
 
-export const endMeeting$ = of({ data: 'dummy data' });
+export const endMeeting$ = of({
+  receiver: 'test.user@innovapptive.com',
+  conferenceId: 'conference1'
+});
 
 export const videoCallDialogData = {
   conversation: {
+    chatType: 'oneOnOne',
     members: [
       {
         email: 'test.user@innovapptive.com',
@@ -231,8 +235,10 @@ export const videoCallDialogData = {
     ]
   },
   conferenceType: 'audio',
-  isCreateConferenceEvent: true,
-  meetingEvent: {}
+  isCreateConferenceEvent: false,
+  meetingEvent: {
+    conferenceId: 'conference1'
+  }
 };
 
 export const getUsers$ = of({ data: 'dummy' });
@@ -288,10 +294,10 @@ export const selectedConfMock = {
         82, 85, 53, 69, 114, 107, 74, 103, 103, 103, 61, 61
       ]
     }
+  },
+  metadata: {
+    subject: 'testMeeting',
+    chatType: 'oneOnOne',
+    conferenceType: 'audio'
   }
 };
-
-export class JitsiMeetExternalAPIMock {
-  constructor() {}
-  appendChild() {}
-}

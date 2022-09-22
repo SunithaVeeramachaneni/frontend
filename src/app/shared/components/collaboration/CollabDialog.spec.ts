@@ -123,10 +123,6 @@ fdescribe('CollabDialogComponent', () => {
     component.closeCollabDialog();
     expect(dialogRefSpy.close).toHaveBeenCalledTimes(1);
   });
-  it('closeCollabDialog', () => {
-    component.closeCollabDialog();
-    expect(dialogRefSpy.close).toHaveBeenCalledTimes(1);
-  });
 
   it('collapseCollabDialog isCollapsed=true', () => {
     chatServiceSpy.getAVConfWindowStatus = jasmine
