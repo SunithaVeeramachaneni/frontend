@@ -1,5 +1,6 @@
 import { TitleCasePipe } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -43,11 +44,12 @@ const regUrl =
   styleUrls: ['./tenant.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TenantComponent implements OnInit {
+export class TenantComponent implements OnInit, AfterViewInit {
   @ViewChild('inputClientSecret') inputClientSecret: ElementRef;
   hidePasswordDBMS = true;
   hidePasswordNoSQL = true;
   hidePasswordERPS = true;
+  hideBasicCredentialsPassword = true;
   firstButton = true;
   lastButton = false;
   selectedID = new FormControl(0);
@@ -469,6 +471,10 @@ export class TenantComponent implements OnInit {
         }
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.maskClientSecret();
   }
 
   setTenantFormData() {

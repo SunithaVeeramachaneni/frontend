@@ -551,20 +551,27 @@
                   <input
                     matInput
                     [placeholder]="'password' | translate"
-                    [type]="hidePasswordERPS ? 'password' : 'text'"
+                    [type]="hideBasicCredentialsPassword ? 'password' : 'text'"
                     formControlName="password"
                   />
                   <button
                     type="button"
                     mat-icon-button
                     matSuffix
-                    (click)="hidePasswordERPS = !hidePasswordERPS"
+                    (click)="
+                      hideBasicCredentialsPassword =
+                        !hideBasicCredentialsPassword
+                    "
                     [attr.aria-label]="'Hide password ERPS'"
-                    [attr.aria-pressed]="hidePasswordERPS"
+                    [attr.aria-pressed]="hideBasicCredentialsPassword"
                     [disabled]="!this.editTenant"
                   >
                     <mat-icon>
-                      {{ hidePasswordERPS ? 'visibility_off' : 'visibility' }}
+                      {{
+                        hideBasicCredentialsPassword
+                          ? 'visibility_off'
+                          : 'visibility'
+                      }}
                     </mat-icon>
                   </button>
                 </mat-form-field>
