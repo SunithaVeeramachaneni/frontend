@@ -315,7 +315,7 @@ export const mockGetUsers = of({
 @Pipe({ name: 'timeAgo', pure: false })
 export class MockTimeAgoPipe implements PipeTransform {
   transform(value: string): string {
-    return value;
+    return '';
   }
 }
 
