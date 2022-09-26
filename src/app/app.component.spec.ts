@@ -27,7 +27,7 @@ import { PeopleService } from './shared/components/collaboration/people/people.s
 import { ImageUtils } from './shared/utils/imageUtils';
 import { MatDialog } from '@angular/material/dialog';
 
-fdescribe('AppComponent', () => {
+describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let headerServiceSpy: HeaderService;
