@@ -23,8 +23,11 @@ import {
   userAuthData$
 } from './components/login/services/login.service.mock';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { PeopleService } from './shared/components/collaboration/people/people.service';
+import { ImageUtils } from './shared/utils/imageUtils';
+import { MatDialog } from '@angular/material/dialog';
 
-describe('AppComponent', () => {
+fdescribe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let headerServiceSpy: HeaderService;
@@ -36,6 +39,10 @@ describe('AppComponent', () => {
   let usersServiceSpy: UsersService;
   let tenantServiceSpy: TenantService;
   let loginServiceSpy: LoginService;
+  let peopleServiceSpy: PeopleService;
+  let imageUtilsSpy: ImageUtils;
+  let dialogSpy: MatDialog;
+
   let appDe: DebugElement;
   let appEl: HTMLElement;
 
@@ -53,9 +60,11 @@ describe('AppComponent', () => {
     oidcSecurityServiceSpy = jasmine.createSpyObj('OidcSecurityService', [], {
       userData$: userAuthData$
     });
-    usersServiceSpy = jasmine.createSpyObj('UsersService', [
-      'getUserPermissionsByEmail$'
-    ]);
+    usersServiceSpy = jasmine.createSpyObj(
+      'UsersService',
+      ['getUserPermissionsByEmail$'],
+      { removeUserPresence$: of({ ok: true }) }
+    );
 
     chatServiceSpy = jasmine.createSpyObj(
       'ChatService',
@@ -76,6 +85,17 @@ describe('AppComponent', () => {
     ]);
     loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
       isUserAuthenticated$: of(true)
+    });
+
+    peopleServiceSpy = jasmine.createSpyObj(
+      'PeopleService',
+      ['updateUserPresence'],
+      {}
+    );
+    imageUtilsSpy = jasmine.createSpyObj('ImageUtils', ['getImageSrc'], {});
+
+    dialogSpy = jasmine.createSpyObj('MatDialog', ['close'], {
+      open: () => {}
     });
 
     await TestBed.configureTestingModule({
@@ -99,7 +119,10 @@ describe('AppComponent', () => {
         { provide: AuthHeaderService, useValue: authHeaderServiceSpy },
         { provide: HeaderService, useValue: headerServiceSpy },
         { provide: LoginService, useValue: loginServiceSpy },
-        { provide: TenantService, useValue: tenantServiceSpy }
+        { provide: TenantService, useValue: tenantServiceSpy },
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: PeopleService, useValue: peopleServiceSpy },
+        { provide: ImageUtils, useValue: imageUtilsSpy }
       ]
     }).compileComponents();
 

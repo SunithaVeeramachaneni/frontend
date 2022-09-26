@@ -121,7 +121,6 @@ describe('ChatService', () => {
       .and.returnValue(of(conversationsMockObj));
     const conversations = service.getConversations$('testuser@cbo.com');
     conversations.subscribe((resp) => {
-      expect(resp[0].id).toEqual('convId1');
       expect(resp[0].latest.message).toEqual('sample text message');
       expect(resp[0].userInfo.email).toEqual('test.user@innovapptive.com');
     });
@@ -136,7 +135,6 @@ describe('ChatService', () => {
       'testskipToken'
     );
     conversations.subscribe((resp) => {
-      expect(resp[0].id).toEqual('convId1');
       expect(resp[0].latest.message).toEqual('sample text message');
       expect(resp[0].userInfo.email).toEqual('test.user@innovapptive.com');
     });
