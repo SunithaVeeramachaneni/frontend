@@ -14,7 +14,7 @@ import {
 } from '../collaboration-mock';
 import { LoginService } from 'src/app/components/login/services/login.service';
 
-fdescribe('ChatService', () => {
+describe('ChatService', () => {
   let service: ChatService;
   let httpTestingController: HttpTestingController;
   let appServiceSpy: AppService;

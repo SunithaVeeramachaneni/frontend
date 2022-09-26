@@ -37,7 +37,7 @@ import { ChatsComponent } from './chats.component';
 
 const mySubject: ReplaySubject<any> = new ReplaySubject<any>(1);
 
-fdescribe('ChatsComponent', () => {
+describe('ChatsComponent', () => {
   let component: ChatsComponent;
   let fixture: ComponentFixture<ChatsComponent>;
 
