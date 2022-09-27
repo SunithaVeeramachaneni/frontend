@@ -183,51 +183,32 @@ export class ChatsComponent implements OnInit, OnDestroy {
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
       mergeMap((conversations: any) => {
         conversations = conversations || [];
-        if (conversations.length) {
-          conversations = this.formatConversations(conversations);
-          if (this.targetUser) {
-            let conversationExists = false;
-            conversations.forEach((conv) => {
-              if (conv.chatType === 'oneOnOne') {
-                if (conv.userInfo.email === this.targetUser.email) {
-                  conversationExists = true;
-                  this.setSelectedConversation(conv);
-                }
+        conversations = this.formatConversations(conversations);
+        if (this.targetUser) {
+          let conversationExists = false;
+          conversations.forEach((conv) => {
+            if (conv.chatType === 'oneOnOne') {
+              if (conv.userInfo.email === this.targetUser.email) {
+                conversationExists = true;
+                this.setSelectedConversation(conv);
               }
-            });
-            if (!conversationExists) {
-              const info: ErrorInfo = {
-                displayToast: true,
-                failureResponse: 'throwError'
-              };
-              const invitedUsers = [];
-              if (userInfo.collaborationType === 'slack') {
-                if (
-                  this.targetUser.slackDetail &&
-                  this.targetUser.slackDetail.slackID
-                ) {
-                  invitedUsers.push(this.targetUser.slackDetail.slackID);
-                  this.chatService
-                    .openConversation$(null, invitedUsers, 'oneOnOne', info)
-                    .subscribe((resp) => {
-                      if (resp.ok) {
-                        resp.userInfo.profileImage =
-                          this.imageUtils.getImageSrc(
-                            Buffer.from(resp.userInfo.profileImage).toString()
-                          );
-                        this.updateConversations$.next({
-                          action: 'create_conversation',
-                          message: resp,
-                          channel: ''
-                        });
-                        this.setSelectedConversation(resp);
-                      }
-                    });
-                }
-              } else if (userInfo.collaborationType === 'msteams') {
-                invitedUsers.push(this.targetUser.email);
+            }
+          });
+
+          if (!conversationExists) {
+            const info: ErrorInfo = {
+              displayToast: true,
+              failureResponse: 'throwError'
+            };
+            const invitedUsers = [];
+            if (userInfo.collaborationType === 'slack') {
+              if (
+                this.targetUser.slackDetail &&
+                this.targetUser.slackDetail.slackID
+              ) {
+                invitedUsers.push(this.targetUser.slackDetail.slackID);
                 this.chatService
-                  .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                  .openConversation$(null, invitedUsers, 'oneOnOne', info)
                   .subscribe((resp) => {
                     if (resp.ok) {
                       resp.userInfo.profileImage = this.imageUtils.getImageSrc(
@@ -242,14 +223,29 @@ export class ChatsComponent implements OnInit, OnDestroy {
                     }
                   });
               }
+            } else if (userInfo.collaborationType === 'msteams') {
+              invitedUsers.push(this.targetUser.email);
+              this.chatService
+                .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                .subscribe((resp) => {
+                  if (resp.ok) {
+                    resp.userInfo.profileImage = this.imageUtils.getImageSrc(
+                      Buffer.from(resp.userInfo.profileImage).toString()
+                    );
+                    this.updateConversations$.next({
+                      action: 'create_conversation',
+                      message: resp,
+                      channel: ''
+                    });
+                    this.setSelectedConversation(resp);
+                  }
+                });
             }
-          } else {
-            this.setSelectedConversation(conversations[0]);
           }
-          return of({ data: conversations });
         } else {
-          return of({ data: conversations });
+          this.setSelectedConversation(conversations[0]);
         }
+        return of({ data: conversations });
       })
     );
 
@@ -619,6 +615,12 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }, 0);
       });
     }
+
+    this.conversationHistoryInit$.next({
+      data: [],
+      action: 'reset_conversation_history',
+      newHistory: []
+    });
 
     this.fetchConversationHistory(conversation.id).subscribe(
       (history) => {

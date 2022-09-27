@@ -27,6 +27,7 @@
   height: 65px;
   align-items: center;
   padding: 0px 10px;
+  position: relative;
   &:hover {
     cursor: pointer;
     background: colors.$hover-bg;
