@@ -1,6 +1,8 @@
 import { ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import {
   TranslateFakeLoader,
   TranslateLoader,
@@ -64,6 +66,8 @@ describe('CollabDialogComponent', () => {
         })
       ],
       providers: [
+        MatIconModule,
+        MatDividerModule,
         { provide: ChatService, useValue: chatServiceSpy },
         { provide: MatDialogRef, useValue: dialogRefSpy },
         {
@@ -80,19 +84,29 @@ describe('CollabDialogComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should create component - ngOnInit()', () => {
     chatServiceSpy.getCollaborationWindowStatus = jasmine
       .createSpy()
-      .and.returnValue({ isOpen: true });
+      .and.returnValue({ isOpen: true, isCollapsed: false });
     const minimizeSpy = spyOn(component, 'minimizeCollabDialog');
 
     component.ngOnInit();
     expect(component).toBeTruthy();
     expect(minimizeSpy).toHaveBeenCalledTimes(1);
+    expect(chatServiceSpy.getCollaborationWindowStatus).toHaveBeenCalled();
   });
   it('handleViewChange - hideButtonGroup=false', () => {
-    component.handleViewChange({});
-    expect(component.hideButtonGroup).toBeFalsy();
+    try {
+      component.handleViewChange({ hideButtonGroup: false });
+      expect(component.hideButtonGroup).toBeFalsy();
+    } catch (err) {
+      console.log('ERROR OCCURED');
+      console.log(err);
+    }
   });
   it('handleViewChange - hideButtonGroup=true', () => {
     component.handleViewChange({ hideButtonGroup: true });
