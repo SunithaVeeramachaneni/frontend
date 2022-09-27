@@ -22,11 +22,13 @@ import { HttpClient } from '@angular/common/http';
 import { Permission, Role, ValidationError } from 'src/app/interfaces';
 import { Observable } from 'rxjs';
 import {
+  debounceTime,
   delay,
   distinctUntilChanged,
   first,
   map,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs/operators';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
@@ -65,8 +67,8 @@ export class AddEditUserModalComponent implements OnInit {
     ]),
     email: new FormControl(
       '',
-      [Validators.required, Validators.email, this.emailNameValidator()],
-      this.checkIfUserExistsInIDP()
+      [Validators.required, Validators.email],
+      [this.checkIfUserExistsInIDP(), this.checkIfUserExistsInDB()]
     ),
     roles: new FormControl([], [this.matSelectValidator()]),
     profileImage: new FormControl(''),
@@ -109,19 +111,19 @@ export class AddEditUserModalComponent implements OnInit {
       !control.value.length ? { selectOne: { value: control.value } } : null;
   }
 
-  emailNameValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      this.emailValidated = false;
-      this.isValidIDPUser = false;
+  // emailNameValidator(): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     this.emailValidated = false;
+  //     this.isValidIDPUser = false;
 
-      if (this.data.user.email && this.data.user.email === control.value)
-        return null;
-      const find = this.data.allusers.findIndex(
-        (user) => user.email === control.value
-      );
-      return find === -1 ? null : { duplicateName: true };
-    };
-  }
+  //     if (this.data.user.email && this.data.user.email === control.value)
+  //       return null;
+  //     const find = this.data.allusers.findIndex(
+  //       (user) => user.email === control.value
+  //     );
+  //     return find === -1 ? null : { duplicateName: true };
+  //   };
+  // }
   checkIfUserExistsInIDP(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       control.markAsTouched();
@@ -149,9 +151,23 @@ export class AddEditUserModalComponent implements OnInit {
       );
     };
   }
+  checkIfUserExistsInDB(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> =>
+      this.usersService.getUsersCount$({ email: control.value }).pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        map((response) => {
+          const { count } = response;
+          return count > 0 && control.value !== this.data.user?.email
+            ? { exists: true }
+            : null;
+        })
+      );
+  }
 
   ngOnInit() {
     const userDetails = this.data.user;
+    console.log('userDetails', userDetails);
     this.permissionsList$ = this.data.permissionsList$;
     this.rolesInput = this.data.roles;
     this.rolesList$ = this.data.rolesList$;
