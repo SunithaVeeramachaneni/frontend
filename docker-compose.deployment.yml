@@ -98,6 +98,8 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
     ports:
       - '8001:8001'
     networks:
@@ -179,6 +181,8 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8004:8004'
     networks:
@@ -244,6 +248,10 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - JAAS_PRIVATE_KEY_PATH=/usr/src/user-service/.docker/jaas-private-key/key.json
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8007:8007'
     networks:
