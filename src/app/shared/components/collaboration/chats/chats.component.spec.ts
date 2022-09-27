@@ -249,14 +249,6 @@ describe('ChatsComponent', () => {
     expect(tSpy).toHaveBeenCalled();
   });
 
-  it('ngOnInit() - fetchConversations is empty', () => {
-    chatServiceSpy.getConversations$ = jasmine
-      .createSpy()
-      .and.returnValue(emptyConversations);
-    component.ngOnInit();
-    // expect(tSpy).toHaveBeenCalled();
-  });
-
   xit('ngOnInit() - conversation unreadCount is 0', () => {
     chatServiceSpy.getConversations$ = jasmine
       .createSpy()
