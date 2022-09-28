@@ -17,7 +17,6 @@ import { HeaderService } from '../../services/header.service';
 import { ChatService } from '../collaboration/chats/chat.service';
 
 import { HeaderComponent } from './header.component';
-import { meeting$, openCollabWindow$ } from './header.component.mock';
 
 import {
   TranslateFakeLoader,
@@ -32,7 +31,7 @@ const openCollabWindowSubject: BehaviorSubject<any> = new BehaviorSubject<any>({
   open: false
 });
 
-fdescribe('HeaderComponent', () => {
+describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let headerServiceSpy: HeaderService;
