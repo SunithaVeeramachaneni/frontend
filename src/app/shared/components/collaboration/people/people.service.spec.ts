@@ -45,5 +45,8 @@ describe('PeopleService', () => {
   });
   it('updateUserPresence ', () => {
     service.updateUserPresence({ ok: true });
+    service.updateUserPresence$.subscribe((presence) =>
+      expect(presence.ok).toBeTrue()
+    );
   });
 });

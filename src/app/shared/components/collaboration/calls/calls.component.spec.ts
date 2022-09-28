@@ -66,139 +66,179 @@ describe('CallsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create component - ngOnInit()', () => {
-    const fetchcallListSpy = spyOn(component, 'fetchcallList').and.returnValue(
-      of([])
-    );
-    component.ngOnInit();
-    expect(component).toBeTruthy();
-    expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
-  });
-
-  xit('should create component - ngOnInit() - catchError', () => {
-    const fetchcallListSpy = spyOn(
-      component,
-      'fetchcallList'
-    ).and.callThrough();
-
-    component.ngOnInit();
-    expect(component).toBeTruthy();
-    expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('should create component - ngOnInit() "add_call" event', () => {
-    const fetchcallListSpy = spyOn(component, 'fetchcallList').and.returnValue(
-      of({ data: [] })
-    );
-    component.ngOnInit();
-    component.updateCallList$.next({
-      data: { callType: 'audio', sender: '', receiver: '' },
-      action: 'add_call'
+  describe('should create component - ngOnInit()', () => {
+    it('should create component', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of([]));
+      component.ngOnInit();
+      expect(component).toBeTruthy();
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
     });
-    expect(component).toBeTruthy();
-    expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
-  });
 
-  it('should create component - ngOnInit() "add_call_search" event', () => {
-    const fetchcallListSpy = spyOn(component, 'fetchcallList').and.returnValue(
-      of({ data: [] })
-    );
-    component.ngOnInit();
-    component.updateCallList$.next({
-      data: [{ callType: 'audio', sender: '', receiver: '' }],
-      action: 'add_call_search'
+    xit('catchError', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.callThrough();
+
+      component.ngOnInit();
+      expect(component).toBeTruthy();
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
     });
-    expect(component).toBeTruthy();
-    expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
-  });
 
-  it('should create component - ngOnInit() "add_call_search" event empty data', () => {
-    const fetchcallListSpy = spyOn(component, 'fetchcallList').and.returnValue(
-      of({ data: [] })
-    );
-    component.ngOnInit();
-    component.updateCallList$.next({
-      data: undefined,
-      action: 'add_call_search'
+    it('"add_call" event', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of({ data: [] }));
+      component.ngOnInit();
+      component.updateCallList$.next({
+        data: { callType: 'audio', sender: '', receiver: '' },
+        action: 'add_call'
+      });
+      expect(component).toBeTruthy();
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
     });
-    expect(component).toBeTruthy();
-    expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
+
+    it('"add_call_search" event', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of({ data: [] }));
+      component.ngOnInit();
+      component.updateCallList$.next({
+        data: [{ callType: 'audio', sender: '', receiver: '' }],
+        action: 'add_call_search'
+      });
+      expect(component).toBeTruthy();
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('"add_call_search" event empty data', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of({ data: [] }));
+      component.ngOnInit();
+      component.updateCallList$.next({
+        data: undefined,
+        action: 'add_call_search'
+      });
+      expect(component).toBeTruthy();
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('fetchcallList', () => {
-    component.fetchcallList();
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+  describe('fetchcallList', () => {
+    it('fetchcallList', () => {
+      component.fetchcallList();
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+    });
+
+    it('fetchcallList isDebounceSearchEvent=true', () => {
+      component.fetchcallList(true);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+    });
   });
 
-  it('fetchcallList isDebounceSearchEvent=true', () => {
-    component.fetchcallList(true);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+  describe('formatUsers', () => {
+    it('slack', () => {
+      imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
+      const validUsers = component.formatUsers(mockUsers);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+      expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(3);
+      expect(validUsers.length).toEqual(3);
+    });
+
+    it('msteams', () => {
+      imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
+      const mockUserInfoMSTeams = {
+        ...mockUserInfo,
+        collaborationType: 'msteams'
+      };
+      loginServiceSpy.getLoggedInUserInfo = jasmine
+        .createSpy()
+        .and.returnValue(mockUserInfoMSTeams);
+      const validUsers = component.formatUsers(mockUsersMSTeams);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+      expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(2);
+      expect(validUsers.length).toEqual(2);
+    });
   });
 
-  it('formatUsers - slack', () => {
-    imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
-    const validUsers = component.formatUsers(mockUsers);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
-    expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(3);
-    expect(validUsers.length).toEqual(3);
-  });
+  describe('onPeopleListScrolled', () => {
+    it('scrollLeft is not same', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.lastScrollLeft = 10;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(0);
+    });
 
-  it('formatUsers - msteams', () => {
-    imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
-    const mockUserInfoMSTeams = {
-      ...mockUserInfo,
-      collaborationType: 'msteams'
-    };
-    loginServiceSpy.getLoggedInUserInfo = jasmine
-      .createSpy()
-      .and.returnValue(mockUserInfoMSTeams);
-    const validUsers = component.formatUsers(mockUsersMSTeams);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
-    expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(2);
-    expect(validUsers.length).toEqual(2);
-  });
+    it('isBottomReached', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(0);
+    });
 
-  it('onPeopleListScrolled - scrollLeft is not same', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.lastScrollLeft = 10;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
+    it('callList Loaded minimum records', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.callListLoadedCount = 10;
+      component.callListTotalCount = 8;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(0);
+    });
 
-  it('onPeopleListScrolled - isBottomReached', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
-
-  it('onPeopleListScrolled - callList Loaded completely', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.callListLoadedCount = 10;
-    component.callListTotalCount = 8;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
-
-  it('onPeopleListScrolled - bottomReached and fetchcallListInprogress', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.fetchcallListInprogress = true;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
+    it('bottomReached and fetchcallListInprogress', () => {
+      const fetchcallListSpy = spyOn(
+        component,
+        'fetchcallList'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.fetchcallListInprogress = true;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(0);
+    });
   });
 });

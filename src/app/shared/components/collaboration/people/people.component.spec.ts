@@ -82,124 +82,160 @@ describe('PeopleComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create component - ngOnInit()', () => {
-    component.ngOnInit();
-    expect(component).toBeTruthy();
-  });
-
-  it('should create component - constructor - searchKeyUpdate', () => {
-    const fetchActiveUsersSpy = spyOn(
-      component,
-      'fetchActiveUsers'
-    ).and.returnValue(of([]));
-    component.searchKeyUpdate.next('hello');
-    expect(component).toBeTruthy();
-  });
-
-  it('should create component - add_people event', () => {
-    component.updatePeople$.next({
-      data: [{ email: 'addeduser1@cbo.com', firstName: 'addeduser1' }],
-      action: 'add_people'
+  describe('should create component', () => {
+    it('ngOnInit()', () => {
+      component.ngOnInit();
+      expect(component).toBeTruthy();
     });
-    expect(component).toBeTruthy();
-  });
 
-  it('should create component - add_people_search event', () => {
-    component.updatePeople$.next({
-      data: [{ email: 'addeduser1@cbo.com', firstName: 'addeduser1' }],
-      action: 'add_people_search'
+    it('constructor - searchKeyUpdate', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(of([]));
+      component.searchKeyUpdate.next('hello');
+      expect(component).toBeTruthy();
     });
-    expect(component).toBeTruthy();
-  });
 
-  it('should create component - update_user_presence event', () => {
-    component.updateUserPresence$.next({
-      data: ['addeduser1@cbo.com', 'addeduser2@cbo.com'],
-      action: 'update_user_presence'
+    it('add_people event', () => {
+      component.updatePeople$.next({
+        data: [{ email: 'addeduser1@cbo.com', firstName: 'addeduser1' }],
+        action: 'add_people'
+      });
+      expect(component).toBeTruthy();
     });
-    expect(component).toBeTruthy();
+
+    it('add_people_search event', () => {
+      component.updatePeople$.next({
+        data: [{ email: 'addeduser1@cbo.com', firstName: 'addeduser1' }],
+        action: 'add_people_search'
+      });
+      expect(component).toBeTruthy();
+    });
+
+    it('update_user_presence event', () => {
+      component.updateUserPresence$.next({
+        data: ['addeduser1@cbo.com', 'addeduser2@cbo.com'],
+        action: 'update_user_presence'
+      });
+      expect(component).toBeTruthy();
+    });
   });
 
-  it('fetchActiveUsers', () => {
-    component.fetchActiveUsers();
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+  describe('fetchActiveUsers', () => {
+    it('fetchActiveUsers', () => {
+      component.fetchActiveUsers();
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+    });
+
+    it('isDebounceSearchEvent=true', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(mockGetUsers);
+
+      component.fetchActiveUsers(true);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+    });
   });
 
-  it('fetchActiveUsers isDebounceSearchEvent=true', () => {
-    const fetchActiveUsersSpy = spyOn(
-      component,
-      'fetchActiveUsers'
-    ).and.returnValue(mockGetUsers);
+  describe('formatUsers', () => {
+    it('slack', () => {
+      imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
+      const validUsers = component.formatUsers(mockUsers);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+      expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(3);
+      expect(validUsers.length).toEqual(3);
+    });
 
-    component.fetchActiveUsers(true);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+    it('msteams', () => {
+      imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
+      const mockUserInfoMSTeams = {
+        ...mockUserInfo,
+        collaborationType: 'msteams'
+      };
+      loginServiceSpy.getLoggedInUserInfo = jasmine
+        .createSpy()
+        .and.returnValue(mockUserInfoMSTeams);
+      const validUsers = component.formatUsers(mockUsersMSTeams);
+      expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
+      expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(2);
+      expect(validUsers.length).toEqual(2);
+    });
   });
 
-  it('formatUsers - slack', () => {
-    imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
-    const validUsers = component.formatUsers(mockUsers);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
-    expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(3);
-    expect(validUsers.length).toEqual(3);
-  });
+  describe('onPeopleListScrolled', () => {
+    it('scrollLeft is not same', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.lastScrollLeft = 10;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchActiveUsersSpy).toHaveBeenCalledTimes(0);
+    });
 
-  it('formatUsers - msteams', () => {
-    imageUtilsSpy.getImageSrc = jasmine.createSpy().and.returnValue('');
-    const mockUserInfoMSTeams = {
-      ...mockUserInfo,
-      collaborationType: 'msteams'
-    };
-    loginServiceSpy.getLoggedInUserInfo = jasmine
-      .createSpy()
-      .and.returnValue(mockUserInfoMSTeams);
-    const validUsers = component.formatUsers(mockUsersMSTeams);
-    expect(loginServiceSpy.getLoggedInUserInfo).toHaveBeenCalled();
-    expect(imageUtilsSpy.getImageSrc).toHaveBeenCalledTimes(2);
-    expect(validUsers.length).toEqual(2);
-  });
+    it('isBottomReached', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchActiveUsersSpy).toHaveBeenCalledTimes(1);
+    });
 
-  it('onPeopleListScrolled - scrollLeft is not same', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.lastScrollLeft = 10;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
+    it('callList Loaded minimum records', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.peopleLoadedCount = 10;
+      component.peopleTotalCount = 8;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchActiveUsersSpy).toHaveBeenCalledTimes(0);
+    });
 
-  it('onPeopleListScrolled - isBottomReached', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
-
-  it('onPeopleListScrolled - callList Loaded completely', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.peopleLoadedCount = 10;
-    component.peopleTotalCount = 8;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
-  });
-
-  it('onPeopleListScrolled - bottomReached and fetchcallListInprogress', () => {
-    const mockTargetElementBottomReached = {
-      scrollHeight: 120,
-      scrollTop: 100,
-      clientHeight: 20,
-      scrollLeft: 0
-    };
-    component.fetchActiveUsersInprogress = true;
-    component.onPeopleListScrolled({ target: mockTargetElementBottomReached });
+    it('bottomReached and fetchcallListInprogress', () => {
+      const fetchActiveUsersSpy = spyOn(
+        component,
+        'fetchActiveUsers'
+      ).and.returnValue(of([]));
+      const mockTargetElementBottomReached = {
+        scrollHeight: 120,
+        scrollTop: 100,
+        clientHeight: 20,
+        scrollLeft: 0
+      };
+      component.fetchActiveUsersInprogress = true;
+      component.onPeopleListScrolled({
+        target: mockTargetElementBottomReached
+      });
+      expect(fetchActiveUsersSpy).toHaveBeenCalledTimes(0);
+    });
   });
 
   it('onTextMessageClick', () => {
@@ -211,23 +247,25 @@ describe('PeopleComponent', () => {
     expect(handlTextMsgSpy).toHaveBeenCalled();
   });
 
-  it('openAudioVideoCallDialog - isOpen=true', () => {
-    chatServiceSpy.getAVConfWindowStatus = jasmine
-      .createSpy()
-      .and.returnValue({ isOpen: true });
-    const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
-    component.openAudioVideoCallDialog(user, 'audio');
-    expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
-  });
+  describe('openAudioVideoCallDialog', () => {
+    it('isOpen=true', () => {
+      chatServiceSpy.getAVConfWindowStatus = jasmine
+        .createSpy()
+        .and.returnValue({ isOpen: true });
+      const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
+      component.openAudioVideoCallDialog(user, 'audio');
+      expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
+    });
 
-  xit('openAudioVideoCallDialog - isOpen=false', () => {
-    chatServiceSpy.getAVConfWindowStatus = jasmine
-      .createSpy()
-      .and.returnValue({ isOpen: false });
-    dialogSpy.open = jasmine.createSpy().and.returnValue({ ok: true });
-    const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
-    component.openAudioVideoCallDialog(user, 'audio');
-    expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
-    expect(dialogSpy.open).toHaveBeenCalled();
+    xit('isOpen=false', () => {
+      chatServiceSpy.getAVConfWindowStatus = jasmine
+        .createSpy()
+        .and.returnValue({ isOpen: false });
+      dialogSpy.open = jasmine.createSpy().and.returnValue({ ok: true });
+      const user = { firstName: 'testuser1', email: 'testuser.cbo@cbo.com' };
+      component.openAudioVideoCallDialog(user, 'audio');
+      expect(chatServiceSpy.getAVConfWindowStatus).toHaveBeenCalled();
+      expect(dialogSpy.open).toHaveBeenCalled();
+    });
   });
 });

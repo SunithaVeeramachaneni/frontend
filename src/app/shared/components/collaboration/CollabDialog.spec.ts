@@ -100,13 +100,8 @@ describe('CollabDialogComponent', () => {
     expect(chatServiceSpy.getCollaborationWindowStatus).toHaveBeenCalled();
   });
   it('handleViewChange - hideButtonGroup=false', () => {
-    try {
-      component.handleViewChange({ hideButtonGroup: false });
-      expect(component.hideButtonGroup).toBeFalsy();
-    } catch (err) {
-      console.log('ERROR OCCURED');
-      console.log(err);
-    }
+    component.handleViewChange({ hideButtonGroup: false });
+    expect(component.hideButtonGroup).toBeFalsy();
   });
   it('handleViewChange - hideButtonGroup=true', () => {
     component.handleViewChange({ hideButtonGroup: true });

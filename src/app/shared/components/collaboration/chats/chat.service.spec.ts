@@ -55,30 +55,47 @@ describe('ChatService', () => {
   });
 
   it('setMeeting', () => {
-    service.setMeeting({});
+    service.setMeeting({ start: true });
+    service.meeting$.subscribe((meeting) => expect(meeting.start).toBeTrue());
   });
 
   it('endMeeting', () => {
-    service.endMeeting({});
+    service.endMeeting({ ended: true });
+    service.endMeeting$.subscribe((meeting) =>
+      expect(meeting.ended).toBeTrue()
+    );
   });
 
   it('newMessageReceived', () => {
-    service.newMessageReceived({});
+    service.newMessageReceived({ received: true });
+    service.newMessageReceivedAction$.subscribe((event) =>
+      expect(event.received).toBeTrue()
+    );
   });
 
   it('expandCollaborationWindow', () => {
     service.expandCollaborationWindow();
+    service.collabWindowCollapseExpandAction$.subscribe((event) =>
+      expect(event.expand).toBeTrue()
+    );
   });
   it('collaborationWindowAction', () => {
     service.collaborationWindowAction({ action: 'action' });
+    service.collaborationWindowAction$.subscribe((event) =>
+      expect(event.action).toEqual('action')
+    );
   });
 
   it('avConfWindowAction ', () => {
-    service.avConfWindowAction({ action: 'action' });
+    service.avConfWindowAction({ isOpen: true });
+    const status = service.getAVConfWindowStatus();
+    expect(status.isOpen).toBeTrue();
   });
 
   it('acceptCallWindowAction ', () => {
-    service.acceptCallWindowAction({ action: 'action' });
+    service.acceptCallWindowAction({ isOpen: true });
+    const status = service.getAcceptCallWindowStatus();
+    expect(status.isOpen).toBeTrue();
   });
 
   it('getCollaborationWindowStatus  ', () => {
@@ -102,11 +119,15 @@ describe('ChatService', () => {
   });
 
   it('openCollaborationWindow ', () => {
-    service.openCollaborationWindow({});
+    service.openCollaborationWindow({ action: 'action' });
+    service.openCollabWindow$.subscribe((event) =>
+      expect(event.action).toEqual('action')
+    );
   });
 
   it('setUnreadMessageCount ', () => {
     service.setUnreadMessageCount(1);
+    service.unreadCount$.subscribe((event) => expect(event).toEqual(1));
   });
 
   it('getUnreadMessageCount  ', () => {
