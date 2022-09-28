@@ -26,6 +26,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { ImageUtils } from './shared/utils/imageUtils';
 import { MatDialog } from '@angular/material/dialog';
+import { mockUserInfo } from './shared/components/collaboration/collaboration-mock';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -62,8 +63,8 @@ describe('AppComponent', () => {
     });
     usersServiceSpy = jasmine.createSpyObj(
       'UsersService',
-      ['getUserPermissionsByEmail$'],
-      { removeUserPresence$: of({ ok: true }) }
+      ['getUserPermissionsByEmail$', 'removeUserPresence$', 'setUserPresence$'],
+      {}
     );
 
     chatServiceSpy = jasmine.createSpyObj(
@@ -83,9 +84,16 @@ describe('AppComponent', () => {
       'getTenantInfo',
       'setTenantInfo'
     ]);
-    loginServiceSpy = jasmine.createSpyObj('LoginService', [], {
-      isUserAuthenticated$: of(true)
-    });
+    loginServiceSpy = jasmine.createSpyObj(
+      'LoginService',
+      ['getLoggedInUserInfo', 'setLoggedInUserInfo'],
+      {
+        isUserAuthenticated$: of(true)
+      }
+    );
+    loginServiceSpy.getLoggedInUserInfo = jasmine
+      .createSpy()
+      .and.returnValue(mockUserInfo);
 
     peopleServiceSpy = jasmine.createSpyObj(
       'PeopleService',
@@ -138,5 +146,47 @@ describe('AppComponent', () => {
   it('should create the app', () => {
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('onSignOut', () => {
+    const tSpy = spyOn(component, 'removeUserPresence');
+    component.onSignOut();
+    expect(tSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe('updateUserPresence ', () => {
+    it('when user is already online do nothing', () => {
+      usersServiceSpy.setUserPresence$ = jasmine
+        .createSpy()
+        .and.returnValue(of({ ok: true }));
+      component.isUserOnline = true;
+      component.isUserAuthenticated = false;
+      const resp = component.updateUserPresence();
+      expect(resp).toBeUndefined();
+    });
+
+    it('when user is not online update user presence', () => {
+      usersServiceSpy.setUserPresence$ = jasmine
+        .createSpy()
+        .and.returnValue(of({ ok: true }));
+      component.isUserOnline = false;
+      component.isUserAuthenticated = true;
+      const resp = component.updateUserPresence();
+      expect(resp).toBeUndefined();
+      expect(usersServiceSpy.setUserPresence$).toHaveBeenCalledTimes(1);
+    });
+  });
+  describe('removeUserPresence', () => {
+    it('remove user presence', () => {
+      usersServiceSpy.removeUserPresence$ = jasmine
+        .createSpy()
+        .and.returnValue(of({ ok: true }));
+
+      component.isUserOnline = false;
+      component.isUserAuthenticated = true;
+      const resp = component.removeUserPresence();
+      expect(resp).toBeUndefined();
+      expect(usersServiceSpy.removeUserPresence$).toHaveBeenCalledTimes(1);
+    });
   });
 });
