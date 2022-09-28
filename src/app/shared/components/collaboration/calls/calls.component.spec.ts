@@ -201,7 +201,7 @@ describe('CallsComponent', () => {
       component.onPeopleListScrolled({
         target: mockTargetElementBottomReached
       });
-      expect(fetchcallListSpy).toHaveBeenCalledTimes(0);
+      expect(fetchcallListSpy).toHaveBeenCalledTimes(1);
     });
 
     it('callList Loaded minimum records', () => {
