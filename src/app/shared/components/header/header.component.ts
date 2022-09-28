@@ -144,11 +144,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.chatService.meeting$.subscribe((event) => {
       if (event) {
-        this.audio = new Audio('assets/audio/calltone.mp3');
-        this.audio.play().then(() => {
-          // TODO
-        });
-        this.audio.loop = true;
+        this.playIncomingCallAudio();
         this.chatService.acceptCallWindowAction({
           isOpen: true
         });
@@ -167,6 +163,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.tenantService.tenantInfo$.subscribe(
       ({ tenantLogo }) => (this.tenantLogo = tenantLogo)
     );
+  }
+
+  playIncomingCallAudio() {
+    this.audio = new Audio('assets/audio/calltone.mp3');
+    this.audio
+      .play()
+      .then(() => {})
+      .catch((error) => {
+        // show error
+      });
+
+    this.audio.loop = true;
   }
 
   openSidenav() {
