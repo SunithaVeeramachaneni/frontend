@@ -27,8 +27,7 @@ import {
   distinctUntilChanged,
   first,
   map,
-  switchMap,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
