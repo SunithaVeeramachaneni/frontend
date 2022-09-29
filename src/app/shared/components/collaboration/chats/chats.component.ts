@@ -1,4 +1,6 @@
 import {
+  AfterViewChecked,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -17,7 +19,7 @@ import {
   of,
   Subscription
 } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
@@ -73,7 +75,7 @@ interface Message {
   styleUrls: ['./chats.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ChatsComponent implements OnInit, OnDestroy {
+export class ChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() viewChangeHandler = new EventEmitter<any>();
 
@@ -145,12 +147,17 @@ export class ChatsComponent implements OnInit, OnDestroy {
   private updateUserPresenceSubscription: Subscription;
 
   constructor(
+    private cdrf: ChangeDetectorRef,
     public uploadDialog: MatDialog,
     private chatService: ChatService,
     private loginService: LoginService,
     private imageUtils: ImageUtils,
     private peopleService: PeopleService
   ) {}
+
+  ngAfterViewChecked(): void {
+    this.cdrf.detectChanges();
+  }
 
   ngOnInit() {
     this.selectedView = 'CHAT';

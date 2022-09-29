@@ -392,7 +392,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     };
     this.eventSourceCollaboration.onerror = (event) => {
-      // console.log(JSON.parse(event.data));
+      // console.log(event);
     };
 
     // JITSI AV CALLING SSE
@@ -428,7 +428,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     };
     this.eventSourceJitsi.onerror = (event) => {
-      // console.log(JSON.parse(event.data));
+      // console.log(event);
     };
 
     // USER PRESENCE SSE
@@ -450,7 +450,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     };
     this.eventSourceUpdateUserPresence.onerror = (event) => {
-      // console.log(JSON.parse(event.data));
+      // console.log(event);
     };
   }
 
@@ -489,15 +489,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
   ngOnDestroy() {
-    if (this.eventSourceCollaboration) {
-      this.eventSourceCollaboration.close();
-    }
-    if (this.eventSourceJitsi) {
-      this.eventSourceJitsi.close();
-    }
-    if (this.eventSourceUpdateUserPresence) {
-      this.eventSourceUpdateUserPresence.close();
-    }
+    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
+    // if (this.eventSourceCollaboration) {
+    //   this.eventSourceCollaboration.close();
+    // }
+    // if (this.eventSourceJitsi) {
+    //   this.eventSourceJitsi.close();
+    // }
+    // if (this.eventSourceUpdateUserPresence) {
+    //   this.eventSourceUpdateUserPresence.close();
+    // }
   }
 
   checkUserHasSubMenusPermissions(
