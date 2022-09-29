@@ -26,7 +26,7 @@ import {
   permissionsList$
 } from './add-edit-user-modal.component.mock';
 
-fdescribe('AddEditUserModalComponent', () => {
+describe('AddEditUserModalComponent', () => {
   let component: AddEditUserModalComponent;
   let fixture: ComponentFixture<AddEditUserModalComponent>;
   let dialogSpy: MatDialogRef<AddEditUserModalComponent>;
@@ -70,7 +70,135 @@ fdescribe('AddEditUserModalComponent', () => {
           }
         }
       ]
-    }).compileComponents();
+    });
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AddEditUserModalComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('During edit user', () => {
+    beforeEach(() => {
+      (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+        .withArgs({
+          email: 'user1@innovapptive.com'
+        })
+        .and.returnValue(of({ count: 1 }));
+      (usersServiceSpy.verifyUserEmail$ as jasmine.Spy)
+        .withArgs('user1@innovapptive.com')
+        .and.returnValue(of({ isValidUserEmail: true }));
+    });
+
+    it('should return null if input email ID is same as default email ID', () => {
+      (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+        .withArgs({
+          email: 'user1@innovapptive.com'
+        })
+        .and.returnValue(of({ count: 1 }));
+      component.userForm
+        .get('email')
+        .setAsyncValidators(component.checkIfUserExistsInDB());
+
+      component.userForm.patchValue({
+        email: 'user1@innovapptive.com'
+      });
+
+      expect(component.userForm.get('email').errors).toBeNull();
+    });
+
+    it('should return null if email ID is unique', () => {
+      (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+        .withArgs({
+          email: 'user2@innovapptive.com'
+        })
+        .and.returnValue(of({ count: 0 }));
+
+      component.userForm
+        .get('email')
+        .setAsyncValidators(component.checkIfUserExistsInDB());
+
+      component.userForm.patchValue({
+        email: 'user2@innovapptive.com'
+      });
+
+      expect(component.userForm.get('email').errors).toBeNull();
+    });
+
+    it('should return true if input email ID already exists with another user', () => {
+      (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+        .withArgs({
+          email: 'user2@innovapptive.com'
+        })
+        .and.returnValue(of({ count: 1 }));
+
+      component.userForm
+        .get('email')
+        .setAsyncValidators(component.checkIfUserExistsInDB());
+
+      component.userForm.patchValue({
+        email: 'user2@innovapptive.com'
+      });
+
+      expect(component.userForm.get('email').errors.exists).toBeTrue();
+    });
+  });
+});
+
+/**
+ * ----------Below describe is for adding user scenario only---------------
+ */
+
+describe('AddEditUserModalComponent, for adding user only', () => {
+  let component: AddEditUserModalComponent;
+  let fixture: ComponentFixture<AddEditUserModalComponent>;
+  let dialogSpy: MatDialogRef<AddEditUserModalComponent>;
+  let usersServiceSpy: UsersService;
+
+  beforeEach(async () => {
+    dialogSpy = jasmine.createSpyObj('MatDialogRef', ['close']);
+    usersServiceSpy = jasmine.createSpyObj('UsersService', [
+      'getUsersCount$',
+      'verifyUserEmail$'
+    ]);
+
+    await TestBed.configureTestingModule({
+      declarations: [AddEditUserModalComponent],
+      imports: [
+        AppMaterialModules,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        HttpClientTestingModule,
+        MatFormFieldModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatDialogModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useValue: TranslateFakeLoader
+          }
+        })
+      ],
+      providers: [
+        { provide: MatDialogRef, useValue: dialogSpy },
+        { provide: UsersService, useValue: usersServiceSpy },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            user: {},
+            roles: rolesInput,
+            permissionsList$,
+            rolesList$
+          }
+        }
+      ]
+    });
   });
 
   beforeEach(() => {
@@ -88,38 +216,35 @@ fdescribe('AddEditUserModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
-    expect(component).toBeTruthy();
-  });
-
-  fit('should return true if email ID already exists during edit', () => {
+  it('should return true if input email ID already exists', () => {
     (usersServiceSpy.getUsersCount$ as jasmine.Spy)
       .withArgs({
         email: 'user1@innovapptive.com'
       })
       .and.returnValue(of({ count: 1 }));
-    (usersServiceSpy.verifyUserEmail$ as jasmine.Spy)
-      .withArgs('user1@innovapptive.com')
-      .and.returnValue(of({ isValidUserEmail: true }));
-
-    component.userForm.get('email').patchValue('user1@innovapptive.com');
-    console.log('Form value', component.userForm.value);
-    console.log('Form errors', component.userForm.get('email').errors);
-
-    expect(component.userForm.get('email').errors).toBeTrue();
-  });
-
-  xit('should return null if email ID is unique', () => {
-    (usersServiceSpy.getUsersCount$ as jasmine.Spy)
-      .withArgs(
-        JSON.stringify({
-          email: 'user@innovapptive.com'
-        })
-      )
-      .and.returnValue(of({ count: 0 }));
+    component.userForm
+      .get('email')
+      .setAsyncValidators(component.checkIfUserExistsInDB());
 
     component.userForm.patchValue({
-      email: 'user@innovapptive.com'
+      email: 'user1@innovapptive.com'
+    });
+
+    expect(component.userForm.get('email').errors.exists).toBeTrue();
+  });
+
+  it('should return null if input email ID is unique', () => {
+    (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+      .withArgs({
+        email: 'user1@innovapptive.com'
+      })
+      .and.returnValue(of({ count: 0 }));
+    component.userForm
+      .get('email')
+      .setAsyncValidators(component.checkIfUserExistsInDB());
+
+    component.userForm.patchValue({
+      email: 'user1@innovapptive.com'
     });
 
     expect(component.userForm.get('email').errors).toBeNull();

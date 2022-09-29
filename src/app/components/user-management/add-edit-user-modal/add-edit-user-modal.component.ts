@@ -30,6 +30,7 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { defaultProfile, superAdminText } from 'src/app/app.constants';
 import { userRolePermissions } from 'src/app/app.constants';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
@@ -111,19 +112,6 @@ export class AddEditUserModalComponent implements OnInit {
       !control.value.length ? { selectOne: { value: control.value } } : null;
   }
 
-  // emailNameValidator(): ValidatorFn {
-  //   return (control: AbstractControl): ValidationErrors | null => {
-  //     this.emailValidated = false;
-  //     this.isValidIDPUser = false;
-
-  //     if (this.data.user.email && this.data.user.email === control.value)
-  //       return null;
-  //     const find = this.data.allusers.findIndex(
-  //       (user) => user.email === control.value
-  //     );
-  //     return find === -1 ? null : { duplicateName: true };
-  //   };
-  // }
   checkIfUserExistsInIDP(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       control.markAsTouched();
@@ -153,21 +141,25 @@ export class AddEditUserModalComponent implements OnInit {
   }
   checkIfUserExistsInDB(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> =>
-      this.usersService.getUsersCount$({ email: control.value }).pipe(
+      of(control.value).pipe(
         debounceTime(500),
         distinctUntilChanged(),
+        switchMap((value) =>
+          this.usersService.getUsersCount$({ email: value })
+        ),
         map((response) => {
           const { count } = response;
+          this.cdrf.markForCheck();
           return count > 0 && control.value !== this.data.user?.email
             ? { exists: true }
             : null;
-        })
+        }),
+        first()
       );
   }
 
   ngOnInit() {
     const userDetails = this.data.user;
-    console.log('userDetails', userDetails);
     this.permissionsList$ = this.data.permissionsList$;
     this.rolesInput = this.data.roles;
     this.rolesList$ = this.data.rolesList$;
