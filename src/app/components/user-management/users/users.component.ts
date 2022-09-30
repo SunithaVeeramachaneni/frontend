@@ -256,7 +256,6 @@ export class UsersComponent implements OnInit {
       AddEditUserModalComponent,
       {
         data: {
-          allusers: this.allUsersList,
           user,
           roles: this.roles,
           permissionsList$: this.permissionsList$,
