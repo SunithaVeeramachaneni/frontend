@@ -106,7 +106,7 @@ export class ChatService {
 
   getConversationHistory$ = (
     conversationId: string,
-    skipToken: string,
+    skipToken?: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const userInfo = this.loginService.getLoggedInUserInfo();
@@ -335,8 +335,4 @@ export class ChatService {
       info,
       { ...queryParams }
     );
-
-  triggerCall = (user) => {
-    //
-  };
 }
