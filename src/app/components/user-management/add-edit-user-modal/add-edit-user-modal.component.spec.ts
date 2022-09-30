@@ -73,6 +73,14 @@ describe('AddEditUserModalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AddEditUserModalComponent);
     component = fixture.componentInstance;
+    (usersServiceSpy.getUsersCount$ as jasmine.Spy)
+      .withArgs({
+        email: 'user1@innovapptive.com'
+      })
+      .and.returnValue(of({ count: 1 }));
+    (usersServiceSpy.verifyUserEmail$ as jasmine.Spy)
+      .withArgs('user1@innovapptive.com')
+      .and.returnValue(of({ isValidUserEmail: true }));
     fixture.detectChanges();
   });
 
@@ -81,17 +89,6 @@ describe('AddEditUserModalComponent', () => {
   });
 
   describe('During edit user', () => {
-    beforeEach(() => {
-      (usersServiceSpy.getUsersCount$ as jasmine.Spy)
-        .withArgs({
-          email: 'user1@innovapptive.com'
-        })
-        .and.returnValue(of({ count: 1 }));
-      (usersServiceSpy.verifyUserEmail$ as jasmine.Spy)
-        .withArgs('user1@innovapptive.com')
-        .and.returnValue(of({ isValidUserEmail: true }));
-    });
-
     it('should return null if input email ID is same as default email ID', () => {
       (usersServiceSpy.getUsersCount$ as jasmine.Spy)
         .withArgs({
