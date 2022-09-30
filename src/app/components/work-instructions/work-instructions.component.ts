@@ -166,18 +166,15 @@ export class WorkInstructionsComponent
           for (const businessObject of businessObjects) {
             objects = [...objects, businessObject.FIELDDESCRIPTION];
           }
-          if (objects.length) {
-            return this.instructionSvc
-              .downloadSampleInstructionTemplate({
-                businessObjects: objects
-              })
-              .pipe(
-                tap((data) =>
-                  downloadFile(data, 'WorkInstruction_Sample_Template')
-                )
-              );
-          }
-          return of(businessObjects);
+          return this.instructionSvc
+            .downloadSampleInstructionTemplate({
+              businessObjects: objects
+            })
+            .pipe(
+              tap((data) =>
+                downloadFile(data, 'WorkInstruction_Sample_Template')
+              )
+            );
         })
       )
       .subscribe();

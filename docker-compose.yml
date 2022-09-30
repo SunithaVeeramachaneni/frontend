@@ -100,6 +100,7 @@ services:
       - mysql
       - redis-cluster
       - authentication-factory
+      - rabbitmq
     networks:
       - app-network
 
@@ -212,6 +213,7 @@ services:
       - mysql
       - redis-cluster
       - authentication-factory
+      - rabbitmq
     networks:
       - app-network
 
@@ -296,6 +298,7 @@ services:
     depends_on:
       - mysql
       - redis-cluster
+      - rabbitmq
     networks:
       - app-network
 
