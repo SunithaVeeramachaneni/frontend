@@ -84,7 +84,12 @@
           </div>
         </mat-list-item>
         <mat-list-item
-          *ngIf="conversations.length < 8 && conversationsSkipToken.length"
+          *ngIf="
+            conversations &&
+            conversations.length < 8 &&
+            conversationsSkipToken &&
+            conversationsSkipToken.length
+          "
         >
           <div class="loadMore">
             <span translate class="loadMoreText">loadingMore</span>

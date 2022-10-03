@@ -21,7 +21,6 @@ import { combineLatest, Observable } from 'rxjs';
 import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
 import { environment } from 'src/environments/environment';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import { ChatService } from './shared/components/collaboration/chats/chat.service';
 import { AuthHeaderService } from './shared/services/authHeader.service';
 import { TenantService } from './components/tenant-management/services/tenant.service';
@@ -32,6 +31,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
+import { PeopleService } from './shared/components/collaboration/people/people.service';
+import { SseService } from './shared/services/sse.service';
 
 const {
   dashboard,
@@ -173,8 +174,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   sidebar: boolean;
   currentRouteUrl: string;
   selectedMenu: string;
-  eventSource: any;
+
+  eventSourceCollaboration: any;
   eventSourceJitsi: any;
+  eventSourceUpdateUserPresence: any;
+
   menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
@@ -195,9 +199,11 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private authHeaderService: AuthHeaderService,
     private chatService: ChatService,
     private tenantService: TenantService,
+    private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
-    private userIdle: UserIdleService
+    private userIdle: UserIdleService,
+    private sseService: SseService
   ) {}
 
   @HostListener('document:mousemove', ['$event'])
@@ -308,82 +314,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
       .subscribe(([userInfo]) => {
         if (Object.keys(userInfo).length) {
-          let userID;
-          if (userInfo.collaborationType === 'slack') {
-            if (userInfo.slackDetail?.slackID) {
-              userID = userInfo.slackDetail.slackID;
-            }
-          } else if (userInfo.collaborationType === 'msteams') {
-            userID = userInfo.email;
-          }
-
-          const SSE_URL = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
-
-          const { authorization, tenantid } =
-            this.authHeaderService.getAuthHeaders(SSE_URL);
-          this.eventSource = new EventSourcePolyfill(SSE_URL, {
-            headers: {
-              authorization,
-              tenantid
-            }
-          });
-          this.eventSource.onmessage = async (event: any) => {
-            const eventData = JSON.parse(event.data);
-            if (!eventData.isHeartbeat) {
-              eventData.forEach((evt: any) => {
-                const { message } = evt;
-                if (
-                  message.eventType === 'message' ||
-                  message.messageType === 'message' ||
-                  message.eventType === 'GROUP_CREATED_EVENT' ||
-                  message.messageType === 'GROUP_CREATED_EVENT'
-                ) {
-                  const collaborationWindowStatus =
-                    ref.chatService.getCollaborationWindowStatus();
-                  if (collaborationWindowStatus.isOpen) {
-                    ref.chatService.newMessageReceived(message);
-                  } else {
-                    let unreadCount = ref.chatService.getUnreadMessageCount();
-                    unreadCount = unreadCount + 1;
-                    ref.chatService.setUnreadMessageCount(unreadCount);
-                  }
-                  const audio = new Audio('../assets/audio/notification.mp3');
-                  audio.play();
-                }
-              });
-            }
-          };
-          const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userID}`;
-
-          this.eventSourceJitsi = new EventSourcePolyfill(jitsiSseUrl, {
-            headers: {
-              authorization,
-              tenantid
-            }
-          });
-          this.eventSourceJitsi.onmessage = async (event: any) => {
-            const eventData = JSON.parse(event.data);
-            if (!eventData.isHeartbeat) {
-              if (eventData.eventType === 'INCOMING_CALL') {
-                // If any other AV call is going on, discard the SSE event, else delete the SSE event...
-                const avConfWindowStatus =
-                  this.chatService.getAVConfWindowStatus();
-                const acceptCallWindowStatus =
-                  this.chatService.getAcceptCallWindowStatus();
-                const isAVConfWindowOpen = avConfWindowStatus.isOpen;
-                const isAcceptCallWindowOpen = acceptCallWindowStatus.isOpen;
-                if (isAVConfWindowOpen || isAcceptCallWindowOpen) {
-                  // TODO: If the call is not accepted for 10 consecutive SSE events, reject it gracefully with reason 'USER_BUSY_IN_OTHER_CALL'
-                  return;
-                } else {
-                  this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
-                  this.chatService.setMeeting(eventData);
-                }
-              } else if (eventData.eventType === 'END_CONFERENCE') {
-                this.chatService.endMeeting(eventData);
-              }
-            }
-          };
+          this.registerServerSentEvents(userInfo, ref);
         }
       });
 
@@ -425,6 +356,114 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     );
   }
 
+  registerServerSentEvents(userInfo, ref) {
+    let userID;
+    if (userInfo.collaborationType === 'slack') {
+      if (userInfo.slackDetail && userInfo.slackDetail.slackID) {
+        userID = userInfo.slackDetail.slackID;
+      }
+    } else if (userInfo.collaborationType === 'msteams') {
+      userID = userInfo.email;
+    }
+
+    // COLLABORATION CHAT SSE
+    const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
+    this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
+      collaborationSSEUrl,
+      null
+    );
+    this.eventSourceCollaboration.stream();
+    this.eventSourceCollaboration.onmessage = (event) => {
+      if (event) {
+        const eventData = JSON.parse(event.data);
+        if (!eventData.isHeartbeat) {
+          eventData.forEach((evt: any) => {
+            const { message } = evt;
+            if (
+              message.eventType === 'message' ||
+              message.messageType === 'message' ||
+              message.eventType === 'GROUP_CREATED_EVENT' ||
+              message.messageType === 'GROUP_CREATED_EVENT'
+            ) {
+              const collaborationWindowStatus =
+                ref.chatService.getCollaborationWindowStatus();
+              if (collaborationWindowStatus.isOpen) {
+                ref.chatService.newMessageReceived(message);
+              } else {
+                let unreadCount = ref.chatService.getUnreadMessageCount();
+                unreadCount = unreadCount + 1;
+                ref.chatService.setUnreadMessageCount(unreadCount);
+              }
+              const audio = new Audio('../assets/audio/notification.mp3');
+              audio.play();
+            }
+          });
+        }
+      }
+    };
+    this.eventSourceCollaboration.onerror = (event) => {
+      // console.log(event);
+    };
+
+    // JITSI AV CALLING SSE
+    const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
+    this.eventSourceJitsi = this.sseService.getEventSourceWithGet(
+      jitsiSseUrl,
+      null
+    );
+    this.eventSourceJitsi.stream();
+    this.eventSourceJitsi.onmessage = (event) => {
+      if (event) {
+        const eventData = JSON.parse(event.data);
+        if (!eventData.isHeartbeat) {
+          if (eventData.eventType === 'INCOMING_CALL') {
+            // If any other AV call is going on, discard the SSE event, else delete the SSE event...
+            const avConfWindowStatus = this.chatService.getAVConfWindowStatus();
+            const acceptCallWindowStatus =
+              this.chatService.getAcceptCallWindowStatus();
+            const isAVConfWindowOpen = avConfWindowStatus.isOpen;
+            const isAcceptCallWindowOpen = acceptCallWindowStatus.isOpen;
+            if (isAVConfWindowOpen || isAcceptCallWindowOpen) {
+              // TODO: If the call is not accepted for 10 consecutive SSE events, reject it gracefully with reason 'USER_BUSY_IN_OTHER_CALL'
+              return;
+            } else {
+              this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
+              this.chatService.setMeeting(eventData);
+            }
+          } else if (eventData.eventType === 'END_CONFERENCE') {
+            this.chatService.deleteJitsiEvent$(eventData.id).subscribe();
+            this.chatService.endMeeting(eventData);
+          }
+        }
+      }
+    };
+    this.eventSourceJitsi.onerror = (event) => {
+      // console.log(event);
+    };
+
+    // USER PRESENCE SSE
+    const updateUserPresenceSSEURL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
+    this.eventSourceUpdateUserPresence = this.sseService.getEventSourceWithGet(
+      updateUserPresenceSSEURL,
+      null
+    );
+    this.eventSourceUpdateUserPresence.stream();
+    this.eventSourceUpdateUserPresence.onmessage = (event) => {
+      if (event) {
+        const eventData = JSON.parse(event.data);
+        if (!eventData.isHeartbeat) {
+          this.peopleService.updateUserPresence({
+            action: 'update_user_presence',
+            data: eventData
+          });
+        }
+      }
+    };
+    this.eventSourceUpdateUserPresence.onerror = (event) => {
+      // console.log(event);
+    };
+  }
+
   ngAfterViewChecked(): void {
     this.cdrf.detectChanges();
   }
@@ -460,12 +499,16 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
   }
   ngOnDestroy() {
-    if (this.eventSource) {
-      this.eventSource.close();
-    }
-    if (this.eventSourceJitsi) {
-      this.eventSourceJitsi.close();
-    }
+    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
+    // if (this.eventSourceCollaboration) {
+    //   this.eventSourceCollaboration.close();
+    // }
+    // if (this.eventSourceJitsi) {
+    //   this.eventSourceJitsi.close();
+    // }
+    // if (this.eventSourceUpdateUserPresence) {
+    //   this.eventSourceUpdateUserPresence.close();
+    // }
   }
 
   checkUserHasSubMenusPermissions(

@@ -15,9 +15,6 @@ import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { defaultLimit } from 'src/app/app.constants';
-import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
-import { environment } from 'src/environments/environment';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
 import { ChatService } from '../chats/chat.service';
 
@@ -44,8 +41,6 @@ export class PeopleComponent implements OnInit {
   activeUsersInitial$: Observable<any>;
   activeUsers$: Observable<any[]>;
 
-  eventSource: any;
-
   peopleTotalCount = 0;
   peopleLoadedCount = 0;
 
@@ -71,7 +66,6 @@ export class PeopleComponent implements OnInit {
     private peopleService: PeopleService,
     private imageUtils: ImageUtils,
     private loginService: LoginService,
-    private authHeaderService: AuthHeaderService,
     private chatService: ChatService
   ) {
     this.searchKeyUpdate
@@ -88,25 +82,11 @@ export class PeopleComponent implements OnInit {
   }
 
   ngOnInit() {
-    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
-
-    const { authorization, tenantid } =
-      this.authHeaderService.getAuthHeaders(SSE_URL);
-    this.eventSource = new EventSourcePolyfill(SSE_URL, {
-      headers: {
-        authorization,
-        tenantid
+    this.peopleService.updateUserPresence$.subscribe((event) => {
+      if (event && event.action === 'update_user_presence') {
+        this.updateUserPresence$.next(event);
       }
     });
-    this.eventSource.onmessage = async (event: any) => {
-      const eventData = JSON.parse(event.data);
-      if (!eventData.isHeartbeat) {
-        this.updateUserPresence$.next({
-          action: 'update_user_presence',
-          data: eventData
-        });
-      }
-    };
 
     this.activeUsersInitial$ = this.fetchActiveUsers().pipe(
       mergeMap((users: any) => {

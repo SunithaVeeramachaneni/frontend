@@ -1,4 +1,6 @@
 import {
+  AfterViewChecked,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -10,7 +12,6 @@ import {
 import { ChatService } from './chat.service';
 import { MatDialog } from '@angular/material/dialog';
 
-import { EmitterService } from '../EmitterService';
 import {
   BehaviorSubject,
   combineLatest,
@@ -18,15 +19,19 @@ import {
   of,
   Subscription
 } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { ImageUtils } from '../../../../shared/utils/imageUtils';
 import { ErrorInfo } from 'src/app/interfaces/error-info';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import { environment } from 'src/environments/environment';
-import { EventSourcePolyfill } from 'event-source-polyfill';
-import { AuthHeaderService } from 'src/app/shared/services/authHeader.service';
 import { VideoCallDialogComponent } from '../calls/video-call-dialog/video-call-dialog.component';
+import { PeopleService } from '../people/people.service';
+
+interface ResetConversationHistory {
+  data: any[];
+  action: 'reset_conversation_history';
+  newHistory: any[];
+}
 
 interface SendReceiveMessages {
   action: 'send' | 'receive' | 'append_history' | '';
@@ -70,7 +75,7 @@ interface Message {
   styleUrls: ['./chats.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ChatsComponent implements OnInit, OnDestroy {
+export class ChatsComponent implements OnInit, OnDestroy, AfterViewChecked {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() viewChangeHandler = new EventEmitter<any>();
 
@@ -115,8 +120,14 @@ export class ChatsComponent implements OnInit, OnDestroy {
   conversationsInitial$: Observable<any>;
   conversations$: Observable<Conversation[]>;
 
-  conversationHistoryInit$: Observable<any>;
   conversationHistory$: Observable<Message[]>;
+
+  conversationHistoryInit$: BehaviorSubject<ResetConversationHistory> =
+    new BehaviorSubject<ResetConversationHistory>({
+      data: [],
+      action: 'reset_conversation_history',
+      newHistory: []
+    });
 
   sendReceiveMessages$: BehaviorSubject<SendReceiveMessages> =
     new BehaviorSubject<SendReceiveMessages>({
@@ -133,25 +144,23 @@ export class ChatsComponent implements OnInit, OnDestroy {
     });
 
   private newMessageReceivedSubscription: Subscription;
+  private updateUserPresenceSubscription: Subscription;
 
   constructor(
+    private cdrf: ChangeDetectorRef,
     public uploadDialog: MatDialog,
     private chatService: ChatService,
-    private emitterService: EmitterService,
     private loginService: LoginService,
     private imageUtils: ImageUtils,
-    private authHeaderService: AuthHeaderService
+    private peopleService: PeopleService
   ) {}
+
+  ngAfterViewChecked(): void {
+    this.cdrf.detectChanges();
+  }
 
   ngOnInit() {
     this.selectedView = 'CHAT';
-    this.emitterService.chatMessageAdded.subscribe((data) => {
-      // this.sendMessageToUser(data.data.conversation.userInfo, {
-      //   type: 'meeting_request',
-      //   link: data.meetingLink
-      // });
-      // this.sendMessageToUser(data.data, data.meetingLink);
-    });
 
     this.newMessageReceivedSubscription =
       this.chatService.newMessageReceivedAction$.subscribe((event) => {
@@ -166,77 +175,47 @@ export class ChatsComponent implements OnInit, OnDestroy {
         }
       });
 
-    const SSE_URL = `${environment.userRoleManagementApiUrl}users/sse/users_presence`;
-
-    const { authorization, tenantid } =
-      this.authHeaderService.getAuthHeaders(SSE_URL);
-    this.eventSource = new EventSourcePolyfill(SSE_URL, {
-      headers: {
-        authorization,
-        tenantid
-      }
-    });
-    this.eventSource.onmessage = async (event: any) => {
-      const eventData = JSON.parse(event.data);
-      if (!eventData.isHeartbeat) {
-        this.updateConversations$.next({
-          action: 'update_user_presence',
-          message: eventData,
-          channel: ''
-        });
-      }
-    };
+    this.updateUserPresenceSubscription =
+      this.peopleService.updateUserPresence$.subscribe((event) => {
+        if (event && event.action === 'update_user_presence') {
+          this.updateConversations$.next({
+            action: 'update_user_presence',
+            message: event.data,
+            channel: ''
+          });
+        }
+      });
 
     const userInfo = this.loginService.getLoggedInUserInfo();
     this.conversationsInitial$ = this.fetchConversations(userInfo.email).pipe(
       mergeMap((conversations: any) => {
         conversations = conversations || [];
-        if (conversations.length) {
-          conversations = this.formatConversations(conversations);
-          if (this.targetUser) {
-            let conversationExists = false;
-            conversations.forEach((conv) => {
-              if (conv.chatType === 'oneOnOne') {
-                if (conv.userInfo.email === this.targetUser.email) {
-                  conversationExists = true;
-                  this.setSelectedConversation(conv);
-                }
+        conversations = this.formatConversations(conversations);
+        if (this.targetUser) {
+          let conversationExists = false;
+          conversations.forEach((conv) => {
+            if (conv.chatType === 'oneOnOne') {
+              if (conv.userInfo.email === this.targetUser.email) {
+                conversationExists = true;
+                this.setSelectedConversation(conv);
               }
-            });
+            }
+          });
 
-            if (!conversationExists) {
-              const info: ErrorInfo = {
-                displayToast: true,
-                failureResponse: 'throwError'
-              };
-              const invitedUsers = [];
-              if (userInfo.collaborationType === 'slack') {
-                if (
-                  this.targetUser.slackDetail &&
-                  this.targetUser.slackDetail.slackID
-                ) {
-                  invitedUsers.push(this.targetUser.slackDetail.slackID);
-                  this.chatService
-                    .openConversation$(null, invitedUsers, 'oneOnOne', info)
-                    .subscribe((resp) => {
-                      if (resp.ok) {
-                        resp.userInfo.profileImage =
-                          this.imageUtils.getImageSrc(
-                            Buffer.from(resp.userInfo.profileImage).toString()
-                          );
-                        this.updateConversations$.next({
-                          action: 'create_conversation',
-                          message: resp,
-                          channel: ''
-                        });
-                        this.setSelectedConversation(resp);
-                      }
-                    });
-                }
-              } else if (userInfo.collaborationType === 'msteams') {
-                invitedUsers.push(this.targetUser.email);
+          if (!conversationExists) {
+            const info: ErrorInfo = {
+              displayToast: true,
+              failureResponse: 'throwError'
+            };
+            const invitedUsers = [];
+            if (userInfo.collaborationType === 'slack') {
+              if (
+                this.targetUser.slackDetail &&
+                this.targetUser.slackDetail.slackID
+              ) {
+                invitedUsers.push(this.targetUser.slackDetail.slackID);
                 this.chatService
-                  .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                  .openConversation$(null, invitedUsers, 'oneOnOne', info)
                   .subscribe((resp) => {
                     if (resp.ok) {
                       resp.userInfo.profileImage = this.imageUtils.getImageSrc(
@@ -251,14 +230,29 @@ export class ChatsComponent implements OnInit, OnDestroy {
                     }
                   });
               }
+            } else if (userInfo.collaborationType === 'msteams') {
+              invitedUsers.push(this.targetUser.email);
+              this.chatService
+                .createConversation$(null, invitedUsers, 'oneOnOne', info)
+                .subscribe((resp) => {
+                  if (resp.ok) {
+                    resp.userInfo.profileImage = this.imageUtils.getImageSrc(
+                      Buffer.from(resp.userInfo.profileImage).toString()
+                    );
+                    this.updateConversations$.next({
+                      action: 'create_conversation',
+                      message: resp,
+                      channel: ''
+                    });
+                    this.setSelectedConversation(resp);
+                  }
+                });
             }
-          } else {
-            this.setSelectedConversation(conversations[0]);
           }
-          return of({ data: conversations });
         } else {
-          return of({ data: conversations });
+          this.setSelectedConversation(conversations[0]);
         }
+        return of({ data: conversations });
       })
     );
 
@@ -339,6 +333,70 @@ export class ChatsComponent implements OnInit, OnDestroy {
         this.conversations = conversations;
       })
     );
+
+    this.conversationHistory$ = combineLatest([
+      this.conversationHistoryInit$,
+      this.sendReceiveMessages$
+    ]).pipe(
+      map(([initial, messageAction]) => {
+        const initialAction = initial.action;
+        if (initialAction === 'reset_conversation_history') {
+          initial.data = initial.newHistory;
+        }
+
+        const { action, message, channel } = messageAction;
+        if (action === 'send') {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          let userInfo;
+          initial.data.forEach((msg) => {
+            if (message.user === msg.user) {
+              userInfo = msg.from;
+            }
+          });
+
+          message.userInfo = userInfo;
+          message.isMeeting = false;
+          initial.data = initial.data.concat(message);
+          if (
+            this.selectedConversation &&
+            this.selectedConversation.id === channel
+          ) {
+            this.selectedConversation.latest = message;
+          } else {
+            this.updateConversations$.next({
+              action: 'update_latest_message',
+              message,
+              channel: message.channel
+            });
+          }
+          return initial.data;
+        } else if (action === 'receive') {
+          message.isMeeting = false;
+          initial.data = initial.data.concat(message);
+
+          if (
+            this.selectedConversation &&
+            this.selectedConversation.id === channel
+          ) {
+            this.selectedConversation.latest = message;
+          } else {
+            this.updateConversations$.next({
+              action: 'update_latest_message',
+              message,
+              channel: message.chatId
+            });
+          }
+
+          return initial.data;
+        } else if (action === 'append_history') {
+          const newMessages = this.formatConversationHistory(message);
+          initial.data = [...newMessages, ...initial.data];
+          return initial.data;
+        } else {
+          return initial.data;
+        }
+      })
+    );
   }
 
   fetchConversations = (email: string, skipToken?: string) => {
@@ -368,7 +426,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       this.appendingConvHistory = true;
     }
     const convHistory = this.chatService
-      .getConversationHistory$(convId, skipToken, info)
+      .getConversationHistory$(convId, skipToken)
       .pipe(
         mergeMap((data: any) => {
           this.appendingConvHistory = false;
@@ -565,76 +623,27 @@ export class ChatsComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.conversationHistoryInit$ = this.fetchConversationHistory(
-      conversation.id
-    ).pipe(
-      mergeMap((history) => {
+    this.conversationHistoryInit$.next({
+      data: [],
+      action: 'reset_conversation_history',
+      newHistory: []
+    });
+
+    this.fetchConversationHistory(conversation.id).subscribe(
+      (history) => {
         this.conversationHistoryLoaded = true;
         if (history.length) {
           history = this.formatConversationHistory(history);
+          this.conversationHistoryInit$.next({
+            data: history,
+            action: 'reset_conversation_history',
+            newHistory: history
+          });
           return of({ data: history });
         }
         return of({ data: history });
-      }),
-      catchError(() => of({ data: [] }))
-    );
-
-    this.conversationHistory$ = combineLatest([
-      this.conversationHistoryInit$,
-      this.sendReceiveMessages$
-    ]).pipe(
-      map(([initial, messageAction]) => {
-        const { action, message, channel } = messageAction;
-        if (action === 'send') {
-          let userInfo;
-          initial.data.forEach((msg) => {
-            if (message.user === msg.user) {
-              userInfo = msg.from;
-            }
-          });
-
-          message.userInfo = userInfo;
-          message.isMeeting = false;
-          initial.data = initial.data.concat(message);
-          if (
-            this.selectedConversation &&
-            this.selectedConversation.id === channel
-          ) {
-            this.selectedConversation.latest = message;
-          } else {
-            this.updateConversations$.next({
-              action: 'update_latest_message',
-              message,
-              channel: message.channel
-            });
-          }
-          return initial.data;
-        } else if (action === 'receive') {
-          message.isMeeting = false;
-          initial.data = initial.data.concat(message);
-
-          if (
-            this.selectedConversation &&
-            this.selectedConversation.id === channel
-          ) {
-            this.selectedConversation.latest = message;
-          } else {
-            this.updateConversations$.next({
-              action: 'update_latest_message',
-              message,
-              channel: message.chatId
-            });
-          }
-
-          return initial.data;
-        } else if (action === 'append_history') {
-          const newMessages = this.formatConversationHistory(message);
-          initial.data = [...newMessages, ...initial.data];
-          return initial.data;
-        } else {
-          return initial.data;
-        }
-      })
+      },
+      (error) => {}
     );
   };
 
@@ -820,7 +829,7 @@ export class ChatsComponent implements OnInit, OnDestroy {
       this.selectedConversation &&
       message.chatId === this.selectedConversation.id
     ) {
-      if (message.message.indexOf('meeting_request')) {
+      if (message.message.indexOf('meeting_request') > -1) {
         try {
           message.jsonObj = JSON.parse(message.text);
           if (message.jsonObj.link) {
@@ -845,32 +854,16 @@ export class ChatsComponent implements OnInit, OnDestroy {
     }
   };
 
-  getConversationsByUser = async (targetUser) => {
-    if (targetUser) {
-      const targetConversation = this.conversations.find(
-        (c) => c.user === this.targetUser.id
-      );
-      if (targetConversation) {
-        this.setSelectedConversation(targetConversation);
-      }
-    } else {
-      // this.setSelectedConversation(conversations[0]);
-    }
-  };
-
-  triggerCall = async (conv) => {
-    await this.chatService.triggerCall(conv);
-  };
-
   openMeetingLink = (message) => {
-    let url = message.jsonObj.link;
-    url = url.slice(1, -1);
-    window.open(url, '_blank');
+    // TODO: This method has to be deleted
   };
 
   ngOnDestroy(): void {
     if (this.newMessageReceivedSubscription) {
       this.newMessageReceivedSubscription.unsubscribe();
+    }
+    if (this.updateUserPresenceSubscription) {
+      this.updateUserPresenceSubscription.unsubscribe();
     }
   }
 }

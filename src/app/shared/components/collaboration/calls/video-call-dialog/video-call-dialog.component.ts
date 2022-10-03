@@ -7,13 +7,12 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChatService } from '../../chats/chat.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
-import waitFor from 'src/app/shared/utils/waitFor';
-import { MatSidenav } from '@angular/material/sidenav';
 import { Buffer } from 'buffer';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { environment } from 'src/environments/environment';
+import { WaitForUtil } from 'src/app/shared/utils/waitFor';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 declare let JitsiMeetExternalAPI: any;
@@ -64,19 +63,19 @@ export class VideoCallDialogComponent implements OnInit {
     private chatService: ChatService,
     private loginService: LoginService,
     private imageUtils: ImageUtils,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private waitForUtil: WaitForUtil
   ) {}
 
   async ngOnInit() {
     const {
-      conversation: { topic, id, chatType, userInfo, members } = {},
+      conversation: { topic, chatType, members } = {},
       isCreateConferenceEvent = true,
       meetingEvent = {},
       conferenceType = 'audio'
     } = this.data;
     const { firstName, lastName, email } =
       this.loginService.getLoggedInUserInfo();
-
     this.chatService.endMeeting$.subscribe((event) => {
       if (event) {
         if (
@@ -87,7 +86,6 @@ export class VideoCallDialogComponent implements OnInit {
         }
       }
     });
-
     this.spinner.show();
     let conferenceName;
     const isMeetingEvent = Object.keys(meetingEvent).length !== 0;
@@ -96,10 +94,12 @@ export class VideoCallDialogComponent implements OnInit {
       const conferenceDetailsProm = this.chatService.getConferenceDetails$(
         this.conferenceId
       );
-      const conferenceDetails = await waitFor(conferenceDetailsProm);
+
+      const conferenceDetails = await this.waitForUtil.waitFor(
+        conferenceDetailsProm
+      );
       conferenceName = conferenceDetails.metadata.subject;
       this.selectedConference = conferenceDetails;
-
       this.selectedConference.members.forEach((user) => {
         user.profileImage = this.imageUtils.getImageSrc(
           Buffer.from(user.profileImage).toString()
@@ -117,7 +117,6 @@ export class VideoCallDialogComponent implements OnInit {
             ).toString()
           );
       }
-
       this.isConferenceReadyToJoin = true;
       this.spinner.hide();
     } else if (isCreateConferenceEvent) {
@@ -129,25 +128,29 @@ export class VideoCallDialogComponent implements OnInit {
         conferenceType,
         metadata
       });
-      const createdJitsiConf = await waitFor(createdJitsiConfProm);
-      this.conferenceId = createdJitsiConf.id;
+      const createdJitsiConf = await this.waitForUtil.waitFor(
+        createdJitsiConfProm
+      );
 
+      this.conferenceId = createdJitsiConf.id;
       if (members && members.length) {
         let invitees = members.filter((m) => m.email !== email);
         invitees = invitees.map((i) => i.email);
-
         const initConfProm = this.chatService.initiateConference$(
           this.conferenceId,
           invitees,
           metadata
         );
-        const confrenceInitiatedObj = await waitFor(initConfProm);
+        const confrenceInitiatedObj = await this.waitForUtil.waitFor(
+          initConfProm
+        );
         this.selectedConference = confrenceInitiatedObj;
         this.selectedConference.members.forEach((user) => {
           user.profileImage = this.imageUtils.getImageSrc(
             Buffer.from(user.profileImage).toString()
           );
         });
+
         if (
           chatType === 'oneOnOne' &&
           this.selectedConference.userInfo &&
@@ -160,28 +163,22 @@ export class VideoCallDialogComponent implements OnInit {
               ).toString()
             );
         }
-
         this.isConferenceReadyToJoin = true;
         this.spinner.hide();
       }
     } else {
       return;
     }
-
     this.joinedUsers = [...this.selectedConference.members];
-
     this.chatService.avConfWindowAction({
       isOpen: true,
       isCollapsed: false
     });
-
     const getJaaSJWTTokenProm = this.chatService.getJaaSJWTToken$(
       isCreateConferenceEvent
     );
-    const jaasJWTToken = await waitFor(getJaaSJWTTokenProm);
-
+    const jaasJWTToken = await this.waitForUtil.waitFor(getJaaSJWTTokenProm);
     const isAudioOnly = conferenceType === 'audio' ? true : false;
-
     const JAAS_DOMAIN = '8x8.vc';
     this.api = new JitsiMeetExternalAPI(JAAS_DOMAIN, {
       roomName: `${environment.jaasAppID}/${this.conferenceId}`,
@@ -203,7 +200,6 @@ export class VideoCallDialogComponent implements OnInit {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       interfaceConfigOverwrite: { DEFAULT_BACKGROUND: '#fff' }
     });
-
     if (isCreateConferenceEvent) {
       setTimeout(() => {
         this.api.executeCommand(
