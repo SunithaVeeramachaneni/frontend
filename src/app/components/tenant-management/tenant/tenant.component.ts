@@ -65,7 +65,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'Maintenance Control Center',
     'Spare Parts Control Center',
     'User Management',
-    'Work Instructions Authoring'
+    'Work Instructions Authoring',
+    'Race Dynamic Forms'
   ];
   idps = ['azure'];
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];

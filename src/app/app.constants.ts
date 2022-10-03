@@ -40,7 +40,11 @@ export const permissions = Object.freeze({
   deleteCategory: 'DELETE_CATEGORY',
   viewFiles: 'VIEW_FILES',
   updateFile: 'UPDATE_FILE',
-  deleteFile: 'DELETE_FILE'
+  deleteFile: 'DELETE_FILE',
+  viewForms: 'VIEW_FORM',
+  createForms: 'CREATE_FORM',
+  updateForms: 'UPDATE_FORM',
+  deleteForms: 'DELETE_FORM'
 });
 
 export const routingUrls = {
@@ -118,6 +122,11 @@ export const routingUrls = {
     url: '/tenant-management/inactive-tenants',
     title: 'Inactive Tenants',
     permission: permissions.viewTenants
+  },
+  raceDynamicForms: {
+    url: '/rdf-forms',
+    title: 'Race Dynamic Forms',
+    permission: permissions.viewForms
   }
 };
 

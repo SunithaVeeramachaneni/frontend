@@ -1,0 +1,128 @@
+<div class="create-form-main" [formGroup]="createForm">
+  <div class="dis-flex" style="justify-content: space-between">
+    <div>
+      <a class="form-title">
+        <input
+          type="text"
+          formControlName="formTitle"
+          class="form_title_input"
+          placeholder="Untitled Form"
+          autofocus="true"
+          autocomplete="off"
+          (keyup)="titleChange($event.target)"
+        />
+      </a>
+      <a class="form-description">
+        <input
+          type="text"
+          formControlName="formDescription"
+          class="form_description_input"
+          placeholder="Add Form description"
+          autofocus="true"
+          autocomplete="off"
+          (keyup)="titleChange('', '')"
+        />
+      </a>
+    </div>
+    <div class="dis-flex">
+      <p class="changes-text">Changes not published</p>
+      <button
+        (click)="publishInstruction()"
+        mat-raised-button
+        class="b-r-8 publish-btn"
+      >
+        <span>
+          <img
+            alt="upload"
+            src="assets/work-instructions-icons/svg/upload-white.png"
+            class="publish-btn-icon"
+          />
+          <span class="publish">Publish</span>
+        </span>
+      </button>
+    </div>
+  </div>
+  <hr style="border: 1px solid #e5e5e5" />
+  <div class="dis-flex" formGroupName="sections">
+    <div class="width-70" style="padding: 10px 20px">
+      <div
+        style="
+          background: rgba(61, 90, 254, 0.15);
+          border-radius: 8px 8px 0px 0px;
+          height: 35px;
+          padding: 7px;
+        "
+      >
+        <mat-icon
+          (click)="isOpenState = false"
+          *ngIf="isOpenState === true"
+          class="section-arrow"
+        >
+          keyboard_arrow_down
+        </mat-icon>
+        <mat-icon
+          (click)="isOpenState = true"
+          *ngIf="isOpenState === false"
+          class="section-arrow"
+        >
+          keyboard_arrow_up
+        </mat-icon>
+
+        <span>
+          <input
+            type="text"
+            formControlName="sectionName"
+            class="form_section_name_input"
+            placeholder="Untitled Section"
+            autofocus="true"
+            autocomplete="off"
+            *ngIf="isSectionNameEditMode === true"
+            (keyup.enter)="sectionChange('')"
+          />
+          <span *ngIf="isSectionNameEditMode === false" class="section-name">
+            {{
+              this.createForm.controls.sections.value.sectionName
+                ? this.createForm.controls.sections.value.sectionName
+                : 'Untitled Section'
+            }}
+          </span>
+          <img
+            src="../../../../assets/rdf-forms-icons/edit-icon.svg"
+            alt="edit-icon"
+            (click)="isSectionNameEditMode = true"
+            *ngIf="isSectionNameEditMode === false"
+            style="cursor: pointer; width: 13px; margin-left: 5px"
+          />
+        </span>
+      </div>
+      <div
+        *ngIf="isOpenState === true"
+        class="dis-flex"
+        formGroupName="questions"
+      >
+        <div class="width-60">
+          <p>Questions</p>
+          <img
+            src="../../../../assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+          />
+          <!-- <mat-form-field appearance="outline">
+            <input matInput formControlName="questionName" />
+          </mat-form-field> -->
+        </div>
+        <div class="width-40">
+          <p>Response Type</p>
+          <!-- <mat-form-field appearance="outline">
+            <mat-select>
+              <mat-option value="one">First option</mat-option>
+              <mat-option value="two">Second option</mat-option>
+            </mat-select>
+          </mat-form-field> -->
+        </div>
+      </div>
+    </div>
+    <div class="width-30" style="padding: 10px 20px">
+      <app-rdf-forms-iphone-preview></app-rdf-forms-iphone-preview>
+    </div>
+  </div>
+</div>

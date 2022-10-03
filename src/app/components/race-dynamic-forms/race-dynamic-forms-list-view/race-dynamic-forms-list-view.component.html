@@ -1,0 +1,49 @@
+<div class="rdf-forms-list-screen">
+  <div class="dis-flex">
+    <div class="width-90">
+      <mat-form-field class="width-100" appearance="outline">
+        <input matInput placeholder="Search" style="width: 100%" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+    <div class="width-10">
+      <button
+        style="
+          position: absolute;
+          right: 14px;
+          margin-top: 25px;
+          border: none;
+          background: transparent;
+        "
+      >
+        <span
+          style="
+            color: #2a3eb1;
+            font-size: 110%;
+            letter-spacing: 0.419185px;
+            margin-right: 2px;
+          "
+        >
+          Filter
+        </span>
+        <img
+          src="../../../assets/rdf-forms-icons/filter-icon.svg"
+          alt="filter-icon"
+          style="position: relative; top: 3px"
+        />
+      </button>
+    </div>
+  </div>
+  <div class="dis-flex">
+    <h1 style="font-size: 160%; width: 85%; margin-left: 5px">Recent Forms</h1>
+    <button
+      [routerLink]="['/rdf-forms/create-form']"
+      mat-raised-button
+      color="primary"
+      style="width: 15%; height: 35px; margin-top: 12px"
+    >
+      Create Form
+    </button>
+  </div>
+  <div class="dis-flex" style="background: white">No results</div>
+</div>
