@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { RdfService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-create-form',
@@ -12,7 +14,9 @@ export class CreateFormComponent implements OnInit {
   public createForm: FormGroup;
   isOpenState = true;
   isSectionNameEditMode = true;
-  constructor(private fb: FormBuilder) {}
+  fieldTypes$: Observable<any>;
+  fieldTypes: any = [];
+  constructor(private fb: FormBuilder, private rdfService: RdfService) {}
 
   ngOnInit() {
     this.createForm = this.fb.group({
@@ -21,6 +25,10 @@ export class CreateFormComponent implements OnInit {
       sections: this.fb.array([this.initSection()]),
       counter: ['']
     });
+    this.fieldTypes$ = this.rdfService
+      .getFieldTypes$()
+      .pipe(tap((fieldTypes) => (this.fieldTypes = fieldTypes)));
+    this.fieldTypes$.subscribe();
   }
 
   getQuestions(form) {
@@ -42,11 +50,6 @@ export class CreateFormComponent implements OnInit {
     ].get('questions') as FormArray;
     control.push(this.initQuestion());
   }
-
-  /* addSections() {
-    console.log('in section');
-    // this.sections.push(this.initSection());
-  } */
 
   initQuestion = () =>
     this.fb.group({
@@ -73,5 +76,14 @@ export class CreateFormComponent implements OnInit {
 
   publishInstruction() {
     console.log('published');
+  }
+
+  getFieldTypeImage(type) {
+    return `assets/rdf-forms-icons/fieldType-icons/${type}.svg`;
+  }
+
+  getFieldTypeDescription(type) {
+    const fieldType = this.fieldTypes.find((field) => field.type === type);
+    return fieldType?.description;
   }
 }
