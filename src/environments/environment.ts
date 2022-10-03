@@ -4,13 +4,13 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
   production: true,
-  dashboardApiUrl: 'https://cwpqa.innovapptive.com/dashboardapi/',
-  mccAbapApiUrl: 'https://cwpqa.innovapptive.com/mccspccabapapi/',
-  spccAbapApiUrl: 'https://cwpqa.innovapptive.com/mccspccabapapi/',
-  wiApiUrl: 'https://cwpqa.innovapptive.com/wiapi/',
-  wiAbapApiUrl: 'https://cwpqa.innovapptive.com/wiabapapi/',
-  userRoleManagementApiUrl:
-    'https://cwpqa.innovapptive.com/userrolemanagementapi/',
+  dashboardApiUrl: 'http://localhost:8004/',
+  mccAbapApiUrl: 'http://localhost:8003/',
+  spccAbapApiUrl: 'http://localhost:8003/',
+  wiApiUrl: 'http://localhost:8001/',
+  wiAbapApiUrl: 'http://localhost:8002/',
+  userRoleManagementApiUrl: 'http://localhost:8007/',
+  rdfApiUrl: 'http://localhost:8008/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5,
