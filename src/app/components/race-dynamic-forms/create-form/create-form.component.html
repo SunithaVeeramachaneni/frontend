@@ -1,26 +1,31 @@
 <div class="create-form-main" [formGroup]="createForm">
-  <div class="dis-flex" style="justify-content: space-between">
+  <div
+    class="dis-flex"
+    style="
+      justify-content: space-between;
+      background-color: #ffffff;
+      border-bottom: 1px solid #e5e5e5;
+    "
+  >
     <div>
       <a class="form-title">
         <input
           type="text"
-          formControlName="formTitle"
+          formControlName="name"
           class="form_title_input"
           placeholder="Untitled Form"
           autofocus="true"
           autocomplete="off"
-          (keyup)="titleChange($event.target)"
         />
       </a>
       <a class="form-description">
         <input
           type="text"
-          formControlName="formDescription"
+          formControlName="description"
           class="form_description_input"
           placeholder="Add Form description"
           autofocus="true"
           autocomplete="off"
-          (keyup)="titleChange('', '')"
         />
       </a>
     </div>
@@ -42,82 +47,142 @@
       </button>
     </div>
   </div>
-  <hr style="border: 1px solid #e5e5e5" />
-  <div class="dis-flex" formGroupName="sections">
-    <div class="width-70" style="padding: 10px 20px">
-      <div
-        style="
-          background: rgba(61, 90, 254, 0.15);
-          border-radius: 8px 8px 0px 0px;
-          height: 35px;
-          padding: 7px;
-        "
-      >
-        <mat-icon
-          (click)="isOpenState = false"
-          *ngIf="isOpenState === true"
-          class="section-arrow"
-        >
-          keyboard_arrow_down
-        </mat-icon>
-        <mat-icon
-          (click)="isOpenState = true"
-          *ngIf="isOpenState === false"
-          class="section-arrow"
-        >
-          keyboard_arrow_up
-        </mat-icon>
+  <div class="dis-flex">
+    <div formArrayName="sections" class="width-70">
+      <div *ngFor="let sec of getSections(createForm); let i = index">
+        <div style="padding: 10px" [formGroupName]="i">
+          <div
+            style="
+              background: rgba(61, 90, 254, 0.15);
+              border-radius: 8px 8px 0px 0px;
+              height: 35px;
+              padding: 7px;
+            "
+          >
+            <mat-icon
+              (click)="isOpenState = false"
+              *ngIf="isOpenState === true"
+              class="section-arrow"
+            >
+              keyboard_arrow_down
+            </mat-icon>
+            <mat-icon
+              (click)="isOpenState = true"
+              *ngIf="isOpenState === false"
+              class="section-arrow"
+            >
+              keyboard_arrow_right
+            </mat-icon>
 
-        <span>
-          <input
-            type="text"
-            formControlName="sectionName"
-            class="form_section_name_input"
-            placeholder="Untitled Section"
-            autofocus="true"
-            autocomplete="off"
-            *ngIf="isSectionNameEditMode === true"
-            (keyup.enter)="sectionChange('')"
-          />
-          <span *ngIf="isSectionNameEditMode === false" class="section-name">
-            {{
-              this.createForm.controls.sections.value.sectionName
-                ? this.createForm.controls.sections.value.sectionName
-                : 'Untitled Section'
-            }}
-          </span>
-          <img
-            src="../../../../assets/rdf-forms-icons/edit-icon.svg"
-            alt="edit-icon"
-            (click)="isSectionNameEditMode = true"
-            *ngIf="isSectionNameEditMode === false"
-            style="cursor: pointer; width: 13px; margin-left: 5px"
-          />
-        </span>
-      </div>
-      <div
-        *ngIf="isOpenState === true"
-        class="dis-flex"
-        formGroupName="questions"
-      >
-        <div class="width-60">
-          <p>Questions</p>
-          <img
-            src="../../../../assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
-          />
-          <!-- <mat-form-field appearance="outline">
-            <input matInput formControlName="questionName" />
-          </mat-form-field> -->
-        </div>
-        <div class="width-40">
-          <p>Response Type</p>
-          <!-- <mat-form-field appearance="outline">
-            <mat-select>
-              <mat-option value="one">First option</mat-option>
-              <mat-option value="two">Second option</mat-option>
-            </mat-select>
-          </mat-form-field> -->
+            <span>
+              <input
+                type="text"
+                formControlName="name"
+                class="form_section_name_input"
+                placeholder="Untitled Section"
+                autofocus="true"
+                autocomplete="off"
+                (keyup.enter)="sec.get('name').disable()"
+              />
+              <img
+                src="../../../../assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                (click)="editSection(sec)"
+                *ngIf="sec.get('name').disabled === true"
+                style="cursor: pointer; width: 13px; margin-left: 5px"
+              />
+            </span>
+
+            <img
+              src="../../../../assets/rdf-forms-icons/more.svg"
+              alt="more-icon"
+              style="float: right; margin-top: 17px; margin-right: 12px"
+            />
+
+            <img
+              src="../../../../assets/rdf-forms-icons/add-questions.svg"
+              alt="add-questions"
+              style="
+                position: relative;
+                left: 80px;
+                float: right;
+                cursor: pointer;
+              "
+              (click)="addQuestion(i)"
+            />
+
+            <img
+              src="../../../../assets/rdf-forms-icons/add-sections.svg"
+              alt="add-sections"
+              (click)="addSection()"
+              style="
+                position: relative;
+                left: 118px;
+                top: 45px;
+                float: right;
+                cursor: pointer;
+              "
+            />
+          </div>
+          <div
+            *ngIf="isOpenState === true"
+            style="background-color: #ffffff"
+            formArrayName="questions"
+          >
+            <div class="dis-flex">
+              <div class="width-70">
+                <p class="sub-headings m-l-30">Questions</p>
+              </div>
+              <div class="width-30">
+                <p class="sub-headings">Response Type</p>
+              </div>
+            </div>
+            <div *ngFor="let que of getQuestions(sec); let j = index">
+              <div [formGroupName]="j" class="dis-flex">
+                <div class="width-70">
+                  <img
+                    src="../../../../assets/rdf-forms-icons/six-dots.svg"
+                    alt="six-dots"
+                    class="m-l-10 six-dots"
+                  />
+                  <mat-form-field
+                    appearance="outline"
+                    class="width-90"
+                    style="margin-left: 10px"
+                  >
+                    <quill-material formControlName="name" placeholder="">
+                    </quill-material>
+                  </mat-form-field>
+                </div>
+
+                <div class="width-30">
+                  <mat-form-field appearance="outline">
+                    <mat-select
+                      placeholder="Select Response"
+                      formControlName="fieldType"
+                    >
+                      <mat-select-trigger>
+                        <img
+                          src="../../../../assets/rdf-forms-icons/fieldType-icons/CB.svg"
+                        />&nbsp;
+                        <span style="position: relative; top: -2px"
+                          >First Option</span
+                        >
+                      </mat-select-trigger>
+                      <mat-option value="one">
+                        <img
+                          src="../../../../assets/rdf-forms-icons/fieldType-icons/CB.svg"
+                        />&nbsp;
+                        <span style="position: relative; top: -2px">
+                          First Option
+                        </span>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

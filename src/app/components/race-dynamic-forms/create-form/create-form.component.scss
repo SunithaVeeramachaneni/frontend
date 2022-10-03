@@ -1,8 +1,15 @@
 .create-form-main {
-  height: 120vh;
-  padding: 12px 0;
-  margin-top: 14px;
-  background-color: #ffffff;
+  height: 85vh;
+  overflow-y: auto;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 12px 0;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+    position: relative;
+    top: 5px;
+  }
 }
 
 input[type='text']:focus {
@@ -18,7 +25,7 @@ input[type='text']:focus {
   font-size: 140%;
   font-weight: 500;
   text-overflow: ellipsis;
-  padding: 5px 20px;
+  padding: 5px 10px;
 }
 
 .form_description_input {
@@ -29,7 +36,7 @@ input[type='text']:focus {
   font-size: 100%;
   font-weight: 500;
   text-overflow: ellipsis;
-  padding: 5px 20px;
+  padding: 5px 10px;
 }
 
 .changes-text {
@@ -87,4 +94,15 @@ input[type='text']:focus {
   font-size: 110%;
   font-weight: 500;
   color: #000000;
+}
+
+.sub-headings {
+  letter-spacing: 0.419185px;
+  color: #76767b;
+  font-size: 90%;
+}
+
+.six-dots {
+  position: relative;
+  top: 3px;
 }
