@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -11,29 +11,64 @@ import { Subject } from 'rxjs';
 export class CreateFormComponent implements OnInit {
   public createForm: FormGroup;
   isOpenState = true;
-  isSectionNameEditMode = false;
+  isSectionNameEditMode = true;
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     this.createForm = this.fb.group({
-      formTitle: [''],
-      formDescription: [''],
-      sections: this.fb.group({
-        sectionName: [''],
-        questions: this.fb.group({
-          questionName: [''],
-          responseType: ['']
-        })
-      })
+      name: [''],
+      description: [''],
+      sections: this.fb.array([this.initSection()]),
+      counter: ['']
     });
   }
+
+  getQuestions(form) {
+    return form.controls.questions.controls;
+  }
+
+  getSections(form) {
+    return form.controls.sections.controls;
+  }
+
+  addSection() {
+    const control = this.createForm.get('sections') as FormArray;
+    control.push(this.initSection());
+  }
+
+  addQuestion(j) {
+    const control = (this.createForm.get('sections') as FormArray).controls[
+      j
+    ].get('questions') as FormArray;
+    control.push(this.initQuestion());
+  }
+
+  /* addSections() {
+    console.log('in section');
+    // this.sections.push(this.initSection());
+  } */
+
+  initQuestion = () =>
+    this.fb.group({
+      id: [''],
+      name: [''],
+      fieldType: [''],
+      position: ['']
+    });
+
+  initSection = () =>
+    this.fb.group({
+      name: [{ value: '', disabled: true }],
+      position: [''],
+      questions: this.fb.array([this.initQuestion()])
+    });
 
   titleChange(value) {
     console.log(value);
   }
 
-  sectionChange(sectionname) {
-    console.log(sectionname);
+  editSection(e) {
+    e.get('name').enable();
   }
 
   publishInstruction() {

@@ -3,14 +3,14 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 export const environment = {
-  production: true,
+  production: false,
   dashboardApiUrl: 'http://localhost:8004/',
   mccAbapApiUrl: 'http://localhost:8003/',
   spccAbapApiUrl: 'http://localhost:8003/',
   wiApiUrl: 'http://localhost:8001/',
   wiAbapApiUrl: 'http://localhost:8002/',
   userRoleManagementApiUrl: 'http://localhost:8007/',
-  rdfApiUrl: 'http://localhost:8008/',
+  rdfApiUrl: 'http://localhost:8007/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5,
