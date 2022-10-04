@@ -2,15 +2,20 @@
   <div class="dis-flex">
     <div class="width-90">
       <mat-form-field class="width-100" appearance="outline">
-        <input matInput placeholder="Search" style="width: 100%" />
+        <input
+          matInput
+          placeholder="Search"
+          style="width: 100%"
+          disabled="true"
+        />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
     </div>
     <div class="width-10">
       <button
+        [disabled]="true"
         style="
-          position: absolute;
-          right: 14px;
+          float: right;
           margin-top: 25px;
           border: none;
           background: transparent;
@@ -35,19 +40,34 @@
     </div>
   </div>
   <div class="dis-flex">
-    <h1 style="font-size: 160%; width: 85%; margin-left: 5px">Recent Forms</h1>
+    <h1 style="font-size: 160%; width: 90%; margin-left: 5px">Recent Forms</h1>
     <button
       [routerLink]="['/rdf-forms/create-form']"
       mat-raised-button
       color="primary"
-      style="width: 15%; height: 35px; margin-top: 12px"
+      style="width: 10%; height: 35px; margin-top: 12px"
     >
       Create Form
     </button>
   </div>
   <div *ngIf="forms$ | async as forms">
-    <div *ngFor="let form of forms">
-      <div>{{ form.name }}</div>
+    <div *ngFor="let form of forms" style="background-color: #ffffff">
+      <div class="form-data">
+        <span>
+          <span class="form-name">{{ form.name }}</span>
+          <br />
+          <span class="form-description">{{ form.description }}</span>
+        </span>
+
+        <span style="float: right; margin-top: -12px">
+          <span class="form-created">{{ form.createdAt | timeAgo }}</span>
+          <img
+            src="assets/rdf-forms-icons/arrow-right.svg"
+            alt="arrow-right"
+            style="position: relative; top: 3px"
+          />
+        </span>
+      </div>
     </div>
     <div class="dis-flex" style="background: white" *ngIf="forms.length === 0">
       No results

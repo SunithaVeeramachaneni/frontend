@@ -32,6 +32,12 @@ export class CreateFormComponent implements OnInit {
   status$ = new BehaviorSubject<string>('');
   setFieldType;
   isCustomizerOpen = false;
+  sliderOptions = {
+    min: 0,
+    max: 100,
+    increment: 1
+  };
+
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
@@ -121,7 +127,8 @@ export class CreateFormComponent implements OnInit {
       fieldType: ['TF'],
       position: [''],
       require: [false],
-      isPublished: [false]
+      isPublished: [false],
+      value: ['']
     });
 
   initSection = (id) =>
@@ -179,5 +186,10 @@ export class CreateFormComponent implements OnInit {
       .get('counter')
       .setValue(this.createForm.get('counter').value + 1);
     return this.createForm.get('counter').value;
+  }
+
+  applySliderOptions(values, question) {
+    question.get('value').setValue(values);
+    this.isCustomizerOpen = false;
   }
 }

@@ -30,7 +30,9 @@
       </a>
     </div>
     <div class="dis-flex">
-      <p *ngIf="status$ | async as status">{{ status }}</p>
+      <p *ngIf="status$ | async as status" style="margin-top: 22px">
+        {{ status }}
+      </p>
       <button
         (click)="publishInstruction()"
         mat-raised-button
@@ -205,6 +207,77 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
+
+                <div
+                  id="app-customizer"
+                  *ngIf="isCustomizerOpen && setFieldType === 'RT'"
+                >
+                  <mat-card class="p-0">
+                    <mat-card-title class="m-0 light-gray">
+                      <div class="slider-heading">Slider</div>
+                    </mat-card-title>
+                    <mat-card-content>
+                      <div class="dis-flex">
+                        <div class="width-50">
+                          <label for="min">From</label><br />
+                          <input
+                            id="min"
+                            type="number"
+                            class="slider-inputs"
+                            [(ngModel)]="sliderOptions.min"
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                        </div>
+                        <div class="width-50" style="text-align: end">
+                          <label for="max">To</label><br />
+                          <input
+                            id="max"
+                            type="number"
+                            class="slider-inputs"
+                            [(ngModel)]="sliderOptions.max"
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                        </div>
+                      </div>
+                      <mat-slider
+                        [max]="sliderOptions.max"
+                        [min]="sliderOptions.min"
+                        [step]="sliderOptions.increment"
+                        class="width-100"
+                      >
+                      </mat-slider>
+                      <div>
+                        <label for="incre">Increment</label>
+                        <br />
+                        <input
+                          id="incre"
+                          type="number"
+                          class="slider-inputs"
+                          [(ngModel)]="sliderOptions.increment"
+                          [ngModelOptions]="{ standalone: true }"
+                        />
+                      </div>
+                      <br />
+                      <br />
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        style="width: 48%; margin-right: 10px"
+                        (click)="applySliderOptions(sliderOptions, question)"
+                      >
+                        Apply
+                      </button>
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        style="width: 48%"
+                        (click)="isCustomizerOpen = false"
+                      >
+                        Cancel
+                      </button>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
               </div>
             </div>
           </div>
@@ -214,26 +287,5 @@
     <div class="width-30" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview></app-rdf-forms-iphone-preview>
     </div>
-  </div>
-
-  <div id="app-customizer" *ngIf="isCustomizerOpen && setFieldType === 'RT'">
-    <mat-card class="p-0">
-      <mat-card-title class="m-0 light-gray">
-        <div
-          class="card-title-text"
-          fxLayout="row wrap"
-          fxLayoutAlign="center center"
-        >
-          <button
-            class="card-control"
-            mat-icon-button
-            (click)="isCustomizerOpen = false"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </div>
-      </mat-card-title>
-      <mat-card-content> Slider </mat-card-content>
-    </mat-card>
   </div>
 </div>
