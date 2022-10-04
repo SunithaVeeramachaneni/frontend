@@ -30,7 +30,7 @@
       </a>
     </div>
     <div class="dis-flex">
-      <p class="changes-text">Changes not published</p>
+      <p *ngIf="status$ | async as status">{{ status }}</p>
       <button
         (click)="publishInstruction()"
         mat-raised-button

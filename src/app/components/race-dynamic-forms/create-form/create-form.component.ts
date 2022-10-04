@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -20,12 +21,15 @@ import { RdfService } from '../services/rdf.service';
 export class CreateFormComponent implements OnInit {
   public createForm: FormGroup;
   defaultFormHeader = 'Untitled Form';
+  saveProgress = 'Save in progress...';
+  changesSaved = 'All Changes Saved';
   formHeader: string;
   isOpenState = true;
   isSectionNameEditMode = true;
   fieldTypes: any = [];
   createInProgress = false;
   disableFormFields = true;
+  status$ = new BehaviorSubject<string>('');
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
@@ -147,15 +151,22 @@ export class CreateFormComponent implements OnInit {
     const { id, ...form } = this.createForm.getRawValue();
 
     if (id) {
-      return this.rdfService.updateForm$(id, form).pipe();
+      this.status$.next(this.saveProgress);
+      return this.rdfService.updateForm$(id, form).pipe(
+        tap(() => {
+          this.status$.next(this.changesSaved);
+        })
+      );
     } else {
       this.createInProgress = true;
+      this.status$.next(this.saveProgress);
       return this.rdfService.createForm$(form).pipe(
         tap((createdForm) => {
           this.createForm.get('id').setValue(createdForm.id);
           this.createInProgress = false;
           this.createForm.enable({ emitEvent: false });
           this.disableFormFields = false;
+          this.status$.next(this.changesSaved);
         })
       );
     }
