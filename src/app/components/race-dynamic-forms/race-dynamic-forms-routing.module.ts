@@ -13,7 +13,7 @@ const routes: Routes = [
     component: RaceDynamicFormsContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { skip: true },
+      breadcrumb: { label: 'Race Dynamic Forms' },
       permissions: [permissions.viewForms]
     },
     children: [
@@ -22,7 +22,7 @@ const routes: Routes = [
         component: CreateFormComponent,
         canActivate: [AuthGuard],
         data: {
-          breadcrumb: { label: 'Create Forms' },
+          breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForms]
         }
       }

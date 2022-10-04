@@ -51,6 +51,7 @@
     <div formArrayName="sections" class="width-70">
       <div *ngFor="let section of getSections(createForm); let i = index">
         <div style="padding: 10px" [formGroupName]="i">
+          <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div
             style="
               background: rgba(61, 90, 254, 0.15);
@@ -139,6 +140,11 @@
             </div>
             <div *ngFor="let question of getQuestions(section); let j = index">
               <div [formGroupName]="j" class="dis-flex">
+                <input
+                  type="hidden"
+                  formControlName="position"
+                  [ngModel]="j + 1"
+                />
                 <div class="width-70">
                   <img
                     src="../../../../assets/rdf-forms-icons/six-dots.svg"

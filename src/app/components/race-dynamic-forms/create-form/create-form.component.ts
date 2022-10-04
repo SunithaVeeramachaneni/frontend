@@ -1,7 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  tap
+} from 'rxjs/operators';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
 
 @Component({
@@ -12,23 +20,60 @@ import { RdfService } from '../services/rdf.service';
 })
 export class CreateFormComponent implements OnInit {
   public createForm: FormGroup;
+  defaultFormHeader = 'Untitled Form';
+  formHeader: string;
   isOpenState = true;
   isSectionNameEditMode = true;
-  fieldTypes$: Observable<any>;
   fieldTypes: any = [];
-  constructor(private fb: FormBuilder, private rdfService: RdfService) {}
+  createInProgress = false;
+  constructor(
+    private fb: FormBuilder,
+    private rdfService: RdfService,
+    private breadcrumbService: BreadcrumbService,
+    private headerService: HeaderService
+  ) {}
 
   ngOnInit() {
     this.createForm = this.fb.group({
+      id: [''],
       name: [''],
       description: [''],
-      sections: this.fb.array([this.initSection()]),
-      counter: ['']
+      counter: [0],
+      sections: this.fb.array([this.initSection()])
     });
-    this.fieldTypes$ = this.rdfService
+    this.rdfService
       .getFieldTypes$()
-      .pipe(tap((fieldTypes) => (this.fieldTypes = fieldTypes)));
-    this.fieldTypes$.subscribe();
+      .pipe(tap((fieldTypes) => (this.fieldTypes = fieldTypes)))
+      .subscribe();
+
+    this.createForm
+      .get('name')
+      .valueChanges.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap((formName) => {
+          const displayName = formName.trim()
+            ? formName
+            : this.defaultFormHeader;
+          this.formHeader = displayName;
+          this.breadcrumbService.set('@formName', { label: displayName });
+          this.headerService.setHeaderTitle(displayName);
+          console.log(this.createForm.getRawValue());
+        }),
+        filter(() => this.createInProgress === false),
+        switchMap(() => this.saveForm())
+      )
+      .subscribe();
+
+    const headerTitle = this.createForm.get('name').value
+      ? this.createForm.get('name').value
+      : this.defaultFormHeader;
+    this.headerService.setHeaderTitle(headerTitle);
+    this.breadcrumbService.set('@formName', {
+      label: headerTitle
+    });
+
+    // this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
   getQuestions(form) {
@@ -53,9 +98,9 @@ export class CreateFormComponent implements OnInit {
 
   initQuestion = () =>
     this.fb.group({
-      id: [''],
+      id: ['Q1'],
       name: [''],
-      fieldType: [''],
+      fieldType: ['TF'],
       position: ['']
     });
 
@@ -79,11 +124,28 @@ export class CreateFormComponent implements OnInit {
   }
 
   getFieldTypeImage(type) {
-    return `assets/rdf-forms-icons/fieldType-icons/${type}.svg`;
+    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
   }
 
   getFieldTypeDescription(type) {
-    const fieldType = this.fieldTypes.find((field) => field.type === type);
-    return fieldType?.description;
+    return type
+      ? this.fieldTypes.find((field) => field.type === type)?.description
+      : null;
+  }
+
+  saveForm() {
+    const { id, ...form } = this.createForm.getRawValue();
+
+    if (id) {
+      return this.rdfService.updateForm$(id, form).pipe();
+    } else {
+      this.createInProgress = true;
+      return this.rdfService.createForm$(form).pipe(
+        tap((createdForm) => {
+          this.createForm.get('id').setValue(createdForm.id);
+          this.createInProgress = false;
+        })
+      );
+    }
   }
 }
