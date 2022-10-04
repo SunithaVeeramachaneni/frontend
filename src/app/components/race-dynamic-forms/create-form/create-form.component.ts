@@ -26,7 +26,7 @@ export class CreateFormComponent implements OnInit {
   formHeader: string;
   isOpenState = true;
   isSectionNameEditMode = true;
-  fieldTypes: any = [];
+  fieldTypes: any = [{ type: 'TF', description: 'Text Answer' }];
   createInProgress = false;
   disableFormFields = true;
   status$ = new BehaviorSubject<string>('');
