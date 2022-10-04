@@ -2,15 +2,8 @@
   <div class="ipad-view-default-content">
     <div class="width-100">
       <div class="main-carosuel-iphone">
-        <div
-          style="
-            background: #3a6175;
-            border-top-right-radius: 30px;
-            border-top-left-radius: 30px;
-            height: 100px;
-          "
-        >
-          <div class="dis-flex" style="padding: 5px">
+        <div class="iphone-header">
+          <div class="dis-flex p-5">
             <div class="width-60 status-bar-left">9:41</div>
             <div class="width-40 iphone-status-bar-right m-r-10">
               <mat-icon class="status-bar-icons">signal_cellular_alt</mat-icon>
@@ -20,43 +13,51 @@
               </mat-icon>
             </div>
           </div>
-          <div style="color: #ffffff; font-size: 90%">in Progress</div>
-          <mat-icon style="color: #ffffff; float: left; margin-left: 5px">
-            keyboard_arrow_left
-          </mat-icon>
-          <div>
-            <img
-              src="../../../../assets/rdf-forms-icons/file-icon.png"
-              alt="file-icons"
-              style="
-                width: 30px;
-                float: left;
-                margin-left: -20px;
-                margin-top: 5px;
-              "
-            />
-            <span
-              style="float: left; color: #ffffff; font-size: 100%; padding: 7px"
-            >
-              F036
-            </span>
-            <br />
-            <span
-              style="
-                float: left;
-                color: #ffffff;
-                font-size: 80%;
-                padding: 7px;
-                margin-left: -45px;
-              "
-            >
-              F036-DOT Cargo Tank– 5 year
-            </span>
+          <div class="in-progress-text">in Progress</div>
+          <mat-icon class="back-button"> keyboard_arrow_left </mat-icon>
+          <div class="dis-flex">
+            <div class="width-10">
+              <img
+                src="../../../../assets/rdf-forms-icons/file-icon.png"
+                alt="file-icons"
+                class="file-icon"
+              />
+            </div>
+            <div class="width-90 form-div">
+              <span class="form-name">
+                {{ formData.name ? formData.name : 'Unititled Form' }}
+              </span>
+              <br />
+              <span class="form-description">
+                {{
+                  formData.description
+                    ? formData.description
+                    : 'Add Form Description'
+                }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div>
-          <p>section</p>
+        <div *ngFor="let section of formData.sections; let i = index">
+          <p class="section-name">
+            {{ section.name ? section.name : 'Section Name' }}
+          </p>
+          <div
+            *ngFor="let question of section.questions"
+            class="dis-flex m-b-10"
+          >
+            <div class="width-45 question-name">
+              {{ question.name ? question.name : 'Type Question' }}
+            </div>
+            <div class="width-45 text-left">
+              <input
+                type="text"
+                *ngIf="question.fieldType === 'TF'"
+                class="input-fields"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

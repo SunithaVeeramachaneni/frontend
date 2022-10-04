@@ -285,7 +285,9 @@
       </div>
     </div>
     <div class="width-30" style="padding: 10px 20px">
-      <app-rdf-forms-iphone-preview></app-rdf-forms-iphone-preview>
+      <app-rdf-forms-iphone-preview
+        [formData]="createForm.getRawValue()"
+      ></app-rdf-forms-iphone-preview>
     </div>
   </div>
 </div>
