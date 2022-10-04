@@ -39,7 +39,9 @@ export class CreateFormComponent implements OnInit {
       name: [''],
       description: [''],
       counter: [1],
-      sections: this.fb.array([this.initSection('Q1')])
+      sections: this.fb.array([this.initSection('Q1')]),
+      isPublished: [false],
+      isPublishedTillSave: [false]
     });
     this.rdfService
       .getFieldTypes$()
@@ -112,7 +114,8 @@ export class CreateFormComponent implements OnInit {
       name: [''],
       fieldType: ['TF'],
       position: [''],
-      require: [false]
+      require: [false],
+      isPublished: [false]
     });
 
   initSection = (id) =>
