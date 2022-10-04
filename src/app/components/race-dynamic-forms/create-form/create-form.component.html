@@ -32,7 +32,7 @@
     <div class="dis-flex">
       <p *ngIf="status$ | async as status">{{ status }}</p>
       <button
-        (click)="publishInstruction()"
+        (click)="publishForm()"
         mat-raised-button
         class="b-r-8 publish-btn"
         [disabled]="disableFormFields"

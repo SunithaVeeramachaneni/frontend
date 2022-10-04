@@ -135,8 +135,9 @@ export class CreateFormComponent implements OnInit {
     e.get('name').enable();
   }
 
-  publishInstruction() {
-    console.log('published');
+  publishForm() {
+    const form = this.createForm.getRawValue();
+    this.rdfService.publishForm$(form).subscribe();
   }
 
   getFieldTypeImage(type) {
