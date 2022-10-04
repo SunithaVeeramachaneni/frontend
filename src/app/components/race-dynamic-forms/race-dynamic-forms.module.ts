@@ -30,6 +30,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { QuillMaterialComponent } from '../work-instructions/steps/quill-material/quill-material.component';
 import { IphonePreviewComponent } from './iphone-preview/iphone-preview.component';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -48,6 +49,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSelectModule,
     MatInputModule,
     SharedModule,
+    MatCardModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

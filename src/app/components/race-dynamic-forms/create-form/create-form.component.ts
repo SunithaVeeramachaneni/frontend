@@ -26,6 +26,8 @@ export class CreateFormComponent implements OnInit {
   fieldTypes: any = [];
   createInProgress = false;
   disableFormFields = true;
+  setFieldType;
+  isCustomizerOpen = false;
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
