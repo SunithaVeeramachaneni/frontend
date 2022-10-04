@@ -101,7 +101,7 @@
             />
 
             <img
-              src="../../../../assets/rdf-forms-icons/add-questions.svg"
+              src="assets/rdf-forms-icons/add-questions.svg"
               alt="add-questions"
               style="
                 position: relative;
@@ -113,7 +113,7 @@
             />
 
             <img
-              src="../../../../assets/rdf-forms-icons/add-sections.svg"
+              src="assets/rdf-forms-icons/add-sections.svg"
               alt="add-sections"
               (click)="addSection()"
               style="
@@ -156,8 +156,9 @@
                     class="width-90"
                     style="margin-left: 10px"
                   >
-                    <quill-material formControlName="name" placeholder="">
-                    </quill-material>
+                    <input type="text" matInput formControlName="name" />
+                    <!-- <quill-material formControlName="name" placeholder="">
+                    </quill-material> -->
                   </mat-form-field>
                 </div>
 

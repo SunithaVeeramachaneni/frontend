@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Observable, of, Subject } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -26,6 +25,7 @@ export class CreateFormComponent implements OnInit {
   isSectionNameEditMode = true;
   fieldTypes: any = [];
   createInProgress = false;
+  disableFormFields = true;
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
@@ -38,8 +38,8 @@ export class CreateFormComponent implements OnInit {
       id: [''],
       name: [''],
       description: [''],
-      counter: [0],
-      sections: this.fb.array([this.initSection()])
+      counter: [1],
+      sections: this.fb.array([this.initSection('Q1')])
     });
     this.rdfService
       .getFieldTypes$()
@@ -49,7 +49,7 @@ export class CreateFormComponent implements OnInit {
     this.createForm
       .get('name')
       .valueChanges.pipe(
-        debounceTime(500),
+        debounceTime(1000),
         distinctUntilChanged(),
         tap((formName) => {
           const displayName = formName.trim()
@@ -58,9 +58,18 @@ export class CreateFormComponent implements OnInit {
           this.formHeader = displayName;
           this.breadcrumbService.set('@formName', { label: displayName });
           this.headerService.setHeaderTitle(displayName);
-          console.log(this.createForm.getRawValue());
         }),
         filter(() => this.createInProgress === false),
+        switchMap(() => this.saveForm())
+      )
+      .subscribe();
+
+    this.createForm
+      .get('sections')
+      .valueChanges.pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        filter(() => this.createForm.get('id').value),
         switchMap(() => this.saveForm())
       )
       .subscribe();
@@ -72,7 +81,8 @@ export class CreateFormComponent implements OnInit {
     this.breadcrumbService.set('@formName', {
       label: headerTitle
     });
-
+    this.createForm.disable({ emitEvent: false });
+    this.createForm.get('name').enable({ emitEvent: false });
     // this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
@@ -86,34 +96,31 @@ export class CreateFormComponent implements OnInit {
 
   addSection() {
     const control = this.createForm.get('sections') as FormArray;
-    control.push(this.initSection());
+    control.push(this.initSection(`Q${this.getCounter()}`));
   }
 
   addQuestion(j) {
     const control = (this.createForm.get('sections') as FormArray).controls[
       j
     ].get('questions') as FormArray;
-    control.push(this.initQuestion());
+    control.push(this.initQuestion(`Q${this.getCounter()}`));
   }
 
-  initQuestion = () =>
+  initQuestion = (id) =>
     this.fb.group({
-      id: ['Q1'],
+      id: [id],
       name: [''],
       fieldType: ['TF'],
-      position: ['']
+      position: [''],
+      require: [false]
     });
 
-  initSection = () =>
+  initSection = (id) =>
     this.fb.group({
       name: [{ value: '', disabled: true }],
       position: [''],
-      questions: this.fb.array([this.initQuestion()])
+      questions: this.fb.array([this.initQuestion(id)])
     });
-
-  titleChange(value) {
-    console.log(value);
-  }
 
   editSection(e) {
     e.get('name').enable();
@@ -144,8 +151,17 @@ export class CreateFormComponent implements OnInit {
         tap((createdForm) => {
           this.createForm.get('id').setValue(createdForm.id);
           this.createInProgress = false;
+          this.createForm.enable({ emitEvent: false });
+          this.disableFormFields = false;
         })
       );
     }
+  }
+
+  getCounter() {
+    this.createForm
+      .get('counter')
+      .setValue(this.createForm.get('counter').value + 1);
+    return this.createForm.get('counter').value;
   }
 }
