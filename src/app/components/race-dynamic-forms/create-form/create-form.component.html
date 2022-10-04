@@ -35,6 +35,7 @@
         (click)="publishInstruction()"
         mat-raised-button
         class="b-r-8 publish-btn"
+        [disabled]="disableFormFields"
       >
         <span>
           <img
@@ -85,45 +86,49 @@
                 autocomplete="off"
                 (keyup.enter)="section.get('name').disable()"
               />
-              <img
-                src="../../../../assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
+              <button
+                mat-icon-button
+                [disabled]="disableFormFields"
                 (click)="editSection(section)"
+                style="width: 13px; margin-left: 5px"
                 *ngIf="section.get('name').disabled === true"
-                style="cursor: pointer; width: 13px; margin-left: 5px"
-              />
+              >
+                <img
+                  src="assets/rdf-forms-icons/edit-icon.svg"
+                  alt="edit-icon"
+                />
+              </button>
             </span>
 
             <img
-              src="../../../../assets/rdf-forms-icons/more.svg"
+              src="assets/rdf-forms-icons/more.svg"
               alt="more-icon"
               style="float: right; margin-top: 17px; margin-right: 12px"
             />
 
-            <img
-              src="assets/rdf-forms-icons/add-questions.svg"
-              alt="add-questions"
-              style="
-                position: relative;
-                left: 80px;
-                float: right;
-                cursor: pointer;
-              "
+            <button
+              mat-icon-button
+              [disabled]="disableFormFields"
               (click)="addQuestion(i)"
-            />
+              style="position: relative; left: 80px; float: right"
+            >
+              <img
+                src="assets/rdf-forms-icons/add-questions.svg"
+                alt="add-questions"
+              />
+            </button>
 
-            <img
-              src="assets/rdf-forms-icons/add-sections.svg"
-              alt="add-sections"
+            <button
+              mat-icon-button
+              [disabled]="disableFormFields"
               (click)="addSection()"
-              style="
-                position: relative;
-                left: 118px;
-                top: 45px;
-                float: right;
-                cursor: pointer;
-              "
-            />
+              style="position: relative; left: 118px; top: 45px; float: right"
+            >
+              <img
+                src="assets/rdf-forms-icons/add-sections.svg"
+                alt="add-sections"
+              />
+            </button>
           </div>
           <div
             *ngIf="isOpenState === true"
@@ -147,7 +152,7 @@
                 />
                 <div class="width-70">
                   <img
-                    src="../../../../assets/rdf-forms-icons/six-dots.svg"
+                    src="assets/rdf-forms-icons/six-dots.svg"
                     alt="six-dots"
                     class="m-l-10 six-dots"
                   />
@@ -156,7 +161,12 @@
                     class="width-90"
                     style="margin-left: 10px"
                   >
-                    <input type="text" matInput formControlName="name" />
+                    <input
+                      type="text"
+                      matInput
+                      formControlName="name"
+                      placeholder="Type Question"
+                    />
                     <!-- <quill-material formControlName="name" placeholder="">
                     </quill-material> -->
                   </mat-form-field>
@@ -183,6 +193,9 @@
                       <mat-option
                         *ngFor="let fieldType of fieldTypes"
                         [value]="fieldType.type"
+                        (click)="
+                          isCustomizerOpen = true; setFieldType = fieldType.type
+                        "
                       >
                         <img [src]="getFieldTypeImage(fieldType.type)" />&nbsp;
                         <span style="position: relative; top: -2px">
@@ -201,5 +214,26 @@
     <div class="width-30" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview></app-rdf-forms-iphone-preview>
     </div>
+  </div>
+
+  <div id="app-customizer" *ngIf="isCustomizerOpen && setFieldType === 'RT'">
+    <mat-card class="p-0">
+      <mat-card-title class="m-0 light-gray">
+        <div
+          class="card-title-text"
+          fxLayout="row wrap"
+          fxLayoutAlign="center center"
+        >
+          <button
+            class="card-control"
+            mat-icon-button
+            (click)="isCustomizerOpen = false"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </mat-card-title>
+      <mat-card-content> Slider </mat-card-content>
+    </mat-card>
   </div>
 </div>

@@ -30,6 +30,8 @@ export class CreateFormComponent implements OnInit {
   createInProgress = false;
   disableFormFields = true;
   status$ = new BehaviorSubject<string>('');
+  setFieldType;
+  isCustomizerOpen = false;
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,

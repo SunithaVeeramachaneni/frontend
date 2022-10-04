@@ -83,7 +83,6 @@ input[type='text']:focus {
 
 .form_section_name_input {
   border: none;
-  cursor: pointer;
   background: none;
   font-size: 110%;
   font-weight: 500;
@@ -105,4 +104,29 @@ input[type='text']:focus {
 .six-dots {
   position: relative;
   top: 3px;
+}
+
+#app-customizer {
+  position: fixed;
+  bottom: 0px;
+  top: 0;
+  right: 0;
+  width: 370px;
+  z-index: 999;
+
+  .title {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0 0 1rem;
+  }
+  .mat-card {
+    margin: 0;
+    border-radius: 0;
+    height: 100%;
+  }
+  .mat-card-content {
+    padding: 1rem 1.5rem 2rem;
+    max-height: calc(100vh - 80px);
+  }
 }
