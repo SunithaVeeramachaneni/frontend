@@ -124,9 +124,21 @@ input[type='text']:focus {
     margin: 0;
     border-radius: 0;
     height: 100%;
+    padding: 0;
   }
   .mat-card-content {
-    padding: 1rem 1.5rem 2rem;
+    padding: 15px;
     max-height: calc(100vh - 80px);
+  }
+  .slider-heading {
+    font-size: 110%;
+    border-bottom: 1px solid #d3d3d3;
+    padding: 15px;
+  }
+  .slider-inputs {
+    width: 100px;
+    height: 35px;
+    border: 1px solid #bac1c4;
+    border-radius: 4px;
   }
 }

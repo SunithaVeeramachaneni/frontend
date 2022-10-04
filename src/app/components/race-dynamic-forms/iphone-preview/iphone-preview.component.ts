@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
@@ -6,6 +7,14 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./iphone-preview.component.css']
 })
 export class IphonePreviewComponent implements OnInit, OnDestroy {
+  private _formData;
+  @Input() set formData(data) {
+    console.log(data);
+    this._formData = data;
+  }
+  get formData() {
+    return this._formData;
+  }
   constructor() {}
 
   ngOnInit() {}
