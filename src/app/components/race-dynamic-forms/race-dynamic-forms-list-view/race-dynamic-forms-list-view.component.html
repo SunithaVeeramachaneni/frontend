@@ -45,5 +45,12 @@
       Create Form
     </button>
   </div>
-  <div class="dis-flex" style="background: white">No results</div>
+  <div *ngIf="forms$ | async as forms">
+    <div *ngFor="let form of forms">
+      <div>{{ form.name }}</div>
+    </div>
+    <div class="dis-flex" style="background: white" *ngIf="forms.length === 0">
+      No results
+    </div>
+  </div>
 </div>

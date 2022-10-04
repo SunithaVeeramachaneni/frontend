@@ -31,4 +31,19 @@ export class RdfService {
 
   getFieldTypes$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms/field-types', info);
+
+  createAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
+
+  updateAbapForm$ = (
+    formId: string,
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService
+      ._updateData(environment.rdfApiUrl, `abap/forms`, form, info)
+      .pipe(map((response) => (response === null ? form : response)));
 }

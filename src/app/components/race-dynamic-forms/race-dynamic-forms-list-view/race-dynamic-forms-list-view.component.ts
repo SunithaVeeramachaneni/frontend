@@ -1,4 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { RdfService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-race-dynamic-forms-list-view',
@@ -7,6 +9,9 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RaceDynamicFormsListViewComponent implements OnInit {
-  constructor() {}
-  ngOnInit(): void {}
+  forms$: Observable<any>;
+  constructor(private rdfService: RdfService) {}
+  ngOnInit(): void {
+    this.forms$ = this.rdfService.getForms$();
+  }
 }
