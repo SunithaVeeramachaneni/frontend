@@ -167,13 +167,7 @@
               >
                 <div
                   [formGroupName]="j"
-                  (click)="
-                    setShowAndHideContents(
-                      getSections(createForm).length,
-                      getQuestions(section).length
-                    );
-                    showAndHideContent[i][j] = true
-                  "
+                  (click)="toggleFieldContentOpenState(i, j)"
                 >
                   <div class="dis-flex">
                     <input
@@ -315,9 +309,8 @@
                       </mat-card-content>
                     </mat-card>
                   </div>
-
                   <div
-                    *ngIf="showAndHideContent[i][j] === true"
+                    *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     style="
                       background: #f3f3f3;
                       border-radius: 7px;

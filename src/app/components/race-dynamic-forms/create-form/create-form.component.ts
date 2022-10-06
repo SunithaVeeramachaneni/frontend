@@ -51,8 +51,7 @@ export class CreateFormComponent implements OnInit {
     max: 100,
     increment: 1
   };
-  showAndHideContent = [];
-  showAndHideConetentState = {};
+  fieldContentOpenState = {};
 
   constructor(
     private fb: FormBuilder,
@@ -63,14 +62,12 @@ export class CreateFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.setShowAndHideContents(1, 1);
-    console.log(this.showAndHideContent);
     this.createForm = this.fb.group({
       id: [''],
       name: [''],
       description: [''],
       counter: [1],
-      sections: this.fb.array([this.initSection(1, 1)]),
+      sections: this.fb.array([this.initSection(1, 1, 1)]),
       isPublishedTillSave: [false]
     });
     this.rdfService
@@ -143,7 +140,7 @@ export class CreateFormComponent implements OnInit {
     });
     this.createForm.disable({ emitEvent: false });
     this.createForm.get('name').enable({ emitEvent: false });
-    // this.createForm.get('name').setValue(this.defaultFormHeader);
+    this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
   setFormTitle() {
@@ -182,21 +179,24 @@ export class CreateFormComponent implements OnInit {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
-      this.initSection(control.length + 1, this.getCounter())
+      this.initSection(control.length + 1, 1, this.getCounter())
     );
-    this.setShowAndHideContents(control.length + 1, 1);
   }
 
   addQuestion(j) {
     const control = (this.createForm.get('sections') as FormArray).controls[
       j
     ].get('questions') as FormArray;
-    control.push(this.initQuestion(this.getCounter()));
+    control.push(
+      this.initQuestion(j + 1, control.length + 1, this.getCounter())
+    );
   }
 
-  initQuestion = (counter: number) =>
-    this.fb.group({
-      id: [`Q${counter}`],
+  initQuestion = (sc: number, qc: number, uqc: number) => {
+    if (!this.fieldContentOpenState[sc][qc])
+      this.fieldContentOpenState[sc][qc] = false;
+    return this.fb.group({
+      id: [`Q${uqc}`],
       name: [''],
       fieldType: ['TF'],
       position: [''],
@@ -205,19 +205,28 @@ export class CreateFormComponent implements OnInit {
       isPublished: [false],
       isPublishedTillSave: [false]
     });
+  };
 
-  initSection = (sc: number, qc: number) => {
+  initSection = (sc: number, qc: number, uqc: number) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
+    if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     return this.fb.group({
       uid: [`uid${sc}`],
       name: [{ value: `Section ${sc}`, disabled: true }],
       position: [''],
-      questions: this.fb.array([this.initQuestion(qc)])
+      questions: this.fb.array([this.initQuestion(sc, qc, uqc)])
     });
   };
 
   toggleOpenState = (idx: number) => {
     this.isOpenState[idx + 1] = !this.isOpenState[idx + 1];
+  };
+
+  toggleFieldContentOpenState = (sectionIndex, questionIndex) => {
+    Object.keys(this.fieldContentOpenState[sectionIndex + 1]).forEach((key) => {
+      this.fieldContentOpenState[sectionIndex + 1][key] = false;
+    });
+    this.fieldContentOpenState[sectionIndex + 1][questionIndex + 1] = true;
   };
 
   editSection(e) {
@@ -228,30 +237,7 @@ export class CreateFormComponent implements OnInit {
     let publishedCount = 0;
     const form = this.createForm.getRawValue();
     this.publishInProgress = true;
-    const questions = ['Q1'];
 
-    /* of(true)
-      .pipe(
-        delay(2000),
-        tap(() => {
-          this.publishInProgress = false;
-          form.sections.forEach((section) => {
-            section.questions.forEach((question) => {
-              if (questions.includes(question.id)) {
-                publishedCount++;
-                question.isPublished = true;
-                question.isPublishedTillSave = true;
-              }
-            });
-          });
-          if (publishedCount === questions.length) {
-            form.isPublishedTillSave = true;
-          }
-          this.createForm.patchValue(form, { emitEvent: false });
-        }),
-        switchMap(() => this.saveForm(true))
-      )
-      .subscribe(() => this.cdrf.markForCheck()); */
     this.rdfService
       .publishForm$(form)
       .pipe(
@@ -328,14 +314,5 @@ export class CreateFormComponent implements OnInit {
   applySliderOptions(values, question) {
     question.get('value').setValue(values);
     this.isCustomizerOpen = false;
-  }
-
-  setShowAndHideContents(sc, qc) {
-    console.log(this.showAndHideContent);
-    this.showAndHideContent = [...Array(sc)].map(() =>
-      new Array(qc).fill(false)
-    );
-
-    console.log(this.showAndHideContent);
   }
 }
