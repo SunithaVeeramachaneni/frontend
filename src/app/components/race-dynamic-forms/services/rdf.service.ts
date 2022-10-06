@@ -42,36 +42,19 @@ export class RdfService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> => {
     const payloads = this.getFormPayload(form);
-    console.log(payloads);
     return from(this.getFormPayload(form)).pipe(
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
           return this.createAbapForm$(rest).pipe(
-            map((resp) => {
-              console.log({ id: rest.UNIQUEKEY });
-              return Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY;
-            })
+            map((resp) =>
+              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
+            )
           );
-          /* this.appService._postData(
-            environment.rdfApiUrl,
-            'abap/forms',
-            rest,
-            info
-          ); */
         } else {
           return this.updateAbapForm$(rest).pipe(
-            map((resp) => {
-              console.log({ id: rest.UNIQUEKEY });
-              return Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY;
-            })
+            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
-          /* this.appService._updateData(
-            environment.rdfApiUrl,
-            'abap/forms',
-            rest,
-            info
-          ); */
         }
       }),
       toArray(),
@@ -105,7 +88,7 @@ export class RdfService {
         name: sectionName,
         position: sectionPosition
       } = section;
-      payloads = questions
+      const sectionPayloads = questions
         .map((question) => {
           const {
             id: questionId,
@@ -177,6 +160,7 @@ export class RdfService {
           };
         })
         .filter((payload) => payload);
+      payloads = [...payloads, ...sectionPayloads];
     });
     return payloads;
   }

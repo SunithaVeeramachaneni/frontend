@@ -31,6 +31,7 @@ export class CreateFormComponent implements OnInit {
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
+  changesPublished = 'All Changes published';
   isOpenState = true;
   isSectionNameEditMode = true;
   fieldTypes: any = [{ type: 'TF', description: 'Text Answer' }];
@@ -234,6 +235,7 @@ export class CreateFormComponent implements OnInit {
           }
           this.createForm.patchValue(form, { emitEvent: false });
           this.publishInProgress = false;
+          this.status$.next(this.changesPublished);
         }),
         switchMap(() => this.saveForm(true))
       )
@@ -250,11 +252,11 @@ export class CreateFormComponent implements OnInit {
       : null;
   }
 
-  saveForm(ignoreProgress = false) {
+  saveForm(ignoreStatus = false) {
     const { id, ...form } = this.createForm.getRawValue();
 
     if (id) {
-      if (!ignoreProgress) {
+      if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
       return this.rdfService.updateForm$(id, form).pipe(
@@ -264,7 +266,9 @@ export class CreateFormComponent implements OnInit {
       );
     } else {
       this.createInProgress = true;
-      this.status$.next(this.saveProgress);
+      if (!ignoreStatus) {
+        this.status$.next(this.saveProgress);
+      }
       return this.rdfService.createForm$(form).pipe(
         tap((createdForm) => {
           this.createForm.get('id').setValue(createdForm.id);
