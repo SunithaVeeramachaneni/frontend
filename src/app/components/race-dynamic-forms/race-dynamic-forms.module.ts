@@ -32,6 +32,7 @@ import { IphonePreviewComponent } from './iphone-preview/iphone-preview.componen
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -50,6 +51,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSelectModule,
     MatInputModule,
     MatSliderModule,
+    MatTooltipModule,
     SharedModule,
     MatCardModule,
     NgxShimmerLoadingModule,
