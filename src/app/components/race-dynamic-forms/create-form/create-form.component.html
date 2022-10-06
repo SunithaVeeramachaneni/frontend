@@ -56,8 +56,19 @@
     </div>
   </div>
   <div class="dis-flex">
-    <div formArrayName="sections" class="width-70" cdkDropListGroup>
-      <div *ngFor="let section of getSections(createForm); let i = index">
+    <div
+      formArrayName="sections"
+      class="width-70"
+      cdkDrop
+      cdkDropList
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListData]="getSections(createForm)"
+      cdkDropListGroup
+    >
+      <div
+        cdkDrag
+        *ngFor="let section of getSections(createForm); let i = index"
+      >
         <div style="padding: 10px" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div
@@ -68,6 +79,12 @@
               padding: 7px;
             "
           >
+            <img
+              cdkDragHandle
+              src="assets/rdf-forms-icons/six-dots.svg"
+              alt="six-dots"
+              class="m-l-10 six-dots"
+            />
             <mat-icon
               (click)="toggleOpenState(i)"
               *ngIf="isOpenState[i + 1] === true"
@@ -159,7 +176,7 @@
               cdkDropList
               (cdkDropListDropped)="drop($event)"
               [cdkDropListData]="getQuestions(section)"
-              [id]="section.id"
+              [id]="section.uid"
             >
               <div
                 cdkDrag
@@ -431,6 +448,13 @@
                     </span>
                   </div>
                 </div>
+              </div>
+              <div
+                cdkDrag
+                *ngIf="!getQuestions(section).length"
+                class="empty-section"
+              >
+                This section is empty. Please add a question.
               </div>
             </div>
           </div>
