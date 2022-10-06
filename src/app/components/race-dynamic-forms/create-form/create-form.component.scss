@@ -142,3 +142,7 @@ input[type='text']:focus {
     border-radius: 4px;
   }
 }
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
