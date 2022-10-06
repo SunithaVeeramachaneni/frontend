@@ -25,15 +25,11 @@
             </div>
             <div class="width-90 form-div">
               <span class="form-name">
-                {{ formData.name ? formData.name : 'Unititled Form' }}
+                {{ formData.id }}
               </span>
               <br />
               <span class="form-description">
-                {{
-                  formData.description
-                    ? formData.description
-                    : 'Add Form Description'
-                }}
+                {{ formData.name ? formData.name : 'Unititled Form' }}
               </span>
             </div>
           </div>
