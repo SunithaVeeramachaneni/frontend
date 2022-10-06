@@ -151,6 +151,7 @@ export class RdfService {
             SCAN: '',
             APPNAME,
             FORMNAME: `FT${id.substr(-4)}`,
+            // FORMNAME: `FORMTESTING`,
             FORMTITLE: name,
             STATUS: 'PUBLISHED',
             IMAGECONTENT: '',

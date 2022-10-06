@@ -132,7 +132,7 @@
               matTooltip="Add Section"
               matTooltipPosition="right"
               [disabled]="disableFormFields"
-              (click)="addSection()"
+              (click)="addSection(i)"
               style="position: relative; left: 118px; top: 45px; float: right"
             >
               <img
@@ -165,7 +165,10 @@
                 cdkDrag
                 *ngFor="let question of getQuestions(section); let j = index"
               >
-                <div [formGroupName]="j" (click)="showAndHideContent[j] = true">
+                <div
+                  [formGroupName]="j"
+                  (click)="toggleFieldContentOpenState(i, j)"
+                >
                   <div class="dis-flex">
                     <input
                       type="hidden"
@@ -367,9 +370,8 @@
                       </mat-card-content>
                     </mat-card>
                   </div>
-
                   <div
-                    *ngIf="showAndHideContent[j] === true"
+                    *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     style="
                       background: #f3f3f3;
                       border-radius: 7px;
