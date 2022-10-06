@@ -18,12 +18,21 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'create-form',
+        path: 'create',
         component: CreateFormComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Untitled Form', alias: 'formName' },
-          permissions: [permissions.createForms]
+          permissions: [permissions.createForm]
+        }
+      },
+      {
+        path: 'edit/:id',
+        component: CreateFormComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Edit Form', alias: 'formName' },
+          permissions: [permissions.updateForm]
         }
       }
     ]

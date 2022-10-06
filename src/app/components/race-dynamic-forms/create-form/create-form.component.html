@@ -16,6 +16,7 @@
           placeholder="Untitled Form"
           autofocus="true"
           autocomplete="off"
+          (blur)="setFormTitle()"
         />
       </a>
       <a class="form-description">
@@ -37,7 +38,11 @@
         (click)="publishForm()"
         mat-raised-button
         class="b-r-8 publish-btn"
-        [disabled]="disableFormFields"
+        [disabled]="
+          disableFormFields ||
+          publishInProgress ||
+          createForm.get('isPublishedTillSave').value
+        "
       >
         <span>
           <img
@@ -164,6 +169,7 @@
                     style="margin-left: 10px"
                   >
                     <input
+                      autocomplete="off"
                       type="text"
                       matInput
                       formControlName="name"

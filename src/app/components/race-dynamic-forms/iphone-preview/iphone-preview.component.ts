@@ -9,7 +9,6 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 export class IphonePreviewComponent implements OnInit, OnDestroy {
   private _formData;
   @Input() set formData(data) {
-    console.log(data);
     this._formData = data;
   }
   get formData() {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray } from 'rxjs/operators';
+import { map, mergeMap, tap, toArray } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -47,24 +47,54 @@ export class RdfService {
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
-          return this.appService._postData(
+          return this.createAbapForm$(rest).pipe(
+            map((resp) => {
+              console.log({ id: rest.UNIQUEKEY });
+              return Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY;
+            })
+          );
+          /* this.appService._postData(
             environment.rdfApiUrl,
             'abap/forms',
             rest,
             info
-          );
+          ); */
         } else {
-          return this.appService._updateData(
+          return this.updateAbapForm$(rest).pipe(
+            map((resp) => {
+              console.log({ id: rest.UNIQUEKEY });
+              return Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY;
+            })
+          );
+          /* this.appService._updateData(
             environment.rdfApiUrl,
             'abap/forms',
             rest,
             info
-          );
+          ); */
         }
       }),
-      toArray()
+      toArray(),
+      tap(console.log)
     );
   };
+
+  createAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
+
+  updateAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms`,
+      form,
+      info
+    );
 
   getFormPayload(form) {
     let payloads = [];
@@ -75,71 +105,98 @@ export class RdfService {
         name: sectionName,
         position: sectionPosition
       } = section;
-      payloads = questions.map((question) => {
-        const {
-          id: questionId,
-          name: questionName,
-          position: questionPosition,
-          fieldType,
-          required,
-          isPublished
-        } = question;
-        return {
-          UNIQUEKEY: questionId,
-          VALIDFROM,
-          VALIDTO,
-          VERSION,
-          SECTIONNAME: sectionName,
-          REFFIELD: '',
-          SUBFORMNAME: '',
-          FIELDLABEL: questionName,
-          PLACEHOLDER: '',
-          UIPOSITION: `${questionPosition}`,
-          UIFIELDTYPE: fieldType,
-          DDVALUE: '',
-          DDTABNAME: '',
-          DDFIELDNAME: '',
-          TEXTREQ: '',
-          TEXTFIELDNAME: '',
-          TEXTKEYFNAME: '',
-          TEXTTABLE: '',
-          DESCRIPTIONALT: '',
-          ALIGNMENT: '',
-          DISPLAYSIZE: '',
-          ACTIVE: 'X',
-          INSTRUCTION: '',
-          TEXTSTYLE: '',
-          TEXTCOLOR: '',
-          MANDATORY: required ? 'X' : '',
-          FOLLOWUPIND: '',
-          FOLLOWUPVALUE: '',
-          OVERVIEW: '',
-          DETAIL: '',
-          SENDEMAIL: '',
-          UIVALIDATIONMSG: '',
-          UIVALIDATION: '',
-          EMAILCONDITION: '',
-          SENDTO: '',
-          SUBJECT: '',
-          MESSAGEBODY: '',
-          SECTIONPOSITION: `${sectionPosition}`,
-          DEFAULTVALUE: '',
-          APITYPE: '',
-          APINAME: '',
-          APIFIELD: '',
-          APIKEYS: '',
-          BOSTATUS: '',
-          SCAN: '',
-          APPNAME,
-          FORMNAME: `FT${id.substr(-4)}`,
-          FORMTITLE: name,
-          STATUS: 'PUBLISHED',
-          IMAGECONTENT: '',
-          ELEMENTTYPE: 'MULTIFORMTAB',
-          PUBLISHED: isPublished
-        };
-      });
+      payloads = questions
+        .map((question) => {
+          const {
+            id: questionId,
+            name: questionName,
+            position: questionPosition,
+            fieldType,
+            required,
+            isPublished,
+            isPublishedTillSave
+          } = question;
+
+          if (isPublishedTillSave) {
+            return null;
+          }
+          return {
+            UNIQUEKEY: questionId,
+            VALIDFROM,
+            VALIDTO,
+            VERSION,
+            SECTIONNAME: sectionName,
+            REFFIELD: '',
+            SUBFORMNAME: '',
+            FIELDLABEL: questionName,
+            PLACEHOLDER: '',
+            UIPOSITION: questionPosition.toString(),
+            UIFIELDTYPE: fieldType,
+            DDVALUE: '',
+            DDTABNAME: '',
+            DDFIELDNAME: '',
+            TEXTREQ: '',
+            TEXTFIELDNAME: '',
+            TEXTKEYFNAME: '',
+            TEXTTABLE: '',
+            DESCRIPTIONALT: '',
+            ALIGNMENT: '',
+            DISPLAYSIZE: '',
+            ACTIVE: 'X',
+            INSTRUCTION: '',
+            TEXTSTYLE: '',
+            TEXTCOLOR: '',
+            MANDATORY: required ? 'X' : '',
+            FOLLOWUPIND: '',
+            FOLLOWUPVALUE: '',
+            OVERVIEW: '',
+            DETAIL: '',
+            SENDEMAIL: '',
+            UIVALIDATIONMSG: '',
+            UIVALIDATION: '',
+            EMAILCONDITION: '',
+            SENDTO: '',
+            SUBJECT: '',
+            MESSAGEBODY: '',
+            SECTIONPOSITION: sectionPosition.toString(),
+            DEFAULTVALUE: this.getDefaultValue(question),
+            APITYPE: '',
+            APINAME: '',
+            APIFIELD: '',
+            APIKEYS: '',
+            BOSTATUS: '',
+            SCAN: '',
+            APPNAME,
+            FORMNAME: `FT${id.substr(-4)}`,
+            FORMTITLE: name,
+            STATUS: 'PUBLISHED',
+            IMAGECONTENT: '',
+            ELEMENTTYPE: 'MULTIFORMTAB',
+            PUBLISHED: isPublished,
+            ...this.getSliderProperties(question)
+          };
+        })
+        .filter((payload) => payload);
     });
     return payloads;
+  }
+
+  getDefaultValue(question) {
+    return question.fieldType === 'LF' ? question.value : '';
+  }
+
+  getSliderProperties(question) {
+    const {
+      value: { min, max, increment },
+      fieldType
+    } = question;
+    if (fieldType === 'RT') {
+      return {
+        MINVAL: min.toString(),
+        MAXVAL: max.toString(),
+        RINTERVAL: increment.toString()
+      };
+    }
+    return null;
   }
 }

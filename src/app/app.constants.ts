@@ -42,9 +42,9 @@ export const permissions = Object.freeze({
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
   viewForms: 'VIEW_FORM',
-  createForms: 'CREATE_FORM',
-  updateForms: 'UPDATE_FORM',
-  deleteForms: 'DELETE_FORM'
+  createForm: 'CREATE_FORM',
+  updateForm: 'UPDATE_FORM',
+  deleteForm: 'DELETE_FORM'
 });
 
 export const routingUrls = {

@@ -1,13 +1,21 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   debounceTime,
+  delay,
   distinctUntilChanged,
   filter,
+  pairwise,
   switchMap,
   tap
 } from 'rxjs/operators';
+import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
@@ -23,11 +31,11 @@ export class CreateFormComponent implements OnInit {
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
-  formHeader: string;
   isOpenState = true;
   isSectionNameEditMode = true;
   fieldTypes: any = [{ type: 'TF', description: 'Text Answer' }];
   createInProgress = false;
+  publishInProgress = false;
   disableFormFields = true;
   status$ = new BehaviorSubject<string>('');
   setFieldType;
@@ -42,7 +50,8 @@ export class CreateFormComponent implements OnInit {
     private fb: FormBuilder,
     private rdfService: RdfService,
     private breadcrumbService: BreadcrumbService,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -51,8 +60,7 @@ export class CreateFormComponent implements OnInit {
       name: [''],
       description: [''],
       counter: [1],
-      sections: this.fb.array([this.initSection('Q1')]),
-      isPublished: [false],
+      sections: this.fb.array([this.initSection(1, 1)]),
       isPublishedTillSave: [false]
     });
     this.rdfService
@@ -69,9 +77,16 @@ export class CreateFormComponent implements OnInit {
           const displayName = formName.trim()
             ? formName
             : this.defaultFormHeader;
-          this.formHeader = displayName;
           this.breadcrumbService.set('@formName', { label: displayName });
           this.headerService.setHeaderTitle(displayName);
+          const form = this.createForm.getRawValue();
+          form.sections.forEach((section) => {
+            section.questions.forEach((question) => {
+              question.isPublishedTillSave = false;
+            });
+          });
+          form.isPublishedTillSave = false;
+          this.createForm.patchValue(form, { emitEvent: false });
         }),
         filter(() => this.createInProgress === false),
         switchMap(() => this.saveForm())
@@ -81,9 +96,32 @@ export class CreateFormComponent implements OnInit {
     this.createForm
       .get('sections')
       .valueChanges.pipe(
+        pairwise(),
         debounceTime(1000),
         distinctUntilChanged(),
         filter(() => this.createForm.get('id').value),
+        tap(([prev, curr]) => {
+          curr.forEach(({ questions: cq, ...currSection }, i) => {
+            const { questions: pq, ...prevSection } = prev[i];
+            console.log(`section${i + 1}:`, isEqual(currSection, prevSection));
+            if (isEqual(currSection, prevSection)) {
+              cq.forEach((q, j) => {
+                console.log(`question${j + 1}:`, isEqual(q, pq[j]));
+                if (!isEqual(q, pq[j])) {
+                  q.isPublishedTillSave = false;
+                }
+              });
+            } else {
+              cq.forEach((q) => {
+                q.isPublishedTillSave = false;
+              });
+            }
+          });
+          this.createForm.patchValue(
+            { sections: curr, isPublishedTillSave: false },
+            { emitEvent: false }
+          );
+        }),
         switchMap(() => this.saveForm())
       )
       .subscribe();
@@ -100,6 +138,13 @@ export class CreateFormComponent implements OnInit {
     // this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
+  setFormTitle() {
+    const formName = this.createForm.get('name').value;
+    this.createForm.patchValue({
+      name: formName.trim() ? formName : this.defaultFormHeader
+    });
+  }
+
   getQuestions(form) {
     return form.controls.questions.controls;
   }
@@ -110,32 +155,33 @@ export class CreateFormComponent implements OnInit {
 
   addSection() {
     const control = this.createForm.get('sections') as FormArray;
-    control.push(this.initSection(`Q${this.getCounter()}`));
+    control.push(this.initSection(control.length + 1, this.getCounter()));
   }
 
   addQuestion(j) {
     const control = (this.createForm.get('sections') as FormArray).controls[
       j
     ].get('questions') as FormArray;
-    control.push(this.initQuestion(`Q${this.getCounter()}`));
+    control.push(this.initQuestion(this.getCounter()));
   }
 
-  initQuestion = (id) =>
+  initQuestion = (counter: number) =>
     this.fb.group({
-      id: [id],
+      id: [`Q${counter}`],
       name: [''],
       fieldType: ['TF'],
       position: [''],
-      require: [false],
+      required: [false],
+      value: [''],
       isPublished: [false],
-      value: ['']
+      isPublishedTillSave: [false]
     });
 
-  initSection = (id) =>
+  initSection = (sc: number, qc: number) =>
     this.fb.group({
-      name: [{ value: '', disabled: true }],
+      name: [{ value: `Section ${sc}`, disabled: true }],
       position: [''],
-      questions: this.fb.array([this.initQuestion(id)])
+      questions: this.fb.array([this.initQuestion(qc)])
     });
 
   editSection(e) {
@@ -143,8 +189,55 @@ export class CreateFormComponent implements OnInit {
   }
 
   publishForm() {
+    let publishedCount = 0;
     const form = this.createForm.getRawValue();
-    this.rdfService.publishForm$(form).subscribe();
+    this.publishInProgress = true;
+    const questions = ['Q1'];
+
+    /* of(true)
+      .pipe(
+        delay(2000),
+        tap(() => {
+          this.publishInProgress = false;
+          form.sections.forEach((section) => {
+            section.questions.forEach((question) => {
+              if (questions.includes(question.id)) {
+                publishedCount++;
+                question.isPublished = true;
+                question.isPublishedTillSave = true;
+              }
+            });
+          });
+          if (publishedCount === questions.length) {
+            form.isPublishedTillSave = true;
+          }
+          this.createForm.patchValue(form, { emitEvent: false });
+        }),
+        switchMap(() => this.saveForm(true))
+      )
+      .subscribe(() => this.cdrf.markForCheck()); */
+    this.rdfService
+      .publishForm$(form)
+      .pipe(
+        tap((response) => {
+          form.sections.forEach((section) => {
+            section.questions.forEach((question) => {
+              if (response.includes(question.id)) {
+                publishedCount++;
+                question.isPublished = true;
+                question.isPublishedTillSave = true;
+              }
+            });
+          });
+          if (publishedCount === response.length) {
+            form.isPublishedTillSave = true;
+          }
+          this.createForm.patchValue(form, { emitEvent: false });
+          this.publishInProgress = false;
+        }),
+        switchMap(() => this.saveForm(true))
+      )
+      .subscribe(() => this.cdrf.markForCheck());
   }
 
   getFieldTypeImage(type) {
@@ -157,11 +250,13 @@ export class CreateFormComponent implements OnInit {
       : null;
   }
 
-  saveForm() {
+  saveForm(ignoreProgress = false) {
     const { id, ...form } = this.createForm.getRawValue();
 
     if (id) {
-      this.status$.next(this.saveProgress);
+      if (!ignoreProgress) {
+        this.status$.next(this.saveProgress);
+      }
       return this.rdfService.updateForm$(id, form).pipe(
         tap(() => {
           this.status$.next(this.changesSaved);
