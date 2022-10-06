@@ -203,7 +203,7 @@
                       <button
                         cdkOverlayOrigin
                         #trigger="cdkOverlayOrigin"
-                        (click)="isPopoverOpen[i] = true"
+                        (click)="togglePopOverOpenState(i, j)"
                         class="response-type-btn"
                       >
                         <img
@@ -230,14 +230,16 @@
                         cdkConnectedOverlayPanelClass="custom-popover"
                         cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
                         [cdkConnectedOverlayHasBackdrop]="true"
-                        [cdkConnectedOverlayOpen]="isPopoverOpen[i]"
+                        [cdkConnectedOverlayOpen]="
+                          popOverOpenState[i + 1][j + 1]
+                        "
                         [cdkConnectedOverlayOrigin]="trigger"
                         cdkConnectedOverlayWidth="400px"
-                        (backdropClick)="isPopoverOpen[i] = false"
+                        (backdropClick)="togglePopOverOpenState(i, j)"
                       >
                         <div class="response-type-modal">
                           <h1>
-                            <mat-icon (click)="isPopoverOpen[i] = false">
+                            <mat-icon (click)="togglePopOverOpenState(i, j)">
                               clear
                             </mat-icon>
                             <span
@@ -253,7 +255,8 @@
                               <li
                                 *ngFor="let fieldType of fieldTypes"
                                 (click)="
-                                  selectFieldType(fieldType, question, j)
+                                  selectFieldType(fieldType, question);
+                                  togglePopOverOpenState(i, j)
                                 "
                                 class="response-field-types"
                               >

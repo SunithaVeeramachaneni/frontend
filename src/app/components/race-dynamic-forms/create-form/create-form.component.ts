@@ -52,6 +52,7 @@ export class CreateFormComponent implements OnInit {
     increment: 1
   };
   isPopoverOpen = [false];
+  popOverOpenState = {};
   fieldContentOpenState = {};
 
   constructor(
@@ -196,6 +197,7 @@ export class CreateFormComponent implements OnInit {
   initQuestion = (sc: number, qc: number, uqc: number) => {
     if (!this.fieldContentOpenState[sc][qc])
       this.fieldContentOpenState[sc][qc] = false;
+    if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
     return this.fb.group({
       id: [`Q${uqc}`],
       name: [''],
@@ -211,6 +213,8 @@ export class CreateFormComponent implements OnInit {
   initSection = (sc: number, qc: number, uqc: number) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
+    if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
+
     return this.fb.group({
       uid: [`uid${sc}`],
       name: [{ value: `Section ${sc}`, disabled: true }],
@@ -228,6 +232,11 @@ export class CreateFormComponent implements OnInit {
       this.fieldContentOpenState[sectionIndex + 1][key] = false;
     });
     this.fieldContentOpenState[sectionIndex + 1][questionIndex + 1] = true;
+  };
+
+  togglePopOverOpenState = (sectionIndex, questionIndex) => {
+    this.popOverOpenState[sectionIndex + 1][questionIndex + 1] =
+      !this.popOverOpenState[sectionIndex + 1][questionIndex + 1];
   };
 
   editSection(e) {
@@ -317,9 +326,8 @@ export class CreateFormComponent implements OnInit {
     this.isCustomizerOpen = false;
   }
 
-  selectFieldType(fieldType, question, index) {
+  selectFieldType(fieldType, question) {
     this.isCustomizerOpen = true;
     question.get('fieldType').setValue(fieldType.type);
-    this.isPopoverOpen[index] = false;
   }
 }
