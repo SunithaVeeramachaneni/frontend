@@ -108,6 +108,7 @@ select:focus {
 .six-dots {
   position: relative;
   top: 3px;
+  cursor: move;
 }
 
 .response-type-modal {
@@ -191,4 +192,14 @@ select:focus {
 
 .cdk-drag-placeholder {
   opacity: 0;
+}
+
+.empty-section {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: lightgray;
+  font-style: italic;
+  font-weight: 100;
 }
