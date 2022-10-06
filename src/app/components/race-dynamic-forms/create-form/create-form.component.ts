@@ -51,7 +51,8 @@ export class CreateFormComponent implements OnInit {
     max: 100,
     increment: 1
   };
-  showAndHideContent = [false];
+  showAndHideContent = [];
+  showAndHideConetentState = {};
 
   constructor(
     private fb: FormBuilder,
@@ -62,6 +63,8 @@ export class CreateFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.setShowAndHideContents(1, 1);
+    console.log(this.showAndHideContent);
     this.createForm = this.fb.group({
       id: [''],
       name: [''],
@@ -177,9 +180,13 @@ export class CreateFormComponent implements OnInit {
     return form.controls.sections.controls;
   }
 
-  addSection() {
+  addSection(index: number) {
     const control = this.createForm.get('sections') as FormArray;
-    control.push(this.initSection(control.length + 1, this.getCounter()));
+    control.insert(
+      index + 1,
+      this.initSection(control.length + 1, this.getCounter())
+    );
+    this.setShowAndHideContents(control.length + 1, 1);
   }
 
   addQuestion(j) {
@@ -203,7 +210,7 @@ export class CreateFormComponent implements OnInit {
 
   initSection = (sc: number, qc: number) =>
     this.fb.group({
-      uid: [{ value: `uid${sc}` }],
+      uid: [`uid${sc}`],
       name: [{ value: `Section ${sc}`, disabled: true }],
       position: [''],
       questions: this.fb.array([this.initQuestion(qc)])
@@ -259,11 +266,13 @@ export class CreateFormComponent implements OnInit {
           }
           this.createForm.patchValue(form, { emitEvent: false });
           this.publishInProgress = false;
-          this.status$.next(this.changesPublished);
         }),
         switchMap(() => this.saveForm(true))
       )
-      .subscribe(() => this.cdrf.markForCheck());
+      .subscribe(() => {
+        this.status$.next(this.changesPublished);
+        this.cdrf.markForCheck();
+      });
   }
 
   getFieldTypeImage(type) {
@@ -315,5 +324,14 @@ export class CreateFormComponent implements OnInit {
   applySliderOptions(values, question) {
     question.get('value').setValue(values);
     this.isCustomizerOpen = false;
+  }
+
+  setShowAndHideContents(sc, qc) {
+    console.log(this.showAndHideContent);
+    this.showAndHideContent = [...Array(sc)].map(() =>
+      new Array(qc).fill(false)
+    );
+
+    console.log(this.showAndHideContent);
   }
 }

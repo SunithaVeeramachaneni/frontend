@@ -128,7 +128,7 @@
             <button
               mat-icon-button
               [disabled]="disableFormFields"
-              (click)="addSection()"
+              (click)="addSection(i)"
               style="position: relative; left: 118px; top: 45px; float: right"
             >
               <img
@@ -161,7 +161,16 @@
                 cdkDrag
                 *ngFor="let question of getQuestions(section); let j = index"
               >
-                <div [formGroupName]="j" (click)="showAndHideContent[j] = true">
+                <div
+                  [formGroupName]="j"
+                  (click)="
+                    setShowAndHideContents(
+                      getSections(createForm).length,
+                      getQuestions(section).length
+                    );
+                    showAndHideContent[i][j] = true
+                  "
+                >
                   <div class="dis-flex">
                     <input
                       type="hidden"
@@ -304,7 +313,7 @@
                   </div>
 
                   <div
-                    *ngIf="showAndHideContent[j] === true"
+                    *ngIf="showAndHideContent[i][j] === true"
                     style="
                       background: #f3f3f3;
                       border-radius: 7px;
