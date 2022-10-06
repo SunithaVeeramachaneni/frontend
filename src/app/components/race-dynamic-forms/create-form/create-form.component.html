@@ -69,15 +69,15 @@
             "
           >
             <mat-icon
-              (click)="isOpenState = false"
-              *ngIf="isOpenState === true"
+              (click)="toggleOpenState(i)"
+              *ngIf="isOpenState[i + 1] === true"
               class="section-arrow"
             >
               keyboard_arrow_down
             </mat-icon>
             <mat-icon
-              (click)="isOpenState = true"
-              *ngIf="isOpenState === false"
+              (click)="toggleOpenState(i)"
+              *ngIf="isOpenState[i + 1] === false"
               class="section-arrow"
             >
               keyboard_arrow_right
@@ -138,7 +138,7 @@
             </button>
           </div>
           <div
-            *ngIf="isOpenState === true"
+            *ngIf="isOpenState[i + 1] === true"
             style="background-color: #ffffff; padding-bottom: 10px"
             formArrayName="questions"
           >

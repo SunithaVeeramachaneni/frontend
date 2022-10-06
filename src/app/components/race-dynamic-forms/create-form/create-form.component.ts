@@ -37,7 +37,7 @@ export class CreateFormComponent implements OnInit {
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
   changesPublished = 'All Changes published';
-  isOpenState = true;
+  public isOpenState = {};
   isSectionNameEditMode = true;
   fieldTypes: any = [{ type: 'TF', description: 'Text Answer' }];
   createInProgress = false;
@@ -110,10 +110,8 @@ export class CreateFormComponent implements OnInit {
         tap(([prev, curr]) => {
           curr.forEach(({ questions: cq, ...currSection }, i) => {
             const { questions: pq, ...prevSection } = prev[i];
-            console.log(`section${i + 1}:`, isEqual(currSection, prevSection));
             if (isEqual(currSection, prevSection)) {
               cq.forEach((q, j) => {
-                console.log(`question${j + 1}:`, isEqual(q, pq[j]));
                 if (!isEqual(q, pq[j])) {
                   q.isPublishedTillSave = false;
                 }
@@ -201,13 +199,19 @@ export class CreateFormComponent implements OnInit {
       isPublishedTillSave: [false]
     });
 
-  initSection = (sc: number, qc: number) =>
-    this.fb.group({
+  initSection = (sc: number, qc: number) => {
+    if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
+    return this.fb.group({
       uid: [{ value: `uid${sc}` }],
       name: [{ value: `Section ${sc}`, disabled: true }],
       position: [''],
       questions: this.fb.array([this.initQuestion(qc)])
     });
+  };
+
+  toggleOpenState = (idx: number) => {
+    this.isOpenState[idx + 1] = !this.isOpenState[idx + 1];
+  };
 
   editSection(e) {
     e.get('name').enable();
