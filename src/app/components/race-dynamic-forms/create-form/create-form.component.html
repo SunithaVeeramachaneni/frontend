@@ -197,48 +197,109 @@
                     </div>
 
                     <div class="width-30">
-                      <mat-form-field appearance="outline">
-                        <mat-select
-                          placeholder="Select Response"
-                          formControlName="fieldType"
+                      <button
+                        cdkOverlayOrigin
+                        #trigger="cdkOverlayOrigin"
+                        (click)="isPopoverOpen[i] = true"
+                        class="response-type-btn"
+                      >
+                        <img
+                          [src]="
+                            getFieldTypeImage(question.controls.fieldType.value)
+                          "
+                        />&nbsp;
+                        <span>
+                          {{
+                            getFieldTypeDescription(
+                              question.controls.fieldType.value
+                            )
+                          }}
+                        </span>
+                        <mat-icon
+                          style="float: right; position: relative; top: -4px"
                         >
-                          <mat-select-trigger>
-                            <img
-                              [src]="
-                                getFieldTypeImage(
-                                  question.controls.fieldType.value
-                                )
-                              "
-                            />&nbsp;
-                            <span style="position: relative; top: -2px">{{
-                              getFieldTypeDescription(
-                                question.controls.fieldType.value
-                              )
-                            }}</span>
-                          </mat-select-trigger>
-                          <mat-option
-                            *ngFor="let fieldType of fieldTypes"
-                            [value]="fieldType.type"
-                            (click)="
-                              isCustomizerOpen = true;
-                              setFieldType = fieldType.type
-                            "
-                          >
-                            <img
-                              [src]="getFieldTypeImage(fieldType.type)"
-                            />&nbsp;
-                            <span style="position: relative; top: -2px">
-                              {{ fieldType.description }}
+                          keyboard_arrow_down
+                        </mat-icon>
+                      </button>
+
+                      <ng-template
+                        cdkConnectedOverlay
+                        cdkConnectedOverlayPanelClass="custom-popover"
+                        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                        [cdkConnectedOverlayHasBackdrop]="true"
+                        [cdkConnectedOverlayOpen]="isPopoverOpen[i]"
+                        [cdkConnectedOverlayOrigin]="trigger"
+                        cdkConnectedOverlayWidth="400px"
+                        (backdropClick)="isPopoverOpen[i] = false"
+                      >
+                        <div class="response-type-modal">
+                          <h1>
+                            <mat-icon (click)="isPopoverOpen[i] = false">
+                              clear
+                            </mat-icon>
+                            <span
+                              style="position: relative; top: -7px; left: 5px"
+                            >
+                              Responses
                             </span>
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
+                          </h1>
+
+                          <div class="dis-flex content">
+                            <div class="width-50">
+                              <h2 style="color: #e8743b">QUESTIONS</h2>
+                              <li
+                                *ngFor="let fieldType of fieldTypes"
+                                (click)="
+                                  selectFieldType(fieldType, question, j)
+                                "
+                                class="response-field-types"
+                              >
+                                <img
+                                  [src]="getFieldTypeImage(fieldType.type)"
+                                />&nbsp;
+                                <span style="position: relative; top: -2px">
+                                  {{ fieldType.description }}
+                                </span>
+                              </li>
+                            </div>
+                            <div class="width-50">
+                              <div style="height: 50%">
+                                <h2 style="color: #e8743b">QUICK RESPONSES</h2>
+                                <button
+                                  style="
+                                    color: #3d5afe;
+                                    border: none;
+                                    background: none;
+                                  "
+                                >
+                                  Add New
+                                </button>
+                              </div>
+                              <div style="height: 50%">
+                                <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
+                                <button
+                                  style="
+                                    color: #3d5afe;
+                                    border: none;
+                                    background: none;
+                                  "
+                                >
+                                  Add Manually
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-template>
                     </div>
                   </div>
 
                   <div
                     id="app-customizer"
-                    *ngIf="isCustomizerOpen && setFieldType === 'RT'"
+                    *ngIf="
+                      isCustomizerOpen &&
+                      question.controls.fieldType.value === 'RT'
+                    "
                   >
                     <mat-card class="p-0">
                       <mat-card-title class="m-0 light-gray">

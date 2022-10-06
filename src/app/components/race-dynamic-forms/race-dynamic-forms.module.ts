@@ -34,6 +34,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { OverlayModule } from '@angular/cdk/overlay';
+
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
 
@@ -52,6 +54,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatSliderModule,
     MatTooltipModule,
+    OverlayModule,
     SharedModule,
     MatCardModule,
     NgxShimmerLoadingModule,

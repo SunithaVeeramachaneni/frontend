@@ -39,12 +39,12 @@ export class CreateFormComponent implements OnInit {
   changesPublished = 'All Changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
-  fieldTypes: any = [{ type: 'TF', description: 'Text Answer' }];
+  fieldType = { type: 'TF', description: 'Text Answer' };
+  fieldTypes: any = [this.fieldType];
   createInProgress = false;
   publishInProgress = false;
   disableFormFields = true;
   status$ = new BehaviorSubject<string>('');
-  setFieldType;
   isCustomizerOpen = false;
   sliderOptions = {
     min: 0,
@@ -52,6 +52,7 @@ export class CreateFormComponent implements OnInit {
     increment: 1
   };
   showAndHideContent = [false];
+  isPopoverOpen = [false];
 
   constructor(
     private fb: FormBuilder,
@@ -191,7 +192,7 @@ export class CreateFormComponent implements OnInit {
     this.fb.group({
       id: [`Q${counter}`],
       name: [''],
-      fieldType: ['TF'],
+      fieldType: [this.fieldType.type],
       position: [''],
       required: [false],
       value: [''],
@@ -319,5 +320,11 @@ export class CreateFormComponent implements OnInit {
   applySliderOptions(values, question) {
     question.get('value').setValue(values);
     this.isCustomizerOpen = false;
+  }
+
+  selectFieldType(fieldType, question, index) {
+    this.isCustomizerOpen = true;
+    question.get('fieldType').setValue(fieldType.type);
+    this.isPopoverOpen[index] = false;
   }
 }

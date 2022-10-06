@@ -110,6 +110,48 @@ select:focus {
   top: 3px;
 }
 
+.response-type-modal {
+  height: 500px;
+  width: 500px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid pink;
+  position: absolute;
+  left: 0%;
+  top: -230px;
+
+  h1 {
+    padding: 10px 10px 0 10px;
+  }
+
+  .content {
+    height: 70vh;
+    overflow-y: scroll;
+    padding: 0 15px;
+  }
+
+  .response-field-types {
+    padding: 10px 0 5px 10px;
+    margin: 5px 0;
+  }
+
+  .response-field-types:hover {
+    background-color: #ebedfe;
+  }
+}
+
+.response-type-btn {
+  background: white;
+  border: 1px solid #bac1c4;
+  border-radius: 5px;
+  height: 40px;
+  margin-top: 7px;
+  width: 80%;
+  text-align: left;
+  padding-left: 12px;
+  padding-top: 10px;
+}
+
 #app-customizer {
   position: fixed;
   bottom: 0px;
