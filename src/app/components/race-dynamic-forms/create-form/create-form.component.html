@@ -56,7 +56,7 @@
     </div>
   </div>
   <div class="dis-flex">
-    <div formArrayName="sections" class="width-70">
+    <div formArrayName="sections" class="width-70" cdkDropListGroup>
       <div *ngFor="let section of getSections(createForm); let i = index">
         <div style="padding: 10px" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
@@ -139,7 +139,7 @@
           </div>
           <div
             *ngIf="isOpenState === true"
-            style="background-color: #ffffff"
+            style="background-color: #ffffff; padding-bottom: 10px"
             formArrayName="questions"
           >
             <div class="dis-flex">
@@ -150,139 +150,216 @@
                 <p class="sub-headings">Response Type</p>
               </div>
             </div>
-            <div *ngFor="let question of getQuestions(section); let j = index">
-              <div [formGroupName]="j" class="dis-flex">
-                <input
-                  type="hidden"
-                  formControlName="position"
-                  [ngModel]="j + 1"
-                />
-                <div class="width-70">
-                  <img
-                    src="assets/rdf-forms-icons/six-dots.svg"
-                    alt="six-dots"
-                    class="m-l-10 six-dots"
-                  />
-                  <mat-form-field
-                    appearance="outline"
-                    class="width-90"
-                    style="margin-left: 10px"
+            <div
+              cdkDrop
+              cdkDropList
+              (cdkDropListDropped)="drop($event)"
+              [cdkDropListData]="getQuestions(section)"
+              [id]="section.id"
+            >
+              <div
+                cdkDrag
+                *ngFor="let question of getQuestions(section); let j = index"
+              >
+                <div [formGroupName]="j" (click)="showAndHideContent[j] = true">
+                  <div class="dis-flex">
+                    <input
+                      type="hidden"
+                      formControlName="position"
+                      [ngModel]="j + 1"
+                    />
+                    <div class="width-70">
+                      <img
+                        cdkDragHandle
+                        src="assets/rdf-forms-icons/six-dots.svg"
+                        alt="six-dots"
+                        class="m-l-10 six-dots"
+                      />
+                      <mat-form-field
+                        appearance="outline"
+                        class="width-90"
+                        style="margin-left: 10px"
+                      >
+                        <input
+                          autocomplete="off"
+                          type="text"
+                          matInput
+                          formControlName="name"
+                          placeholder="Type Question"
+                        />
+                        <!-- <quill-material formControlName="name" placeholder="">
+                    </quill-material> -->
+                      </mat-form-field>
+                    </div>
+
+                    <div class="width-30">
+                      <mat-form-field appearance="outline">
+                        <mat-select
+                          placeholder="Select Response"
+                          formControlName="fieldType"
+                        >
+                          <mat-select-trigger>
+                            <img
+                              [src]="
+                                getFieldTypeImage(
+                                  question.controls.fieldType.value
+                                )
+                              "
+                            />&nbsp;
+                            <span style="position: relative; top: -2px">{{
+                              getFieldTypeDescription(
+                                question.controls.fieldType.value
+                              )
+                            }}</span>
+                          </mat-select-trigger>
+                          <mat-option
+                            *ngFor="let fieldType of fieldTypes"
+                            [value]="fieldType.type"
+                            (click)="
+                              isCustomizerOpen = true;
+                              setFieldType = fieldType.type
+                            "
+                          >
+                            <img
+                              [src]="getFieldTypeImage(fieldType.type)"
+                            />&nbsp;
+                            <span style="position: relative; top: -2px">
+                              {{ fieldType.description }}
+                            </span>
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                  <div
+                    id="app-customizer"
+                    *ngIf="isCustomizerOpen && setFieldType === 'RT'"
+                  >
+                    <mat-card class="p-0">
+                      <mat-card-title class="m-0 light-gray">
+                        <div class="slider-heading">Slider</div>
+                      </mat-card-title>
+                      <mat-card-content>
+                        <div class="dis-flex">
+                          <div class="width-50">
+                            <label for="min">From</label><br />
+                            <input
+                              id="min"
+                              type="number"
+                              class="slider-inputs"
+                              [(ngModel)]="sliderOptions.min"
+                              [ngModelOptions]="{ standalone: true }"
+                            />
+                          </div>
+                          <div class="width-50" style="text-align: end">
+                            <label for="max">To</label><br />
+                            <input
+                              id="max"
+                              type="number"
+                              class="slider-inputs"
+                              [(ngModel)]="sliderOptions.max"
+                              [ngModelOptions]="{ standalone: true }"
+                            />
+                          </div>
+                        </div>
+                        <mat-slider
+                          [max]="sliderOptions.max"
+                          [min]="sliderOptions.min"
+                          [step]="sliderOptions.increment"
+                          class="width-100"
+                        >
+                        </mat-slider>
+                        <div>
+                          <label for="incre">Increment</label>
+                          <br />
+                          <input
+                            id="incre"
+                            type="number"
+                            class="slider-inputs"
+                            [(ngModel)]="sliderOptions.increment"
+                            [ngModelOptions]="{ standalone: true }"
+                          />
+                        </div>
+                        <br />
+                        <br />
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          style="width: 48%; margin-right: 10px"
+                          (click)="applySliderOptions(sliderOptions, question)"
+                        >
+                          Apply
+                        </button>
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          style="width: 48%"
+                          (click)="isCustomizerOpen = false"
+                        >
+                          Cancel
+                        </button>
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+
+                  <div
+                    *ngIf="showAndHideContent[j] === true"
+                    style="
+                      background: #f3f3f3;
+                      border-radius: 7px;
+                      padding: 5px;
+                      padding: 10px;
+                      margin: 0 50px;
+                    "
                   >
                     <input
-                      autocomplete="off"
-                      type="text"
-                      matInput
-                      formControlName="name"
-                      placeholder="Type Question"
-                    />
-                    <!-- <quill-material formControlName="name" placeholder="">
-                    </quill-material> -->
-                  </mat-form-field>
-                </div>
+                      type="checkbox"
+                      id="required"
+                      name="required"
+                      formControlName="required"
+                    />&nbsp;
+                    <label for="required">Required</label>
 
-                <div class="width-30">
-                  <mat-form-field appearance="outline">
-                    <mat-select
-                      placeholder="Select Response"
-                      formControlName="fieldType"
+                    <span
+                      *ngIf="question.controls.fieldType.value === 'LF'"
+                      style="margin-left: 50px"
                     >
-                      <mat-select-trigger>
-                        <img
-                          [src]="
-                            getFieldTypeImage(question.controls.fieldType.value)
-                          "
-                        />&nbsp;
-                        <span style="position: relative; top: -2px">{{
-                          getFieldTypeDescription(
-                            question.controls.fieldType.value
-                          )
-                        }}</span>
-                      </mat-select-trigger>
-                      <mat-option
-                        *ngFor="let fieldType of fieldTypes"
-                        [value]="fieldType.type"
-                        (click)="
-                          isCustomizerOpen = true; setFieldType = fieldType.type
+                      <label for="defaultValue">Default Value</label
+                      >&nbsp;&nbsp;
+                      <input
+                        type="text"
+                        id="defaultValue"
+                        formControlName="value"
+                        style="border: 1px solid #cccccc; border-radius: 3px"
+                      />
+                    </span>
+
+                    <span
+                      *ngIf="question.controls.fieldType.value === 'TF'"
+                      style="margin-left: 50px"
+                    >
+                      <label>Format:</label>&nbsp;
+
+                      <select
+                        formControlName="value"
+                        style="
+                          border: none;
+                          background: transparent;
+                          -webkit-appearance: none;
+                          width: 110px;
+                          color: #3d5afe;
                         "
                       >
-                        <img [src]="getFieldTypeImage(fieldType.type)" />&nbsp;
-                        <span style="position: relative; top: -2px">
-                          {{ fieldType.description }}
-                        </span>
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <div
-                  id="app-customizer"
-                  *ngIf="isCustomizerOpen && setFieldType === 'RT'"
-                >
-                  <mat-card class="p-0">
-                    <mat-card-title class="m-0 light-gray">
-                      <div class="slider-heading">Slider</div>
-                    </mat-card-title>
-                    <mat-card-content>
-                      <div class="dis-flex">
-                        <div class="width-50">
-                          <label for="min">From</label><br />
-                          <input
-                            id="min"
-                            type="number"
-                            class="slider-inputs"
-                            [(ngModel)]="sliderOptions.min"
-                            [ngModelOptions]="{ standalone: true }"
-                          />
-                        </div>
-                        <div class="width-50" style="text-align: end">
-                          <label for="max">To</label><br />
-                          <input
-                            id="max"
-                            type="number"
-                            class="slider-inputs"
-                            [(ngModel)]="sliderOptions.max"
-                            [ngModelOptions]="{ standalone: true }"
-                          />
-                        </div>
-                      </div>
-                      <mat-slider
-                        [max]="sliderOptions.max"
-                        [min]="sliderOptions.min"
-                        [step]="sliderOptions.increment"
-                        class="width-100"
-                      >
-                      </mat-slider>
-                      <div>
-                        <label for="incre">Increment</label>
-                        <br />
-                        <input
-                          id="incre"
-                          type="number"
-                          class="slider-inputs"
-                          [(ngModel)]="sliderOptions.increment"
-                          [ngModelOptions]="{ standalone: true }"
-                        />
-                      </div>
-                      <br />
-                      <br />
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        style="width: 48%; margin-right: 10px"
-                        (click)="applySliderOptions(sliderOptions, question)"
-                      >
-                        Apply
-                      </button>
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        style="width: 48%"
-                        (click)="isCustomizerOpen = false"
-                      >
-                        Cancel
-                      </button>
-                    </mat-card-content>
-                  </mat-card>
+                        <option value="TF" style="padding: 10px">
+                          Short Answer
+                        </option>
+                        <option value="LTV" style="padding: 10px">
+                          Long Answer
+                        </option>
+                      </select>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

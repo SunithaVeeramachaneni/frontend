@@ -19,6 +19,11 @@ import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { RdfService } from '../services/rdf.service';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-create-form',
@@ -46,6 +51,7 @@ export class CreateFormComponent implements OnInit {
     max: 100,
     increment: 1
   };
+  showAndHideContent = [false];
 
   constructor(
     private fb: FormBuilder,
@@ -146,6 +152,23 @@ export class CreateFormComponent implements OnInit {
     });
   }
 
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    }
+  }
+
   getQuestions(form) {
     return form.controls.questions.controls;
   }
@@ -180,6 +203,7 @@ export class CreateFormComponent implements OnInit {
 
   initSection = (sc: number, qc: number) =>
     this.fb.group({
+      uid: [{ value: `uid${sc}` }],
       name: [{ value: `Section ${sc}`, disabled: true }],
       position: [''],
       questions: this.fb.array([this.initQuestion(qc)])

@@ -17,6 +17,10 @@ input[type='text']:focus {
   caret-color: #007aff;
 }
 
+select:focus {
+  outline: none;
+}
+
 .form_title_input {
   border: none;
   cursor: pointer;
@@ -141,4 +145,8 @@ input[type='text']:focus {
     border: 1px solid #bac1c4;
     border-radius: 4px;
   }
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
 }

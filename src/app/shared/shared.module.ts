@@ -105,6 +105,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     TranslateModule.forChild({})
   ],
   exports: [
+    DragDropModule,
     CustomPaginationControlsComponent,
     DummyComponent,
     TimeAgoPipe,
