@@ -17,6 +17,10 @@ input[type='text']:focus {
   caret-color: #007aff;
 }
 
+select:focus {
+  outline: none;
+}
+
 .form_title_input {
   border: none;
   cursor: pointer;

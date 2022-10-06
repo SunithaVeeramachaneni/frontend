@@ -139,7 +139,7 @@
           </div>
           <div
             *ngIf="isOpenState === true"
-            style="background-color: #ffffff"
+            style="background-color: #ffffff; padding-bottom: 10px"
             formArrayName="questions"
           >
             <div class="dis-flex">
@@ -161,73 +161,75 @@
                 cdkDrag
                 *ngFor="let question of getQuestions(section); let j = index"
               >
-                <div [formGroupName]="j" class="dis-flex">
-                  <input
-                    type="hidden"
-                    formControlName="position"
-                    [ngModel]="j + 1"
-                  />
-                  <div class="width-70">
-                    <img
-                      cdkDragHandle
-                      src="assets/rdf-forms-icons/six-dots.svg"
-                      alt="six-dots"
-                      class="m-l-10 six-dots"
+                <div [formGroupName]="j" (click)="showAndHideContent[j] = true">
+                  <div class="dis-flex">
+                    <input
+                      type="hidden"
+                      formControlName="position"
+                      [ngModel]="j + 1"
                     />
-                    <mat-form-field
-                      appearance="outline"
-                      class="width-90"
-                      style="margin-left: 10px"
-                    >
-                      <input
-                        autocomplete="off"
-                        type="text"
-                        matInput
-                        formControlName="name"
-                        placeholder="Type Question"
+                    <div class="width-70">
+                      <img
+                        cdkDragHandle
+                        src="assets/rdf-forms-icons/six-dots.svg"
+                        alt="six-dots"
+                        class="m-l-10 six-dots"
                       />
-                      <!-- <quill-material formControlName="name" placeholder="">
-                    </quill-material> -->
-                    </mat-form-field>
-                  </div>
-
-                  <div class="width-30">
-                    <mat-form-field appearance="outline">
-                      <mat-select
-                        placeholder="Select Response"
-                        formControlName="fieldType"
+                      <mat-form-field
+                        appearance="outline"
+                        class="width-90"
+                        style="margin-left: 10px"
                       >
-                        <mat-select-trigger>
-                          <img
-                            [src]="
-                              getFieldTypeImage(
+                        <input
+                          autocomplete="off"
+                          type="text"
+                          matInput
+                          formControlName="name"
+                          placeholder="Type Question"
+                        />
+                        <!-- <quill-material formControlName="name" placeholder="">
+                    </quill-material> -->
+                      </mat-form-field>
+                    </div>
+
+                    <div class="width-30">
+                      <mat-form-field appearance="outline">
+                        <mat-select
+                          placeholder="Select Response"
+                          formControlName="fieldType"
+                        >
+                          <mat-select-trigger>
+                            <img
+                              [src]="
+                                getFieldTypeImage(
+                                  question.controls.fieldType.value
+                                )
+                              "
+                            />&nbsp;
+                            <span style="position: relative; top: -2px">{{
+                              getFieldTypeDescription(
                                 question.controls.fieldType.value
                               )
+                            }}</span>
+                          </mat-select-trigger>
+                          <mat-option
+                            *ngFor="let fieldType of fieldTypes"
+                            [value]="fieldType.type"
+                            (click)="
+                              isCustomizerOpen = true;
+                              setFieldType = fieldType.type
                             "
-                          />&nbsp;
-                          <span style="position: relative; top: -2px">{{
-                            getFieldTypeDescription(
-                              question.controls.fieldType.value
-                            )
-                          }}</span>
-                        </mat-select-trigger>
-                        <mat-option
-                          *ngFor="let fieldType of fieldTypes"
-                          [value]="fieldType.type"
-                          (click)="
-                            isCustomizerOpen = true;
-                            setFieldType = fieldType.type
-                          "
-                        >
-                          <img
-                            [src]="getFieldTypeImage(fieldType.type)"
-                          />&nbsp;
-                          <span style="position: relative; top: -2px">
-                            {{ fieldType.description }}
-                          </span>
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
+                          >
+                            <img
+                              [src]="getFieldTypeImage(fieldType.type)"
+                            />&nbsp;
+                            <span style="position: relative; top: -2px">
+                              {{ fieldType.description }}
+                            </span>
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
                   </div>
 
                   <div
@@ -299,6 +301,64 @@
                         </button>
                       </mat-card-content>
                     </mat-card>
+                  </div>
+
+                  <div
+                    *ngIf="showAndHideContent[j] === true"
+                    style="
+                      background: #f3f3f3;
+                      border-radius: 7px;
+                      padding: 5px;
+                      padding: 10px;
+                      margin: 0 50px;
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      id="required"
+                      name="required"
+                      formControlName="required"
+                    />&nbsp;
+                    <label for="required">Required</label>
+
+                    <span
+                      *ngIf="question.controls.fieldType.value === 'LF'"
+                      style="margin-left: 50px"
+                    >
+                      <label for="defaultValue">Default Value</label
+                      >&nbsp;&nbsp;
+                      <input
+                        type="text"
+                        id="defaultValue"
+                        formControlName="value"
+                        style="border: 1px solid #cccccc; border-radius: 3px"
+                      />
+                    </span>
+
+                    <span
+                      *ngIf="question.controls.fieldType.value === 'TF'"
+                      style="margin-left: 50px"
+                    >
+                      <label>Format:</label>&nbsp;
+
+                      <select
+                        formControlName="value"
+                        style="
+                          border: none;
+                          background: transparent;
+                          -webkit-appearance: none;
+                          width: 110px;
+                          color: #3d5afe;
+                        "
+                      >
+                        <option value="TF" style="padding: 10px">
+                          Short Answer
+                        </option>
+                        <option value="LTV" style="padding: 10px">
+                          Long Answer
+                        </option>
+                      </select>
+                    </span>
                   </div>
                 </div>
               </div>

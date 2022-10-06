@@ -50,6 +50,7 @@ export class CreateFormComponent implements OnInit {
     max: 100,
     increment: 1
   };
+  showAndHideContent = [false];
 
   constructor(
     private fb: FormBuilder,
