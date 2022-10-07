@@ -4,7 +4,7 @@
   </mat-card-title>
   <div [formGroup]="responseForm">
     <div class="width-70" formArrayName="responses">
-      <div *ngFor="let response of responses()">
+      <div *ngFor="let response of responses.controls">
         <input placeholder="Title" />
       </div>
     </div>
