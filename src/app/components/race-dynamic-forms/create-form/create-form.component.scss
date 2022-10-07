@@ -153,11 +153,14 @@ select:focus {
 }
 
 .delete-icon {
-  position: relative;
-  left: 44px;
   background: white;
   height: 28px;
+  position: relative;
+  left: 40px;
   padding: 10px;
+  top: -60px;
+  cursor: pointer;
+  width: 20px;
 }
 
 .more-icon {
