@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, tap, toArray } from 'rxjs/operators';
+import { map, mergeMap, toArray } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -40,27 +40,24 @@ export class RdfService {
   publishForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const payloads = this.getFormPayload(form);
-    return from(this.getFormPayload(form)).pipe(
+  ): Observable<any> =>
+    from(this.postOrPutFormPayload(form)).pipe(
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
-          return this.createAbapForm$(rest).pipe(
+          return this.createAbapForm$(rest, info).pipe(
             map((resp) =>
               Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
-          return this.updateAbapForm$(rest).pipe(
+          return this.updateAbapForm$(rest, info).pipe(
             map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
       }),
-      toArray(),
-      tap(console.log)
+      toArray()
     );
-  };
 
   createAbapForm$ = (
     form: any,
@@ -79,7 +76,7 @@ export class RdfService {
       info
     );
 
-  getFormPayload(form) {
+  postOrPutFormPayload(form) {
     let payloads = [];
     const { sections, name, id } = form;
     sections.forEach((section) => {
@@ -94,7 +91,6 @@ export class RdfService {
             id: questionId,
             name: questionName,
             position: questionPosition,
-            fieldType,
             required,
             isPublished,
             isPublishedTillSave
@@ -114,7 +110,7 @@ export class RdfService {
             FIELDLABEL: questionName,
             PLACEHOLDER: '',
             UIPOSITION: questionPosition.toString(),
-            UIFIELDTYPE: fieldType,
+            UIFIELDTYPE: this.getFieldType(question),
             DDVALUE: '',
             DDTABNAME: '',
             DDFIELDNAME: '',
@@ -182,5 +178,15 @@ export class RdfService {
       };
     }
     return null;
+  }
+
+  getFieldType(question) {
+    const { value, fieldType } = question;
+    switch (fieldType) {
+      case 'TF':
+        return value;
+      default:
+        return fieldType;
+    }
   }
 }

@@ -1,14 +1,16 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit
+  ElementRef,
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import {
   debounceTime,
-  delay,
   distinctUntilChanged,
   filter,
   pairwise,
@@ -31,16 +33,19 @@ import {
   styleUrls: ['./create-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateFormComponent implements OnInit {
+export class CreateFormComponent implements OnInit, AfterViewInit {
+  @ViewChild('name') private name: ElementRef;
   public createForm: FormGroup;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
+  publishingChanges = 'Publishing changes...';
   changesPublished = 'All Changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
+  filteredFieldTypes: any = [this.fieldType];
   createInProgress = false;
   publishInProgress = false;
   disableFormFields = true;
@@ -74,7 +79,17 @@ export class CreateFormComponent implements OnInit {
     });
     this.rdfService
       .getFieldTypes$()
-      .pipe(tap((fieldTypes) => (this.fieldTypes = fieldTypes)))
+      .pipe(
+        tap((fieldTypes) => {
+          this.fieldTypes = fieldTypes;
+          this.filteredFieldTypes = fieldTypes.filter(
+            (fieldType) =>
+              fieldType.type !== 'LTV' &&
+              fieldType.type !== 'DD' &&
+              fieldType.type !== 'DDM'
+          );
+        })
+      )
       .subscribe();
 
     this.createForm
@@ -145,6 +160,10 @@ export class CreateFormComponent implements OnInit {
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
+  ngAfterViewInit(): void {
+    this.name.nativeElement.focus();
+  }
+
   setFormTitle() {
     const formName = this.createForm.get('name').value;
     this.createForm.patchValue({
@@ -204,7 +223,7 @@ export class CreateFormComponent implements OnInit {
       fieldType: [this.fieldType.type],
       position: [''],
       required: [false],
-      value: [''],
+      value: ['TF'],
       isPublished: [false],
       isPublishedTillSave: [false]
     });
@@ -249,6 +268,7 @@ export class CreateFormComponent implements OnInit {
     let publishedCount = 0;
     const form = this.createForm.getRawValue();
     this.publishInProgress = true;
+    this.status$.next(this.publishingChanges);
 
     this.rdfService
       .publishForm$(form)
@@ -265,6 +285,7 @@ export class CreateFormComponent implements OnInit {
           });
           if (publishedCount === response.length) {
             form.isPublishedTillSave = true;
+            this.status$.next(this.changesPublished);
           }
           this.createForm.patchValue(form, { emitEvent: false });
           this.publishInProgress = false;
@@ -272,7 +293,6 @@ export class CreateFormComponent implements OnInit {
         switchMap(() => this.saveForm(true))
       )
       .subscribe(() => {
-        this.status$.next(this.changesPublished);
         this.cdrf.markForCheck();
       });
   }
@@ -330,6 +350,11 @@ export class CreateFormComponent implements OnInit {
 
   selectFieldType(fieldType, question) {
     this.isCustomizerOpen = true;
+    if (fieldType.type === 'TF') {
+      question.get('value').setValue('TF');
+    } else {
+      question.get('value').setValue('');
+    }
     question.get('fieldType').setValue(fieldType.type);
   }
 }

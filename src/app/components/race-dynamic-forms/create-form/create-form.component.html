@@ -10,6 +10,7 @@
     <div>
       <a class="form-title">
         <input
+          #name
           type="text"
           formControlName="name"
           class="form_title_input"
@@ -270,7 +271,7 @@
                             <div class="width-50">
                               <h2 style="color: #e8743b">QUESTIONS</h2>
                               <li
-                                *ngFor="let fieldType of fieldTypes"
+                                *ngFor="let fieldType of filteredFieldTypes"
                                 (click)="
                                   selectFieldType(fieldType, question);
                                   togglePopOverOpenState(i, j)
