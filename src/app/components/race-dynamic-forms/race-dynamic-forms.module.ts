@@ -84,7 +84,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     RaceDynamicFormsListViewComponent,
     RaceDynamicFormsContainerComponent,
     CreateFormComponent,
-    QuillMaterialComponent,
+    // QuillMaterialComponent,
     IphonePreviewComponent,
     AddLogicComponent,
     McqResponseComponent
