@@ -176,6 +176,16 @@ export class RdfService {
           FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
         };
         break;
+      case 'VI':
+        const { value } = question;
+        const ddVALUE = value.map((item, idx) => ({
+          [`LABEL${idx + 1}`]: item.title
+        }));
+        properties = {
+          ...properties,
+          DDVALUE: JSON.stringify(ddVALUE)
+        };
+        break;
       default:
       // do nothing
     }

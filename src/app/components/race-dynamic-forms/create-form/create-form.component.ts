@@ -411,6 +411,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       case 'TF':
         question.get('value').setValue('TF');
         break;
+      case 'VI':
+        this.isCustomizerOpen = true;
+        break;
       case 'RT':
         this.isCustomizerOpen = true;
         let sliderValue = {
