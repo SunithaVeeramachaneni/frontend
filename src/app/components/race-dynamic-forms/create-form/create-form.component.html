@@ -382,6 +382,8 @@
                           [max]="sliderOptions.max"
                           [min]="sliderOptions.min"
                           [step]="sliderOptions.increment"
+                          [(ngModel)]="sliderOptions.value"
+                          [ngModelOptions]="{ standalone: true }"
                           class="width-100"
                         >
                         </mat-slider>
@@ -428,6 +430,15 @@
                     />
                   </div>
 
+                  <div
+                    id="app-customizer"
+                    *ngIf="
+                      isCustomizerOpen &&
+                      question.controls.fieldType.value === 'VI'
+                    "
+                  >
+                    <app-mcq-response></app-mcq-response>
+                  </div>
                   <div
                     *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     class="dis-flex"

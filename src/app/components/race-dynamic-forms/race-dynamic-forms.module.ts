@@ -39,6 +39,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AddLogicComponent } from './add-logic/add-logic.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
+import { McqResponseComponent } from './utils/mcq-response/mcq-response.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -85,7 +86,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFormComponent,
     QuillMaterialComponent,
     IphonePreviewComponent,
-    AddLogicComponent
+    AddLogicComponent,
+    McqResponseComponent
   ],
   exports: [],
   entryComponents: []
