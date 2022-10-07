@@ -10,6 +10,7 @@
     <div>
       <a class="form-title">
         <input
+          #name
           type="text"
           formControlName="name"
           class="form_title_input"
@@ -56,8 +57,19 @@
     </div>
   </div>
   <div class="dis-flex">
-    <div formArrayName="sections" class="width-70" cdkDropListGroup>
-      <div *ngFor="let section of getSections(createForm); let i = index">
+    <div
+      formArrayName="sections"
+      class="width-70"
+      cdkDrop
+      cdkDropList
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListData]="getSections(createForm)"
+      cdkDropListGroup
+    >
+      <div
+        cdkDrag
+        *ngFor="let section of getSections(createForm); let i = index"
+      >
         <div style="padding: 10px" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div
@@ -68,6 +80,12 @@
               padding: 7px;
             "
           >
+            <img
+              cdkDragHandle
+              src="assets/rdf-forms-icons/six-dots.svg"
+              alt="six-dots"
+              class="m-l-10 six-dots"
+            />
             <mat-icon
               (click)="toggleOpenState(i)"
               *ngIf="isOpenState[i + 1] === true"
@@ -159,7 +177,7 @@
               cdkDropList
               (cdkDropListDropped)="drop($event)"
               [cdkDropListData]="getQuestions(section)"
-              [id]="section.id"
+              [id]="section.uid"
             >
               <div
                 cdkDrag
@@ -263,7 +281,7 @@
                             <div class="width-50">
                               <h2 style="color: #e8743b">QUESTIONS</h2>
                               <li
-                                *ngFor="let fieldType of fieldTypes"
+                                *ngFor="let fieldType of filteredFieldTypes"
                                 (click)="
                                   selectFieldType(fieldType, question);
                                   togglePopOverOpenState(i, j)
@@ -389,59 +407,84 @@
                     style="
                       background: #f3f3f3;
                       border-radius: 5px;
-                      padding: 5px;
                       padding: 10px;
+                      display: flex;
+                      flex-direction: column;
                     "
                   >
-                    <input
-                      type="checkbox"
-                      id="required"
-                      name="required"
-                      class="required-input"
-                      formControlName="required"
-                    />&nbsp;
-                    <label for="required">Required</label>
-
-                    <span
-                      *ngIf="question.controls.fieldType.value === 'LF'"
-                      style="margin-left: 50px"
-                    >
-                      <label for="defaultValue">Default Value</label
-                      >&nbsp;&nbsp;
-                      <input
-                        type="text"
-                        id="defaultValue"
-                        formControlName="value"
-                        style="border: 1px solid #cccccc; border-radius: 3px"
-                      />
-                    </span>
-
-                    <span
-                      *ngIf="question.controls.fieldType.value === 'TF'"
-                      style="margin-left: 50px"
-                    >
-                      <label>Format:</label>&nbsp;
-
-                      <select
-                        formControlName="value"
-                        style="
-                          border: none;
-                          background: transparent;
-                          -webkit-appearance: none;
-                          width: 110px;
-                          color: #3d5afe;
-                        "
+                    <div class="add-logic-row">
+                      <div
+                        class="add-logic-btn"
+                        (click)="addLogicForQuestion(question, createForm)"
                       >
-                        <option value="TF" style="padding: 10px">
-                          Short Answer
-                        </option>
-                        <option value="LTV" style="padding: 10px">
-                          Long Answer
-                        </option>
-                      </select>
-                    </span>
+                        <mat-icon class="icon">psychology</mat-icon>
+                        <span>Add Logic</span>
+                      </div>
+                      <mat-divider
+                        [vertical]="true"
+                        class="vert-divider"
+                      ></mat-divider>
+                      <input
+                        type="checkbox"
+                        id="required"
+                        class="required-input"
+                        name="required"
+                        formControlName="required"
+                      />&nbsp;
+                      <label for="required">Required</label>
+                      <span
+                        *ngIf="question.controls.fieldType.value === 'LF'"
+                        style="margin-left: 50px"
+                      >
+                        <label for="defaultValue">Default Value</label
+                        >&nbsp;&nbsp;
+                        <input
+                          type="text"
+                          id="defaultValue"
+                          formControlName="value"
+                          style="border: 1px solid #cccccc; border-radius: 3px"
+                        />
+                      </span>
+                      <span
+                        *ngIf="question.controls.fieldType.value === 'TF'"
+                        style="margin-left: 50px"
+                      >
+                        <label>Format:</label>&nbsp;
+
+                        <select
+                          formControlName="value"
+                          style="
+                            border: none;
+                            background: transparent;
+                            -webkit-appearance: none;
+                            width: 110px;
+                            color: #3d5afe;
+                          "
+                        >
+                          <option value="TF" style="padding: 10px">
+                            Short Answer
+                          </option>
+                          <option value="LTV" style="padding: 10px">
+                            Long Answer
+                          </option>
+                        </select>
+                      </span>
+                    </div>
+                    <div *ngIf="question.hasLogic" class="logicBuilder">
+                      <!-- {{ question.value | json }} -->
+                      <app-add-logic
+                        [question]="question.value"
+                      ></app-add-logic>
+                    </div>
                   </div>
                 </div>
+              </div>
+              <div
+                cdkDrag
+                *ngIf="!getQuestions(section).length"
+                class="empty-section"
+              >
+                This section is empty. Please add a question.
               </div>
             </div>
           </div>
