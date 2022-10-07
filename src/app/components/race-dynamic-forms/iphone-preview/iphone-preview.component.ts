@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 @Component({
   selector: 'app-rdf-forms-iphone-preview',
@@ -14,9 +15,13 @@ export class IphonePreviewComponent implements OnInit, OnDestroy {
   get formData() {
     return this._formData;
   }
-  constructor() {}
+  constructor(private imageUtils: ImageUtils) {}
 
   ngOnInit() {}
 
   ngOnDestroy() {}
+
+  getImageSrc(base64) {
+    return this.imageUtils.getImageSrc(base64);
+  }
 }

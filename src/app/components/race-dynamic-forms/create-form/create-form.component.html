@@ -524,7 +524,7 @@
                       </div>
                       <div *ngIf="question.controls.fieldType.value === 'IMF'">
                         <div
-                          class="width-50 bg-white"
+                          class="width-50 bg-white dis-flex"
                           *ngIf="question.controls.value.value"
                         >
                           <img
@@ -534,17 +534,20 @@
                             "
                             alt="image"
                           />
-                          <span>
-                            {{ question.controls.value.value.name }}
-                          </span>
-                          <span>
-                            {{
-                              (
-                                question.controls.value.value.size / 1024
-                              ).toFixed(2)
-                            }}
-                            KB
-                          </span>
+                          <div>
+                            <span style="font-size: 90%">
+                              {{ question.controls.value.value.name }}
+                            </span>
+                            <br />
+                            <span style="font-size: 80%">
+                              {{
+                                (
+                                  question.controls.value.value.size / 1024
+                                ).toFixed(2)
+                              }}
+                              KB
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
