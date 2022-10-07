@@ -537,6 +537,14 @@
                           <span>
                             {{ question.controls.value.value.name }}
                           </span>
+                          <span>
+                            {{
+                              (
+                                question.controls.value.value.size / 1024
+                              ).toFixed(2)
+                            }}
+                            KB
+                          </span>
                         </div>
                       </div>
                     </div>
