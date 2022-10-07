@@ -194,6 +194,15 @@ export class CreateFormComponent implements OnInit {
     );
   }
 
+  addLogicForQuestion(question: any, form: any) {
+    question.hasLogic = true;
+    question.value.logics.push({
+      operator: 'is',
+      operand1: question.value.name,
+      operand2: '10'
+    });
+  }
+
   initQuestion = (sc: number, qc: number, uqc: number) => {
     if (!this.fieldContentOpenState[sc][qc])
       this.fieldContentOpenState[sc][qc] = false;
@@ -206,7 +215,8 @@ export class CreateFormComponent implements OnInit {
       required: [false],
       value: [''],
       isPublished: [false],
-      isPublishedTillSave: [false]
+      isPublishedTillSave: [false],
+      logics: this.fb.array([])
     });
   };
 

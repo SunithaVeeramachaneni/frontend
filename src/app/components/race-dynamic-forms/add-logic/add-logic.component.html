@@ -1,0 +1,12 @@
+<div *ngIf="question.logics && question.logics.length > 1">
+  <mat-tab-group>
+    <mat-tab
+      *ngFor="let logic of question.logics"
+      label="{{ logic.operator }} {{ logic.operand2 }}"
+      >Content of the tab</mat-tab
+    >
+  </mat-tab-group>
+</div>
+<div *ngIf="question.logics && question.logics.length === 1">
+  <span> If answer is less than 0 then trigger </span>
+</div>
