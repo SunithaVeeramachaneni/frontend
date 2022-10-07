@@ -317,7 +317,12 @@
                         </div>
                       </ng-template>
                     </div>
-                    <div *ngIf="fieldContentOpenState[i + 1][j + 1] === true">
+                    <div
+                      *ngIf="
+                        fieldContentOpenState[i + 1][j + 1] === true &&
+                        getQuestions(section).length !== 1
+                      "
+                    >
                       <mat-icon
                         (click)="deleteQuestion(i, j, question)"
                         class="delete-icon"
