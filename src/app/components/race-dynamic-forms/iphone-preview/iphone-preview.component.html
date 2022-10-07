@@ -163,6 +163,19 @@
                   />
                 </div>
 
+                <div *ngIf="question.fieldType === 'IMF'">
+                  <img
+                    [src]="getImageSrc(question.value.base64)"
+                    alt="image"
+                    style="
+                      width: 100px;
+                      height: 70px;
+                      float: left;
+                      margin-left: 10px;
+                    "
+                  />
+                </div>
+
                 <span *ngIf="question.fieldType === 'RT'">
                   <mat-slider style="width: 230px; margin-top: -15px">
                   </mat-slider>
