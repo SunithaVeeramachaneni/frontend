@@ -437,7 +437,10 @@
                       question.controls.fieldType.value === 'VI'
                     "
                   >
-                    <app-mcq-response [question]="question"></app-mcq-response>
+                    <app-mcq-response
+                      [question]="question"
+                      (dialogClose)="isCustomizerOpen = false"
+                    ></app-mcq-response>
                   </div>
                   <div
                     *ngIf="fieldContentOpenState[i + 1][j + 1] === true"

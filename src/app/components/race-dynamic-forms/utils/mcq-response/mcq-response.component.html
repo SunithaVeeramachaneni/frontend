@@ -50,7 +50,11 @@
     >
       Apply
     </button>
-    <button mat-stroked-button style="width: 46%; margin-right: 10px">
+    <button
+      mat-stroked-button
+      style="width: 46%; margin-right: 10px"
+      (click)="cancelForm()"
+    >
       Cancel
     </button>
   </mat-card>

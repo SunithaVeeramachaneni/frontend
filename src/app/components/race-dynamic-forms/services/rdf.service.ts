@@ -127,7 +127,6 @@ export class RdfService {
             PLACEHOLDER: '',
             UIPOSITION: questionPosition.toString(),
             UIFIELDTYPE: this.getFieldType(question),
-            DDVALUE: '',
             DDTABNAME: '',
             DDFIELDNAME: '',
             TEXTREQ: '',
@@ -204,6 +203,16 @@ export class RdfService {
           ...properties,
           FORMCONTENT: base64,
           FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
+        };
+        break;
+      case 'VI':
+        const { value } = question;
+        const ddVALUE = value.map((item, idx) => ({
+          [`LABEL${idx + 1}`]: item.title
+        }));
+        properties = {
+          ...properties,
+          DDVALUE: JSON.stringify(ddVALUE)
         };
         break;
       default:

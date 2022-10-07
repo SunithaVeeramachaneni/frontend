@@ -2,21 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  Input
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
-  map,
   pairwise,
+  startWith,
   tap
 } from 'rxjs/operators';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
 import { isEqual } from 'lodash-es';
 
 @Component({
@@ -26,13 +23,13 @@ import { isEqual } from 'lodash-es';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class McqResponseComponent implements OnInit {
+  @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
-  private inputQuestion: any;
+  private inputQuestion: FormGroup;
 
   @Input() set question(question: any) {
     this.inputQuestion = question ? question : ({} as any);
-    console.log('inital', question);
   }
 
   constructor(private fb: FormBuilder) {}
@@ -41,6 +38,11 @@ export class McqResponseComponent implements OnInit {
     this.responseForm = this.fb.group({
       responses: this.fb.array([])
     });
+
+    // if (Array.isArray(this.inputQuestion.get('value').value)) {
+    //   console.log('Hit');
+    //   this.responses.setValue(this.inputQuestion.get('value').value);
+    // } else this.responses.setValue([]);
 
     this.responses.valueChanges
       .pipe(
@@ -56,6 +58,19 @@ export class McqResponseComponent implements OnInit {
       )
       .subscribe();
   }
+
+  // initalValue = () => {
+  //   setTimeout(() => {
+  //     if (Array.isArray(this.inputQuestion.get('value').value)) {
+  //       const val = this.inputQuestion.get('value').value;
+  //       return ([{
+  //         title: val.title,
+  //         color: val.color
+  //       }])
+  //       // this.responses.setValue(this.inputQuestion.get('value').value);
+  //     } else this.responses.setValue([]);
+  //   });
+  // };
 
   get responses(): FormArray {
     return this.responseForm.get('responses') as FormArray;
@@ -81,6 +96,7 @@ export class McqResponseComponent implements OnInit {
   submitResponses = () => {
     this.inputQuestion.get('value').setValue(this.responses.value);
     console.log('final', this.inputQuestion);
+    this.dialogClose.emit(false);
   };
 
   keytab(event) {
@@ -89,4 +105,8 @@ export class McqResponseComponent implements OnInit {
     if (element == null) return;
     else element.focus();
   }
+
+  cancelForm = () => {
+    this.dialogClose.emit(false);
+  };
 }
