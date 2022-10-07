@@ -228,8 +228,18 @@
                           [src]="
                             getFieldTypeImage(question.controls.fieldType.value)
                           "
+                          class="response-type-icons"
+                          style="position: relative; top: -2px"
                         />&nbsp;
-                        <span>
+                        <span
+                          style="
+                            white-space: nowrap;
+                            display: inline-block;
+                            text-overflow: ellipsis;
+                            width: 130px;
+                            overflow: hidden;
+                          "
+                        >
                           {{
                             getFieldTypeDescription(
                               question.controls.fieldType.value
@@ -280,6 +290,7 @@
                               >
                                 <img
                                   [src]="getFieldTypeImage(fieldType.type)"
+                                  class="response-type-icons"
                                 />&nbsp;
                                 <span style="position: relative; top: -2px">
                                   {{ fieldType.description }}
@@ -395,10 +406,8 @@
                     *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     style="
                       background: #f3f3f3;
-                      border-radius: 7px;
-                      padding: 5px;
+                      border-radius: 5px;
                       padding: 10px;
-                      margin: 0 50px;
                       display: flex;
                       flex-direction: column;
                     "
@@ -418,6 +427,7 @@
                       <input
                         type="checkbox"
                         id="required"
+                        class="required-input"
                         name="required"
                         formControlName="required"
                       />&nbsp;
