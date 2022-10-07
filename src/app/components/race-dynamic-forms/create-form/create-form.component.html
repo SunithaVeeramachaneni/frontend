@@ -382,6 +382,8 @@
                           [max]="sliderOptions.max"
                           [min]="sliderOptions.min"
                           [step]="sliderOptions.increment"
+                          [(ngModel)]="sliderOptions.value"
+                          [ngModelOptions]="{ standalone: true }"
                           class="width-100"
                         >
                         </mat-slider>
@@ -418,6 +420,16 @@
                     </mat-card>
                   </div>
 
+                  <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                    <input
+                      #insertImages
+                      [hidden]="true"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      (change)="insertImageHandler($event)"
+                    />
+                  </div>
+
                   <div
                     id="app-customizer"
                     *ngIf="
@@ -441,72 +453,102 @@
                         width: 100%;
                       "
                     >
-                      <div class="add-logic-row">
-                        <div
-                          class="add-logic-btn"
-                          (click)="addLogicForQuestion(question, createForm)"
-                        >
-                          <mat-icon class="icon">psychology</mat-icon>
-                          <span>Add Logic</span>
-                        </div>
-                        <mat-divider
-                          [vertical]="true"
-                          class="vert-divider"
-                        ></mat-divider>
-                        <input
-                          type="checkbox"
-                          id="required"
-                          class="required-input"
-                          name="required"
-                          formControlName="required"
-                        />&nbsp;
-                        <label for="required">Required</label>
-                        <span
-                          *ngIf="question.controls.fieldType.value === 'LF'"
-                          style="margin-left: 50px"
-                        >
-                          <label for="defaultValue">Default Value</label
-                          >&nbsp;&nbsp;
-                          <input
-                            type="text"
-                            id="defaultValue"
-                            formControlName="value"
-                            style="
-                              border: 1px solid #cccccc;
-                              border-radius: 3px;
-                            "
-                          />
-                        </span>
-                        <span
-                          *ngIf="question.controls.fieldType.value === 'TF'"
-                          style="margin-left: 50px"
-                        >
-                          <label>Format:</label>&nbsp;
-
-                          <select
-                            formControlName="value"
-                            style="
-                              border: none;
-                              background: transparent;
-                              -webkit-appearance: none;
-                              width: 110px;
-                              color: #3d5afe;
-                            "
+                      <div *ngIf="question.controls.fieldType.value !== 'IMF'">
+                        <div class="add-logic-row">
+                          <div
+                            class="add-logic-btn"
+                            (click)="addLogicForQuestion(question, createForm)"
                           >
-                            <option value="TF" style="padding: 10px">
-                              Short Answer
-                            </option>
-                            <option value="LTV" style="padding: 10px">
-                              Long Answer
-                            </option>
-                          </select>
-                        </span>
+                            <mat-icon class="icon">psychology</mat-icon>
+                            <span>Add Logic</span>
+                          </div>
+                          <mat-divider
+                            [vertical]="true"
+                            class="vert-divider"
+                          ></mat-divider>
+                          <input
+                            type="checkbox"
+                            id="required"
+                            class="required-input"
+                            name="required"
+                            formControlName="required"
+                          />&nbsp;
+                          <label for="required">Required</label>
+                          <span
+                            *ngIf="question.controls.fieldType.value === 'LF'"
+                            style="margin-left: 50px"
+                          >
+                            <label for="defaultValue">Default Value</label
+                            >&nbsp;&nbsp;
+                            <input
+                              type="text"
+                              id="defaultValue"
+                              formControlName="value"
+                              style="
+                                border: 1px solid #cccccc;
+                                border-radius: 3px;
+                              "
+                            />
+                          </span>
+                          <span
+                            *ngIf="question.controls.fieldType.value === 'TF'"
+                            style="margin-left: 50px"
+                          >
+                            <label>Format:</label>&nbsp;
+
+                            <select
+                              formControlName="value"
+                              style="
+                                border: none;
+                                background: transparent;
+                                -webkit-appearance: none;
+                                width: 110px;
+                                color: #3d5afe;
+                              "
+                            >
+                              <option value="TF" style="padding: 10px">
+                                Short Answer
+                              </option>
+                              <option value="LTV" style="padding: 10px">
+                                Long Answer
+                              </option>
+                            </select>
+                          </span>
+                        </div>
+                        <div *ngIf="question.hasLogic" class="logicBuilder">
+                          <!-- {{ question.value | json }} -->
+                          <app-add-logic
+                            [question]="question.value"
+                          ></app-add-logic>
+                        </div>
                       </div>
-                      <div *ngIf="question.hasLogic" class="logicBuilder">
-                        <!-- {{ question.value | json }} -->
-                        <app-add-logic
-                          [question]="question.value"
-                        ></app-add-logic>
+                      <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                        <div
+                          class="width-50 bg-white dis-flex"
+                          *ngIf="question.controls.value.value"
+                        >
+                          <img
+                            class="insert-image"
+                            [src]="
+                              getImageSrc(question.controls.value.value.base64)
+                            "
+                            alt="image"
+                          />
+                          <div>
+                            <span style="font-size: 90%">
+                              {{ question.controls.value.value.name }}
+                            </span>
+                            <br />
+                            <span style="font-size: 80%">
+                              {{
+                                (
+                                  question.controls.value.value.size / 1024
+                                ).toFixed(2)
+                              }}
+                              KB
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
