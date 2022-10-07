@@ -238,8 +238,10 @@ export class CreateFormComponent implements OnInit {
   };
 
   toggleFieldContentOpenState = (sectionIndex, questionIndex) => {
-    Object.keys(this.fieldContentOpenState[sectionIndex + 1]).forEach((key) => {
-      this.fieldContentOpenState[sectionIndex + 1][key] = false;
+    Object.keys(this.fieldContentOpenState).forEach((sKey) => {
+      Object.keys(this.fieldContentOpenState[sKey]).forEach((qKey) => {
+        this.fieldContentOpenState[sKey][qKey] = false;
+      });
     });
     this.fieldContentOpenState[sectionIndex + 1][questionIndex + 1] = true;
   };
