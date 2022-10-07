@@ -428,7 +428,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         }
         this.sliderOptions = sliderValue;
         break;
-      case 'IMG':
+      case 'IMF':
         let index = 0;
         let found = false;
         this.createForm.get('sections').value.forEach((section) => {
@@ -436,7 +436,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             if (que.id === this.currentQuestion.value.id) {
               found = true;
             }
-            if (!found && que.fieldType === 'IMG') {
+            if (!found && que.fieldType === 'IMF') {
               index++;
             }
           });
