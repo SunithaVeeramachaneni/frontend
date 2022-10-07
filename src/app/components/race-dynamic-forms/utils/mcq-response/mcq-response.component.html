@@ -1,0 +1,13 @@
+<mat-card class="p-0">
+  <mat-card-title class="m-0 light-gray">
+    <div class="mcq-heading">Multiple Choice Responses</div>
+  </mat-card-title>
+  <div [formGroup]="responseForm">
+    <div class="width-70" formArrayName="responses">
+      <div *ngFor="let response of responses()">
+        <input placeholder="Title" />
+      </div>
+    </div>
+  </div>
+  <button (click)="initResponse()">+ Add Response</button>
+</mat-card>
