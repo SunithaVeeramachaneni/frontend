@@ -382,6 +382,8 @@
                           [max]="sliderOptions.max"
                           [min]="sliderOptions.min"
                           [step]="sliderOptions.increment"
+                          [(ngModel)]="sliderOptions.value"
+                          [ngModelOptions]="{ standalone: true }"
                           class="width-100"
                         >
                         </mat-slider>

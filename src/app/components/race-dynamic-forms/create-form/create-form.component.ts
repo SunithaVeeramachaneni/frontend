@@ -56,6 +56,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   status$ = new BehaviorSubject<string>('');
   isCustomizerOpen = false;
   sliderOptions = {
+    value: 0,
     min: 0,
     max: 100,
     increment: 1
@@ -408,6 +409,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       case 'RT': {
         this.currentQuestion = question;
         let sliderValue = {
+          value: 0,
           min: 0,
           max: 100,
           increment: 1
