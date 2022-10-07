@@ -38,6 +38,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDividerModule } from '@angular/material/divider';
 import { AddLogicComponent } from './add-logic/add-logic.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatMenuModule } from '@angular/material/menu';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -54,6 +55,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatDividerModule,
     MatExpansionModule,
     MatFormFieldModule,
+    MatMenuModule,
     MatSelectModule,
     MatInputModule,
     MatSliderModule,

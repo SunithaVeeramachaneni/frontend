@@ -2,11 +2,42 @@
   <mat-tab-group>
     <mat-tab
       *ngFor="let logic of question.logics"
-      label="{{ logic.operator }} {{ logic.operand2 }}"
-      >Content of the tab</mat-tab
+      label="{{ logic.logicCondition ? logic.logicCondition : 'Untitled' }}"
     >
+      <div class="tabContent">
+        If answer
+        <select class="logicCondition" [(ngModel)]="logic.logicCondition">
+          <option value="EQ">is</option>
+          <option value="NE">is not</option>
+        </select>
+        <input
+          type="text"
+          value="{{ question.fieldType }}"
+          class="logicValue"
+        />
+        then
+        <button mat-button [matMenuTriggerFor]="menu" color="primary">
+          +trigger
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>Ask Questions</button>
+          <button mat-menu-item>Hide Questions</button>
+          <button mat-menu-item>Ask Evidence</button>
+        </mat-menu>
+      </div>
+    </mat-tab>
   </mat-tab-group>
 </div>
 <div *ngIf="question.logics && question.logics.length === 1">
-  <span> If answer is less than 0 then trigger </span>
+  <div class="tabContent">
+    If answer is {{ question.fieldType }}
+    <button mat-button [matMenuTriggerFor]="menu" color="primary">
+      +trigger
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Ask Questions</button>
+      <button mat-menu-item>Hide Questions</button>
+      <button mat-menu-item>Ask Evidence</button>
+    </mat-menu>
+  </div>
 </div>
