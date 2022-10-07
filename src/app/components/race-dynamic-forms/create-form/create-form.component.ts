@@ -50,6 +50,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   createInProgress = false;
   publishInProgress = false;
   disableFormFields = true;
+  currentQuestion: any;
   status$ = new BehaviorSubject<string>('');
   isCustomizerOpen = false;
   sliderOptions = {
@@ -379,7 +380,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   applySliderOptions(values, question) {
-    question.get('value').setValue(values);
+    this.currentQuestion.get('value').setValue(values);
+    // question.get('value').setValue(values);
     this.isCustomizerOpen = false;
   }
 
@@ -387,9 +389,24 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.isCustomizerOpen = true;
     if (fieldType.type === 'TF') {
       question.get('value').setValue('TF');
-    } else {
-      question.get('value').setValue('');
     }
     question.get('fieldType').setValue(fieldType.type);
+
+    if (fieldType.type === 'RT') {
+      this.currentQuestion = question;
+      let sliderValue = {
+        min: 0,
+        max: 100,
+        increment: 1
+      };
+      if (
+        Object.keys(question.get('value').value).find((item) => item === 'min')
+      ) {
+        sliderValue = question.get('value').value;
+      } else {
+        question.get('value').setValue(sliderValue);
+      }
+      this.sliderOptions = sliderValue;
+    }
   }
 }
