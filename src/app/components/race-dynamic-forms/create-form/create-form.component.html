@@ -248,7 +248,7 @@
                             white-space: nowrap;
                             display: inline-block;
                             text-overflow: ellipsis;
-                            width: 130px;
+                            width: 60%;
                             overflow: hidden;
                           "
                         >
@@ -279,7 +279,10 @@
                       >
                         <div class="response-type-modal">
                           <h1>
-                            <mat-icon (click)="togglePopOverOpenState(i, j)">
+                            <mat-icon
+                              (click)="togglePopOverOpenState(i, j)"
+                              style="cursor: pointer"
+                            >
                               clear
                             </mat-icon>
                             <span
