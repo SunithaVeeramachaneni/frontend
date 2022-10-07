@@ -1,19 +1,26 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit
+  ElementRef,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, from, timer } from 'rxjs';
 import {
   debounceTime,
-  delay,
   distinctUntilChanged,
   filter,
+  mergeMap,
   pairwise,
   switchMap,
-  tap
+  tap,
+  toArray
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -24,6 +31,7 @@ import {
   moveItemInArray,
   transferArrayItem
 } from '@angular/cdk/drag-drop';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 @Component({
   selector: 'app-create-form',
@@ -31,22 +39,28 @@ import {
   styleUrls: ['./create-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateFormComponent implements OnInit {
+export class CreateFormComponent implements OnInit, AfterViewInit {
+  @ViewChild('name') private name: ElementRef;
+  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
   public createForm: FormGroup;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
+  publishingChanges = 'Publishing changes...';
   changesPublished = 'All Changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
+  filteredFieldTypes: any = [this.fieldType];
   createInProgress = false;
   publishInProgress = false;
   disableFormFields = true;
+  currentQuestion: any;
   status$ = new BehaviorSubject<string>('');
   isCustomizerOpen = false;
   sliderOptions = {
+    value: 0,
     min: 0,
     max: 100,
     increment: 1
@@ -60,7 +74,8 @@ export class CreateFormComponent implements OnInit {
     private rdfService: RdfService,
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -74,7 +89,17 @@ export class CreateFormComponent implements OnInit {
     });
     this.rdfService
       .getFieldTypes$()
-      .pipe(tap((fieldTypes) => (this.fieldTypes = fieldTypes)))
+      .pipe(
+        tap((fieldTypes) => {
+          this.fieldTypes = fieldTypes;
+          this.filteredFieldTypes = fieldTypes.filter(
+            (fieldType) =>
+              fieldType.type !== 'LTV' &&
+              fieldType.type !== 'DD' &&
+              fieldType.type !== 'DDM'
+          );
+        })
+      )
       .subscribe();
 
     this.createForm
@@ -145,6 +170,10 @@ export class CreateFormComponent implements OnInit {
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
+  ngAfterViewInit(): void {
+    this.name.nativeElement.focus();
+  }
+
   setFormTitle() {
     const formName = this.createForm.get('name').value;
     this.createForm.patchValue({
@@ -185,13 +214,46 @@ export class CreateFormComponent implements OnInit {
     );
   }
 
-  addQuestion(j) {
+  addQuestion(i) {
     const control = (this.createForm.get('sections') as FormArray).controls[
-      j
+      i
     ].get('questions') as FormArray;
     control.push(
-      this.initQuestion(j + 1, control.length + 1, this.getCounter())
+      this.initQuestion(i + 1, control.length + 1, this.getCounter())
     );
+  }
+
+  deleteQuestion(i, j, question) {
+    const control = (this.createForm.get('sections') as FormArray).controls[
+      i
+    ].get('questions') as FormArray;
+    control.removeAt(j);
+    this.fieldContentOpenState[i + 1][j + 1] = false;
+    if (question.value.isPublished) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.createForm.get('id').value,
+          UNIQUEKEY: question.value.id
+        })
+        .subscribe();
+    }
+  }
+
+  deleteSection(i, section) {
+    const control = this.createForm.get('sections') as FormArray;
+    control.removeAt(i);
+    from(section.value.questions)
+      .pipe(
+        filter((question: any) => question.isPublished),
+        mergeMap((question) =>
+          this.rdfService.deleteAbapFormField$({
+            FORMNAME: this.createForm.get('id').value,
+            UNIQUEKEY: question.value.id
+          })
+        ),
+        toArray()
+      )
+      .subscribe();
   }
 
   addLogicForQuestion(question: any, form: any) {
@@ -213,7 +275,7 @@ export class CreateFormComponent implements OnInit {
       fieldType: [this.fieldType.type],
       position: [''],
       required: [false],
-      value: [''],
+      value: ['TF'],
       isPublished: [false],
       isPublishedTillSave: [false],
       logics: this.fb.array([])
@@ -259,6 +321,7 @@ export class CreateFormComponent implements OnInit {
     let publishedCount = 0;
     const form = this.createForm.getRawValue();
     this.publishInProgress = true;
+    this.status$.next(this.publishingChanges);
 
     this.rdfService
       .publishForm$(form)
@@ -275,6 +338,7 @@ export class CreateFormComponent implements OnInit {
           });
           if (publishedCount === response.length) {
             form.isPublishedTillSave = true;
+            this.status$.next(this.changesPublished);
           }
           this.createForm.patchValue(form, { emitEvent: false });
           this.publishInProgress = false;
@@ -282,7 +346,6 @@ export class CreateFormComponent implements OnInit {
         switchMap(() => this.saveForm(true))
       )
       .subscribe(() => {
-        this.status$.next(this.changesPublished);
         this.cdrf.markForCheck();
       });
   }
@@ -306,7 +369,9 @@ export class CreateFormComponent implements OnInit {
       }
       return this.rdfService.updateForm$(id, form).pipe(
         tap(() => {
-          this.status$.next(this.changesSaved);
+          if (!ignoreStatus) {
+            this.status$.next(this.changesSaved);
+          }
         })
       );
     } else {
@@ -334,12 +399,86 @@ export class CreateFormComponent implements OnInit {
   }
 
   applySliderOptions(values, question) {
-    question.get('value').setValue(values);
+    this.currentQuestion.get('value').setValue(values);
+    // question.get('value').setValue(values);
     this.isCustomizerOpen = false;
   }
 
   selectFieldType(fieldType, question) {
-    this.isCustomizerOpen = true;
+    this.currentQuestion = question;
     question.get('fieldType').setValue(fieldType.type);
+    switch (fieldType.type) {
+      case 'TF':
+        question.get('value').setValue('TF');
+        break;
+      case 'VI':
+        this.isCustomizerOpen = true;
+        break;
+      case 'RT':
+        this.isCustomizerOpen = true;
+        let sliderValue = {
+          value: 0,
+          min: 0,
+          max: 100,
+          increment: 1
+        };
+        if (
+          Object.keys(question.get('value').value).find(
+            (item) => item === 'min'
+          )
+        ) {
+          sliderValue = question.get('value').value;
+        } else {
+          question.get('value').setValue(sliderValue);
+        }
+        this.sliderOptions = sliderValue;
+        break;
+      case 'IMF':
+        let index = 0;
+        let found = false;
+        this.createForm.get('sections').value.forEach((section) => {
+          section.questions.forEach((que) => {
+            if (que.id === this.currentQuestion.value.id) {
+              found = true;
+            }
+            if (!found && que.fieldType === 'IMF') {
+              index++;
+            }
+          });
+        });
+        question.get('value').setValue('');
+
+        timer(0)
+          .pipe(
+            tap(() => {
+              this.insertImages.toArray()[index]?.nativeElement.click();
+            })
+          )
+          .subscribe();
+        break;
+      default:
+        question.get('value').setValue('');
+    }
+  }
+
+  insertImageHandler(event) {
+    let base64: string;
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const image = base64.split(',')[1];
+      const value = {
+        name: files[0].name,
+        size: (files[0].size / 1024).toFixed(2),
+        base64: image
+      };
+      this.currentQuestion.get('value').setValue(value);
+    };
+  }
+
+  getImageSrc(base64) {
+    return this.imageUtils.getImageSrc(base64);
   }
 }

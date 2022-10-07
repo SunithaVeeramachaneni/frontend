@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, tap, toArray } from 'rxjs/operators';
+import { map, mergeMap, toArray } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -40,35 +40,32 @@ export class RdfService {
   publishForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> => {
-    const payloads = this.getFormPayload(form);
-    return from(this.getFormPayload(form)).pipe(
+  ): Observable<any> =>
+    from(this.postOrPutFormPayload(form)).pipe(
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
-          return this.createAbapForm$(rest).pipe(
+          return this.createAbapFormField$(rest, info).pipe(
             map((resp) =>
               Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
-          return this.updateAbapForm$(rest).pipe(
+          return this.updateAbapFormField$(rest, info).pipe(
             map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
       }),
-      toArray(),
-      tap(console.log)
+      toArray()
     );
-  };
 
-  createAbapForm$ = (
+  createAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
 
-  updateAbapForm$ = (
+  updateAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
@@ -79,7 +76,23 @@ export class RdfService {
       info
     );
 
-  getFormPayload(form) {
+  deleteAbapFormField$ = (
+    params: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.rdfApiUrl,
+      `abap/forms${this.appService.getQueryString({
+        APPNAME,
+        VERSION,
+        VALIDFROM,
+        VALIDTO,
+        ...params
+      })}`,
+      info
+    );
+
+  postOrPutFormPayload(form) {
     let payloads = [];
     const { sections, name, id } = form;
     sections.forEach((section) => {
@@ -94,7 +107,6 @@ export class RdfService {
             id: questionId,
             name: questionName,
             position: questionPosition,
-            fieldType,
             required,
             isPublished,
             isPublishedTillSave
@@ -114,8 +126,7 @@ export class RdfService {
             FIELDLABEL: questionName,
             PLACEHOLDER: '',
             UIPOSITION: questionPosition.toString(),
-            UIFIELDTYPE: fieldType,
-            DDVALUE: '',
+            UIFIELDTYPE: this.getFieldType(question),
             DDTABNAME: '',
             DDFIELDNAME: '',
             TEXTREQ: '',
@@ -156,7 +167,7 @@ export class RdfService {
             IMAGECONTENT: '',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            ...this.getSliderProperties(question)
+            ...this.getProperties(question)
           };
         })
         .filter((payload) => payload);
@@ -169,18 +180,54 @@ export class RdfService {
     return question.fieldType === 'LF' ? question.value : '';
   }
 
-  getSliderProperties(question) {
-    const {
-      value: { min, max, increment },
-      fieldType
-    } = question;
-    if (fieldType === 'RT') {
-      return {
-        MINVAL: min.toString(),
-        MAXVAL: max.toString(),
-        RINTERVAL: increment.toString()
-      };
+  getProperties(question) {
+    let properties = {};
+    const { fieldType } = question;
+    switch (fieldType) {
+      case 'RT':
+        const {
+          value: { min, max, increment }
+        } = question;
+        properties = {
+          ...properties,
+          MINVAL: min.toString(),
+          MAXVAL: max.toString(),
+          RINTERVAL: increment.toString()
+        };
+        break;
+      case 'IMF':
+        const {
+          value: { base64, name }
+        } = question;
+        properties = {
+          ...properties,
+          FORMCONTENT: base64,
+          FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
+        };
+        break;
+      case 'VI':
+        const { value } = question;
+        const ddVALUE = value.map((item, idx) => ({
+          [`LABEL${idx + 1}`]: item.title
+        }));
+        properties = {
+          ...properties,
+          DDVALUE: JSON.stringify(ddVALUE)
+        };
+        break;
+      default:
+      // do nothing
     }
-    return null;
+    return properties;
+  }
+
+  getFieldType(question) {
+    const { value, fieldType } = question;
+    switch (fieldType) {
+      case 'TF':
+        return value;
+      default:
+        return fieldType;
+    }
   }
 }

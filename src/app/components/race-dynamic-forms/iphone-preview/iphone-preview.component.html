@@ -35,23 +35,152 @@
           </div>
         </div>
 
-        <div *ngFor="let section of formData.sections; let i = index">
-          <p class="section-name">
-            {{ section.name ? section.name : 'Section Name' }}
-          </p>
-          <div
-            *ngFor="let question of section.questions"
-            class="dis-flex m-b-10"
-          >
-            <div class="width-45 question-name">
-              {{ question.name ? question.name : 'Type Question' }}
-            </div>
-            <div class="width-45 text-left">
-              <input
-                type="text"
-                *ngIf="question.fieldType === 'TF'"
-                class="input-fields"
-              />
+        <div style="overflow-y: auto; height: 450px">
+          <div *ngFor="let section of formData.sections; let i = index">
+            <p class="section-name">
+              {{ section.name ? section.name : 'Section Name' }}
+            </p>
+            <div *ngFor="let question of section.questions">
+              <div class="dis-flex m-b-10">
+                <div class="width-45 question-name">
+                  {{ question.name ? question.name : 'Type Question' }}
+                </div>
+                <div class="width-45 text-left">
+                  <input
+                    type="text"
+                    *ngIf="
+                      question.fieldType === 'TF' && question.value !== 'LTV'
+                    "
+                    class="input-fields"
+                  />
+
+                  <input
+                    type="date"
+                    *ngIf="
+                      question.fieldType === 'DF' ||
+                      question.fieldType === 'DFR'
+                    "
+                    class="input-fields"
+                  />
+
+                  <input
+                    type="checkbox"
+                    *ngIf="question.fieldType === 'CB'"
+                    style="float: right"
+                  />
+
+                  <input
+                    type="time"
+                    *ngIf="question.fieldType === 'TIF'"
+                    class="input-fields"
+                  />
+
+                  <textarea
+                    rows="3"
+                    cols="10"
+                    *ngIf="
+                      question.value === 'LTV' && question.fieldType === 'TF'
+                    "
+                    class="input-fields"
+                  ></textarea>
+
+                  <input
+                    type="number"
+                    *ngIf="question.fieldType === 'NF'"
+                    class="input-fields"
+                  />
+
+                  <span
+                    *ngIf="question.fieldType === 'LF'"
+                    class="default-value"
+                  >
+                    {{ question.value }}
+                  </span>
+
+                  <span *ngIf="question.fieldType === 'SF'" class="dis-flex">
+                    <input type="text" class="input-fields-with-icons" />
+                    <img
+                      src="assets/rdf-forms-icons/scan.svg"
+                      alt="scan"
+                      class="scan-icon"
+                    />
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div
+                  *ngIf="question.fieldType === 'SGF'"
+                  style="margin: -10px 0 0 -10px"
+                >
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    class="signature-input-fields"
+                  />
+                  <img
+                    src="assets/rdf-forms-icons/signature.svg"
+                    alt="signature-icon"
+                    style="
+                      width: 35px;
+                      position: relative;
+                      left: 10px;
+                      top: 5px;
+                    "
+                  />
+                </div>
+
+                <div
+                  *ngIf="question.fieldType === 'GAL'"
+                  style="margin: -10px 0 0 -10px"
+                >
+                  <input type="text" class="signature-input-fields" />
+                  <img
+                    src="assets/rdf-forms-icons/location.png"
+                    alt="signature-icon"
+                    style="
+                      width: 35px;
+                      position: relative;
+                      left: 10px;
+                      top: 5px;
+                      height: 20px;
+                    "
+                  />
+                </div>
+
+                <div
+                  *ngIf="question.fieldType === 'ATT'"
+                  style="margin: -10px 0 0 -10px"
+                >
+                  <img
+                    src="assets/rdf-forms-icons/take-a-photo.svg"
+                    alt="take-a-photo-icon"
+                    style="
+                      width: 240px;
+                      position: relative;
+                      left: 10px;
+                      top: 10px;
+                    "
+                  />
+                </div>
+
+                <div *ngIf="question.fieldType === 'IMF'">
+                  <img
+                    [src]="getImageSrc(question.value.base64)"
+                    alt="image"
+                    style="
+                      width: 100px;
+                      height: 70px;
+                      float: left;
+                      margin-left: 10px;
+                    "
+                  />
+                </div>
+
+                <span *ngIf="question.fieldType === 'RT'">
+                  <mat-slider style="width: 230px; margin-top: -15px">
+                  </mat-slider>
+                </span>
+              </div>
             </div>
           </div>
         </div>
