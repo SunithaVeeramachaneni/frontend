@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -204,13 +205,35 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  addQuestion(j) {
+  addQuestion(i) {
     const control = (this.createForm.get('sections') as FormArray).controls[
-      j
+      i
     ].get('questions') as FormArray;
     control.push(
-      this.initQuestion(j + 1, control.length + 1, this.getCounter())
+      this.initQuestion(i + 1, control.length + 1, this.getCounter())
     );
+  }
+
+  deleteQuestion(i, j, question) {
+    const control = (this.createForm.get('sections') as FormArray).controls[
+      i
+    ].get('questions') as FormArray;
+    control.removeAt(j);
+    this.fieldContentOpenState[i + 1][j + 1] = false;
+    if (question.value.isPublished) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: this.createForm.get('id').value,
+          UNIQUEKEY: question.value.id
+        })
+        .subscribe();
+    }
+  }
+
+  deleteSection(i, section) {
+    /* const control = this.createForm.get('sections') as FormArray;
+    control.removeAt(i);
+    console.log(section); */
   }
 
   addLogicForQuestion(question: any, form: any) {
@@ -326,7 +349,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       }
       return this.rdfService.updateForm$(id, form).pipe(
         tap(() => {
-          this.status$.next(this.changesSaved);
+          if (!ignoreStatus) {
+            this.status$.next(this.changesSaved);
+          }
         })
       );
     } else {

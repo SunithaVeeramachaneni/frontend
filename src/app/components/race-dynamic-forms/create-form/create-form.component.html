@@ -129,6 +129,7 @@
               src="assets/rdf-forms-icons/more.svg"
               alt="more-icon"
               style="float: right; margin-top: 17px; margin-right: 12px"
+              (click)="deleteSection(i, section)"
             />
 
             <button
@@ -315,6 +316,13 @@
                           </div>
                         </div>
                       </ng-template>
+                    </div>
+                    <div *ngIf="fieldContentOpenState[i + 1][j + 1] === true">
+                      <mat-icon
+                        (click)="deleteQuestion(i, j, question)"
+                        class="delete-icon"
+                        >delete</mat-icon
+                      >
                     </div>
                   </div>
 

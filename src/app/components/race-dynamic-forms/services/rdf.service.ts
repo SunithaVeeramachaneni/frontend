@@ -45,13 +45,13 @@ export class RdfService {
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
-          return this.createAbapForm$(rest, info).pipe(
+          return this.createAbapFormField$(rest, info).pipe(
             map((resp) =>
               Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
-          return this.updateAbapForm$(rest, info).pipe(
+          return this.updateAbapFormField$(rest, info).pipe(
             map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
@@ -59,13 +59,13 @@ export class RdfService {
       toArray()
     );
 
-  createAbapForm$ = (
+  createAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
 
-  updateAbapForm$ = (
+  updateAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
@@ -73,6 +73,22 @@ export class RdfService {
       environment.rdfApiUrl,
       `abap/forms`,
       form,
+      info
+    );
+
+  deleteAbapFormField$ = (
+    params: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._removeData(
+      environment.rdfApiUrl,
+      `abap/forms${this.appService.getQueryString({
+        APPNAME,
+        VERSION,
+        VALIDFROM,
+        VALIDTO,
+        ...params
+      })}`,
       info
     );
 
