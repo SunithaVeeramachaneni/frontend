@@ -168,7 +168,7 @@ export class RdfService {
             IMAGECONTENT: '',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            ...this.getSliderProperties(question)
+            ...this.getProperties(question)
           };
         })
         .filter((payload) => payload);
@@ -181,19 +181,35 @@ export class RdfService {
     return question.fieldType === 'LF' ? question.value : '';
   }
 
-  getSliderProperties(question) {
-    const {
-      value: { min, max, increment },
-      fieldType
-    } = question;
-    if (fieldType === 'RT') {
-      return {
-        MINVAL: min.toString(),
-        MAXVAL: max.toString(),
-        RINTERVAL: increment.toString()
-      };
+  getProperties(question) {
+    let properties = {};
+    const { fieldType } = question;
+    switch (fieldType) {
+      case 'RT':
+        const {
+          value: { min, max, increment }
+        } = question;
+        properties = {
+          ...properties,
+          MINVAL: min.toString(),
+          MAXVAL: max.toString(),
+          RINTERVAL: increment.toString()
+        };
+        break;
+      case 'IMF':
+        const {
+          value: { base64, name }
+        } = question;
+        properties = {
+          ...properties,
+          FORMCONTENT: base64,
+          FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
+        };
+        break;
+      default:
+      // do nothing
     }
-    return null;
+    return properties;
   }
 
   getFieldType(question) {

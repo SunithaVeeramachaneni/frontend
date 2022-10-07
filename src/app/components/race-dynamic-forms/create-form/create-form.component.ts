@@ -406,13 +406,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   selectFieldType(fieldType, question) {
     this.currentQuestion = question;
-    this.isCustomizerOpen = true;
     question.get('fieldType').setValue(fieldType.type);
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
         break;
       case 'RT':
+        this.isCustomizerOpen = true;
         let sliderValue = {
           value: 0,
           min: 0,
