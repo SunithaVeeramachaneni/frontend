@@ -9,14 +9,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, from } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   filter,
+  mergeMap,
   pairwise,
   switchMap,
-  tap
+  tap,
+  toArray
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -232,9 +234,20 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   deleteSection(i, section) {
-    /* const control = this.createForm.get('sections') as FormArray;
+    const control = this.createForm.get('sections') as FormArray;
     control.removeAt(i);
-    console.log(section); */
+    from(section.value.questions)
+      .pipe(
+        filter((question: any) => question.isPublished),
+        mergeMap((question) =>
+          this.rdfService.deleteAbapFormField$({
+            FORMNAME: this.createForm.get('id').value,
+            UNIQUEKEY: question.value.id
+          })
+        ),
+        toArray()
+      )
+      .subscribe();
   }
 
   addLogicForQuestion(question: any, form: any) {
@@ -387,26 +400,32 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   selectFieldType(fieldType, question) {
     this.isCustomizerOpen = true;
-    if (fieldType.type === 'TF') {
-      question.get('value').setValue('TF');
-    }
     question.get('fieldType').setValue(fieldType.type);
-
-    if (fieldType.type === 'RT') {
-      this.currentQuestion = question;
-      let sliderValue = {
-        min: 0,
-        max: 100,
-        increment: 1
-      };
-      if (
-        Object.keys(question.get('value').value).find((item) => item === 'min')
-      ) {
-        sliderValue = question.get('value').value;
-      } else {
-        question.get('value').setValue(sliderValue);
+    switch (fieldType.type) {
+      case 'TF':
+        question.get('value').setValue('TF');
+        break;
+      case 'RT': {
+        this.currentQuestion = question;
+        let sliderValue = {
+          min: 0,
+          max: 100,
+          increment: 1
+        };
+        if (
+          Object.keys(question.get('value').value).find(
+            (item) => item === 'min'
+          )
+        ) {
+          sliderValue = question.get('value').value;
+        } else {
+          question.get('value').setValue(sliderValue);
+        }
+        this.sliderOptions = sliderValue;
+        break;
       }
-      this.sliderOptions = sliderValue;
+      default:
+        question.get('value').setValue('');
     }
   }
 }

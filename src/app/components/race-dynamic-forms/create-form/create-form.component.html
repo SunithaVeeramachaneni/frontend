@@ -125,13 +125,24 @@
               </button>
             </span>
 
-            <img
-              src="assets/rdf-forms-icons/more.svg"
-              alt="more-icon"
-              style="float: right; margin-top: 17px; margin-right: 12px"
-              (click)="deleteSection(i, section)"
-            />
-
+            <button
+              [matMenuTriggerFor]="sectionMenu"
+              class="more-icon"
+              aria-label="More Options"
+              [disabled]="getSections(createForm).length === 1"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #sectionMenu="matMenu">
+              <button
+                mat-menu-item
+                (click)="deleteSection(i, section)"
+                class="text-red"
+                *ngIf="getSections(createForm).length !== 1"
+              >
+                <span>Delete Section</span>
+              </button>
+            </mat-menu>
             <button
               mat-icon-button
               matTooltip="Add Question"

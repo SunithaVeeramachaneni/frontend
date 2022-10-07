@@ -160,6 +160,17 @@ select:focus {
   padding: 10px;
 }
 
+.more-icon {
+  background: none;
+  border: none;
+  float: right;
+  margin-top: 5px;
+  margin-right: -5px;
+  .more-icon-no-color {
+    color: #757575;
+  }
+}
+
 .required-input {
   position: relative;
   top: 1px;
