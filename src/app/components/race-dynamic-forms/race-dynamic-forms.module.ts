@@ -35,6 +35,9 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { OverlayModule } from '@angular/cdk/overlay';
+import { MatDividerModule } from '@angular/material/divider';
+import { AddLogicComponent } from './add-logic/add-logic.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -48,11 +51,13 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatNativeDateModule,
     MatIconModule,
     MatButtonModule,
+    MatDividerModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatSliderModule,
+    MatTabsModule,
     MatTooltipModule,
     OverlayModule,
     SharedModule,
@@ -77,7 +82,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     RaceDynamicFormsContainerComponent,
     CreateFormComponent,
     QuillMaterialComponent,
-    IphonePreviewComponent
+    IphonePreviewComponent,
+    AddLogicComponent
   ],
   exports: [],
   entryComponents: []
