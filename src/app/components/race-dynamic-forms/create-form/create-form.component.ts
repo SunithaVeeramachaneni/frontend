@@ -6,10 +6,12 @@ import {
   Component,
   ElementRef,
   OnInit,
-  ViewChild
+  QueryList,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject, from } from 'rxjs';
+import { BehaviorSubject, from, timer } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -29,6 +31,7 @@ import {
   moveItemInArray,
   transferArrayItem
 } from '@angular/cdk/drag-drop';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 @Component({
   selector: 'app-create-form',
@@ -38,6 +41,7 @@ import {
 })
 export class CreateFormComponent implements OnInit, AfterViewInit {
   @ViewChild('name') private name: ElementRef;
+  @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
   public createForm: FormGroup;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
@@ -69,7 +73,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private rdfService: RdfService,
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private imageUtils: ImageUtils
   ) {}
 
   ngOnInit() {
@@ -399,14 +404,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   selectFieldType(fieldType, question) {
+    this.currentQuestion = question;
     this.isCustomizerOpen = true;
     question.get('fieldType').setValue(fieldType.type);
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
         break;
-      case 'RT': {
-        this.currentQuestion = question;
+      case 'RT':
         let sliderValue = {
           min: 0,
           max: 100,
@@ -423,9 +428,52 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         }
         this.sliderOptions = sliderValue;
         break;
-      }
+      case 'IMG':
+        let index = 0;
+        let found = false;
+        this.createForm.get('sections').value.forEach((section) => {
+          section.questions.forEach((que) => {
+            if (que.id === this.currentQuestion.value.id) {
+              found = true;
+            }
+            if (!found && que.fieldType === 'IMG') {
+              index++;
+            }
+          });
+        });
+        question.get('value').setValue('');
+
+        timer(0)
+          .pipe(
+            tap(() => {
+              this.insertImages.toArray()[index]?.nativeElement.click();
+            })
+          )
+          .subscribe();
+        break;
       default:
         question.get('value').setValue('');
     }
+  }
+
+  insertImageHandler(event) {
+    let base64: string;
+    const { files } = event.target as HTMLInputElement;
+    const reader = new FileReader();
+    reader.readAsDataURL(files[0]);
+    reader.onloadend = () => {
+      base64 = reader.result as string;
+      const image = base64.split(',')[1];
+      const value = {
+        name: files[0].name,
+        size: (files[0].size / 1024).toFixed(2),
+        base64: image
+      };
+      this.currentQuestion.get('value').setValue(value);
+    };
+  }
+
+  getImageSrc(base64) {
+    return this.imageUtils.getImageSrc(base64);
   }
 }
