@@ -1,43 +1,75 @@
-<div *ngIf="question.logics && question.logics.length > 1">
-  <mat-tab-group>
+<div [formGroup]="logicsForm">
+  <mat-tab-group formArrayName="logics">
     <mat-tab
-      *ngFor="let logic of question.logics"
-      label="{{ logic.logicCondition ? logic.logicCondition : 'Untitled' }}"
+      *ngFor="let logic of getLogicsList(); let i = index"
+      label="{{ logic.value.logicTitle ? logic.value.logicTitle : 'Untitled' }}"
     >
-      <div class="tabContent">
-        If answer
-        <select class="logicCondition" [(ngModel)]="logic.logicCondition">
-          <option value="EQ">is</option>
-          <option value="NE">is not</option>
-        </select>
-        <input
-          type="text"
-          value="{{ question.fieldType }}"
-          class="logicValue"
-        />
-        then
-        <button mat-button [matMenuTriggerFor]="menu" color="primary">
-          +trigger
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item>Ask Questions</button>
-          <button mat-menu-item>Hide Questions</button>
-          <button mat-menu-item>Ask Evidence</button>
-        </mat-menu>
+      <div class="tabContent" [formGroupName]="i">
+        <div>
+          <input type="hidden" formControlName="logicTitle" />
+          <input type="hidden" formControlName="expression" />
+          If answer
+          <select
+            class="logicCondition"
+            formControlName="operator"
+            (ngModelChange)="operatorChanged(logic, $event)"
+          >
+            <option
+              value="{{ operator.code }}"
+              *ngFor="let operator of fieldOperators"
+            >
+              {{ operator.displayName }}
+            </option>
+          </select>
+          <input
+            type="text"
+            class="logicValue"
+            formControlName="operand2"
+            (ngModelChange)="operand2Changed(logic, $event)"
+          />
+          then
+          <input
+            *ngIf="logic.value.action"
+            formControlName="action"
+            class="action"
+            readonly
+          />
+          <button mat-button [matMenuTriggerFor]="menu" color="primary">
+            +trigger
+          </button>
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              (click)="triggerMenuAction('ask_questions', logic)"
+            >
+              Ask Questions
+            </button>
+            <button mat-menu-item (click)="triggerMenuAction('hide', logic)">
+              Hide Questions
+            </button>
+            <button
+              mat-menu-item
+              (click)="triggerMenuAction('ask_evidence', logic)"
+            >
+              Ask Evidence
+            </button>
+          </mat-menu>
+          <input
+            readonly
+            formControlName="expression"
+            class="action"
+            *ngIf="logic.value.action"
+          />
+        </div>
+
+        <div
+          *ngIf="logic.value.action === 'Ask Questions'"
+          class="logicAskQuestions"
+        >
+          <h4>Asking Questions</h4>
+        </div>
       </div>
+      <b>{{ logic.value | json }}</b>
     </mat-tab>
   </mat-tab-group>
-</div>
-<div *ngIf="question.logics && question.logics.length === 1">
-  <div class="tabContent">
-    If answer is {{ question.fieldType }}
-    <button mat-button [matMenuTriggerFor]="menu" color="primary">
-      +trigger
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>Ask Questions</button>
-      <button mat-menu-item>Hide Questions</button>
-      <button mat-menu-item>Ask Evidence</button>
-    </mat-menu>
-  </div>
 </div>

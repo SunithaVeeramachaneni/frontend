@@ -256,13 +256,32 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  addLogicForQuestion(question: any, form: any) {
+  addLogicForQuestion(question: any, section: any, form: any) {
     question.hasLogic = true;
-    question.value.logics.push({
-      operator: 'is',
-      operand1: question.value.name,
-      operand2: '10'
+    question.controls.logics.controls.push(
+      this.fb.group({
+        operator: ['EQ'],
+        operand1: [''],
+        operand2: [''],
+        action: [''],
+        logicTitle: ['blank'],
+        expression: [''],
+        questions: this.fb.group({
+          questions: question.controls.logics.controls.questions
+        })
+      })
+    );
+
+    form.controls.sections.controls.forEach((sec) => {
+      sec.controls.questions.controls.forEach((q) => {
+        if (q.value.id === question.value.id) {
+          q = question;
+        }
+      });
     });
+    this.createForm = form;
+    this.cdrf.detectChanges();
+    this.cdrf.markForCheck();
   }
 
   initQuestion = (sc: number, qc: number, uqc: number) => {

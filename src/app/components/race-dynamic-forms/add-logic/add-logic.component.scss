@@ -1,8 +1,9 @@
 .tabContent {
   display: flex;
-  align-items: center;
+  // align-items: center;
   padding: 5px 10px;
   background: white;
+  flex-direction: column;
 }
 
 .logicValue {
@@ -20,4 +21,16 @@
   padding: 0px 10px;
   background: #d7dbf4;
   line-height: 1.5;
+}
+
+.action {
+  margin: 0px 5px;
+  border: 1px solid lightblue;
+  border-radius: 6px;
+  padding: 0px 5px;
+  background: lightblue;
+}
+
+.logicAskQuestions {
+  width: 100%;
 }
