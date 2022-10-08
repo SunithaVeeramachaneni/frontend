@@ -24,3 +24,10 @@
   margin: 0 10px;
   color: #76767b;
 }
+
+.search-box {
+  height: 45px;
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
+}
