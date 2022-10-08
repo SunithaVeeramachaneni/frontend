@@ -301,9 +301,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         action: [''],
         logicTitle: ['blank'],
         expression: [''],
-        questions: this.fb.group({
-          questions: question.controls.logics.controls.questions
-        })
+        questions: this.fb.array([])
       })
     );
 

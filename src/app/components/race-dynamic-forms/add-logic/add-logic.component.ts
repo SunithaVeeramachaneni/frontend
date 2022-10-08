@@ -8,7 +8,8 @@ import {
   OnInit
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { distinctUntilChanged, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
+import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 
 @Component({
@@ -18,6 +19,10 @@ import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 })
 export class AddLogicComponent implements OnInit {
   fieldOperators: any;
+
+  fieldType = { type: 'TF', description: 'Text Answer' };
+  fieldTypes: any = [this.fieldType];
+  filteredFieldTypes: any = [this.fieldType];
 
   public logicsForm: FormGroup;
 
@@ -45,12 +50,31 @@ export class AddLogicComponent implements OnInit {
     return this._question;
   }
 
-  constructor(private cdrf: ChangeDetectorRef, private fb: FormBuilder) {}
+  constructor(
+    private cdrf: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private rdfService: RdfService
+  ) {}
 
   ngOnInit() {
     this.logicsForm.get('logics').valueChanges.subscribe((data) => {
       console.log('value changed', data);
     });
+
+    this.rdfService
+      .getFieldTypes$()
+      .pipe(
+        tap((fieldTypes) => {
+          this.fieldTypes = fieldTypes;
+          this.filteredFieldTypes = fieldTypes.filter(
+            (fieldType) =>
+              fieldType.type !== 'LTV' &&
+              fieldType.type !== 'DD' &&
+              fieldType.type !== 'DDM'
+          );
+        })
+      )
+      .subscribe();
   }
 
   get logics(): FormArray {
@@ -84,7 +108,21 @@ export class AddLogicComponent implements OnInit {
         action: 'Ask Questions',
         expression
       });
-      //
+      // TODO: add questions to logic...
+      logic.controls.questions.push(
+        this.fb.group({
+          id: [`QID_ADD_LOGIC`],
+          name: [''],
+          fieldType: ['TF'],
+          position: [''],
+          required: [false],
+          multi: [false],
+          value: ['TF'],
+          isPublished: [false],
+          isPublishedTillSave: [false],
+          logics: this.fb.array([])
+        })
+      );
     } else if (action === 'hide') {
       const isEmpty = logic.value.operand2.length ? true : false;
       if (isEmpty) {
@@ -111,5 +149,19 @@ export class AddLogicComponent implements OnInit {
       });
     }
     this.cdrf.detectChanges();
+  }
+
+  getQuestionsOfLogic(logic) {
+    //    return form.controls.questions.controls;
+    return logic.controls.questions.controls;
+  }
+
+  getFieldTypeImage(type) {
+    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
+  }
+  getFieldTypeDescription(type) {
+    return type
+      ? this.fieldTypes.find((field) => field.type === type)?.description
+      : null;
   }
 }
