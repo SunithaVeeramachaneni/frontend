@@ -40,6 +40,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AddLogicComponent } from './add-logic/add-logic.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
 import { McqResponseComponent } from './utils/mcq-response/mcq-response.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -66,6 +67,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     SharedModule,
     MatCardModule,
     MatMenuModule,
+    MatChipsModule,
     MatButtonToggleModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({

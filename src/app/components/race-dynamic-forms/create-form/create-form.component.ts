@@ -11,6 +11,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject, from, timer, Observable, of } from 'rxjs';
 import {
   debounceTime,
@@ -48,6 +49,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public quickResponses$: Observable<any>;
   public globalResponses$: Observable<any>;
   public activeResponses$: Observable<any>;
+  public activeResponseId: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
@@ -200,9 +202,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
-  handleResponses = (resp: any, type: string) => {
-    this.activeResponses$ = of(resp);
+  handleResponses = (type: string, id: string) => {
+    this.activeResponses$ =
+      type === 'globalResponse' ? this.globalResponses$ : this.quickResponses$;
     this.activeResponseType = type;
+    this.activeResponseId = id;
   };
 
   ngAfterViewInit(): void {
