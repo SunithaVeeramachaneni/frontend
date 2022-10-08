@@ -28,7 +28,6 @@ import { McqService } from './mcq.service';
 export class McqResponseComponent implements OnInit {
   @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  public isGlobalResp: boolean;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
   private inputResp: Observable<any>;
@@ -41,8 +40,10 @@ export class McqResponseComponent implements OnInit {
 
   @Input() set responseType(responseType: string) {
     this.respType = responseType;
-    this.isGlobalResp = responseType === 'globalResponse' ? true : false;
-    console.log(this.isGlobalResp);
+  }
+
+  @Input() set activeResponseId(id: string) {
+    this.id = id;
   }
 
   constructor(private fb: FormBuilder, private mcqService: McqService) {}
@@ -56,10 +57,13 @@ export class McqResponseComponent implements OnInit {
     this.inputResp
       .pipe(
         tap((input) => {
-          if (!Array.isArray(input)) {
-            this.id = input.id;
-            input.values.forEach((val) => {
+          const resp = input.find((item) => item.id === this.id);
+          if (resp) {
+            if (this.respType === 'globalResponse')
+              this.name.patchValue(resp.name);
+            resp.values.forEach((val) => {
               this.responses.push(this.fb.group(val));
+              console.log(this.responses.value);
             });
           }
         })
@@ -107,17 +111,25 @@ export class McqResponseComponent implements OnInit {
   };
 
   submitResponses = () => {
-    if (this.id) {
+    if (this.id !== '-1') {
       this.mcqService
         .updateResponse$(this.id, this.responses.value)
         .subscribe((newResp) => {
-          console.log('Updated', newResp);
           this.inputResp.pipe(
-            tap(() => ({
-              id: newResp.id,
-              values: newResp.values,
-              name: this.name.value
-            }))
+            tap((oldResp) => {
+              const latest = oldResp.map((resp) => {
+                let cur = resp;
+                if (resp.id === this.id) {
+                  cur = {
+                    id: newResp.id,
+                    values: newResp.values,
+                    name: this.name.value
+                  };
+                }
+                return cur;
+              });
+              return latest;
+            })
           );
         });
     } else {
@@ -128,7 +140,6 @@ export class McqResponseComponent implements OnInit {
           name: this.name.value
         })
         .subscribe((newResp) => {
-          console.log('Created', newResp);
           this.inputResp.pipe(
             tap((oldResp) => {
               const latest = oldResp.push({

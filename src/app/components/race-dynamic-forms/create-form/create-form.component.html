@@ -325,18 +325,18 @@
                                       mat-flat-button
                                       (click)="
                                         handleResponses(
-                                          quickResponses,
-                                          'quickResponse'
+                                          'quickResponse',
+                                          resp.id
                                         );
                                         isMCQResponseOpen = true;
                                         togglePopOverOpenState(i, j)
                                       "
                                     >
-                                      <span
-                                        ><div *ngFor="let val of resp.values">
-                                          {{ val.title }}
-                                        </div></span
+                                      <mat-chip-list
+                                        *ngFor="let val of resp.values"
                                       >
+                                        <mat-chip> {{ val.title }} </mat-chip>
+                                      </mat-chip-list>
                                     </button>
                                   </div>
                                   <button
@@ -346,10 +346,7 @@
                                       background: none;
                                     "
                                     (click)="
-                                      handleResponses(
-                                        quickResponses,
-                                        'quickResponse'
-                                      );
+                                      handleResponses('quickResponse', '-1');
                                       isMCQResponseOpen = true;
                                       togglePopOverOpenState(i, j)
                                     "
@@ -370,8 +367,8 @@
                                       mat-flat-button
                                       (click)="
                                         handleResponses(
-                                          globalResponses,
-                                          'globalResponse'
+                                          'globalResponse',
+                                          resp.id
                                         );
                                         isMCQResponseOpen = true;
                                         togglePopOverOpenState(i, j)
@@ -387,10 +384,7 @@
                                       background: none;
                                     "
                                     (click)="
-                                      handleResponses(
-                                        globalResponses,
-                                        'globalResponse'
-                                      );
+                                      handleResponses('globalResponse', '-1');
                                       isMCQResponseOpen = true;
                                       togglePopOverOpenState(i, j)
                                     "
@@ -496,6 +490,7 @@
                     <app-mcq-response
                       [inputResponse]="activeResponses$"
                       [responseType]="activeResponseType"
+                      [activeResponseId]="activeResponseId"
                       (dialogClose)="isMCQResponseOpen = false"
                     ></app-mcq-response>
                   </div>
