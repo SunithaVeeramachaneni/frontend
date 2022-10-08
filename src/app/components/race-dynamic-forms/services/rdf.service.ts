@@ -60,6 +60,16 @@ export class RdfService {
       toArray()
     );
 
+  getResponses$ = (
+    respType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getRespFromGateway(
+      environment.rdfApiUrl,
+      `forms/responses/${respType}`,
+      info
+    );
+
   createAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo

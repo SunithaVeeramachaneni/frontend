@@ -11,7 +11,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject, from, timer } from 'rxjs';
+import { BehaviorSubject, from, timer, Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -20,7 +20,8 @@ import {
   pairwise,
   switchMap,
   tap,
-  toArray
+  toArray,
+  map
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -43,6 +44,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   @ViewChild('name') private name: ElementRef;
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
   public createForm: FormGroup;
+  public isMCQResponseOpen = false;
+  public quickResponses$: Observable<any>;
+  public globalResponses$: Observable<any>;
+  public activeResponses$: Observable<any>;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
@@ -50,6 +55,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   changesPublished = 'All Changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
+  activeResponseType: string;
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
@@ -79,6 +85,30 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.quickResponses$ = this.rdfService.getResponses$('quickResponse').pipe(
+      tap((resp) => {
+        const quickResp = resp.map((r) => ({
+          id: r.id,
+          name: '',
+          values: r.values
+        }));
+        return quickResp;
+      })
+    );
+    this.globalResponses$ = this.rdfService
+      .getResponses$('globalResponse')
+      .pipe(
+        tap((resp) => {
+          const globalResp = resp.map((r) => ({
+            id: r.id,
+            name: r.name,
+            values: r.values
+          }));
+          return globalResp;
+        })
+      );
+    this.quickResponses$.subscribe();
+    this.globalResponses$.subscribe();
     this.createForm = this.fb.group({
       id: [''],
       name: [''],
@@ -170,6 +200,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
+  handleResponses = (resp: any, type: string) => {
+    this.activeResponses$ = of(resp);
+    this.activeResponseType = type;
+  };
+
   ngAfterViewInit(): void {
     this.name.nativeElement.focus();
   }
@@ -248,7 +283,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         mergeMap((question) =>
           this.rdfService.deleteAbapFormField$({
             FORMNAME: this.createForm.get('id').value,
-            UNIQUEKEY: question.value.id
+            UNIQUEKEY: question.id
           })
         ),
         toArray()
@@ -294,6 +329,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       fieldType: [this.fieldType.type],
       position: [''],
       required: [false],
+      multi: [false],
       value: ['TF'],
       isPublished: [false],
       isPublishedTillSave: [false],
@@ -425,13 +461,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   selectFieldType(fieldType, question) {
     this.currentQuestion = question;
-    question.get('fieldType').setValue(fieldType.type);
+    question.patchValue({ fieldType: fieldType.type, required: false });
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
         break;
       case 'VI':
         this.isCustomizerOpen = true;
+        question.get('value').setValue([]);
         break;
       case 'RT':
         this.isCustomizerOpen = true;

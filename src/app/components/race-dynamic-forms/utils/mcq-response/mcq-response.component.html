@@ -3,9 +3,18 @@
     <mat-card-title class="m-0 light-gray">
       <div class="mcq-heading">Multiple Choice Responses</div>
     </mat-card-title>
-    <div style="padding-left: 10px">Response</div>
-    <mat-card-content>
-      <div [formGroup]="responseForm">
+    <div [formGroup]="responseForm">
+      <div>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Untitled Response Set"
+          [hidden]="isGlobalResp === false"
+          autocomplete="off"
+        />
+      </div>
+      <div style="padding-left: 10px">Response</div>
+      <mat-card-content>
         <div class="width-100" formArrayName="responses">
           <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
             <div *ngFor="let response of getResponseList(); let i = index">
@@ -36,11 +45,11 @@
             </div>
           </div>
         </div>
-      </div>
-      <button mat-flat-button (click)="initResponse()" class="add-response">
-        + Add Response
-      </button>
-    </mat-card-content>
+        <button mat-flat-button (click)="initResponse()" class="add-response">
+          + Add Response
+        </button>
+      </mat-card-content>
+    </div>
     <button
       mat-raised-button
       (click)="submitResponses()"

@@ -4,9 +4,11 @@ import {
   OnInit,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  AfterViewInit
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -15,6 +17,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
+import { McqService } from './mcq.service';
 
 @Component({
   selector: 'app-mcq-response',
@@ -24,25 +27,44 @@ import { isEqual } from 'lodash-es';
 })
 export class McqResponseComponent implements OnInit {
   @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  public isGlobalResp: boolean;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
-  private inputQuestion: FormGroup;
+  private inputResp: Observable<any>;
+  private respType: string;
+  private id: string;
 
-  @Input() set question(question: any) {
-    this.inputQuestion = question ? question : ({} as any);
+  @Input() set inputResponse(responses: Observable<any>) {
+    this.inputResp = responses ? responses : (of([]) as Observable<any>);
   }
 
-  constructor(private fb: FormBuilder) {}
+  @Input() set responseType(responseType: string) {
+    this.respType = responseType;
+    this.isGlobalResp = responseType === 'globalResponse' ? true : false;
+    console.log(this.isGlobalResp);
+  }
+
+  constructor(private fb: FormBuilder, private mcqService: McqService) {}
 
   ngOnInit(): void {
     this.responseForm = this.fb.group({
+      name: new FormControl(''),
       responses: this.fb.array([])
     });
 
-    // if (Array.isArray(this.inputQuestion.get('value').value)) {
-    //   console.log('Hit');
-    //   this.responses.setValue(this.inputQuestion.get('value').value);
-    // } else this.responses.setValue([]);
+    this.inputResp
+      .pipe(
+        tap((input) => {
+          if (!Array.isArray(input)) {
+            this.id = input.id;
+            input.values.forEach((val) => {
+              this.responses.push(this.fb.group(val));
+            });
+          }
+        })
+      )
+      .subscribe();
 
     this.responses.valueChanges
       .pipe(
@@ -59,21 +81,12 @@ export class McqResponseComponent implements OnInit {
       .subscribe();
   }
 
-  // initalValue = () => {
-  //   setTimeout(() => {
-  //     if (Array.isArray(this.inputQuestion.get('value').value)) {
-  //       const val = this.inputQuestion.get('value').value;
-  //       return ([{
-  //         title: val.title,
-  //         color: val.color
-  //       }])
-  //       // this.responses.setValue(this.inputQuestion.get('value').value);
-  //     } else this.responses.setValue([]);
-  //   });
-  // };
-
   get responses(): FormArray {
     return this.responseForm.get('responses') as FormArray;
+  }
+
+  get name() {
+    return this.responseForm.get('name');
   }
 
   getResponseList() {
@@ -94,8 +107,40 @@ export class McqResponseComponent implements OnInit {
   };
 
   submitResponses = () => {
-    this.inputQuestion.get('value').setValue(this.responses.value);
-    console.log('final', this.inputQuestion);
+    if (this.id) {
+      this.mcqService
+        .updateResponse$(this.id, this.responses.value)
+        .subscribe((newResp) => {
+          console.log('Updated', newResp);
+          this.inputResp.pipe(
+            tap(() => ({
+              id: newResp.id,
+              values: newResp.values,
+              name: this.name.value
+            }))
+          );
+        });
+    } else {
+      this.mcqService
+        .createResponse$({
+          type: this.respType,
+          values: this.responses.value,
+          name: this.name.value
+        })
+        .subscribe((newResp) => {
+          console.log('Created', newResp);
+          this.inputResp.pipe(
+            tap((oldResp) => {
+              const latest = oldResp.push({
+                id: newResp.id,
+                values: newResp.values,
+                name: this.name.value
+              });
+              return latest;
+            })
+          );
+        });
+    }
     this.dialogClose.emit(false);
   };
 
