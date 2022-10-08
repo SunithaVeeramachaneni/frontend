@@ -35,10 +35,19 @@
           </div>
         </div>
 
-        <div style="overflow-y: auto; height: 450px">
+        <div
+          style="
+            overflow-y: auto;
+            height: 420px;
+            border-bottom: 1px solid #d3d3d3;
+          "
+        >
           <div *ngFor="let section of formData.sections; let i = index">
             <p class="section-name">
               {{ section.name ? section.name : 'Section Name' }}
+              <mat-icon style="float: right; position: relative; top: -2px">
+                keyboard_arrow_down
+              </mat-icon>
             </p>
             <div *ngFor="let question of section.questions">
               <div class="dis-flex m-b-10">
@@ -180,9 +189,43 @@
                   <mat-slider style="width: 230px; margin-top: -15px">
                   </mat-slider>
                 </span>
+
+                <div *ngIf="question.fieldType === 'VI'">
+                  <div *ngIf="question.value?.length > 0">
+                    <div *ngIf="4 >= question.value.length">
+                      <mat-button-toggle-group
+                        style="height: 35px; align-items: center; width: 240px"
+                      >
+                        <mat-button-toggle
+                          class="vi-values"
+                          [value]="ques.title"
+                          *ngFor="let ques of question.value"
+                        >
+                          {{ ques.title }}
+                        </mat-button-toggle>
+                      </mat-button-toggle-group>
+                    </div>
+
+                    <div *ngIf="question.value.length > 4">
+                      <mat-select class="dropdown" [multiple]="question.multi">
+                        <mat-option
+                          *ngFor="let ques of question.value"
+                          [value]="ques.title"
+                        >
+                          {{ ques.title }}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div>
+          <button class="btns">Save</button>
+          <button class="btns">Submit</button>
         </div>
       </div>
     </div>

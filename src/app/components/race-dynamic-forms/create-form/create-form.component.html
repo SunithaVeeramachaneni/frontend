@@ -518,6 +518,26 @@
                               </option>
                             </select>
                           </span>
+                          <span
+                            *ngIf="question.controls.fieldType.value === 'VI'"
+                            style="margin-left: 20px"
+                          >
+                            <input
+                              type="checkbox"
+                              id="multi"
+                              class="required-input"
+                              name="multi"
+                              formControlName="multi"
+                              (click)="
+                                question
+                                  .get('multi')
+                                  .setValue(!question.controls.multi.value)
+                              "
+                            />&nbsp;
+                            <label for="multi">
+                              Allow more than one selection
+                            </label>
+                          </span>
                         </div>
                         <div *ngIf="question.hasLogic" class="logicBuilder">
                           <!-- {{ question.value | json }} -->
@@ -581,7 +601,7 @@
     </div>
     <div class="width-30" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview
-        [formData]="createForm.getRawValue()"
+        [formData]="createForm.value"
       ></app-rdf-forms-iphone-preview>
     </div>
   </div>

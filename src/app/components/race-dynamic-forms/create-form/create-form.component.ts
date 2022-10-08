@@ -275,6 +275,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       fieldType: [this.fieldType.type],
       position: [''],
       required: [false],
+      multi: [false],
       value: ['TF'],
       isPublished: [false],
       isPublishedTillSave: [false],
@@ -413,6 +414,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         break;
       case 'VI':
         this.isCustomizerOpen = true;
+        question.get('value').setValue([]);
         break;
       case 'RT':
         this.isCustomizerOpen = true;

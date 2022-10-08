@@ -1,11 +1,18 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
 @Component({
   selector: 'app-rdf-forms-iphone-preview',
   templateUrl: './iphone-preview.component.html',
-  styleUrls: ['./iphone-preview.component.css']
+  styleUrls: ['./iphone-preview.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IphonePreviewComponent implements OnInit, OnDestroy {
   private _formData;

@@ -135,7 +135,9 @@
   text-align: left;
   color: #000000;
   font-weight: 500;
-  margin-left: 10px;
+  padding-left: 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #d3d3d3;
 }
 
 .question-name {
@@ -189,4 +191,37 @@
 .scan-icon {
   width: 15px;
   margin-left: 5px;
+}
+
+.vi-values {
+  width: inherit;
+  background: white;
+  box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
+}
+
+.btns {
+  background-color: #008dc7;
+  border: #008dc7;
+  color: #ffffff;
+  padding: 5px;
+  height: 30px;
+  width: 80px;
+  margin-top: 6px;
+  float: right;
+  margin-right: 12px;
+}
+
+.dropdown {
+  width: 90%;
+  margin: 0 10px;
+  height: 30px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  text-align: left;
+  padding-left: 10px;
+
+  ::ng-deep .mat-select-value {
+    height: 24px;
+    padding-top: 8px;
+  }
 }
