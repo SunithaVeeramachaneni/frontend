@@ -315,27 +315,89 @@
                             <div class="width-50">
                               <div style="height: 50%">
                                 <h2 style="color: #e8743b">QUICK RESPONSES</h2>
-                                <button
-                                  style="
-                                    color: #3d5afe;
-                                    border: none;
-                                    background: none;
+                                <ng-container
+                                  *ngIf="
+                                    quickResponses$ | async as quickResponses
                                   "
                                 >
-                                  Add New
-                                </button>
+                                  <div *ngFor="let resp of quickResponses">
+                                    <button
+                                      mat-flat-button
+                                      (click)="
+                                        handleResponses(
+                                          quickResponses,
+                                          'quickResponse'
+                                        );
+                                        isMCQResponseOpen = true;
+                                        togglePopOverOpenState(i, j)
+                                      "
+                                    >
+                                      <span
+                                        ><div *ngFor="let val of resp.values">
+                                          {{ val.title }}
+                                        </div></span
+                                      >
+                                    </button>
+                                  </div>
+                                  <button
+                                    style="
+                                      color: #3d5afe;
+                                      border: none;
+                                      background: none;
+                                    "
+                                    (click)="
+                                      handleResponses(
+                                        quickResponses,
+                                        'quickResponse'
+                                      );
+                                      isMCQResponseOpen = true;
+                                      togglePopOverOpenState(i, j)
+                                    "
+                                  >
+                                    Add New
+                                  </button>
+                                </ng-container>
                               </div>
                               <div style="height: 50%">
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
-                                <button
-                                  style="
-                                    color: #3d5afe;
-                                    border: none;
-                                    background: none;
+                                <ng-container
+                                  *ngIf="
+                                    globalResponses$ | async as globalResponses
                                   "
                                 >
-                                  Add Manually
-                                </button>
+                                  <div *ngFor="let resp of globalResponses">
+                                    <button
+                                      mat-flat-button
+                                      (click)="
+                                        handleResponses(
+                                          globalResponses,
+                                          'globalResponse'
+                                        );
+                                        isMCQResponseOpen = true;
+                                        togglePopOverOpenState(i, j)
+                                      "
+                                    >
+                                      {{ resp.name }}
+                                    </button>
+                                  </div>
+                                  <button
+                                    style="
+                                      color: #3d5afe;
+                                      border: none;
+                                      background: none;
+                                    "
+                                    (click)="
+                                      handleResponses(
+                                        globalResponses,
+                                        'globalResponse'
+                                      );
+                                      isMCQResponseOpen = true;
+                                      togglePopOverOpenState(i, j)
+                                    "
+                                  >
+                                    Add Manually
+                                  </button>
+                                </ng-container>
                               </div>
                             </div>
                           </div>
@@ -430,16 +492,11 @@
                     />
                   </div>
 
-                  <div
-                    id="app-customizer"
-                    *ngIf="
-                      isCustomizerOpen &&
-                      question.controls.fieldType.value === 'VI'
-                    "
-                  >
+                  <div id="app-customizer" *ngIf="isMCQResponseOpen">
                     <app-mcq-response
-                      [question]="question"
-                      (dialogClose)="isCustomizerOpen = false"
+                      [inputResponse]="activeResponses$"
+                      [responseType]="activeResponseType"
+                      (dialogClose)="isMCQResponseOpen = false"
                     ></app-mcq-response>
                   </div>
                   <div
