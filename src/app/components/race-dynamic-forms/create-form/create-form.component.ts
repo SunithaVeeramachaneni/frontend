@@ -406,7 +406,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   selectFieldType(fieldType, question) {
     this.currentQuestion = question;
-    question.get('fieldType').setValue(fieldType.type);
+    question.patchValue({ fieldType: fieldType.type, required: false });
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
