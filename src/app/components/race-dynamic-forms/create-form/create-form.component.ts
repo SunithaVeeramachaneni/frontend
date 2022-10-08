@@ -248,7 +248,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         mergeMap((question) =>
           this.rdfService.deleteAbapFormField$({
             FORMNAME: this.createForm.get('id').value,
-            UNIQUEKEY: question.value.id
+            UNIQUEKEY: question.id
           })
         ),
         toArray()
