@@ -122,6 +122,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       description: [''],
       counter: [1],
       sections: this.fb.array([this.initSection(1, 1, 1)]),
+      isPublished: [false],
       isPublishedTillSave: [false]
     });
     this.rdfService
@@ -133,7 +134,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             (fieldType) =>
               fieldType.type !== 'LTV' &&
               fieldType.type !== 'DD' &&
-              fieldType.type !== 'DDM'
+              fieldType.type !== 'DDM' &&
+              fieldType.type !== 'VI'
           );
         })
       )
@@ -427,6 +429,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             });
           });
           if (publishedCount === response.length) {
+            form.isPublished = true;
             form.isPublishedTillSave = true;
             this.status$.next(this.changesPublished);
           }
@@ -457,9 +460,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.updateForm$(id, form).pipe(
-        tap(() => {
-          if (!ignoreStatus) {
+      return this.rdfService.updateForm$(form).pipe(
+        tap((updateForm) => {
+          if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);
           }
         })
@@ -471,11 +474,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       }
       return this.rdfService.createForm$(form).pipe(
         tap((createdForm) => {
-          this.createForm.get('id').setValue(createdForm.id);
-          this.createInProgress = false;
-          this.createForm.enable({ emitEvent: false });
-          this.disableFormFields = false;
-          this.status$.next(this.changesSaved);
+          if (Object.keys(createdForm).length) {
+            this.createForm.get('id').setValue(createdForm.id);
+            this.createInProgress = false;
+            this.createForm.enable({ emitEvent: false });
+            this.disableFormFields = false;
+            this.status$.next(this.changesSaved);
+          }
         })
       );
     }
