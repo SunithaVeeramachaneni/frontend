@@ -235,29 +235,51 @@
                         #trigger="cdkOverlayOrigin"
                         (click)="togglePopOverOpenState(i, j)"
                         class="response-type-btn"
+                        [ngClass]="{
+                          'dis-flex':
+                            question.controls.fieldType.value === 'VI' ||
+                            question.controls.fieldType.value === 'DD'
+                        }"
                       >
-                        <img
-                          [src]="
-                            getFieldTypeImage(question.controls.fieldType.value)
+                        <div
+                          *ngIf="
+                            question.controls.fieldType.value === 'VI' ||
+                              question.controls.fieldType.value === 'DD';
+                            else nonMCQFields
                           "
-                          class="response-type-icons"
-                          style="position: relative; top: -2px"
-                        />&nbsp;
-                        <span
-                          style="
-                            white-space: nowrap;
-                            display: inline-block;
-                            text-overflow: ellipsis;
-                            width: 60%;
-                            overflow: hidden;
-                          "
+                          class="chip-list"
                         >
-                          {{
-                            getFieldTypeDescription(
-                              question.controls.fieldType.value
-                            )
-                          }}
-                        </span>
+                          <mat-chip-list>
+                            <mat-chip>
+                              {{ question.controls.value?.value[0] }}
+                            </mat-chip>
+                          </mat-chip-list>
+                        </div>
+                        <ng-template #nonMCQFields>
+                          <img
+                            [src]="
+                              getFieldTypeImage(
+                                question.controls.fieldType.value
+                              )
+                            "
+                            class="response-type-icons"
+                            style="position: relative; top: -2px"
+                          />&nbsp;
+                          <span
+                            style="
+                              white-space: nowrap;
+                              display: inline-block;
+                              text-overflow: ellipsis;
+                              width: 60%;
+                              overflow: hidden;
+                            "
+                            >{{
+                              getFieldTypeDescription(
+                                question.controls.fieldType.value
+                              )
+                            }}
+                          </span>
+                        </ng-template>
                         <mat-icon
                           style="float: right; position: relative; top: -4px"
                         >
@@ -335,6 +357,8 @@
                                         </mat-chip-list>
                                       </button>
                                       <button
+                                        mat-flat-button
+                                        style="float: right"
                                         (click)="
                                           handleResponses(
                                             'quickResponse',
@@ -375,6 +399,15 @@
                                     <button
                                       mat-flat-button
                                       (click)="
+                                        handleMCQFieldType(question, resp)
+                                      "
+                                    >
+                                      {{ resp.name }}
+                                    </button>
+                                    <button
+                                      mat-flat-button
+                                      style="float: right"
+                                      (click)="
                                         handleResponses(
                                           'globalResponse',
                                           resp.id
@@ -383,7 +416,7 @@
                                         togglePopOverOpenState(i, j)
                                       "
                                     >
-                                      {{ resp.name }}
+                                      Edit
                                     </button>
                                   </div>
                                   <button

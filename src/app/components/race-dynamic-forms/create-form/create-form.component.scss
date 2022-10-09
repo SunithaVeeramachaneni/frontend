@@ -190,6 +190,13 @@ select:focus {
   height: 15px;
 }
 
+.chip-list {
+  width: 90%;
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 8px 4px 5px 4px !important;
+  }
+}
+
 #app-customizer {
   position: fixed;
   bottom: 0px;
