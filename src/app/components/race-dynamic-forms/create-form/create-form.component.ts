@@ -168,6 +168,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
 
     this.createForm
+      .get('description')
+      .valueChanges.pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        filter(() => this.createForm.get('id').value),
+        switchMap(() => this.saveForm())
+      )
+      .subscribe();
+
+    this.createForm
       .get('sections')
       .valueChanges.pipe(
         pairwise(),
@@ -462,12 +472,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   saveForm(ignoreStatus = false) {
     const { id, ...form } = this.createForm.getRawValue();
-
     if (id) {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.updateForm$(form).pipe(
+      return this.rdfService.updateForm$({ ...form, id }).pipe(
         tap((updateForm) => {
           if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);

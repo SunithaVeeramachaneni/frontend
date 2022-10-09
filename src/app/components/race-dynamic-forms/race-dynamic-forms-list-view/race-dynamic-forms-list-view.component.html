@@ -50,8 +50,8 @@
       Create Form
     </button>
   </div>
-  <div *ngIf="forms$ | async as forms">
-    <div *ngFor="let form of forms" style="background-color: #ffffff">
+  <div *ngIf="formsData$ | async as forms">
+    <div *ngFor="let form of forms.data" style="background-color: #ffffff">
       <div class="form-data">
         <span>
           <span class="form-name">{{ form.name }}</span>
@@ -59,13 +59,20 @@
           <span class="form-description">{{ form.description }}</span>
         </span>
 
+        <button
+          [matMenuTriggerFor]="sectionMenu"
+          class="more-icon"
+          aria-label="More Options"
+        >
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #sectionMenu="matMenu">
+          <button mat-menu-item (click)="deleteForm(form)" class="text-red">
+            <span>Delete</span>
+          </button>
+        </mat-menu>
         <span style="float: right; margin-top: -12px">
           <span class="form-created">{{ form.createdAt | timeAgo }}</span>
-          <img
-            src="assets/rdf-forms-icons/arrow-right.svg"
-            alt="arrow-right"
-            style="position: relative; top: 3px"
-          />
         </span>
       </div>
     </div>
