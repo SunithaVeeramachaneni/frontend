@@ -24,12 +24,19 @@ export class RdfService {
     this.appService._postData(environment.rdfApiUrl, 'forms', form, info);
 
   updateForm$ = (
-    formId: string,
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService
-      .patchData(environment.rdfApiUrl, `forms/${formId}`, form, info)
+      .patchData(environment.rdfApiUrl, `forms/${form.id}`, form, info)
+      .pipe(map((response) => (response === null ? form : response)));
+
+  deleteForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService
+      ._removeData(environment.rdfApiUrl, `forms/${form.id}`, info)
       .pipe(map((response) => (response === null ? form : response)));
 
   getForms$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
@@ -42,7 +49,7 @@ export class RdfService {
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    from(this.postOrPutFormPayload(form)).pipe(
+    from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
         const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
@@ -74,7 +81,12 @@ export class RdfService {
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._postData(environment.rdfApiUrl, 'abap/forms', form, info);
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'abap/forms/fields',
+      form,
+      info
+    );
 
   updateAbapFormField$ = (
     form: any,
@@ -82,10 +94,23 @@ export class RdfService {
   ): Observable<any> =>
     this.appService._updateData(
       environment.rdfApiUrl,
-      `abap/forms`,
+      `abap/forms/fields`,
       form,
       info
     );
+
+  deactivateAbapForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> => {
+    const payload = this.deactivateFormPayload(form);
+    return this.appService._updateData(
+      environment.rdfApiUrl,
+      `abap/forms`,
+      payload,
+      info
+    );
+  };
 
   deleteAbapFormField$ = (
     params: any,
@@ -93,7 +118,7 @@ export class RdfService {
   ): Observable<any> =>
     this.appService._removeData(
       environment.rdfApiUrl,
-      `abap/forms${this.appService.getQueryString({
+      `abap/forms/fields${this.appService.getQueryString({
         APPNAME,
         VERSION,
         VALIDFROM,
@@ -103,7 +128,7 @@ export class RdfService {
       info
     );
 
-  postOrPutFormPayload(form) {
+  postPutFormFieldPayload(form) {
     let payloads = [];
     const { sections, name, id } = form;
     sections.forEach((section) => {
@@ -158,6 +183,17 @@ export class RdfService {
     return payloads;
   }
 
+  deactivateFormPayload(form) {
+    const { name, id } = form;
+    return {
+      VERSION,
+      APPNAME,
+      FORMNAME: id,
+      FORMTITLE: name,
+      DEACTIVATE: 'X'
+    };
+  }
+
   getDefaultValue(question) {
     return question.fieldType === 'LF' ? question.value : '';
   }
@@ -166,7 +202,7 @@ export class RdfService {
     let properties = {};
     const { fieldType } = question;
     switch (fieldType) {
-      case 'RT':
+      case 'RT': {
         const {
           value: { min, max, increment }
         } = question;
@@ -177,7 +213,8 @@ export class RdfService {
           RINTERVAL: increment.toString()
         };
         break;
-      case 'IMF':
+      }
+      case 'IMF': {
         const {
           value: { base64, name }
         } = question;
@@ -187,16 +224,20 @@ export class RdfService {
           FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
         };
         break;
+      }
       case 'VI':
-        const { value } = question;
-        const ddVALUE = value.map((item, idx) => ({
+      case 'DD': {
+        const { value, multi } = question;
+        const viVALUE = value.map((item, idx) => ({
           [`LABEL${idx + 1}`]: item.title
         }));
         properties = {
           ...properties,
-          DDVALUE: JSON.stringify(ddVALUE)
+          DDVALUE: JSON.stringify(viVALUE),
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
         };
         break;
+      }
       default:
       // do nothing
     }

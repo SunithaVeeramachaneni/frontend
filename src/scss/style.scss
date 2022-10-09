@@ -112,7 +112,17 @@ li.breadcrumb-item.active span {
   width: 100% !important;
   left: 43px !important;
 }
-.ql-toolbar.ql-snow {
+
+.instruction-quill-box .ql-toolbar.ql-snow {
+  position: absolute;
+  top: -29px !important;
+  background: white;
+  z-index: 1;
+  right: 0 !important;
+  display: none;
+}
+
+.steps-quill-material .ql-toolbar.ql-snow {
   position: absolute;
   top: -29px !important;
   background: white;

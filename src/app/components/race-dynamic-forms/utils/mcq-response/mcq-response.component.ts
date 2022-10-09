@@ -5,7 +5,7 @@ import {
   Input,
   Output,
   EventEmitter,
-  AfterViewInit
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
@@ -13,7 +13,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
-  startWith,
   tap
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
@@ -28,10 +27,10 @@ import { McqService } from './mcq.service';
 export class McqResponseComponent implements OnInit {
   @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  public respType: string;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
   private inputResp: Observable<any>;
-  private respType: string;
   private id: string;
 
   @Input() set inputResponse(responses: Observable<any>) {
@@ -46,29 +45,17 @@ export class McqResponseComponent implements OnInit {
     this.id = id;
   }
 
-  constructor(private fb: FormBuilder, private mcqService: McqService) {}
+  constructor(
+    private fb: FormBuilder,
+    private mcqService: McqService,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.responseForm = this.fb.group({
       name: new FormControl(''),
       responses: this.fb.array([])
     });
-
-    this.inputResp
-      .pipe(
-        tap((input) => {
-          const resp = input.find((item) => item.id === this.id);
-          if (resp) {
-            if (this.respType === 'globalResponse')
-              this.name.patchValue(resp.name);
-            resp.values.forEach((val) => {
-              this.responses.push(this.fb.group(val));
-              console.log(this.responses.value);
-            });
-          }
-        })
-      )
-      .subscribe();
 
     this.responses.valueChanges
       .pipe(
@@ -80,6 +67,22 @@ export class McqResponseComponent implements OnInit {
           else if (currResp.find((item) => !item.title))
             this.isFormNotUpdated = true;
           else this.isFormNotUpdated = false;
+        })
+      )
+      .subscribe();
+
+    this.inputResp
+      .pipe(
+        tap((input) => {
+          const resp = input.find((item) => item.id === this.id);
+          if (resp) {
+            if (this.respType === 'globalResponse')
+              this.name.patchValue(resp.name);
+            resp.values.forEach((val) => {
+              this.responses.push(this.fb.group(val));
+            });
+          }
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();
@@ -113,16 +116,20 @@ export class McqResponseComponent implements OnInit {
   submitResponses = () => {
     if (this.id !== '-1') {
       this.mcqService
-        .updateResponse$(this.id, this.responses.value)
-        .subscribe((newResp) => {
+        .updateResponse$(this.id, {
+          id: this.id,
+          values: this.responses.value,
+          name: this.name.value
+        })
+        .subscribe(() => {
           this.inputResp.pipe(
             tap((oldResp) => {
               const latest = oldResp.map((resp) => {
                 let cur = resp;
                 if (resp.id === this.id) {
                   cur = {
-                    id: newResp.id,
-                    values: newResp.values,
+                    id: this.id,
+                    values: this.responses.value,
                     name: this.name.value
                   };
                 }
