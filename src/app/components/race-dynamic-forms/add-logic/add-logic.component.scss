@@ -1,0 +1,65 @@
+.tabContent {
+  display: flex;
+  // align-items: center;
+  padding: 5px 10px;
+  background: white;
+  flex-direction: column;
+  border-radius: 0px 0px 15px 15px;
+}
+
+.logicValue {
+  margin: 0px 5px;
+  border: 1px solid #d7dbf4;
+  border-radius: 45px;
+  padding: 0px 10px;
+  background: #d7dbf4;
+  line-height: 1.5;
+}
+.logicCondition {
+  margin: 0px 5px;
+  border: 1px solid #d7dbf4;
+  border-radius: 45px;
+  padding: 0px 10px;
+  background: #d7dbf4;
+  line-height: 1.5;
+}
+
+.action {
+  margin: 0px 5px;
+  border: 1px solid #d7dbf4;
+  border-radius: 6px;
+  padding: 0px 5px;
+  background: #d7dbf4;
+}
+
+.logicAskQuestions {
+  width: 100%;
+}
+
+.logicRow {
+  background: rgb(0 0 0 / 12%);
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.six-dots {
+  position: relative;
+  top: 3px;
+  cursor: move;
+}
+
+.response-type-btn {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  height: 40px;
+  margin-top: 7px;
+  width: 80%;
+  text-align: left;
+  padding-left: 12px;
+  padding-top: 10px;
+}
+.response-type-icons {
+  width: 15px;
+  height: 15px;
+}
