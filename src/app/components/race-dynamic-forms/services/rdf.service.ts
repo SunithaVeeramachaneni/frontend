@@ -166,7 +166,7 @@ export class RdfService {
     let properties = {};
     const { fieldType } = question;
     switch (fieldType) {
-      case 'RT':
+      case 'RT': {
         const {
           value: { min, max, increment }
         } = question;
@@ -177,7 +177,8 @@ export class RdfService {
           RINTERVAL: increment.toString()
         };
         break;
-      case 'IMF':
+      }
+      case 'IMF': {
         const {
           value: { base64, name }
         } = question;
@@ -187,16 +188,20 @@ export class RdfService {
           FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
         };
         break;
+      }
       case 'VI':
-        const { value } = question;
-        const ddVALUE = value.map((item, idx) => ({
+      case 'DD': {
+        const { value, multi } = question;
+        const viVALUE = value.map((item, idx) => ({
           [`LABEL${idx + 1}`]: item.title
         }));
         properties = {
           ...properties,
-          DDVALUE: JSON.stringify(ddVALUE)
+          DDVALUE: JSON.stringify(viVALUE),
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
         };
         break;
+      }
       default:
       // do nothing
     }
