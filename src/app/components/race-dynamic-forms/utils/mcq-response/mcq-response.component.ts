@@ -5,7 +5,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  AfterViewInit,
   ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -14,7 +13,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
-  startWith,
   tap
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
@@ -82,7 +80,6 @@ export class McqResponseComponent implements OnInit {
               this.name.patchValue(resp.name);
             resp.values.forEach((val) => {
               this.responses.push(this.fb.group(val));
-              console.log(this.responses.value);
             });
           }
           this.cdrf.markForCheck();
