@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { ToastService } from 'src/app/shared/toast';
 import { RdfService } from '../services/rdf.service';
 
@@ -58,20 +58,37 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
   }
 
   deleteForm(form: any) {
-    const observables = [this.rdfService.deleteForm$(form)];
+    of(form)
+      .pipe(
+        mergeMap(({ isPublished }) => {
+          if (isPublished) {
+            return this.rdfService.deactivateAbapForm$(form).pipe(
+              mergeMap((resp) => {
+                if (resp === null) {
+                  return this.deleteFromFromMongo(form);
+                }
+                return of({});
+              })
+            );
+          } else {
+            return this.deleteFromFromMongo(form);
+          }
+        })
+      )
+      .subscribe();
+  }
 
-    if (form.isPublished) {
-      observables.push(this.rdfService.deactivateAbapForm$(form));
-    }
-
-    combineLatest(observables).subscribe(([resp]) => {
-      if (Object.keys(resp).length) {
-        this.toaster.show({
-          text: `Form ${form.name} deleted successfully`,
-          type: 'success'
-        });
-        this.deleteForm$.next(resp);
-      }
-    });
+  deleteFromFromMongo(form) {
+    return this.rdfService.deleteForm$(form).pipe(
+      tap((deleteFrom) => {
+        if (Object.keys(deleteFrom).length) {
+          this.toaster.show({
+            text: `Form ${form.name} deleted successfully`,
+            type: 'success'
+          });
+          this.deleteForm$.next(deleteFrom);
+        }
+      })
+    );
   }
 }
