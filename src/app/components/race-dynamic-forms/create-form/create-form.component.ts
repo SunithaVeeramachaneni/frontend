@@ -77,6 +77,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   isPopoverOpen = [false];
   popOverOpenState = {};
   fieldContentOpenState = {};
+  richTextEditorToolbarState = {};
+  isLLFFieldChanged = false;
+  sections: any;
 
   constructor(
     private fb: FormBuilder,
@@ -174,7 +177,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             if (isEqual(currSection, prevSection)) {
               cq.forEach((q, j) => {
                 if (!isEqual(q, pq[j])) {
+                  this.isLLFFieldChanged = false;
                   q.isPublishedTillSave = false;
+                  if (q.fieldType === 'LLF') {
+                    this.sections = curr;
+                    // this.isLLFFieldChanged = true;
+                  }
                 }
               });
             } else {
@@ -183,10 +191,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               });
             }
           });
-          this.createForm.patchValue(
-            { sections: curr, isPublishedTillSave: false },
-            { emitEvent: false }
-          );
+          if (!this.isLLFFieldChanged) {
+            this.createForm.patchValue(
+              { sections: curr, isPublishedTillSave: false },
+              { emitEvent: false }
+            );
+          }
         }),
         switchMap(() => this.saveForm())
       )
@@ -202,6 +212,17 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.disable({ emitEvent: false });
     this.createForm.get('name').enable({ emitEvent: false });
     this.createForm.get('name').setValue(this.defaultFormHeader);
+  }
+
+  handleEditorFocus(focus: boolean, i, j) {
+    if (!focus && this.isLLFFieldChanged) {
+      this.createForm.patchValue({
+        sections: this.sections,
+        isPublishedTillSave: false
+      });
+      this.isLLFFieldChanged = false;
+    }
+    this.richTextEditorToolbarState[i + 1][j + 1] = focus;
   }
 
   handleMCQFieldType = (question: any, response: any) => {
@@ -333,6 +354,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.fieldContentOpenState[sc][qc])
       this.fieldContentOpenState[sc][qc] = false;
     if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
+    if (!this.richTextEditorToolbarState[sc][qc])
+      this.richTextEditorToolbarState[sc][qc] = false;
     return this.fb.group({
       id: [`Q${uqc}`],
       name: [''],
@@ -351,6 +374,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
+    if (!this.richTextEditorToolbarState[sc])
+      this.richTextEditorToolbarState[sc] = {};
 
     return this.fb.group({
       uid: [`uid${sc}`],

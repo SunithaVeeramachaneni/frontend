@@ -223,9 +223,27 @@
                           matInput
                           formControlName="name"
                           placeholder="Type Question"
+                          *ngIf="question.controls.fieldType.value !== 'LLF'"
                         />
-                        <!-- <quill-material formControlName="name" placeholder="">
-                    </quill-material> -->
+                        <!-- <input
+                          autocomplete="off"
+                          type="text"
+                          matInput
+                          formControlName="name"
+                          placeholder="Type Question"
+                          *ngIf="question.controls.fieldType.value !== 'LLF'"
+                        />
+                        <quill-material
+                          formControlName="name"
+                          placeholder="Type Question"
+                          [ngClass]="{
+                            'display-toolbar':
+                              richTextEditorToolbarState[i + 1][j + 1]
+                          }"
+                          *ngIf="question.controls.fieldType.value === 'LLF'"
+                          (editorFocus)="handleEditorFocus($event, i, j)"
+                        >
+                        </quill-material> -->
                       </mat-form-field>
                     </div>
 

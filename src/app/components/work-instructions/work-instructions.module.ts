@@ -21,7 +21,6 @@ import {
 } from './steps/overview.component';
 import { StepContentComponent } from './steps/step-content/step-content.component';
 import { CarouselComponent } from './steps/attachment-carousel/carousel.component';
-import { QuillMaterialComponent } from './steps/quill-material/quill-material.component';
 import { NgCarousel } from './steps/attachment-carousel/ngcarousel.component';
 import { IphonePreviewComponent } from './steps/iphone/iphone-preview.component';
 import { IpadPreviewComponent } from './steps/ipad/ipad-preview.component';
@@ -130,7 +129,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     CustomStepperComponent,
     StepContentComponent,
     CarouselComponent,
-    QuillMaterialComponent,
     NgCarousel,
     IphonePreviewComponent,
     IpadPreviewComponent,
