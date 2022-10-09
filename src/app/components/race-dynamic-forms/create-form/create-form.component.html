@@ -320,24 +320,33 @@
                                     quickResponses$ | async as quickResponses
                                   "
                                 >
-                                  <div *ngFor="let resp of quickResponses">
-                                    <button
-                                      mat-flat-button
-                                      (click)="
-                                        handleResponses(
-                                          'quickResponse',
-                                          resp.id
-                                        );
-                                        isMCQResponseOpen = true;
-                                        togglePopOverOpenState(i, j)
-                                      "
-                                    >
-                                      <mat-chip-list
-                                        *ngFor="let val of resp.values"
+                                  <div>
+                                    <div *ngFor="let resp of quickResponses">
+                                      <button
+                                        mat-flat-button
+                                        (click)="
+                                          handleMCQFieldType(question, resp)
+                                        "
                                       >
-                                        <mat-chip> {{ val.title }} </mat-chip>
-                                      </mat-chip-list>
-                                    </button>
+                                        <mat-chip-list
+                                          *ngFor="let val of resp.values"
+                                        >
+                                          <mat-chip> {{ val.title }} </mat-chip>
+                                        </mat-chip-list>
+                                      </button>
+                                      <button
+                                        (click)="
+                                          handleResponses(
+                                            'quickResponse',
+                                            resp.id
+                                          );
+                                          isMCQResponseOpen = true;
+                                          togglePopOverOpenState(i, j)
+                                        "
+                                      >
+                                        Edit
+                                      </button>
+                                    </div>
                                   </div>
                                   <button
                                     style="

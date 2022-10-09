@@ -46,6 +46,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
   public createForm: FormGroup;
   public isMCQResponseOpen = false;
+  public quickResponseList: any;
   public quickResponses$: Observable<any>;
   public globalResponses$: Observable<any>;
   public activeResponses$: Observable<any>;
@@ -94,6 +95,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           name: '',
           values: r.values
         }));
+        this.quickResponseList = quickResp;
         return quickResp;
       })
     );
@@ -201,6 +203,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.get('name').enable({ emitEvent: false });
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
+
+  handleMCQFieldType = (question: any, response: any) => {
+    const fieldType = response.length > 4 ? 'DD' : 'VI';
+    question.get('fieldType').setValue(fieldType);
+    question.get('value').setValue(response);
+  };
 
   handleResponses = (type: string, id: string) => {
     this.activeResponses$ =

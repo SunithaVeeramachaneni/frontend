@@ -5,7 +5,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  AfterViewInit
+  AfterViewInit,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
@@ -46,13 +47,31 @@ export class McqResponseComponent implements OnInit {
     this.id = id;
   }
 
-  constructor(private fb: FormBuilder, private mcqService: McqService) {}
+  constructor(
+    private fb: FormBuilder,
+    private mcqService: McqService,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.responseForm = this.fb.group({
       name: new FormControl(''),
       responses: this.fb.array([])
     });
+
+    this.responses.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(([prevResp, currResp]) => {
+          if (isEqual(prevResp, currResp)) this.isFormNotUpdated = true;
+          else if (currResp.find((item) => !item.title))
+            this.isFormNotUpdated = true;
+          else this.isFormNotUpdated = false;
+        })
+      )
+      .subscribe();
 
     this.inputResp
       .pipe(
@@ -66,20 +85,7 @@ export class McqResponseComponent implements OnInit {
               console.log(this.responses.value);
             });
           }
-        })
-      )
-      .subscribe();
-
-    this.responses.valueChanges
-      .pipe(
-        pairwise(),
-        debounceTime(500),
-        distinctUntilChanged(),
-        tap(([prevResp, currResp]) => {
-          if (isEqual(prevResp, currResp)) this.isFormNotUpdated = true;
-          else if (currResp.find((item) => !item.title))
-            this.isFormNotUpdated = true;
-          else this.isFormNotUpdated = false;
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();
@@ -113,16 +119,20 @@ export class McqResponseComponent implements OnInit {
   submitResponses = () => {
     if (this.id !== '-1') {
       this.mcqService
-        .updateResponse$(this.id, this.responses.value)
-        .subscribe((newResp) => {
+        .updateResponse$(this.id, {
+          id: this.id,
+          values: this.responses.value,
+          name: this.name.value
+        })
+        .subscribe(() => {
           this.inputResp.pipe(
             tap((oldResp) => {
               const latest = oldResp.map((resp) => {
                 let cur = resp;
                 if (resp.id === this.id) {
                   cur = {
-                    id: newResp.id,
-                    values: newResp.values,
+                    id: this.id,
+                    values: this.responses.value,
                     name: this.name.value
                   };
                 }
