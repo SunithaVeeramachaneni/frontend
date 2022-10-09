@@ -49,6 +49,7 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { QuillMaterialComponent } from './components/quill-material/quill-material.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     AcceptCallComponent,
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
-    BackgroundComponent
+    BackgroundComponent,
+    QuillMaterialComponent
   ],
   imports: [
     FormsModule,
@@ -116,7 +118,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     HeaderComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
-    BackgroundComponent
+    BackgroundComponent,
+    QuillMaterialComponent
   ],
   providers: [DatePipe]
 })

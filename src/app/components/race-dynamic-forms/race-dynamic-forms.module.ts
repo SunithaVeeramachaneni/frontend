@@ -27,7 +27,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
-import { QuillMaterialComponent } from '../work-instructions/steps/quill-material/quill-material.component';
 import { IphonePreviewComponent } from './iphone-preview/iphone-preview.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -90,7 +89,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     RaceDynamicFormsListViewComponent,
     RaceDynamicFormsContainerComponent,
     CreateFormComponent,
-    // QuillMaterialComponent,
     IphonePreviewComponent,
     AddLogicComponent,
     McqResponseComponent
