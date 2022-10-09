@@ -259,7 +259,14 @@
                           <mat-chip-list
                             *ngIf="mcqResponseType === 'quickResponse'"
                           >
-                            <mat-chip>
+                            <mat-chip
+                              [ngStyle]="{
+                                color:
+                                  question.controls.value.value?.values[0]
+                                    ?.color,
+                                backgroundColor: '#D3D3D3'
+                              }"
+                            >
                               {{
                                 question.controls.value.value?.values[0].title
                               }}
@@ -269,6 +276,12 @@
                                 question.controls.value.value?.values.length >=
                                 2
                               "
+                              [ngStyle]="{
+                                color:
+                                  question.controls.value.value?.values[1]
+                                    ?.color,
+                                backgroundColor: '#D3D3D3'
+                              }"
                             >
                               {{
                                 question.controls.value.value?.values[1].title
@@ -387,7 +400,14 @@
                                         <mat-chip-list
                                           *ngFor="let val of resp.values"
                                         >
-                                          <mat-chip> {{ val.title }} </mat-chip>
+                                          <mat-chip
+                                            [ngStyle]="{
+                                              color: val?.color,
+                                              backgroundColor: '#D3D3D3'
+                                            }"
+                                          >
+                                            {{ val.title }}
+                                          </mat-chip>
                                         </mat-chip-list>
                                       </button>
                                       <button
@@ -402,7 +422,10 @@
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
-                                        Edit
+                                        <img
+                                          src="assets/rdf-forms-icons/edit-icon.svg"
+                                          alt="edit-icon"
+                                        />
                                       </button>
                                     </div>
                                   </div>
@@ -454,7 +477,10 @@
                                         togglePopOverOpenState(i, j)
                                       "
                                     >
-                                      Edit
+                                      <img
+                                        src="assets/rdf-forms-icons/edit-icon.svg"
+                                        alt="edit-icon"
+                                      />
                                     </button>
                                   </div>
                                   <button
