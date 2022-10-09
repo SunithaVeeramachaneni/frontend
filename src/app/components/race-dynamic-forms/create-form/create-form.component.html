@@ -217,14 +217,14 @@
                         class="width-90"
                         style="margin-left: 10px"
                       >
-                        <input
+                        <!-- <input
                           autocomplete="off"
                           type="text"
                           matInput
                           formControlName="name"
                           placeholder="Type Question"
-                        />
-                        <!-- <input
+                        /> -->
+                        <input
                           autocomplete="off"
                           type="text"
                           matInput
@@ -239,10 +239,11 @@
                             'display-toolbar':
                               richTextEditorToolbarState[i + 1][j + 1]
                           }"
+                          class="instruction-quill-box"
                           *ngIf="question.controls.fieldType.value === 'LLF'"
                           (editorFocus)="handleEditorFocus($event, i, j)"
                         >
-                        </quill-material> -->
+                        </quill-material>
                       </mat-form-field>
                     </div>
 
@@ -594,6 +595,10 @@
                   <div
                     *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     class="dis-flex"
+                    [ngClass]="{
+                      height: question.controls.fieldType.value === 'LLF'
+                    }"
+                    style="justify-content: flex-end"
                   >
                     <div
                       style="
