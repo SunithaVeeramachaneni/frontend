@@ -41,6 +41,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
 import { McqResponseComponent } from './utils/mcq-response/mcq-response.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { AskQuestionComponent } from './add-logic/ask-question/ask-question.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -91,6 +92,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFormComponent,
     IphonePreviewComponent,
     AddLogicComponent,
+    AskQuestionComponent,
     McqResponseComponent
   ],
   exports: [],

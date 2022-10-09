@@ -10,7 +10,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { BehaviorSubject, from, timer, Observable, of } from 'rxjs';
 import {
@@ -343,9 +343,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
+  onValueChanged(question: any, event: any) {
+    const control = question.get('logics') as FormArray;
+    control.patchValue(event);
+    // question.patchValue({ ...question.getRawValue(), logics: event.logics });
+  }
+
   addLogicForQuestion(question: any, section: any, form: any) {
     question.hasLogic = true;
-    question.controls.logics.controls.push(
+    const control = question.get('logics') as FormArray;
+    control.push(
       this.fb.group({
         operator: ['EQ'],
         operand1: [''],
@@ -356,17 +363,28 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         questions: this.fb.array([])
       })
     );
+    // question.controls.logics.controls.push(
+    //   this.fb.group({
+    //     operator: ['EQ'],
+    //     operand1: [''],
+    //     operand2: [''],
+    //     action: [''],
+    //     logicTitle: ['blank'],
+    //     expression: [''],
+    //     questions: this.fb.array([])
+    //   })
+    // );
 
-    form.controls.sections.controls.forEach((sec) => {
-      sec.controls.questions.controls.forEach((q) => {
-        if (q.value.id === question.value.id) {
-          q = question;
-        }
-      });
-    });
-    this.createForm = form;
-    this.cdrf.detectChanges();
-    this.cdrf.markForCheck();
+    // form.controls.sections.controls.forEach((sec) => {
+    //   sec.controls.questions.controls.forEach((q) => {
+    //     if (q.value.id === question.value.id) {
+    //       q = question;
+    //     }
+    //   });
+    // });
+    // this.createForm.patchValue(form, { emitEvent: false });
+    // this.cdrf.detectChanges();
+    // this.cdrf.markForCheck();
   }
 
   initQuestion = (sc: number, qc: number, uqc: number) => {

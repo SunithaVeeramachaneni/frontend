@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
-  OnInit
+  OnInit,
+  Output
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { tap } from 'rxjs/operators';
+import { isEqual } from 'lodash-es';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  tap
+} from 'rxjs/operators';
 import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 
@@ -18,6 +25,9 @@ import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
   styleUrls: ['./add-logic.component.scss']
 })
 export class AddLogicComponent implements OnInit {
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+
   fieldOperators: any;
 
   fieldType = { type: 'TF', description: 'Text Answer' };
@@ -29,8 +39,6 @@ export class AddLogicComponent implements OnInit {
   private _question: any;
 
   @Input() set question(question: any) {
-    console.log('question,', question);
-
     question.controls.logics.controls.forEach((logic) => {
       if (!logic.value.logicTitle) {
         logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
@@ -38,9 +46,9 @@ export class AddLogicComponent implements OnInit {
     });
 
     this.logicsForm = this.fb.group({
+      counter: [1],
       logics: question.controls.logics
     });
-
     this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
     this._question = question ? question : ({} as any);
     this.cdrf.detectChanges();
@@ -57,9 +65,22 @@ export class AddLogicComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.logicsForm.get('logics').valueChanges.subscribe((data) => {
-      console.log('value changed', data);
-    });
+    this.logicsForm
+      .get('logics')
+      .valueChanges.pipe(
+        pairwise(),
+        debounceTime(1000),
+        distinctUntilChanged(),
+        tap(([prev, curr]) => {
+          curr.forEach((q) => {
+            if (!isEqual(curr, prev)) {
+              this.logicsForm.patchValue(curr);
+              this.onValueChanged.emit(curr);
+            }
+          });
+        })
+      )
+      .subscribe();
 
     this.rdfService
       .getFieldTypes$()
@@ -85,46 +106,57 @@ export class AddLogicComponent implements OnInit {
     return (this.logicsForm.get('logics') as FormArray).controls;
   }
 
+  getCounter() {
+    this.logicsForm
+      .get('counter')
+      .setValue(this.logicsForm.get('counter').value + 1);
+    return this.logicsForm.get('counter').value;
+  }
+
   operatorChanged(logic, event) {
     logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     this.cdrf.detectChanges();
   }
   operand2Changed(logic, event) {
     logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    this.cdrf.detectChanges();
   }
 
   triggerMenuAction(action: string, logic: any): void {
     logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     let expression = '';
     if (action === 'ask_questions') {
-      const isEmpty = logic.value.operand2.length ? true : false;
+      logic.hasAskQuestions = true;
+      const isEmpty = logic.value.operand2.length ? false : true;
       if (isEmpty) {
         expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
       } else {
         expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
       }
-      logic.patchValue({
-        ...logic.value,
-        action: 'Ask Questions',
-        expression
+
+      logic.controls.questions.value.push({
+        id: [`QID_ADD_LOGIC`],
+        name: [''],
+        fieldType: ['TF'],
+        position: [''],
+        required: [false],
+        multi: [false],
+        value: ['TF'],
+        isPublished: [false],
+        isPublishedTillSave: [false],
+        logics: this.fb.array([])
       });
-      // TODO: add questions to logic...
-      logic.controls.questions.push(
-        this.fb.group({
-          id: [`QID_ADD_LOGIC`],
-          name: [''],
-          fieldType: ['TF'],
-          position: [''],
-          required: [false],
-          multi: [false],
-          value: ['TF'],
-          isPublished: [false],
-          isPublishedTillSave: [false],
-          logics: this.fb.array([])
-        })
+      logic.patchValue(
+        {
+          ...logic.value,
+          logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+          action: 'Ask Questions',
+          expression
+        },
+        { emitEvent: true }
       );
     } else if (action === 'hide') {
-      const isEmpty = logic.value.operand2.length ? true : false;
+      const isEmpty = logic.value.operand2.length ? false : true;
       if (isEmpty) {
         expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} EMPTY`;
       } else {
@@ -132,11 +164,12 @@ export class AddLogicComponent implements OnInit {
       }
       logic.patchValue({
         ...logic.value,
+        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
         action: 'Hide Questions',
         expression
       });
     } else if (action === 'ask_evidence') {
-      const isEmpty = logic.value.operand2.length ? true : false;
+      const isEmpty = logic.value.operand2.length ? false : true;
       if (isEmpty) {
         expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
       } else {
@@ -144,16 +177,33 @@ export class AddLogicComponent implements OnInit {
       }
       logic.patchValue({
         ...logic.value,
+        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
         action: 'Ask Evidence',
         expression
       });
     }
     this.cdrf.detectChanges();
+    this.cdrf.markForCheck();
   }
 
-  getQuestionsOfLogic(logic) {
-    //    return form.controls.questions.controls;
-    return logic.controls.questions.controls;
+  onLogicQuestionValueChanged(logic: any, event: any[]) {
+    // const control = this.logicsForm.get('questions') as FormArray;
+    const logics = this.logicsForm.get('logics') as FormArray;
+
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    for (let i = 0; i < logics.value.length; i++) {
+      if (
+        logics.value[i].operator === logic.value.operator &&
+        logics.value[i].operand2 === logic.value.operand2
+      ) {
+        logics.controls[i].patchValue({ questions: event });
+      }
+    }
+
+    const control = logic.get('questions') as FormArray;
+    // const control = logic.controls.questions as FormArray;
+    control.patchValue(event);
+    // this.onValueChanged.emit(event);
   }
 
   getFieldTypeImage(type) {
