@@ -30,6 +30,12 @@
                   autocomplete="off"
                   (keyup.enter)="initResponse(); keytab($event)"
                 />
+                <input
+                  matInput
+                  type="color"
+                  formControlName="color"
+                  [hidden]="respType === 'globalResponse'"
+                />
                 <button
                   mat-flat-button
                   (click)="deleteResponse(i)"

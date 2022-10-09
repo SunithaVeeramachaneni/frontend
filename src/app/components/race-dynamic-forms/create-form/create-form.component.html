@@ -217,14 +217,14 @@
                         class="width-90"
                         style="margin-left: 10px"
                       >
-                        <input
+                        <!-- <input
                           autocomplete="off"
                           type="text"
                           matInput
                           formControlName="name"
                           placeholder="Type Question"
-                        />
-                        <!-- <input
+                        /> -->
+                        <input
                           autocomplete="off"
                           type="text"
                           matInput
@@ -239,10 +239,11 @@
                             'display-toolbar':
                               richTextEditorToolbarState[i + 1][j + 1]
                           }"
+                          class="instruction-quill-box"
                           *ngIf="question.controls.fieldType.value === 'LLF'"
                           (editorFocus)="handleEditorFocus($event, i, j)"
                         >
-                        </quill-material> -->
+                        </quill-material>
                       </mat-form-field>
                     </div>
 
@@ -276,7 +277,14 @@
                           <mat-chip-list
                             *ngIf="mcqResponseType === 'quickResponse'"
                           >
-                            <mat-chip>
+                            <mat-chip
+                              [ngStyle]="{
+                                color:
+                                  question.controls.value.value?.values[0]
+                                    ?.color,
+                                backgroundColor: '#D3D3D3'
+                              }"
+                            >
                               {{
                                 question.controls.value.value?.values[0].title
                               }}
@@ -286,6 +294,12 @@
                                 question.controls.value.value?.values.length >=
                                 2
                               "
+                              [ngStyle]="{
+                                color:
+                                  question.controls.value.value?.values[1]
+                                    ?.color,
+                                backgroundColor: '#D3D3D3'
+                              }"
                             >
                               {{
                                 question.controls.value.value?.values[1].title
@@ -404,7 +418,14 @@
                                         <mat-chip-list
                                           *ngFor="let val of resp.values"
                                         >
-                                          <mat-chip> {{ val.title }} </mat-chip>
+                                          <mat-chip
+                                            [ngStyle]="{
+                                              color: val?.color,
+                                              backgroundColor: '#D3D3D3'
+                                            }"
+                                          >
+                                            {{ val.title }}
+                                          </mat-chip>
                                         </mat-chip-list>
                                       </button>
                                       <button
@@ -419,7 +440,10 @@
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
-                                        Edit
+                                        <img
+                                          src="assets/rdf-forms-icons/edit-icon.svg"
+                                          alt="edit-icon"
+                                        />
                                       </button>
                                     </div>
                                   </div>
@@ -471,7 +495,10 @@
                                         togglePopOverOpenState(i, j)
                                       "
                                     >
-                                      Edit
+                                      <img
+                                        src="assets/rdf-forms-icons/edit-icon.svg"
+                                        alt="edit-icon"
+                                      />
                                     </button>
                                   </div>
                                   <button
@@ -594,6 +621,10 @@
                   <div
                     *ngIf="fieldContentOpenState[i + 1][j + 1] === true"
                     class="dis-flex"
+                    [ngClass]="{
+                      height: question.controls.fieldType.value === 'LLF'
+                    }"
+                    style="justify-content: flex-end"
                   >
                     <div
                       style="
