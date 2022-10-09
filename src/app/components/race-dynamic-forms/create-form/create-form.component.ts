@@ -51,6 +51,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public globalResponses$: Observable<any>;
   public activeResponses$: Observable<any>;
   public activeResponseId: string;
+  public mcqResponseType: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
@@ -204,10 +205,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.get('name').setValue(this.defaultFormHeader);
   }
 
-  handleMCQFieldType = (question: any, response: any) => {
+  handleMCQFieldType = (
+    question: any,
+    response: any,
+    responseTypeForDisplay: string
+  ) => {
     const fieldType = response.length > 4 ? 'DD' : 'VI';
+    this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
+    console.log(question.controls.value.value);
   };
 
   handleResponses = (type: string, id: string) => {
