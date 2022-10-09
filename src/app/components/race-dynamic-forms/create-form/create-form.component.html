@@ -595,7 +595,10 @@
                           </span>
                         </div>
                         <div *ngIf="question.hasLogic" class="logicBuilder">
-                          <app-add-logic [question]="question"></app-add-logic>
+                          <app-add-logic
+                            [question]="question"
+                            (onValueChanged)="onValueChanged(question, $event)"
+                          ></app-add-logic>
                         </div>
                       </div>
                       <div *ngIf="question.controls.fieldType.value === 'IMF'">

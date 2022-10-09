@@ -1,0 +1,184 @@
+<div [formGroup]="questionForm">
+  <div formArrayName="questions">
+    <div cdkDrop cdkDropList>
+      <div
+        *ngFor="let question of getQuestions(questionForm); let i = index"
+        (click)="toggleFieldContentOpenState(1, i)"
+      >
+        <div class="dis-flex" [formGroupName]="i">
+          <input type="hidden" formControlName="position" [ngModel]="i + 1" />
+          <div class="width-70">
+            <img
+              src="assets/rdf-forms-icons/six-dots.svg"
+              alt="six-dots"
+              class="m-l-10 six-dots"
+            />
+            <mat-form-field
+              appearance="outline"
+              class="width-90"
+              style="margin-left: 10px"
+            >
+              <input
+                autocomplete="off"
+                type="text"
+                matInput
+                formControlName="name"
+                placeholder="Type Question"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="width-30">
+            <button
+              class="response-type-btn"
+              cdkOverlayOrigin
+              #trigger="cdkOverlayOrigin"
+              (click)="togglePopOverOpenState(1, i)"
+            >
+              <img
+                [src]="getFieldTypeImage(question.controls.fieldType.value)"
+                class="response-type-icons"
+                style="position: relative; top: -2px"
+              />&nbsp;
+              <span
+                style="
+                  white-space: nowrap;
+                  display: inline-block;
+                  text-overflow: ellipsis;
+                  width: 60%;
+                  overflow: hidden;
+                "
+              >
+                {{ getFieldTypeDescription(question.controls.fieldType.value) }}
+              </span>
+              <mat-icon style="float: right; position: relative; top: -4px">
+                keyboard_arrow_down
+              </mat-icon>
+
+              <button
+                mat-icon-button
+                matTooltip="Add Question"
+                matTooltipPosition="right"
+                (click)="addQuestion(i, questionForm)"
+                style="position: relative; left: 80px; float: right; top: -13px"
+              >
+                <img
+                  src="assets/rdf-forms-icons/add-questions.svg"
+                  alt="add-questions"
+                />
+              </button>
+            </button>
+            <ng-template
+              cdkConnectedOverlay
+              cdkConnectedOverlayPanelClass="custom-popover"
+              cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+              [cdkConnectedOverlayHasBackdrop]="true"
+              [cdkConnectedOverlayOpen]="popOverOpenState[1][i + 1]"
+              [cdkConnectedOverlayOrigin]="trigger"
+              cdkConnectedOverlayWidth="400px"
+              (backdropClick)="togglePopOverOpenState(1, i)"
+            >
+              <div class="response-type-modal">
+                <h1>
+                  <mat-icon
+                    (click)="togglePopOverOpenState(1, i)"
+                    style="cursor: pointer"
+                  >
+                    clear
+                  </mat-icon>
+                  <span style="position: relative; top: -7px; left: 5px">
+                    Responses
+                  </span>
+                </h1>
+
+                <div class="dis-flex content">
+                  <div class="width-50">
+                    <h2 style="color: #e8743b">QUESTIONS</h2>
+                    <li
+                      *ngFor="let fieldType of filteredFieldTypes"
+                      (click)="
+                        selectFieldType(fieldType, question);
+                        togglePopOverOpenState(1, i)
+                      "
+                      class="response-field-types"
+                    >
+                      <img
+                        [src]="getFieldTypeImage(fieldType.type)"
+                        class="response-type-icons"
+                      />&nbsp;
+                      <span style="position: relative; top: -2px">
+                        {{ fieldType.description }}
+                      </span>
+                    </li>
+                  </div>
+                  <div class="width-50">
+                    <div style="height: 50%">
+                      <h2 style="color: #e8743b">QUICK RESPONSES</h2>
+                      <ng-container
+                        *ngIf="quickResponses$ | async as quickResponses"
+                      >
+                        <div *ngFor="let resp of quickResponses">
+                          <button
+                            mat-flat-button
+                            (click)="
+                              handleResponses('quickResponse', resp.id);
+                              isMCQResponseOpen = true;
+                              togglePopOverOpenState(1, i)
+                            "
+                          >
+                            <mat-chip-list *ngFor="let val of resp.values">
+                              <mat-chip> {{ val.title }} </mat-chip>
+                            </mat-chip-list>
+                          </button>
+                        </div>
+                        <button
+                          style="color: #3d5afe; border: none; background: none"
+                          (click)="
+                            handleResponses('quickResponse', '-1');
+                            isMCQResponseOpen = true;
+                            togglePopOverOpenState(1, i)
+                          "
+                        >
+                          Add New
+                        </button>
+                      </ng-container>
+                    </div>
+                    <div style="height: 50%">
+                      <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
+                      <ng-container
+                        *ngIf="globalResponses$ | async as globalResponses"
+                      >
+                        <div *ngFor="let resp of globalResponses">
+                          <button
+                            mat-flat-button
+                            (click)="
+                              handleResponses('globalResponse', resp.id);
+                              isMCQResponseOpen = true;
+                              togglePopOverOpenState(1, i)
+                            "
+                          >
+                            {{ resp.name }}
+                          </button>
+                        </div>
+                        <button
+                          style="color: #3d5afe; border: none; background: none"
+                          (click)="
+                            handleResponses('globalResponse', '-1');
+                            isMCQResponseOpen = true;
+                            togglePopOverOpenState(1, i)
+                          "
+                        >
+                          Add Manually
+                        </button>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

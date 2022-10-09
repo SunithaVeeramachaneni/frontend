@@ -61,69 +61,14 @@
             *ngIf="logic.value.action"
           /> -->
         </div>
-
         <div
           *ngIf="logic.value.action === 'Ask Questions'"
           class="logicAskQuestions"
         >
-          <!-- <h4>Asking Questions</h4> -->
-          <div
-            *ngFor="let question of getQuestionsOfLogic(logic); let i = index"
-          >
-            <div class="dis-flex">
-              <input
-                type="hidden"
-                formControlName="position"
-                [ngModel]="i + 1"
-              />
-              <div class="width-70">
-                <img
-                  src="assets/rdf-forms-icons/six-dots.svg"
-                  alt="six-dots"
-                  class="m-l-10 six-dots"
-                />
-                <mat-form-field
-                  appearance="outline"
-                  class="width-90"
-                  style="margin-left: 10px"
-                >
-                  <input
-                    autocomplete="off"
-                    type="text"
-                    matInput
-                    formControlName="name"
-                    placeholder="Type Question"
-                  />
-                </mat-form-field>
-              </div>
-
-              <div class="width-30">
-                <button class="response-type-btn">
-                  <img
-                    [src]="getFieldTypeImage(question.controls.fieldType.value)"
-                    class="response-type-icons"
-                    style="position: relative; top: -2px"
-                  />&nbsp;
-                  <span
-                    style="
-                      white-space: nowrap;
-                      display: inline-block;
-                      text-overflow: ellipsis;
-                      width: 60%;
-                      overflow: hidden;
-                    "
-                  >
-                    {{
-                      getFieldTypeDescription(question.controls.fieldType.value)
-                    }}
-                  </span>
-                  <mat-icon style="float: right; position: relative; top: -4px">
-                    keyboard_arrow_down
-                  </mat-icon>
-                </button>
-              </div>
-            </div>
-          </div>
+          <app-ask-question
+            [logic]="logic"
+            (onValueChanged)="onLogicQuestionValueChanged(logic, $event)"
+          ></app-ask-question>
         </div>
       </div>
     </mat-tab>
