@@ -29,10 +29,10 @@ import { McqService } from './mcq.service';
 export class McqResponseComponent implements OnInit {
   @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  public respType: string;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
   private inputResp: Observable<any>;
-  private respType: string;
   private id: string;
 
   @Input() set inputResponse(responses: Observable<any>) {
