@@ -184,7 +184,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   q.isPublishedTillSave = false;
                   if (q.fieldType === 'LLF') {
                     this.sections = curr;
-                    // this.isLLFFieldChanged = true;
+                    this.isLLFFieldChanged = true;
                   }
                 }
               });
