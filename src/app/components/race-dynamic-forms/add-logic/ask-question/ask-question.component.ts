@@ -213,8 +213,15 @@ export class AskQuestionComponent implements OnInit {
   };
 
   selectFieldType(fieldType, question) {
+    if (fieldType.type === question.get('fieldType').value) {
+      return;
+    }
     this.currentQuestion = question;
-    question.patchValue({ fieldType: fieldType.type, required: false });
+    question.patchValue({
+      fieldType: fieldType.type,
+      required: false,
+      value: ''
+    });
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
@@ -225,24 +232,16 @@ export class AskQuestionComponent implements OnInit {
         break;
       case 'RT':
         this.isCustomizerOpen = true;
-        let sliderValue = {
+        const sliderValue = {
           value: 0,
           min: 0,
           max: 100,
           increment: 1
         };
-        if (
-          Object.keys(question.get('value').value).find(
-            (item) => item === 'min'
-          )
-        ) {
-          sliderValue = question.get('value').value;
-        } else {
-          question.get('value').setValue(sliderValue);
-        }
+        question.get('value').setValue(sliderValue);
         this.sliderOptions = sliderValue;
         break;
-      case 'IMF':
+      case 'IMG':
         let index = 0;
         let found = false;
         this.questionForm.get('sections').value.forEach((section) => {
@@ -250,12 +249,11 @@ export class AskQuestionComponent implements OnInit {
             if (que.id === this.currentQuestion.value.id) {
               found = true;
             }
-            if (!found && que.fieldType === 'IMF') {
+            if (!found && que.fieldType === 'IMG') {
               index++;
             }
           });
         });
-        question.get('value').setValue('');
 
         timer(0)
           .pipe(
@@ -266,7 +264,7 @@ export class AskQuestionComponent implements OnInit {
           .subscribe();
         break;
       default:
-        question.get('value').setValue('');
+      // do nothing
     }
   }
 
