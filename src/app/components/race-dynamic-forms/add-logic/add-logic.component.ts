@@ -74,7 +74,6 @@ export class AddLogicComponent implements OnInit {
         tap(([prev, curr]) => {
           curr.forEach((q) => {
             if (!isEqual(curr, prev)) {
-              this.logicsForm.patchValue(curr);
               this.onValueChanged.emit(curr);
             }
           });
@@ -133,28 +132,26 @@ export class AddLogicComponent implements OnInit {
       } else {
         expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
       }
-
-      logic.controls.questions.value.push({
-        id: [`QID_ADD_LOGIC`],
-        name: [''],
-        fieldType: ['TF'],
-        position: [''],
-        required: [false],
-        multi: [false],
-        value: ['TF'],
-        isPublished: [false],
-        isPublishedTillSave: [false],
-        logics: this.fb.array([])
-      });
-      logic.patchValue(
-        {
-          ...logic.value,
-          logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
-          action: 'Ask Questions',
-          expression
-        },
-        { emitEvent: true }
+      const control = logic.get('questions') as FormArray;
+      control.push(
+        this.fb.group({
+          id: [`QID_ADD_LOGIC`],
+          name: [''],
+          fieldType: ['TF'],
+          position: [''],
+          required: [false],
+          multi: [false],
+          value: ['TF'],
+          isPublished: [false],
+          isPublishedTillSave: [false],
+          logics: this.fb.array([])
+        })
       );
+      logic.patchValue({
+        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        action: 'Ask Questions',
+        expression
+      });
     } else if (action === 'hide') {
       const isEmpty = logic.value.operand2.length ? false : true;
       if (isEmpty) {
@@ -187,10 +184,13 @@ export class AddLogicComponent implements OnInit {
   }
 
   onLogicQuestionValueChanged(logic: any, event: any[]) {
-    // const control = this.logicsForm.get('questions') as FormArray;
-    const logics = this.logicsForm.get('logics') as FormArray;
+    const control = logic.get('questions') as FormArray;
+    control.setValue(event);
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
+    const logics = this.logicsForm.get('logics') as FormArray;
+    this.onValueChanged.emit(logics.getRawValue());
+
+    // // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < logics.value.length; i++) {
       if (
         logics.value[i].operator === logic.value.operator &&
@@ -199,11 +199,6 @@ export class AddLogicComponent implements OnInit {
         logics.controls[i].patchValue({ questions: event });
       }
     }
-
-    const control = logic.get('questions') as FormArray;
-    // const control = logic.controls.questions as FormArray;
-    control.patchValue(event);
-    // this.onValueChanged.emit(event);
   }
 
   getFieldTypeImage(type) {

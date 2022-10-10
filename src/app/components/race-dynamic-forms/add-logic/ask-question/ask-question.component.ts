@@ -73,8 +73,7 @@ export class AskQuestionComponent implements OnInit {
 
     this.questionForm = this.fb.group({
       counter: [1],
-      // questions: logic.controls.questions
-      questions: this.fb.array([this.initQuestion(1, 1, 1)])
+      questions: logic.controls.questions
     });
     // this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
     this._logic = logic ? logic : ({} as any);
@@ -141,9 +140,6 @@ export class AskQuestionComponent implements OnInit {
         tap(([prev, curr]) => {
           curr.forEach((q) => {
             if (!isEqual(curr, prev)) {
-              // this.questionForm.patchValue(curr);
-              // const control = this.logic.get('questions') as FormArray;
-              // control.patchValue(curr);
               this.onValueChanged.emit(curr);
             }
           });

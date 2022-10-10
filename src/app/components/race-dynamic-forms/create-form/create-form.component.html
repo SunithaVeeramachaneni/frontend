@@ -728,7 +728,9 @@
                         <div *ngIf="question.hasLogic" class="logicBuilder">
                           <app-add-logic
                             [question]="question"
-                            (onValueChanged)="onValueChanged(question, $event)"
+                            (onValueChanged)="
+                              onValueChanged(section, question, $event)
+                            "
                           ></app-add-logic>
                         </div>
                       </div>
