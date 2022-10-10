@@ -177,7 +177,6 @@ export class RdfService {
             FORMNAME: id,
             FORMTITLE: name,
             STATUS: 'PUBLISHED',
-            IMAGECONTENT: '',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
             ...this.getProperties(question)
@@ -220,22 +219,28 @@ export class RdfService {
         };
         break;
       }
-      case 'IMF': {
+      case 'IMG': {
         const {
           value: { base64, name }
         } = question;
         properties = {
           ...properties,
-          FORMCONTENT: base64,
-          FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
+          IMAGECONTENT: base64,
+          IMAGETYPE: `.${name.split('.').slice(-1)[0].toLowerCase()}`
         };
         break;
       }
       case 'VI':
       case 'DD': {
-        const { value, multi } = question;
-        const viVALUE = value.map((item, idx) => ({
-          [`LABEL${idx + 1}`]: item.title
+        const {
+          value: { values },
+          multi
+        } = question;
+        const viVALUE = values.map((item, idx) => ({
+          [`label${idx + 1}`]: item.title,
+          key: item.title,
+          color: item.color,
+          description: item.title
         }));
         properties = {
           ...properties,

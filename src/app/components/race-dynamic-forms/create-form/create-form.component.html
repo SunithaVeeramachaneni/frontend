@@ -452,7 +452,7 @@
                                           "
                                         >
                                           <mat-chip
-                                            *ngIf="i < 2; else moreBlock"
+                                            *ngIf="i < 2"
                                             style="margin-left: 10px"
                                             [ngStyle]="{
                                               color: val?.color,
@@ -464,19 +464,18 @@
                                           >
                                             {{ val.title }}
                                           </mat-chip>
-                                          <ng-template #moreBlock>
-                                            <span
-                                              style="
-                                                margin-top: 5px;
-                                                margin-left: 5px;
-                                                font-weight: 400;
-                                              "
-                                            >
-                                              + ({{ resp.values.length - 2 }}
-                                              more)
-                                            </span>
-                                          </ng-template>
                                         </mat-chip-list>
+                                        <span
+                                          *ngIf="resp.values.length > 2"
+                                          style="
+                                            margin-top: -10px;
+                                            margin-left: 5px;
+                                            font-weight: 400;
+                                          "
+                                        >
+                                          + ({{ resp.values.length - 2 }}
+                                          more)
+                                        </span>
                                       </button>
                                       <button
                                         mat-flat-button
@@ -656,7 +655,7 @@
                     </mat-card>
                   </div>
 
-                  <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                  <div *ngIf="question.controls.fieldType.value === 'IMG'">
                     <input
                       #insertImages
                       [hidden]="true"
@@ -694,7 +693,7 @@
                       "
                       *ngIf="question.controls.fieldType.value !== 'LLF'"
                     >
-                      <div *ngIf="question.controls.fieldType.value !== 'IMF'">
+                      <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
                           <div
                             class="add-logic-btn"
@@ -785,7 +784,7 @@
                           ></app-add-logic>
                         </div>
                       </div>
-                      <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                      <div *ngIf="question.controls.fieldType.value === 'IMG'">
                         <div
                           class="width-50 bg-white dis-flex"
                           *ngIf="question.controls.value.value"

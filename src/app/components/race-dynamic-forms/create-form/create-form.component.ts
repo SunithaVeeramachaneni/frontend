@@ -322,7 +322,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseTypeForDisplay: string
   ) => {
-    const fieldType = response.length > 4 ? 'DD' : 'VI';
+    const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
@@ -660,7 +660,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         question.get('value').setValue(sliderValue);
         this.sliderOptions = sliderValue;
         break;
-      case 'IMF':
+      case 'IMG':
         let index = 0;
         let found = false;
         this.createForm.get('sections').value.forEach((section) => {
@@ -668,7 +668,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             if (que.id === this.currentQuestion.value.id) {
               found = true;
             }
-            if (!found && que.fieldType === 'IMF') {
+            if (!found && que.fieldType === 'IMG') {
               index++;
             }
           });
@@ -707,4 +707,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
   }
+
+  getLogicsFormBuilderArray(logics) {}
 }
