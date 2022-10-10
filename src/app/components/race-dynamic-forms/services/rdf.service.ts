@@ -245,7 +245,7 @@ export class RdfService {
         properties = {
           ...properties,
           DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : values.length > 4 ? 'DD' : 'VI'
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
         };
         break;
       }

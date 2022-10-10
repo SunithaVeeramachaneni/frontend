@@ -76,12 +76,26 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     max: 100,
     increment: 1
   };
-  isPopoverOpen = [false];
   popOverOpenState = {};
   fieldContentOpenState = {};
   richTextEditorToolbarState = {};
   isLLFFieldChanged = false;
   sections: any;
+
+  addLogicIgnoredFields = [
+    'LTV',
+    'CB',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT'
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -322,7 +336,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseTypeForDisplay: string
   ) => {
-    const fieldType = response.length > 4 ? 'DD' : 'VI';
+    const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
@@ -637,8 +651,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.patchValue({
       fieldType: fieldType.type,
       required: false,
-      value: ''
+      value: '',
+      logics: []
     });
+    question.hasLogic = false;
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');

@@ -454,7 +454,7 @@
                                           "
                                         >
                                           <mat-chip
-                                            *ngIf="i < 2; else moreBlock"
+                                            *ngIf="i < 2"
                                             style="margin-left: 10px"
                                             [ngStyle]="{
                                               color: val?.color,
@@ -466,19 +466,18 @@
                                           >
                                             {{ val.title }}
                                           </mat-chip>
-                                          <ng-template #moreBlock>
-                                            <span
-                                              style="
-                                                margin-top: 5px;
-                                                margin-left: 5px;
-                                                font-weight: 400;
-                                              "
-                                            >
-                                              + ({{ resp.values.length - 2 }}
-                                              more)
-                                            </span>
-                                          </ng-template>
                                         </mat-chip-list>
+                                        <span
+                                          *ngIf="resp.values.length > 2"
+                                          style="
+                                            margin-top: -10px;
+                                            margin-left: 5px;
+                                            font-weight: 400;
+                                          "
+                                        >
+                                          + ({{ resp.values.length - 2 }}
+                                          more)
+                                        </span>
                                       </button>
                                       <button
                                         mat-flat-button
@@ -693,12 +692,18 @@
                         flex-direction: column;
                         width: 100%;
                         margin: 0 10px;
+                        justify-content: center;
                       "
                       *ngIf="question.controls.fieldType.value !== 'LLF'"
                     >
                       <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
                           <div
+                            *ngIf="
+                              addLogicIgnoredFields.indexOf(
+                                question.controls.fieldType.value
+                              ) < 0
+                            "
                             class="add-logic-btn"
                             (click)="
                               addLogicForQuestion(question, section, createForm)
@@ -706,11 +711,12 @@
                           >
                             <mat-icon class="icon">psychology</mat-icon>
                             <span>Add Logic</span>
+                            <mat-divider
+                              [vertical]="true"
+                              class="vert-divider"
+                            ></mat-divider>
                           </div>
-                          <mat-divider
-                            [vertical]="true"
-                            class="vert-divider"
-                          ></mat-divider>
+
                           <input
                             type="checkbox"
                             id="required"
