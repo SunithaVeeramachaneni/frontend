@@ -247,7 +247,7 @@
                         (click)="togglePopOverOpenState(i, j)"
                         class="response-type-btn"
                         [ngClass]="{
-                          'dis-flex':
+                          'dis-flex p-t-0':
                             question.controls.fieldType.value === 'VI' ||
                             question.controls.fieldType.value === 'DD'
                         }"
@@ -262,6 +262,7 @@
                         >
                           <mat-chip-list
                             *ngIf="mcqResponseType === 'globalResponse'"
+                            class="response-type-chips"
                           >
                             <mat-chip>
                               {{ question.controls.value.value?.name }}
@@ -269,6 +270,7 @@
                           </mat-chip-list>
                           <mat-chip-list
                             *ngIf="mcqResponseType === 'quickResponse'"
+                            class="response-type-chips"
                           >
                             <mat-chip
                               [ngStyle]="{
@@ -276,7 +278,9 @@
                                   question.controls.value.value?.values[0]
                                     ?.color,
                                 backgroundColor: '#ffffff',
-                                border: '1px solid #d3d3d3'
+                                border: '1px solid #d3d3d3',
+                                minHeight: '24px',
+                                fontSize: '90%'
                               }"
                             >
                               {{
@@ -293,7 +297,9 @@
                                   question.controls.value.value?.values[1]
                                     ?.color,
                                 backgroundColor: '#ffffff',
-                                border: '1px solid #d3d3d3'
+                                border: '1px solid #d3d3d3',
+                                minHeight: '24px',
+                                fontSize: '90%'
                               }"
                             >
                               {{
@@ -304,6 +310,7 @@
                               *ngIf="
                                 question.controls.value.value?.values.length > 2
                               "
+                              style="margin-top: 15px; margin-left: 5px"
                               >+ ({{
                                 question.controls.value.value?.values.length - 2
                               }}
@@ -338,6 +345,11 @@
                         </ng-template>
                         <mat-icon
                           style="float: right; position: relative; top: -4px"
+                          [ngClass]="{
+                            'p-t-13':
+                              question.controls.fieldType.value === 'VI' ||
+                              question.controls.fieldType.value === 'DD'
+                          }"
                         >
                           keyboard_arrow_down
                         </mat-icon>
@@ -399,9 +411,12 @@
                                   "
                                 >
                                   <div>
-                                    <div *ngFor="let resp of quickResponses">
+                                    <div
+                                      *ngFor="let resp of quickResponses"
+                                      style="height: 36px"
+                                    >
                                       <button
-                                        style="padding: 0"
+                                        style="padding: 0; height: 36px"
                                         mat-flat-button
                                         class="quick-response"
                                         (click)="
@@ -420,7 +435,9 @@
                                             [ngStyle]="{
                                               color: val?.color,
                                               backgroundColor: '#ffffff',
-                                              border: '1px solid #d3d3d3'
+                                              border: '1px solid #d3d3d3',
+                                              minHeight: '24px',
+                                              fontSize: '90%'
                                             }"
                                           >
                                             {{ val.title }}
@@ -455,6 +472,7 @@
                                       color: #3d5afe;
                                       border: none;
                                       background: none;
+                                      padding: 10px;
                                     "
                                     (click)="
                                       handleResponses('quickResponse', '-1');
