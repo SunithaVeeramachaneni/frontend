@@ -83,6 +83,21 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   isLLFFieldChanged = false;
   sections: any;
 
+  addLogicIgnoredFields = [
+    'LTV',
+    'CB',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT'
+  ];
+
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
@@ -640,8 +655,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.patchValue({
       fieldType: fieldType.type,
       required: false,
-      value: ''
+      value: '',
+      logics: []
     });
+    question.hasLogic = false;
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');

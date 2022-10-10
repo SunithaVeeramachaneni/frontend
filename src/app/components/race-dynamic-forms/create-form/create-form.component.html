@@ -694,12 +694,18 @@
                         flex-direction: column;
                         width: 100%;
                         margin: 0 10px;
+                        justify-content: center;
                       "
                       *ngIf="question.controls.fieldType.value !== 'LLF'"
                     >
                       <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
                           <div
+                            *ngIf="
+                              addLogicIgnoredFields.indexOf(
+                                question.controls.fieldType.value
+                              ) < 0
+                            "
                             class="add-logic-btn"
                             (click)="
                               addLogicForQuestion(question, section, createForm)
@@ -707,11 +713,12 @@
                           >
                             <mat-icon class="icon">psychology</mat-icon>
                             <span>Add Logic</span>
+                            <mat-divider
+                              [vertical]="true"
+                              class="vert-divider"
+                            ></mat-divider>
                           </div>
-                          <mat-divider
-                            [vertical]="true"
-                            class="vert-divider"
-                          ></mat-divider>
+
                           <input
                             type="checkbox"
                             id="required"
