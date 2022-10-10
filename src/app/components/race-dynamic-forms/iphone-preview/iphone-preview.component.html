@@ -191,7 +191,7 @@
                   </button>
                 </div>
 
-                <p class="m-0 width-100" *ngIf="question.fieldType === 'IMF'">
+                <div *ngIf="question.fieldType === 'IMG'">
                   <img
                     [src]="getImageSrc(question.value.base64)"
                     *ngIf="question.value.base64"
@@ -203,7 +203,7 @@
                       margin-left: 10px;
                     "
                   />
-                </p>
+                </div>
 
                 <div *ngIf="question.fieldType === 'RT'">
                   <mat-slider style="width: 230px; margin-top: -15px">
