@@ -51,8 +51,17 @@
             </p>
             <div *ngFor="let question of section.questions">
               <div class="dis-flex m-b-10">
-                <div class="width-45 question-name">
+                <div
+                  class="width-45 question-name"
+                  *ngIf="question.fieldType !== 'LLF'"
+                >
                   {{ question.name ? question.name : 'Type Question' }}
+                </div>
+                <div
+                  class="width-45 question-name"
+                  *ngIf="question.fieldType === 'LLF'"
+                >
+                  <div [innerHTML]="question.name"></div>
                 </div>
                 <div class="width-45 text-left">
                   <input

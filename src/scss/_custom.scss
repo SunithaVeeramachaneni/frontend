@@ -312,6 +312,20 @@ li {
   list-style-type: none;
 }
 
+.question-name ul li {
+  list-style-type: disc;
+}
+
+.question-name ol li {
+  list-style-type: auto;
+}
+
+.question-name ol,
+.question-name ul {
+  padding: 0 20px;
+  margin: 0;
+}
+
 a {
   text-decoration: none;
 }

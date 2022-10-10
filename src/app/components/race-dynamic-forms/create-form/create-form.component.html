@@ -389,7 +389,7 @@
                               </li>
                             </div>
                             <div class="width-50">
-                              <div style="height: 50%">
+                              <div>
                                 <h2 style="color: #e8743b">QUICK RESPONSES</h2>
                                 <ng-container
                                   *ngIf="
@@ -399,7 +399,9 @@
                                   <div>
                                     <div *ngFor="let resp of quickResponses">
                                       <button
+                                        style="padding: 0"
                                         mat-flat-button
+                                        class="quick-response"
                                         (click)="
                                           handleMCQFieldType(
                                             question,
@@ -412,6 +414,7 @@
                                           *ngFor="let val of resp.values"
                                         >
                                           <mat-chip
+                                            style="margin-left: 10px"
                                             [ngStyle]="{
                                               color: val?.color,
                                               backgroundColor: '#D3D3D3'
@@ -423,7 +426,11 @@
                                       </button>
                                       <button
                                         mat-flat-button
-                                        style="float: right"
+                                        style="
+                                          float: right;
+                                          min-width: 10px;
+                                          padding: 0;
+                                        "
                                         (click)="
                                           handleResponses(
                                             'quickResponse',

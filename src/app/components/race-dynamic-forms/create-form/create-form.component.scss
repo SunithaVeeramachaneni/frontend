@@ -284,3 +284,14 @@ select:focus {
 .height {
   height: 0;
 }
+
+.quick-response {
+  ::ng-deep .mat-button-wrapper {
+    display: flex;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 3px;
+  }
+}
