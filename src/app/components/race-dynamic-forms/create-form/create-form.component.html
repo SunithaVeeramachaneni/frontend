@@ -378,6 +378,11 @@
                                   togglePopOverOpenState(i, j)
                                 "
                                 class="response-field-types"
+                                [ngClass]="{
+                                  active:
+                                    fieldType.type ===
+                                    question.controls.fieldType.value
+                                }"
                               >
                                 <img
                                   [src]="getFieldTypeImage(fieldType.type)"

@@ -6,6 +6,7 @@ import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 
 import { RaceDynamicFormsContainerComponent } from './race-dynamic-forms-container/race-dynamic-forms-container.component';
 import { CreateFormComponent } from './create-form/create-form.component';
+import { FormResolverService } from './services/form-resolver.service';
 
 const routes: Routes = [
   {
@@ -30,6 +31,7 @@ const routes: Routes = [
         path: 'edit/:id',
         component: CreateFormComponent,
         canActivate: [AuthGuard],
+        resolve: { form: FormResolverService },
         data: {
           breadcrumb: { label: 'Edit Form', alias: 'formName' },
           permissions: [permissions.updateForm]

@@ -42,6 +42,12 @@ export class RdfService {
   getForms$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms', info);
 
+  getFormById$ = (
+    id: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getRespById(environment.rdfApiUrl, 'forms/', id, info);
+
   getFieldTypes$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms/field-types', info);
 
