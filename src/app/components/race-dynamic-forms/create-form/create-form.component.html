@@ -414,7 +414,9 @@
                             </div>
                             <div class="width-50">
                               <div>
-                                <h2 style="color: #e8743b">QUICK RESPONSES</h2>
+                                <h2 style="color: #e8743b">
+                                  MULTIPLE CHOICE RESPONSES
+                                </h2>
                                 <ng-container
                                   *ngIf="
                                     quickResponses$ | async as quickResponses
@@ -766,9 +768,7 @@
                                   .setValue(!question.controls.multi.value)
                               "
                             />&nbsp;
-                            <label for="multi">
-                              Allow more than one selection
-                            </label>
+                            <label for="multi"> Multi Selection </label>
                           </span>
                         </div>
                         <div *ngIf="question.hasLogic" class="logicBuilder">
