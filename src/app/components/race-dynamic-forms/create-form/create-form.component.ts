@@ -422,10 +422,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  onValueChanged(question: any, event: any) {
+  onValueChanged(section: any, question: any, event: any) {
     const control = question.get('logics') as FormArray;
     control.patchValue(event);
-    // question.patchValue({ ...question.getRawValue(), logics: event.logics });
+    const sections = this.createForm.get('sections') as FormArray;
+    let sectionIndex = 0;
+    for (let i = 0; i < sections.value.length; i++) {
+      if (sections.value[i].uid === section.value.uid) {
+        sectionIndex = i;
+      }
+    }
+    const sectionControl = sections.at(sectionIndex) as FormArray;
+    const questions = sectionControl.get('questions') as FormArray;
+    let questionIndex = 0;
+    for (let j = 0; j < questions.value.length; j++) {
+      if (questions.value[j].id === question.value.id) {
+        questionIndex = j;
+      }
+    }
+    const logics = questions.at(questionIndex).get('logics') as FormArray;
+    logics.patchValue(event);
+    this.createForm.patchValue({ sections: sections.getRawValue() });
   }
 
   addLogicForQuestion(question: any, section: any, form: any) {
