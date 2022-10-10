@@ -50,7 +50,7 @@
               </mat-icon>
             </p>
             <div *ngFor="let question of section.questions">
-              <div class="dis-flex m-b-10">
+              <div class="dis-flex m-b-10 m-r-15">
                 <div
                   class="width-45 question-name"
                   *ngIf="question.fieldType !== 'LLF'"
@@ -196,12 +196,7 @@
                     [src]="getImageSrc(question.value.base64)"
                     *ngIf="question.value.base64"
                     alt="image"
-                    style="
-                      width: 100px;
-                      height: 70px;
-                      float: left;
-                      margin-left: 10px;
-                    "
+                    style="width: 240px; height: 80px; margin-left: 10px"
                   />
                 </div>
 

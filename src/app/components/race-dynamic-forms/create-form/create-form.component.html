@@ -148,6 +148,7 @@
               matTooltip="Add Question"
               matTooltipPosition="right"
               [disabled]="disableFormFields"
+              *ngIf="isOpenState[i + 1] === true"
               (click)="addQuestion(i)"
               style="position: relative; left: 80px; float: right"
             >
@@ -161,6 +162,7 @@
               mat-icon-button
               matTooltip="Add Section"
               matTooltipPosition="right"
+              *ngIf="isOpenState[i + 1] === true"
               [disabled]="disableFormFields"
               (click)="addSection(i)"
               style="position: relative; left: 120px; top: 40px; float: right"
@@ -749,12 +751,8 @@
                                 color: #3d5afe;
                               "
                             >
-                              <option value="TF" style="padding: 10px">
-                                Short Answer
-                              </option>
-                              <option value="LTV" style="padding: 10px">
-                                Long Answer
-                              </option>
+                              <option value="TF">Short Answer</option>
+                              <option value="LTV">Long Answer</option>
                             </select>
                           </span>
                           <span
