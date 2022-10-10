@@ -294,4 +294,8 @@ select:focus {
     text-overflow: ellipsis;
     padding-top: 3px;
   }
+
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 12px 5px 5px 5px !important;
+  }
 }
