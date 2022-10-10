@@ -225,6 +225,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               { sections: curr, isPublishedTillSave: false },
               { emitEvent: false }
             );
+            this.rdfService.setCurrentFormValue(this.createForm.getRawValue());
           }
         }),
         switchMap(() => this.saveForm())
@@ -471,31 +472,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         action: [''],
         logicTitle: ['blank'],
         expression: [''],
-        questions: this.fb.array([])
+        questions: this.fb.array([]),
+        mandateQuestions: this.fb.array([]),
+        hideQuestions: this.fb.array([]),
+        askEvidence: [false]
       })
     );
-    // question.controls.logics.controls.push(
-    //   this.fb.group({
-    //     operator: ['EQ'],
-    //     operand1: [''],
-    //     operand2: [''],
-    //     action: [''],
-    //     logicTitle: ['blank'],
-    //     expression: [''],
-    //     questions: this.fb.array([])
-    //   })
-    // );
-
-    // form.controls.sections.controls.forEach((sec) => {
-    //   sec.controls.questions.controls.forEach((q) => {
-    //     if (q.value.id === question.value.id) {
-    //       q = question;
-    //     }
-    //   });
-    // });
-    // this.createForm.patchValue(form, { emitEvent: false });
-    // this.cdrf.detectChanges();
-    // this.cdrf.markForCheck();
   }
 
   initQuestion = (sc: number, qc: number, uqc: number) => {

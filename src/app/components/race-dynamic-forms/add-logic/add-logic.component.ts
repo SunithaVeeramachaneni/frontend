@@ -9,6 +9,7 @@ import {
   Output
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { isEqual } from 'lodash-es';
 import {
   debounceTime,
@@ -18,6 +19,7 @@ import {
 } from 'rxjs/operators';
 import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
+import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
 @Component({
   selector: 'app-add-logic',
@@ -61,7 +63,8 @@ export class AddLogicComponent implements OnInit {
   constructor(
     private cdrf: ChangeDetectorRef,
     private fb: FormBuilder,
-    private rdfService: RdfService
+    private rdfService: RdfService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -121,10 +124,47 @@ export class AddLogicComponent implements OnInit {
     this.cdrf.detectChanges();
   }
 
+  openSelectQuestionsDialog(question, logic, viewMode = 'MANDATE') {
+    const dialogRef = this.dialog.open(SelectQuestionsDialogComponent, {
+      restoreFocus: false,
+      disableClose: true,
+      hasBackdrop: false,
+      width: '60%',
+      data: { logic: logic.value, viewMode }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      if (result.type === 'MANDATE') {
+        const control = logic.get('mandateQuestions') as FormArray;
+        result.selectedQuestions.forEach((q) => {
+          control.push(this.fb.control(q));
+        });
+        logic.patchValue({ mandateQuestions: logic.value.mandateQuestions });
+      } else if (result.type === 'HIDE') {
+        const control = logic.get('hideQuestions') as FormArray;
+        result.selectedQuestions.forEach((q) => {
+          control.push(this.fb.control(q));
+        });
+      }
+    });
+  }
+
   triggerMenuAction(action: string, logic: any): void {
     logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     let expression = '';
-    if (action === 'ask_questions') {
+    if (action === 'mandate_questions') {
+      const isEmpty = logic.value.operand2.length ? false : true;
+      if (isEmpty) {
+        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
+      } else {
+        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
+      }
+      logic.patchValue({
+        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        action: 'Mandate Questions',
+        expression
+      });
+    } else if (action === 'ask_questions') {
       logic.hasAskQuestions = true;
       const isEmpty = logic.value.operand2.length ? false : true;
       if (isEmpty) {
@@ -176,7 +216,8 @@ export class AddLogicComponent implements OnInit {
         ...logic.value,
         logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
         action: 'Ask Evidence',
-        expression
+        expression,
+        askEvidence: true
       });
     }
     this.cdrf.detectChanges();

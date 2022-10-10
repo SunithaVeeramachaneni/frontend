@@ -15,7 +15,16 @@ const APPNAME = 'MWORKORDER';
   providedIn: 'root'
 })
 export class RdfService {
+  currentFormValue: any;
+
   constructor(private appService: AppService) {}
+
+  setCurrentFormValue(form: any) {
+    this.currentFormValue = form;
+  }
+  getCurrentFormValue() {
+    return this.currentFormValue;
+  }
 
   createForm$ = (
     form: any,

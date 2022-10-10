@@ -15,6 +15,7 @@
             (ngModelChange)="operatorChanged(logic, $event)"
           >
             <option
+              class="logicOperator"
               value="{{ operator.code }}"
               *ngFor="let operator of fieldOperators"
             >
@@ -34,17 +35,47 @@
             class="action"
             readonly
           />
-          <button mat-button [matMenuTriggerFor]="menu" color="primary">
-            +trigger
+          <span
+            *ngIf="
+              logic.value.mandateQuestions &&
+              logic.value.mandateQuestions.length
+            "
+            class="mandateAction"
+            (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
+          >
+            Mandate Questions <mat-icon>edit</mat-icon>
+          </span>
+          <span
+            *ngIf="
+              logic.value.hideQuestions && logic.value.hideQuestions.length
+            "
+            class="mandateAction"
+            (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
+          >
+            Hide Questions <mat-icon>edit</mat-icon>
+          </span>
+          <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
+            + action
           </button>
           <mat-menu #menu="matMenu">
             <button
               mat-menu-item
               (click)="triggerMenuAction('ask_questions', logic)"
+              disabled
+              [hidden]="true"
             >
               Ask Questions
             </button>
-            <button mat-menu-item (click)="triggerMenuAction('hide', logic)">
+            <button
+              mat-menu-item
+              (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
+            >
+              Mandate Questions
+            </button>
+            <button
+              mat-menu-item
+              (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
+            >
               Hide Questions
             </button>
             <button
