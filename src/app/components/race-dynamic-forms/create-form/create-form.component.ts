@@ -326,7 +326,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
-    console.log(question.controls.value.value);
   };
 
   handleResponses = (type: string, id: string) => {
