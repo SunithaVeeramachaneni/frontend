@@ -136,7 +136,8 @@ select:focus {
     cursor: pointer;
   }
 
-  .response-field-types:hover {
+  .response-field-types:hover,
+  .active {
     background-color: #ebedfe;
   }
 }
@@ -147,10 +148,22 @@ select:focus {
   border-radius: 5px;
   height: 40px;
   margin-top: 7px;
-  width: 80%;
+  width: 90%;
   text-align: left;
   padding-left: 12px;
   padding-top: 10px;
+
+  .response-type-chips {
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+
+    ::ng-deep .mat-chip-list-wrapper {
+      flex-wrap: nowrap;
+    }
+  }
 }
 
 .delete-icon {
@@ -193,7 +206,7 @@ select:focus {
 .chip-list {
   width: 90%;
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
-    margin: 8px 4px 5px 4px !important;
+    margin: 22px 0px 5px 4px !important;
   }
 }
 
@@ -292,7 +305,7 @@ select:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-top: 3px;
+    padding-top: 10px;
   }
 
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {

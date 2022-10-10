@@ -11,9 +11,12 @@
           placeholder="Untitled Response Set"
           [hidden]="respType === 'quickResponse'"
           autocomplete="off"
+          class="global_response_name_input"
         />
       </div>
-      <div style="padding-left: 10px">Response</div>
+      <br />
+      <br />
+      <div style="padding-left: 10px; font-weight: 'bold'">Response</div>
       <mat-card-content>
         <div class="width-100" formArrayName="responses">
           <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">

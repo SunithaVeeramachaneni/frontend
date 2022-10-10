@@ -58,12 +58,15 @@
                   {{ question.name ? question.name : 'Type Question' }}
                 </div>
                 <div
-                  class="width-45 question-name"
+                  class="width-100 question-name"
                   *ngIf="question.fieldType === 'LLF'"
                 >
                   <div [innerHTML]="question.name"></div>
                 </div>
-                <div class="width-45 text-left">
+                <div
+                  class="width-45 text-left"
+                  *ngIf="question.fieldType !== 'LLF'"
+                >
                   <input
                     type="text"
                     *ngIf="
@@ -169,16 +172,23 @@
                   *ngIf="question.fieldType === 'ATT'"
                   style="margin: -10px 0 0 -10px"
                 >
-                  <img
-                    src="assets/rdf-forms-icons/take-a-photo.svg"
-                    alt="take-a-photo-icon"
+                  <button
+                    mat-raised-button
                     style="
                       width: 240px;
                       position: relative;
                       left: 10px;
                       top: 10px;
+                      background-color: #0053d7;
+                      color: white;
                     "
-                  />
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/take-a-photo.svg"
+                      alt="take-a-photo-icon"
+                    />
+                    Take Photo
+                  </button>
                 </div>
 
                 <div *ngIf="question.fieldType === 'IMF'">
@@ -200,26 +210,32 @@
                 </span>
 
                 <div *ngIf="question.fieldType === 'VI'">
-                  <div *ngIf="question.value?.length > 0">
-                    <div *ngIf="4 >= question.value.length">
+                  <div *ngIf="question.value?.values?.length > 0">
+                    <div *ngIf="4 >= question.value.values.length">
                       <mat-button-toggle-group
                         style="height: 35px; align-items: center; width: 240px"
                       >
                         <mat-button-toggle
                           class="vi-values"
                           [value]="ques.title"
-                          *ngFor="let ques of question.value"
+                          [ngStyle]="{
+                            color: ques.color
+                          }"
+                          *ngFor="let ques of question.value.values"
                         >
                           {{ ques.title }}
                         </mat-button-toggle>
                       </mat-button-toggle-group>
                     </div>
 
-                    <div *ngIf="question.value.length > 4">
+                    <div *ngIf="question.value.values.length > 4">
                       <mat-select class="dropdown" [multiple]="question.multi">
                         <mat-option
-                          *ngFor="let ques of question.value"
+                          *ngFor="let ques of question.value.values"
                           [value]="ques.title"
+                          [ngStyle]="{
+                            color: ques.color
+                          }"
                         >
                           {{ ques.title }}
                         </mat-option>

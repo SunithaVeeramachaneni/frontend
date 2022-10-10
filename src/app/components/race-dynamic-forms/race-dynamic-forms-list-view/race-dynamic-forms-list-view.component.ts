@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { ToastService } from 'src/app/shared/toast';
@@ -14,7 +15,11 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
   forms$: Observable<any>;
   formsData$: Observable<any>;
   deleteForm$ = new BehaviorSubject<any>({} as any);
-  constructor(private rdfService: RdfService, private toaster: ToastService) {}
+  constructor(
+    private rdfService: RdfService,
+    private toaster: ToastService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const initial = { data: [] };
@@ -90,5 +95,11 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
         }
       })
     );
+  }
+
+  editForm(form) {
+    this.router.navigate(['rdf-forms/edit', form.id], {
+      state: { data: form }
+    });
   }
 }
