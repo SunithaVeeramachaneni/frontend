@@ -58,12 +58,15 @@
                   {{ question.name ? question.name : 'Type Question' }}
                 </div>
                 <div
-                  class="width-45 question-name"
+                  class="width-100 question-name"
                   *ngIf="question.fieldType === 'LLF'"
                 >
                   <div [innerHTML]="question.name"></div>
                 </div>
-                <div class="width-45 text-left">
+                <div
+                  class="width-45 text-left"
+                  *ngIf="question.fieldType !== 'LLF'"
+                >
                   <input
                     type="text"
                     *ngIf="
@@ -169,16 +172,23 @@
                   *ngIf="question.fieldType === 'ATT'"
                   style="margin: -10px 0 0 -10px"
                 >
-                  <img
-                    src="assets/rdf-forms-icons/take-a-photo.svg"
-                    alt="take-a-photo-icon"
+                  <button
+                    mat-raised-button
                     style="
                       width: 240px;
                       position: relative;
                       left: 10px;
                       top: 10px;
+                      background-color: #0053d7;
+                      color: white;
                     "
-                  />
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/take-a-photo.svg"
+                      alt="take-a-photo-icon"
+                    />
+                    Take Photo
+                  </button>
                 </div>
 
                 <div *ngIf="question.fieldType === 'IMF'">
