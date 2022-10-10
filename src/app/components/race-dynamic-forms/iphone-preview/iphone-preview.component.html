@@ -223,7 +223,11 @@
                         </mat-button-toggle>
                       </mat-button-toggle-group>
                     </div>
+                  </div>
+                </div>
 
+                <div *ngIf="question.fieldType === 'DD'">
+                  <div *ngIf="question.value?.values?.length > 0">
                     <div *ngIf="question.value.values.length > 4">
                       <mat-select class="dropdown" [multiple]="question.multi">
                         <mat-option
