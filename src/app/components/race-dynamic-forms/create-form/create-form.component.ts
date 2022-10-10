@@ -79,7 +79,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   popOverOpenState = {};
   fieldContentOpenState = {};
   richTextEditorToolbarState = {};
-  sectionActiveState = {};
   isLLFFieldChanged = false;
   sections: any;
 
@@ -256,7 +255,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           const { uid, name, position, questions } = section;
           const sc = index + 1;
           if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
-          if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
           if (!this.fieldContentOpenState[sc])
             this.fieldContentOpenState[sc] = {};
           if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
@@ -313,7 +311,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         this.disableFormFields = false;
       }
     });
-    this.sectionActiveState[1] = true;
   }
 
   setHeaderTitle(title) {
@@ -522,7 +519,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   initSection = (sc: number, qc: number, uqc: number) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
-    if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
     if (!this.richTextEditorToolbarState[sc])
@@ -727,11 +723,4 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   getLogicsFormBuilderArray(logics) {}
-
-  activeSection(sectionIndex: number) {
-    Object.keys(this.sectionActiveState).forEach((key) => {
-      this.sectionActiveState[key] = false;
-    });
-    this.sectionActiveState[sectionIndex + 1] = true;
-  }
 }
