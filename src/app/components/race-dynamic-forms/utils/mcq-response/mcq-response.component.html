@@ -11,9 +11,12 @@
           placeholder="Untitled Response Set"
           [hidden]="respType === 'quickResponse'"
           autocomplete="off"
+          class="global_response_name_input"
         />
       </div>
-      <div style="padding-left: 10px">Response</div>
+      <br />
+      <br />
+      <div style="padding-left: 10px; font-weight: 'bold'">Response</div>
       <mat-card-content>
         <div class="width-100" formArrayName="responses">
           <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
@@ -33,6 +36,12 @@
                 <input
                   matInput
                   type="color"
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    position: relative;
+                    top: 10px;
+                  "
                   formControlName="color"
                   [hidden]="respType === 'globalResponse'"
                 />
@@ -40,7 +49,7 @@
                   mat-flat-button
                   (click)="deleteResponse(i)"
                   color="#545F70"
-                  style="float: right"
+                  style="float: right; padding: 0; min-width: 40px"
                 >
                   <img
                     src="assets/rdf-forms-icons/delete-icon.svg"
