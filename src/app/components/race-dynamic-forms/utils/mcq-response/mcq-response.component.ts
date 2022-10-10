@@ -144,7 +144,10 @@ export class McqResponseComponent implements OnInit {
         .createResponse$({
           type: this.respType,
           values: this.responses.value,
-          name: this.name.value
+          name:
+            this.respType === 'globalResponse' && !this.name.value
+              ? 'Untitled'
+              : this.name.value
         })
         .subscribe((newResp) => {
           this.inputResp.pipe(
@@ -152,7 +155,10 @@ export class McqResponseComponent implements OnInit {
               const latest = oldResp.push({
                 id: newResp.id,
                 values: newResp.values,
-                name: this.name.value
+                name:
+                  this.respType === 'globalResponse' && !this.name.value
+                    ? 'Untitled'
+                    : this.name.value
               });
               return latest;
             })

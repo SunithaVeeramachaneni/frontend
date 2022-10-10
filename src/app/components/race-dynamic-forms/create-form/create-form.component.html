@@ -244,7 +244,10 @@
                       <button
                         cdkOverlayOrigin
                         #trigger="cdkOverlayOrigin"
-                        (click)="togglePopOverOpenState(i, j)"
+                        (click)="
+                          togglePopOverOpenState(i, j);
+                          isMCQResponseOpen = false
+                        "
                         class="response-type-btn"
                         [ngClass]="{
                           'dis-flex p-t-0':
@@ -264,7 +267,14 @@
                             *ngIf="mcqResponseType === 'globalResponse'"
                             class="response-type-chips"
                           >
-                            <mat-chip>
+                            <mat-chip
+                              [ngStyle]="{
+                                backgroundColor: '#ffffff',
+                                border: '1px solid #d3d3d3',
+                                minHeight: '24px',
+                                fontSize: '90%'
+                              }"
+                            >
                               {{ question.controls.value.value?.name }}
                             </mat-chip>
                           </mat-chip-list>
@@ -392,6 +402,11 @@
                                   togglePopOverOpenState(i, j)
                                 "
                                 class="response-field-types"
+                                [ngClass]="{
+                                  active:
+                                    fieldType.type ===
+                                    question.controls.fieldType.value
+                                }"
                               >
                                 <img
                                   [src]="getFieldTypeImage(fieldType.type)"
@@ -426,13 +441,18 @@
                                             question,
                                             resp,
                                             'quickResponse'
-                                          )
+                                          );
+                                          togglePopOverOpenState(i, j)
                                         "
                                       >
                                         <mat-chip-list
-                                          *ngFor="let val of resp.values"
+                                          *ngFor="
+                                            let val of resp.values;
+                                            let i = index
+                                          "
                                         >
                                           <mat-chip
+                                            *ngIf="i < 2; else moreBlock"
                                             style="margin-left: 10px"
                                             [ngStyle]="{
                                               color: val?.color,
@@ -444,6 +464,18 @@
                                           >
                                             {{ val.title }}
                                           </mat-chip>
+                                          <ng-template #moreBlock>
+                                            <span
+                                              style="
+                                                margin-top: 5px;
+                                                margin-left: 5px;
+                                                font-weight: 400;
+                                              "
+                                            >
+                                              + ({{ resp.values.length - 2 }}
+                                              more)
+                                            </span>
+                                          </ng-template>
                                         </mat-chip-list>
                                       </button>
                                       <button
@@ -501,7 +533,8 @@
                                           question,
                                           resp,
                                           'globalResponse'
-                                        )
+                                        );
+                                        togglePopOverOpenState(i, j)
                                       "
                                     >
                                       {{ resp.name }}
