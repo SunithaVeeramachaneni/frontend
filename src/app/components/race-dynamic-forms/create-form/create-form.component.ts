@@ -637,8 +637,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.patchValue({
       fieldType: fieldType.type,
       required: false,
-      value: ''
+      value: '',
+      logics: []
     });
+    question.hasLogic = false;
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
