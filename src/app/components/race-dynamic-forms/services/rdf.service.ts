@@ -42,6 +42,12 @@ export class RdfService {
   getForms$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms', info);
 
+  getFormById$ = (
+    id: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getRespById(environment.rdfApiUrl, 'forms/', id, info);
+
   getFieldTypes$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms/field-types', info);
 
@@ -171,7 +177,6 @@ export class RdfService {
             FORMNAME: id,
             FORMTITLE: name,
             STATUS: 'PUBLISHED',
-            IMAGECONTENT: '',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
             ...this.getProperties(question)
@@ -214,27 +219,33 @@ export class RdfService {
         };
         break;
       }
-      case 'IMF': {
+      case 'IMG': {
         const {
           value: { base64, name }
         } = question;
         properties = {
           ...properties,
-          FORMCONTENT: base64,
-          FILETYPE: name.split('.').slice(-1)[0].toLowerCase()
+          IMAGECONTENT: base64,
+          IMAGETYPE: `.${name.split('.').slice(-1)[0].toLowerCase()}`
         };
         break;
       }
       case 'VI':
       case 'DD': {
-        const { value, multi } = question;
-        const viVALUE = value.map((item, idx) => ({
-          [`LABEL${idx + 1}`]: item.title
+        const {
+          value: { values },
+          multi
+        } = question;
+        const viVALUE = values.map((item, idx) => ({
+          [`label${idx + 1}`]: item.title,
+          key: item.title,
+          color: item.color,
+          description: item.title
         }));
         properties = {
           ...properties,
           DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : fieldType
+          UIFIELDTYPE: multi ? 'DDM' : values.length > 4 ? 'DD' : 'VI'
         };
         break;
       }

@@ -68,6 +68,9 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #sectionMenu="matMenu">
+          <button mat-menu-item (click)="editForm(form)">
+            <span>Edit</span>
+          </button>
           <button mat-menu-item (click)="deleteForm(form)" class="text-red">
             <span>Delete</span>
           </button>

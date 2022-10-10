@@ -58,40 +58,45 @@
                   {{ question.name ? question.name : 'Type Question' }}
                 </div>
                 <div
-                  class="width-45 question-name"
+                  class="width-100 question-name"
                   *ngIf="question.fieldType === 'LLF'"
                 >
                   <div [innerHTML]="question.name"></div>
                 </div>
-                <div class="width-45 text-left">
-                  <input
-                    type="text"
+                <div
+                  class="width-45 text-left"
+                  *ngIf="question.fieldType !== 'LLF'"
+                >
+                  <p
+                    class="m-0"
                     *ngIf="
                       question.fieldType === 'TF' && question.value !== 'LTV'
                     "
-                    class="input-fields"
-                  />
+                  >
+                    <input type="text" class="input-fields" />
+                  </p>
 
-                  <input
-                    type="date"
+                  <p
+                    class="m-0"
                     *ngIf="
                       question.fieldType === 'DF' ||
                       question.fieldType === 'DFR'
                     "
-                    class="input-fields"
-                  />
+                  >
+                    <input type="date" class="input-fields" />
+                  </p>
 
-                  <input
-                    type="checkbox"
+                  <p
                     *ngIf="question.fieldType === 'CB'"
                     style="float: right"
-                  />
+                    class="m-0"
+                  >
+                    <input type="checkbox" />
+                  </p>
 
-                  <input
-                    type="time"
-                    *ngIf="question.fieldType === 'TIF'"
-                    class="input-fields"
-                  />
+                  <p *ngIf="question.fieldType === 'TIF'" class="m-0">
+                    <input type="time" class="input-fields" />
+                  </p>
 
                   <textarea
                     rows="3"
@@ -102,30 +107,28 @@
                     class="input-fields"
                   ></textarea>
 
-                  <input
-                    type="number"
-                    *ngIf="question.fieldType === 'NF'"
-                    class="input-fields"
-                  />
+                  <p *ngIf="question.fieldType === 'NF'" class="m-0">
+                    <input type="number" class="input-fields" />
+                  </p>
 
-                  <span
+                  <p
                     *ngIf="question.fieldType === 'LF'"
-                    class="default-value"
+                    class="default-value m-0"
                   >
                     {{ question.value }}
-                  </span>
+                  </p>
 
-                  <span *ngIf="question.fieldType === 'SF'" class="dis-flex">
+                  <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
                     <input type="text" class="input-fields-with-icons" />
                     <img
                       src="assets/rdf-forms-icons/scan.svg"
                       alt="scan"
                       class="scan-icon"
                     />
-                  </span>
+                  </p>
                 </div>
               </div>
-              <div>
+              <div class="width-100">
                 <div
                   *ngIf="question.fieldType === 'SGF'"
                   style="margin: -10px 0 0 -10px"
@@ -167,23 +170,31 @@
 
                 <div
                   *ngIf="question.fieldType === 'ATT'"
-                  style="margin: -10px 0 0 -10px"
+                  style="margin: -5px 0 10px -10px"
                 >
-                  <img
-                    src="assets/rdf-forms-icons/take-a-photo.svg"
-                    alt="take-a-photo-icon"
+                  <button
+                    mat-raised-button
                     style="
                       width: 240px;
                       position: relative;
                       left: 10px;
-                      top: 10px;
+                      background-color: #0053d7;
+                      color: white;
+                      height: 34px;
                     "
-                  />
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/take-a-photo.svg"
+                      alt="take-a-photo-icon"
+                    />
+                    Take Photo
+                  </button>
                 </div>
 
-                <div *ngIf="question.fieldType === 'IMF'">
+                <div *ngIf="question.fieldType === 'IMG'">
                   <img
                     [src]="getImageSrc(question.value.base64)"
+                    *ngIf="question.value.base64"
                     alt="image"
                     style="
                       width: 100px;
@@ -194,10 +205,10 @@
                   />
                 </div>
 
-                <span *ngIf="question.fieldType === 'RT'">
+                <div *ngIf="question.fieldType === 'RT'">
                   <mat-slider style="width: 230px; margin-top: -15px">
                   </mat-slider>
-                </span>
+                </div>
 
                 <div *ngIf="question.fieldType === 'VI'">
                   <div *ngIf="question.value?.values?.length > 0">

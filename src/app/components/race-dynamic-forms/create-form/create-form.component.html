@@ -402,6 +402,11 @@
                                   togglePopOverOpenState(i, j)
                                 "
                                 class="response-field-types"
+                                [ngClass]="{
+                                  active:
+                                    fieldType.type ===
+                                    question.controls.fieldType.value
+                                }"
                               >
                                 <img
                                   [src]="getFieldTypeImage(fieldType.type)"
@@ -650,7 +655,7 @@
                     </mat-card>
                   </div>
 
-                  <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                  <div *ngIf="question.controls.fieldType.value === 'IMG'">
                     <input
                       #insertImages
                       [hidden]="true"
@@ -688,7 +693,7 @@
                       "
                       *ngIf="question.controls.fieldType.value !== 'LLF'"
                     >
-                      <div *ngIf="question.controls.fieldType.value !== 'IMF'">
+                      <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
                           <div
                             class="add-logic-btn"
@@ -773,11 +778,13 @@
                         <div *ngIf="question.hasLogic" class="logicBuilder">
                           <app-add-logic
                             [question]="question"
-                            (onValueChanged)="onValueChanged(question, $event)"
+                            (onValueChanged)="
+                              onValueChanged(section, question, $event)
+                            "
                           ></app-add-logic>
                         </div>
                       </div>
-                      <div *ngIf="question.controls.fieldType.value === 'IMF'">
+                      <div *ngIf="question.controls.fieldType.value === 'IMG'">
                         <div
                           class="width-50 bg-white dis-flex"
                           *ngIf="question.controls.value.value"

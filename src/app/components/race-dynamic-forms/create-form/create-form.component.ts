@@ -34,6 +34,7 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-create-form',
@@ -88,7 +89,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private breadcrumbService: BreadcrumbService,
     private headerService: HeaderService,
     private cdrf: ChangeDetectorRef,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -151,8 +153,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           const displayName = formName.trim()
             ? formName
             : this.defaultFormHeader;
-          this.breadcrumbService.set('@formName', { label: displayName });
-          this.headerService.setHeaderTitle(displayName);
+          this.setHeaderTitle(displayName);
           const form = this.createForm.getRawValue();
           form.sections.forEach((section) => {
             section.questions.forEach((question) => {
@@ -218,13 +219,91 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const headerTitle = this.createForm.get('name').value
       ? this.createForm.get('name').value
       : this.defaultFormHeader;
-    this.headerService.setHeaderTitle(headerTitle);
-    this.breadcrumbService.set('@formName', {
-      label: headerTitle
+    this.setHeaderTitle(headerTitle);
+
+    this.route.params.subscribe(({ id }) => {
+      if (id === undefined) {
+        this.createForm.disable({ emitEvent: false });
+        this.createForm.get('name').enable({ emitEvent: false });
+        this.createForm.get('name').setValue(this.defaultFormHeader);
+      }
     });
-    this.createForm.disable({ emitEvent: false });
-    this.createForm.get('name').enable({ emitEvent: false });
-    this.createForm.get('name').setValue(this.defaultFormHeader);
+
+    this.route.data.subscribe(({ form }) => {
+      if (form && Object.keys(form).length) {
+        this.createForm.patchValue(form, { emitEvent: false });
+        const { name: formName, sections } = form;
+        this.setHeaderTitle(formName);
+
+        (this.createForm.get('sections') as FormArray).removeAt(0);
+
+        sections.forEach((section, index) => {
+          const { uid, name, position, questions } = section;
+          const sc = index + 1;
+          if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
+          if (!this.fieldContentOpenState[sc])
+            this.fieldContentOpenState[sc] = {};
+          if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
+          if (!this.richTextEditorToolbarState[sc])
+            this.richTextEditorToolbarState[sc] = {};
+
+          const questionsFormBuilderArray = questions.map(
+            (question, qindex) => {
+              const {
+                id,
+                fieldType,
+                name: qname,
+                position: qposition,
+                required,
+                multi,
+                value,
+                isPublished,
+                isPublishedTillSave
+              } = question;
+              const qc = qindex + 1;
+
+              if (!this.fieldContentOpenState[sc][qc])
+                this.fieldContentOpenState[sc][qc] = false;
+              if (!this.popOverOpenState[sc][qc])
+                this.popOverOpenState[sc][qc] = false;
+              if (!this.richTextEditorToolbarState[sc][qc])
+                this.richTextEditorToolbarState[sc][qc] = false;
+
+              return this.fb.group({
+                id,
+                name: qname,
+                fieldType,
+                position: qposition,
+                required,
+                multi,
+                value,
+                isPublished,
+                isPublishedTillSave,
+                logics: this.fb.array([])
+              });
+            }
+          );
+
+          (this.createForm.get('sections') as FormArray).push(
+            this.fb.group({
+              uid,
+              name: [{ value: name, disabled: true }],
+              position,
+              questions: this.fb.array(questionsFormBuilderArray)
+            })
+          );
+        });
+
+        this.disableFormFields = false;
+      }
+    });
+  }
+
+  setHeaderTitle(title) {
+    this.headerService.setHeaderTitle(title);
+    this.breadcrumbService.set('@formName', {
+      label: title
+    });
   }
 
   handleEditorFocus(focus: boolean, i, j) {
@@ -247,7 +326,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
-    console.log(question.controls.value.value);
   };
 
   handleResponses = (type: string, id: string) => {
@@ -263,9 +341,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   setFormTitle() {
     const formName = this.createForm.get('name').value;
-    this.createForm.patchValue({
-      name: formName.trim() ? formName : this.defaultFormHeader
-    });
+    if (!formName)
+      this.createForm.patchValue({
+        name: formName.trim() ? formName : this.defaultFormHeader
+      });
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -343,10 +422,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
-  onValueChanged(question: any, event: any) {
+  onValueChanged(section: any, question: any, event: any) {
     const control = question.get('logics') as FormArray;
     control.patchValue(event);
-    // question.patchValue({ ...question.getRawValue(), logics: event.logics });
+    const sections = this.createForm.get('sections') as FormArray;
+    let sectionIndex = 0;
+    for (let i = 0; i < sections.value.length; i++) {
+      if (sections.value[i].uid === section.value.uid) {
+        sectionIndex = i;
+      }
+    }
+    const sectionControl = sections.at(sectionIndex) as FormArray;
+    const questions = sectionControl.get('questions') as FormArray;
+    let questionIndex = 0;
+    for (let j = 0; j < questions.value.length; j++) {
+      if (questions.value[j].id === question.value.id) {
+        questionIndex = j;
+      }
+    }
+    const logics = questions.at(questionIndex).get('logics') as FormArray;
+    logics.patchValue(event);
+    this.createForm.patchValue({ sections: sections.getRawValue() });
   }
 
   addLogicForQuestion(question: any, section: any, form: any) {
@@ -534,8 +630,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   selectFieldType(fieldType, question) {
+    if (fieldType.type === question.get('fieldType').value) {
+      return;
+    }
     this.currentQuestion = question;
-    question.patchValue({ fieldType: fieldType.type, required: false });
+    question.patchValue({
+      fieldType: fieldType.type,
+      required: false,
+      value: ''
+    });
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
@@ -546,24 +649,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         break;
       case 'RT':
         this.isCustomizerOpen = true;
-        let sliderValue = {
+        const sliderValue = {
           value: 0,
           min: 0,
           max: 100,
           increment: 1
         };
-        if (
-          Object.keys(question.get('value').value).find(
-            (item) => item === 'min'
-          )
-        ) {
-          sliderValue = question.get('value').value;
-        } else {
-          question.get('value').setValue(sliderValue);
-        }
+        question.get('value').setValue(sliderValue);
         this.sliderOptions = sliderValue;
         break;
-      case 'IMF':
+      case 'IMG':
         let index = 0;
         let found = false;
         this.createForm.get('sections').value.forEach((section) => {
@@ -571,12 +666,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             if (que.id === this.currentQuestion.value.id) {
               found = true;
             }
-            if (!found && que.fieldType === 'IMF') {
+            if (!found && que.fieldType === 'IMG') {
               index++;
             }
           });
         });
-        question.get('value').setValue('');
 
         timer(0)
           .pipe(
@@ -587,7 +681,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           .subscribe();
         break;
       default:
-        question.get('value').setValue('');
+      // do nothing
     }
   }
 
@@ -611,4 +705,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
   }
+
+  getLogicsFormBuilderArray(logics) {}
 }
