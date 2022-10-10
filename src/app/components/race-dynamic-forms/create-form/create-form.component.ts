@@ -83,6 +83,21 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   isLLFFieldChanged = false;
   sections: any;
 
+  addLogicIgnoredFields = [
+    'LTV',
+    'CB',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT'
+  ];
+
   constructor(
     private fb: FormBuilder,
     private rdfService: RdfService,
