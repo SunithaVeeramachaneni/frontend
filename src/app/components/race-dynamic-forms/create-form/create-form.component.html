@@ -69,8 +69,6 @@
       <div
         cdkDrag
         *ngFor="let section of getSections(createForm); let i = index"
-        (mouseenter)="activeSection(i)"
-        (mouseleave)="activeSection(i)"
       >
         <div style="padding: 10px" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
@@ -151,7 +149,6 @@
               matTooltipPosition="right"
               [disabled]="disableFormFields"
               (click)="addQuestion(i)"
-              *ngIf="sectionActiveState[i + 1] === true"
               style="position: relative; left: 80px; float: right"
             >
               <img
@@ -167,7 +164,6 @@
               [disabled]="disableFormFields"
               (click)="addSection(i)"
               style="position: relative; left: 120px; top: 40px; float: right"
-              *ngIf="sectionActiveState[i + 1] === true"
             >
               <img
                 src="assets/rdf-forms-icons/add-sections.svg"
