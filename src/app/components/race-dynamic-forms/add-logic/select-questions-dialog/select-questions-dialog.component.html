@@ -1,21 +1,27 @@
 <div mat-dialog-title>
-  <span>
-    Select questions to be
-    <span *ngIf="data.viewMode === 'MANDATE'"> mandated</span>
-    <span *ngIf="data.viewMode === 'HIDE'"> hidden</span>
-  </span>
+  <div class="logicRow">
+    <mat-icon>info</mat-icon>
+    <div class="questionLogic">
+      <span class="currentQuestion">
+        {{ data.question.name }}
+      </span>
+      <p class="m-0">
+        If answer {{ data.logic.operator }} {{ data.logic.operand2 }}
+      </p>
+    </div>
+  </div>
 </div>
 <div mat-dialog-content>
-  <h1 class="currentQuestion">
-    {{ data.question.name }}
-  </h1>
   <div class="dialogBody">
-    <div class="logicRow">
-      <mat-icon>info</mat-icon>
-      If answer {{ data.logic.operator }} {{ data.logic.operand2 }}
-    </div>
+    <span class="heading">
+      Select questions to be
+      <span *ngIf="data.viewMode === 'MANDATE'" class="f-inherit">
+        mandated</span
+      >
+      <span *ngIf="data.viewMode === 'HIDE'" class="f-inherit"> hidden</span>
+    </span>
     <div class="validationMessageRow">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>UI Validation Message</mat-label>
         <input
           matInput
