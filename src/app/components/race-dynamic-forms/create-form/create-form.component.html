@@ -461,6 +461,14 @@
                                               minHeight: '24px',
                                               fontSize: '90%'
                                             }"
+                                            (click)="
+                                              handleMCQFieldType(
+                                                question,
+                                                resp,
+                                                'quickResponse'
+                                              );
+                                              togglePopOverOpenState(i, j)
+                                            "
                                           >
                                             {{ val.title }}
                                           </mat-chip>
