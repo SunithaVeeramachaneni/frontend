@@ -1,37 +1,60 @@
-<div mat-dialog-title>Select questions to be hidden</div>
+<div mat-dialog-title>
+  <span>
+    Select questions to be
+    <span *ngIf="data.viewMode === 'MANDATE'"> mandated</span>
+    <span *ngIf="data.viewMode === 'HIDE'"> hidden</span>
+  </span>
+</div>
 <div mat-dialog-content>
+  <h1 class="currentQuestion">
+    {{ data.question.name }}
+  </h1>
   <div class="dialogBody">
     <div class="logicRow">
       <mat-icon>info</mat-icon>
-      If answer {{ data.operator }} {{ data.operand2 }}
+      If answer {{ data.logic.operator }} {{ data.logic.operand2 }}
+    </div>
+    <div class="validationMessageRow">
+      <mat-form-field appearance="outline">
+        <mat-label>UI Validation Message</mat-label>
+        <input
+          matInput
+          placeholder="Validation Message"
+          [(ngModel)]="validationMessage"
+        />
+      </mat-form-field>
     </div>
     <div *ngFor="let section of sections">
       <div class="sectionHead">{{ section.name }}</div>
       <div class="sectionContent">
-        <mat-checkbox
-          *ngFor="let question of section.questions"
-          class="question"
-          [checked]="selectedQuestions.indexOf(question.id) > -1"
-          (change)="selectQuestion($event.checked, question.id)"
-          [ngClass]="{
-            'strike-question': selectedQuestions.indexOf(question.id) > -1
-          }"
-        >
-          {{
-            question.name && question.name.length
-              ? question.name
-              : 'Untitled question'
-          }}
-          - {{ question.id }}</mat-checkbox
-        >
+        <div *ngFor="let question of section.questions">
+          <div *ngIf="data.question.id !== question.id">
+            <mat-checkbox
+              class="question"
+              [checked]="selectedQuestions.indexOf(question.id) > -1"
+              (change)="selectQuestion($event.checked, question.id)"
+              [ngClass]="{
+                'strike-question': selectedQuestions.indexOf(question.id) > -1
+              }"
+            >
+              {{
+                question.name && question.name.length
+                  ? question.name
+                  : 'Untitled question'
+              }}
+              - {{ question.id }}</mat-checkbox
+            >
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close (click)="close()">Cancel</button>
+  <button mat-raised-button mat-dialog-close (click)="close()">Cancel</button>
   <button
-    mat-button
+    mat-raised-button
+    color="primary"
     [mat-dialog-close]="true"
     color="primary"
     (click)="submit()"

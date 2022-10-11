@@ -130,7 +130,7 @@ export class AddLogicComponent implements OnInit {
       disableClose: true,
       hasBackdrop: false,
       width: '60%',
-      data: { logic: logic.value, viewMode }
+      data: { logic: logic.value, viewMode, question: question.value }
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
@@ -139,14 +139,24 @@ export class AddLogicComponent implements OnInit {
         result.selectedQuestions.forEach((q) => {
           control.push(this.fb.control(q));
         });
-        logic.patchValue({ mandateQuestions: logic.value.mandateQuestions });
+        logic.patchValue({
+          mandateQuestions: logic.value.mandateQuestions,
+          validationMessage: result.validationMessage
+        });
       } else if (result.type === 'HIDE') {
         const control = logic.get('hideQuestions') as FormArray;
         result.selectedQuestions.forEach((q) => {
           control.push(this.fb.control(q));
         });
+        logic.patchValue({ hideQuestions: logic.value.hideQuestions });
       }
     });
+  }
+  askEvidence(logic) {
+    logic.patchValue({ askEvidence: true });
+  }
+  removeEvidence(logic) {
+    logic.patchValue({ askEvidence: false });
   }
 
   triggerMenuAction(action: string, logic: any): void {

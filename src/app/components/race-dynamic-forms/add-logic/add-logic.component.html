@@ -8,6 +8,7 @@
         <div class="logicRow">
           <input type="hidden" formControlName="logicTitle" />
           <input type="hidden" formControlName="expression" />
+          <input type="hidden" formControlName="askEvidence" />
           If answer
           <select
             class="logicCondition"
@@ -29,12 +30,6 @@
             (ngModelChange)="operand2Changed(logic, $event)"
           />
           then
-          <input
-            *ngIf="logic.value.action"
-            formControlName="action"
-            class="action"
-            readonly
-          />
           <span
             *ngIf="
               logic.value.mandateQuestions &&
@@ -53,6 +48,10 @@
             (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
           >
             Hide Questions <mat-icon>edit</mat-icon>
+          </span>
+          <span *ngIf="logic.value.requireEvidence" class="mandateAction">
+            Ask Evidence
+            <mat-icon (click)="removeEvidence(logic)">close</mat-icon>
           </span>
           <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
             + action
@@ -78,10 +77,7 @@
             >
               Hide Questions
             </button>
-            <button
-              mat-menu-item
-              (click)="triggerMenuAction('ask_evidence', logic)"
-            >
+            <button mat-menu-item (click)="askEvidence(logic)">
               Ask Evidence
             </button>
           </mat-menu>

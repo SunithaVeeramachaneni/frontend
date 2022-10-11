@@ -16,6 +16,7 @@ import { RdfService } from '../../services/rdf.service';
 export class SelectQuestionsDialogComponent implements OnInit {
   sections = [];
   selectedQuestions = [];
+  validationMessage = '';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -25,6 +26,7 @@ export class SelectQuestionsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.sections = [];
+    this.validationMessage = '';
     const tempSections = this.rdfService.getCurrentFormValue().sections;
     this.sections = [...tempSections];
     if (this.data.viewMode === 'MANDATE') {
@@ -53,7 +55,8 @@ export class SelectQuestionsDialogComponent implements OnInit {
   submit() {
     this.dialogRef.close({
       selectedQuestions: this.selectedQuestions,
-      type: this.data.viewMode
+      type: this.data.viewMode,
+      validationMessage: this.validationMessage
     });
   }
 }

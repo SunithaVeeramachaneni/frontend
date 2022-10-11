@@ -276,6 +276,10 @@ select:focus {
     .icon {
       font-size: 150%;
       height: auto;
+      transform: rotate(305deg);
+      color: #3d5afe;
+      margin-top: -4px;
+      margin-right: -5px;
     }
   }
   .vert-divider {
