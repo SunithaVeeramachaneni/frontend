@@ -38,7 +38,8 @@
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
           >
-            Mandate Questions <mat-icon>edit</mat-icon>
+            Mandate ({{ logic.value.mandateQuestions.length }}) Questions
+            <mat-icon>edit</mat-icon>
           </span>
           <span
             *ngIf="
@@ -47,7 +48,8 @@
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
           >
-            Hide Questions <mat-icon>edit</mat-icon>
+            Hide ({{ logic.value.hideQuestions.length }}) Questions
+            <mat-icon>edit</mat-icon>
           </span>
           <span *ngIf="logic.value.requireEvidence" class="mandateAction">
             Ask Evidence
