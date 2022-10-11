@@ -15,7 +15,16 @@ const APPNAME = 'MWORKORDER';
   providedIn: 'root'
 })
 export class RdfService {
+  currentFormValue: any;
+
   constructor(private appService: AppService) {}
+
+  setCurrentFormValue(form: any) {
+    this.currentFormValue = form;
+  }
+  getCurrentFormValue() {
+    return this.currentFormValue;
+  }
 
   createForm$ = (
     form: any,
@@ -179,6 +188,8 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
+            UIVALIDATION: this.getValidationExpression(question),
+            UIVALIDATIONMSG: this.getValidationMessage(question),
             ...this.getProperties(question)
           };
         })
@@ -245,7 +256,7 @@ export class RdfService {
         properties = {
           ...properties,
           DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : values.length > 4 ? 'DD' : 'VI'
+          UIFIELDTYPE: multi ? 'DDM' : fieldType
         };
         break;
       }
@@ -263,5 +274,58 @@ export class RdfService {
       default:
         return fieldType;
     }
+  }
+
+  getValidationExpression(question) {
+    let expression = '';
+    if (!question.logics || !question.logics.length) return expression;
+
+    const logic = question.logics[0];
+    const isEmpty = !logic.operand2.length;
+    const questionId = question.id;
+
+    // Mandate Questions;
+    const mandatedQuestions = logic.mandateQuestions;
+    if (mandatedQuestions.length) {
+      mandatedQuestions.forEach((mq, index) => {
+        if (isEmpty) {
+          expression = `${expression};${
+            index + 1
+          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} EMPTY`;
+        } else {
+          expression = `${expression};${
+            index + 1
+          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} (V)${
+            logic.operand2
+          }`;
+        }
+      });
+      return expression;
+    }
+
+    // Hide Questions;
+    expression = '';
+    const hiddenQuestions = logic.hideQuestions;
+    if (hiddenQuestions.length) {
+      hiddenQuestions.forEach((hq, index) => {
+        if (isEmpty) {
+          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
+            logic.operator
+          } EMPTY`;
+        } else {
+          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
+            logic.operator
+          } (V)${logic.operand2}`;
+        }
+      });
+      return expression;
+    }
+
+    return expression;
+  }
+
+  getValidationMessage(question) {
+    if (!question.logics || !question.logics.length) return '';
+    return question.logics[0].validationMessage;
   }
 }

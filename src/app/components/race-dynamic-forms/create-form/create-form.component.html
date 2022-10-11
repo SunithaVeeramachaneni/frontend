@@ -69,6 +69,8 @@
       <div
         cdkDrag
         *ngFor="let section of getSections(createForm); let i = index"
+        (mouseenter)="setSectionActiveState(i)"
+        (mouseleave)="setSectionActiveState(i)"
       >
         <div style="padding: 10px" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
@@ -148,6 +150,10 @@
               matTooltip="Add Question"
               matTooltipPosition="right"
               [disabled]="disableFormFields"
+              *ngIf="
+                isOpenState[i + 1] === true &&
+                sectionActiveState[i + 1] === true
+              "
               (click)="addQuestion(i)"
               style="position: relative; left: 80px; float: right"
             >
@@ -161,6 +167,10 @@
               mat-icon-button
               matTooltip="Add Section"
               matTooltipPosition="right"
+              *ngIf="
+                isOpenState[i + 1] === true &&
+                sectionActiveState[i + 1] === true
+              "
               [disabled]="disableFormFields"
               (click)="addSection(i)"
               style="position: relative; left: 120px; top: 40px; float: right"
@@ -698,24 +708,31 @@
                         flex-direction: column;
                         width: 100%;
                         margin: 0 10px;
+                        justify-content: center;
                       "
                       *ngIf="question.controls.fieldType.value !== 'LLF'"
                     >
                       <div *ngIf="question.controls.fieldType.value !== 'IMG'">
                         <div class="add-logic-row">
                           <div
+                            *ngIf="
+                              addLogicIgnoredFields.indexOf(
+                                question.controls.fieldType.value
+                              ) < 0
+                            "
                             class="add-logic-btn"
                             (click)="
                               addLogicForQuestion(question, section, createForm)
                             "
                           >
-                            <mat-icon class="icon">psychology</mat-icon>
+                            <mat-icon class="icon">link</mat-icon>
                             <span>Add Logic</span>
+                            <mat-divider
+                              [vertical]="true"
+                              class="vert-divider"
+                            ></mat-divider>
                           </div>
-                          <mat-divider
-                            [vertical]="true"
-                            class="vert-divider"
-                          ></mat-divider>
+
                           <input
                             type="checkbox"
                             id="required"
@@ -756,16 +773,12 @@
                                 color: #3d5afe;
                               "
                             >
-                              <option value="TF" style="padding: 10px">
-                                Short Answer
-                              </option>
-                              <option value="LTV" style="padding: 10px">
-                                Long Answer
-                              </option>
+                              <option value="TF">Short Answer</option>
+                              <option value="LTV">Long Answer</option>
                             </select>
                           </span>
                           <span
-                            *ngIf="question.controls.fieldType.value === 'VI'"
+                            *ngIf="question.controls.fieldType.value === 'DD'"
                             style="margin-left: 20px"
                           >
                             <input

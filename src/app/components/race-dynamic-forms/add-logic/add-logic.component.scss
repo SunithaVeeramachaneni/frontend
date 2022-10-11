@@ -9,19 +9,31 @@
 
 .logicValue {
   margin: 0px 5px;
-  border: 1px solid #d7dbf4;
-  border-radius: 45px;
-  padding: 0px 10px;
-  background: #d7dbf4;
   line-height: 1.5;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-left: 15px;
+  border: 1px solid #e6e6fa;
+  padding: 0px 15px;
+  background: #e6f0fa;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: initial;
+  max-width: 100px;
+  width: 50px;
 }
 .logicCondition {
-  margin: 0px 5px;
-  border: 1px solid #d7dbf4;
-  border-radius: 45px;
-  padding: 0px 10px;
-  background: #d7dbf4;
-  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-left: 15px;
+  border: 1px solid #e6e6fa;
+  padding: 0px 15px;
+  background: #e6f0fa;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: initial;
 }
 
 .action {
@@ -31,15 +43,22 @@
   padding: 0px 5px;
   background: #d7dbf4;
 }
+.expression {
+  width: 250px;
+  font-size: xx-small;
+}
 
 .logicAskQuestions {
   width: 100%;
 }
 
 .logicRow {
-  background: rgb(0 0 0 / 12%);
+  // background: rgba(0, 0, 0, 0.12);
   border-radius: 5px;
   padding: 5px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 
 .six-dots {
@@ -62,4 +81,23 @@
 .response-type-icons {
   width: 15px;
   height: 15px;
+}
+
+.mandateAction {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-left: 15px;
+  border: 1px solid #e6e6fa;
+  padding: 0px 15px;
+  background: #e6f0fa;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.actionBtn {
+  color: #3d5afe;
+  text-decoration: underline;
+}
+.logicOperator {
+  padding: 5px;
 }

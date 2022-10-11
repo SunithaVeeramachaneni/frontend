@@ -10,9 +10,8 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { Form, FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { MatChipsModule } from '@angular/material/chips';
-import { BehaviorSubject, from, timer, Observable, of } from 'rxjs';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject, from, timer, Observable } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -21,8 +20,7 @@ import {
   pairwise,
   switchMap,
   tap,
-  toArray,
-  map
+  toArray
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -76,12 +74,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     max: 100,
     increment: 1
   };
-  isPopoverOpen = [false];
   popOverOpenState = {};
   fieldContentOpenState = {};
   richTextEditorToolbarState = {};
+  sectionActiveState = {};
   isLLFFieldChanged = false;
   sections: any;
+
+  addLogicIgnoredFields = [
+    'LTV',
+    'CB',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT'
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -210,6 +223,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               { sections: curr, isPublishedTillSave: false },
               { emitEvent: false }
             );
+            this.rdfService.setCurrentFormValue(this.createForm.getRawValue());
           }
         }),
         switchMap(() => this.saveForm())
@@ -241,6 +255,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           const { uid, name, position, questions } = section;
           const sc = index + 1;
           if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
+          if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
           if (!this.fieldContentOpenState[sc])
             this.fieldContentOpenState[sc] = {};
           if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
@@ -297,6 +312,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         this.disableFormFields = false;
       }
     });
+    this.sectionActiveState[1] = true;
   }
 
   setHeaderTitle(title) {
@@ -322,7 +338,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseTypeForDisplay: string
   ) => {
-    const fieldType = response.length > 4 ? 'DD' : 'VI';
+    const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
@@ -456,31 +472,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         action: [''],
         logicTitle: ['blank'],
         expression: [''],
-        questions: this.fb.array([])
+        questions: this.fb.array([]),
+        mandateQuestions: this.fb.array([]),
+        hideQuestions: this.fb.array([]),
+        validationMessage: [''],
+        askEvidence: [false]
       })
     );
-    // question.controls.logics.controls.push(
-    //   this.fb.group({
-    //     operator: ['EQ'],
-    //     operand1: [''],
-    //     operand2: [''],
-    //     action: [''],
-    //     logicTitle: ['blank'],
-    //     expression: [''],
-    //     questions: this.fb.array([])
-    //   })
-    // );
-
-    // form.controls.sections.controls.forEach((sec) => {
-    //   sec.controls.questions.controls.forEach((q) => {
-    //     if (q.value.id === question.value.id) {
-    //       q = question;
-    //     }
-    //   });
-    // });
-    // this.createForm.patchValue(form, { emitEvent: false });
-    // this.cdrf.detectChanges();
-    // this.cdrf.markForCheck();
   }
 
   initQuestion = (sc: number, qc: number, uqc: number) => {
@@ -505,6 +503,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   initSection = (sc: number, qc: number, uqc: number) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
+    if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
     if (!this.richTextEditorToolbarState[sc])
@@ -637,8 +636,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.patchValue({
       fieldType: fieldType.type,
       required: false,
-      value: ''
+      value: '',
+      logics: []
     });
+    question.hasLogic = false;
     switch (fieldType.type) {
       case 'TF':
         question.get('value').setValue('TF');
@@ -707,4 +708,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   getLogicsFormBuilderArray(logics) {}
+
+  setSectionActiveState(sectionIndex) {
+    Object.keys(this.sectionActiveState).forEach((key) => {
+      this.sectionActiveState[key] = false;
+    });
+    this.sectionActiveState[sectionIndex + 1] = true;
+  }
 }

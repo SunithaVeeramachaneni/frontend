@@ -8,6 +8,7 @@
         <div class="logicRow">
           <input type="hidden" formControlName="logicTitle" />
           <input type="hidden" formControlName="expression" />
+          <input type="hidden" formControlName="askEvidence" />
           If answer
           <select
             class="logicCondition"
@@ -15,6 +16,7 @@
             (ngModelChange)="operatorChanged(logic, $event)"
           >
             <option
+              class="logicOperator"
               value="{{ operator.code }}"
               *ngFor="let operator of fieldOperators"
             >
@@ -28,36 +30,63 @@
             (ngModelChange)="operand2Changed(logic, $event)"
           />
           then
-          <input
-            *ngIf="logic.value.action"
-            formControlName="action"
-            class="action"
-            readonly
-          />
-          <button mat-button [matMenuTriggerFor]="menu" color="primary">
-            +trigger
+          <span
+            *ngIf="
+              logic.value.mandateQuestions &&
+              logic.value.mandateQuestions.length
+            "
+            class="mandateAction"
+            (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
+          >
+            Mandate ({{ logic.value.mandateQuestions.length }}) Questions
+            <mat-icon>edit</mat-icon>
+          </span>
+          <span
+            *ngIf="
+              logic.value.hideQuestions && logic.value.hideQuestions.length
+            "
+            class="mandateAction"
+            (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
+          >
+            Hide ({{ logic.value.hideQuestions.length }}) Questions
+            <mat-icon>edit</mat-icon>
+          </span>
+          <span *ngIf="logic.value.requireEvidence" class="mandateAction">
+            Ask Evidence
+            <mat-icon (click)="removeEvidence(logic)">close</mat-icon>
+          </span>
+          <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
+            + action
           </button>
           <mat-menu #menu="matMenu">
             <button
               mat-menu-item
               (click)="triggerMenuAction('ask_questions', logic)"
+              disabled
+              [hidden]="true"
             >
               Ask Questions
             </button>
-            <button mat-menu-item (click)="triggerMenuAction('hide', logic)">
-              Hide Questions
+            <button
+              mat-menu-item
+              (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
+            >
+              Mandate Questions
             </button>
             <button
               mat-menu-item
-              (click)="triggerMenuAction('ask_evidence', logic)"
+              (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
             >
+              Hide Questions
+            </button>
+            <button mat-menu-item (click)="askEvidence(logic)">
               Ask Evidence
             </button>
           </mat-menu>
           <!-- <input
             readonly
             formControlName="expression"
-            class="action"
+            class="action expression"
             *ngIf="logic.value.action"
           /> -->
         </div>

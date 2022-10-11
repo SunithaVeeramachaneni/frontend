@@ -42,6 +42,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { McqResponseComponent } from './utils/mcq-response/mcq-response.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { AskQuestionComponent } from './add-logic/ask-question/ask-question.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { SelectQuestionsDialogComponent } from './add-logic/select-questions-dialog/select-questions-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -71,6 +74,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatChipsModule,
     MatButtonToggleModule,
+    MatCheckboxModule,
+    MatDialogModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
@@ -92,6 +97,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     CreateFormComponent,
     IphonePreviewComponent,
     AddLogicComponent,
+    SelectQuestionsDialogComponent,
     AskQuestionComponent,
     McqResponseComponent
   ],
