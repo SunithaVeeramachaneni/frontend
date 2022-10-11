@@ -286,28 +286,36 @@ export class RdfService {
 
     // Mandate Questions;
     const mandatedQuestions = logic.mandateQuestions;
-    if (mandatedQuestions.length) {
+    if (mandatedQuestions && mandatedQuestions.length) {
       mandatedQuestions.forEach((mq, index) => {
+        if (index === 0) {
+          expression = `${expression}`;
+        } else {
+          expression = `${expression};`;
+        }
         if (isEmpty) {
-          expression = `${expression};${
+          expression = `${expression}${
             index + 1
           }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} EMPTY`;
         } else {
-          expression = `${expression};${
+          expression = `${expression}${
             index + 1
           }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} (V)${
             logic.operand2
           }`;
         }
       });
-      return expression;
     }
 
     // Hide Questions;
-    expression = '';
     const hiddenQuestions = logic.hideQuestions;
-    if (hiddenQuestions.length) {
+    if (hiddenQuestions && hiddenQuestions.length) {
       hiddenQuestions.forEach((hq, index) => {
+        if (!expression.length && index === 0) {
+          expression = `${expression}`;
+        } else {
+          expression = `${expression};`;
+        }
         if (isEmpty) {
           expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
             logic.operator
@@ -318,7 +326,6 @@ export class RdfService {
           } (V)${logic.operand2}`;
         }
       });
-      return expression;
     }
 
     return expression;
