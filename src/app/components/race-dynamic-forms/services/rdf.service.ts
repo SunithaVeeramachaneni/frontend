@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray } from 'rxjs/operators';
+import { map, mergeMap, toArray, share } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -82,15 +82,30 @@ export class RdfService {
       toArray()
     );
 
-  getResponses$ = (
+  getFormSpecificResponses$ = (
     respType: string,
+    formId: string = null,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._getRespFromGateway(
       environment.rdfApiUrl,
-      `forms/responses/${respType}`,
+      formId
+        ? `forms/responses/${respType}?formId=${formId}`
+        : `forms/responses/${respType}`,
       info
     );
+
+  getResponses$ = (
+    respType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService
+      ._getRespFromGateway(
+        environment.rdfApiUrl,
+        `forms/responses/${respType}`,
+        info
+      )
+      .pipe(share());
 
   createAbapFormField$ = (
     form: any,

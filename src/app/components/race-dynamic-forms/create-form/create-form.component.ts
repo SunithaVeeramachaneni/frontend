@@ -20,7 +20,8 @@ import {
   pairwise,
   switchMap,
   tap,
-  toArray
+  toArray,
+  share
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -51,6 +52,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public activeResponses$: Observable<any>;
   public activeResponseId: string;
   public mcqResponseType: string;
+  public formId: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
   changesSaved = 'All Changes Saved';
@@ -107,17 +109,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.quickResponses$ = this.rdfService.getResponses$('quickResponse').pipe(
-      tap((resp) => {
-        const quickResp = resp.map((r) => ({
-          id: r.id,
-          name: '',
-          values: r.values
-        }));
-        this.quickResponseList = quickResp;
-        return quickResp;
-      })
-    );
     this.globalResponses$ = this.rdfService
       .getResponses$('globalResponse')
       .pipe(
@@ -130,7 +121,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           return globalResp;
         })
       );
-    this.quickResponses$.subscribe();
     this.globalResponses$.subscribe();
     this.createForm = this.fb.group({
       id: [''],
@@ -186,7 +176,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .valueChanges.pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        filter(() => this.createForm.get('id').value),
+        filter(() => {
+          this.formId = this.createForm.get('id').value;
+          return this.createForm.get('id').value;
+        }),
         switchMap(() => this.saveForm())
       )
       .subscribe();
@@ -197,7 +190,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         pairwise(),
         debounceTime(1000),
         distinctUntilChanged(),
-        filter(() => this.createForm.get('id').value),
+        filter(() => {
+          this.formId = this.createForm.get('id').value;
+          return this.createForm.get('id').value;
+        }),
         tap(([prev, curr]) => {
           curr.forEach(({ questions: cq, ...currSection }, i) => {
             const { questions: pq, ...prevSection } = prev[i];
@@ -241,12 +237,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         this.createForm.get('name').enable({ emitEvent: false });
         this.createForm.get('name').setValue(this.defaultFormHeader);
       }
+      this.formId = id;
     });
 
     this.route.data.subscribe(({ form }) => {
       if (form && Object.keys(form).length) {
         this.createForm.patchValue(form, { emitEvent: false });
         const { name: formName, sections } = form;
+        this.formId = form.id;
         this.setHeaderTitle(formName);
 
         (this.createForm.get('sections') as FormArray).removeAt(0);
@@ -313,6 +311,41 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       }
     });
     this.sectionActiveState[1] = true;
+    this.rdfService
+      .getResponses$('quickResponse')
+      .pipe(
+        tap((resp) => {
+          const tempResp = resp.filter((item) => !item.formId);
+          const quickResp = tempResp.map((r) => ({
+            id: r.id,
+            name: '',
+            values: r.values
+          }));
+          this.quickResponseList = quickResp;
+        }),
+        share()
+      )
+      .subscribe();
+
+    this.quickResponses$ = this.rdfService
+      .getFormSpecificResponses$('quickResponse', this.formId)
+      .pipe(
+        tap((resp) => {
+          const tempResp = resp.filter(
+            (item) =>
+              !this.quickResponseList.find((list) => list.id === item.id)
+          );
+          const quickResp = tempResp.map((r) => ({
+            id: r.id,
+            name: '',
+            values: r.values
+          }));
+          this.quickResponseList.push(...quickResp);
+          return this.quickResponseList;
+        }),
+        share()
+      );
+    this.quickResponses$.subscribe();
   }
 
   setHeaderTitle(title) {
@@ -338,6 +371,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseTypeForDisplay: string
   ) => {
+    const { id, ...form } = this.createForm.getRawValue();
     const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
@@ -593,6 +627,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         tap((updateForm) => {
           if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);
+            this.formId = updateForm.id;
           }
         })
       );
@@ -604,6 +639,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       return this.rdfService.createForm$(form).pipe(
         tap((createdForm) => {
           if (Object.keys(createdForm).length) {
+            this.formId = createdForm.id;
             this.createForm.get('id').setValue(createdForm.id);
             this.createInProgress = false;
             this.createForm.enable({ emitEvent: false });

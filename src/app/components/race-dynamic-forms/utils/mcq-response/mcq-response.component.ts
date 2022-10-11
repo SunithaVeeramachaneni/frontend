@@ -32,9 +32,13 @@ export class McqResponseComponent implements OnInit {
   public isFormNotUpdated = true;
   private inputResp: Observable<any>;
   private id: string;
+  private formsId: string;
 
   @Input() set inputResponse(responses: Observable<any>) {
     this.inputResp = responses ? responses : (of([]) as Observable<any>);
+  }
+  @Input() set formId(id: string) {
+    this.formsId = id;
   }
 
   @Input() set responseType(responseType: string) {
@@ -144,6 +148,7 @@ export class McqResponseComponent implements OnInit {
         .createResponse$({
           type: this.respType,
           values: this.responses.value,
+          formId: this.formsId,
           name:
             this.respType === 'globalResponse' && !this.name.value
               ? 'Untitled'

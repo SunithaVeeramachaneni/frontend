@@ -439,7 +439,7 @@
                                 >
                                   <div>
                                     <div
-                                      *ngFor="let resp of quickResponses"
+                                      *ngFor="let resp of quickResponseList"
                                       style="height: 36px"
                                     >
                                       <button
@@ -685,6 +685,7 @@
 
                   <div id="app-customizer" *ngIf="isMCQResponseOpen">
                     <app-mcq-response
+                      [formId]="formId"
                       [inputResponse]="activeResponses$"
                       [responseType]="activeResponseType"
                       [activeResponseId]="activeResponseId"
