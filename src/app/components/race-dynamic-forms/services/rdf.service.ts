@@ -298,11 +298,11 @@ export class RdfService {
         if (isEmpty) {
           expression = `${expression}${
             index + 1
-          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} EMPTY`;
+          }:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
         } else {
           expression = `${expression}${
             index + 1
-          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} (V)${
+          }:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${
             logic.operand2
           }`;
         }
@@ -319,11 +319,11 @@ export class RdfService {
           expression = `${expression};`;
         }
         if (isEmpty) {
-          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
+          expression = `${expression}${index + 1}:(HI) ${hq} IF ${questionId} ${
             logic.operator
           } EMPTY`;
         } else {
-          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
+          expression = `${expression}${index + 1}:(HI) ${hq} IF ${questionId} ${
             logic.operator
           } (V)${logic.operand2}`;
         }
