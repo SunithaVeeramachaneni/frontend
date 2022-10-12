@@ -797,11 +797,17 @@
                             <label for="multi"> Multi Selection </label>
                           </span>
                         </div>
-                        <div *ngIf="question.hasLogic" class="logicBuilder">
+                        <div class="logicBuilder">
                           <app-add-logic
                             [question]="question"
                             (onValueChanged)="
                               onValueChanged(section, question, $event)
+                            "
+                            (onLogicDelete)="
+                              onLogicDelete(section, question, $event)
+                            "
+                            (onAskEvidence)="
+                              onAskEvidence(section, question, $event)
                             "
                           ></app-add-logic>
                         </div>

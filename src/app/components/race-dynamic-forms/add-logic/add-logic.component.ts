@@ -29,12 +29,18 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
 export class AddLogicComponent implements OnInit {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onLogicDelete: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onAskEvidence: EventEmitter<any> = new EventEmitter();
 
   fieldOperators: any;
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
+
+  dropDownTypes = ['DD', 'VI', 'DDM'];
 
   public logicsForm: FormGroup;
 
@@ -115,6 +121,10 @@ export class AddLogicComponent implements OnInit {
     return this.logicsForm.get('counter').value;
   }
 
+  deleteLogic(logic, index) {
+    this.onLogicDelete.emit({ index });
+  }
+
   operatorChanged(logic, event) {
     logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     this.cdrf.detectChanges();
@@ -134,12 +144,16 @@ export class AddLogicComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
+      logic.value.action = result.type;
+      this.cdrf.detectChanges();
+
       if (result.type === 'MANDATE') {
         const control = logic.get('mandateQuestions') as FormArray;
         result.selectedQuestions.forEach((q) => {
           control.push(this.fb.control(q));
         });
         logic.patchValue({
+          action: result.type,
           mandateQuestions: logic.value.mandateQuestions,
           validationMessage: result.validationMessage
         });
@@ -148,15 +162,29 @@ export class AddLogicComponent implements OnInit {
         result.selectedQuestions.forEach((q) => {
           control.push(this.fb.control(q));
         });
-        logic.patchValue({ hideQuestions: logic.value.hideQuestions });
+        logic.patchValue({
+          action: result.type,
+          hideQuestions: logic.value.hideQuestions
+        });
       }
     });
   }
 
-  askEvidence(logic) {
-    logic.patchValue({ askEvidence: true });
+  askEvidence(question, logic, index) {
+    logic.value.action = 'ask_evidence';
+    logic.value.askEvidence = true;
+
+    this.cdrf.detectChanges();
+    logic.patchValue({ action: 'ask_evidence', askEvidence: true });
+    this.onAskEvidence.emit({ index, questionId: question.value.id });
+    // Add expression for ask Evidence
+    // logic.value.askEvidence = '<QUESTIONID_INDEX_EVIDENCE>'
+    // `${questionId}_${event.index}_EVIDENCE`
   }
+
   removeEvidence(logic) {
+    logic.value.askEvidence = false;
+    this.cdrf.detectChanges();
     logic.patchValue({ askEvidence: false });
   }
 
