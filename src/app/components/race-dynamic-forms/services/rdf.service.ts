@@ -82,19 +82,6 @@ export class RdfService {
       toArray()
     );
 
-  getFormSpecificResponses$ = (
-    respType: string,
-    formId: string = null,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._getRespFromGateway(
-      environment.rdfApiUrl,
-      formId
-        ? `forms/responses/${respType}?formId=${formId}`
-        : `forms/responses/${respType}`,
-      info
-    );
-
   getResponses$ = (
     respType: string,
     info: ErrorInfo = {} as ErrorInfo
