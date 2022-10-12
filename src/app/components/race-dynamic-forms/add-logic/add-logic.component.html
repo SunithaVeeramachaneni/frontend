@@ -81,6 +81,7 @@
           </button>
           <mat-menu #menu="matMenu">
             <button
+              class="logicActionMenuItem"
               mat-menu-item
               (click)="triggerMenuAction('ask_questions', logic)"
               disabled
@@ -89,18 +90,24 @@
               Ask Questions
             </button>
             <button
+              class="logicActionMenuItem"
               mat-menu-item
               (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
             >
               Mandate Questions
             </button>
             <button
+              class="logicActionMenuItem"
               mat-menu-item
               (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
             >
               Hide Questions
             </button>
-            <button mat-menu-item (click)="askEvidence(logic)">
+            <button
+              mat-menu-item
+              class="logicActionMenuItem"
+              (click)="askEvidence(logic)"
+            >
               Ask Evidence
             </button>
           </mat-menu>
