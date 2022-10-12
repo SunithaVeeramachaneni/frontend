@@ -50,6 +50,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public quickResponses$: Observable<any>;
   public globalResponses$: Observable<any>;
   public activeResponses$: Observable<any>;
+  public quickCommonResponse$: Observable<any>;
   public activeResponseId: string;
   public mcqResponseType: string;
   public formId: string;
@@ -311,40 +312,23 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       }
     });
     this.sectionActiveState[1] = true;
-    this.rdfService
-      .getResponses$('quickResponse')
-      .pipe(
-        tap((resp) => {
-          const tempResp = resp.filter((item) => !item.formId);
-          const quickResp = tempResp.map((r) => ({
-            id: r.id,
-            name: '',
-            values: r.values
-          }));
-          this.quickResponseList = quickResp;
-        }),
-        share()
-      )
-      .subscribe();
 
-    this.quickResponses$ = this.rdfService
-      .getFormSpecificResponses$('quickResponse', this.formId)
-      .pipe(
-        tap((resp) => {
-          const tempResp = resp.filter(
-            (item) =>
-              !this.quickResponseList.find((list) => list.id === item.id)
-          );
-          const quickResp = tempResp.map((r) => ({
-            id: r.id,
-            name: '',
-            values: r.values
-          }));
-          this.quickResponseList.push(...quickResp);
-          return this.quickResponseList;
-        }),
-        share()
-      );
+    this.quickResponses$ = this.rdfService.getResponses$('quickResponse').pipe(
+      tap((resp) => {
+        const tempResp = resp.filter((item) => !item.formId);
+        if (this.formId) {
+          const addResp = resp.filter((item) => item.formId === this.formId);
+          tempResp.push(...addResp);
+        }
+        const quickResp = tempResp.map((r) => ({
+          id: r.id,
+          name: '',
+          values: r.values
+        }));
+        this.quickResponseList = quickResp;
+        return this.quickResponseList;
+      })
+    );
     this.quickResponses$.subscribe();
   }
 
