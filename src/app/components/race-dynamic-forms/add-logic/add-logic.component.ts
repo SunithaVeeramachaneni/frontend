@@ -29,12 +29,16 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
 export class AddLogicComponent implements OnInit {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onLogicDelete: EventEmitter<any> = new EventEmitter();
 
   fieldOperators: any;
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
+
+  dropDownTypes = ['DD', 'VI', 'DDM'];
 
   public logicsForm: FormGroup;
 
@@ -113,6 +117,10 @@ export class AddLogicComponent implements OnInit {
       .get('counter')
       .setValue(this.logicsForm.get('counter').value + 1);
     return this.logicsForm.get('counter').value;
+  }
+
+  deleteLogic(logic, index) {
+    this.onLogicDelete.emit({ index });
   }
 
   operatorChanged(logic, event) {

@@ -6,10 +6,17 @@
     >
       <div class="tabContent" [formGroupName]="i">
         <div class="logicRow">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+            (click)="deleteLogic(logic, i)"
+          />
           <input type="hidden" formControlName="logicTitle" />
           <input type="hidden" formControlName="expression" />
           <input type="hidden" formControlName="askEvidence" />
           If answer
+
           <select
             class="logicCondition"
             formControlName="operator"
@@ -24,11 +31,25 @@
             </option>
           </select>
           <input
+            *ngIf="dropDownTypes.indexOf(question.value.fieldType) < 0"
             type="text"
             class="logicValue"
             formControlName="operand2"
             (ngModelChange)="operand2Changed(logic, $event)"
           />
+          <select
+            class="logicValue"
+            stype="margin-left: -30px;"
+            formControlName="operand2"
+            *ngIf="dropDownTypes.indexOf(question.value.fieldType) > -1"
+          >
+            <option
+              class="logicOperator"
+              *ngFor="let option of question.value.value.values"
+            >
+              {{ option.title }}
+            </option>
+          </select>
           then
           <span
             *ngIf="

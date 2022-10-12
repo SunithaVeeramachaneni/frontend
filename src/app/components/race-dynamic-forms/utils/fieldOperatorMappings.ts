@@ -35,5 +35,45 @@ export const fieldTypeOperatorMapping = {
       code: 'GT',
       displayName: 'greater than'
     }
+  ],
+  DD: [
+    {
+      code: 'NE',
+      displayName: 'is not'
+    },
+    {
+      code: 'EQ',
+      displayName: 'is'
+    }
+  ],
+  VI: [
+    {
+      code: 'NE',
+      displayName: 'is not'
+    },
+    {
+      code: 'EQ',
+      displayName: 'is'
+    }
+  ],
+  DDM: [
+    {
+      code: 'NE',
+      displayName: 'is not'
+    },
+    {
+      code: 'EQ',
+      displayName: 'is'
+    }
+  ],
+  DF: [
+    {
+      code: 'NE',
+      displayName: 'is not'
+    },
+    {
+      code: 'EQ',
+      displayName: 'is'
+    }
   ]
 };
