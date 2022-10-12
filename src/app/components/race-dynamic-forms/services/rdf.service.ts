@@ -306,15 +306,10 @@ export class RdfService {
       if (mandatedQuestions && mandatedQuestions.length) {
         mandatedQuestions.forEach((mq, index) => {
           globalIndex = globalIndex + 1;
-          if (index === 0) {
-            expression = `${expression}`;
-          } else {
-            expression = `${expression};`;
-          }
           if (isEmpty) {
-            expression = `${expression}${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            expression = `${expression}${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
           }
         });
       }
@@ -324,19 +319,21 @@ export class RdfService {
       if (hiddenQuestions && hiddenQuestions.length) {
         hiddenQuestions.forEach((hq, index) => {
           globalIndex = globalIndex + 1;
-          if (!expression.length && index === 0) {
-            expression = `${expression}`;
-          } else {
-            expression = `${expression};`;
-          }
           if (isEmpty) {
-            expression = `${expression}${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            expression = `${expression}${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
           }
         });
       }
     });
+
+    if (expression[0] === ';') {
+      expression = expression.slice(1, expression.length);
+    }
+    if (expression[expression.length - 1] === ';') {
+      expression = expression.slice(0, expression.length - 1);
+    }
 
     return expression;
   }
