@@ -271,10 +271,46 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 multi,
                 value,
                 isPublished,
-                isPublishedTillSave
+                isPublishedTillSave,
+                logics
               } = question;
-              const qc = qindex + 1;
 
+              let logicsFormArray = [];
+              if (logics && logics.length) {
+                logicsFormArray = logics.map((logic) => {
+                  const mandateQuestions = logic.mandateQuestions;
+                  const hideQuestions = logic.hideQuestions;
+                  let mandateQuestionsFormArray = [];
+
+                  if (mandateQuestions && mandateQuestions.length) {
+                    mandateQuestionsFormArray = mandateQuestions.map((mq) =>
+                      this.fb.control(mq)
+                    );
+                  }
+
+                  let hideQuestionsFormArray = [];
+                  if (hideQuestions && hideQuestions.length) {
+                    hideQuestionsFormArray = hideQuestions.map((mq) =>
+                      this.fb.control(mq)
+                    );
+                  }
+                  return this.fb.group({
+                    operator: logic.operator || '',
+                    operand1: logic.operand1 || '',
+                    operand2: logic.operand2 || '',
+                    action: logic.action || '',
+                    logicTitle: logic.logicTitle || 'blank',
+                    expression: logic.expression || '',
+                    questions: this.fb.array([]),
+                    mandateQuestions: this.fb.array(mandateQuestionsFormArray),
+                    hideQuestions: this.fb.array(hideQuestionsFormArray),
+                    validationMessage: logic.validationMessage || '',
+                    askEvidence: logic.askEvidence || false
+                  });
+                });
+              }
+
+              const qc = qindex + 1;
               if (!this.fieldContentOpenState[sc][qc])
                 this.fieldContentOpenState[sc][qc] = false;
               if (!this.popOverOpenState[sc][qc])
@@ -292,7 +328,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 value,
                 isPublished,
                 isPublishedTillSave,
-                logics: this.fb.array([])
+                logics: this.fb.array(logicsFormArray) //this.fb.array([])
               });
             }
           );
@@ -331,16 +367,18 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .getFormSpecificResponses$('quickResponse', this.formId)
       .pipe(
         tap((resp) => {
-          const tempResp = resp.filter(
-            (item) =>
-              !this.quickResponseList.find((list) => list.id === item.id)
-          );
-          const quickResp = tempResp.map((r) => ({
-            id: r.id,
-            name: '',
-            values: r.values
-          }));
-          this.quickResponseList.push(...quickResp);
+          if (resp && this.quickResponseList) {
+            const tempResp = resp.filter(
+              (item) =>
+                !this.quickResponseList.find((list) => list.id === item.id)
+            );
+            const quickResp = tempResp.map((r) => ({
+              id: r.id,
+              name: '',
+              values: r.values
+            }));
+            this.quickResponseList.push(...quickResp);
+          }
           return this.quickResponseList;
         }),
         share()
@@ -516,6 +554,19 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.patchValue({ sections: sections.getRawValue() });
   }
 
+  onAskEvidence(section: any, question: any, event: any) {
+    const form = this.createForm.getRawValue();
+    const index = form.sections.findIndex(
+      (sec) => sec.uid === section.value.uid
+    );
+    if (index > -1) {
+      const control = (this.createForm.get('sections') as FormArray).controls[
+        index
+      ].get('questions') as FormArray;
+      control.push(this.addEvidenceQuestion(question.value.id, event));
+    }
+  }
+
   addLogicForQuestion(question: any, section: any, form: any) {
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
@@ -555,6 +606,20 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       logics: this.fb.array([])
     });
   };
+
+  addEvidenceQuestion = (questionId: string, event: any) =>
+    this.fb.group({
+      id: [`${questionId}_${event.index}_EVIDENCE`],
+      name: [''],
+      fieldType: ['ATT'],
+      position: [''],
+      required: [false],
+      multi: [false],
+      value: ['ATT'],
+      isPublished: [false],
+      isPublishedTillSave: [false],
+      logics: this.fb.array([])
+    });
 
   initSection = (sc: number, qc: number, uqc: number) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;

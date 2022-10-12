@@ -1,4 +1,4 @@
-<div [formGroup]="logicsForm">
+<div [formGroup]="logicsForm" *ngIf="getLogicsList().length">
   <mat-tab-group formArrayName="logics">
     <mat-tab
       *ngFor="let logic of getLogicsList(); let i = index"
@@ -15,6 +15,7 @@
           <input type="hidden" formControlName="logicTitle" />
           <input type="hidden" formControlName="expression" />
           <input type="hidden" formControlName="askEvidence" />
+          <input type="hidden" formControlName="action" />
           If answer
 
           <select
@@ -52,10 +53,7 @@
           </select>
           then
           <span
-            *ngIf="
-              logic.value.mandateQuestions &&
-              logic.value.mandateQuestions.length
-            "
+            *ngIf="logic.value.action && logic.value.action === 'MANDATE'"
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
           >
@@ -63,16 +61,17 @@
             <mat-icon>edit</mat-icon>
           </span>
           <span
-            *ngIf="
-              logic.value.hideQuestions && logic.value.hideQuestions.length
-            "
+            *ngIf="logic.value.action && logic.value.action === 'HIDE'"
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
           >
             Hide ({{ logic.value.hideQuestions.length }}) Questions
             <mat-icon>edit</mat-icon>
           </span>
-          <span *ngIf="logic.value.requireEvidence" class="mandateAction">
+          <span
+            *ngIf="logic.value.action && logic.value.action === 'ask_evidence'"
+            class="mandateAction"
+          >
             Ask Evidence
             <mat-icon (click)="removeEvidence(logic)">close</mat-icon>
           </span>
@@ -106,7 +105,7 @@
             <button
               mat-menu-item
               class="logicActionMenuItem"
-              (click)="askEvidence(logic)"
+              (click)="askEvidence(question, logic, i)"
             >
               Ask Evidence
             </button>
