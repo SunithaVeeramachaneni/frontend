@@ -152,6 +152,7 @@ export class AddLogicComponent implements OnInit {
       }
     });
   }
+
   askEvidence(logic) {
     logic.patchValue({ askEvidence: true });
   }
