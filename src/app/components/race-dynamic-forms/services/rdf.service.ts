@@ -170,7 +170,7 @@ export class RdfService {
           }
 
           const { expression, validationMessage } =
-            this.getValidationExpression(question);
+            this.getValidationExpression(question, questions);
 
           return {
             UNIQUEKEY: questionId,
@@ -282,7 +282,7 @@ export class RdfService {
     }
   }
 
-  getValidationExpression(question): any {
+  getValidationExpression(question: any, sectionQuestions: any): any {
     let expression = '';
     let validationMessage = '';
     let globalIndex = 0;
@@ -297,8 +297,18 @@ export class RdfService {
       const mandatedQuestions = logic.mandateQuestions;
       if (mandatedQuestions && mandatedQuestions.length) {
         mandatedQuestions.forEach((mq, index) => {
+          const questionIndex = sectionQuestions.findIndex(
+            (sq) => sq.id === mq
+          );
+          if (questionIndex > -1) {
+            const mQuestion = sectionQuestions[questionIndex];
+            validationMessage = `${validationMessage};${
+              index + 1
+            }:Please answer the question ${mQuestion.name}`;
+          }
+        });
+        mandatedQuestions.forEach((mq, index) => {
           globalIndex = globalIndex + 1;
-          validationMessage = `${validationMessage};${globalIndex}:Please provide valid value for ${question.name} as provided value ${logic.operator} ${logic.operand2}`;
           if (isEmpty) {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
@@ -323,6 +333,8 @@ export class RdfService {
       // Ask Evidence;
       const evidenceQuestion = logic.askEvidence;
       if (evidenceQuestion && evidenceQuestion.length) {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
         globalIndex = globalIndex + 1;
         if (isEmpty) {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;

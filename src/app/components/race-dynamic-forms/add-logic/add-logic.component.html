@@ -75,6 +75,12 @@
             Ask Evidence
             <!-- <mat-icon (click)="removeEvidence(logic)">close</mat-icon> -->
           </span>
+          <span
+            *ngIf="logic.value.action && logic.value.action === 'ask_questions'"
+            class="mandateAction"
+          >
+            Ask Questions
+          </span>
           <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
             + action
           </button>
@@ -83,8 +89,6 @@
               class="logicActionMenuItem"
               mat-menu-item
               (click)="triggerMenuAction('ask_questions', logic)"
-              disabled
-              [hidden]="true"
             >
               Ask Questions
             </button>
@@ -118,7 +122,7 @@
           /> -->
         </div>
         <div
-          *ngIf="logic.value.action === 'Ask Questions'"
+          *ngIf="logic.value.action === 'ask_questions'"
           class="logicAskQuestions"
         >
           <app-ask-question
