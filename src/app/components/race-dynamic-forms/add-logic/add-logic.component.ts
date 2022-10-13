@@ -199,14 +199,13 @@ export class AddLogicComponent implements OnInit {
 
   askEvidence(question, logic, index) {
     logic.value.action = 'ask_evidence';
-    logic.value.askEvidence = true;
-
+    logic.value.askEvidence = `${question.value.id}_${index}_EVIDENCE`;
     this.cdrf.detectChanges();
-    logic.patchValue({ action: 'ask_evidence', askEvidence: true });
+    logic.patchValue({
+      action: 'ask_evidence',
+      askEvidence: `${question.value.id}_${index}_EVIDENCE`
+    });
     this.onAskEvidence.emit({ index, questionId: question.value.id });
-    // Add expression for ask Evidence
-    // logic.value.askEvidence = '<QUESTIONID_INDEX_EVIDENCE>'
-    // `${questionId}_${event.index}_EVIDENCE`
   }
 
   removeEvidence(logic) {
@@ -224,36 +223,17 @@ export class AddLogicComponent implements OnInit {
     } else {
       logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
     }
+    logic.value.action = 'ask_questions';
+    this.cdrf.detectChanges();
 
-    let expression = '';
-    if (action === 'mandate_questions') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
-
-      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      if (logicSymbol) {
-        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
-      } else {
-        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      }
-      logic.value.logicTitle = logicTitleTemp;
-      logic.patchValue({
-        logicTitle: logicTitleTemp,
-        action: 'Mandate Questions',
-        expression
-      });
-    } else if (action === 'ask_questions') {
+    if (action === 'ask_questions') {
       logic.hasAskQuestions = true;
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
+      // const isEmpty = logic.value.operand2.length ? false : true;
+      // if (isEmpty) {
+      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
+      // } else {
+      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
+      // }
       const control = logic.get('questions') as FormArray;
       control.push(
         this.fb.group({
@@ -279,53 +259,8 @@ export class AddLogicComponent implements OnInit {
       logic.value.logicTitle = logicTitleTemp;
       logic.patchValue({
         logicTitle: logicTitleTemp,
-        action: 'Ask Questions',
-        expression
-      });
-    } else if (action === 'hide') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
-
-      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      if (logicSymbol) {
-        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
-      } else {
-        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      }
-      logic.value.logicTitle = logicTitleTemp;
-
-      logic.patchValue({
-        ...logic.value,
-        logicTitle: logicTitleTemp,
-        action: 'Hide Questions',
-        expression
-      });
-    } else if (action === 'ask_evidence') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
-
-      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      if (logicSymbol) {
-        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
-      } else {
-        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
-      }
-      logic.value.logicTitle = logicTitleTemp;
-
-      logic.patchValue({
-        ...logic.value,
-        logicTitle: logicTitleTemp,
-        action: 'Ask Evidence',
-        expression,
-        askEvidence: true
+        action: 'ask_questions'
+        // expression
       });
     }
     this.cdrf.detectChanges();
