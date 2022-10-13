@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RdfService } from '../../services/rdf.service';
+import { operatorSymbolMap } from '../../utils/fieldOperatorMappings';
 
 @Component({
   selector: 'app-select-questions-dialog',
@@ -17,6 +18,7 @@ export class SelectQuestionsDialogComponent implements OnInit {
   sections = [];
   selectedQuestions = [];
   validationMessage = '';
+  operatorSymbolMap = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -25,6 +27,8 @@ export class SelectQuestionsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.operatorSymbolMap = operatorSymbolMap;
+    this.selectedQuestions = [];
     this.sections = [];
     this.validationMessage = '';
     const tempSections = this.rdfService.getCurrentFormValue().sections;
@@ -40,7 +44,9 @@ export class SelectQuestionsDialogComponent implements OnInit {
 
   selectQuestion(checked: boolean, questionId: string) {
     if (checked) {
-      this.selectedQuestions.push(questionId);
+      if (this.selectedQuestions.indexOf(questionId) < 0) {
+        this.selectedQuestions.push(questionId);
+      }
     } else {
       const index = this.selectedQuestions.indexOf(questionId);
       if (index > -1) {

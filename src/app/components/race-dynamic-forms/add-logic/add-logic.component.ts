@@ -170,8 +170,11 @@ export class AddLogicComponent implements OnInit {
 
       if (result.type === 'MANDATE') {
         const control = logic.get('mandateQuestions') as FormArray;
+        const controlRaw = control.getRawValue();
         result.selectedQuestions.forEach((q) => {
-          control.push(this.fb.control(q));
+          if (controlRaw.indexOf(q) < 0) {
+            control.push(this.fb.control(q));
+          }
         });
         logic.patchValue({
           action: result.type,
@@ -180,8 +183,11 @@ export class AddLogicComponent implements OnInit {
         });
       } else if (result.type === 'HIDE') {
         const control = logic.get('hideQuestions') as FormArray;
+        const controlRaw = control.getRawValue();
         result.selectedQuestions.forEach((q) => {
-          control.push(this.fb.control(q));
+          if (controlRaw.indexOf(q) < 0) {
+            control.push(this.fb.control(q));
+          }
         });
         logic.patchValue({
           action: result.type,

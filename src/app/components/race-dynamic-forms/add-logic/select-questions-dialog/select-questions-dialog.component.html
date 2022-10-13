@@ -6,7 +6,8 @@
         {{ data.question.name }}
       </span>
       <p class="m-0">
-        If answer {{ data.logic.operator }} {{ data.logic.operand2 }}
+        If answer {{ operatorSymbolMap[data.logic.operator] }}
+        {{ data.logic.operand2 }}
       </p>
     </div>
   </div>
