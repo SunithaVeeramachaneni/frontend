@@ -168,6 +168,10 @@ export class RdfService {
           if (isPublishedTillSave) {
             return null;
           }
+
+          const { expression, validationMessage } =
+            this.getValidationExpression(question);
+
           return {
             UNIQUEKEY: questionId,
             VALIDFROM,
@@ -190,8 +194,8 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            UIVALIDATION: this.getValidationExpression(question),
-            UIVALIDATIONMSG: '', //this.getValidationMessage(question),
+            UIVALIDATION: expression, //this.getValidationExpression(question),
+            UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
             ...this.getProperties(question)
           };
         })
@@ -278,8 +282,9 @@ export class RdfService {
     }
   }
 
-  getValidationExpression(question) {
+  getValidationExpression(question): any {
     let expression = '';
+    let validationMessage = '';
     let globalIndex = 0;
 
     if (!question.logics || !question.logics.length) return expression;
@@ -293,6 +298,7 @@ export class RdfService {
       if (mandatedQuestions && mandatedQuestions.length) {
         mandatedQuestions.forEach((mq, index) => {
           globalIndex = globalIndex + 1;
+          validationMessage = `${validationMessage};${globalIndex}:Please provide valid value for ${question.name} as provided value ${logic.operator} ${logic.operand2}`;
           if (isEmpty) {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
@@ -333,7 +339,17 @@ export class RdfService {
       expression = expression.slice(0, expression.length - 1);
     }
 
-    return expression;
+    if (validationMessage[0] === ';') {
+      validationMessage = validationMessage.slice(1, validationMessage.length);
+    }
+    if (validationMessage[validationMessage.length - 1] === ';') {
+      validationMessage = validationMessage.slice(
+        0,
+        validationMessage.length - 1
+      );
+    }
+
+    return { expression, validationMessage };
   }
 
   getValidationMessage(question) {

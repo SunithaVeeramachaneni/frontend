@@ -93,3 +93,12 @@ export const fieldTypeOperatorMapping = {
     }
   ]
 };
+
+export const operatorSymbolMap = {
+  EQ: '=',
+  NE: '≠',
+  LT: '<',
+  LE: '≤',
+  GE: '≥',
+  GT: '>'
+};

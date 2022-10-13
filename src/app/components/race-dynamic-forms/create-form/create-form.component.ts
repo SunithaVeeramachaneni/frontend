@@ -550,20 +550,26 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       const control = (this.createForm.get('sections') as FormArray).controls[
         index
       ].get('questions') as FormArray;
-      control.push(
-        this.addEvidenceQuestion(question.value.id, questionIndex, event)
+      control.insert(
+        questionIndex + 1,
+        this.addEvidenceQuestion(
+          question,
+          question.value.id,
+          questionIndex + 1,
+          event
+        )
       );
 
-      const controlRaw = control.getRawValue();
+      // const controlRaw = control.getRawValue();
 
-      controlRaw.forEach((q) => {
-        if (q.position > questionIndex) {
-          questionIndex = questionIndex + 1;
-          q.position = questionIndex;
-        }
-      });
-      controlRaw.sort((a, b) => (a.position > b.position ? 1 : -1));
-      control.patchValue(controlRaw);
+      // controlRaw.forEach((q) => {
+      //   if (q.position > questionIndex) {
+      //     questionIndex = questionIndex + 1;
+      //     q.position = questionIndex;
+      //   }
+      // });
+      // controlRaw.sort((a, b) => (a.position > b.position ? 1 : -1));
+      // control.patchValue(controlRaw);
     }
   }
 
@@ -608,13 +614,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   };
 
   addEvidenceQuestion = (
+    question: any,
     questionId: string,
     questionIndex: number,
     event: any
   ) =>
     this.fb.group({
       id: [`${questionId}_${event.index}_EVIDENCE`],
-      name: [''],
+      name: [`Attach Evidence for ${question.value.name}`],
       fieldType: ['ATT'],
       position: [questionIndex + 1],
       required: [false],
