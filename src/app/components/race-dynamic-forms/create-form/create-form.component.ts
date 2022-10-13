@@ -306,7 +306,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     mandateQuestions: this.fb.array(mandateQuestionsFormArray),
                     hideQuestions: this.fb.array(hideQuestionsFormArray),
                     validationMessage: logic.validationMessage || '',
-                    askEvidence: logic.askEvidence || false
+                    askEvidence: logic.askEvidence || ''
                   });
                 });
               }
@@ -536,7 +536,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.createForm.patchValue({ sections: sections.getRawValue() });
   }
 
-  onAskEvidence(section: any, question: any, event: any) {
+  onAskEvidence(
+    section: any,
+    question: any,
+    questionIndex: number,
+    event: any
+  ) {
     const form = this.createForm.getRawValue();
     const index = form.sections.findIndex(
       (sec) => sec.uid === section.value.uid
@@ -545,7 +550,20 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       const control = (this.createForm.get('sections') as FormArray).controls[
         index
       ].get('questions') as FormArray;
-      control.push(this.addEvidenceQuestion(question.value.id, event));
+      control.push(
+        this.addEvidenceQuestion(question.value.id, questionIndex, event)
+      );
+
+      const controlRaw = control.getRawValue();
+
+      controlRaw.forEach((q) => {
+        if (q.position > questionIndex) {
+          questionIndex = questionIndex + 1;
+          q.position = questionIndex;
+        }
+      });
+      controlRaw.sort((a, b) => (a.position > b.position ? 1 : -1));
+      control.patchValue(controlRaw);
     }
   }
 
@@ -564,7 +582,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         mandateQuestions: this.fb.array([]),
         hideQuestions: this.fb.array([]),
         validationMessage: [''],
-        askEvidence: [false]
+        askEvidence: ['']
       })
     );
   }
@@ -589,12 +607,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     });
   };
 
-  addEvidenceQuestion = (questionId: string, event: any) =>
+  addEvidenceQuestion = (
+    questionId: string,
+    questionIndex: number,
+    event: any
+  ) =>
     this.fb.group({
       id: [`${questionId}_${event.index}_EVIDENCE`],
       name: [''],
       fieldType: ['ATT'],
-      position: [''],
+      position: [questionIndex + 1],
       required: [false],
       multi: [false],
       value: ['ATT'],

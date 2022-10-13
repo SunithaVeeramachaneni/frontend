@@ -313,6 +313,17 @@ export class RdfService {
           }
         });
       }
+
+      // Ask Evidence;
+      const evidenceQuestion = logic.askEvidence;
+      if (evidenceQuestion && evidenceQuestion.length) {
+        globalIndex = globalIndex + 1;
+        if (isEmpty) {
+          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+        } else {
+          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        }
+      }
     });
 
     if (expression[0] === ';') {
