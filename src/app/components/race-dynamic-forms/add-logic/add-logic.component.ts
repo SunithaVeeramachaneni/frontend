@@ -49,7 +49,14 @@ export class AddLogicComponent implements OnInit {
   @Input() set question(question: any) {
     question.controls.logics.controls.forEach((logic) => {
       if (!logic.value.logicTitle) {
-        logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+        const logicSymbol = this.fieldOperators.find(
+          (op) => op.code === logic.value.operator
+        );
+        if (logicSymbol) {
+          logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+        } else {
+          logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+        }
       }
     });
 
@@ -126,11 +133,25 @@ export class AddLogicComponent implements OnInit {
   }
 
   operatorChanged(logic, event) {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
     this.cdrf.detectChanges();
   }
   operand2Changed(logic, event) {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
     this.cdrf.detectChanges();
   }
 
@@ -189,7 +210,15 @@ export class AddLogicComponent implements OnInit {
   }
 
   triggerMenuAction(action: string, logic: any): void {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
+
     let expression = '';
     if (action === 'mandate_questions') {
       const isEmpty = logic.value.operand2.length ? false : true;
@@ -198,8 +227,16 @@ export class AddLogicComponent implements OnInit {
       } else {
         expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
       }
+
+      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      if (logicSymbol) {
+        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
+      } else {
+        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      }
+      logic.value.logicTitle = logicTitleTemp;
       logic.patchValue({
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        logicTitle: logicTitleTemp,
         action: 'Mandate Questions',
         expression
       });
@@ -226,8 +263,16 @@ export class AddLogicComponent implements OnInit {
           logics: this.fb.array([])
         })
       );
+
+      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      if (logicSymbol) {
+        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
+      } else {
+        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      }
+      logic.value.logicTitle = logicTitleTemp;
       logic.patchValue({
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        logicTitle: logicTitleTemp,
         action: 'Ask Questions',
         expression
       });
@@ -238,9 +283,18 @@ export class AddLogicComponent implements OnInit {
       } else {
         expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
       }
+
+      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      if (logicSymbol) {
+        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
+      } else {
+        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      }
+      logic.value.logicTitle = logicTitleTemp;
+
       logic.patchValue({
         ...logic.value,
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        logicTitle: logicTitleTemp,
         action: 'Hide Questions',
         expression
       });
@@ -251,9 +305,18 @@ export class AddLogicComponent implements OnInit {
       } else {
         expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
       }
+
+      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      if (logicSymbol) {
+        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
+      } else {
+        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      }
+      logic.value.logicTitle = logicTitleTemp;
+
       logic.patchValue({
         ...logic.value,
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
+        logicTitle: logicTitleTemp,
         action: 'Ask Evidence',
         expression,
         askEvidence: true
