@@ -33,7 +33,7 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-form',
@@ -106,7 +106,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private headerService: HeaderService,
     private cdrf: ChangeDetectorRef,
     private imageUtils: ImageUtils,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -742,6 +743,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             this.createForm.enable({ emitEvent: false });
             this.disableFormFields = false;
             this.status$.next(this.changesSaved);
+            this.router.navigate(['/rdf-forms/edit', createdForm.id]);
           }
         })
       );
