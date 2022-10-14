@@ -297,22 +297,19 @@ export class RdfService {
       const mandatedQuestions = logic.mandateQuestions;
       if (mandatedQuestions && mandatedQuestions.length) {
         mandatedQuestions.forEach((mq, index) => {
-          const questionIndex = sectionQuestions.findIndex(
-            (sq) => sq.id === mq
-          );
-          if (questionIndex > -1) {
-            const mQuestion = sectionQuestions[questionIndex];
-            validationMessage = `${validationMessage};${
-              index + 1
-            }:Please answer the question ${mQuestion.name}`;
-          }
-        });
-        mandatedQuestions.forEach((mq, index) => {
           globalIndex = globalIndex + 1;
           if (isEmpty) {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+
+          const questionIndex = sectionQuestions.findIndex(
+            (sq) => sq.id === mq
+          );
+          if (questionIndex > -1) {
+            const mQuestion = sectionQuestions[questionIndex];
+            validationMessage = `${validationMessage};${globalIndex}:Please answer the question ${mQuestion.name}`;
           }
         });
       }
