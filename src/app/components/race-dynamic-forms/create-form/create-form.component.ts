@@ -577,11 +577,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   addLogicForQuestion(question: any, section: any, form: any) {
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
+    const dropDownTypes = ['DD', 'VI', 'DDM'];
+    let operand2Val = '';
+    if (dropDownTypes.indexOf(question.value.fieldType) > -1) {
+      operand2Val = question.value.value.values[0].title;
+    }
     control.push(
       this.fb.group({
         operator: ['EQ'],
         operand1: [''],
-        operand2: [''],
+        operand2: [operand2Val],
         action: [''],
         logicTitle: ['blank'],
         expression: [''],
