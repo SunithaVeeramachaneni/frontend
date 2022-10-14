@@ -178,9 +178,10 @@ export class AddLogicComponent implements OnInit {
         });
         logic.patchValue({
           action: result.type,
-          mandateQuestions: logic.value.mandateQuestions,
+          mandateQuestions: result.selectedQuestions,
           validationMessage: result.validationMessage
         });
+        logic.value.mandateQuestions = result.selectedQuestions;
       } else if (result.type === 'HIDE') {
         const control = logic.get('hideQuestions') as FormArray;
         const controlRaw = control.getRawValue();
@@ -191,8 +192,9 @@ export class AddLogicComponent implements OnInit {
         });
         logic.patchValue({
           action: result.type,
-          hideQuestions: logic.value.hideQuestions
+          hideQuestions: result.selectedQuestions
         });
+        logic.value.hideQuestions = result.selectedQuestions;
       }
     });
   }

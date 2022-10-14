@@ -33,7 +33,7 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-form',
@@ -106,7 +106,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private headerService: HeaderService,
     private cdrf: ChangeDetectorRef,
     private imageUtils: ImageUtils,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -576,11 +577,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   addLogicForQuestion(question: any, section: any, form: any) {
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
+    const dropDownTypes = ['DD', 'VI', 'DDM'];
+    let operand2Val = '';
+    if (dropDownTypes.indexOf(question.value.fieldType) > -1) {
+      operand2Val = question.value.value.values[0].title;
+    }
     control.push(
       this.fb.group({
         operator: ['EQ'],
         operand1: [''],
-        operand2: [''],
+        operand2: [operand2Val],
         action: [''],
         logicTitle: ['blank'],
         expression: [''],
@@ -742,6 +748,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             this.createForm.enable({ emitEvent: false });
             this.disableFormFields = false;
             this.status$.next(this.changesSaved);
+            this.router.navigate(['/rdf-forms/edit', createdForm.id]);
           }
         })
       );

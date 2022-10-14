@@ -105,8 +105,10 @@
 
             <span>
               <input
+                #sectionName
                 type="text"
                 formControlName="name"
+                [size]="sectionName.value.length - 4"
                 class="form_section_name_input"
                 placeholder="Untitled Section"
                 autofocus="true"
