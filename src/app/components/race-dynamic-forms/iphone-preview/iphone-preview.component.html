@@ -54,7 +54,32 @@
               <div class="dis-flex m-b-10 m-r-15">
                 <div
                   class="width-40 question-name"
-                  *ngIf="question.fieldType !== 'LLF'"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    question.fieldType !== 'VI' &&
+                    question.fieldType !== 'DD' &&
+                    question.fieldType !== 'SGF' &&
+                    question.fieldType !== 'GAL' &&
+                    question.fieldType !== 'ATT' &&
+                    question.fieldType !== 'IMG' &&
+                    question.fieldType !== 'RT'
+                  "
+                >
+                  {{ question.name ? question.name : 'Type Question' }}
+                </div>
+
+                <div
+                  class="width-100 question-name"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    (question.fieldType === 'VI' ||
+                      question.fieldType === 'DD' ||
+                      question.fieldType === 'SGF' ||
+                      question.fieldType === 'GAL' ||
+                      question.fieldType === 'ATT' ||
+                      question.fieldType === 'IMG' ||
+                      question.fieldType === 'RT')
+                  "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
                 </div>
@@ -66,7 +91,16 @@
                 </div>
                 <div
                   class="width-40 text-left"
-                  *ngIf="question.fieldType !== 'LLF'"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    question.fieldType !== 'VI' &&
+                    question.fieldType !== 'DD' &&
+                    question.fieldType !== 'SGF' &&
+                    question.fieldType !== 'GAL' &&
+                    question.fieldType !== 'ATT' &&
+                    question.fieldType !== 'IMG' &&
+                    question.fieldType !== 'RT'
+                  "
                 >
                   <p
                     class="m-0"
