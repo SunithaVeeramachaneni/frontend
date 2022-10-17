@@ -424,7 +424,7 @@ export class RdfService {
   getDOMStringFromHTML = (value) => {
     let newElement = value.replaceAll('<li>', '');
     newElement = newElement.replaceAll('<br/>', '');
-    newElement = newElement.replaceAll('</li>', '\n');
+    newElement = newElement.replaceAll('</li>', '\\r\\n');
     const parsedElement = new DOMParser().parseFromString(
       newElement,
       'text/html'
