@@ -229,8 +229,8 @@ export class RdfService {
         properties = {
           ...properties,
           FIELDLABEL: this.getDOMStringFromHTML(name),
-          DEFAULTVALUE: '',
-          INSTRUCTION: this.getDOMStringFromHTML(name)
+          DEFAULTVALUE: ''
+          //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
         break;
       }
@@ -377,8 +377,14 @@ export class RdfService {
   }
 
   getDOMStringFromHTML = (value) => {
-    const parsedElement = new DOMParser().parseFromString(value, 'text/html')
-      .documentElement.textContent;
+    let newElement = value.replaceAll('<li>', '');
+    newElement = newElement.replaceAll('<br/>', '');
+    newElement = newElement.replaceAll('</li>', '\n');
+    const parsedElement = new DOMParser().parseFromString(
+      newElement,
+      'text/html'
+    ).documentElement.textContent;
+
     return parsedElement;
   };
 }
