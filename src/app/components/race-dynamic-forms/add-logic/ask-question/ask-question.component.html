@@ -8,11 +8,11 @@
         <div class="dis-flex" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div class="width-70">
-            <img
+            <!-- <img
               src="assets/rdf-forms-icons/six-dots.svg"
               alt="six-dots"
               class="m-l-10 six-dots"
-            />
+            /> -->
             <mat-form-field
               appearance="outline"
               class="width-90"
@@ -55,6 +55,13 @@
                 keyboard_arrow_down
               </mat-icon>
             </button>
+            <img
+              src="assets/rdf-forms-icons/delete-icon.svg"
+              alt="delete-icon"
+              (click)="deleteQuestion(i)"
+              class="delete-icon"
+            />
+
             <ng-template
               cdkConnectedOverlay
               cdkConnectedOverlayPanelClass="custom-popover"

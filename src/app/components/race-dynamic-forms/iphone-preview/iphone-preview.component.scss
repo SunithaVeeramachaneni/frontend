@@ -1,16 +1,17 @@
 .iphone-view {
-  background: url('/assets/rdf-forms-icons/iPhone11-DeviceFrame.svg') top left
+  background: url('/assets/rdf-forms-icons/iPhone11-DeviceFrame.png') top left
     no-repeat;
-  background-size: 100% 100%;
-  width: 300px;
-  min-height: 596px;
+  background-size: 275px 470px;
+  width: 285px;
+  min-height: 470px;
   height: auto !important;
   overflow: hidden;
+  position: fixed;
+  right: 50px;
   margin: 0px auto 0;
 }
 
 .ipad-view-default-content {
-  /* margin: 0 auto; */
   text-align: center;
   vertical-align: middle;
   width: 100%;
@@ -21,17 +22,17 @@
 
 .main-carosuel-iphone {
   background-color: #ffffff;
-  margin-top: -40px;
-  margin-left: 20px;
-  margin-right: 20px;
-  height: 560px;
+  margin-top: -42px;
+  margin-left: 15px;
+  margin-right: 25px;
+  height: 440px;
   border-radius: 25px;
 }
 
 .iphone-header {
   background: #3a6175;
-  border-top-right-radius: 30px;
-  border-top-left-radius: 30px;
+  border-top-right-radius: 23px;
+  border-top-left-radius: 23px;
   height: 100px;
 }
 
@@ -178,7 +179,7 @@
 }
 
 .signature-input-fields {
-  width: 180px;
+  width: 160px;
   border: 1px solid #cccccc;
   padding-left: 5px;
   font-size: 90%;
@@ -195,6 +196,7 @@
 
 .vi-values {
   width: inherit;
+  font-size: 80%;
   background: white;
   box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
 }
@@ -212,9 +214,9 @@
 }
 
 .dropdown {
-  width: 90%;
-  margin: 0 10px;
-  height: 30px;
+  width: 85%;
+  margin: 0 7px;
+  height: 25px;
   border: 1px solid #d3d3d3;
   border-radius: 4px;
   text-align: left;

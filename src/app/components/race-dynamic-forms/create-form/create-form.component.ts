@@ -56,9 +56,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public formId: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
-  changesSaved = 'All Changes Saved';
+  changesSaved = 'All changes saved';
   publishingChanges = 'Publishing changes...';
-  changesPublished = 'All Changes published';
+  changesPublished = 'All changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
   activeResponseType: string;
@@ -282,7 +282,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 logicsFormArray = logics.map((logic) => {
                   const mandateQuestions = logic.mandateQuestions;
                   const hideQuestions = logic.hideQuestions;
+                  const askQuestions = logic.questions;
                   let mandateQuestionsFormArray = [];
+                  let askQuestionsFormArray = [];
 
                   if (mandateQuestions && mandateQuestions.length) {
                     mandateQuestionsFormArray = mandateQuestions.map((mq) =>
@@ -296,6 +298,24 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                       this.fb.control(mq)
                     );
                   }
+
+                  if (askQuestions && askQuestions.length) {
+                    askQuestionsFormArray = askQuestions.map((askQuestion) =>
+                      this.fb.group({
+                        id: askQuestion.id,
+                        name: askQuestion.name,
+                        fieldType: askQuestion.fieldType,
+                        position: askQuestion.position,
+                        required: askQuestion.required,
+                        multi: askQuestion.multi,
+                        value: askQuestion.value,
+                        isPublished: askQuestion.isPublished,
+                        isPublishedTillSave: askQuestion.isPublishedTillSave,
+                        logics: this.fb.array([]) //this.fb.array([])
+                      })
+                    );
+                  }
+
                   return this.fb.group({
                     operator: logic.operator || '',
                     operand1: logic.operand1 || '',
@@ -303,7 +323,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     action: logic.action || '',
                     logicTitle: logic.logicTitle || 'blank',
                     expression: logic.expression || '',
-                    questions: this.fb.array([]),
+                    questions: this.fb.array(askQuestionsFormArray),
                     mandateQuestions: this.fb.array(mandateQuestionsFormArray),
                     hideQuestions: this.fb.array(hideQuestionsFormArray),
                     validationMessage: logic.validationMessage || '',
