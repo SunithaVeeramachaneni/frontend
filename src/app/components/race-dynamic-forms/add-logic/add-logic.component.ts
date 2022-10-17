@@ -17,6 +17,7 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
+
 import { RdfService } from '../services/rdf.service';
 import { fieldTypeOperatorMapping } from '../utils/fieldOperatorMappings';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
@@ -216,7 +217,12 @@ export class AddLogicComponent implements OnInit {
     logic.patchValue({ askEvidence: false });
   }
 
-  triggerMenuAction(action: string, logic: any): void {
+  triggerMenuAction(
+    action: string,
+    question: any,
+    logic: any,
+    index: number
+  ): void {
     const logicSymbol = this.fieldOperators.find(
       (op) => op.code === logic.value.operator
     );
@@ -230,16 +236,10 @@ export class AddLogicComponent implements OnInit {
 
     if (action === 'ask_questions') {
       logic.hasAskQuestions = true;
-      // const isEmpty = logic.value.operand2.length ? false : true;
-      // if (isEmpty) {
-      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      // } else {
-      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      // }
       const control = logic.get('questions') as FormArray;
       control.push(
         this.fb.group({
-          id: [`QID_ADD_LOGIC`],
+          id: [`${question.value.id}_AQ_${new Date().getTime()}`],
           name: [''],
           fieldType: ['TF'],
           position: [''],
@@ -285,6 +285,14 @@ export class AddLogicComponent implements OnInit {
         logics.controls[i].patchValue({ questions: event });
       }
     }
+  }
+
+  onLogicQuestionDelete(logic: any, event: any) {
+    const control = logic.get('questions') as FormArray;
+    control.removeAt(event.index);
+
+    const logics = this.logicsForm.get('logics') as FormArray;
+    this.onValueChanged.emit(logics.getRawValue());
   }
 
   getFieldTypeImage(type) {

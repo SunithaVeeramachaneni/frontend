@@ -51,7 +51,11 @@
     </button>
   </div>
   <div *ngIf="formsData$ | async as forms">
-    <div *ngFor="let form of forms.data" style="background-color: #ffffff">
+    <div
+      *ngFor="let form of forms.data"
+      style="background-color: #ffffff; cursor: pointer"
+      (click)="editForm(form)"
+    >
       <div class="form-data">
         <span>
           <span class="form-name">{{ form.name }}</span>
