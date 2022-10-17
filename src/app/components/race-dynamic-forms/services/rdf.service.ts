@@ -260,6 +260,16 @@ export class RdfService {
     let properties = {};
     const { fieldType } = question;
     switch (fieldType) {
+      case 'LLF': {
+        const { name } = question;
+        properties = {
+          ...properties,
+          FIELDLABEL: this.getDOMStringFromHTML(name),
+          DEFAULTVALUE: ''
+          //,INSTRUCTION: this.getDOMStringFromHTML(name)
+        };
+        break;
+      }
       case 'RT': {
         const {
           value: { min, max, increment }
@@ -279,7 +289,7 @@ export class RdfService {
         properties = {
           ...properties,
           IMAGECONTENT: base64,
-          IMAGETYPE: `.${name.split('.').slice(-1)[0].toLowerCase()}`
+          IMAGETYPE: `.${name?.split('.').slice(-1)[0].toLowerCase()}`
         };
         break;
       }
@@ -410,4 +420,16 @@ export class RdfService {
     if (!question.logics || !question.logics.length) return '';
     return question.logics[0].validationMessage;
   }
+
+  getDOMStringFromHTML = (value) => {
+    let newElement = value.replaceAll('<li>', '');
+    newElement = newElement.replaceAll('<br/>', '');
+    newElement = newElement.replaceAll('</li>', '\n');
+    const parsedElement = new DOMParser().parseFromString(
+      newElement,
+      'text/html'
+    ).documentElement.textContent;
+
+    return parsedElement;
+  };
 }

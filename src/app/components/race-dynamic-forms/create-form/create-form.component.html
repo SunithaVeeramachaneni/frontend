@@ -276,7 +276,7 @@
                           class="chip-list"
                         >
                           <mat-chip-list
-                            *ngIf="mcqResponseType === 'globalResponse'"
+                            *ngIf="question.controls.value.value?.name"
                             class="response-type-chips"
                           >
                             <mat-chip
@@ -291,7 +291,7 @@
                             </mat-chip>
                           </mat-chip-list>
                           <mat-chip-list
-                            *ngIf="mcqResponseType === 'quickResponse'"
+                            *ngIf="!question.controls.value.value?.name"
                             class="response-type-chips"
                           >
                             <mat-chip
