@@ -78,6 +78,7 @@
           <span
             *ngIf="logic.value.action && logic.value.action === 'ask_questions'"
             class="mandateAction"
+            (click)="triggerMenuAction('ask_questions', question, logic, i)"
           >
             Ask Questions
           </span>
@@ -109,8 +110,7 @@
             <button
               class="logicActionMenuItem"
               mat-menu-item
-              disabled
-              (click)="triggerMenuAction('ask_questions', logic)"
+              (click)="triggerMenuAction('ask_questions', question, logic, i)"
             >
               Ask Questions
             </button>
@@ -129,6 +129,7 @@
           <app-ask-question
             [logic]="logic"
             (onValueChanged)="onLogicQuestionValueChanged(logic, $event)"
+            (onQuestionDelete)="onLogicQuestionDelete(logic, $event)"
           ></app-ask-question>
         </div>
       </div>
