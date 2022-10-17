@@ -56,9 +56,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public formId: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
-  changesSaved = 'All Changes Saved';
+  changesSaved = 'All changes saved';
   publishingChanges = 'Publishing changes...';
-  changesPublished = 'All Changes published';
+  changesPublished = 'All changes published';
   public isOpenState = {};
   isSectionNameEditMode = true;
   activeResponseType: string;
