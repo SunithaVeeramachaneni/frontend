@@ -31,6 +31,8 @@ import { fieldTypeOperatorMapping } from '../../utils/fieldOperatorMappings';
 export class AskQuestionComponent implements OnInit {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onQuestionDelete: EventEmitter<any> = new EventEmitter();
 
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
 
@@ -262,6 +264,13 @@ export class AskQuestionComponent implements OnInit {
       default:
       // do nothing
     }
+  }
+
+  deleteQuestion(index: number) {
+    const form = this.questionForm.getRawValue();
+    form.questions.splice(index, 1);
+    this.questionForm.patchValue(form);
+    this.onQuestionDelete.emit({ index });
   }
 
   getFieldTypeImage(type) {
