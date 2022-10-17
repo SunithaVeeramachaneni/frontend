@@ -243,7 +243,7 @@ export class RdfService {
         properties = {
           ...properties,
           IMAGECONTENT: base64,
-          IMAGETYPE: `.${name.split('.').slice(-1)[0].toLowerCase()}`
+          IMAGETYPE: `.${name?.split('.').slice(-1)[0].toLowerCase()}`
         };
         break;
       }
