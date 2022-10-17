@@ -29,12 +29,18 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
 export class AddLogicComponent implements OnInit {
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onValueChanged: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onLogicDelete: EventEmitter<any> = new EventEmitter();
+  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
+  @Output() onAskEvidence: EventEmitter<any> = new EventEmitter();
 
   fieldOperators: any;
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
+
+  dropDownTypes = ['DD', 'VI', 'DDM'];
 
   public logicsForm: FormGroup;
 
@@ -43,7 +49,14 @@ export class AddLogicComponent implements OnInit {
   @Input() set question(question: any) {
     question.controls.logics.controls.forEach((logic) => {
       if (!logic.value.logicTitle) {
-        logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+        const logicSymbol = this.fieldOperators.find(
+          (op) => op.code === logic.value.operator
+        );
+        if (logicSymbol) {
+          logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+        } else {
+          logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+        }
       }
     });
 
@@ -115,12 +128,30 @@ export class AddLogicComponent implements OnInit {
     return this.logicsForm.get('counter').value;
   }
 
+  deleteLogic(logic, index) {
+    this.onLogicDelete.emit({ index });
+  }
+
   operatorChanged(logic, event) {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
     this.cdrf.detectChanges();
   }
   operand2Changed(logic, event) {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
     this.cdrf.detectChanges();
   }
 
@@ -134,54 +165,77 @@ export class AddLogicComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
+      logic.value.action = result.type;
+      this.cdrf.detectChanges();
+
       if (result.type === 'MANDATE') {
         const control = logic.get('mandateQuestions') as FormArray;
+        const controlRaw = control.getRawValue();
         result.selectedQuestions.forEach((q) => {
-          control.push(this.fb.control(q));
+          if (controlRaw.indexOf(q) < 0) {
+            control.push(this.fb.control(q));
+          }
         });
         logic.patchValue({
-          mandateQuestions: logic.value.mandateQuestions,
+          action: result.type,
+          mandateQuestions: result.selectedQuestions,
           validationMessage: result.validationMessage
         });
+        logic.value.mandateQuestions = result.selectedQuestions;
       } else if (result.type === 'HIDE') {
         const control = logic.get('hideQuestions') as FormArray;
+        const controlRaw = control.getRawValue();
         result.selectedQuestions.forEach((q) => {
-          control.push(this.fb.control(q));
+          if (controlRaw.indexOf(q) < 0) {
+            control.push(this.fb.control(q));
+          }
         });
-        logic.patchValue({ hideQuestions: logic.value.hideQuestions });
+        logic.patchValue({
+          action: result.type,
+          hideQuestions: result.selectedQuestions
+        });
+        logic.value.hideQuestions = result.selectedQuestions;
       }
     });
   }
-  askEvidence(logic) {
-    logic.patchValue({ askEvidence: true });
+
+  askEvidence(question, logic, index) {
+    logic.value.action = 'ask_evidence';
+    logic.value.askEvidence = `${question.value.id}_${index}_EVIDENCE`;
+    this.cdrf.detectChanges();
+    logic.patchValue({
+      action: 'ask_evidence',
+      askEvidence: `${question.value.id}_${index}_EVIDENCE`
+    });
+    this.onAskEvidence.emit({ index, questionId: question.value.id });
   }
+
   removeEvidence(logic) {
+    logic.value.askEvidence = false;
+    this.cdrf.detectChanges();
     logic.patchValue({ askEvidence: false });
   }
 
   triggerMenuAction(action: string, logic: any): void {
-    logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
-    let expression = '';
-    if (action === 'mandate_questions') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
-      logic.patchValue({
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
-        action: 'Mandate Questions',
-        expression
-      });
-    } else if (action === 'ask_questions') {
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.value.operator
+    );
+    if (logicSymbol) {
+      logic.value.logicTitle = `${logicSymbol.symbol} ${logic.value.operand2}`;
+    } else {
+      logic.value.logicTitle = `${logic.value.operator} ${logic.value.operand2}`;
+    }
+    logic.value.action = 'ask_questions';
+    this.cdrf.detectChanges();
+
+    if (action === 'ask_questions') {
       logic.hasAskQuestions = true;
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
+      // const isEmpty = logic.value.operand2.length ? false : true;
+      // if (isEmpty) {
+      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
+      // } else {
+      //   expression = `1:(E) ${this.question.value.id} EQ MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
+      // }
       const control = logic.get('questions') as FormArray;
       control.push(
         this.fb.group({
@@ -197,37 +251,18 @@ export class AddLogicComponent implements OnInit {
           logics: this.fb.array([])
         })
       );
-      logic.patchValue({
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
-        action: 'Ask Questions',
-        expression
-      });
-    } else if (action === 'hide') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} EMPTY`;
+
+      let logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
+      if (logicSymbol) {
+        logicTitleTemp = `${logicSymbol.symbol} ${logic.value.operand2}`;
       } else {
-        expression = `1:(HI) ${this.question.value.id} IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
+        logicTitleTemp = `${logic.value.operator} ${logic.value.operand2}`;
       }
+      logic.value.logicTitle = logicTitleTemp;
       logic.patchValue({
-        ...logic.value,
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
-        action: 'Hide Questions',
-        expression
-      });
-    } else if (action === 'ask_evidence') {
-      const isEmpty = logic.value.operand2.length ? false : true;
-      if (isEmpty) {
-        expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} EMPTY`;
-      } else {
-        expression = `1:(E) ${this.question.value.id} MANDIT IF FIELD_2 ${logic.value.operator} (V)${logic.value.operand2}`;
-      }
-      logic.patchValue({
-        ...logic.value,
-        logicTitle: `${logic.value.operator} ${logic.value.operand2}`,
-        action: 'Ask Evidence',
-        expression,
-        askEvidence: true
+        logicTitle: logicTitleTemp,
+        action: 'ask_questions'
+        // expression
       });
     }
     this.cdrf.detectChanges();

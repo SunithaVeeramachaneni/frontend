@@ -1,4 +1,4 @@
-<div [formGroup]="logicsForm">
+<div [formGroup]="logicsForm" *ngIf="getLogicsList().length">
   <mat-tab-group formArrayName="logics">
     <mat-tab
       *ngFor="let logic of getLogicsList(); let i = index"
@@ -6,10 +6,18 @@
     >
       <div class="tabContent" [formGroupName]="i">
         <div class="logicRow">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+            (click)="deleteLogic(logic, i)"
+          />
           <input type="hidden" formControlName="logicTitle" />
           <input type="hidden" formControlName="expression" />
           <input type="hidden" formControlName="askEvidence" />
+          <input type="hidden" formControlName="action" />
           If answer
+
           <select
             class="logicCondition"
             formControlName="operator"
@@ -24,17 +32,28 @@
             </option>
           </select>
           <input
+            *ngIf="dropDownTypes.indexOf(question.value.fieldType) < 0"
             type="text"
             class="logicValue"
             formControlName="operand2"
             (ngModelChange)="operand2Changed(logic, $event)"
           />
+          <select
+            class="logicValue"
+            stype="margin-left: -30px;"
+            formControlName="operand2"
+            *ngIf="dropDownTypes.indexOf(question.value.fieldType) > -1"
+          >
+            <option
+              class="logicOperator"
+              *ngFor="let option of question.value.value.values"
+            >
+              {{ option.title }}
+            </option>
+          </select>
           then
           <span
-            *ngIf="
-              logic.value.mandateQuestions &&
-              logic.value.mandateQuestions.length
-            "
+            *ngIf="logic.value.action && logic.value.action === 'MANDATE'"
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
           >
@@ -42,45 +61,58 @@
             <mat-icon>edit</mat-icon>
           </span>
           <span
-            *ngIf="
-              logic.value.hideQuestions && logic.value.hideQuestions.length
-            "
+            *ngIf="logic.value.action && logic.value.action === 'HIDE'"
             class="mandateAction"
             (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
           >
             Hide ({{ logic.value.hideQuestions.length }}) Questions
             <mat-icon>edit</mat-icon>
           </span>
-          <span *ngIf="logic.value.requireEvidence" class="mandateAction">
+          <span
+            *ngIf="logic.value.action && logic.value.action === 'ask_evidence'"
+            class="mandateAction"
+          >
             Ask Evidence
-            <mat-icon (click)="removeEvidence(logic)">close</mat-icon>
+            <!-- <mat-icon (click)="removeEvidence(logic)">close</mat-icon> -->
+          </span>
+          <span
+            *ngIf="logic.value.action && logic.value.action === 'ask_questions'"
+            class="mandateAction"
+          >
+            Ask Questions
           </span>
           <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
             + action
           </button>
           <mat-menu #menu="matMenu">
             <button
-              mat-menu-item
-              (click)="triggerMenuAction('ask_questions', logic)"
-              disabled
-              [hidden]="true"
-            >
-              Ask Questions
-            </button>
-            <button
+              class="logicActionMenuItem"
               mat-menu-item
               (click)="openSelectQuestionsDialog(question, logic, 'MANDATE')"
             >
               Mandate Questions
             </button>
             <button
+              class="logicActionMenuItem"
               mat-menu-item
               (click)="openSelectQuestionsDialog(question, logic, 'HIDE')"
             >
               Hide Questions
             </button>
-            <button mat-menu-item (click)="askEvidence(logic)">
+            <button
+              mat-menu-item
+              class="logicActionMenuItem"
+              (click)="askEvidence(question, logic, i)"
+            >
               Ask Evidence
+            </button>
+            <button
+              class="logicActionMenuItem"
+              mat-menu-item
+              disabled
+              (click)="triggerMenuAction('ask_questions', logic)"
+            >
+              Ask Questions
             </button>
           </mat-menu>
           <!-- <input
@@ -91,7 +123,7 @@
           /> -->
         </div>
         <div
-          *ngIf="logic.value.action === 'Ask Questions'"
+          *ngIf="logic.value.action === 'ask_questions'"
           class="logicAskQuestions"
         >
           <app-ask-question

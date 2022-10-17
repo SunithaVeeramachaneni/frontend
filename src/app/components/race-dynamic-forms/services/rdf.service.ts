@@ -168,6 +168,10 @@ export class RdfService {
           if (isPublishedTillSave) {
             return null;
           }
+
+          const { expression, validationMessage } =
+            this.getValidationExpression(question, questions);
+
           return {
             UNIQUEKEY: questionId,
             VALIDFROM,
@@ -190,8 +194,8 @@ export class RdfService {
             STATUS: 'PUBLISHED',
             ELEMENTTYPE: 'MULTIFORMTAB',
             PUBLISHED: isPublished,
-            UIVALIDATION: this.getValidationExpression(question),
-            UIVALIDATIONMSG: this.getValidationMessage(question),
+            UIVALIDATION: expression, //this.getValidationExpression(question),
+            UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
             ...this.getProperties(question)
           };
         })
@@ -288,59 +292,83 @@ export class RdfService {
     }
   }
 
-  getValidationExpression(question) {
+  getValidationExpression(question: any, sectionQuestions: any): any {
     let expression = '';
+    let validationMessage = '';
+    let globalIndex = 0;
+
     if (!question.logics || !question.logics.length) return expression;
 
-    const logic = question.logics[0];
-    const isEmpty = !logic.operand2.length;
-    const questionId = question.id;
+    question.logics.forEach((logic) => {
+      const isEmpty = !logic.operand2.length;
+      const questionId = question.id;
 
-    // Mandate Questions;
-    const mandatedQuestions = logic.mandateQuestions;
-    if (mandatedQuestions && mandatedQuestions.length) {
-      mandatedQuestions.forEach((mq, index) => {
-        if (index === 0) {
-          expression = `${expression}`;
-        } else {
-          expression = `${expression};`;
-        }
+      // Mandate Questions;
+      const mandatedQuestions = logic.mandateQuestions;
+      if (mandatedQuestions && mandatedQuestions.length) {
+        mandatedQuestions.forEach((mq, index) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+
+          const questionIndex = sectionQuestions.findIndex(
+            (sq) => sq.id === mq
+          );
+          if (questionIndex > -1) {
+            const mQuestion = sectionQuestions[questionIndex];
+            validationMessage = `${validationMessage};${globalIndex}:Please answer the question ${mQuestion.name}`;
+          }
+        });
+      }
+
+      // Hide Questions;
+      const hiddenQuestions = logic.hideQuestions;
+      if (hiddenQuestions && hiddenQuestions.length) {
+        hiddenQuestions.forEach((hq, index) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Ask Evidence;
+      const evidenceQuestion = logic.askEvidence;
+      if (evidenceQuestion && evidenceQuestion.length) {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${evidenceQuestion} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        globalIndex = globalIndex + 1;
         if (isEmpty) {
-          expression = `${expression}${
-            index + 1
-          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} EMPTY`;
+          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
         } else {
-          expression = `${expression}${
-            index + 1
-          }:(E) ${questionId} EQ MANDIT IF ${mq} ${logic.operator} (V)${
-            logic.operand2
-          }`;
+          expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
         }
-      });
+      }
+    });
+
+    if (expression[0] === ';') {
+      expression = expression.slice(1, expression.length);
+    }
+    if (expression[expression.length - 1] === ';') {
+      expression = expression.slice(0, expression.length - 1);
     }
 
-    // Hide Questions;
-    const hiddenQuestions = logic.hideQuestions;
-    if (hiddenQuestions && hiddenQuestions.length) {
-      hiddenQuestions.forEach((hq, index) => {
-        if (!expression.length && index === 0) {
-          expression = `${expression}`;
-        } else {
-          expression = `${expression};`;
-        }
-        if (isEmpty) {
-          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
-            logic.operator
-          } EMPTY`;
-        } else {
-          expression = `${expression}${index + 1}:(HI) ${questionId} IF ${hq} ${
-            logic.operator
-          } (V)${logic.operand2}`;
-        }
-      });
+    if (validationMessage[0] === ';') {
+      validationMessage = validationMessage.slice(1, validationMessage.length);
+    }
+    if (validationMessage[validationMessage.length - 1] === ';') {
+      validationMessage = validationMessage.slice(
+        0,
+        validationMessage.length - 1
+      );
     }
 
-    return expression;
+    return { expression, validationMessage };
   }
 
   getValidationMessage(question) {

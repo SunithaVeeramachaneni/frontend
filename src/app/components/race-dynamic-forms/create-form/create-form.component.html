@@ -105,8 +105,10 @@
 
             <span>
               <input
+                #sectionName
                 type="text"
                 formControlName="name"
+                [size]="sectionName.value.length - 4"
                 class="form_section_name_input"
                 placeholder="Untitled Section"
                 autofocus="true"
@@ -797,11 +799,17 @@
                             <label for="multi"> Multi Selection </label>
                           </span>
                         </div>
-                        <div *ngIf="question.hasLogic" class="logicBuilder">
+                        <div class="logicBuilder">
                           <app-add-logic
                             [question]="question"
                             (onValueChanged)="
                               onValueChanged(section, question, $event)
+                            "
+                            (onLogicDelete)="
+                              onLogicDelete(section, question, $event)
+                            "
+                            (onAskEvidence)="
+                              onAskEvidence(section, question, j, $event)
                             "
                           ></app-add-logic>
                         </div>

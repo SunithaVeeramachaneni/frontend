@@ -6,7 +6,8 @@
         {{ data.question.name }}
       </span>
       <p class="m-0">
-        If answer {{ data.logic.operator }} {{ data.logic.operand2 }}
+        If answer {{ operatorSymbolMap[data.logic.operator] }}
+        {{ data.logic.operand2 }}
       </p>
     </div>
   </div>
@@ -20,7 +21,7 @@
       >
       <span *ngIf="data.viewMode === 'HIDE'" class="f-inherit"> hidden</span>
     </span>
-    <div class="validationMessageRow">
+    <div class="validationMessageRow" style="display: none">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>UI Validation Message</mat-label>
         <input
@@ -47,8 +48,7 @@
                 question.name && question.name.length
                   ? question.name
                   : 'Untitled question'
-              }}
-              - {{ question.id }}</mat-checkbox
+              }}</mat-checkbox
             >
           </div>
         </div>
