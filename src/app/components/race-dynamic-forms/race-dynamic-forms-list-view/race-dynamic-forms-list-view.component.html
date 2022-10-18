@@ -51,9 +51,12 @@
     </button>
   </div>
   <div *ngIf="formsData$ | async as forms">
-    <div *ngFor="let form of forms.data" style="background-color: #ffffff">
+    <div
+      *ngFor="let form of forms.data"
+      style="background-color: #ffffff; cursor: pointer"
+    >
       <div class="form-data">
-        <span>
+        <span (click)="editForm(form)">
           <span class="form-name">{{ form.name }}</span>
           <br />
           <span class="form-description">{{ form.description }}</span>
@@ -70,6 +73,9 @@
         <mat-menu #sectionMenu="matMenu">
           <button mat-menu-item (click)="editForm(form)">
             <span>Edit</span>
+          </button>
+          <button mat-menu-item (click)="duplicateForm(form)">
+            <span>Copy</span>
           </button>
           <button mat-menu-item (click)="deleteForm(form)" class="text-red">
             <span>Delete</span>

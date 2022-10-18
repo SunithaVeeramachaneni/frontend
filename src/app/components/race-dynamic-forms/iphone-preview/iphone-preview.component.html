@@ -38,7 +38,8 @@
         <div
           style="
             overflow-y: auto;
-            height: 420px;
+            overflow-x: hidden;
+            height: 300px;
             border-bottom: 1px solid #d3d3d3;
           "
         >
@@ -52,8 +53,33 @@
             <div *ngFor="let question of section.questions">
               <div class="dis-flex m-b-10 m-r-15">
                 <div
-                  class="width-45 question-name"
-                  *ngIf="question.fieldType !== 'LLF'"
+                  class="width-40 question-name"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    question.fieldType !== 'VI' &&
+                    question.fieldType !== 'DD' &&
+                    question.fieldType !== 'SGF' &&
+                    question.fieldType !== 'GAL' &&
+                    question.fieldType !== 'ATT' &&
+                    question.fieldType !== 'IMG' &&
+                    question.fieldType !== 'RT'
+                  "
+                >
+                  {{ question.name ? question.name : 'Type Question' }}
+                </div>
+
+                <div
+                  class="width-100 question-name"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    (question.fieldType === 'VI' ||
+                      question.fieldType === 'DD' ||
+                      question.fieldType === 'SGF' ||
+                      question.fieldType === 'GAL' ||
+                      question.fieldType === 'ATT' ||
+                      question.fieldType === 'IMG' ||
+                      question.fieldType === 'RT')
+                  "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
                 </div>
@@ -64,8 +90,17 @@
                   <div [innerHTML]="question.name"></div>
                 </div>
                 <div
-                  class="width-45 text-left"
-                  *ngIf="question.fieldType !== 'LLF'"
+                  class="width-40 text-left"
+                  *ngIf="
+                    question.fieldType !== 'LLF' &&
+                    question.fieldType !== 'VI' &&
+                    question.fieldType !== 'DD' &&
+                    question.fieldType !== 'SGF' &&
+                    question.fieldType !== 'GAL' &&
+                    question.fieldType !== 'ATT' &&
+                    question.fieldType !== 'IMG' &&
+                    question.fieldType !== 'RT'
+                  "
                 >
                   <p
                     class="m-0"
@@ -88,7 +123,7 @@
 
                   <p
                     *ngIf="question.fieldType === 'CB'"
-                    style="float: right"
+                    style="float: right; margin-right: -40px"
                     class="m-0"
                   >
                     <input type="checkbox" />
@@ -114,6 +149,7 @@
                   <p
                     *ngIf="question.fieldType === 'LF'"
                     class="default-value m-0"
+                    style="margin-right: -40px"
                   >
                     {{ question.value }}
                   </p>
@@ -131,7 +167,7 @@
               <div class="width-100">
                 <div
                   *ngIf="question.fieldType === 'SGF'"
-                  style="margin: -10px 0 0 -10px"
+                  style="margin: -10px 0 10px -10px"
                 >
                   <input
                     type="text"
@@ -152,7 +188,7 @@
 
                 <div
                   *ngIf="question.fieldType === 'GAL'"
-                  style="margin: -10px 0 0 -10px"
+                  style="margin: -10px 0 10px -10px"
                 >
                   <input type="text" class="signature-input-fields" />
                   <img
@@ -175,9 +211,9 @@
                   <button
                     mat-raised-button
                     style="
-                      width: 240px;
+                      width: 215px;
                       position: relative;
-                      left: 10px;
+                      left: 5px;
                       background-color: #0053d7;
                       color: white;
                       height: 34px;
@@ -205,11 +241,14 @@
                   </mat-slider>
                 </div>
 
-                <div *ngIf="question.fieldType === 'VI'">
+                <div
+                  *ngIf="question.fieldType === 'VI'"
+                  style="margin-bottom: 10px"
+                >
                   <div *ngIf="question.value?.values?.length > 0">
                     <div *ngIf="4 >= question.value.values.length">
                       <mat-button-toggle-group
-                        style="height: 35px; align-items: center; width: 240px"
+                        style="height: 25px; align-items: center; width: 215px"
                       >
                         <mat-button-toggle
                           class="vi-values"
@@ -226,7 +265,10 @@
                   </div>
                 </div>
 
-                <div *ngIf="question.fieldType === 'DD'">
+                <div
+                  *ngIf="question.fieldType === 'DD'"
+                  style="margin-bottom: 10px"
+                >
                   <div *ngIf="question.value?.values?.length > 0">
                     <div *ngIf="question.value.values.length > 4">
                       <mat-select class="dropdown" [multiple]="question.multi">

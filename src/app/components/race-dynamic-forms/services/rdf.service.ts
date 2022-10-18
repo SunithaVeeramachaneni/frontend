@@ -40,6 +40,17 @@ export class RdfService {
       .patchData(environment.rdfApiUrl, `forms/${form.id}`, form, info)
       .pipe(map((response) => (response === null ? form : response)));
 
+  duplicateForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/duplicate',
+      form,
+      info
+    );
+
   deleteForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -154,8 +165,12 @@ export class RdfService {
         name: sectionName,
         position: sectionPosition
       } = section;
-      const sectionPayloads = questions
+
+      let index = 0;
+      const sectionPayloads = [];
+      questions
         .map((question) => {
+          index = index + 1;
           const {
             id: questionId,
             name: questionName,
@@ -169,17 +184,17 @@ export class RdfService {
             return null;
           }
 
-          const { expression, validationMessage } =
+          const { expression, validationMessage, askQuestions } =
             this.getValidationExpression(question, questions);
 
-          return {
+          sectionPayloads.push({
             UNIQUEKEY: questionId,
             VALIDFROM,
             VALIDTO,
             VERSION,
             SECTIONNAME: sectionName,
             FIELDLABEL: questionName,
-            UIPOSITION: questionPosition.toString(),
+            UIPOSITION: index.toString(),
             UIFIELDTYPE: this.getFieldType(question),
             ACTIVE: 'X',
             INSTRUCTION: '',
@@ -197,7 +212,39 @@ export class RdfService {
             UIVALIDATION: expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
             ...this.getProperties(question)
-          };
+          });
+
+          if (askQuestions && askQuestions.length) {
+            askQuestions.forEach((aq) => {
+              index = index + 1;
+              sectionPayloads.push({
+                UNIQUEKEY: aq.id,
+                VALIDFROM,
+                VALIDTO,
+                VERSION,
+                SECTIONNAME: sectionName,
+                FIELDLABEL: aq.name,
+                UIPOSITION: index.toString(),
+                UIFIELDTYPE: this.getFieldType(aq),
+                ACTIVE: 'X',
+                INSTRUCTION: '',
+                TEXTSTYLE: '',
+                TEXTCOLOR: '',
+                MANDATORY: required ? 'X' : '',
+                SECTIONPOSITION: sectionPosition.toString(),
+                DEFAULTVALUE: this.getDefaultValue(aq),
+                APPNAME,
+                FORMNAME: id,
+                FORMTITLE: aq.name,
+                STATUS: 'PUBLISHED',
+                ELEMENTTYPE: 'MULTIFORMTAB',
+                PUBLISHED: isPublished,
+                UIVALIDATION: '', //this.getValidationExpression(question),
+                UIVALIDATIONMSG: '', //this.getValidationMessage(question),
+                ...this.getProperties(aq)
+              });
+            });
+          }
         })
         .filter((payload) => payload);
       payloads = [...payloads, ...sectionPayloads];
@@ -229,8 +276,8 @@ export class RdfService {
         properties = {
           ...properties,
           FIELDLABEL: this.getDOMStringFromHTML(name),
-          DEFAULTVALUE: '',
-          INSTRUCTION: this.getDOMStringFromHTML(name)
+          DEFAULTVALUE: ''
+          //,INSTRUCTION: this.getDOMStringFromHTML(name)
         };
         break;
       }
@@ -296,6 +343,7 @@ export class RdfService {
     let expression = '';
     let validationMessage = '';
     let globalIndex = 0;
+    let askQuestions = [];
 
     if (!question.logics || !question.logics.length) return expression;
 
@@ -349,6 +397,14 @@ export class RdfService {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
         }
       }
+
+      // Ask Questions;
+      const questionsToBeAsked = logic.questions || [];
+      askQuestions = askQuestions.concat(questionsToBeAsked);
+      questionsToBeAsked.forEach((q) => {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+      });
     });
 
     if (expression[0] === ';') {
@@ -368,7 +424,7 @@ export class RdfService {
       );
     }
 
-    return { expression, validationMessage };
+    return { expression, validationMessage, askQuestions };
   }
 
   getValidationMessage(question) {
@@ -377,8 +433,14 @@ export class RdfService {
   }
 
   getDOMStringFromHTML = (value) => {
-    const parsedElement = new DOMParser().parseFromString(value, 'text/html')
-      .documentElement.textContent;
+    let newElement = value.replaceAll('<li>', '');
+    newElement = newElement.replaceAll('<br/>', '');
+    newElement = newElement.replaceAll('</li>', '\\r\\n');
+    const parsedElement = new DOMParser().parseFromString(
+      newElement,
+      'text/html'
+    ).documentElement.textContent;
+
     return parsedElement;
   };
 }

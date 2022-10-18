@@ -15,6 +15,7 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
   forms$: Observable<any>;
   formsData$: Observable<any>;
   deleteForm$ = new BehaviorSubject<any>({} as any);
+  duplicateForm$ = new BehaviorSubject<any>({} as any);
   constructor(
     private rdfService: RdfService,
     private toaster: ToastService,
@@ -36,14 +37,19 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
             )
           )
         ),
-      this.deleteForm$
+      this.deleteForm$,
+      this.duplicateForm$
     ]).pipe(
-      map(([formsList, deleteForm]) => {
+      map(([formsList, deleteForm, duplicateForm]) => {
         if (Object.keys(deleteForm).length) {
           initial.data = initial.data.filter(
             (form) => form.id !== deleteForm.id
           );
           return initial;
+        }
+
+        if (Object.keys(duplicateForm).length) {
+          initial.data.splice(0, 0, duplicateForm);
         }
         initial.data = formsList;
         return initial;
@@ -101,5 +107,22 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
     this.router.navigate(['rdf-forms/edit', form.id], {
       state: { data: form }
     });
+  }
+
+  duplicateForm(form) {
+    return this.rdfService
+      .duplicateForm$(form)
+      .pipe(
+        tap((newForm) => {
+          if (Object.keys(newForm).length) {
+            this.toaster.show({
+              text: `Form ${newForm.name} copied successfully`,
+              type: 'success'
+            });
+            this.duplicateForm$.next(newForm);
+          }
+        })
+      )
+      .subscribe();
   }
 }
