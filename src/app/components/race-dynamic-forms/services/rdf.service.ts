@@ -40,6 +40,17 @@ export class RdfService {
       .patchData(environment.rdfApiUrl, `forms/${form.id}`, form, info)
       .pipe(map((response) => (response === null ? form : response)));
 
+  duplicateForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/duplicate',
+      form,
+      info
+    );
+
   deleteForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
