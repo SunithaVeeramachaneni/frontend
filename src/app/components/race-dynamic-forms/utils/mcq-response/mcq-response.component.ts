@@ -17,6 +17,7 @@ import {
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { McqService } from './mcq.service';
+import { CreateUpdateResponse } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-mcq-response',
@@ -25,7 +26,8 @@ import { McqService } from './mcq.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class McqResponseComponent implements OnInit {
-  @Output() dialogClose: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() dialogClose: EventEmitter<CreateUpdateResponse> =
+    new EventEmitter<CreateUpdateResponse>();
 
   public respType: string;
   public responseForm: FormGroup;
@@ -77,7 +79,7 @@ export class McqResponseComponent implements OnInit {
 
     this.inputResp
       .pipe(
-        tap((input) => {
+        tap(({ data: input }) => {
           const resp = input.find((item) => item.id === this.id);
           if (resp) {
             if (this.respType === 'globalResponse')
@@ -126,22 +128,15 @@ export class McqResponseComponent implements OnInit {
           name: this.name.value
         })
         .subscribe(() => {
-          this.inputResp.pipe(
-            tap((oldResp) => {
-              const latest = oldResp.map((resp) => {
-                let cur = resp;
-                if (resp.id === this.id) {
-                  cur = {
-                    id: this.id,
-                    values: this.responses.value,
-                    name: this.name.value
-                  };
-                }
-                return cur;
-              });
-              return latest;
-            })
-          );
+          this.dialogClose.emit({
+            type: 'update',
+            responseType: this.respType,
+            response: {
+              id: this.id,
+              values: this.responses.value,
+              name: this.name.value
+            }
+          });
         });
     } else {
       this.mcqService
@@ -155,22 +150,20 @@ export class McqResponseComponent implements OnInit {
               : this.name.value
         })
         .subscribe((newResp) => {
-          this.inputResp.pipe(
-            tap((oldResp) => {
-              const latest = oldResp.push({
-                id: newResp.id,
-                values: newResp.values,
-                name:
-                  this.respType === 'globalResponse' && !this.name.value
-                    ? 'Untitled'
-                    : this.name.value
-              });
-              return latest;
-            })
-          );
+          this.dialogClose.emit({
+            type: 'create',
+            responseType: this.respType,
+            response: {
+              id: newResp.id,
+              values: newResp.values,
+              name:
+                this.respType === 'globalResponse' && !this.name.value
+                  ? 'Untitled'
+                  : this.name.value
+            }
+          });
         });
     }
-    this.dialogClose.emit(false);
   };
 
   keytab(event) {
@@ -181,6 +174,6 @@ export class McqResponseComponent implements OnInit {
   }
 
   cancelForm = () => {
-    this.dialogClose.emit(false);
+    this.dialogClose.emit({ type: 'cancel', response: {} });
   };
 }

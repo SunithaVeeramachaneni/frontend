@@ -19,3 +19,4 @@ export * from './roles-permissions';
 export * from './tenant';
 export * from './validation-error';
 export * from './events';
+export * from './rdf';

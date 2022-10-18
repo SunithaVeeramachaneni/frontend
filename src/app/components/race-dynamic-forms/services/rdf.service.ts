@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray, share } from 'rxjs/operators';
+import { map, mergeMap, toArray, shareReplay } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -92,7 +92,7 @@ export class RdfService {
         `forms/responses/${respType}`,
         info
       )
-      .pipe(share());
+      .pipe(shareReplay(1));
 
   createAbapFormField$ = (
     form: any,
