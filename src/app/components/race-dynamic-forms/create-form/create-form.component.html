@@ -263,7 +263,8 @@
                         #trigger="cdkOverlayOrigin"
                         (click)="
                           togglePopOverOpenState(i, j);
-                          isMCQResponseOpen = false
+                          isMCQResponseOpen = false;
+                          currentQuestion = question
                         "
                         class="response-type-btn"
                         [ngClass]="{
@@ -441,18 +442,26 @@
                                 </h2>
                                 <ng-container
                                   *ngIf="
-                                    quickResponses$ | async as quickResponses
+                                    quickResponsesData$
+                                      | async as quickResponsesData
                                   "
                                 >
                                   <div>
                                     <div
-                                      *ngFor="let resp of quickResponseList"
+                                      *ngFor="
+                                        let resp of quickResponsesData.data
+                                      "
                                       style="height: 36px"
                                     >
                                       <button
-                                        style="padding: 0; height: 36px"
+                                        style="padding: 0 0 0 5px; height: 36px"
                                         mat-flat-button
                                         class="quick-response"
+                                        [ngClass]="{
+                                          active:
+                                            currentQuestion?.controls.value
+                                              .value.id === resp.id
+                                        }"
                                         (click)="
                                           handleMCQFieldType(
                                             question,
@@ -546,10 +555,15 @@
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
                                 <ng-container
                                   *ngIf="
-                                    globalResponses$ | async as globalResponses
+                                    globalResponsesData$
+                                      | async as globalResponsesData
                                   "
                                 >
-                                  <div *ngFor="let resp of globalResponses">
+                                  <div
+                                    *ngFor="
+                                      let resp of globalResponsesData.data
+                                    "
+                                  >
                                     <button
                                       mat-flat-button
                                       (click)="
@@ -560,6 +574,11 @@
                                         );
                                         togglePopOverOpenState(i, j)
                                       "
+                                      [ngClass]="{
+                                        active:
+                                          currentQuestion?.controls.value.value
+                                            .name === resp.name
+                                      }"
                                     >
                                       {{ resp.name }}
                                     </button>
@@ -696,7 +715,9 @@
                       [inputResponse]="activeResponses$"
                       [responseType]="activeResponseType"
                       [activeResponseId]="activeResponseId"
-                      (dialogClose)="isMCQResponseOpen = false"
+                      (dialogClose)="
+                        isMCQResponseOpen = false; handleMCQResponse($event)
+                      "
                     ></app-mcq-response>
                   </div>
                   <div

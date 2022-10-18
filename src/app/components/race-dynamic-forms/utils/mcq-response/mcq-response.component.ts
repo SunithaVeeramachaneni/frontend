@@ -73,6 +73,7 @@ export class McqResponseComponent implements OnInit {
           else if (currResp.find((item) => !item.title))
             this.isFormNotUpdated = true;
           else this.isFormNotUpdated = false;
+          this.cdrf.markForCheck();
         })
       )
       .subscribe();
@@ -117,6 +118,7 @@ export class McqResponseComponent implements OnInit {
 
   deleteResponse = (idx: number) => {
     this.responses.removeAt(idx);
+    this.responseForm.markAsDirty();
   };
 
   submitResponses = () => {
