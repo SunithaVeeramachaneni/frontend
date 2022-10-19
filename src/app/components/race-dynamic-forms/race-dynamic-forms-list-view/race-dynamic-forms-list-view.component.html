@@ -52,6 +52,7 @@
     </button>
   </div>
   <div
+    class="formsListContainer"
     *ngIf="formsData$ | async as forms"
     (scroll)="onFormsListScrolled($event)"
   >
