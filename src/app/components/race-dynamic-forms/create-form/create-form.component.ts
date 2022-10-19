@@ -543,7 +543,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return form.controls.sections.controls;
   }
 
-  addSection(index: number, section: any) {
+  addSection(index: number, section: any = null) {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
