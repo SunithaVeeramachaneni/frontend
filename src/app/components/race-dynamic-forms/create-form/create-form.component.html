@@ -138,16 +138,18 @@
               [matMenuTriggerFor]="sectionMenu"
               class="more-icon"
               aria-label="More Options"
-              [disabled]="getSections(createForm).length === 1"
             >
               <mat-icon>more_horiz</mat-icon>
             </button>
             <mat-menu #sectionMenu="matMenu">
+              <button mat-menu-item (click)="addSection(i, section)">
+                <span>Copy Section</span>
+              </button>
               <button
                 mat-menu-item
                 (click)="deleteSection(i, section)"
                 class="text-red"
-                *ngIf="getSections(createForm).length !== 1"
+                [disabled]="getSections(createForm).length === 1"
               >
                 <span>Delete Section</span>
               </button>
@@ -858,6 +860,12 @@
                         class="delete-icon"
                       />
                     </div>
+                    <!-- <mat-icon
+                      class="align-icon fa-pull-right p-l-0 p-t-5 step-action"
+                      title="Clone Step"
+                      (click)="duplicateQuestion(i, j, question)"
+                      >content_copy
+                    </mat-icon> -->
                   </div>
                 </div>
               </div>
