@@ -11,7 +11,14 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { BehaviorSubject, from, timer, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  from,
+  timer,
+  Observable,
+  of,
+  combineLatest
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -21,7 +28,7 @@ import {
   switchMap,
   tap,
   toArray,
-  share
+  map
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { HeaderService } from 'src/app/shared/services/header.service';
@@ -34,6 +41,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CreateUpdateResponse } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-create-form',
@@ -46,9 +54,18 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
   public createForm: FormGroup;
   public isMCQResponseOpen = false;
-  public quickResponseList: any;
-  public quickResponses$: Observable<any>;
-  public globalResponses$: Observable<any>;
+  quickResponsesData$: Observable<any>;
+  globalResponsesData$: Observable<any>;
+  createEditQuickResponse$ = new BehaviorSubject<CreateUpdateResponse>({
+    type: 'create',
+    response: {}
+  });
+  createEditGlobalResponse$ = new BehaviorSubject<CreateUpdateResponse>({
+    type: 'create',
+    response: {}
+  });
+  createEditQuickResponse = true;
+  createEditGlobalResponse = true;
   public activeResponses$: Observable<any>;
   public quickCommonResponse$: Observable<any>;
   public activeResponseId: string;
@@ -111,19 +128,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.globalResponses$ = this.rdfService
-      .getResponses$('globalResponse')
-      .pipe(
-        tap((resp) => {
-          const globalResp = resp.map((r) => ({
-            id: r.id,
-            name: r.name,
-            values: r.values
-          }));
-          return globalResp;
-        })
-      );
-    this.globalResponses$.subscribe();
     this.createForm = this.fb.group({
       id: [''],
       name: [''],
@@ -178,10 +182,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .valueChanges.pipe(
         debounceTime(1000),
         distinctUntilChanged(),
-        filter(() => {
-          this.formId = this.createForm.get('id').value;
-          return this.createForm.get('id').value;
-        }),
+        filter(() => this.createForm.get('id').value),
         switchMap(() => this.saveForm())
       )
       .subscribe();
@@ -192,11 +193,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         pairwise(),
         debounceTime(1000),
         distinctUntilChanged(),
-        filter(() => {
-          this.formId = this.createForm.get('id').value;
-          return this.createForm.get('id').value;
-        }),
+        filter(() => this.createForm.get('id').value),
         tap(([prev, curr]) => {
+          let isPublishedTillSave = this.createForm.get(
+            'isPublishedTillSave'
+          ).value;
           curr.forEach(({ questions: cq, ...currSection }, i) => {
             const { questions: pq, ...prevSection } = prev[i];
             if (isEqual(currSection, prevSection)) {
@@ -204,6 +205,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 if (!isEqual(q, pq[j])) {
                   this.isLLFFieldChanged = false;
                   q.isPublishedTillSave = false;
+                  isPublishedTillSave = false;
                   if (q.fieldType === 'LLF') {
                     this.sections = curr;
                     this.isLLFFieldChanged = true;
@@ -213,12 +215,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             } else {
               cq.forEach((q) => {
                 q.isPublishedTillSave = false;
+                isPublishedTillSave = false;
               });
             }
           });
           if (!this.isLLFFieldChanged) {
             this.createForm.patchValue(
-              { sections: curr, isPublishedTillSave: false },
+              { sections: curr, isPublishedTillSave },
               { emitEvent: false }
             );
             this.rdfService.setCurrentFormValue(this.createForm.getRawValue());
@@ -370,23 +373,98 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     });
     this.sectionActiveState[1] = true;
 
-    this.quickResponses$ = this.rdfService.getResponses$('quickResponse').pipe(
-      tap((resp) => {
-        const tempResp = resp.filter((item) => !item.formId);
-        if (this.formId) {
-          const addResp = resp.filter((item) => item.formId === this.formId);
-          tempResp.push(...addResp);
+    this.quickResponsesData$ = combineLatest([
+      of({ data: [] }),
+      this.rdfService.getResponses$('quickResponse'),
+      this.createEditQuickResponse$
+    ]).pipe(
+      map(([initial, responses, { type, response, responseType }]) => {
+        if (
+          type === 'cancel' ||
+          !this.createEditQuickResponse ||
+          (responseType !== 'quickResponse' && responseType !== undefined)
+        ) {
+          return initial;
         }
-        const quickResp = tempResp.map((r) => ({
-          id: r.id,
-          name: '',
-          values: r.values
-        }));
-        this.quickResponseList = quickResp;
-        return this.quickResponseList;
+        if (Object.keys(response).length) {
+          if (type === 'create') {
+            initial.data = initial.data.concat([response]);
+          } else {
+            initial.data = initial.data.map((resp) => {
+              if (resp.id === response.id) {
+                return response;
+              }
+              return resp;
+            });
+          }
+          this.createEditQuickResponse = false;
+          return initial;
+        } else {
+          if (initial.data.length === 0) {
+            const tempResp = responses.filter((item) => !item.formId);
+            if (this.formId) {
+              const addResp = responses.filter(
+                (item) => item.formId === this.formId
+              );
+              tempResp.push(...addResp);
+            }
+            const quickResp = tempResp.map((r) => ({
+              id: r.id,
+              name: '',
+              values: r.values
+            }));
+            initial.data = initial.data.concat(quickResp);
+          }
+          this.createEditQuickResponse = false;
+          return initial;
+        }
       })
     );
-    this.quickResponses$.subscribe();
+
+    this.quickResponsesData$.subscribe();
+
+    this.globalResponsesData$ = combineLatest([
+      of({ data: [] }),
+      this.rdfService.getResponses$('globalResponse'),
+      this.createEditGlobalResponse$
+    ]).pipe(
+      map(([initial, responses, { type, response, responseType }]) => {
+        if (
+          type === 'cancel' ||
+          !this.createEditGlobalResponse ||
+          (responseType !== 'globalResponse' && responseType !== undefined)
+        ) {
+          return initial;
+        }
+        if (Object.keys(response).length) {
+          if (type === 'create') {
+            initial.data = initial.data.concat([response]);
+          } else {
+            initial.data = initial.data.map((resp) => {
+              if (resp.id === response.id) {
+                return response;
+              }
+              return resp;
+            });
+          }
+          this.createEditGlobalResponse = false;
+          return initial;
+        } else {
+          if (initial.data.length === 0) {
+            const globalResp = responses.map((resp) => ({
+              id: resp.id,
+              name: resp.name,
+              values: resp.values
+            }));
+            initial.data = initial.data.concat(globalResp);
+          }
+          this.createEditGlobalResponse = false;
+          return initial;
+        }
+      })
+    );
+
+    this.globalResponsesData$.subscribe();
   }
 
   setHeaderTitle(title) {
@@ -421,7 +499,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   handleResponses = (type: string, id: string) => {
     this.activeResponses$ =
-      type === 'globalResponse' ? this.globalResponses$ : this.quickResponses$;
+      type === 'globalResponse'
+        ? this.globalResponsesData$
+        : this.quickResponsesData$;
     this.activeResponseType = type;
     this.activeResponseId = id;
   };
@@ -877,12 +957,42 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return this.imageUtils.getImageSrc(base64);
   }
 
-  getLogicsFormBuilderArray(logics) {}
-
   setSectionActiveState(sectionIndex) {
     Object.keys(this.sectionActiveState).forEach((key) => {
       this.sectionActiveState[key] = false;
     });
     this.sectionActiveState[sectionIndex + 1] = true;
+  }
+
+  handleMCQResponse(event: CreateUpdateResponse) {
+    const { responseType, type, response } = event;
+    if (responseType === 'quickResponse') {
+      this.createEditQuickResponse = true;
+      this.createEditQuickResponse$.next({ type, response, responseType });
+    } else {
+      this.createEditGlobalResponse = true;
+      this.createEditGlobalResponse$.next({ type, response, responseType });
+    }
+    this.handleMCQFieldType(this.currentQuestion, response, responseType);
+    this.updateMcqAndGlobalResponses(response);
+  }
+
+  updateMcqAndGlobalResponses(value) {
+    const { sections } = this.createForm.getRawValue();
+    const fieldType = value.values.length > 4 ? 'DD' : 'VI';
+    sections.forEach((section) => {
+      const { questions } = section;
+      questions.forEach((que) => {
+        if (
+          value.id === que.value.id &&
+          (que.fieldType === 'VI' || que.fieldType === 'DD')
+        ) {
+          que.value = value;
+          que.fieldType = fieldType;
+        }
+      });
+    });
+
+    this.createForm.patchValue({ sections });
   }
 }

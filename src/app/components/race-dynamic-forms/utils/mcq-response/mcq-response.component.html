@@ -70,7 +70,7 @@
       (click)="submitResponses()"
       color="primary"
       style="width: 46%; margin-right: 10px; margin-left: 10px"
-      [disabled]="isFormNotUpdated === true"
+      [disabled]="isFormNotUpdated === true || responseForm.pristine"
     >
       Apply
     </button>
