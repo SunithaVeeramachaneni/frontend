@@ -1,9 +1,29 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  tap
+} from 'rxjs/operators';
 import { ToastService } from 'src/app/shared/toast';
 import { RdfService } from '../services/rdf.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { defaultLimit } from 'src/app/app.constants';
+
+interface SearchEvent {
+  data: 'search' | 'load' | 'infiniteScroll';
+}
 
 @Component({
   selector: 'app-race-dynamic-forms-list-view',
@@ -12,35 +32,78 @@ import { RdfService } from '../services/rdf.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RaceDynamicFormsListViewComponent implements OnInit {
+  searchKey = '';
+  skip = 0;
+  limit = defaultLimit;
+  lastScrollLeft = 0;
+  formsListTotalCount = 0;
+  formsListLoadedCount = 0;
+  fetchFormsListInprogress = false;
+
+  searchForm: FormGroup;
+
+  formsOnLoadSearch$: Observable<any>; //new BehaviorSubject<any>({} as any);
+  formListOnScroll$: Observable<any>;
   forms$: Observable<any>;
   formsData$: Observable<any>;
+
   deleteForm$ = new BehaviorSubject<any>({} as any);
   duplicateForm$ = new BehaviorSubject<any>({} as any);
+
+  private fetchForms$: ReplaySubject<SearchEvent> =
+    new ReplaySubject<SearchEvent>(2);
+
   constructor(
     private rdfService: RdfService,
     private toaster: ToastService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    this.searchForm = this.fb.group({
+      search: ['']
+    });
+
+    this.fetchForms$.next({ data: 'load' });
+
     const initial = { data: [] };
 
+    this.searchForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.fetchForms$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
+
+    this.formsOnLoadSearch$ = this.fetchForms$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() => {
+        this.skip = 0;
+        return this.fetchForms();
+      })
+    );
+
+    this.formListOnScroll$ = this.fetchForms$.pipe(
+      switchMap(({ data }) => {
+        if (data === 'infiniteScroll') {
+          return this.fetchForms();
+        } else {
+          return of([]);
+        }
+      })
+    );
+
     this.formsData$ = combineLatest([
-      this.rdfService
-        .getForms$()
-        .pipe(
-          map((forms) =>
-            forms.sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-            )
-          )
-        ),
+      this.formsOnLoadSearch$,
       this.deleteForm$,
-      this.duplicateForm$
+      this.duplicateForm$,
+      this.formListOnScroll$
     ]).pipe(
-      map(([formsList, deleteForm, duplicateForm]) => {
+      map(([formsList, deleteForm, duplicateForm, scroll]) => {
         if (Object.keys(deleteForm).length) {
           initial.data = initial.data.filter(
             (form) => form.id !== deleteForm.id
@@ -51,20 +114,62 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
         if (Object.keys(duplicateForm).length) {
           initial.data.splice(0, 0, duplicateForm);
         }
+        if (Object.keys(scroll).length) {
+          formsList = formsList.concat(scroll);
+        }
         initial.data = formsList;
+        this.skip = initial.data.length;
         return initial;
       })
     );
+  }
 
-    this.forms$ = this.rdfService
-      .getForms$()
+  onFormsListScrolled(event: any) {
+    const element = event.target;
+    const isBottomReached =
+      Math.abs(element.scrollHeight) -
+        Math.abs(element.scrollTop) -
+        Math.abs(element.clientHeight) <=
+      1;
+
+    const documentScrollLeft = element.scrollLeft;
+    if (this.lastScrollLeft !== documentScrollLeft) {
+      this.lastScrollLeft = documentScrollLeft;
+      return;
+    }
+
+    if (isBottomReached) {
+      if (!(this.formsListLoadedCount < this.formsListTotalCount)) {
+        return;
+      }
+      if (this.fetchFormsListInprogress) return;
+      this.fetchForms$.next({ data: 'infiniteScroll' });
+    }
+  }
+
+  fetchForms() {
+    this.fetchFormsListInprogress = true;
+
+    return this.rdfService
+      .getForms$({
+        skip: this.skip,
+        limit: this.limit,
+        isActive: true,
+        searchKey: this.searchForm.get('search').value
+      })
       .pipe(
-        map((forms) =>
-          forms.sort(
+        mergeMap((formsResp: any) => {
+          this.fetchFormsListInprogress = false;
+          formsResp.data.sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
-        )
+          );
+          if (formsResp.count) {
+            this.formsListTotalCount = formsResp.count;
+          }
+          this.formsListLoadedCount += formsResp.data.length;
+          return of(formsResp.data);
+        })
       );
   }
 

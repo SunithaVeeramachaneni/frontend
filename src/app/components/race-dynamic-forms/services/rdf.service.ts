@@ -59,8 +59,11 @@ export class RdfService {
       ._removeData(environment.rdfApiUrl, `forms/${form.id}`, info)
       .pipe(map((response) => (response === null ? form : response)));
 
-  getForms$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.rdfApiUrl, 'forms', info);
+  getForms$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(environment.rdfApiUrl, 'forms', info, queryParams);
 
   getFormById$ = (
     id: string,

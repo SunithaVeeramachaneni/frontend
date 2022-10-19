@@ -1,12 +1,13 @@
 <div class="rdf-forms-list-screen">
-  <div class="dis-flex">
+  <div class="dis-flex" [formGroup]="searchForm">
     <div class="width-90 search-box">
       <mat-form-field class="width-100" appearance="outline">
         <input
           matInput
           placeholder="Search"
           style="width: 100%"
-          disabled="true"
+          autocomplete="off"
+          formControlName="search"
         />
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
@@ -50,7 +51,10 @@
       Create Form
     </button>
   </div>
-  <div *ngIf="formsData$ | async as forms">
+  <div
+    *ngIf="formsData$ | async as forms"
+    (scroll)="onFormsListScrolled($event)"
+  >
     <div
       *ngFor="let form of forms.data"
       style="background-color: #ffffff; cursor: pointer"
