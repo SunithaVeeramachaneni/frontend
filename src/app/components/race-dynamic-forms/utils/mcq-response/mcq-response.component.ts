@@ -17,7 +17,7 @@ import {
 } from 'rxjs/operators';
 import { isEqual } from 'lodash-es';
 import { McqService } from './mcq.service';
-import { CreateUpdateResponse } from 'src/app/interfaces';
+import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
 
 @Component({
   selector: 'app-mcq-response',

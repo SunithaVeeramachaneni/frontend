@@ -41,7 +41,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreateUpdateResponse } from 'src/app/interfaces';
+import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
 
 @Component({
   selector: 'app-create-form',
