@@ -69,7 +69,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public activeResponses$: Observable<any>;
   public quickCommonResponse$: Observable<any>;
   public activeResponseId: string;
-  public mcqResponseType: string;
   public formId: string;
   defaultFormHeader = 'Untitled Form';
   saveProgress = 'Save in progress...';
@@ -485,14 +484,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.richTextEditorToolbarState[i + 1][j + 1] = focus;
   }
 
-  handleMCQFieldType = (
-    question: any,
-    response: any,
-    responseTypeForDisplay: string
-  ) => {
-    const { id, ...form } = this.createForm.getRawValue();
+  handleMCQFieldType = (question: any, response: any) => {
     const fieldType = response.values.length > 4 ? 'DD' : 'VI';
-    this.mcqResponseType = responseTypeForDisplay;
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
   };
@@ -963,7 +956,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.createEditGlobalResponse = true;
       this.createEditGlobalResponse$.next({ type, response, responseType });
     }
-    this.handleMCQFieldType(this.currentQuestion, response, responseType);
+    this.handleMCQFieldType(this.currentQuestion, response);
     this.updateMcqAndGlobalResponses(response);
   }
 

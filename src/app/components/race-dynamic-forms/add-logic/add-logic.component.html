@@ -127,6 +127,7 @@
           class="logicAskQuestions"
         >
           <app-ask-question
+            [formId]="formId"
             [logic]="logic"
             (onValueChanged)="onLogicQuestionValueChanged(logic, $event)"
             (onQuestionDelete)="onLogicQuestionDelete(logic, $event)"

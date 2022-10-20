@@ -5,171 +5,564 @@
         *ngFor="let question of getQuestions(questionForm); let i = index"
         (click)="toggleFieldContentOpenState(1, i)"
       >
-        <div class="dis-flex" [formGroupName]="i">
-          <input type="hidden" formControlName="position" [ngModel]="i + 1" />
-          <div class="width-70">
-            <!-- <img
-              src="assets/rdf-forms-icons/six-dots.svg"
-              alt="six-dots"
-              class="m-l-10 six-dots"
-            /> -->
-            <mat-form-field
-              appearance="outline"
-              class="width-90"
-              style="margin-left: 10px"
-            >
-              <input
-                autocomplete="off"
-                type="text"
-                matInput
-                formControlName="name"
-                placeholder="Type Question"
-              />
-            </mat-form-field>
-          </div>
-
-          <div class="width-30">
-            <button
-              class="response-type-btn"
-              cdkOverlayOrigin
-              #trigger="cdkOverlayOrigin"
-              (click)="togglePopOverOpenState(1, i)"
-            >
-              <img
-                [src]="getFieldTypeImage(question.controls.fieldType.value)"
-                class="response-type-icons"
-                style="position: relative; top: -2px"
-              />&nbsp;
-              <span
-                style="
-                  white-space: nowrap;
-                  display: inline-block;
-                  text-overflow: ellipsis;
-                  width: 60%;
-                  overflow: hidden;
-                "
+        <div [formGroupName]="i" (click)="toggleFieldContentOpenState(1, i)">
+          <div class="dis-flex">
+            <input type="hidden" formControlName="position" [ngModel]="i + 1" />
+            <div class="width-70">
+              <!-- <img
+                cdkDragHandle
+                src="assets/rdf-forms-icons/six-dots.svg"
+                alt="six-dots"
+                class="m-l-10 six-dots"
+              /> -->
+              <mat-form-field
+                appearance="outline"
+                class="width-90"
+                style="margin-left: 10px"
               >
-                {{ getFieldTypeDescription(question.controls.fieldType.value) }}
-              </span>
-              <mat-icon style="float: right; position: relative; top: -4px">
-                keyboard_arrow_down
-              </mat-icon>
-            </button>
-            <img
-              src="assets/rdf-forms-icons/delete-icon.svg"
-              alt="delete-icon"
-              (click)="deleteQuestion(i)"
-              class="delete-icon"
-            />
+                <input
+                  autocomplete="off"
+                  type="text"
+                  matInput
+                  formControlName="name"
+                  placeholder="Type Question"
+                  *ngIf="question.controls.fieldType.value !== 'LLF'"
+                />
+                <quill-material
+                  formControlName="name"
+                  placeholder="Type Question"
+                  [ngClass]="{
+                    'display-toolbar': richTextEditorToolbarState[1][i + 1]
+                  }"
+                  class="instruction-quill-box"
+                  *ngIf="question.controls.fieldType.value === 'LLF'"
+                  (editorFocus)="handleEditorFocus($event, 1, i)"
+                >
+                </quill-material>
+              </mat-form-field>
+            </div>
 
-            <ng-template
-              cdkConnectedOverlay
-              cdkConnectedOverlayPanelClass="custom-popover"
-              cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-              [cdkConnectedOverlayHasBackdrop]="true"
-              [cdkConnectedOverlayOpen]="popOverOpenState[1][i + 1]"
-              [cdkConnectedOverlayOrigin]="trigger"
-              cdkConnectedOverlayWidth="400px"
-              (backdropClick)="togglePopOverOpenState(1, i)"
-            >
-              <div class="response-type-modal">
-                <h1>
-                  <mat-icon
-                    (click)="togglePopOverOpenState(1, i)"
-                    style="cursor: pointer"
+            <div class="width-30" style="display: flex">
+              <button
+                cdkOverlayOrigin
+                #trigger="cdkOverlayOrigin"
+                (click)="
+                  togglePopOverOpenState(1, i);
+                  isMCQResponseOpen = false;
+                  currentQuestion = question
+                "
+                class="response-type-btn"
+                [ngClass]="{
+                  'dis-flex p-t-0':
+                    question.controls.fieldType.value === 'VI' ||
+                    question.controls.fieldType.value === 'DD'
+                }"
+              >
+                <div
+                  *ngIf="
+                    question.controls.fieldType.value === 'VI' ||
+                      question.controls.fieldType.value === 'DD';
+                    else nonMCQFields
+                  "
+                  class="chip-list"
+                >
+                  <mat-chip-list
+                    *ngIf="question.controls.value.value?.name"
+                    class="response-type-chips"
                   >
-                    clear
-                  </mat-icon>
-                  <span style="position: relative; top: -7px; left: 5px">
-                    Responses
-                  </span>
-                </h1>
-
-                <div class="dis-flex content">
-                  <div class="width-50">
-                    <h2 style="color: #e8743b">QUESTIONS</h2>
-                    <li
-                      *ngFor="let fieldType of filteredFieldTypes"
-                      (click)="
-                        selectFieldType(fieldType, question);
-                        togglePopOverOpenState(1, i)
-                      "
-                      class="response-field-types"
+                    <mat-chip
+                      [ngStyle]="{
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d3d3d3',
+                        minHeight: '24px',
+                        fontSize: '90%'
+                      }"
                     >
-                      <img
-                        [src]="getFieldTypeImage(fieldType.type)"
-                        class="response-type-icons"
-                      />&nbsp;
-                      <span style="position: relative; top: -2px">
-                        {{ fieldType.description }}
-                      </span>
-                    </li>
-                  </div>
-                  <div class="width-50">
-                    <div style="height: 50%">
-                      <h2 style="color: #e8743b">MULTIPLE CHOICE RESPONSES</h2>
-                      <ng-container
-                        *ngIf="quickResponses$ | async as quickResponses"
+                      {{ question.controls.value.value?.name }}
+                    </mat-chip>
+                  </mat-chip-list>
+                  <mat-chip-list
+                    *ngIf="!question.controls.value.value?.name"
+                    class="response-type-chips"
+                  >
+                    <mat-chip
+                      [ngStyle]="{
+                        color: question.controls.value.value?.values[0]?.color,
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d3d3d3',
+                        minHeight: '24px',
+                        fontSize: '90%'
+                      }"
+                    >
+                      {{ question.controls.value.value?.values[0].title }}
+                    </mat-chip>
+                    <mat-chip
+                      *ngIf="question.controls.value.value?.values.length >= 2"
+                      [ngStyle]="{
+                        color: question.controls.value.value?.values[1]?.color,
+                        backgroundColor: '#ffffff',
+                        border: '1px solid #d3d3d3',
+                        minHeight: '24px',
+                        fontSize: '90%'
+                      }"
+                    >
+                      {{ question.controls.value.value?.values[1].title }}
+                    </mat-chip>
+                    <span
+                      *ngIf="question.controls.value.value?.values.length > 2"
+                      style="margin-top: 15px; margin-left: 5px"
+                      >+ ({{ question.controls.value.value?.values.length - 2 }}
+                      more)
+                    </span>
+                  </mat-chip-list>
+                </div>
+                <ng-template #nonMCQFields>
+                  <img
+                    [src]="getFieldTypeImage(question.controls.fieldType.value)"
+                    class="response-type-icons"
+                    style="position: relative; top: -2px"
+                  />&nbsp;
+                  <span
+                    style="
+                      white-space: nowrap;
+                      display: inline-block;
+                      text-overflow: ellipsis;
+                      width: 60%;
+                      overflow: hidden;
+                    "
+                    >{{
+                      getFieldTypeDescription(question.controls.fieldType.value)
+                    }}
+                  </span>
+                </ng-template>
+                <mat-icon
+                  style="float: right; position: relative; top: -4px"
+                  [ngClass]="{
+                    'p-t-13 right':
+                      question.controls.fieldType.value === 'VI' ||
+                      question.controls.fieldType.value === 'DD'
+                  }"
+                >
+                  keyboard_arrow_down
+                </mat-icon>
+              </button>
+              <img
+                src="assets/rdf-forms-icons/delete-icon.svg"
+                alt="delete-icon"
+                (click)="deleteQuestion(i)"
+                class="delete-icon"
+              />
+
+              <ng-template
+                cdkConnectedOverlay
+                cdkConnectedOverlayPanelClass="custom-popover"
+                cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+                [cdkConnectedOverlayHasBackdrop]="true"
+                [cdkConnectedOverlayOpen]="popOverOpenState[1][i + 1]"
+                [cdkConnectedOverlayOrigin]="trigger"
+                cdkConnectedOverlayWidth="400px"
+                (backdropClick)="togglePopOverOpenState(1, i)"
+              >
+                <div class="response-type-modal">
+                  <h1>
+                    <mat-icon
+                      (click)="togglePopOverOpenState(1, i)"
+                      style="cursor: pointer"
+                    >
+                      clear
+                    </mat-icon>
+                    <span style="position: relative; top: -7px; left: 5px">
+                      Responses
+                    </span>
+                  </h1>
+
+                  <div class="dis-flex content">
+                    <div class="width-50">
+                      <h2 style="color: #e8743b">QUESTIONS</h2>
+                      <li
+                        *ngFor="let fieldType of filteredFieldTypes"
+                        (click)="
+                          selectFieldType(fieldType, question);
+                          togglePopOverOpenState(1, i)
+                        "
+                        class="response-field-types"
+                        [ngClass]="{
+                          active:
+                            fieldType.type === question.controls.fieldType.value
+                        }"
                       >
-                        <div *ngFor="let resp of quickResponses">
-                          <button
-                            mat-flat-button
-                            (click)="
-                              handleResponses('quickResponse', resp.id);
-                              isMCQResponseOpen = true;
-                              togglePopOverOpenState(1, i)
-                            "
-                          >
-                            <mat-chip-list *ngFor="let val of resp.values">
-                              <mat-chip> {{ val.title }} </mat-chip>
-                            </mat-chip-list>
-                          </button>
-                        </div>
-                        <button
-                          style="color: #3d5afe; border: none; background: none"
-                          (click)="
-                            handleResponses('quickResponse', '-1');
-                            isMCQResponseOpen = true;
-                            togglePopOverOpenState(1, i)
-                          "
-                        >
-                          Add New
-                        </button>
-                      </ng-container>
+                        <img
+                          [src]="getFieldTypeImage(fieldType.type)"
+                          class="response-type-icons"
+                        />&nbsp;
+                        <span style="position: relative; top: -2px">
+                          {{ fieldType.description }}
+                        </span>
+                      </li>
                     </div>
-                    <div style="height: 50%">
-                      <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
-                      <ng-container
-                        *ngIf="globalResponses$ | async as globalResponses"
-                      >
-                        <div *ngFor="let resp of globalResponses">
+                    <div class="width-50">
+                      <div>
+                        <h2 style="color: #e8743b">
+                          MULTIPLE CHOICE RESPONSES
+                        </h2>
+                        <ng-container
+                          *ngIf="
+                            quickResponsesData$ | async as quickResponsesData
+                          "
+                        >
+                          <div>
+                            <div
+                              *ngFor="let resp of quickResponsesData.data"
+                              style="height: 36px"
+                            >
+                              <button
+                                style="padding: 0 0 0 5px; height: 36px"
+                                mat-flat-button
+                                class="quick-response"
+                                [ngClass]="{
+                                  active:
+                                    currentQuestion?.controls.value.value.id ===
+                                    resp.id
+                                }"
+                                (click)="
+                                  handleMCQFieldType(question, resp);
+                                  togglePopOverOpenState(1, i)
+                                "
+                              >
+                                <mat-chip-list
+                                  *ngFor="let val of resp.values; let i = index"
+                                >
+                                  <mat-chip
+                                    *ngIf="i < 2"
+                                    style="margin-left: 10px"
+                                    [ngStyle]="{
+                                      color: val?.color,
+                                      backgroundColor: '#ffffff',
+                                      border: '1px solid #d3d3d3',
+                                      minHeight: '24px',
+                                      fontSize: '90%'
+                                    }"
+                                    (click)="
+                                      handleMCQFieldType(question, resp);
+                                      togglePopOverOpenState(1, i)
+                                    "
+                                  >
+                                    {{ val.title }}
+                                  </mat-chip>
+                                </mat-chip-list>
+                                <span
+                                  *ngIf="resp.values.length > 2"
+                                  style="
+                                    margin-top: -10px;
+                                    margin-left: 5px;
+                                    font-weight: 400;
+                                  "
+                                >
+                                  + ({{ resp.values.length - 2 }}
+                                  more)
+                                </span>
+                              </button>
+                              <button
+                                mat-flat-button
+                                style="
+                                  float: right;
+                                  min-width: 10px;
+                                  padding: 0;
+                                "
+                                (click)="
+                                  handleResponses('quickResponse', resp.id);
+                                  isMCQResponseOpen = true;
+                                  togglePopOverOpenState(1, i)
+                                "
+                              >
+                                <img
+                                  src="assets/rdf-forms-icons/edit-icon.svg"
+                                  alt="edit-icon"
+                                />
+                              </button>
+                            </div>
+                          </div>
                           <button
-                            mat-flat-button
+                            style="
+                              color: #3d5afe;
+                              border: none;
+                              background: none;
+                              padding: 10px;
+                            "
                             (click)="
-                              handleResponses('globalResponse', resp.id);
+                              handleResponses('quickResponse', '-1');
                               isMCQResponseOpen = true;
                               togglePopOverOpenState(1, i)
                             "
                           >
-                            {{ resp.name }}
+                            Add New
                           </button>
-                        </div>
-                        <button
-                          style="color: #3d5afe; border: none; background: none"
-                          (click)="
-                            handleResponses('globalResponse', '-1');
-                            isMCQResponseOpen = true;
-                            togglePopOverOpenState(1, i)
+                        </ng-container>
+                      </div>
+                      <div style="height: 50%">
+                        <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
+                        <ng-container
+                          *ngIf="
+                            globalResponsesData$ | async as globalResponsesData
                           "
                         >
-                          Add Manually
-                        </button>
-                      </ng-container>
+                          <div *ngFor="let resp of globalResponsesData.data">
+                            <button
+                              mat-flat-button
+                              (click)="
+                                handleMCQFieldType(question, resp);
+                                togglePopOverOpenState(1, i)
+                              "
+                              [ngClass]="{
+                                active:
+                                  currentQuestion?.controls.value.value.name ===
+                                  resp.name
+                              }"
+                            >
+                              {{ resp.name }}
+                            </button>
+                            <button
+                              mat-flat-button
+                              style="float: right"
+                              (click)="
+                                handleResponses('globalResponse', resp.id);
+                                isMCQResponseOpen = true;
+                                togglePopOverOpenState(1, i)
+                              "
+                            >
+                              <img
+                                src="assets/rdf-forms-icons/edit-icon.svg"
+                                alt="edit-icon"
+                              />
+                            </button>
+                          </div>
+                          <button
+                            style="
+                              color: #3d5afe;
+                              border: none;
+                              background: none;
+                            "
+                            (click)="
+                              handleResponses('globalResponse', '-1');
+                              isMCQResponseOpen = true;
+                              togglePopOverOpenState(1, i)
+                            "
+                          >
+                            Add Manually
+                          </button>
+                        </ng-container>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </ng-template>
+            </div>
+          </div>
+
+          <div
+            id="app-customizer"
+            *ngIf="
+              isCustomizerOpen && question.controls.fieldType.value === 'RT'
+            "
+          >
+            <mat-card class="p-0">
+              <mat-card-title class="m-0 light-gray">
+                <div class="slider-heading">Slider</div>
+              </mat-card-title>
+              <mat-card-content>
+                <div class="dis-flex">
+                  <div class="width-50">
+                    <label for="min">From</label><br />
+                    <input
+                      id="min"
+                      type="number"
+                      class="slider-inputs"
+                      [(ngModel)]="sliderOptions.min"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                  </div>
+                  <div class="width-50" style="text-align: end">
+                    <label for="max">To</label><br />
+                    <input
+                      id="max"
+                      type="number"
+                      class="slider-inputs"
+                      [(ngModel)]="sliderOptions.max"
+                      [ngModelOptions]="{ standalone: true }"
+                    />
+                  </div>
+                </div>
+                <mat-slider
+                  [max]="sliderOptions.max"
+                  [min]="sliderOptions.min"
+                  [step]="sliderOptions.increment"
+                  [(ngModel)]="sliderOptions.value"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="width-100"
+                >
+                </mat-slider>
+                <div>
+                  <label for="incre">Increment</label>
+                  <br />
+                  <input
+                    id="incre"
+                    type="number"
+                    class="slider-inputs"
+                    [(ngModel)]="sliderOptions.increment"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </div>
+                <br />
+                <br />
+                <button
+                  mat-raised-button
+                  color="primary"
+                  style="width: 48%; margin-right: 10px"
+                  (click)="applySliderOptions(sliderOptions, question)"
+                >
+                  Apply
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  style="width: 48%"
+                  (click)="isCustomizerOpen = false"
+                >
+                  Cancel
+                </button>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div *ngIf="question.controls.fieldType.value === 'IMG'">
+            <input
+              #insertImages
+              [hidden]="true"
+              type="file"
+              accept="image/jpeg,image/jpg,image/png"
+              (change)="insertImageHandler($event)"
+            />
+          </div>
+
+          <div id="app-customizer" *ngIf="isMCQResponseOpen">
+            <app-mcq-response
+              [formId]="formId"
+              [inputResponse]="activeResponses$"
+              [responseType]="activeResponseType"
+              [activeResponseId]="activeResponseId"
+              (dialogClose)="
+                isMCQResponseOpen = false; handleMCQResponse($event)
+              "
+            ></app-mcq-response>
+          </div>
+          <div
+            *ngIf="fieldContentOpenState[1][i + 1] === true"
+            class="dis-flex"
+            [ngClass]="{
+              height: question.controls.fieldType.value === 'LLF'
+            }"
+            style="justify-content: flex-end"
+          >
+            <div
+              style="
+                background: #f3f3f3;
+                border-radius: 5px;
+                padding: 15px 10px 10px 10px;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                margin: 0 10px;
+                justify-content: center;
+              "
+              *ngIf="question.controls.fieldType.value !== 'LLF'"
+            >
+              <div *ngIf="question.controls.fieldType.value !== 'IMG'">
+                <div class="add-logic-row">
+                  <input
+                    type="checkbox"
+                    id="required"
+                    class="required-input"
+                    name="required"
+                    formControlName="required"
+                  />&nbsp;
+                  <label for="required">Required</label>
+                  <span
+                    *ngIf="question.controls.fieldType.value === 'LF'"
+                    style="margin-left: 50px"
+                  >
+                    <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
+                    <input
+                      type="text"
+                      id="defaultValue"
+                      formControlName="value"
+                      style="border: 1px solid #cccccc; border-radius: 3px"
+                    />
+                  </span>
+                  <span
+                    *ngIf="question.controls.fieldType.value === 'TF'"
+                    style="margin-left: 50px"
+                  >
+                    <label>Format:</label>&nbsp;
+
+                    <select
+                      formControlName="value"
+                      style="
+                        border: none;
+                        background: transparent;
+                        -webkit-appearance: none;
+                        width: 110px;
+                        color: #3d5afe;
+                      "
+                    >
+                      <option value="TF">Short Answer</option>
+                      <option value="LTV">Long Answer</option>
+                    </select>
+                  </span>
+                  <span
+                    *ngIf="question.controls.fieldType.value === 'DD'"
+                    style="margin-left: 20px"
+                  >
+                    <input
+                      type="checkbox"
+                      id="multi"
+                      class="required-input"
+                      name="multi"
+                      formControlName="multi"
+                      (click)="
+                        question
+                          .get('multi')
+                          .setValue(!question.controls.multi.value)
+                      "
+                    />&nbsp;
+                    <label for="multi"> Multi Selection </label>
+                  </span>
+                </div>
               </div>
-            </ng-template>
+              <div *ngIf="question.controls.fieldType.value === 'IMG'">
+                <div
+                  class="width-50 bg-white dis-flex"
+                  *ngIf="question.controls.value.value"
+                >
+                  <img
+                    class="insert-image"
+                    [src]="getImageSrc(question.controls.value.value.base64)"
+                    alt="image"
+                  />
+                  <div>
+                    <span style="font-size: 90%">
+                      {{ question.controls.value.value.name }}
+                    </span>
+                    <br />
+                    <span style="font-size: 80%">
+                      {{
+                        (question.controls.value.value.size / 1024).toFixed(2)
+                      }}
+                      KB
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
