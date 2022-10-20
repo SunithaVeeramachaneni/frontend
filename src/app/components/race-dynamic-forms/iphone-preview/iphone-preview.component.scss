@@ -1,14 +1,41 @@
 .iphone-view {
   background: url('/assets/rdf-forms-icons/iPhone11-DeviceFrame.png') top left
     no-repeat;
-  background-size: 275px 470px;
-  width: 285px;
-  min-height: 470px;
-  height: auto !important;
+  background-size: 260px 75vh;
+  width: 270px;
+  min-height: 100%;
   overflow: hidden;
   position: fixed;
   right: 50px;
   margin: 0px auto 0;
+}
+
+@media only screen and (max-width: 2049px) {
+  .iphone-view {
+    background-size: 295px 75vh;
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 1563px) {
+  .iphone-view {
+    background-size: 281px 75vh;
+    width: 290px;
+  }
+}
+
+@media only screen and (max-width: 1389px) {
+  .iphone-view {
+    background-size: 260px 75vh;
+    width: 270px;
+  }
+}
+
+@media only screen and (max-width: 1042px) {
+  .iphone-view {
+    background-size: 260px 75vh;
+    width: 270px;
+  }
 }
 
 .ipad-view-default-content {
@@ -25,15 +52,44 @@
   margin-top: -42px;
   margin-left: 15px;
   margin-right: 25px;
-  height: 440px;
+  height: 70vh;
   border-radius: 25px;
+}
+
+@media only screen and (max-width: 2049px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 70vh;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1563px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -42px;
+    margin-left: 15px;
+    margin-right: 25px;
+    height: 70vh;
+    border-radius: 25px;
+  }
+}
+
+.iphone-body-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 48vh;
+  border-bottom: 1px solid #d3d3d3;
 }
 
 .iphone-header {
   background: #3a6175;
   border-top-right-radius: 23px;
   border-top-left-radius: 23px;
-  height: 100px;
+  height: 16vh;
 }
 
 .p-5 {
@@ -100,6 +156,8 @@
   color: #ffffff;
   float: left;
   margin-left: 5px;
+  position: relative;
+  top: -5px;
 }
 
 .file-icon {

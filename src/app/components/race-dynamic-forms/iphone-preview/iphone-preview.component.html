@@ -3,7 +3,7 @@
     <div class="width-100">
       <div class="main-carosuel-iphone">
         <div class="iphone-header">
-          <div class="dis-flex p-5">
+          <div class="dis-flex p-5" style="padding-bottom: 0">
             <div class="width-60 status-bar-left">9:41</div>
             <div class="width-40 iphone-status-bar-right m-r-10">
               <mat-icon class="status-bar-icons">signal_cellular_alt</mat-icon>
@@ -16,14 +16,14 @@
           <!-- <div class="in-progress-text">in Progress</div> -->
           <mat-icon class="back-button"> keyboard_arrow_left </mat-icon>
           <div class="dis-flex">
-            <div class="width-10" style="margin-top: 18px">
+            <div class="width-10" style="margin-top: 12px">
               <img
                 src="../../../../assets/rdf-forms-icons/file-icon.png"
                 alt="file-icons"
                 class="file-icon"
               />
             </div>
-            <div class="width-90 form-div" style="top: 26px !important">
+            <div class="width-90 form-div" style="top: 20px !important">
               <span class="form-name">
                 {{ formData.id }}
               </span>
@@ -35,14 +35,7 @@
           </div>
         </div>
 
-        <div
-          style="
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: 300px;
-            border-bottom: 1px solid #d3d3d3;
-          "
-        >
+        <div class="iphone-body-content">
           <div *ngFor="let section of formData.sections; let i = index">
             <p class="section-name">
               {{ section.name ? section.name : 'Section Name' }}
