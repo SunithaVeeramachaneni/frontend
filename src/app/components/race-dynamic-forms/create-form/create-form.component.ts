@@ -41,7 +41,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreateUpdateResponse } from 'src/app/interfaces';
+import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
 
 @Component({
   selector: 'app-create-form',
@@ -536,11 +536,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return form.controls.sections.controls;
   }
 
-  addSection(index: number) {
+  addSection(index: number, section: any = null) {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
-      this.initSection(control.length + 1, 1, this.getCounter())
+      section
+        ? section
+        : this.initSection(control.length + 1, 1, this.getCounter())
     );
   }
 
@@ -552,6 +554,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.initQuestion(i + 1, control.length + 1, this.getCounter())
     );
   }
+
+  duplicateQuestion = (i, j, question) => {
+    const control = (this.createForm.get('sections') as FormArray).controls[
+      i
+    ].get('questions') as FormArray;
+
+    control.insert(j + 1, question);
+  };
 
   deleteQuestion(i, j, question) {
     const control = (this.createForm.get('sections') as FormArray).controls[
