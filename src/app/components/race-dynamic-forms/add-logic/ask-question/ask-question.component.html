@@ -146,12 +146,19 @@
                   keyboard_arrow_down
                 </mat-icon>
               </button>
-              <img
-                src="assets/rdf-forms-icons/delete-icon.svg"
-                alt="delete-icon"
-                (click)="deleteQuestion(i)"
-                class="delete-icon"
-              />
+              <div
+                *ngIf="
+                  getQuestions(questionForm).length !== 1 &&
+                  fieldContentOpenState[1][i + 1] === true
+                "
+              >
+                <img
+                  src="assets/rdf-forms-icons/delete-icon.svg"
+                  alt="delete-icon"
+                  (click)="deleteQuestion(i)"
+                  class="delete-icon"
+                />
+              </div>
 
               <ng-template
                 cdkConnectedOverlay
