@@ -108,7 +108,7 @@
                 #sectionName
                 type="text"
                 formControlName="name"
-                [size]="sectionName.value.length - 3"
+                [size]="getSize(sectionName.value)"
                 class="form_section_name_input"
                 placeholder="Untitled Section"
                 autofocus="true"

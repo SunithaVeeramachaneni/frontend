@@ -988,4 +988,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
     this.createForm.patchValue({ sections });
   }
+
+  getSize(value) {
+    if (value && value === value.toUpperCase()) {
+      return value.length;
+    }
+    return value ? value.length - 3 : -1;
+  }
 }
