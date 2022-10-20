@@ -552,9 +552,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
-      section
-        ? section
-        : this.initSection(control.length + 1, 1, this.getCounter())
+      this.initSection(control.length + 1, 1, this.getCounter(), section)
     );
   }
 
@@ -753,7 +751,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       logics: this.fb.array([])
     });
 
-  initSection = (sc: number, qc: number, uqc: number) => {
+  initSection = (sc: number, qc: number, uqc: number, section = null) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
     if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
@@ -763,10 +761,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
     return this.fb.group({
       uid: [`uid${sc}`],
-      name: [{ value: `Section ${sc}`, disabled: true }],
+      name: [
+        {
+          value: section
+            ? `${section.get('name').value} Copy`
+            : `Section ${sc}`,
+          disabled: true
+        }
+      ],
       position: [''],
-      questions: this.fb.array([this.initQuestion(sc, qc, uqc)])
+      questions: section
+        ? this.addQuestionsForCopySections(section.value.questions)
+        : this.fb.array([this.initQuestion(sc, qc, uqc)])
     });
+  };
+
+  addQuestionsForCopySections = (questions) => {
+    const questionsForm = this.fb.array([]);
+    questions.forEach((q) => {
+      questionsForm.push(this.fb.group(q));
+    });
+    return questionsForm;
   };
 
   toggleOpenState = (idx: number) => {
