@@ -58,6 +58,18 @@
   text-align: left;
   padding-left: 12px;
   padding-top: 10px;
+
+  .response-type-chips {
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+
+    ::ng-deep .mat-chip-list-wrapper {
+      flex-wrap: nowrap;
+    }
+  }
 }
 .response-type-icons {
   width: 15px;
@@ -88,7 +100,8 @@
     cursor: pointer;
   }
 
-  .response-field-types:hover {
+  .response-field-types:hover,
+  .active {
     background-color: #ebedfe;
   }
 }
@@ -96,6 +109,81 @@
 .delete-icon {
   background: white;
   margin-left: 25px;
-  margin-top: 5px;
+  margin-top: 14px;
   cursor: pointer;
+  height: 28px;
+  width: 20px;
+}
+
+.quick-response {
+  ::ng-deep .mat-button-wrapper {
+    display: flex;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 10px;
+  }
+
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 12px 5px 5px 5px !important;
+  }
+}
+
+.chip-list {
+  width: 90%;
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 22px 0px 5px 4px !important;
+  }
+}
+
+#app-customizer {
+  position: fixed;
+  bottom: 0px;
+  top: 0;
+  right: 0;
+  width: 370px;
+  z-index: 999;
+
+  .title {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0 0 1rem;
+  }
+  .mat-card {
+    margin: 0;
+    border-radius: 0;
+    height: 100%;
+    padding: 0;
+  }
+  .mat-card-content {
+    padding: 15px;
+    max-height: calc(100vh - 80px);
+  }
+  .slider-heading {
+    font-size: 110%;
+    border-bottom: 1px solid #d3d3d3;
+    padding: 15px;
+  }
+  .slider-inputs {
+    width: 100px;
+    height: 35px;
+    border: 1px solid #bac1c4;
+    border-radius: 4px;
+  }
+}
+
+.required-input {
+  position: relative;
+  top: 1px;
+}
+
+.insert-image {
+  height: 40px;
+  width: 60px;
+}
+
+.right {
+  right: 11px;
 }

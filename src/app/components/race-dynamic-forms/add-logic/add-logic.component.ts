@@ -34,6 +34,7 @@ export class AddLogicComponent implements OnInit {
   @Output() onLogicDelete: EventEmitter<any> = new EventEmitter();
   // eslint-disable-next-line @angular-eslint/no-output-on-prefix
   @Output() onAskEvidence: EventEmitter<any> = new EventEmitter();
+  @Input() formId: string;
 
   fieldOperators: any;
 
@@ -107,7 +108,8 @@ export class AddLogicComponent implements OnInit {
             (fieldType) =>
               fieldType.type !== 'LTV' &&
               fieldType.type !== 'DD' &&
-              fieldType.type !== 'DDM'
+              fieldType.type !== 'DDM' &&
+              fieldType.type !== 'VI'
           );
         })
       )

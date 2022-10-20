@@ -466,11 +466,7 @@
                                               .value.id === resp.id
                                         }"
                                         (click)="
-                                          handleMCQFieldType(
-                                            question,
-                                            resp,
-                                            'quickResponse'
-                                          );
+                                          handleMCQFieldType(question, resp);
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
@@ -493,8 +489,7 @@
                                             (click)="
                                               handleMCQFieldType(
                                                 question,
-                                                resp,
-                                                'quickResponse'
+                                                resp
                                               );
                                               togglePopOverOpenState(i, j)
                                             "
@@ -570,11 +565,7 @@
                                     <button
                                       mat-flat-button
                                       (click)="
-                                        handleMCQFieldType(
-                                          question,
-                                          resp,
-                                          'globalResponse'
-                                        );
+                                        handleMCQFieldType(question, resp);
                                         togglePopOverOpenState(i, j)
                                       "
                                       [ngClass]="{
@@ -830,6 +821,7 @@
                         </div>
                         <div class="logicBuilder">
                           <app-add-logic
+                            [formId]="formId"
                             [question]="question"
                             (onValueChanged)="
                               onValueChanged(section, question, $event)
