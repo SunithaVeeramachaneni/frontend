@@ -64,6 +64,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     type: 'create',
     response: {}
   });
+  createForm$: BehaviorSubject<any> = new BehaviorSubject({});
   createEditQuickResponse = true;
   createEditGlobalResponse = true;
   public activeResponses$: Observable<any>;
@@ -230,6 +231,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         switchMap(() => this.saveForm())
       )
       .subscribe();
+
+    this.createForm.valueChanges.subscribe(() =>
+      this.createForm$.next(this.createForm.getRawValue())
+    );
 
     const headerTitle = this.createForm.get('name').value
       ? this.createForm.get('name').value

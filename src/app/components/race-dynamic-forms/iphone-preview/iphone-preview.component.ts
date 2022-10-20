@@ -4,7 +4,8 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 
@@ -17,12 +18,18 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 export class IphonePreviewComponent implements OnInit, OnDestroy {
   private _formData;
   @Input() set formData(data) {
-    this._formData = data;
+    data.subscribe((val) => {
+      this._formData = val;
+      this.cdrf.markForCheck();
+    });
   }
   get formData() {
     return this._formData;
   }
-  constructor(private imageUtils: ImageUtils) {}
+  constructor(
+    private imageUtils: ImageUtils,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {}
 
