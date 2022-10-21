@@ -114,6 +114,7 @@
                 autofocus="true"
                 autocomplete="off"
                 (keyup.enter)="section.get('name').disable()"
+                (keydown.control.c)="addSection(i, section)"
               />
               <button
                 mat-icon-button
@@ -895,7 +896,7 @@
     </div>
     <div class="width-30" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview
-        [formData]="createForm.value"
+        [formData]="createForm$"
       ></app-rdf-forms-iphone-preview>
     </div>
   </div>
