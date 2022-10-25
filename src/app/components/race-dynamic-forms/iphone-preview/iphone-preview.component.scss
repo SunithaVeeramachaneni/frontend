@@ -12,7 +12,14 @@
 
 @media only screen and (max-width: 2049px) {
   .iphone-view {
-    background-size: 295px 75vh;
+    background-size: 295px 63vh;
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .iphone-view {
+    background-size: 295px 68vh;
     width: 300px;
   }
 }
@@ -62,7 +69,18 @@
     margin-top: -39px;
     margin-left: 17px;
     margin-right: 22px;
-    height: 70vh;
+    height: 58vh;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 62vh;
     border-radius: 25px;
   }
 }
@@ -81,19 +99,19 @@
 .iphone-body-content {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 265px;
+  height: 360px;
   border-bottom: 1px solid #d3d3d3;
 }
 
 @media only screen and (max-width: 5120px) {
   .iphone-body-content {
-    height: 15vh;
+    height: 19vh;
   }
 }
 
 @media only screen and (max-width: 3840px) {
   .iphone-body-content {
-    height: 21vh;
+    height: 29vh;
   }
 }
 
@@ -105,25 +123,25 @@
 
 @media only screen and (max-width: 2049px) {
   .iphone-body-content {
-    height: 50vh;
+    height: 43vh;
   }
 }
 
 @media only screen and (max-width: 1920px) {
   .iphone-body-content {
-    height: 52vh;
+    height: 45vh;
   }
 }
 
 @media only screen and (max-width: 1563px) {
   .iphone-body-content {
-    height: 48vh;
+    height: 49vh;
   }
 }
 
 @media only screen and (max-width: 1389px) {
   .iphone-body-content {
-    height: 46.5vh;
+    height: 46vh;
   }
 }
 

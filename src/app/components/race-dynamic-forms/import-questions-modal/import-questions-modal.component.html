@@ -1,0 +1,68 @@
+<div class="import-questions-modal">
+  <div
+    class="dis-flex"
+    style="justify-content: space-between; padding: 10px 10px 0 15px"
+  >
+    <h2 class="heading">Select Form</h2>
+    <mat-icon class="clear-icon">clear</mat-icon>
+  </div>
+  <div style="margin: 0 15px" [formGroup]="searchForm">
+    <mat-form-field class="width-100" appearance="outline">
+      <input
+        matInput
+        placeholder="Search"
+        style="width: 100%"
+        autocomplete="off"
+        formControlName="search"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div
+    *ngIf="formsData$ | async as forms"
+    (scroll)="onFormsListScrolled($event)"
+    style="height: 315px; overflow-y: auto"
+  >
+    <div
+      *ngFor="let form of forms.data; let i = index"
+      class="dis-flex"
+      style="border-bottom: 1px solid #d3d3d3"
+    >
+      <li
+        class="selected-list-element"
+        (click)="selectListItem(form, i)"
+        [ngClass]="{ active: selectedItem === i }"
+      >
+        <div class="width-70">
+          <p class="form-name">{{ form.name }}</p>
+          <p class="form-des">{{ form.description }}</p>
+        </div>
+        <div class="width-30">
+          <p class="no-of-ques">6 questions</p>
+        </div>
+      </li>
+    </div>
+  </div>
+
+  <div
+    mat-dialog-actions
+    style="
+      float: right;
+      margin-right: 15px;
+      margin-top: -5px;
+      position: absolute;
+      bottom: 80px;
+      left: 57%;
+    "
+  >
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="disableSelectBtn"
+      (click)="selectFormElement()"
+    >
+      Select
+    </button>
+    <button mat-stroked-button mat-dialog-close="true">Close</button>
+  </div>
+</div>
