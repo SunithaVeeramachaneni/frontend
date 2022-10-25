@@ -35,6 +35,11 @@
       <p *ngIf="status$ | async as status" style="margin-top: 22px">
         {{ status }}
       </p>
+
+      <button mat-stroked-button (click)="importQuestions()" class="import-btn">
+        Import Questions
+      </button>
+
       <button
         (click)="publishForm()"
         mat-raised-button
@@ -899,5 +904,50 @@
         [formData]="createForm$"
       ></app-rdf-forms-iphone-preview>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div id="import-form-customizer" *ngIf="openAppSider">
+    <mat-card class="p-0">
+      <mat-card-title class="m-0 light-gray">
+        <div class="slider-heading">Import Questions</div>
+      </mat-card-title>
+      <mat-card-content>
+        <div style="font-weight: 500">{{ selectedFormData.name }}</div>
+        <div *ngFor="let section of selectedFormData.sections; let i = index">
+          <p class="section-div">
+            <mat-checkbox
+              [checked]="section.checked"
+              [indeterminate]="fewComplete(section, i)"
+              (change)="setAllChecked($event.checked, section)"
+            >
+            </mat-checkbox>
+            {{ section.name }}
+          </p>
+          <div *ngFor="let question of section.questions" class="questions">
+            <mat-checkbox
+              [checked]="question.checked"
+              (change)="updateAllChecked($event.checked, question)"
+            >
+              {{ question.name }}
+            </mat-checkbox>
+          </div>
+        </div>
+      </mat-card-content>
+      <div style="padding: 0 15px 10px 15px">
+        <button
+          mat-raised-button
+          color="primary"
+          style="width: 48%; margin-right: 10px"
+          (click)="useForm()"
+        >
+          Use
+        </button>
+        <button mat-stroked-button style="width: 48%" (click)="cancelSlider()">
+          Cancel
+        </button>
+      </div>
+    </mat-card>
   </div>
 </div>

@@ -42,6 +42,8 @@ import {
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
+import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-form',
@@ -67,6 +69,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   createForm$: BehaviorSubject<any> = new BehaviorSubject({});
   createEditQuickResponse = true;
   createEditGlobalResponse = true;
+  public openAppSider$: Observable<any>;
   public activeResponses$: Observable<any>;
   public quickCommonResponse$: Observable<any>;
   public activeResponseId: string;
@@ -100,6 +103,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   sectionActiveState = {};
   isLLFFieldChanged = false;
   sections: any;
+  selectedFormData: any;
+  allChecked = [];
+  subChecked = [];
 
   addLogicIgnoredFields = [
     'LTV',
@@ -124,7 +130,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private cdrf: ChangeDetectorRef,
     private imageUtils: ImageUtils,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -541,11 +548,17 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return form.controls.sections.controls;
   }
 
-  addSection(index: number, section: any = null) {
+  addSection(index: number, section: any = null, sectionName = null) {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
-      this.initSection(control.length + 1, 1, this.getCounter(), section)
+      this.initSection(
+        control.length + 1,
+        1,
+        this.getCounter(),
+        section,
+        sectionName
+      )
     );
   }
 
@@ -744,7 +757,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       logics: this.fb.array([])
     });
 
-  initSection = (sc: number, qc: number, uqc: number, section = null) => {
+  initSection = (
+    sc: number,
+    qc: number,
+    uqc: number,
+    section = null,
+    sectionName = null
+  ) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
     if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
@@ -756,9 +775,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       uid: [`uid${sc}`],
       name: [
         {
-          value: section
-            ? `${section.get('name').value} Copy`
-            : `Section ${sc}`,
+          value:
+            section && sectionName === null
+              ? `${section.get('name').value} Copy`
+              : sectionName
+              ? sectionName
+              : `Section ${sc}`,
           disabled: true
         }
       ],
@@ -1014,5 +1036,104 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       return value.length;
     }
     return value ? value.length - 3 : -1;
+  }
+
+  importQuestions(): void {
+    const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
+      data: { selectedFormData: '', openImportQuestionsSlider: false }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.selectedFormData = result.selectedFormData;
+      console.log(this.selectedFormData);
+      this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.cdrf.markForCheck();
+    });
+  }
+
+  cancelSlider() {
+    this.openAppSider$ = of(false);
+  }
+
+  updateAllChecked(checked, question) {
+    question.checked = checked;
+  }
+
+  setAllChecked(checked, section) {
+    section.checked = checked;
+    if (section.questions == null) {
+      return;
+    }
+    section.questions.forEach((t) => (t.checked = checked));
+  }
+
+  fewComplete(section, index): boolean {
+    if (section.questions === null) {
+      return false;
+    }
+    return (
+      section.questions.filter((t) => t.checked).length > 0 &&
+      !this.allChecked[index]
+    );
+  }
+
+  useForm() {
+    const newArray = [];
+    this.selectedFormData.sections.forEach((section) => {
+      if (section.checked === true) {
+        newArray.push(section);
+      }
+      if (section.checked === false) {
+        const newQuestion = [];
+        section.questions.forEach((question) => {
+          if (question.checked === true) {
+            newQuestion.push(question);
+          }
+        });
+        if (newQuestion.length) {
+          const filteredSection = {
+            name: section.name,
+            questions: newQuestion
+          };
+          newArray.push(filteredSection);
+        }
+      }
+    });
+    console.log(newArray);
+    newArray.forEach((section) => {
+      const { name, questions } = section;
+      const control = this.createForm.get('sections') as FormArray;
+      console.log(control.length);
+      // control.push(
+      //   this.initSection(control.length + 1, 1, this.getCounter(), null, name)
+      // );
+      //this.cdrf.markForCheck();
+      this.addSection(control.length, null, name);
+      const sc = control.length;
+      const questionsFBArray = questions.map((question, index) => {
+        const qc = index + 1;
+        if (!this.fieldContentOpenState[sc][qc])
+          this.fieldContentOpenState[sc][qc] = false;
+        if (!this.popOverOpenState[sc][qc])
+          this.popOverOpenState[sc][qc] = false;
+        if (!this.richTextEditorToolbarState[sc][qc])
+          this.richTextEditorToolbarState[sc][qc] = false;
+
+        const { logics, ...rest } = question;
+        return this.fb.group({
+          ...rest,
+          logics: this.fb.array([])
+        });
+        //this.addQuestion(control.length + 1);
+      });
+      const questionControl = (
+        this.createForm.get('sections') as FormArray
+      ).controls[sc - 1].get('questions') as FormArray;
+
+      console.log(questionControl);
+      //questionControl.removeAt(0);
+      //questionControl.push(this.fb.array(questionsFBArray));
+    });
+    this.openAppSider$ = of(false);
   }
 }
