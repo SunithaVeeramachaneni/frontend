@@ -1120,10 +1120,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         questionControl.push(
           this.fb.group({
             ...rest,
+            id: `Q${this.getCounter()}`,
+            isPublished: false,
+            isPublishedTillSave: false,
             logics: this.fb.array([])
           })
         );
       });
+      this.createForm.patchValue({ isPublishedTillSave: false });
     });
     this.openAppSider$ = of(false);
   }
