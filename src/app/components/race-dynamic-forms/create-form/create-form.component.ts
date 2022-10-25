@@ -1045,6 +1045,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
+      this.selectedFormData.sections.forEach((section) => {
+        section.questions.forEach((question, index) => {
+          console.log(question);
+          if (question.id.includes('EVIDENCE')) {
+            section.questions.splice(index, 1);
+          }
+        });
+      });
+      console.log(this.selectedFormData);
+
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
     });

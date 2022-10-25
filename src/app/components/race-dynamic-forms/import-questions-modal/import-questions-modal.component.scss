@@ -2,6 +2,10 @@
   height: 500px;
   width: 500px;
   overflow: hidden;
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 10px 0;
+  }
 }
 
 .heading {
@@ -12,6 +16,7 @@
 .clear-icon {
   font-size: 130%;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .selected-list-element {
