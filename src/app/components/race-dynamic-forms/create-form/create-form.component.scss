@@ -11,6 +11,77 @@
   }
 }
 
+.left-panel {
+  width: 70%;
+}
+
+.right-panel {
+  width: 30%;
+}
+
+@media only screen and (max-width: 5700px) {
+  .left-panel {
+    width: 90%;
+  }
+  .right-panel {
+    width: 10%;
+  }
+}
+
+@media only screen and (max-width: 4098px) {
+  .left-panel {
+    width: 90%;
+  }
+  .right-panel {
+    width: 10%;
+  }
+}
+
+@media only screen and (max-width: 2800px) {
+  .left-panel {
+    width: 85%;
+  }
+  .right-panel {
+    width: 15%;
+  }
+}
+
+@media only screen and (max-width: 2049px) {
+  .left-panel {
+    width: 80%;
+  }
+  .right-panel {
+    width: 20%;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .left-panel {
+    width: 75%;
+  }
+  .right-panel {
+    width: 25%;
+  }
+}
+
+@media only screen and (max-width: 1260px) {
+  .left-panel {
+    width: 70%;
+  }
+  .right-panel {
+    width: 30%;
+  }
+}
+
+@media only screen and (max-width: 1100px) {
+  .left-panel {
+    width: 65%;
+  }
+  .right-panel {
+    width: 35%;
+  }
+}
+
 input[type='text']:focus {
   outline: none;
   caret-color: #007aff;

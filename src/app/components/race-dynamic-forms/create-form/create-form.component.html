@@ -64,7 +64,7 @@
   <div class="dis-flex" style="height: 80vh; overflow-y: auto">
     <div
       formArrayName="sections"
-      class="width-70"
+      class="left-panel"
       cdkDrop
       cdkDropList
       (cdkDropListDropped)="drop($event)"
@@ -899,7 +899,7 @@
         </div>
       </div>
     </div>
-    <div class="width-30" style="padding: 10px 20px">
+    <div class="right-panel" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview
         [formData]="createForm$"
       ></app-rdf-forms-iphone-preview>
