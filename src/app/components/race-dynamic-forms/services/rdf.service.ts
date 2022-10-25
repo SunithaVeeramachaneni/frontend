@@ -399,6 +399,7 @@ export class RdfService {
         } else {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
         }
+        validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
       }
 
       // Ask Questions;
