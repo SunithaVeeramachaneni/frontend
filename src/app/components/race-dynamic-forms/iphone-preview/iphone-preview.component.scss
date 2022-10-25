@@ -1,7 +1,7 @@
 .iphone-view {
   background: url('/assets/rdf-forms-icons/iPhone11-DeviceFrame.png') top left
     no-repeat;
-  background-size: 260px 75vh;
+  background-size: 260px 550px;
   width: 270px;
   min-height: 100%;
   overflow: hidden;
@@ -52,7 +52,7 @@
   margin-top: -42px;
   margin-left: 15px;
   margin-right: 25px;
-  height: 70vh;
+  height: 450px;
   border-radius: 25px;
 }
 
@@ -81,15 +81,63 @@
 .iphone-body-content {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 48vh;
+  height: 265px;
   border-bottom: 1px solid #d3d3d3;
+}
+
+@media only screen and (max-width: 5120px) {
+  .iphone-body-content {
+    height: 15vh;
+  }
+}
+
+@media only screen and (max-width: 3840px) {
+  .iphone-body-content {
+    height: 21vh;
+  }
+}
+
+@media only screen and (max-width: 2560px) {
+  .iphone-body-content {
+    height: 31vh;
+  }
+}
+
+@media only screen and (max-width: 2049px) {
+  .iphone-body-content {
+    height: 50vh;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .iphone-body-content {
+    height: 52vh;
+  }
+}
+
+@media only screen and (max-width: 1563px) {
+  .iphone-body-content {
+    height: 48vh;
+  }
+}
+
+@media only screen and (max-width: 1389px) {
+  .iphone-body-content {
+    height: 46.5vh;
+  }
+}
+
+@media only screen and (max-width: 1042px) {
+  .iphone-body-content {
+    height: 46.5vh;
+  }
 }
 
 .iphone-header {
   background: #3a6175;
   border-top-right-radius: 23px;
   border-top-left-radius: 23px;
-  height: 16vh;
+  height: 100px;
 }
 
 .p-5 {
