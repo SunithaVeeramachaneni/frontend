@@ -1045,7 +1045,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
-      console.log(this.selectedFormData);
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
     });
@@ -1099,18 +1098,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    console.log(newArray);
     newArray.forEach((section) => {
       const { name, questions } = section;
       const control = this.createForm.get('sections') as FormArray;
-      console.log(control.length);
-      // control.push(
-      //   this.initSection(control.length + 1, 1, this.getCounter(), null, name)
-      // );
-      //this.cdrf.markForCheck();
       this.addSection(control.length, null, name);
       const sc = control.length;
-      const questionsFBArray = questions.map((question, index) => {
+      const questionControl = (
+        this.createForm.get('sections') as FormArray
+      ).controls[sc - 1].get('questions') as FormArray;
+      questionControl.removeAt(0);
+      questions.forEach((question, index) => {
         const qc = index + 1;
         if (!this.fieldContentOpenState[sc][qc])
           this.fieldContentOpenState[sc][qc] = false;
@@ -1120,19 +1117,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           this.richTextEditorToolbarState[sc][qc] = false;
 
         const { logics, ...rest } = question;
-        return this.fb.group({
-          ...rest,
-          logics: this.fb.array([])
-        });
-        //this.addQuestion(control.length + 1);
+        questionControl.push(
+          this.fb.group({
+            ...rest,
+            logics: this.fb.array([])
+          })
+        );
       });
-      const questionControl = (
-        this.createForm.get('sections') as FormArray
-      ).controls[sc - 1].get('questions') as FormArray;
-
-      console.log(questionControl);
-      //questionControl.removeAt(0);
-      //questionControl.push(this.fb.array(questionsFBArray));
     });
     this.openAppSider$ = of(false);
   }
