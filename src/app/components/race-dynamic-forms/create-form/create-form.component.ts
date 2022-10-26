@@ -1048,15 +1048,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
-      this.selectedFormData.sections.forEach((section) => {
+      this.selectedFormData?.sections.forEach((section) => {
         section.questions.forEach((question, index) => {
-          console.log(question);
           if (question.id.includes('EVIDENCE')) {
             section.questions.splice(index, 1);
           }
         });
       });
-      console.log(this.selectedFormData);
 
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
@@ -1067,8 +1065,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.openAppSider$ = of(false);
   }
 
-  updateAllChecked(checked, question) {
+  updateAllChecked(checked, question, section) {
     question.checked = checked;
+    const countOfChecked = section.questions.filter(
+      (per) => per.checked
+    ).length;
+    if (countOfChecked === 0 || countOfChecked !== section.questions.length)
+      section.checked = false;
+    if (countOfChecked === section.questions.length) section.checked = true;
   }
 
   setAllChecked(checked, section) {
@@ -1079,14 +1083,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     section.questions.forEach((t) => (t.checked = checked));
   }
 
-  fewComplete(section, index): boolean {
+  fewComplete(section) {
     if (section.questions === null) {
       return false;
     }
-    return (
-      section.questions.filter((t) => t.checked).length > 0 &&
-      !this.allChecked[index]
-    );
+    const checkedCount = section.questions.filter((p) => p.checked).length;
+
+    return checkedCount > 0 && checkedCount !== section.questions.length;
   }
 
   useForm() {
