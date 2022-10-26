@@ -1,7 +1,7 @@
 .iphone-view {
   background: url('/assets/rdf-forms-icons/iPhone11-DeviceFrame.png') top left
     no-repeat;
-  background-size: 260px 75vh;
+  background-size: 260px 550px;
   width: 270px;
   min-height: 100%;
   overflow: hidden;
@@ -12,7 +12,14 @@
 
 @media only screen and (max-width: 2049px) {
   .iphone-view {
-    background-size: 295px 75vh;
+    background-size: 295px 63vh;
+    width: 300px;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .iphone-view {
+    background-size: 295px 68vh;
     width: 300px;
   }
 }
@@ -52,7 +59,7 @@
   margin-top: -42px;
   margin-left: 15px;
   margin-right: 25px;
-  height: 70vh;
+  height: 450px;
   border-radius: 25px;
 }
 
@@ -62,7 +69,18 @@
     margin-top: -39px;
     margin-left: 17px;
     margin-right: 22px;
-    height: 70vh;
+    height: 58vh;
+    border-radius: 25px;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .main-carosuel-iphone {
+    background-color: #ffffff;
+    margin-top: -39px;
+    margin-left: 17px;
+    margin-right: 22px;
+    height: 62vh;
     border-radius: 25px;
   }
 }
@@ -81,15 +99,63 @@
 .iphone-body-content {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 48vh;
+  height: 360px;
   border-bottom: 1px solid #d3d3d3;
+}
+
+@media only screen and (max-width: 5120px) {
+  .iphone-body-content {
+    height: 19vh;
+  }
+}
+
+@media only screen and (max-width: 3840px) {
+  .iphone-body-content {
+    height: 29vh;
+  }
+}
+
+@media only screen and (max-width: 2560px) {
+  .iphone-body-content {
+    height: 31vh;
+  }
+}
+
+@media only screen and (max-width: 2049px) {
+  .iphone-body-content {
+    height: 43vh;
+  }
+}
+
+@media only screen and (max-width: 1920px) {
+  .iphone-body-content {
+    height: 45vh;
+  }
+}
+
+@media only screen and (max-width: 1563px) {
+  .iphone-body-content {
+    height: 49vh;
+  }
+}
+
+@media only screen and (max-width: 1389px) {
+  .iphone-body-content {
+    height: 46vh;
+  }
+}
+
+@media only screen and (max-width: 1042px) {
+  .iphone-body-content {
+    height: 46.5vh;
+  }
 }
 
 .iphone-header {
   background: #3a6175;
   border-top-right-radius: 23px;
   border-top-left-radius: 23px;
-  height: 16vh;
+  height: 100px;
 }
 
 .p-5 {
@@ -173,8 +239,8 @@
 
 .form-div {
   position: relative;
-  top: 7px;
   left: -7px;
+  top: 20px;
 }
 
 .form-name {
@@ -199,10 +265,20 @@
   border-bottom: 1px solid #d3d3d3;
 }
 
+.section-arrow {
+  float: right;
+  position: relative;
+  top: -2px;
+}
+
 .question-name {
   text-align: left;
   margin-left: 10px;
   font-size: 90%;
+
+  div p {
+    margin: 0 !important;
+  }
 }
 
 .text-left {
@@ -252,11 +328,69 @@
   margin-left: 5px;
 }
 
+.vi-input {
+  height: 25px;
+  align-items: center;
+  width: 215px;
+}
+
 .vi-values {
   width: inherit;
   font-size: 80%;
   background: white;
   box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
+}
+
+.cb-input {
+  float: right;
+  margin-right: -40px;
+}
+
+.m-r-minus40 {
+  margin-right: -40px;
+}
+
+.signature-div {
+  margin: -10px 0 10px -10px;
+}
+
+.signature-icon {
+  width: 35px;
+  position: relative;
+  left: 10px;
+  top: 5px;
+}
+
+.location-icon {
+  width: 35px;
+  position: relative;
+  left: 10px;
+  top: 5px;
+  height: 20px;
+}
+
+.attachment-div {
+  margin: -5px 0 10px -10px;
+}
+
+.attachment-btn {
+  width: 215px;
+  position: relative;
+  left: 5px;
+  background-color: #0053d7;
+  color: white;
+  height: 34px;
+}
+
+.image-field {
+  width: 240px;
+  height: 80px;
+  margin-left: 10px;
+}
+
+.range-field {
+  width: 230px;
+  margin-top: -15px;
 }
 
 .btns {

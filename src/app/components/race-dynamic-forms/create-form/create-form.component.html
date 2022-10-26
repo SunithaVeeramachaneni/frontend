@@ -35,6 +35,11 @@
       <p *ngIf="status$ | async as status" style="margin-top: 22px">
         {{ status }}
       </p>
+
+      <button mat-stroked-button (click)="importQuestions()" class="import-btn">
+        Import Questions
+      </button>
+
       <button
         (click)="publishForm()"
         mat-raised-button
@@ -56,10 +61,10 @@
       </button>
     </div>
   </div>
-  <div class="dis-flex" style="height: 80vh; overflow-y: auto">
+  <div class="dis-flex" style="height: 75vh; overflow-y: auto">
     <div
       formArrayName="sections"
-      class="width-70"
+      class="left-panel"
       cdkDrop
       cdkDropList
       (cdkDropListDropped)="drop($event)"
@@ -72,7 +77,7 @@
         (mouseenter)="setSectionActiveState(i)"
         (mouseleave)="setSectionActiveState(i)"
       >
-        <div style="padding: 10px" [formGroupName]="i">
+        <div style="padding: 10px 0" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div
             style="
@@ -599,6 +604,40 @@
                                       color: #3d5afe;
                                       border: none;
                                       background: none;
+                                      margin-top: 5px;
+                                    "
+                                  >
+                                    <img
+                                      src="../../../../assets/rdf-forms-icons/excel_icon.svg"
+                                      alt="excel-icon"
+                                      style="width: 18px"
+                                    />
+                                    <input
+                                      #globalResponses
+                                      [hidden]="true"
+                                      type="file"
+                                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                      (change)="uploadGlobalResponses($event)"
+                                      (click)="resetFile($event)"
+                                    />
+                                    <span
+                                      style="
+                                        position: relative;
+                                        top: -4px;
+                                        left: 7px;
+                                      "
+                                      (click)="globalResponses.click()"
+                                    >
+                                      Add From Excel
+                                    </span>
+                                  </button>
+                                  <br />
+                                  <button
+                                    style="
+                                      color: #3d5afe;
+                                      border: none;
+                                      background: none;
+                                      margin-top: 5px;
                                     "
                                     (click)="
                                       handleResponses('globalResponse', '-1');
@@ -894,10 +933,63 @@
         </div>
       </div>
     </div>
-    <div class="width-30" style="padding: 10px 20px">
+    <div class="right-panel" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview
         [formData]="createForm$"
       ></app-rdf-forms-iphone-preview>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div id="import-form-customizer" *ngIf="openAppSider">
+    <mat-card class="p-0">
+      <mat-card-title class="m-0 light-gray">
+        <div class="slider-heading">Import Questions</div>
+      </mat-card-title>
+      <mat-card-content>
+        <div style="font-weight: 500; font-size: 110%">
+          {{ selectedFormData.name }}
+        </div>
+        <div *ngFor="let section of selectedFormData.sections; let i = index">
+          <p class="section-div">
+            <mat-checkbox
+              [checked]="section.checked"
+              [indeterminate]="fewComplete(section)"
+              (change)="setAllChecked($event.checked, section)"
+            >
+            </mat-checkbox>
+            {{ section.name }}
+          </p>
+          <div *ngFor="let question of section.questions" class="questions">
+            <mat-checkbox
+              [checked]="question.checked"
+              (change)="updateAllChecked($event.checked, question, section)"
+            >
+              <span *ngIf="question.fieldType !== 'LLF'">{{
+                question.name
+              }}</span>
+              <span
+                *ngIf="question.fieldType === 'LLF'"
+                [innerHTML]="question.name"
+              ></span>
+            </mat-checkbox>
+          </div>
+        </div>
+      </mat-card-content>
+      <div style="padding: 0 15px 10px 15px">
+        <button
+          mat-raised-button
+          color="primary"
+          style="width: 48%; margin-right: 10px"
+          (click)="useForm()"
+        >
+          Use
+        </button>
+        <button mat-stroked-button style="width: 48%" (click)="cancelSlider()">
+          Cancel
+        </button>
+      </div>
+    </mat-card>
   </div>
 </div>

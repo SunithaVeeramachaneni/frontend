@@ -42,6 +42,10 @@ import {
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
+import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/shared/toast';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-create-form',
@@ -67,6 +71,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   createForm$: BehaviorSubject<any> = new BehaviorSubject({});
   createEditQuickResponse = true;
   createEditGlobalResponse = true;
+  public openAppSider$: Observable<any>;
   public activeResponses$: Observable<any>;
   public quickCommonResponse$: Observable<any>;
   public activeResponseId: string;
@@ -100,6 +105,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   sectionActiveState = {};
   isLLFFieldChanged = false;
   sections: any;
+  selectedFormData: any;
+  allChecked = [];
+  subChecked = [];
 
   addLogicIgnoredFields = [
     'LTV',
@@ -124,7 +132,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private cdrf: ChangeDetectorRef,
     private imageUtils: ImageUtils,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public dialog: MatDialog,
+    private toaster: ToastService
   ) {}
 
   ngOnInit() {
@@ -541,11 +551,17 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return form.controls.sections.controls;
   }
 
-  addSection(index: number, section: any = null) {
+  addSection(index: number, section: any = null, sectionName = null) {
     const control = this.createForm.get('sections') as FormArray;
     control.insert(
       index + 1,
-      this.initSection(control.length + 1, 1, this.getCounter(), section)
+      this.initSection(
+        control.length + 1,
+        1,
+        this.getCounter(),
+        section,
+        sectionName
+      )
     );
   }
 
@@ -744,7 +760,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       logics: this.fb.array([])
     });
 
-  initSection = (sc: number, qc: number, uqc: number, section = null) => {
+  initSection = (
+    sc: number,
+    qc: number,
+    uqc: number,
+    section = null,
+    sectionName = null
+  ) => {
     if (!this.isOpenState[sc]) this.isOpenState[sc] = true;
     if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
@@ -756,9 +778,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       uid: [`uid${sc}`],
       name: [
         {
-          value: section
-            ? `${section.get('name').value} Copy`
-            : `Section ${sc}`,
+          value:
+            section && sectionName === null
+              ? `${section.get('name').value} Copy`
+              : sectionName
+              ? sectionName
+              : `Section ${sc}`,
           disabled: true
         }
       ],
@@ -1014,5 +1039,150 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       return value.length;
     }
     return value ? value.length - 3 : -1;
+  }
+
+  importQuestions(): void {
+    const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
+      data: { selectedFormData: '', openImportQuestionsSlider: false }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.selectedFormData = result.selectedFormData;
+      this.selectedFormData?.sections.forEach((section) => {
+        section.questions.forEach((question, index) => {
+          if (question.id.includes('EVIDENCE')) {
+            section.questions.splice(index, 1);
+          }
+        });
+      });
+
+      this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.cdrf.markForCheck();
+    });
+  }
+
+  cancelSlider() {
+    this.openAppSider$ = of(false);
+  }
+
+  updateAllChecked(checked, question, section) {
+    question.checked = checked;
+    const countOfChecked = section.questions.filter(
+      (per) => per.checked
+    ).length;
+    if (countOfChecked === 0 || countOfChecked !== section.questions.length)
+      section.checked = false;
+    if (countOfChecked === section.questions.length) section.checked = true;
+  }
+
+  setAllChecked(checked, section) {
+    section.checked = checked;
+    if (section.questions == null) {
+      return;
+    }
+    section.questions.forEach((t) => (t.checked = checked));
+  }
+
+  fewComplete(section) {
+    if (section.questions === null) {
+      return false;
+    }
+    const checkedCount = section.questions.filter((p) => p.checked).length;
+
+    return checkedCount > 0 && checkedCount !== section.questions.length;
+  }
+
+  useForm() {
+    const newArray = [];
+    this.selectedFormData.sections.forEach((section) => {
+      if (section.checked === true) {
+        newArray.push(section);
+      }
+      if (section.checked === false) {
+        const newQuestion = [];
+        section.questions.forEach((question) => {
+          if (question.checked === true) {
+            newQuestion.push(question);
+          }
+        });
+        if (newQuestion.length) {
+          const filteredSection = {
+            name: section.name,
+            questions: newQuestion
+          };
+          newArray.push(filteredSection);
+        }
+      }
+    });
+    newArray.forEach((section) => {
+      const { name, questions } = section;
+      const control = this.createForm.get('sections') as FormArray;
+      this.addSection(control.length, null, name);
+      const sc = control.length;
+      const questionControl = (
+        this.createForm.get('sections') as FormArray
+      ).controls[sc - 1].get('questions') as FormArray;
+      questionControl.removeAt(0);
+      questions.forEach((question, index) => {
+        const qc = index + 1;
+        if (!this.fieldContentOpenState[sc][qc])
+          this.fieldContentOpenState[sc][qc] = false;
+        if (!this.popOverOpenState[sc][qc])
+          this.popOverOpenState[sc][qc] = false;
+        if (!this.richTextEditorToolbarState[sc][qc])
+          this.richTextEditorToolbarState[sc][qc] = false;
+
+        const { logics, ...rest } = question;
+        questionControl.push(
+          this.fb.group({
+            ...rest,
+            id: `Q${this.getCounter()}`,
+            isPublished: false,
+            isPublishedTillSave: false,
+            logics: this.fb.array([])
+          })
+        );
+      });
+      this.createForm.patchValue({ isPublishedTillSave: false });
+    });
+    this.openAppSider$ = of(false);
+  }
+
+  uploadGlobalResponses(event: any) {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: []
+    };
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.rdfService
+      .importGlobalResponses$(formData)
+      .subscribe((globalResponses) => {
+        if (globalResponses.length) {
+          globalResponses.forEach((globalResponse) => {
+            this.createEditGlobalResponse = true;
+            const { id, type, values, name } = globalResponse;
+            this.createEditGlobalResponse$.next({
+              type: 'create',
+              responseType: type,
+              response: {
+                id,
+                values,
+                name
+              }
+            });
+          });
+          this.toaster.show({
+            text: `Global responses uploaded successfully`,
+            type: 'success'
+          });
+        }
+      });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }
