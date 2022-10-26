@@ -21,6 +21,8 @@
   .mat-card-content {
     padding: 15px;
     max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    height: 330px;
   }
   .mcq-heading {
     font-size: 110%;
