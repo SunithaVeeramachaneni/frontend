@@ -61,7 +61,7 @@
       </button>
     </div>
   </div>
-  <div class="dis-flex" style="height: 80vh; overflow-y: auto">
+  <div class="dis-flex" style="height: 75vh; overflow-y: auto">
     <div
       formArrayName="sections"
       class="left-panel"
@@ -77,7 +77,7 @@
         (mouseenter)="setSectionActiveState(i)"
         (mouseleave)="setSectionActiveState(i)"
       >
-        <div style="padding: 10px" [formGroupName]="i">
+        <div style="padding: 10px 0" [formGroupName]="i">
           <input type="hidden" formControlName="position" [ngModel]="i + 1" />
           <div
             style="
