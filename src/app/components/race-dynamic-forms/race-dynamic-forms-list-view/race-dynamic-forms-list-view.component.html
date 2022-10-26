@@ -43,6 +43,21 @@
   <div class="dis-flex">
     <h1 style="font-size: 140%; width: 90%; margin-left: 5px">Recent Forms</h1>
     <button
+      mat-raised-button
+      (click)="uploader.click()"
+      style="width: 10%; height: 35px; margin-top: 12px; margin-bottom: 10px"
+    >
+      Upload File
+    </button>
+    <input
+      id="upload"
+      hidden
+      type="file"
+      #uploader
+      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+      (change)="uploadFile($event)"
+    />
+    <button
       [routerLink]="['/rdf-forms/create']"
       mat-raised-button
       color="primary"

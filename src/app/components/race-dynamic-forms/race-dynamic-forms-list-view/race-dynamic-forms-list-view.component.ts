@@ -230,4 +230,13 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
       )
       .subscribe();
   }
+
+  uploadFile = (event) => {
+    console.log('event', event);
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    this.rdfService.uploadFormExcel$(formData).subscribe(console.log);
+  };
 }
