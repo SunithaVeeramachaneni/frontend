@@ -921,7 +921,7 @@
           <p class="section-div">
             <mat-checkbox
               [checked]="section.checked"
-              [indeterminate]="fewComplete(section, i)"
+              [indeterminate]="fewComplete(section)"
               (change)="setAllChecked($event.checked, section)"
             >
             </mat-checkbox>
@@ -930,7 +930,7 @@
           <div *ngFor="let question of section.questions" class="questions">
             <mat-checkbox
               [checked]="question.checked"
-              (change)="updateAllChecked($event.checked, question)"
+              (change)="updateAllChecked($event.checked, question, section)"
             >
               <span *ngIf="question.fieldType !== 'LLF'">{{
                 question.name

@@ -118,6 +118,15 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
         initial.data = formsList;
         this.skip = initial.data.length;
+
+        initial.data.forEach((form) => {
+          let temp = 0;
+          form.sections.forEach((section) => {
+            temp += section.questions.length;
+          });
+          form.countOfQues = temp;
+        });
+
         return initial;
       })
     );

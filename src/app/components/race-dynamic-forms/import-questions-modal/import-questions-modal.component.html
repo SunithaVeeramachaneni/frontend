@@ -38,9 +38,16 @@
           <p class="form-des">{{ form.description }}</p>
         </div>
         <div class="width-30">
-          <p class="no-of-ques">6 questions</p>
+          <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
         </div>
       </li>
+    </div>
+    <div
+      class="dis-flex no-records"
+      style="background: white; justify-content: center"
+      *ngIf="forms.data.length === 0"
+    >
+      No results
     </div>
   </div>
 
