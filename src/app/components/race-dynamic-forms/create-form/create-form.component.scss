@@ -140,6 +140,10 @@ select:focus {
   margin: 12px 0 0 12px;
 }
 
+.import-btn:disabled {
+  border: none;
+}
+
 .publish-btn {
   width: 160px;
   height: 36px;
