@@ -49,6 +49,7 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
 
   deleteForm$ = new BehaviorSubject<any>({} as any);
   duplicateForm$ = new BehaviorSubject<any>({} as any);
+  uploadForm$ = new BehaviorSubject<any>({} as any);
 
   private fetchForms$: ReplaySubject<SearchEvent> =
     new ReplaySubject<SearchEvent>(2);
@@ -101,9 +102,10 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
       this.formsOnLoadSearch$,
       this.deleteForm$,
       this.duplicateForm$,
-      this.formListOnScroll$
+      this.formListOnScroll$,
+      this.uploadForm$
     ]).pipe(
-      map(([formsList, deleteForm, duplicateForm, scroll]) => {
+      map(([formsList, deleteForm, duplicateForm, scroll, uploadForms]) => {
         if (Object.keys(deleteForm).length) {
           initial.data = initial.data.filter(
             (form) => form.id !== deleteForm.id
@@ -116,6 +118,10 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
         }
         if (Object.keys(scroll).length) {
           formsList = formsList.concat(scroll);
+        }
+
+        if (uploadForms.length) {
+          uploadForms.forEach((form) => initial.data.splice(0, 0, form));
         }
         initial.data = formsList;
         this.skip = initial.data.length;
@@ -229,5 +235,29 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  uploadFile = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    this.rdfService.uploadFormExcel$(formData).subscribe((data) => {
+      const newData = data.map((form) => {
+        const id = form._id;
+        const newForm = {
+          ...form,
+          id
+        };
+        delete newForm._id;
+        return newForm;
+      });
+      this.uploadForm$.next(newData);
+    });
+  };
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }

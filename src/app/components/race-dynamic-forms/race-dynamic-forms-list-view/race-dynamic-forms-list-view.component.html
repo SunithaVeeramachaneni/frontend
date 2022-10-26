@@ -35,8 +35,17 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>
+      <button mat-menu-item (click)="uploader.click()">
         <span class="dropdown-item-title">Import File</span>
+        <input
+          id="upload"
+          hidden
+          type="file"
+          #uploader
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,audio/*,video/*"
+          (change)="uploadFile($event)"
+          (click)="resetFile($event)"
+        />
       </button>
     </mat-menu>
   </div>

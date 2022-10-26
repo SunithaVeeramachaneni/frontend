@@ -170,6 +170,17 @@ export class RdfService {
       info
     );
 
+  uploadFormExcel$ = (
+    file,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/upload',
+      file,
+      info
+    );
+
   postPutFormFieldPayload(form) {
     let payloads = [];
     const { sections, name, id } = form;
