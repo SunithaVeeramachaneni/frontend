@@ -108,6 +108,17 @@ export class RdfService {
       )
       .pipe(shareReplay(1));
 
+  importGlobalResponses$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'forms/responses/upload',
+      form,
+      info
+    );
+
   createAbapFormField$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo

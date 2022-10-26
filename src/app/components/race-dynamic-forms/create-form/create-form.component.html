@@ -599,20 +599,41 @@
                                       />
                                     </button>
                                   </div>
-                                  <button
-                                    style="
-                                      color: #3d5afe;
-                                      border: none;
-                                      background: none;
-                                    "
-                                    (click)="
-                                      handleResponses('globalResponse', '-1');
-                                      isMCQResponseOpen = true;
-                                      togglePopOverOpenState(i, j)
-                                    "
-                                  >
-                                    Add Manually
-                                  </button>
+                                  <div>
+                                    <button
+                                      style="
+                                        color: #3d5afe;
+                                        border: none;
+                                        background: none;
+                                      "
+                                      (click)="
+                                        handleResponses('globalResponse', '-1');
+                                        isMCQResponseOpen = true;
+                                        togglePopOverOpenState(i, j)
+                                      "
+                                    >
+                                      Add Manually
+                                    </button>
+                                    <input
+                                      #globalResponses
+                                      [hidden]="true"
+                                      type="file"
+                                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                      (change)="uploadGlobalResponses($event)"
+                                      (click)="resetFile($event)"
+                                    />
+                                    <span
+                                      style="
+                                        color: #3d5afe;
+                                        border: none;
+                                        background: none;
+                                        cursor: pointer;
+                                      "
+                                      (click)="globalResponses.click()"
+                                    >
+                                      Import Global Responses
+                                    </span>
+                                  </div>
                                 </ng-container>
                               </div>
                             </div>

@@ -44,6 +44,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
 import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from 'src/app/shared/toast';
+import { ErrorInfo } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-create-form',
@@ -131,7 +133,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private imageUtils: ImageUtils,
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private toaster: ToastService
   ) {}
 
   ngOnInit() {
@@ -1140,5 +1143,43 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.createForm.patchValue({ isPublishedTillSave: false });
     });
     this.openAppSider$ = of(false);
+  }
+
+  uploadGlobalResponses(event: any) {
+    const info: ErrorInfo = {
+      displayToast: true,
+      failureResponse: []
+    };
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.rdfService
+      .importGlobalResponses$(formData)
+      .subscribe((globalResponses) => {
+        if (globalResponses.length) {
+          globalResponses.forEach((globalResponse) => {
+            this.createEditGlobalResponse = true;
+            const { id, type, values, name } = globalResponse;
+            this.createEditGlobalResponse$.next({
+              type: 'create',
+              responseType: type,
+              response: {
+                id,
+                values,
+                name
+              }
+            });
+          });
+          this.toaster.show({
+            text: `Global responses uploaded successfully`,
+            type: 'success'
+          });
+        }
+      });
+  }
+
+  resetFile(event: Event) {
+    const file = event.target as HTMLInputElement;
+    file.value = '';
   }
 }
