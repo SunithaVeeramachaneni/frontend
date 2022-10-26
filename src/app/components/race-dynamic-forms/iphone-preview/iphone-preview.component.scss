@@ -239,8 +239,8 @@
 
 .form-div {
   position: relative;
-  top: 7px;
   left: -7px;
+  top: 20px;
 }
 
 .form-name {
@@ -265,10 +265,20 @@
   border-bottom: 1px solid #d3d3d3;
 }
 
+.section-arrow {
+  float: right;
+  position: relative;
+  top: -2px;
+}
+
 .question-name {
   text-align: left;
   margin-left: 10px;
   font-size: 90%;
+
+  div p {
+    margin: 0 !important;
+  }
 }
 
 .text-left {
@@ -318,11 +328,69 @@
   margin-left: 5px;
 }
 
+.vi-input {
+  height: 25px;
+  align-items: center;
+  width: 215px;
+}
+
 .vi-values {
   width: inherit;
   font-size: 80%;
   background: white;
   box-shadow: 0px 0px 5px rgb(0 0 0 / 25%);
+}
+
+.cb-input {
+  float: right;
+  margin-right: -40px;
+}
+
+.m-r-minus40 {
+  margin-right: -40px;
+}
+
+.signature-div {
+  margin: -10px 0 10px -10px;
+}
+
+.signature-icon {
+  width: 35px;
+  position: relative;
+  left: 10px;
+  top: 5px;
+}
+
+.location-icon {
+  width: 35px;
+  position: relative;
+  left: 10px;
+  top: 5px;
+  height: 20px;
+}
+
+.attachment-div {
+  margin: -5px 0 10px -10px;
+}
+
+.attachment-btn {
+  width: 215px;
+  position: relative;
+  left: 5px;
+  background-color: #0053d7;
+  color: white;
+  height: 34px;
+}
+
+.image-field {
+  width: 240px;
+  height: 80px;
+  margin-left: 10px;
+}
+
+.range-field {
+  width: 230px;
+  margin-top: -15px;
 }
 
 .btns {
