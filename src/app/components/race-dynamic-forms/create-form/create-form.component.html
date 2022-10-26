@@ -577,6 +577,11 @@
                                         handleMCQFieldType(question, resp);
                                         togglePopOverOpenState(i, j)
                                       "
+                                      style="
+                                        padding: 0 0 0 10px;
+                                        width: 85%;
+                                        text-align: left;
+                                      "
                                       [ngClass]="{
                                         active:
                                           currentQuestion?.controls.value.value
@@ -587,7 +592,11 @@
                                     </button>
                                     <button
                                       mat-flat-button
-                                      style="float: right"
+                                      style="
+                                        float: right;
+                                        padding: 0;
+                                        min-width: 20px;
+                                      "
                                       (click)="
                                         handleResponses(
                                           'globalResponse',
