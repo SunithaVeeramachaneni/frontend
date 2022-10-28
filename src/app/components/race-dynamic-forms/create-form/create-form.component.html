@@ -662,6 +662,93 @@
                                   </button>
                                 </ng-container>
                               </div>
+                              <div style="height: 50%">
+                                <h2 style="color: #e8743b">GLOBAL DATASETS</h2>
+                                <ng-container
+                                  *ngIf="
+                                    globalDatasetsData$
+                                      | async as globalDatasetsData
+                                  "
+                                >
+                                  <div
+                                    *ngFor="let resp of globalDatasetsData.data"
+                                  >
+                                    <button
+                                      mat-flat-button
+                                      (click)="
+                                        handleMCQFieldType(question, resp);
+                                        togglePopOverOpenState(i, j)
+                                      "
+                                      style="
+                                        padding: 0 0 0 10px;
+                                        width: 85%;
+                                        text-align: left;
+                                      "
+                                      [ngClass]="{
+                                        active:
+                                          currentQuestion?.controls.value.value
+                                            .name === resp.name
+                                      }"
+                                    >
+                                      {{ resp.name }}
+                                    </button>
+                                    <button
+                                      mat-flat-button
+                                      style="
+                                        float: right;
+                                        padding: 0;
+                                        min-width: 20px;
+                                      "
+                                      (click)="
+                                        handleResponses(
+                                          'globalResponse',
+                                          resp.id
+                                        );
+                                        isMCQResponseOpen = true;
+                                        togglePopOverOpenState(i, j)
+                                      "
+                                    >
+                                      <mat-icon>keyboard_arrow_right</mat-icon>
+                                      <!-- <img
+                                        src="assets/rdf-forms-icons/edit-icon.svg"
+                                        alt="edit-icon"
+                                      /> -->
+                                    </button>
+                                  </div>
+                                  <button
+                                    style="
+                                      color: #3d5afe;
+                                      border: none;
+                                      background: none;
+                                      margin-top: 5px;
+                                    "
+                                  >
+                                    <img
+                                      src="../../../../assets/rdf-forms-icons/excel_icon.svg"
+                                      alt="excel-icon"
+                                      style="width: 18px"
+                                    />
+                                    <input
+                                      #globalResponses
+                                      [hidden]="true"
+                                      type="file"
+                                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                      (change)="uploadGlobalDatasets($event)"
+                                      (click)="resetFile($event)"
+                                    />
+                                    <span
+                                      style="
+                                        position: relative;
+                                        top: -4px;
+                                        left: 7px;
+                                      "
+                                      (click)="globalResponses.click()"
+                                    >
+                                      Add From Excel
+                                    </span>
+                                  </button>
+                                </ng-container>
+                              </div>
                             </div>
                           </div>
                         </div>

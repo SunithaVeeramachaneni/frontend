@@ -108,16 +108,12 @@ export class RdfService {
       )
       .pipe(shareReplay(1));
 
-  importGlobalResponses$ = (
+  importExcelFile$ = (
     form: any,
+    path: string,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/responses/upload',
-      form,
-      info
-    );
+    this.appService._postData(environment.rdfApiUrl, path, form, info);
 
   createAbapFormField$ = (
     form: any,
@@ -167,17 +163,6 @@ export class RdfService {
         VALIDTO,
         ...params
       })}`,
-      info
-    );
-
-  uploadFormExcel$ = (
-    file,
-    info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any> =>
-    this.appService._postData(
-      environment.rdfApiUrl,
-      'forms/upload',
-      file,
       info
     );
 

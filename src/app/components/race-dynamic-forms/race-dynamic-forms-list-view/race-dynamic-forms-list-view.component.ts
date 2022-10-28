@@ -242,18 +242,20 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
     if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
-    this.rdfService.uploadFormExcel$(formData).subscribe((data) => {
-      const newData = data.map((form) => {
-        const id = form._id;
-        const newForm = {
-          ...form,
-          id
-        };
-        delete newForm._id;
-        return newForm;
+    this.rdfService
+      .importExcelFile$(formData, 'forms/upload')
+      .subscribe((data) => {
+        const newData = data.map((form) => {
+          const id = form._id;
+          const newForm = {
+            ...form,
+            id
+          };
+          delete newForm._id;
+          return newForm;
+        });
+        this.uploadForm$.next(newData);
       });
-      this.uploadForm$.next(newData);
-    });
   };
 
   resetFile(event: Event) {

@@ -41,11 +41,11 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreateUpdateResponse } from 'src/app/interfaces/rdf';
 import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
-import { ErrorInfo } from 'src/app/interfaces';
+import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
+import { globalDatasetMock } from '../services/global-dataset.mock';
 
 @Component({
   selector: 'app-create-form',
@@ -60,6 +60,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   public isMCQResponseOpen = false;
   quickResponsesData$: Observable<any>;
   globalResponsesData$: Observable<any>;
+  globalDatasetsData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<CreateUpdateResponse>({
     type: 'create',
     response: {}
@@ -68,9 +69,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     type: 'create',
     response: {}
   });
+  createGlobalDataset$ = new BehaviorSubject<CreateUpdateResponse>({
+    type: 'create',
+    response: {}
+  });
   createForm$: BehaviorSubject<any> = new BehaviorSubject({});
   createEditQuickResponse = true;
   createEditGlobalResponse = true;
+  createGlobalDataset = true;
   public openAppSider$: Observable<any>;
   public activeResponses$: Observable<any>;
   public quickCommonResponse$: Observable<any>;
@@ -479,6 +485,48 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
 
     this.globalResponsesData$.subscribe();
+
+    this.globalDatasetsData$ = combineLatest([
+      of({ data: [] }),
+      this.rdfService.getResponses$('globalDataset'),
+      this.createGlobalDataset$
+    ]).pipe(
+      map(([initial, responses, { type, response, responseType }]) => {
+        if (
+          !this.createGlobalDataset ||
+          (responseType !== 'globalDataset' && responseType !== undefined)
+        ) {
+          return initial;
+        }
+        if (Object.keys(response).length) {
+          if (type === 'create') {
+            initial.data = initial.data.concat([response]);
+          } else {
+            initial.data = initial.data.map((resp) => {
+              if (resp.id === response.id) {
+                return response;
+              }
+              return resp;
+            });
+          }
+          this.createGlobalDataset = false;
+          return initial;
+        } else {
+          if (initial.data.length === 0) {
+            const globalResp = responses.map((resp) => ({
+              id: resp.id,
+              name: resp.name,
+              values: resp.values
+            }));
+            initial.data = initial.data.concat(globalResp);
+          }
+          this.createGlobalDataset = false;
+          return initial;
+        }
+      })
+    );
+
+    this.globalDatasetsData$.subscribe();
   }
 
   setHeaderTitle(title) {
@@ -1157,7 +1205,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const formData = new FormData();
     formData.append('file', file);
     this.rdfService
-      .importGlobalResponses$(formData)
+      .importExcelFile$(formData, 'forms/responses/upload', info)
       .subscribe((globalResponses) => {
         if (globalResponses.length) {
           globalResponses.forEach((globalResponse) => {
@@ -1184,5 +1232,36 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  uploadGlobalDatasets(event: any) {
+    const info: ErrorInfo = {
+      displayToast: false,
+      failureResponse: globalDatasetMock
+    };
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    this.rdfService
+      .importExcelFile$(formData, 'forms/s3/upload', info)
+      .subscribe((globalDataset) => {
+        if (Object.keys(globalDataset).length) {
+          this.createGlobalDataset = true;
+          const { id, type, values, name } = globalDataset;
+          this.createGlobalDataset$.next({
+            type: 'create',
+            responseType: type,
+            response: {
+              id,
+              values,
+              name
+            }
+          });
+          this.toaster.show({
+            text: `Global dataset uploaded successfully`,
+            type: 'success'
+          });
+        }
+      });
   }
 }
