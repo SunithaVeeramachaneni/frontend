@@ -46,6 +46,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
 import { globalDatasetMock } from '../services/global-dataset.mock';
+import { AddDependencyModalComponent } from '../add-dependency-modal/add-dependency-modal.component';
 
 @Component({
   selector: 'app-create-form',
@@ -1263,5 +1264,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           });
         }
       });
+  }
+
+  openDependencyModal() {
+    const dialogRef = this.dialog.open(AddDependencyModalComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

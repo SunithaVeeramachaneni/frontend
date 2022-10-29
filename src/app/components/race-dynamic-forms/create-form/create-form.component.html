@@ -558,7 +558,7 @@
                                   </button>
                                 </ng-container>
                               </div>
-                              <div style="height: 50%">
+                              <div style="height: 25%; overflow-y: scroll">
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
                                 <ng-container
                                   *ngIf="
@@ -662,7 +662,7 @@
                                   </button>
                                 </ng-container>
                               </div>
-                              <div style="height: 50%">
+                              <div style="height: 25%">
                                 <h2 style="color: #e8743b">GLOBAL DATASETS</h2>
                                 <ng-container
                                   *ngIf="
@@ -675,10 +675,6 @@
                                   >
                                     <button
                                       mat-flat-button
-                                      (click)="
-                                        handleMCQFieldType(question, resp);
-                                        togglePopOverOpenState(i, j)
-                                      "
                                       style="
                                         padding: 0 0 0 10px;
                                         width: 85%;
@@ -699,21 +695,25 @@
                                         padding: 0;
                                         min-width: 20px;
                                       "
-                                      (click)="
-                                        handleResponses(
-                                          'globalResponse',
-                                          resp.id
-                                        );
-                                        isMCQResponseOpen = true;
-                                        togglePopOverOpenState(i, j)
-                                      "
+                                      [matMenuTriggerFor]="menu"
                                     >
                                       <mat-icon>keyboard_arrow_right</mat-icon>
-                                      <!-- <img
-                                        src="assets/rdf-forms-icons/edit-icon.svg"
-                                        alt="edit-icon"
-                                      /> -->
                                     </button>
+                                    <mat-menu #menu="matMenu">
+                                      <button
+                                        mat-menu-item
+                                        *ngFor="
+                                          let headers of resp.values.headers
+                                        "
+                                        class="header-elements"
+                                        (click)="
+                                          handleMCQFieldType(question, resp);
+                                          togglePopOverOpenState(i, j)
+                                        "
+                                      >
+                                        <span>{{ headers }}</span>
+                                      </button>
+                                    </mat-menu>
                                   </div>
                                   <button
                                     style="
@@ -889,6 +889,18 @@
                           >
                             <mat-icon class="icon">link</mat-icon>
                             <span>Add Logic</span>
+                            <mat-divider
+                              [vertical]="true"
+                              class="vert-divider"
+                            ></mat-divider>
+                          </div>
+
+                          <div
+                            class="add-logic-btn"
+                            (click)="openDependencyModal()"
+                          >
+                            <mat-icon class="icon">link</mat-icon>
+                            <span>Add Dependency Settings</span>
                             <mat-divider
                               [vertical]="true"
                               class="vert-divider"

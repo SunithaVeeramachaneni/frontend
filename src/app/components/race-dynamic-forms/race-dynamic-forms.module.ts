@@ -46,6 +46,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { SelectQuestionsDialogComponent } from './add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ImportQuestionsModalComponent } from './import-questions-modal/import-questions-modal.component';
+import { AddDependencyModalComponent } from './add-dependency-modal/add-dependency-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -101,7 +102,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectQuestionsDialogComponent,
     AskQuestionComponent,
     McqResponseComponent,
-    ImportQuestionsModalComponent
+    ImportQuestionsModalComponent,
+    AddDependencyModalComponent
   ],
   exports: [],
   entryComponents: []
