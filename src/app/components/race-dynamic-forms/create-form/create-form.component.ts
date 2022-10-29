@@ -45,7 +45,6 @@ import { ImportQuestionsModalComponent } from '../import-questions-modal/import-
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
-import { globalDatasetMock } from '../services/global-dataset.mock';
 import { AddDependencyModalComponent } from '../add-dependency-modal/add-dependency-modal.component';
 
 @Component({

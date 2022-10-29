@@ -555,7 +555,7 @@
                                   </button>
                                 </ng-container>
                               </div>
-                              <div style="height: 25%; overflow-y: scroll">
+                              <div style="height: 50%; overflow-y: scroll">
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
                                 <ng-container
                                   *ngIf="
@@ -609,58 +609,7 @@
                                       />
                                     </button>
                                   </div>
-                                  <button
-                                    style="
-                                      color: #3d5afe;
-                                      border: none;
-                                      background: none;
-                                      margin-top: 5px;
-                                    "
-                                  >
-                                    <img
-                                      src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                      alt="excel-icon"
-                                      style="width: 18px"
-                                    />
-                                    <input
-                                      #globalResponses
-                                      [hidden]="true"
-                                      type="file"
-                                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                      (change)="uploadGlobalResponses($event)"
-                                      (click)="resetFile($event)"
-                                    />
-                                    <span
-                                      style="
-                                        position: relative;
-                                        top: -4px;
-                                        left: 7px;
-                                      "
-                                      (click)="globalResponses.click()"
-                                    >
-                                      Add From Excel
-                                    </span>
-                                  </button>
-                                  <br />
-                                  <button
-                                    style="
-                                      color: #3d5afe;
-                                      border: none;
-                                      background: none;
-                                      margin-top: 5px;
-                                    "
-                                    (click)="
-                                      handleResponses('globalResponse', '-1');
-                                      isMCQResponseOpen = true;
-                                      togglePopOverOpenState(i, j)
-                                    "
-                                  >
-                                    Add Manually
-                                  </button>
                                 </ng-container>
-                              </div>
-                              <div style="height: 25%">
-                                <h2 style="color: #e8743b">GLOBAL DATASETS</h2>
                                 <ng-container
                                   *ngIf="
                                     globalDatasetsData$
@@ -756,6 +705,22 @@
                                     >
                                       Add From Excel
                                     </span>
+                                  </button>
+                                  <br />
+                                  <button
+                                    style="
+                                      color: #3d5afe;
+                                      border: none;
+                                      background: none;
+                                      margin-top: 5px;
+                                    "
+                                    (click)="
+                                      handleResponses('globalResponse', '-1');
+                                      isMCQResponseOpen = true;
+                                      togglePopOverOpenState(i, j)
+                                    "
+                                  >
+                                    Add Manually
                                   </button>
                                 </ng-container>
                               </div>
