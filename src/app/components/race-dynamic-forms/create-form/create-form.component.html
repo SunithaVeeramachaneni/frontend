@@ -475,7 +475,7 @@
                                               .value.id === resp.id
                                         }"
                                         (click)="
-                                          handleMCQFieldType(question, resp);
+                                          handleFieldType(question, resp);
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
@@ -496,10 +496,7 @@
                                               fontSize: '90%'
                                             }"
                                             (click)="
-                                              handleMCQFieldType(
-                                                question,
-                                                resp
-                                              );
+                                              handleFieldType(question, resp);
                                               togglePopOverOpenState(i, j)
                                             "
                                           >
@@ -574,7 +571,7 @@
                                     <button
                                       mat-flat-button
                                       (click)="
-                                        handleMCQFieldType(question, resp);
+                                        handleFieldType(question, resp);
                                         togglePopOverOpenState(i, j)
                                       "
                                       style="
@@ -676,7 +673,10 @@
                                     <button
                                       mat-flat-button
                                       (click)="
-                                        handleMCQFieldType(question, resp);
+                                        handleGlobalDatasetFieldType(
+                                          question,
+                                          resp
+                                        );
                                         togglePopOverOpenState(i, j)
                                       "
                                       style="
@@ -701,7 +701,7 @@
                                       "
                                       (click)="
                                         handleResponses(
-                                          'globalResponse',
+                                          'globalDataset',
                                           resp.id
                                         );
                                         isMCQResponseOpen = true;

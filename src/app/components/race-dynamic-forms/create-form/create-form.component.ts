@@ -547,16 +547,20 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.richTextEditorToolbarState[i + 1][j + 1] = focus;
   }
 
-  handleMCQFieldType = (question: any, response: any) => {
+  handleFieldType = (question: any, response: any) => {
     const fieldType = response.values.length > 4 ? 'DD' : 'VI';
     question.get('fieldType').setValue(fieldType);
     question.get('value').setValue(response);
   };
 
+  handleGlobalDatasetFieldType = (question: any, response: any) => {};
+
   handleResponses = (type: string, id: string) => {
     this.activeResponses$ =
       type === 'globalResponse'
         ? this.globalResponsesData$
+        : type === 'globalDataset'
+        ? this.globalDatasetsData$
         : this.quickResponsesData$;
     this.activeResponseType = type;
     this.activeResponseId = id;
@@ -1059,7 +1063,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.createEditGlobalResponse = true;
       this.createEditGlobalResponse$.next({ type, response, responseType });
     }
-    this.handleMCQFieldType(this.currentQuestion, response);
+    this.handleFieldType(this.currentQuestion, response);
     this.updateMcqAndGlobalResponses(response);
   }
 
@@ -1210,16 +1214,29 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         if (globalResponses.length) {
           globalResponses.forEach((globalResponse) => {
             this.createEditGlobalResponse = true;
+            this.createGlobalDataset = true;
             const { id, type, values, name } = globalResponse;
-            this.createEditGlobalResponse$.next({
-              type: 'create',
-              responseType: type,
-              response: {
-                id,
-                values,
-                name
-              }
-            });
+            if (type === 'globalResponse') {
+              this.createEditGlobalResponse$.next({
+                type: 'create',
+                responseType: type,
+                response: {
+                  id,
+                  values,
+                  name
+                }
+              });
+            } else {
+              this.createGlobalDataset$.next({
+                type: 'create',
+                responseType: type,
+                response: {
+                  id,
+                  values,
+                  name
+                }
+              });
+            }
           });
           this.toaster.show({
             text: `Global responses uploaded successfully`,
@@ -1232,36 +1249,5 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
-  }
-
-  uploadGlobalDatasets(event: any) {
-    const info: ErrorInfo = {
-      displayToast: false,
-      failureResponse: globalDatasetMock
-    };
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    this.rdfService
-      .importExcelFile$(formData, 'forms/s3/upload', info)
-      .subscribe((globalDataset) => {
-        if (Object.keys(globalDataset).length) {
-          this.createGlobalDataset = true;
-          const { id, type, values, name } = globalDataset;
-          this.createGlobalDataset$.next({
-            type: 'create',
-            responseType: type,
-            response: {
-              id,
-              values,
-              name
-            }
-          });
-          this.toaster.show({
-            text: `Global dataset uploaded successfully`,
-            type: 'success'
-          });
-        }
-      });
   }
 }
