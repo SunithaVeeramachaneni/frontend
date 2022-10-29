@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./add-dependency-modal.component.scss']
 })
 export class AddDependencyModalComponent implements OnInit {
+  isChecked = false;
 
   constructor() { }
 

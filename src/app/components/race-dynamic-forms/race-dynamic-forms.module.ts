@@ -33,6 +33,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDividerModule } from '@angular/material/divider';
@@ -76,6 +77,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatChipsModule,
     MatButtonToggleModule,
+    MatSlideToggleModule,
     MatCheckboxModule,
     MatDialogModule,
     NgxShimmerLoadingModule,
