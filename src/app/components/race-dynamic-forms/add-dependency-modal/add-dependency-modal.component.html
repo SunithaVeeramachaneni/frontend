@@ -1,0 +1,109 @@
+<div class="dependency-modal">
+  <h3 class="settings-heading">Settings</h3>
+
+  <div class="dis-flex">
+    <div class="width-70 parent-question-div">
+      <p class="parent-question">
+        <mat-icon class="info-icon">info</mat-icon>
+        <span class="parent-question-text">Set Functional Location</span>
+      </p>
+    </div>
+    <div class="width-30">
+      <select class="dropdowns width-100">
+        <option value="option1">Option 1</option>
+      </select>
+    </div>
+  </div>
+  <h2 class="dependent-heading">Set Questions and dependencies</h2>
+  <div class="dis-flex">
+    <div class="width-40">
+      <p class="sub-headings m-l-5">Questions</p>
+    </div>
+    <div class="width-20">
+      <p class="sub-headings">Response Type</p>
+    </div>
+    <button
+      mat-icon-button
+      matTooltip="Add Question"
+      matTooltipPosition="right"
+      style="text-align: right; width: 40%"
+    >
+      <img src="assets/rdf-forms-icons/add-questions.svg" alt="add-questions" />
+    </button>
+  </div>
+  <div class="dependent-questions">
+    <div cdkDrag>
+      <div class="dis-flex">
+        <!-- <input type="hidden" formControlName="position" [ngModel]="j + 1" /> -->
+        <div class="width-40 m-r-10">
+          <img
+            cdkDragHandle
+            src="assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+            class="m-l-5 six-dots"
+          />
+          <mat-form-field
+            appearance="outline"
+            class="width-90"
+            style="margin-left: 10px"
+          >
+            <input
+              autocomplete="off"
+              type="text"
+              matInput
+              placeholder="Type Question"
+            />
+          </mat-form-field>
+        </div>
+        <div class="width-20 m-r-10">
+          <select class="dropdowns width-100">
+            <option value="Select" style="display: none">Select</option>
+            <option value="option1">Option 1</option>
+          </select>
+        </div>
+        <div class="width-40">
+          <span class="m-r-10">is dependent on</span>
+          <select class="dropdowns width-50">
+            <option value="Select" style="display: none">Select</option>
+            <option value="option1">Option 1</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <p class="m-l-5">
+      Enable Location
+      <mat-slide-toggle [(ngModel)]="isChecked"> </mat-slide-toggle>
+    </p>
+    <div *ngIf="isChecked === true" class="dis-flex">
+      <div class="width-20 m-r-10">
+        <p class="sub-headings">Choose Question</p>
+        <select class="dropdowns width-100">
+          <option value="F.Loc">F.Loc</option>
+        </select>
+      </div>
+      <div class="width-25 m-r-10">
+        <p class="sub-headings">Choose Column for Latitude</p>
+        <select class="dropdowns width-100">
+          <option value="F.Latitude">F.Latitude</option>
+        </select>
+      </div>
+      <div class="width-25 m-r-10">
+        <p class="sub-headings">Choose Column for Longitude</p>
+        <select class="dropdowns width-100">
+          <option value="F.Longitude">F.Longitude</option>
+        </select>
+      </div>
+      <div class="width-20 m-r-10">
+        <p class="sub-headings">Set Radius</p>
+        <select class="dropdowns width-100">
+          <option value="500 m">500 m</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="footer-btns">
+    <button mat-raised-button>Cancel</button>
+    <button mat-raised-button color="primary">Okay</button>
+  </div>
+</div>

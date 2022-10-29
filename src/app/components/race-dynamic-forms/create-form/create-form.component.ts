@@ -46,6 +46,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
 import { globalDatasetMock } from '../services/global-dataset.mock';
+import { AddDependencyModalComponent } from '../add-dependency-modal/add-dependency-modal.component';
 
 @Component({
   selector: 'app-create-form',
@@ -1249,5 +1250,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   resetFile(event: Event) {
     const file = event.target as HTMLInputElement;
     file.value = '';
+  }
+
+  openDependencyModal() {
+    const dialogRef = this.dialog.open(AddDependencyModalComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }
