@@ -17,48 +17,113 @@
     </div>
   </div>
   <h2 class="dependent-heading">Set Questions and dependencies</h2>
-  <div class="dis-flex">
-    <div class="width-40">
-      <p class="sub-headings m-l-5">Questions</p>
-    </div>
-    <div class="width-20">
-      <p class="sub-headings">Response Type</p>
-    </div>
-    <button
-      mat-icon-button
-      matTooltip="Add Question"
-      matTooltipPosition="right"
-      style="text-align: right; width: 40%"
-    >
-      <img src="assets/rdf-forms-icons/add-questions.svg" alt="add-questions" />
-    </button>
-  </div>
-  <div class="dependent-questions">
-    <div cdkDrag>
-      <div class="dis-flex">
-        <!-- <input type="hidden" formControlName="position" [ngModel]="j + 1" /> -->
-        <div class="width-40 m-r-10">
-          <img
-            cdkDragHandle
-            src="assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
-            class="m-l-5 six-dots"
-          />
-          <mat-form-field
-            appearance="outline"
-            class="width-90"
-            style="margin-left: 10px"
+  <div [formGroup]="dependencyForm">
+    <div class="dependent-questions">
+      <div formArrayName="questions">
+        <div class="dis-flex">
+          <div class="width-40">
+            <p class="sub-headings m-l-5">Questions</p>
+          </div>
+          <div class="width-55">
+            <p class="sub-headings">Response Type</p>
+          </div>
+          <button
+            mat-icon-button
+            matTooltip="Add Question"
+            matTooltipPosition="right"
+            style="text-align: right; width: 5%; position: relative; top: 30px"
+            (click)="addQuestion()"
           >
-            <input
-              autocomplete="off"
-              type="text"
-              matInput
-              placeholder="Type Question"
+            <img
+              src="assets/rdf-forms-icons/add-questions.svg"
+              alt="add-questions"
             />
-          </mat-form-field>
+          </button>
         </div>
-        <div class="width-20 m-r-10">
-          <select class="dropdowns width-100">
+        <div
+          *ngFor="
+            let question of getDependencyQuestions(dependencyForm);
+            let i = index
+          "
+        >
+          <div [formGroupName]="i">
+            <div cdkDrag>
+              <div class="dis-flex">
+                <!-- <input type="hidden" formControlName="position" [ngModel]="j + 1" /> -->
+                <div class="width-40 m-r-10">
+                  <img
+                    cdkDragHandle
+                    src="assets/rdf-forms-icons/six-dots.svg"
+                    alt="six-dots"
+                    class="m-l-5 six-dots"
+                  />
+                  <mat-form-field
+                    appearance="outline"
+                    class="width-90"
+                    style="margin-left: 10px"
+                  >
+                    <input
+                      autocomplete="off"
+                      type="text"
+                      matInput
+                      placeholder="Type Question"
+                      formControlName="name"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="width-20 m-r-10">
+                  <select
+                    class="dropdowns width-100"
+                    formControlName="responseType"
+                  >
+                    <option value="Select" style="display: none">Select</option>
+                    <ng-container
+                      *ngFor="let responseType of globalDataset.values.headers"
+                    >
+                      <option
+                        *ngIf="responseType !== selectedResponseType"
+                        [value]="responseType"
+                      >
+                        {{ responseType }}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+                <div class="width-40">
+                  <span class="m-r-10">is dependent on</span>
+                  <select
+                    class="dropdowns width-50"
+                    formControlName="dependentResponseType"
+                  >
+                    <option value="Select" style="display: none">Select</option>
+                    <option
+                      *ngFor="
+                        let responseType of globalDataset.values.headers;
+                        let i = index
+                      "
+                      [value]="responseType"
+                      [selected]="selectDependency(responseType)"
+                    >
+                      {{ responseType }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="m-l-5">
+        Enable Location
+        <mat-slide-toggle formControlName="location"> </mat-slide-toggle>
+      </p>
+      <div
+        *ngIf="this.dependencyForm.controls.location.value === true"
+        class="dis-flex"
+      >
+        <div class="width-25 m-r-10">
+          <p class="sub-headings">Choose Column for Latitude</p>
+          <select class="dropdowns width-100" formControlName="latitudeColumn">
             <option value="Select" style="display: none">Select</option>
             <ng-container
               *ngFor="let responseType of globalDataset.values.headers"
@@ -72,80 +137,43 @@
             </ng-container>
           </select>
         </div>
-        <div class="width-40">
-          <span class="m-r-10">is dependent on</span>
-          <select class="dropdowns width-50">
+        <div class="width-25 m-r-10">
+          <p class="sub-headings">Choose Column for Longitude</p>
+          <select class="dropdowns width-100" formControlName="longitudeColumn">
             <option value="Select" style="display: none">Select</option>
-            <option
-              *ngFor="
-                let responseType of globalDataset.values.headers;
-                let i = index
-              "
-              [value]="responseType"
-              [selected]="selectDependency(responseType)"
+            <ng-container
+              *ngFor="let responseType of globalDataset.values.headers"
             >
-              {{ responseType }}
-            </option>
+              <option
+                *ngIf="responseType !== selectedResponseType"
+                [value]="responseType"
+              >
+                {{ responseType }}
+              </option>
+            </ng-container>
           </select>
+        </div>
+        <div class="width-20 m-r-10">
+          <p class="sub-headings">Set Radius</p>
+          <select class="dropdowns width-100" formControlName="radius">
+            <option value="500 m">500 m</option>
+          </select>
+        </div>
+        <div class="width-20 m-r-10">
+          <p class="sub-headings">Maximum No of Pins</p>
+          <input
+            type="text"
+            class="dropdowns width-100"
+            formControlName="pins"
+          />
         </div>
       </div>
     </div>
-    <p class="m-l-5">
-      Enable Location
-      <mat-slide-toggle [(ngModel)]="isChecked"> </mat-slide-toggle>
-    </p>
-    <div *ngIf="isChecked === true" class="dis-flex">
-      <div class="width-20 m-r-10">
-        <p class="sub-headings">Choose Question</p>
-        <select class="dropdowns width-100">
-          <option value="F.Loc">F.Loc</option>
-        </select>
-      </div>
-      <div class="width-25 m-r-10">
-        <p class="sub-headings">Choose Column for Latitude</p>
-        <select class="dropdowns width-100">
-          <option value="Select" style="display: none">Select</option>
-          <ng-container
-            *ngFor="let responseType of globalDataset.values.headers"
-          >
-            <option
-              *ngIf="responseType !== selectedResponseType"
-              [value]="responseType"
-            >
-              {{ responseType }}
-            </option>
-          </ng-container>
-        </select>
-      </div>
-      <div class="width-25 m-r-10">
-        <p class="sub-headings">Choose Column for Longitude</p>
-        <select class="dropdowns width-100">
-          <option value="Select" style="display: none">Select</option>
-          <ng-container
-            *ngFor="let responseType of globalDataset.values.headers"
-          >
-            <option
-              *ngIf="responseType !== selectedResponseType"
-              [value]="responseType"
-            >
-              {{ responseType }}
-            </option>
-          </ng-container>
-        </select>
-      </div>
-      <div class="width-20 m-r-10">
-        <p class="sub-headings">Set Radius</p>
-        <select class="dropdowns width-100">
-          <option value="500 m">500 m</option>
-        </select>
-      </div>
+    <div mat-dialog-actions class="footer-btns">
+      <button mat-raised-button mat-dialog-close>Cancel</button>
+      <button mat-raised-button color="primary" (click)="saveDependencies()">
+        Okay
+      </button>
     </div>
-  </div>
-
-  <div mat-dialog-actions class="footer-btns">
-    <button mat-raised-button mat-dialog-close>Cancel</button>
-    <button mat-raised-button color="primary" (click)="saveDependencies()">
-      Okay
-    </button>
   </div>
 </div>
