@@ -967,7 +967,10 @@
                             <label for="multi"> Multi Selection </label>
                           </span>
                         </div>
-                        <div class="logicBuilder">
+                        <div
+                          class="logicBuilder"
+                          *ngIf="!question.controls.value.value?.responseType"
+                        >
                           <app-add-logic
                             [formId]="formId"
                             [question]="question"

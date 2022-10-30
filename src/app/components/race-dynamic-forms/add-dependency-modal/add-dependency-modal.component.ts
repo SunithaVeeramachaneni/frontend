@@ -23,14 +23,22 @@ export class AddDependencyModalComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<AddDependencyModalComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: AddDependencyModalComponent,
+    public data: any,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    const { globalDataset, selectedResponseType } = this.data;
+    const { globalDataset, selectedQuestion, questions } = this.data;
     this.globalDataset = globalDataset;
-    this.selectedResponseType = selectedResponseType;
+    const {
+      responseType: selectedQuestionResponseType,
+      location,
+      latitudeColumn,
+      longitudeColumn,
+      radius,
+      pins
+    } = selectedQuestion.value;
+    this.selectedResponseType = selectedQuestionResponseType;
     this.selectedResponseTypes = [this.selectedResponseType];
     this.dependencyForm = this.fb.group({
       location: false,
@@ -39,9 +47,47 @@ export class AddDependencyModalComponent implements OnInit {
       radius: '',
       pins: 0,
       questions: this.fb.array([
-        this.initQuestion(null, null, this.selectedResponseType)
+        this.initQuestion(null, '', this.selectedResponseType)
       ])
     });
+
+    const filteredQuestions = questions.filter((question) => {
+      if (
+        question.fieldType === 'DD' &&
+        question.value.globalDataset &&
+        question.value.parentDependencyQuestionId === selectedQuestion.id
+      ) {
+        return question;
+      }
+    });
+
+    if (location) {
+      this.dependencyForm.patchValue({
+        location,
+        latitudeColumn,
+        longitudeColumn,
+        radius,
+        pins
+      });
+    }
+
+    if (filteredQuestions.length) {
+      this.depForm.removeAt(0);
+    }
+
+    filteredQuestions.forEach((question) => {
+      const {
+        value: { name, responseType, dependentResponseType }
+      } = question;
+      console.log(name);
+      this.depForm.push(
+        this.initQuestion(name, responseType, dependentResponseType)
+      );
+    });
+  }
+
+  get depForm() {
+    return this.dependencyForm.get('questions') as FormArray;
   }
 
   getDependencyQuestions(form) {
@@ -60,8 +106,9 @@ export class AddDependencyModalComponent implements OnInit {
       dependentResponseType: [dependentResponseType, [Validators.required]]
     });
 
-  selectDependency(responseType: string) {
-    return this.selectedResponseTypes.includes(responseType);
+  onResponseTyepChange(event: any, index: number) {
+    const { value } = event.target as HTMLInputElement;
+    this.selectedResponseTypes[index + 1] = value;
   }
 
   saveDependencies() {

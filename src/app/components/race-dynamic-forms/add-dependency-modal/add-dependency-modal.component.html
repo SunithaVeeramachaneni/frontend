@@ -74,6 +74,7 @@
                   <select
                     class="dropdowns width-100"
                     formControlName="responseType"
+                    (change)="onResponseTyepChange($event, i)"
                   >
                     <option value="" style="display: none">Select</option>
                     <ng-container
@@ -96,12 +97,9 @@
                   >
                     <option value="" style="display: none">Select</option>
                     <option
-                      *ngFor="
-                        let responseType of globalDataset.values.headers;
-                        let i = index
-                      "
+                      *ngFor="let responseType of globalDataset.values.headers"
                       [value]="responseType"
-                      [selected]="selectDependency(responseType)"
+                      [selected]="selectedResponseTypes[i] === responseType"
                     >
                       {{ responseType }}
                     </option>
