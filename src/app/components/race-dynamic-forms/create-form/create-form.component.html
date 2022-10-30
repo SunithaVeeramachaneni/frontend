@@ -365,6 +365,15 @@
                           </mat-chip-list>
                           <div
                             *ngIf="question.controls.value.value?.responseType"
+                            style="
+                              white-space: nowrap;
+                              display: inline-block;
+                              text-overflow: ellipsis;
+                              width: 95%;
+                              overflow: hidden;
+                              position: relative;
+                              top: 12px;
+                            "
                           >
                             {{ question.controls.value.value?.responseType }}
                           </div>
@@ -566,7 +575,7 @@
                                   </button>
                                 </ng-container>
                               </div>
-                              <div style="height: 50%; overflow-y: scroll">
+                              <div style="height: 50%">
                                 <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
                                 <ng-container
                                   *ngIf="
