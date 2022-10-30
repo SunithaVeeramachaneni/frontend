@@ -9,6 +9,32 @@
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
     padding: 5px 0 12px 0;
   }
+
+  ::ng-deep .mat-slide-toggle-bar {
+    background-color: rgba(120, 120, 128, 0.16) !important;
+    height: 24px !important;
+    border-radius: 12px !important;
+  }
+
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #34c759 !important;
+    // height: 24px;
+    // border-radius: 12px;
+  }
+
+  ::ng-deep .mat-slide-toggle-thumb {
+    background-color: #ffffff;
+    margin-top: 5px;
+    position: relative;
+    left: 2px;
+  }
+
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #ffffff;
+    margin-top: 5px;
+    position: relative;
+    left: -2px;
+  }
 }
 
 .settings-heading {
@@ -54,11 +80,18 @@
 .six-dots {
   position: relative;
   top: 3px;
-  cursor: move;
 }
 
 .dropdowns {
   height: 40px;
+  margin-top: 7px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  padding-left: 5px;
+}
+
+.input-box {
+  height: 36px;
   margin-top: 7px;
   border: 1px solid #d3d3d3;
   border-radius: 4px;

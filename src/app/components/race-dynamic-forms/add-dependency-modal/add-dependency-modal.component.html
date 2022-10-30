@@ -2,13 +2,13 @@
   <h3 class="settings-heading">Settings</h3>
 
   <div class="dis-flex">
-    <div class="width-70 parent-question-div">
+    <div class="width-60 parent-question-div">
       <p class="parent-question">
         <mat-icon class="info-icon">info</mat-icon>
         <span class="parent-question-text">Set Functional Location</span>
       </p>
     </div>
-    <div class="width-30">
+    <div class="width-40">
       <select class="dropdowns width-100">
         <option [value]="selectedResponseType">
           {{ selectedResponseType }}
@@ -47,12 +47,11 @@
           "
         >
           <div [formGroupName]="i">
-            <div cdkDrag>
+            <div>
               <div class="dis-flex">
                 <!-- <input type="hidden" formControlName="position" [ngModel]="j + 1" /> -->
                 <div class="width-40 m-r-10">
                   <img
-                    cdkDragHandle
                     src="assets/rdf-forms-icons/six-dots.svg"
                     alt="six-dots"
                     class="m-l-5 six-dots"
@@ -76,7 +75,7 @@
                     class="dropdowns width-100"
                     formControlName="responseType"
                   >
-                    <option value="Select" style="display: none">Select</option>
+                    <option value="" style="display: none">Select</option>
                     <ng-container
                       *ngFor="let responseType of globalDataset.values.headers"
                     >
@@ -95,7 +94,7 @@
                     class="dropdowns width-50"
                     formControlName="dependentResponseType"
                   >
-                    <option value="Select" style="display: none">Select</option>
+                    <option value="" style="display: none">Select</option>
                     <option
                       *ngFor="
                         let responseType of globalDataset.values.headers;
@@ -113,8 +112,16 @@
           </div>
         </div>
       </div>
-      <p class="m-l-5">
-        Enable Location
+      <p class="m-5">
+        <span
+          style="
+            font-size: 110%;
+            position: relative;
+            top: -7px;
+            margin-right: 7px;
+          "
+          >Enable Location</span
+        >
         <mat-slide-toggle formControlName="location"> </mat-slide-toggle>
       </p>
       <div
@@ -124,7 +131,7 @@
         <div class="width-25 m-r-10">
           <p class="sub-headings">Choose Column for Latitude</p>
           <select class="dropdowns width-100" formControlName="latitudeColumn">
-            <option value="Select" style="display: none">Select</option>
+            <option value="" style="display: none">Select</option>
             <ng-container
               *ngFor="let responseType of globalDataset.values.headers"
             >
@@ -140,7 +147,7 @@
         <div class="width-25 m-r-10">
           <p class="sub-headings">Choose Column for Longitude</p>
           <select class="dropdowns width-100" formControlName="longitudeColumn">
-            <option value="Select" style="display: none">Select</option>
+            <option value="" style="display: none">Select</option>
             <ng-container
               *ngFor="let responseType of globalDataset.values.headers"
             >
@@ -156,6 +163,7 @@
         <div class="width-20 m-r-10">
           <p class="sub-headings">Set Radius</p>
           <select class="dropdowns width-100" formControlName="radius">
+            <option value="" style="display: none">Select</option>
             <option value="500 m">500 m</option>
           </select>
         </div>
@@ -163,7 +171,7 @@
           <p class="sub-headings">Maximum No of Pins</p>
           <input
             type="text"
-            class="dropdowns width-100"
+            class="input-box width-100"
             formControlName="pins"
           />
         </div>
