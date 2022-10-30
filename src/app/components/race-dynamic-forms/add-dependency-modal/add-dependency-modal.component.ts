@@ -34,6 +34,7 @@ export class AddDependencyModalComponent implements OnInit {
     this.selectedResponseTypes = [this.selectedResponseType];
     this.dependencyForm = this.fb.group({
       location: false,
+      globalDataset: true,
       latitudeColumn: '',
       longitudeColumn: '',
       radius: '',
