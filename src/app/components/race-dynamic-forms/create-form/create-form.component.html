@@ -891,9 +891,7 @@
                           <div
                             *ngIf="question.controls.value.value?.responseType"
                             class="add-logic-btn"
-                            (click)="
-                              openDependencyModal(question.controls.value.value)
-                            "
+                            (click)="openDependencyModal(i, question)"
                           >
                             <mat-icon class="icon">link</mat-icon>
                             <span>Add Dependency Settings</span>

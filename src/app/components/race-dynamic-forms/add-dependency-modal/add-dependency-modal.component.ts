@@ -4,7 +4,7 @@ import {
   Inject,
   OnInit
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -56,8 +56,8 @@ export class AddDependencyModalComponent implements OnInit {
   initQuestion = (name = '', responseType = '', dependentResponseType = '') =>
     this.fb.group({
       name,
-      responseType: [responseType],
-      dependentResponseType: [dependentResponseType]
+      responseType: [responseType, [Validators.required]],
+      dependentResponseType: [dependentResponseType, [Validators.required]]
     });
 
   selectDependency(responseType: string) {
@@ -65,6 +65,6 @@ export class AddDependencyModalComponent implements OnInit {
   }
 
   saveDependencies() {
-    this.dialogRef.close();
+    this.dialogRef.close(this.dependencyForm.value);
   }
 }

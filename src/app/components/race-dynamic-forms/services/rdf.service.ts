@@ -80,7 +80,10 @@ export class RdfService {
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
-        const { PUBLISHED, ...rest } = payload;
+        const { PUBLISHED, globalDatasetResponseType, ...rest } = payload;
+        rest.UNIQUEKEY = globalDatasetResponseType
+          ? globalDatasetResponseType
+          : rest.UNIQUEKEY;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
             map((resp) =>
@@ -317,20 +320,46 @@ export class RdfService {
       case 'VI':
       case 'DD': {
         const {
-          value: { values },
+          value: {
+            values,
+            responseType,
+            dependentResponseType,
+            location,
+            latitudeColumn: lat,
+            longitudeColumn: lan,
+            radius,
+            pins,
+            fileName,
+            globalDataset
+          },
           multi
         } = question;
-        const viVALUE = values.map((item, idx) => ({
-          [`label${idx + 1}`]: item.title,
-          key: item.title,
-          color: item.color,
-          description: item.title
-        }));
-        properties = {
-          ...properties,
-          DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : fieldType
-        };
+        if (!globalDataset) {
+          const viVALUE = values.map((item, idx) => ({
+            [`label${idx + 1}`]: item.title,
+            key: item.title,
+            color: item.color,
+            description: item.title
+          }));
+          properties = {
+            ...properties,
+            DDVALUE: JSON.stringify(viVALUE),
+            UIFIELDTYPE: multi ? 'DDM' : fieldType
+          };
+        } else {
+          if (location) {
+            properties = {
+              ...properties,
+              MAPDATA: { lat, lan, radius, pins }
+            };
+          }
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependentResponseType,
+            globalDatasetResponseType: responseType
+          };
+        }
         break;
       }
       default:
