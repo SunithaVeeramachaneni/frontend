@@ -34,12 +34,13 @@ export class AddDependencyModalComponent implements OnInit {
     this.selectedResponseTypes = [this.selectedResponseType];
     this.dependencyForm = this.fb.group({
       location: false,
-      globalDataset: true,
       latitudeColumn: '',
       longitudeColumn: '',
       radius: '',
       pins: 0,
-      questions: this.fb.array([this.initQuestion()])
+      questions: this.fb.array([
+        this.initQuestion(null, null, this.selectedResponseType)
+      ])
     });
   }
 
@@ -52,23 +53,11 @@ export class AddDependencyModalComponent implements OnInit {
     control.push(this.initQuestion());
   }
 
-  initQuestion = (
-    name = '',
-    responseType = '',
-    dependentResponseType = '',
-    fieldType = 'DD',
-    position = '',
-    required = false,
-    multi = false
-  ) =>
+  initQuestion = (name = '', responseType = '', dependentResponseType = '') =>
     this.fb.group({
       name,
       responseType: [responseType],
-      dependentResponseType: [dependentResponseType],
-      fieldType,
-      position,
-      required,
-      multi
+      dependentResponseType: [dependentResponseType]
     });
 
   selectDependency(responseType: string) {
