@@ -29,6 +29,6 @@ export class AddDependencyModalComponent implements OnInit {
   }
 
   saveDependencies() {
-    this.dialogRef.close();
+    this.dialogRef.close('hehehee');
   }
 }

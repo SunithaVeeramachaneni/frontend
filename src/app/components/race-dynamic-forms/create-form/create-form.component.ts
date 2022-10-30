@@ -1179,33 +1179,38 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       const control = this.createForm.get('sections') as FormArray;
       this.addSection(control.length, null, name);
       const sc = control.length;
-      const questionControl = (
+      const questionsControl = (
         this.createForm.get('sections') as FormArray
       ).controls[sc - 1].get('questions') as FormArray;
-      questionControl.removeAt(0);
-      questions.forEach((question, index) => {
-        const qc = index + 1;
-        if (!this.fieldContentOpenState[sc][qc])
-          this.fieldContentOpenState[sc][qc] = false;
-        if (!this.popOverOpenState[sc][qc])
-          this.popOverOpenState[sc][qc] = false;
-        if (!this.richTextEditorToolbarState[sc][qc])
-          this.richTextEditorToolbarState[sc][qc] = false;
-
-        const { logics, ...rest } = question;
-        questionControl.push(
-          this.fb.group({
-            ...rest,
-            id: `Q${this.getCounter()}`,
-            isPublished: false,
-            isPublishedTillSave: false,
-            logics: this.fb.array([])
-          })
-        );
-      });
-      this.createForm.patchValue({ isPublishedTillSave: false });
+      questionsControl.removeAt(0);
+      this.addQuestions(questionsControl, questions, 0, sc);
     });
     this.openAppSider$ = of(false);
+  }
+
+  addQuestions(questionsControl, questions, questionIndex, sc) {
+    questions.forEach((question, index) => {
+      const qc = index + 1;
+      if (!this.fieldContentOpenState[sc][qc])
+        this.fieldContentOpenState[sc][qc] = false;
+      if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
+      if (!this.richTextEditorToolbarState[sc][qc])
+        this.richTextEditorToolbarState[sc][qc] = false;
+
+      const { logics, ...rest } = question;
+      questionsControl.insert(
+        questionIndex,
+        this.fb.group({
+          ...rest,
+          id: `Q${this.getCounter()}`,
+          isPublished: false,
+          isPublishedTillSave: false,
+          logics: this.fb.array([])
+        })
+      );
+      questionIndex++;
+    });
+    this.createForm.patchValue({ isPublishedTillSave: false });
   }
 
   uploadGlobalResponses(event: any) {
@@ -1259,17 +1264,80 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     file.value = '';
   }
 
-  openDependencyModal(value: any) {
+  openDependencyModal(sectionIndex: number, question: any) {
+    const {
+      value: { value },
+      position: { value: position }
+    } = question.controls;
     const { id, responseType: selectedResponseType } = value;
     let dialogRef;
+    let globalDataset;
     this.globalDatasetsData$.subscribe(({ data }) => {
-      const globalDataset = data.find((dataset) => dataset.id === id);
+      globalDataset = data.find((dataset) => dataset.id === id);
       dialogRef = this.dialog.open(AddDependencyModalComponent, {
         data: { globalDataset, selectedResponseType }
       });
     });
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+    dialogRef.afterClosed().subscribe((dependencies) => {
+      console.log(`Dialog result: ${dependencies}`);
+      if (dependencies) {
+        const deps = {
+          location: true,
+          latitudeColumn: 'parent_latitude',
+          longitudeColumn: 'parent_longitude',
+          radius: '500m',
+          pins: 50,
+          questions: [
+            {
+              name: 'Functional_Location',
+              responseType: 'Functional_Location',
+              dependentResponseType: 'parent_description'
+            }
+          ]
+        };
+        const {
+          location,
+          latitudeColumn,
+          longitudeColumn,
+          radius,
+          pins,
+          questions
+        } = deps;
+        question.get('value').setValue({
+          ...value,
+          location,
+          latitudeColumn,
+          longitudeColumn,
+          radius,
+          pins,
+          globalDataset: true,
+          fileName: globalDataset.fileName
+        });
+        const questionsObj = questions.map((ques) => {
+          const { name, responseType, dependentResponseType } = ques;
+          return {
+            fieldType: 'DD',
+            position: '',
+            required: false,
+            multi: false,
+            name,
+            value: {
+              id,
+              responseType,
+              dependentResponseType,
+              fileName: globalDataset.fileName,
+              globalDataset: true
+            }
+          };
+        });
+        const sectionsControl = this.getSections(this.createForm);
+        this.addQuestions(
+          sectionsControl[sectionIndex].controls.questions,
+          questionsObj,
+          position,
+          sectionsControl.length
+        );
+      }
     });
   }
 }
