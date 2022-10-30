@@ -1279,22 +1279,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       });
     });
     dialogRef.afterClosed().subscribe((dependencies) => {
-      console.log(`Dialog result: ${dependencies}`);
       if (dependencies) {
-        const deps = {
-          location: true,
-          latitudeColumn: 'parent_latitude',
-          longitudeColumn: 'parent_longitude',
-          radius: '500m',
-          pins: 50,
-          questions: [
-            {
-              name: 'Functional_Location',
-              responseType: 'Functional_Location',
-              dependentResponseType: 'parent_description'
-            }
-          ]
-        };
         const {
           location,
           latitudeColumn,
@@ -1302,7 +1287,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           radius,
           pins,
           questions
-        } = deps;
+        } = dependencies;
         question.get('value').setValue({
           ...value,
           location,

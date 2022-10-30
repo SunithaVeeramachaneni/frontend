@@ -171,7 +171,12 @@
     </div>
     <div mat-dialog-actions class="footer-btns">
       <button mat-raised-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" (click)="saveDependencies()">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="saveDependencies()"
+        [disabled]="!dependencyForm.valid || dependencyForm.pristine"
+      >
         Okay
       </button>
     </div>
