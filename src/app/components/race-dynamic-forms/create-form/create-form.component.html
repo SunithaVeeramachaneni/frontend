@@ -294,7 +294,10 @@
                           class="chip-list"
                         >
                           <mat-chip-list
-                            *ngIf="question.controls.value.value?.name"
+                            *ngIf="
+                              question.controls.value.value?.name &&
+                              !question.controls.value.value?.responseType
+                            "
                             class="response-type-chips"
                           >
                             <mat-chip
@@ -309,7 +312,10 @@
                             </mat-chip>
                           </mat-chip-list>
                           <mat-chip-list
-                            *ngIf="!question.controls.value.value?.name"
+                            *ngIf="
+                              !question.controls.value.value?.name &&
+                              !question.controls.value.value?.responseType
+                            "
                             class="response-type-chips"
                           >
                             <mat-chip
@@ -357,6 +363,11 @@
                               more)
                             </span>
                           </mat-chip-list>
+                          <div
+                            *ngIf="question.controls.value.value?.responseType"
+                          >
+                            {{ question.controls.value.value?.responseType }}
+                          </div>
                         </div>
                         <ng-template #nonMCQFields>
                           <img
@@ -621,13 +632,6 @@
                                   >
                                     <button
                                       mat-flat-button
-                                      (click)="
-                                        handleGlobalDatasetFieldType(
-                                          question,
-                                          resp
-                                        );
-                                        togglePopOverOpenState(i, j)
-                                      "
                                       style="
                                         padding: 0 0 0 10px;
                                         width: 85%;
@@ -662,15 +666,19 @@
                                       <button
                                         mat-menu-item
                                         *ngFor="
-                                          let headers of resp.values.headers
+                                          let header of resp.values.headers
                                         "
                                         class="header-elements"
                                         (click)="
-                                          handleFieldType(question, resp);
+                                          handleGlobalDatasetFieldType(
+                                            question,
+                                            resp,
+                                            header
+                                          );
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
-                                        <span>{{ headers }}</span>
+                                        <span>{{ header }}</span>
                                       </button>
                                     </mat-menu>
                                   </div>
@@ -855,7 +863,8 @@
                             *ngIf="
                               addLogicIgnoredFields.indexOf(
                                 question.controls.fieldType.value
-                              ) < 0
+                              ) < 0 &&
+                              !question.controls.value.value?.responseType
                             "
                             class="add-logic-btn"
                             (click)="
@@ -871,8 +880,11 @@
                           </div>
 
                           <div
+                            *ngIf="question.controls.value.value?.responseType"
                             class="add-logic-btn"
-                            (click)="openDependencyModal()"
+                            (click)="
+                              openDependencyModal(question.controls.value.value)
+                            "
                           >
                             <mat-icon class="icon">link</mat-icon>
                             <span>Add Dependency Settings</span>
@@ -927,7 +939,10 @@
                             </select>
                           </span>
                           <span
-                            *ngIf="question.controls.fieldType.value === 'DD'"
+                            *ngIf="
+                              question.controls.fieldType.value === 'DD' &&
+                              !question.controls.value.value?.responseType
+                            "
                             style="margin-left: 20px"
                           >
                             <input

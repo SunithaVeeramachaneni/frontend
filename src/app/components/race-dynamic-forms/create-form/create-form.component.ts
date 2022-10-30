@@ -553,7 +553,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.get('value').setValue(response);
   };
 
-  handleGlobalDatasetFieldType = (question: any, response: any) => {};
+  handleGlobalDatasetFieldType = (
+    question: any,
+    response: any,
+    responseType: string
+  ) => {
+    const { id } = response;
+    question.get('fieldType').setValue('DD');
+    question.get('value').setValue({ id, responseType });
+  };
 
   handleResponses = (type: string, id: string) => {
     this.activeResponses$ =
@@ -1251,9 +1259,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     file.value = '';
   }
 
-  openDependencyModal() {
-    const dialogRef = this.dialog.open(AddDependencyModalComponent);
-
+  openDependencyModal(value: any) {
+    const { id, responseType: selectedResponseType } = value;
+    let dialogRef;
+    this.globalDatasetsData$.subscribe(({ data }) => {
+      const globalDataset = data.find((dataset) => dataset.id === id);
+      dialogRef = this.dialog.open(AddDependencyModalComponent, {
+        data: { globalDataset, selectedResponseType }
+      });
+    });
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });
