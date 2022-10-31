@@ -418,4 +418,9 @@
     height: 24px;
     padding-top: 8px;
   }
+
+  ::ng-deep .mat-select-arrow {
+    position: relative;
+    top: -3px;
+  }
 }

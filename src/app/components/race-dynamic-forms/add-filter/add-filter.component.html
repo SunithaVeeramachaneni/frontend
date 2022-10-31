@@ -1,0 +1,86 @@
+<div class="filter-section" [formGroup]="filterForm">
+  <span style="margin: 5px 10px 0 5px">Response Type</span>
+  <select
+    class="dropdowns width-30 m-l-5"
+    formControlName="dependsOn"
+    (change)="dependsOn($event)"
+  >
+    <option value="" style="display: none">Select</option>
+    <ng-container
+      *ngFor="let responseType of dependencyData.globalDataset.values.headers"
+    >
+      <option
+        *ngIf="responseType !== selectedResponseType"
+        [value]="responseType"
+      >
+        {{ responseType }}
+      </option>
+    </ng-container>
+  </select>
+  <p style="margin: 10px 0 5px 0">
+    <span
+      style="
+        font-size: 100%;
+        position: relative;
+        top: -7px;
+        margin-right: 7px;
+        margin-left: 5px;
+      "
+    >
+      Enable Location
+    </span>
+    <mat-slide-toggle formControlName="location"> </mat-slide-toggle>
+  </p>
+  <div
+    *ngIf="this.filterForm.controls.location.value === true"
+    class="dis-flex m-l-5"
+  >
+    <div class="width-25 m-r-10">
+      <p class="sub-headings m-0">Choose Latitude</p>
+      <select class="dropdowns width-100" formControlName="latitudeColumn">
+        <option value="" style="display: none">Select</option>
+        <ng-container
+          *ngFor="
+            let responseType of dependencyData.globalDataset.values.headers
+          "
+        >
+          <option
+            *ngIf="responseType !== selectedResponseType"
+            [value]="responseType"
+          >
+            {{ responseType }}
+          </option>
+        </ng-container>
+      </select>
+    </div>
+    <div class="width-25 m-r-10 m-b-5">
+      <p class="sub-headings m-0">Choose Longitude</p>
+      <select class="dropdowns width-100" formControlName="longitudeColumn">
+        <option value="" style="display: none">Select</option>
+        <ng-container
+          *ngFor="
+            let responseType of dependencyData.globalDataset.values.headers
+          "
+        >
+          <option
+            *ngIf="responseType !== selectedResponseType"
+            [value]="responseType"
+          >
+            {{ responseType }}
+          </option>
+        </ng-container>
+      </select>
+    </div>
+    <div class="width-20 m-r-10">
+      <p class="sub-headings m-0">Set Radius</p>
+      <select class="dropdowns width-100" formControlName="radius">
+        <option value="" style="display: none">Select</option>
+        <option value="500 m">500 m</option>
+      </select>
+    </div>
+    <div class="width-20 m-r-10">
+      <p class="sub-headings m-0">Maximum No of Pins</p>
+      <input type="text" class="input-box width-100" formControlName="pins" />
+    </div>
+  </div>
+</div>

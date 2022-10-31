@@ -234,6 +234,12 @@
                       </mat-select>
                     </div>
                   </div>
+
+                  <div *ngIf="question.value?.globalDataset === true">
+                    <mat-select class="dropdown">
+                      <mat-option> 1 </mat-option>
+                    </mat-select>
+                  </div>
                 </div>
               </div>
             </div>

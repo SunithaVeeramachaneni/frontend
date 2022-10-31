@@ -115,6 +115,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   allChecked = [];
   subChecked = [];
 
+  showFilterSection = {};
+  filterData;
+
   addLogicIgnoredFields = [
     'LTV',
     'CB',
@@ -282,6 +285,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           if (!this.fieldContentOpenState[sc])
             this.fieldContentOpenState[sc] = {};
           if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
+          if (!this.showFilterSection[sc]) this.showFilterSection[sc] = {};
           if (!this.richTextEditorToolbarState[sc])
             this.richTextEditorToolbarState[sc] = {};
 
@@ -360,6 +364,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 this.fieldContentOpenState[sc][qc] = false;
               if (!this.popOverOpenState[sc][qc])
                 this.popOverOpenState[sc][qc] = false;
+              if (!this.showFilterSection[sc][qc])
+                this.showFilterSection[sc][qc] = false;
               if (!this.richTextEditorToolbarState[sc][qc])
                 this.richTextEditorToolbarState[sc][qc] = false;
 
@@ -787,6 +793,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.fieldContentOpenState[sc][qc])
       this.fieldContentOpenState[sc][qc] = false;
     if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
+    if (!this.showFilterSection[sc][qc]) this.showFilterSection[sc][qc] = false;
     if (!this.richTextEditorToolbarState[sc][qc])
       this.richTextEditorToolbarState[sc][qc] = false;
     return this.fb.group({
@@ -833,6 +840,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.sectionActiveState[sc]) this.sectionActiveState[sc] = false;
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
+    if (!this.showFilterSection[sc]) this.showFilterSection[sc] = {};
     if (!this.richTextEditorToolbarState[sc])
       this.richTextEditorToolbarState[sc] = {};
 
@@ -1196,6 +1204,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!this.fieldContentOpenState[sc][qc])
         this.fieldContentOpenState[sc][qc] = false;
       if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
+      if (!this.showFilterSection[sc][qc])
+        this.showFilterSection[sc][qc] = false;
       if (!this.richTextEditorToolbarState[sc][qc])
         this.richTextEditorToolbarState[sc][qc] = false;
 
@@ -1267,7 +1277,32 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     file.value = '';
   }
 
-  openDependencyModal(sectionIndex: number, question: any) {
+  openAddFilter(sectionIndex: number, questionIndex: number, question: any) {
+    this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
+    const {
+      value: { value },
+      position: { value: position },
+      id: { value: qid }
+    } = question.controls;
+    const { id } = value;
+    const sectionsControl = this.getSections(this.createForm);
+    let dialogRef;
+    let globalDataset;
+    this.globalDatasetsData$.subscribe(({ data }) => {
+      globalDataset = data.find((dataset) => dataset.id === id);
+      this.filterData = {
+        globalDataset,
+        selectedQuestion: question.value,
+        questions: sectionsControl[sectionIndex].controls.questions.value
+      };
+    });
+  }
+
+  openDependencyModal(
+    sectionIndex: number,
+    questionIndex: number,
+    question: any
+  ) {
     const {
       value: { value },
       position: { value: position },

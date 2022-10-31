@@ -891,10 +891,10 @@
                           <div
                             *ngIf="question.controls.value.value?.responseType"
                             class="add-logic-btn"
-                            (click)="openDependencyModal(i, question)"
+                            (click)="openAddFilter(i, j, question)"
                           >
                             <mat-icon class="icon">link</mat-icon>
-                            <span>Add Dependency Settings</span>
+                            <span>Add Filter</span>
                             <mat-divider
                               [vertical]="true"
                               class="vert-divider"
@@ -966,6 +966,14 @@
                             />&nbsp;
                             <label for="multi"> Multi Selection </label>
                           </span>
+                        </div>
+                        <div
+                          class="logicBilder"
+                          *ngIf="this.showFilterSection[i + 1][j + 1] === true"
+                        >
+                          <app-add-filter
+                            [filteredData]="this.filterData"
+                          ></app-add-filter>
                         </div>
                         <div
                           class="logicBuilder"
