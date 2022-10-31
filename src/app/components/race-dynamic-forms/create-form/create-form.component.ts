@@ -114,9 +114,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   selectedFormData: any;
   allChecked = [];
   subChecked = [];
-
   showFilterSection = {};
-  filterData;
+  filterRequiredInfo;
 
   addLogicIgnoredFields = [
     'LTV',
@@ -568,7 +567,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const { id } = response;
     question.get('fieldType').setValue('DD');
     question.get('logics').setControl(this.fb.array([]));
-    question.get('value').setValue({ id, responseType });
+    question.get('value').setValue({ id, responseType, globalDataset: true });
   };
 
   handleResponses = (type: string, id: string) => {
@@ -1277,32 +1276,57 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     file.value = '';
   }
 
-  openAddFilter(sectionIndex: number, questionIndex: number, question: any) {
-    this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
-    const {
-      value: { value },
-      position: { value: position },
-      id: { value: qid }
-    } = question.controls;
-    const { id } = value;
+  openAddFilter(sectionIndex: number, questionIndex: number, openOnFieldClick) {
     const sectionsControl = this.getSections(this.createForm);
-    let dialogRef;
+    const questionsControl = this.getQuestions(
+      this.getSections(this.createForm)[sectionIndex]
+    );
+    const selectedQuestion = questionsControl[questionIndex].value;
+    if (openOnFieldClick && !selectedQuestion.value.responseType) {
+      return;
+    }
+    this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
     let globalDataset;
     this.globalDatasetsData$.subscribe(({ data }) => {
-      globalDataset = data.find((dataset) => dataset.id === id);
-      this.filterData = {
+      globalDataset = data.find(
+        (dataset) => dataset.id === selectedQuestion.value.id
+      );
+      this.filterRequiredInfo = {
         globalDataset,
-        selectedQuestion: question.value,
+        selectedQuestion,
+        questionControl: questionsControl[questionIndex],
         questions: sectionsControl[sectionIndex].controls.questions.value
       };
     });
   }
 
-  openDependencyModal(
-    sectionIndex: number,
-    questionIndex: number,
-    question: any
-  ) {
+  handleFilterDetails(data: any) {
+    const {
+      dependsOn,
+      location,
+      latitudeColumn,
+      longitudeColumn,
+      radius,
+      pins,
+      autoSelectColumn,
+      globalDataset,
+      questionControl
+    } = data;
+    questionControl.get('value').setValue({
+      ...questionControl.value.value,
+      dependsOn,
+      location,
+      latitudeColumn,
+      longitudeColumn,
+      radius,
+      pins,
+      autoSelectColumn,
+      globalDataset: true,
+      fileName: globalDataset.fileName
+    });
+  }
+
+  openDependencyModal(sectionIndex: number, question: any) {
     const {
       value: { value },
       position: { value: position },

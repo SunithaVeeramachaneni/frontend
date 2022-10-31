@@ -323,12 +323,13 @@ export class RdfService {
           value: {
             values,
             responseType,
-            dependentResponseType,
+            dependsOn,
             location,
             latitudeColumn: lat,
             longitudeColumn: lan,
             radius,
-            pins,
+            pins: pinsCount,
+            autoSelectColumn: autoFill,
             fileName,
             globalDataset
           },
@@ -350,13 +351,20 @@ export class RdfService {
           if (location) {
             properties = {
               ...properties,
-              MAPDATA: { lat, lan, radius, pins }
+              MAPDATA: {
+                lat,
+                lan,
+                radius,
+                pinsCount,
+                autoFill,
+                parent: responseType
+              }
             };
           }
           properties = {
             ...properties,
             FILENAME: fileName,
-            DDDEPENDECYFIELD: dependentResponseType,
+            DDDEPENDECYFIELD: dependsOn,
             globalDatasetResponseType: responseType
           };
         }

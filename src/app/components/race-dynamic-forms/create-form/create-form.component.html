@@ -226,7 +226,9 @@
               >
                 <div
                   [formGroupName]="j"
-                  (click)="toggleFieldContentOpenState(i, j)"
+                  (click)="
+                    toggleFieldContentOpenState(i, j); openAddFilter(i, j, true)
+                  "
                 >
                   <div class="dis-flex">
                     <input
@@ -891,7 +893,7 @@
                           <div
                             *ngIf="question.controls.value.value?.responseType"
                             class="add-logic-btn"
-                            (click)="openAddFilter(i, j, question)"
+                            (click)="openAddFilter(i, j, false)"
                           >
                             <mat-icon class="icon">link</mat-icon>
                             <span>Add Filter</span>
@@ -969,10 +971,12 @@
                         </div>
                         <div
                           class="logicBilder"
-                          *ngIf="this.showFilterSection[i + 1][j + 1] === true"
+                          *ngIf="showFilterSection[i + 1][j + 1] === true"
                         >
                           <app-add-filter
-                            [filteredData]="this.filterData"
+                            *ngIf="question.controls.value.value?.responseType"
+                            [filterRequiredInfo]="filterRequiredInfo"
+                            (filterDetails)="handleFilterDetails($event)"
                           ></app-add-filter>
                         </div>
                         <div

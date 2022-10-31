@@ -1,21 +1,14 @@
 <div class="filter-section" [formGroup]="filterForm">
-  <span style="margin: 5px 10px 0 5px">Response Type</span>
-  <select
-    class="dropdowns width-30 m-l-5"
-    formControlName="dependsOn"
-    (change)="dependsOn($event)"
-  >
+  <span style="margin: 5px 10px 0 5px">Filter Depends On</span>
+  <select class="dropdowns width-30 m-l-5" formControlName="dependsOn">
     <option value="" style="display: none">Select</option>
-    <ng-container
-      *ngFor="let responseType of dependencyData.globalDataset.values.headers"
+    <option
+      *ngFor="let responseType of dependencyResponseTypes"
+      [value]="responseType"
+      [selected]="responseType === selectedDependencyResponseType"
     >
-      <option
-        *ngIf="responseType !== selectedResponseType"
-        [value]="responseType"
-      >
-        {{ responseType }}
-      </option>
-    </ng-container>
+      {{ responseType }}
+    </option>
   </select>
   <p style="margin: 10px 0 5px 0">
     <span
@@ -27,60 +20,66 @@
         margin-left: 5px;
       "
     >
-      Enable Location
+      Enable Map Pins
     </span>
     <mat-slide-toggle formControlName="location"> </mat-slide-toggle>
   </p>
   <div
-    *ngIf="this.filterForm.controls.location.value === true"
+    *ngIf="filterForm.controls.location.value === true"
     class="dis-flex m-l-5"
   >
-    <div class="width-25 m-r-10">
+    <div class="width-20 m-r-10">
       <p class="sub-headings m-0">Choose Latitude</p>
       <select class="dropdowns width-100" formControlName="latitudeColumn">
         <option value="" style="display: none">Select</option>
-        <ng-container
+        <option
           *ngFor="
-            let responseType of dependencyData.globalDataset.values.headers
+            let responseType of filterRequiredInfo.globalDataset.values.headers
           "
+          [value]="responseType"
         >
-          <option
-            *ngIf="responseType !== selectedResponseType"
-            [value]="responseType"
-          >
-            {{ responseType }}
-          </option>
-        </ng-container>
+          {{ responseType }}
+        </option>
       </select>
     </div>
-    <div class="width-25 m-r-10 m-b-5">
+    <div class="width-20 m-r-10 m-b-5">
       <p class="sub-headings m-0">Choose Longitude</p>
       <select class="dropdowns width-100" formControlName="longitudeColumn">
         <option value="" style="display: none">Select</option>
-        <ng-container
+        <option
           *ngFor="
-            let responseType of dependencyData.globalDataset.values.headers
+            let responseType of filterRequiredInfo.globalDataset.values.headers
           "
+          [value]="responseType"
         >
-          <option
-            *ngIf="responseType !== selectedResponseType"
-            [value]="responseType"
-          >
-            {{ responseType }}
-          </option>
-        </ng-container>
+          {{ responseType }}
+        </option>
       </select>
     </div>
     <div class="width-20 m-r-10">
       <p class="sub-headings m-0">Set Radius</p>
       <select class="dropdowns width-100" formControlName="radius">
         <option value="" style="display: none">Select</option>
-        <option value="500 m">500 m</option>
+        <option value="500m">500m</option>
       </select>
     </div>
     <div class="width-20 m-r-10">
-      <p class="sub-headings m-0">Maximum No of Pins</p>
-      <input type="text" class="input-box width-100" formControlName="pins" />
+      <p class="sub-headings m-0">Max No of Pins</p>
+      <input type="text" class="input-box width-90" formControlName="pins" />
+    </div>
+    <div class="width-20 m-r-10 m-b-5">
+      <p class="sub-headings m-0">Auto Select</p>
+      <select class="dropdowns width-100" formControlName="autoSelectColumn">
+        <option value="" style="display: none">Select</option>
+        <option
+          *ngFor="
+            let responseType of filterRequiredInfo.globalDataset.values.headers
+          "
+          [value]="responseType"
+        >
+          {{ responseType }}
+        </option>
+      </select>
     </div>
   </div>
 </div>

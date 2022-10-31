@@ -1,10 +1,14 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-filter',
@@ -13,76 +17,72 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddFilterComponent implements OnInit {
-  selectedResponseTypes: string[];
-  selectedResponseType: string;
+  @Output() filterDetails: EventEmitter<any> = new EventEmitter<any>();
+  selectedDependencyResponseType: string;
   globalDataset: any;
   filterForm: FormGroup;
-  public dependencyData;
-  @Input() set filteredData(data) {
-    this.dependencyData = data;
-    console.log(this.dependencyData);
+  dependencyResponseTypes: [];
+  private _filterRequiredInfo;
+  @Input() set filterRequiredInfo(data) {
+    this._filterRequiredInfo = data;
   }
+  get filterRequiredInfo() {
+    return this._filterRequiredInfo;
+  }
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    const { globalDataset, selectedQuestion, questions } = this.dependencyData;
+    const { globalDataset, selectedQuestion, questionControl, questions } =
+      this.filterRequiredInfo;
     this.globalDataset = globalDataset;
     const {
-      responseType: selectedQuestionResponseType,
-      location,
-      latitudeColumn,
-      longitudeColumn,
-      radius,
-      pins
+      dependsOn = '',
+      location = false,
+      latitudeColumn = '',
+      longitudeColumn = '',
+      radius = '',
+      pins = 0,
+      autoSelectColumn = ''
     } = selectedQuestion.value;
-    this.selectedResponseType = selectedQuestionResponseType;
-    this.selectedResponseTypes = [this.selectedResponseType];
+    this.selectedDependencyResponseType = dependsOn;
+
     this.filterForm = this.fb.group({
+      dependsOn: '',
       location: false,
       latitudeColumn: '',
       longitudeColumn: '',
       radius: '',
       pins: 0,
-      dependsOn: ''
+      autoSelectColumn: ''
     });
 
-    // const filteredQuestions = questions.filter((question) => {
-    //   if (
-    //     question.fieldType === 'DD' &&
-    //     question.value.globalDataset &&
-    //     question.value.parentDependencyQuestionId === selectedQuestion.id
-    //   ) {
-    //     return question;
-    //   }
-    // });
+    this.filterForm.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe((data) =>
+        this.filterDetails.emit({ ...data, questionControl, globalDataset })
+      );
 
-    if (location) {
-      this.filterForm.patchValue({
-        location,
-        latitudeColumn,
-        longitudeColumn,
-        radius,
-        pins
-      });
-    }
+    this.dependencyResponseTypes = questions
+      .map((question) => {
+        if (
+          question.fieldType === 'DD' &&
+          question.value.globalDataset &&
+          question.position < selectedQuestion.position
+        ) {
+          return question.value.responseType;
+        }
+      })
+      .filter((responseType) => responseType);
 
-    // if (filteredQuestions.length) {
-    //   this.depForm.removeAt(0);
-    // }
-
-    // filteredQuestions.forEach((question) => {
-    //   const {
-    //     value: { name, responseType, dependentResponseType }
-    //   } = question;
-    //   console.log(name);
-    //   this.depForm.push(
-    //     this.initQuestion(name, responseType, dependentResponseType)
-    //   );
-    // });
-  }
-
-  dependsOn(event: any) {
-    const { value } = event.target as HTMLInputElement;
-    this.selectedResponseTypes[0] = value;
+    this.filterForm.patchValue({
+      dependsOn,
+      location,
+      latitudeColumn,
+      longitudeColumn,
+      radius,
+      pins,
+      autoSelectColumn
+    });
   }
 }

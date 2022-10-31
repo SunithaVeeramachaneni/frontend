@@ -79,7 +79,6 @@ export class AddDependencyModalComponent implements OnInit {
       const {
         value: { name, responseType, dependentResponseType }
       } = question;
-      console.log(name);
       this.depForm.push(
         this.initQuestion(name, responseType, dependentResponseType)
       );
