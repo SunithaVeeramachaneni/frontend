@@ -23,6 +23,10 @@
     left: 2px;
   }
 
+  ::ng-deep .mat-ripple-element {
+    background: none !important;
+  }
+
   ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
     background-color: #ffffff;
     margin-top: 5px;
