@@ -75,14 +75,17 @@ export class AddFilterComponent implements OnInit {
       })
       .filter((responseType) => responseType);
 
-    this.filterForm.patchValue({
-      dependsOn,
-      location,
-      latitudeColumn,
-      longitudeColumn,
-      radius,
-      pins,
-      autoSelectColumn
-    });
+    this.filterForm.patchValue(
+      {
+        dependsOn,
+        location,
+        latitudeColumn,
+        longitudeColumn,
+        radius,
+        pins,
+        autoSelectColumn
+      },
+      { emitEvent: false }
+    );
   }
 }

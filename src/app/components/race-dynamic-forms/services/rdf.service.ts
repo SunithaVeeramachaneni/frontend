@@ -80,19 +80,34 @@ export class RdfService {
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
-        const { PUBLISHED, globalDatasetResponseType, ...rest } = payload;
+        const {
+          PUBLISHED,
+          globalDatasetResponseType,
+          actualQuestionId,
+          ...rest
+        } = payload;
         rest.UNIQUEKEY = globalDatasetResponseType
           ? globalDatasetResponseType
           : rest.UNIQUEKEY;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
             map((resp) =>
-              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
+              Object.keys(resp).length === 0
+                ? resp
+                : globalDatasetResponseType
+                ? actualQuestionId
+                : rest.UNIQUEKEY
             )
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
-            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
+            map((resp) =>
+              resp === null
+                ? globalDatasetResponseType
+                  ? actualQuestionId
+                  : rest.UNIQUEKEY
+                : resp
+            )
           );
         }
       }),
@@ -282,7 +297,7 @@ export class RdfService {
 
   getProperties(question) {
     let properties = {};
-    const { fieldType } = question;
+    const { fieldType, id } = question;
     switch (fieldType) {
       case 'LLF': {
         const { name } = question;
@@ -351,21 +366,22 @@ export class RdfService {
           if (location) {
             properties = {
               ...properties,
-              MAPDATA: {
+              MAPDATA: JSON.stringify({
                 lat,
                 lan,
                 radius,
                 pinsCount,
                 autoFill,
                 parent: responseType
-              }
+              })
             };
           }
           properties = {
             ...properties,
             FILENAME: fileName,
             DDDEPENDECYFIELD: dependsOn,
-            globalDatasetResponseType: responseType
+            globalDatasetResponseType: responseType,
+            actualQuestionId: id
           };
         }
         break;
