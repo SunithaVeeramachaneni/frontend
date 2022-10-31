@@ -516,7 +516,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             const globalResp = responses.map((resp) => ({
               id: resp.id,
               name: resp.name,
-              values: resp.values
+              values: resp.values,
+              fileName: resp.fileName
             }));
             initial.data = initial.data.concat(globalResp);
           }
@@ -560,6 +561,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   ) => {
     const { id } = response;
     question.get('fieldType').setValue('DD');
+    question.get('logics').setControl(this.fb.array([]));
     question.get('value').setValue({ id, responseType });
   };
 
@@ -1228,7 +1230,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           globalResponses.forEach((globalResponse) => {
             this.createEditGlobalResponse = true;
             this.createGlobalDataset = true;
-            const { id, type, values, name } = globalResponse;
+            const { id, type, values, name, fileName } = globalResponse;
             if (type === 'globalResponse') {
               this.createEditGlobalResponse$.next({
                 type: 'create',
@@ -1246,7 +1248,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 response: {
                   id,
                   values,
-                  name
+                  name,
+                  fileName
                 }
               });
             }
@@ -1267,15 +1270,21 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   openDependencyModal(sectionIndex: number, question: any) {
     const {
       value: { value },
-      position: { value: position }
+      position: { value: position },
+      id: { value: qid }
     } = question.controls;
-    const { id, responseType: selectedResponseType } = value;
+    const { id } = value;
+    const sectionsControl = this.getSections(this.createForm);
     let dialogRef;
     let globalDataset;
     this.globalDatasetsData$.subscribe(({ data }) => {
       globalDataset = data.find((dataset) => dataset.id === id);
       dialogRef = this.dialog.open(AddDependencyModalComponent, {
-        data: { globalDataset, selectedResponseType }
+        data: {
+          globalDataset,
+          selectedQuestion: question.value,
+          questions: sectionsControl[sectionIndex].controls.questions.value
+        }
       });
     });
     dialogRef.afterClosed().subscribe((dependencies) => {
@@ -1308,14 +1317,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             name,
             value: {
               id,
+              name,
               responseType,
               dependentResponseType,
               fileName: globalDataset.fileName,
-              globalDataset: true
+              globalDataset: true,
+              parentDependencyQuestionId: qid
             }
           };
         });
-        const sectionsControl = this.getSections(this.createForm);
+
         this.addQuestions(
           sectionsControl[sectionIndex].controls.questions,
           questionsObj,
