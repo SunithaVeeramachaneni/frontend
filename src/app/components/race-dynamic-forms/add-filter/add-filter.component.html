@@ -1,5 +1,5 @@
 <div class="filter-section" [formGroup]="filterForm">
-  <span style="margin: 5px 10px 0 5px">Filter</span>
+  <span style="margin: 5px 10px 0 5px">Filter By</span>
   <select class="dropdowns width-30 m-l-5" formControlName="dependsOn">
     <option value="" style="display: none">Select</option>
     <option
@@ -36,9 +36,7 @@
         placeholder="Select"
       >
         <mat-option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}
@@ -53,9 +51,7 @@
         placeholder="Select"
       >
         <mat-option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}
@@ -76,26 +72,15 @@
       <p class="sub-headings m-0">Max No.of Pins</p>
       <input type="number" class="input-box width-95" formControlName="pins" />
     </div>
-    <div class="width-20 m-r-10" formArrayName="autoSelectColumn">
-      <!-- <div
-        *ngFor="
-          let field of getAutoSelectColumnFields(filterForm);
-          let i = index
-        "
-      > -->
-
-      <!-- <div [formGroupName]="i"> -->
-      <p class="sub-headings m-0">Sidepanel - List View</p>
+    <div class="width-20 m-r-10 m-b-5">
+      <p class="sub-headings m-0">Auto Select</p>
       <mat-select
-        multiple
         class="dropdowns width-100"
-        formControlName="field"
+        formControlName="autoSelectColumn"
         placeholder="Select"
       >
         <mat-option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}
