@@ -9,6 +9,9 @@
     position: relative;
     top: 5px;
   }
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background: white;
+  }
 }
 
 .left-panel {
@@ -235,7 +238,7 @@ select:focus {
   border-radius: 5px;
   height: 40px;
   margin-top: 7px;
-  width: 90%;
+  width: 95%;
   text-align: left;
   padding-left: 12px;
   padding-top: 10px;
@@ -260,6 +263,7 @@ select:focus {
   left: 40px;
   padding: 10px;
   top: -60px;
+  margin-left: -37px;
   cursor: pointer;
   width: 20px;
 }

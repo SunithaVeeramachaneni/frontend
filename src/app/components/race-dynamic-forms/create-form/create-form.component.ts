@@ -582,13 +582,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     });
   };
 
-  addTableRows(i, j, k) {
+  addTableRows(i, j) {
     const control = (
       (this.createForm.get('sections') as FormArray).controls[i].get(
         'questions'
       ) as FormArray
     ).controls[j].get('table') as FormArray;
-    control.push(this.initTable(i + 1, j + 1, k + 1, `T${this.getCounter()}`));
+    control.push(
+      this.initTable(i + 1, j + 1, control.length + 1, `T${this.getCounter()}`)
+    );
   }
 
   setHeaderTitle(title) {
