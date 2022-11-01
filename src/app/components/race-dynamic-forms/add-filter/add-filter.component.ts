@@ -32,6 +32,7 @@ export class AddFilterComponent implements OnInit {
     autoSelectColumn: [[]]
   });
   dependencyResponseTypes: any[] = [];
+  radiuses = ['500m', '5000m', '50000m', '500000m'];
   private _globalDatasetsData$;
   private _question;
   private _sections;
@@ -95,7 +96,7 @@ export class AddFilterComponent implements OnInit {
       location = false,
       latitudeColumn = '',
       longitudeColumn = '',
-      radius = '',
+      radius = '500000m',
       pins = 0,
       autoSelectColumn = []
     } = filterData;

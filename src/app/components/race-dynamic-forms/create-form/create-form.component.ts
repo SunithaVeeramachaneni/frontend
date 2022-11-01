@@ -637,6 +637,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.get('value').setValue({ id, responseType, globalDataset: true });
   };
 
+  handleGlobalDatasetTableFieldType = (
+    table: any,
+    response: any,
+    responseType: string
+  ) => {
+    const { id } = response;
+    table.get('fieldType').setValue('DD');
+    table.get('value').setValue({ id, responseType, globalDataset: true });
+  };
+
   handleResponses = (type: string, id: string) => {
     this.activeResponses$ =
       type === 'globalResponse'

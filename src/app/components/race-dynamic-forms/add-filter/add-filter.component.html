@@ -69,7 +69,9 @@
         formControlName="radius"
         placeholder="Select"
       >
-        <mat-option value="500m">500m</mat-option>
+        <mat-option *ngFor="let radius of radiuses" [value]="radius">{{
+          radius
+        }}</mat-option>
       </mat-select>
     </div>
     <div class="width-15 m-r-10">
