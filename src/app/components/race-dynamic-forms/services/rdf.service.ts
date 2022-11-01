@@ -396,20 +396,21 @@ export class RdfService {
             UIFIELDTYPE: multi ? 'DDM' : fieldType
           };
         } else {
+          if (location) {
+            properties = {
+              ...properties,
+              MAPDATA: JSON.stringify({
+                lat,
+                lan,
+                radius,
+                pinsCount,
+                autoFill: autoFill.toString(),
+                parent: responseType
+              })
+            };
+          }
           properties = {
             ...properties,
-            MAPDATA: location
-              ? JSON.stringify([
-                  {
-                    lat,
-                    lan,
-                    radius,
-                    pinsCount,
-                    autoFill,
-                    parent: responseType
-                  }
-                ])
-              : JSON.stringify([]),
             FILENAME: fileName,
             DDDEPENDECYFIELD: dependsOn,
             globalDatasetResponseType: responseType,
