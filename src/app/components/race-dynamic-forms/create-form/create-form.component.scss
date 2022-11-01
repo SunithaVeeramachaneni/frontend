@@ -173,6 +173,11 @@ select:focus {
   font-size: 110%;
   font-weight: 500;
   color: #000000;
+  max-width: 80%;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .section-name {

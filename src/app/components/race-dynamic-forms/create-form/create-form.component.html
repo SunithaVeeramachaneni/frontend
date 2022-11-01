@@ -89,116 +89,121 @@
               border-radius: 8px 8px 0px 0px;
               height: 35px;
               padding: 7px;
+              display: flex;
             "
           >
-            <img
-              cdkDragHandle
-              src="assets/rdf-forms-icons/six-dots.svg"
-              alt="six-dots"
-              class="m-l-10 six-dots"
-            />
-            <mat-icon
-              (click)="toggleOpenState(i)"
-              *ngIf="isOpenState[i + 1] === true"
-              class="section-arrow"
-            >
-              keyboard_arrow_down
-            </mat-icon>
-            <mat-icon
-              (click)="toggleOpenState(i)"
-              *ngIf="isOpenState[i + 1] === false"
-              class="section-arrow"
-            >
-              keyboard_arrow_right
-            </mat-icon>
-
-            <span>
-              <input
-                #sectionName
-                type="text"
-                formControlName="name"
-                [size]="getSize(sectionName.value)"
-                class="form_section_name_input"
-                placeholder="Untitled Section"
-                autofocus="true"
-                autocomplete="off"
-                (keyup.enter)="section.get('name').disable()"
-                (keydown.control.c)="addSection(i, section)"
+            <div class="width-90">
+              <img
+                cdkDragHandle
+                src="assets/rdf-forms-icons/six-dots.svg"
+                alt="six-dots"
+                class="m-l-10 six-dots"
               />
+              <mat-icon
+                (click)="toggleOpenState(i)"
+                *ngIf="isOpenState[i + 1] === true"
+                class="section-arrow"
+              >
+                keyboard_arrow_down
+              </mat-icon>
+              <mat-icon
+                (click)="toggleOpenState(i)"
+                *ngIf="isOpenState[i + 1] === false"
+                class="section-arrow"
+              >
+                keyboard_arrow_right
+              </mat-icon>
+
+              <a matTooltip="{{ section.get('name').value }}">
+                <input
+                  #sectionName
+                  type="text"
+                  formControlName="name"
+                  [size]="getSize(sectionName.value)"
+                  class="form_section_name_input"
+                  placeholder="Untitled Section"
+                  autofocus="true"
+                  autocomplete="off"
+                  (keyup.enter)="section.get('name').disable()"
+                  (keydown.control.c)="addSection(i, section)"
+                />
+                <button
+                  mat-icon-button
+                  [disabled]="disableFormFields"
+                  (click)="editSection(section)"
+                  *ngIf="section.get('name').disabled === true"
+                >
+                  <img
+                    src="assets/rdf-forms-icons/edit-icon.svg"
+                    alt="edit-icon"
+                    style="
+                      position: relative;
+                      top: -3px;
+                      width: 14px;
+                      left: -10px;
+                    "
+                  />
+                </button>
+              </a>
+            </div>
+            <div class="width-10">
+              <button
+                [matMenuTriggerFor]="sectionMenu"
+                class="more-icon"
+                aria-label="More Options"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #sectionMenu="matMenu">
+                <button mat-menu-item (click)="addSection(i, section)">
+                  <span>Copy Section</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="deleteSection(i, section)"
+                  class="text-red"
+                  [disabled]="getSections(createForm).length === 1"
+                >
+                  <span>Delete Section</span>
+                </button>
+              </mat-menu>
+
               <button
                 mat-icon-button
+                matTooltip="Add Question"
+                matTooltipPosition="right"
                 [disabled]="disableFormFields"
-                (click)="editSection(section)"
-                *ngIf="section.get('name').disabled === true"
+                *ngIf="
+                  isOpenState[i + 1] === true &&
+                  sectionActiveState[i + 1] === true
+                "
+                (click)="addQuestion(i)"
+                style="position: relative; left: 80px; float: right"
               >
                 <img
-                  src="assets/rdf-forms-icons/edit-icon.svg"
-                  alt="edit-icon"
-                  style="
-                    position: relative;
-                    top: -3px;
-                    width: 14px;
-                    left: -10px;
-                  "
+                  src="assets/rdf-forms-icons/add-questions.svg"
+                  alt="add-questions"
                 />
               </button>
-            </span>
 
-            <button
-              [matMenuTriggerFor]="sectionMenu"
-              class="more-icon"
-              aria-label="More Options"
-            >
-              <mat-icon>more_horiz</mat-icon>
-            </button>
-            <mat-menu #sectionMenu="matMenu">
-              <button mat-menu-item (click)="addSection(i, section)">
-                <span>Copy Section</span>
-              </button>
               <button
-                mat-menu-item
-                (click)="deleteSection(i, section)"
-                class="text-red"
-                [disabled]="getSections(createForm).length === 1"
+                mat-icon-button
+                matTooltip="Add Section"
+                matTooltipPosition="right"
+                *ngIf="
+                  isOpenState[i + 1] === true &&
+                  sectionActiveState[i + 1] === true
+                "
+                [disabled]="disableFormFields"
+                (click)="addSection(i)"
+                style="position: relative; left: 50px; float: right"
               >
-                <span>Delete Section</span>
+                <img
+                  src="assets/rdf-forms-icons/add-sections.svg"
+                  alt="add-sections"
+                />
               </button>
-            </mat-menu>
-            <button
-              mat-icon-button
-              matTooltip="Add Question"
-              matTooltipPosition="right"
-              [disabled]="disableFormFields"
-              *ngIf="
-                isOpenState[i + 1] === true &&
-                sectionActiveState[i + 1] === true
-              "
-              (click)="addQuestion(i)"
-              style="position: relative; left: 80px; float: right"
-            >
-              <img
-                src="assets/rdf-forms-icons/add-questions.svg"
-                alt="add-questions"
-              />
-            </button>
-
-            <button
-              mat-icon-button
-              matTooltip="Add Section"
-              matTooltipPosition="right"
-              *ngIf="
-                isOpenState[i + 1] === true &&
-                sectionActiveState[i + 1] === true
-              "
-              [disabled]="disableFormFields"
-              (click)="addSection(i)"
-              style="position: relative; left: 120px; top: 40px; float: right"
-            >
-              <img
-                src="assets/rdf-forms-icons/add-sections.svg"
-                alt="add-sections"
-              />
-            </button>
+            </div>
           </div>
           <div
             *ngIf="isOpenState[i + 1] === true"
