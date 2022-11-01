@@ -29,7 +29,7 @@ export class AddFilterComponent implements OnInit {
     longitudeColumn: '',
     radius: '',
     pins: 0,
-    autoSelectColumn: ''
+    autoSelectColumn: [[]]
   });
   dependencyResponseTypes: any[] = [];
   private _globalDatasetsData$;
@@ -97,7 +97,7 @@ export class AddFilterComponent implements OnInit {
       longitudeColumn = '',
       radius = '',
       pins = 0,
-      autoSelectColumn = ''
+      autoSelectColumn = []
     } = filterData;
     this.selectedDependencyResponseType = dependsOn;
 
