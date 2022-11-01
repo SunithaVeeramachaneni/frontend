@@ -18,10 +18,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class AddFilterComponent implements OnInit {
   @Output() filterDetails: EventEmitter<any> = new EventEmitter<any>();
+  @Output() updateChildren: EventEmitter<any> = new EventEmitter<any>();
   selectedDependencyResponseType: string;
   globalDataset: any = {};
   filterForm: FormGroup = this.fb.group({
     dependsOn: '',
+    children: [[]],
     location: false,
     latitudeColumn: '',
     longitudeColumn: '',
@@ -89,6 +91,7 @@ export class AddFilterComponent implements OnInit {
     const filterData = this.question.value.value;
     const {
       dependsOn = '',
+      children = [],
       location = false,
       latitudeColumn = '',
       longitudeColumn = '',
@@ -101,6 +104,7 @@ export class AddFilterComponent implements OnInit {
     this.filterForm.patchValue(
       {
         dependsOn,
+        children,
         location,
         latitudeColumn,
         longitudeColumn,
@@ -132,5 +136,31 @@ export class AddFilterComponent implements OnInit {
       this.dependencyResponseTypes =
         this.dependencyResponseTypes.concat(dependencies);
     });
+  }
+
+  handleFilterChange(event: any) {
+    const { value } = event.target as HTMLInputElement;
+    const { responseType } = this.question.value.value;
+    let allSectionQuestions = [];
+
+    this.sections.forEach((section) => {
+      const { questions: que } = section.controls;
+      allSectionQuestions = allSectionQuestions.concat(que.controls);
+    });
+
+    const updateChildrenQuestions = allSectionQuestions
+      .map((question) => {
+        const { children = [], responseType: questionResponseType } =
+          question.value.value;
+        if (value === questionResponseType) {
+          if (!children.includes(responseType)) {
+            children.push(responseType);
+            return { children, question };
+          }
+        }
+      })
+      .filter((item) => item);
+
+    this.updateChildren.emit(updateChildrenQuestions);
   }
 }

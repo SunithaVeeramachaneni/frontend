@@ -129,7 +129,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     'IMG',
     'GAL',
     'DFR',
-    'RT'
+    'RT',
+    'TAF'
   ];
 
   constructor(
@@ -889,6 +890,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       !this.popOverOpenState[sectionIndex + 1][questionIndex + 1];
   };
 
+  toggleShowFilterState = (sectionIndex, questionIndex) => {
+    this.showFilterSection[sectionIndex + 1][questionIndex + 1] =
+      !this.showFilterSection[sectionIndex + 1][questionIndex + 1];
+  };
+
   editSection(e) {
     e.get('name').enable();
   }
@@ -1281,7 +1287,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.getSections(this.createForm)[sectionIndex]
     );
     const selectedQuestion = questionsControl[questionIndex].value;
-    if (openOnFieldClick && !selectedQuestion.value.responseType) {
+    if (openOnFieldClick && Object.keys(selectedQuestion.value).length === 3) {
       return;
     }
     this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
@@ -1290,6 +1296,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   handleFilterDetails(data: any) {
     const {
       dependsOn,
+      children,
       location,
       latitudeColumn,
       longitudeColumn,
@@ -1302,6 +1309,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.get('value').setValue({
       ...question.value.value,
       dependsOn,
+      children,
       location,
       latitudeColumn,
       longitudeColumn,
@@ -1310,6 +1318,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       autoSelectColumn,
       globalDataset: true,
       fileName: globalDataset.fileName
+    });
+  }
+
+  handleUpdateChildren(questionsInfo: any) {
+    questionsInfo.forEach(({ question, children }) => {
+      question.get('value').setValue({
+        ...question.value.value,
+        children
+      });
     });
   }
 
