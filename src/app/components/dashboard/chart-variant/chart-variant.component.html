@@ -7,71 +7,109 @@
     style="margin: 0 0 15px 0"
   >
     <mat-button-toggle value="bar_y" [disabled]="report.groupBy?.length === 0">
-      <img
-        [src]="getImage('bar_chart', f.chartVarient.value === 'bar_y')"
+      <svg-icon
+        icon="icon-bar_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'bar_y'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-bar_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'bar_y'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle value="bar_x" [disabled]="report.groupBy?.length === 0">
-      <img
-        [src]="getImage('column_chart', f.chartVarient.value === 'bar_x')"
+      <svg-icon
+        icon="icon-column_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'bar_x'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-column_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'bar_x'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle
       value="stacked_bar_y"
       [disabled]="report.groupBy?.length < 2"
     >
-      <img
-        [src]="
-          getImage(
-            'stacked_bar_chart',
-            f.chartVarient.value === 'stacked_bar_y'
-          )
-        "
+      <svg-icon
+        icon="icon-stacked_bar_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'stacked_bar_y'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-stacked_bar_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'stacked_bar_y'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle
       value="stacked_bar_x"
       [disabled]="report.groupBy?.length < 2"
     >
-      <img
-        [src]="
-          getImage(
-            'stacked_column_chart',
-            f.chartVarient.value === 'stacked_bar_x'
-          )
-        "
+      <svg-icon
+        icon="icon-stacked_column_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'stacked_bar_x'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-stacked_column_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'stacked_bar_x'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle value="line_x" [disabled]="report.groupBy?.length === 0">
-      <img
-        [src]="getImage('line_chart', f.chartVarient.value === 'line_x')"
+      <svg-icon
+        icon="icon-line_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'line_x'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-line_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'line_x'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0">
-      <img
-        [src]="getImage('pie_chart', f.chartVarient.value === 'pie')"
+      <svg-icon
+        icon="icon-pie_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'pie'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-pie_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'pie'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle
       value="doughnut"
       [disabled]="report.groupBy?.length === 0"
     >
-      <img
-        [src]="getImage('donut_chart', f.chartVarient.value === 'doughnut')"
+      <svg-icon
+        icon="icon-donut_chart"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'doughnut'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-donut_chart_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'doughnut'"
+      ></svg-icon>
     </mat-button-toggle>
     <mat-button-toggle value="table" *ngIf="displayTableVarient">
-      <img
-        [src]="getImage('table', f.chartVarient.value === 'table')"
+      <svg-icon
+        icon="icon-table"
         class="chart-icons"
-      />
+        *ngIf="f.chartVarient.value !== 'table'"
+      ></svg-icon>
+      <svg-icon
+        icon="icon-table_active"
+        class="chart-icons"
+        *ngIf="f.chartVarient.value === 'table'"
+      ></svg-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>
   <ng-container *ngIf="f.chartVarient.value !== 'table'">
