@@ -1035,21 +1035,24 @@
                         >
                           <div formArrayName="table">
                             <div>
-                              <mat-icon
-                                matTooltip="Add Rows"
-                                style="
-                                  float: right;
-                                  cursor: pointer;
-                                  border: 1px solid #757575;
-                                  border-radius: 50%;
-                                  margin-left: -25px;
-                                  position: relative;
-                                  top: -10px;
-                                  left: 5px;
-                                "
-                              >
-                                add
-                              </mat-icon>
+                              <div>
+                                <mat-icon
+                                  (click)="addTableRows(i, j)"
+                                  matTooltip="Add Rows"
+                                  style="
+                                    float: right;
+                                    cursor: pointer;
+                                    border: 1px solid #757575;
+                                    border-radius: 50%;
+                                    margin-left: -25px;
+                                    position: relative;
+                                    top: -12px;
+                                    left: 10px;
+                                  "
+                                >
+                                  add
+                                </mat-icon>
+                              </div>
                             </div>
                             <div
                               *ngFor="
