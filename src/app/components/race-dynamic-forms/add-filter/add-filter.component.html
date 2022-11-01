@@ -1,6 +1,10 @@
 <div class="filter-section" [formGroup]="filterForm">
   <span style="margin: 5px 10px 0 5px">Filter By</span>
-  <select class="dropdowns width-30 m-l-5" formControlName="dependsOn">
+  <select
+    class="dropdowns width-30 m-l-5"
+    formControlName="dependsOn"
+    (change)="handleFilterChange($event)"
+  >
     <option value="" style="display: none">Select</option>
     <option
       *ngFor="let responseType of dependencyResponseTypes"
@@ -73,8 +77,9 @@
       <input type="number" class="input-box width-95" formControlName="pins" />
     </div>
     <div class="width-20 m-r-10 m-b-5">
-      <p class="sub-headings m-0">Auto Select</p>
+      <p class="sub-headings m-0">Sidepanel - List View</p>
       <mat-select
+        multiple
         class="dropdowns width-100"
         formControlName="autoSelectColumn"
         placeholder="Select"

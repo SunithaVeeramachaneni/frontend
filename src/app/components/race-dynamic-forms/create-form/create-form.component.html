@@ -691,7 +691,8 @@
                                             resp,
                                             header
                                           );
-                                          togglePopOverOpenState(i, j)
+                                          togglePopOverOpenState(i, j);
+                                          toggleShowFilterState(i, j)
                                         "
                                       >
                                         <span>{{ header }}</span>
@@ -993,6 +994,7 @@
                             [sectionPosition]="i + 1"
                             [sections]="this.getSections(createForm)"
                             (filterDetails)="handleFilterDetails($event)"
+                            (updateChildren)="handleUpdateChildren($event)"
                           ></app-add-filter>
                         </div>
                         <div
