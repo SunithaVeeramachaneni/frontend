@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray, shareReplay } from 'rxjs/operators';
+import { map, mergeMap, toArray, shareReplay, filter } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -84,6 +84,7 @@ export class RdfService {
           PUBLISHED,
           globalDatasetResponseType,
           actualQuestionId,
+          subFormPayload,
           ...rest
         } = payload;
         rest.UNIQUEKEY = globalDatasetResponseType
@@ -91,6 +92,7 @@ export class RdfService {
           : rest.UNIQUEKEY;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
+            filter(() => !subFormPayload),
             map((resp) =>
               Object.keys(resp).length === 0
                 ? resp
@@ -101,6 +103,7 @@ export class RdfService {
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
+            filter(() => subFormPayload),
             map((resp) =>
               resp === null
                 ? globalDatasetResponseType
@@ -239,8 +242,38 @@ export class RdfService {
             PUBLISHED: isPublished,
             UIVALIDATION: expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
-            ...this.getProperties(question, section)
+            ...this.getProperties(question, id)
           });
+
+          if (question.table.length) {
+            question.table.forEach((row, tableIndex) => {
+              sectionPayloads.push({
+                UNIQUEKEY: row.id,
+                VALIDFROM,
+                VALIDTO,
+                VERSION,
+                SECTIONNAME: '',
+                FIELDLABEL: row.name,
+                UIPOSITION: (tableIndex + 1).toString(),
+                UIFIELDTYPE: this.getFieldType(row),
+                ACTIVE: 'X',
+                INSTRUCTION: '',
+                TEXTSTYLE: '',
+                TEXTCOLOR: '',
+                MANDATORY: '',
+                SECTIONPOSITION: sectionPosition.toString(),
+                DEFAULTVALUE: this.getDefaultValue(row),
+                APPNAME,
+                FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
+                FORMTITLE: '',
+                ELEMENTTYPE: 'MULTIFORMTAB',
+                globalDatasetResponseType: '',
+                actualQuestionId: '',
+                subFormPayload: true,
+                ...this.getProperties(row)
+              });
+            });
+          }
 
           if (askQuestions && askQuestions.length) {
             askQuestions.forEach((aq) => {
@@ -295,7 +328,7 @@ export class RdfService {
     return question.fieldType === 'LF' ? question.value : '';
   }
 
-  getProperties(question, section = null) {
+  getProperties(question, formId = null) {
     let properties = {};
     const { fieldType, id } = question;
     switch (fieldType) {
@@ -387,39 +420,9 @@ export class RdfService {
         break;
       }
       case 'TAF': {
-        const subFormsPayload = question.table.map((row, index) => {
-          const payload = {
-            UNIQUEKEY: row.id,
-            VALIDFROM,
-            VALIDTO,
-            VERSION,
-            SECTIONNAME: '',
-            FIELDLABEL: row.name,
-            UIPOSITION: (index + 1).toString(),
-            UIFIELDTYPE: this.getFieldType(row),
-            ACTIVE: 'X',
-            INSTRUCTION: '',
-            TEXTSTYLE: '',
-            TEXTCOLOR: '',
-            MANDATORY: '',
-            SECTIONPOSITION: section.position.toString(),
-            DEFAULTVALUE: this.getDefaultValue(row),
-            APPNAME,
-            FORMNAME: `TABULARFORM${question.id.slice(1)}`,
-            FORMTITLE: '',
-            ELEMENTTYPE: 'MULTIFORMTAB',
-            globalDatasetResponseType: '',
-            actualQuestionId: '',
-            ...this.getProperties(row)
-          };
-          const { globalDatasetResponseType, actualQuestionId, ...rest } =
-            payload;
-          return rest;
-        });
         properties = {
           ...properties,
-          SUBFORMNAME: `TABULARFORM${question.id.slice(1)}`,
-          SUBFORMDATA: subFormsPayload
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
         };
         break;
       }

@@ -455,7 +455,7 @@
                               <li
                                 *ngFor="let fieldType of filteredFieldTypes"
                                 (click)="
-                                  selectFieldType(fieldType, question);
+                                  selectFieldType(fieldType, question, i, j);
                                   togglePopOverOpenState(i, j)
                                 "
                                 class="response-field-types"
@@ -1292,7 +1292,10 @@
                                               let fieldType of tableFilteredFieldTypes
                                             "
                                             (click)="
-                                              selectFieldType(fieldType, table);
+                                              selectTableFieldType(
+                                                fieldType,
+                                                table
+                                              );
                                               showReponseTypeOverlay(i, j, k)
                                             "
                                             class="response-field-types"

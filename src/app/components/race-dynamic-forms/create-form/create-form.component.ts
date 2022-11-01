@@ -587,7 +587,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       id: tableId,
       name: [''],
       fieldType: ['TF'],
-      value: ['']
+      value: ['TF']
     });
   };
 
@@ -878,7 +878,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       isPublished: [false],
       isPublishedTillSave: [false],
       logics: this.fb.array([]),
-      table: this.fb.array([this.initTable(sc, qc, 1, `T${uqc}`)])
+      table: this.fb.array([])
     });
   };
 
@@ -1064,7 +1064,63 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.isCustomizerOpen = false;
   }
 
-  selectFieldType(fieldType, question) {
+  selectTableFieldType(fieldType, table) {
+    if (fieldType.type === table.get('fieldType').value) {
+      return;
+    }
+
+    // this.currentQuestion = table;
+    table.patchValue({
+      fieldType: fieldType.type,
+      value: ''
+    });
+    switch (fieldType.type) {
+      case 'TF':
+        table.get('value').setValue('TF');
+        break;
+      case 'VI':
+        this.isCustomizerOpen = true;
+        table.get('value').setValue([]);
+        break;
+      case 'RT':
+        this.isCustomizerOpen = true;
+        const sliderValue = {
+          value: 0,
+          min: 0,
+          max: 100,
+          increment: 1
+        };
+        table.get('value').setValue(sliderValue);
+        this.sliderOptions = sliderValue;
+        break;
+      case 'IMG':
+        let index = 0;
+        let found = false;
+        this.createForm.get('sections').value.forEach((section) => {
+          section.questions.forEach((que) => {
+            if (que.id === this.currentQuestion.value.id) {
+              found = true;
+            }
+            if (!found && que.fieldType === 'IMG') {
+              index++;
+            }
+          });
+        });
+
+        timer(0)
+          .pipe(
+            tap(() => {
+              this.insertImages.toArray()[index]?.nativeElement.click();
+            })
+          )
+          .subscribe();
+        break;
+      default:
+      // do nothing
+    }
+  }
+
+  selectFieldType(fieldType, question, i, j) {
     if (fieldType.type === question.get('fieldType').value) {
       return;
     }
@@ -1117,6 +1173,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             })
           )
           .subscribe();
+        break;
+      case 'TAF':
+        this.addTableRows(i, j);
         break;
       default:
       // do nothing
