@@ -950,12 +950,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   togglePopOverOpenState = (sectionIndex, questionIndex) => {
     this.popOverOpenState[sectionIndex + 1][questionIndex + 1] =
       !this.popOverOpenState[sectionIndex + 1][questionIndex + 1];
-    console.log(this.popOverOpenState[sectionIndex + 1][questionIndex + 1]);
   };
 
   toggleShowFilterState = (sectionIndex, questionIndex) => {
-    this.showFilterSection[sectionIndex + 1][questionIndex + 1] =
-      !this.showFilterSection[sectionIndex + 1][questionIndex + 1];
+    /* this.showFilterSection[sectionIndex + 1][questionIndex + 1] =
+      !this.showFilterSection[sectionIndex + 1][questionIndex + 1]; */
   };
 
   editSection(e) {
