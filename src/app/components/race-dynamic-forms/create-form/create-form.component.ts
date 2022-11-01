@@ -94,6 +94,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
+  tableFilteredFieldTypes: any = [this.fieldType];
   createInProgress = false;
   publishInProgress = false;
   disableFormFields = true;
@@ -170,6 +171,14 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               fieldType.type !== 'DD' &&
               fieldType.type !== 'DDM' &&
               fieldType.type !== 'VI'
+          );
+          this.tableFilteredFieldTypes = fieldTypes.filter(
+            (fieldType) =>
+              fieldType.type !== 'LTV' &&
+              fieldType.type !== 'DD' &&
+              fieldType.type !== 'DDM' &&
+              fieldType.type !== 'VI' &&
+              fieldType.type !== 'TAF'
           );
         })
       )
