@@ -103,7 +103,7 @@ export class RdfService {
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
-            filter(() => subFormPayload),
+            filter(() => !subFormPayload),
             map((resp) =>
               resp === null
                 ? globalDatasetResponseType
