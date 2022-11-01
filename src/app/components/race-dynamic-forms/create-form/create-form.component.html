@@ -880,16 +880,29 @@
                             *ngIf="
                               addLogicIgnoredFields.indexOf(
                                 question.controls.fieldType.value
-                              ) < 0 &&
-                              !question.controls.value.value?.responseType
+                              ) < 0
                             "
                             class="add-logic-btn"
                             (click)="
                               addLogicForQuestion(question, section, createForm)
                             "
                           >
-                            <mat-icon class="icon">link</mat-icon>
-                            <span>Add Logic</span>
+                            <button
+                              mat-icon-button
+                              [disabled]="
+                                question.controls.value.value?.responseType
+                              "
+                            >
+                              <mat-icon
+                                class="icon"
+                                [ngClass]="{
+                                  'icon-disable':
+                                    question.controls.value.value?.responseType
+                                }"
+                                >link</mat-icon
+                              >
+                              <span>Add Logic</span>
+                            </button>
                             <mat-divider
                               [vertical]="true"
                               class="vert-divider"
@@ -989,10 +1002,7 @@
                             (updateChildren)="handleUpdateChildren($event)"
                           ></app-add-filter>
                         </div>
-                        <div
-                          class="logicBuilder"
-                          *ngIf="!question.controls.value.value?.responseType"
-                        >
+                        <div class="logicBuilder">
                           <app-add-logic
                             [formId]="formId"
                             [question]="question"

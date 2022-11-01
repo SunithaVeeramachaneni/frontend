@@ -765,6 +765,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   addLogicForQuestion(question: any, section: any, form: any) {
+    if (question.controls.value.value?.responseType) {
+      return;
+    }
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
     const dropDownTypes = ['DD', 'VI', 'DDM'];

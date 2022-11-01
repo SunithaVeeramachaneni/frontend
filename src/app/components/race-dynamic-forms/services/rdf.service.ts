@@ -239,7 +239,7 @@ export class RdfService {
             PUBLISHED: isPublished,
             UIVALIDATION: expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
-            ...this.getProperties(question)
+            ...this.getProperties(question, section)
           });
 
           if (askQuestions && askQuestions.length) {
@@ -295,7 +295,7 @@ export class RdfService {
     return question.fieldType === 'LF' ? question.value : '';
   }
 
-  getProperties(question) {
+  getProperties(question, section = null) {
     let properties = {};
     const { fieldType, id } = question;
     switch (fieldType) {
@@ -384,6 +384,43 @@ export class RdfService {
             actualQuestionId: id
           };
         }
+        break;
+      }
+      case 'TAF': {
+        const subFormsPayload = question.table.map((row, index) => {
+          const payload = {
+            UNIQUEKEY: row.id,
+            VALIDFROM,
+            VALIDTO,
+            VERSION,
+            SECTIONNAME: '',
+            FIELDLABEL: row.name,
+            UIPOSITION: (index + 1).toString(),
+            UIFIELDTYPE: this.getFieldType(row),
+            ACTIVE: 'X',
+            INSTRUCTION: '',
+            TEXTSTYLE: '',
+            TEXTCOLOR: '',
+            MANDATORY: '',
+            SECTIONPOSITION: section.position.toString(),
+            DEFAULTVALUE: this.getDefaultValue(row),
+            APPNAME,
+            FORMNAME: `TABULARFORM${question.id.slice(1)}`,
+            FORMTITLE: '',
+            ELEMENTTYPE: 'MULTIFORMTAB',
+            globalDatasetResponseType: '',
+            actualQuestionId: '',
+            ...this.getProperties(row)
+          };
+          const { globalDatasetResponseType, actualQuestionId, ...rest } =
+            payload;
+          return rest;
+        });
+        properties = {
+          ...properties,
+          SUBFORMNAME: `TABULARFORM${question.id.slice(1)}`,
+          SUBFORMDATA: subFormsPayload
+        };
         break;
       }
       default:
