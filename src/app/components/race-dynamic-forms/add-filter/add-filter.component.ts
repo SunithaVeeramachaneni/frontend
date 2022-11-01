@@ -54,7 +54,7 @@ export class AddFilterComponent implements OnInit {
       longitudeColumn: '',
       radius: '',
       pins: 0,
-      autoSelectColumn: ''
+      autoSelectColumn: this.fb.array([])
     });
 
     this.filterForm.valueChanges
@@ -87,5 +87,10 @@ export class AddFilterComponent implements OnInit {
       },
       { emitEvent: false }
     );
+  }
+
+  getAutoSelectColumnFields(form) {
+    console.log(form);
+    return form.controls.autoSelectColumn.controls;
   }
 }

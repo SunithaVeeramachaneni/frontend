@@ -1,5 +1,5 @@
 <div class="filter-section" [formGroup]="filterForm">
-  <span style="margin: 5px 10px 0 5px">Filter Depends On</span>
+  <span style="margin: 5px 10px 0 5px">Filter</span>
   <select class="dropdowns width-30 m-l-5" formControlName="dependsOn">
     <option value="" style="display: none">Select</option>
     <option
@@ -13,9 +13,9 @@
   <p style="margin: 10px 0 5px 0">
     <span
       style="
-        font-size: 100%;
+        font-size: 90%;
         position: relative;
-        top: -7px;
+        top: -2px;
         margin-right: 7px;
         margin-left: 5px;
       "
@@ -26,60 +26,83 @@
   </p>
   <div
     *ngIf="filterForm.controls.location.value === true"
-    class="dis-flex m-l-5"
+    class="dis-flex m-l-5 m-b-5"
   >
     <div class="width-20 m-r-10">
       <p class="sub-headings m-0">Choose Latitude</p>
-      <select class="dropdowns width-100" formControlName="latitudeColumn">
-        <option value="" style="display: none">Select</option>
-        <option
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="latitudeColumn"
+        placeholder="Select"
+      >
+        <mat-option
           *ngFor="
             let responseType of filterRequiredInfo.globalDataset.values.headers
           "
           [value]="responseType"
         >
           {{ responseType }}
-        </option>
-      </select>
+        </mat-option>
+      </mat-select>
     </div>
-    <div class="width-20 m-r-10 m-b-5">
+    <div class="width-20 m-r-10">
       <p class="sub-headings m-0">Choose Longitude</p>
-      <select class="dropdowns width-100" formControlName="longitudeColumn">
-        <option value="" style="display: none">Select</option>
-        <option
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="longitudeColumn"
+        placeholder="Select"
+      >
+        <mat-option
           *ngFor="
             let responseType of filterRequiredInfo.globalDataset.values.headers
           "
           [value]="responseType"
         >
           {{ responseType }}
-        </option>
-      </select>
+        </mat-option>
+      </mat-select>
     </div>
-    <div class="width-20 m-r-10">
+    <div class="width-15 m-r-10">
       <p class="sub-headings m-0">Set Radius</p>
-      <select class="dropdowns width-100" formControlName="radius">
-        <option value="" style="display: none">Select</option>
-        <option value="500m">500m</option>
-      </select>
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="radius"
+        placeholder="Select"
+      >
+        <mat-option value="500m">500m</mat-option>
+      </mat-select>
     </div>
-    <div class="width-20 m-r-10">
-      <p class="sub-headings m-0">Max No of Pins</p>
-      <input type="text" class="input-box width-90" formControlName="pins" />
+    <div class="width-15 m-r-10">
+      <p class="sub-headings m-0">Max No.of Pins</p>
+      <input type="number" class="input-box width-95" formControlName="pins" />
     </div>
-    <div class="width-20 m-r-10 m-b-5">
-      <p class="sub-headings m-0">Auto Select</p>
-      <select class="dropdowns width-100" formControlName="autoSelectColumn">
-        <option value="" style="display: none">Select</option>
-        <option
+    <div class="width-20 m-r-10" formArrayName="autoSelectColumn">
+      <!-- <div
+        *ngFor="
+          let field of getAutoSelectColumnFields(filterForm);
+          let i = index
+        "
+      > -->
+
+      <!-- <div [formGroupName]="i"> -->
+      <p class="sub-headings m-0">Sidepanel - List View</p>
+      <mat-select
+        multiple
+        class="dropdowns width-100"
+        formControlName="field"
+        placeholder="Select"
+      >
+        <mat-option
           *ngFor="
             let responseType of filterRequiredInfo.globalDataset.values.headers
           "
           [value]="responseType"
         >
           {{ responseType }}
-        </option>
-      </select>
+        </mat-option>
+      </mat-select>
     </div>
   </div>
+  <!-- </div>
+  </div> -->
 </div>
