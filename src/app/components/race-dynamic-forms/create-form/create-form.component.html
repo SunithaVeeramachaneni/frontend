@@ -881,7 +881,6 @@
                               addLogicIgnoredFields.indexOf(
                                 question.controls.fieldType.value
                               ) < 0 &&
-                              !question.controls.value.value?.responseType &&
                               question.controls.fieldType.value !== 'TAF'
                             "
                             class="add-logic-btn"
@@ -889,8 +888,23 @@
                               addLogicForQuestion(question, section, createForm)
                             "
                           >
-                            <mat-icon class="icon">link</mat-icon>
-                            <span>Add Logic</span>
+                            <button
+                              mat-icon-button
+                              [disabled]="
+                                question.controls.value.value?.responseType
+                              "
+                            >
+                              <mat-icon
+                                class="icon"
+                                [ngClass]="{
+                                  'icon-disable':
+                                    question.controls.value.value?.responseType
+                                }"
+                                >link</mat-icon
+                              >
+                              <span>Add Logic</span>
+                            </button>
+
                             <mat-divider
                               [vertical]="true"
                               class="vert-divider"
@@ -999,10 +1013,7 @@
                         </div>
                         <div
                           class="logicBuilder"
-                          *ngIf="
-                            !question.controls.value.value?.responseType &&
-                            question.controls.fieldType.value !== 'TAF'
-                          "
+                          *ngIf="question.controls.fieldType.value !== 'TAF'"
                         >
                           <app-add-logic
                             [formId]="formId"
@@ -1023,6 +1034,23 @@
                           *ngIf="question.controls.fieldType.value === 'TAF'"
                         >
                           <div formArrayName="table">
+                            <div>
+                              <mat-icon
+                                matTooltip="Add Rows"
+                                style="
+                                  float: right;
+                                  cursor: pointer;
+                                  border: 1px solid #757575;
+                                  border-radius: 50%;
+                                  margin-left: -25px;
+                                  position: relative;
+                                  top: -10px;
+                                  left: 5px;
+                                "
+                              >
+                                add
+                              </mat-icon>
+                            </div>
                             <div
                               *ngFor="
                                 let table of getTableData(question);
@@ -1641,10 +1669,6 @@
                                       </div>
                                     </div>
                                   </ng-template>
-
-                                  <button (click)="addTableRows(i, j, k)">
-                                    <mat-icon>add</mat-icon>
-                                  </button>
                                 </div>
                               </div>
                             </div>

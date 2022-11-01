@@ -310,6 +310,18 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 table
               } = question;
 
+              let tableFormBuilderArray = [];
+              if (table && table.length) {
+                tableFormBuilderArray = table.map((row) =>
+                  this.fb.group({
+                    id: row.id,
+                    name: row.name,
+                    fieldType: row.fieldType,
+                    value: row.value
+                  })
+                );
+              }
+
               let logicsFormArray = [];
               if (logics && logics.length) {
                 logicsFormArray = logics.map((logic) => {
@@ -397,7 +409,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 isPublished,
                 isPublishedTillSave,
                 logics: this.fb.array(logicsFormArray), //this.fb.array([])
-                table: this.fb.array([this.initTable(1, 1, 1, 1)])
+                table: this.fb.array(tableFormBuilderArray)
               });
             }
           );
@@ -810,6 +822,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   addLogicForQuestion(question: any, section: any, form: any) {
+    if (question.controls.value.value?.responseType) {
+      return;
+    }
     question.hasLogic = true;
     const control = question.get('logics') as FormArray;
     const dropDownTypes = ['DD', 'VI', 'DDM'];
@@ -854,7 +869,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       isPublished: [false],
       isPublishedTillSave: [false],
       logics: this.fb.array([]),
-      table: this.fb.array([this.initTable(sc, qc, 1, `T${uqc + 1}`)])
+      table: this.fb.array([this.initTable(sc, qc, 1, `T${uqc}`)])
     });
   };
 
