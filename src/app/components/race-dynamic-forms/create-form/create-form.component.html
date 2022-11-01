@@ -975,7 +975,10 @@
                         >
                           <app-add-filter
                             *ngIf="question.controls.value.value?.responseType"
-                            [filterRequiredInfo]="filterRequiredInfo"
+                            [globalDatasetsData$]="globalDatasetsData$"
+                            [question]="question"
+                            [sectionPosition]="i + 1"
+                            [sections]="this.getSections(createForm)"
                             (filterDetails)="handleFilterDetails($event)"
                           ></app-add-filter>
                         </div>

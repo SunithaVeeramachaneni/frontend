@@ -33,9 +33,7 @@
       <select class="dropdowns width-100" formControlName="latitudeColumn">
         <option value="" style="display: none">Select</option>
         <option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}
@@ -47,9 +45,7 @@
       <select class="dropdowns width-100" formControlName="longitudeColumn">
         <option value="" style="display: none">Select</option>
         <option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}
@@ -72,9 +68,7 @@
       <select class="dropdowns width-100" formControlName="autoSelectColumn">
         <option value="" style="display: none">Select</option>
         <option
-          *ngFor="
-            let responseType of filterRequiredInfo.globalDataset.values.headers
-          "
+          *ngFor="let responseType of globalDataset.values.headers"
           [value]="responseType"
         >
           {{ responseType }}

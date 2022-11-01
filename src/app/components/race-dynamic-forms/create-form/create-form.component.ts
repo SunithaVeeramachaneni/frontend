@@ -1277,7 +1277,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   openAddFilter(sectionIndex: number, questionIndex: number, openOnFieldClick) {
-    const sectionsControl = this.getSections(this.createForm);
     const questionsControl = this.getQuestions(
       this.getSections(this.createForm)[sectionIndex]
     );
@@ -1286,18 +1285,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       return;
     }
     this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;
-    let globalDataset;
-    this.globalDatasetsData$.subscribe(({ data }) => {
-      globalDataset = data.find(
-        (dataset) => dataset.id === selectedQuestion.value.id
-      );
-      this.filterRequiredInfo = {
-        globalDataset,
-        selectedQuestion,
-        questionControl: questionsControl[questionIndex],
-        questions: sectionsControl[sectionIndex].controls.questions.value
-      };
-    });
   }
 
   handleFilterDetails(data: any) {
@@ -1310,10 +1297,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       pins,
       autoSelectColumn,
       globalDataset,
-      questionControl
+      question
     } = data;
-    questionControl.get('value').setValue({
-      ...questionControl.value.value,
+    question.get('value').setValue({
+      ...question.value.value,
       dependsOn,
       location,
       latitudeColumn,
