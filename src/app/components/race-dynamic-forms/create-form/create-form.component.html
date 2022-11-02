@@ -8,7 +8,6 @@
     bdColor="rgba(0, 0, 0, 0.6)"
     type="ball-clip-rotate-pulse"
     [fullScreen]="false"
-    style="z-index: 99999"
   >
   </ngx-spinner>
   <div
@@ -448,6 +447,13 @@
                         (backdropClick)="togglePopOverOpenState(i, j)"
                       >
                         <div class="response-type-modal">
+                          <ngx-spinner
+                            size="medium"
+                            bdColor="rgba(0, 0, 0, 0.6)"
+                            type="ball-clip-rotate-pulse"
+                            [fullScreen]="false"
+                          >
+                          </ngx-spinner>
                           <h1>
                             <mat-icon
                               (click)="togglePopOverOpenState(i, j)"
@@ -902,10 +908,11 @@
                             "
                           >
                             <button
-                              mat-icon-button
+                              mat-button
                               [disabled]="
                                 question.controls.value.value?.responseType
                               "
+                              style="padding: 0"
                             >
                               <mat-icon
                                 class="icon"
@@ -1067,6 +1074,9 @@
                                 </mat-icon>
                               </div>
                             </div>
+                            <p style="margin: 0 14px; font-weight: 500">
+                              Column Configurations
+                            </p>
                             <div
                               *ngFor="
                                 let table of getTableData(question);
@@ -1275,6 +1285,13 @@
                                     "
                                   >
                                     <div class="response-type-modal">
+                                      <ngx-spinner
+                                        size="medium"
+                                        bdColor="rgba(0, 0, 0, 0.6)"
+                                        type="ball-clip-rotate-pulse"
+                                        [fullScreen]="false"
+                                      >
+                                      </ngx-spinner>
                                       <h1>
                                         <mat-icon
                                           (click)="
