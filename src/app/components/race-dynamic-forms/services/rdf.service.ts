@@ -406,7 +406,7 @@ export class RdfService {
                 lat,
                 lan,
                 radius,
-                pinsCount,
+                pinsCount: pinsCount.toString(),
                 autoFill: autoFill.toString(),
                 parent: responseType
               })
