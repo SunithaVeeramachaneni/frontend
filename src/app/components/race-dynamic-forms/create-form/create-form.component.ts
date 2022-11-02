@@ -199,6 +199,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           form.sections.forEach((section) => {
             section.questions.forEach((question) => {
               question.isPublishedTillSave = false;
+              question.table.forEach((row) => {
+                row.isPublishedTillSave = false;
+              });
             });
           });
           form.isPublishedTillSave = false;
@@ -237,6 +240,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 if (!isEqual(q, pq[j])) {
                   this.isLLFFieldChanged = false;
                   q.isPublishedTillSave = false;
+                  q.table.forEach((row) => {
+                    row.isPublishedTillSave = false;
+                  });
                   isPublishedTillSave = false;
                   if (q.fieldType === 'LLF') {
                     this.sections = curr;
@@ -247,6 +253,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
             } else {
               cq.forEach((q) => {
                 q.isPublishedTillSave = false;
+                q.table.forEach((row) => {
+                  row.isPublishedTillSave = false;
+                });
                 isPublishedTillSave = false;
               });
             }
@@ -327,7 +336,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     id: row.id,
                     name: row.name,
                     fieldType: row.fieldType,
-                    value: row.value
+                    value: row.value,
+                    isPublished: row.isPublished,
+                    isPublishedTillSave: row.isPublishedTillSave
                   })
                 );
               }
@@ -588,7 +599,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       id: tableId,
       name: [''],
       fieldType: ['TF'],
-      value: ['TF']
+      value: ['TF'],
+      isPublished: [false],
+      isPublishedTillSave: [false]
     });
   };
 
@@ -976,9 +989,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       !this.popOverOpenState[sectionIndex + 1][questionIndex + 1];
   };
 
-  toggleShowFilterState = (sectionIndex, questionIndex) => {
-    /* this.showFilterSection[sectionIndex + 1][questionIndex + 1] =
-      !this.showFilterSection[sectionIndex + 1][questionIndex + 1]; */
+  hideShowFilterState = (sectionIndex, questionIndex) => {
+    this.showFilterSection[sectionIndex + 1][questionIndex + 1] = false;
   };
 
   editSection(e) {
@@ -1002,6 +1014,13 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 question.isPublished = true;
                 question.isPublishedTillSave = true;
               }
+              question.table.forEach((row) => {
+                if (response.includes(question.id)) {
+                  publishedCount++;
+                  row.isPublished = true;
+                  row.isPublishedTillSave = true;
+                }
+              });
             });
           });
           if (publishedCount === response.length) {
@@ -1143,7 +1162,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       fieldType: fieldType.type,
       required: false,
       value: '',
-      logics: []
+      logics: [],
+      table: []
     });
     question.hasLogic = false;
     switch (fieldType.type) {
@@ -1437,7 +1457,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       this.getSections(this.createForm)[sectionIndex]
     );
     const selectedQuestion = questionsControl[questionIndex].value;
-    if (openOnFieldClick && Object.keys(selectedQuestion.value).length === 3) {
+    if (openOnFieldClick && Object.keys(selectedQuestion.value).length === 4) {
       return;
     }
     this.showFilterSection[sectionIndex + 1][questionIndex + 1] = true;

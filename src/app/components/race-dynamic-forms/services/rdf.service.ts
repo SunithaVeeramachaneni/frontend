@@ -80,17 +80,15 @@ export class RdfService {
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
-        const { PUBLISHED, subFormPayload, ...rest } = payload;
+        const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
-            filter(() => !subFormPayload),
             map((resp) =>
               Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
-            filter(() => !subFormPayload),
             map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
@@ -228,6 +226,9 @@ export class RdfService {
 
           if (question.table.length) {
             question.table.forEach((row, tableIndex) => {
+              if (row.isPublishedTillSave) {
+                return null;
+              }
               sectionPayloads.push({
                 UNIQUEKEY: row.id,
                 VALIDFROM,
@@ -245,10 +246,11 @@ export class RdfService {
                 SECTIONPOSITION: sectionPosition.toString(),
                 DEFAULTVALUE: this.getDefaultValue(row),
                 APPNAME,
+                STATUS: 'PUBLISHED',
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
-                subFormPayload: true,
+                PUBLISHED: row.isPublished,
                 ...this.getProperties(row)
               });
             });
@@ -311,6 +313,28 @@ export class RdfService {
     let properties = {};
     const { fieldType, id } = question;
     switch (fieldType) {
+      case 'DF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CD'
+        };
+        break;
+      }
+      case 'TIF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CT'
+        };
+        break;
+      }
+      case 'USR': {
+        properties = {
+          ...properties,
+          UIFIELDTYPE: 'LF',
+          DEFAULTVALUE: 'CU'
+        };
+        break;
+      }
       case 'LLF': {
         const { name } = question;
         properties = {
@@ -382,7 +406,7 @@ export class RdfService {
                 lat,
                 lan,
                 radius,
-                pinsCount,
+                pinsCount: pinsCount.toString(),
                 autoFill: autoFill.toString(),
                 parent: responseType
               })
