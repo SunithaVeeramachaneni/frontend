@@ -80,17 +80,15 @@ export class RdfService {
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
-        const { PUBLISHED, subFormPayload, ...rest } = payload;
+        const { PUBLISHED, ...rest } = payload;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
-            filter(() => !subFormPayload),
             map((resp) =>
               Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
-            filter(() => !subFormPayload),
             map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
@@ -248,7 +246,6 @@ export class RdfService {
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
-                subFormPayload: true,
                 ...this.getProperties(row)
               });
             });

@@ -711,7 +711,7 @@
                                             header
                                           );
                                           togglePopOverOpenState(i, j);
-                                          toggleShowFilterState(i, j)
+                                          hideShowFilterState(i, j)
                                         "
                                       >
                                         <span>{{ header }}</span>
@@ -1627,10 +1627,7 @@
                                                         resp,
                                                         header
                                                       );
-                                                      toggleShowFilterState(
-                                                        i,
-                                                        j
-                                                      );
+                                                      hideShowFilterState(i, j);
                                                       showReponseTypeOverlay(
                                                         i,
                                                         j,
