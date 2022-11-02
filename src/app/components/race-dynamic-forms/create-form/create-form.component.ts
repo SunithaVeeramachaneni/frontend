@@ -329,18 +329,33 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 table
               } = question;
 
+              const qc = qindex + 1;
+              if (!this.fieldContentOpenState[sc][qc])
+                this.fieldContentOpenState[sc][qc] = false;
+              if (!this.popOverOpenState[sc][qc])
+                this.popOverOpenState[sc][qc] = false;
+              if (!this.showTableResponseType[sc][qc])
+                this.showTableResponseType[sc][qc] = {};
+              if (!this.showFilterSection[sc][qc])
+                this.showFilterSection[sc][qc] = false;
+              if (!this.richTextEditorToolbarState[sc][qc])
+                this.richTextEditorToolbarState[sc][qc] = false;
+
               let tableFormBuilderArray = [];
               if (table && table.length) {
-                tableFormBuilderArray = table.map((row) =>
-                  this.fb.group({
+                tableFormBuilderArray = table.map((row, tIndex) => {
+                  const tc = tIndex + 1;
+                  if (!this.showTableResponseType[sc][qc][tc])
+                    this.showTableResponseType[sc][qc][tc] = false;
+                  return this.fb.group({
                     id: row.id,
                     name: row.name,
                     fieldType: row.fieldType,
                     value: row.value,
                     isPublished: row.isPublished,
                     isPublishedTillSave: row.isPublishedTillSave
-                  })
-                );
+                  });
+                });
               }
 
               let logicsFormArray = [];
@@ -397,27 +412,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   });
                 });
               }
-
-              const qc = qindex + 1;
-              if (!this.fieldContentOpenState[sc][qc])
-                this.fieldContentOpenState[sc][qc] = false;
-              if (!this.popOverOpenState[sc][qc])
-                this.popOverOpenState[sc][qc] = false;
-              if (!this.showTableResponseType[sc][qc])
-                this.showTableResponseType[sc][qc] = false;
-              if (!this.showFilterSection[sc][qc])
-                this.showFilterSection[sc][qc] = false;
-              if (!this.richTextEditorToolbarState[sc][qc])
-                this.richTextEditorToolbarState[sc][qc] = false;
-
-              // let tableArray = [];
-              // if (table && table.length) {
-              //   tableArray = table.map((tabIndex) => {
-              //     const tc = tabIndex + 1;
-              //     if (!this.showTableResponseType[sc][qc][tc])
-              //       this.showTableResponseType[sc][qc][tc] = false;
-              //   });
-              // }
 
               return this.fb.group({
                 id,
