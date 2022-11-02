@@ -80,37 +80,18 @@ export class RdfService {
   ): Observable<any> =>
     from(this.postPutFormFieldPayload(form)).pipe(
       mergeMap((payload) => {
-        const {
-          PUBLISHED,
-          globalDatasetResponseType,
-          actualQuestionId,
-          subFormPayload,
-          ...rest
-        } = payload;
-        rest.UNIQUEKEY = globalDatasetResponseType
-          ? globalDatasetResponseType
-          : rest.UNIQUEKEY;
+        const { PUBLISHED, subFormPayload, ...rest } = payload;
         if (!PUBLISHED) {
           return this.createAbapFormField$(rest, info).pipe(
             filter(() => !subFormPayload),
             map((resp) =>
-              Object.keys(resp).length === 0
-                ? resp
-                : globalDatasetResponseType
-                ? actualQuestionId
-                : rest.UNIQUEKEY
+              Object.keys(resp).length === 0 ? resp : rest.UNIQUEKEY
             )
           );
         } else {
           return this.updateAbapFormField$(rest, info).pipe(
             filter(() => !subFormPayload),
-            map((resp) =>
-              resp === null
-                ? globalDatasetResponseType
-                  ? actualQuestionId
-                  : rest.UNIQUEKEY
-                : resp
-            )
+            map((resp) => (resp === null ? rest.UNIQUEKEY : resp))
           );
         }
       }),
@@ -267,8 +248,6 @@ export class RdfService {
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
-                globalDatasetResponseType: '',
-                actualQuestionId: '',
                 subFormPayload: true,
                 ...this.getProperties(row)
               });
@@ -413,8 +392,7 @@ export class RdfService {
             ...properties,
             FILENAME: fileName,
             DDDEPENDECYFIELD: dependsOn,
-            globalDatasetResponseType: responseType,
-            actualQuestionId: id
+            COLUMNNAME: responseType
           };
         }
         break;

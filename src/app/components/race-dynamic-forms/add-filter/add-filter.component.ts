@@ -124,6 +124,7 @@ export class AddFilterComponent implements OnInit {
         .map((question) => {
           if (
             question.fieldType === 'DD' &&
+            question.value.id === selectedQuestion.value.id &&
             question.value.globalDataset &&
             position <= this.sectionPosition &&
             (question.position < selectedQuestion.position ||
