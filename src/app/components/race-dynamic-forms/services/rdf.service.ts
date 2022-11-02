@@ -243,6 +243,7 @@ export class RdfService {
                 SECTIONPOSITION: sectionPosition.toString(),
                 DEFAULTVALUE: this.getDefaultValue(row),
                 APPNAME,
+                STATUS: 'PUBLISHED',
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
