@@ -242,6 +242,46 @@
                   </div>
                 </div>
               </div>
+
+              <div *ngIf="question.fieldType === 'TAF'">
+                <div style="overflow-x: auto">
+                  <table>
+                    <tr>
+                      <th style="width: 20px; background: #e7ecef"></th>
+                      <th
+                        *ngFor="let columns of question.table; let i = index"
+                        style="width: 100px; background: #e7ecef; padding: 5px"
+                      >
+                        {{ columns.name }}
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px">1.</td>
+                      <td
+                        style="padding: 5px"
+                        *ngFor="let columns of question.table; let i = index"
+                      >
+                        <input type="text" size="10" />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <button
+                  style="
+                    color: #3678af;
+                    background: none;
+                    border: none;
+                    float: left;
+                  "
+                >
+                  <img
+                    src="../../../../assets/rdf-forms-icons/add-row.svg"
+                    alt="add row"
+                    style="position: relative; top: 4px; margin-right: 3px"
+                  />
+                  <span>Add row</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
