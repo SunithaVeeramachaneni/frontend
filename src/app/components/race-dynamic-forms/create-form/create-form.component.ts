@@ -1486,16 +1486,10 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   handleUpdateChildren(questionsInfo: any) {
-    /*  const { question, children } = questionsInfo;
+    const { question, children } = questionsInfo;
     question.get('value').setValue({
       ...question.value.value,
       children
-    }); */
-    questionsInfo.forEach(({ question, children }) => {
-      question.get('value').setValue({
-        ...question.value.value,
-        children
-      });
     });
   }
 
