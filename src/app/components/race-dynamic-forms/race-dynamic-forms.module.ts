@@ -49,6 +49,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ImportQuestionsModalComponent } from './import-questions-modal/import-questions-modal.component';
 import { AddDependencyModalComponent } from './add-dependency-modal/add-dependency-modal.component';
 import { AddFilterComponent } from './add-filter/add-filter.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -94,7 +95,8 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    })
+    }),
+    NgxSpinnerModule
   ],
   declarations: [
     RaceDynamicFormsListViewComponent,

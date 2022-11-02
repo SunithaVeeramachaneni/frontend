@@ -46,7 +46,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/toast';
 import { ErrorInfo, CreateUpdateResponse } from 'src/app/interfaces';
 import { AddDependencyModalComponent } from '../add-dependency-modal/add-dependency-modal.component';
-import { TileCoordinator } from '@angular/material/grid-list/tile-coordinator';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-create-form',
@@ -147,7 +147,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     public dialog: MatDialog,
-    private toaster: ToastService
+    private toaster: ToastService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
@@ -1383,9 +1384,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
+    this.spinner.show();
     this.rdfService
       .importExcelFile$(formData, 'forms/responses/upload', info)
       .subscribe((globalResponses) => {
+        this.spinner.hide();
         if (globalResponses.length) {
           globalResponses.forEach((globalResponse) => {
             this.createEditGlobalResponse = true;
