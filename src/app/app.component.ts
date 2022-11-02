@@ -314,7 +314,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       )
       .subscribe(([userInfo]) => {
         if (Object.keys(userInfo).length) {
-          // this.registerServerSentEvents(userInfo, ref);
+          this.registerServerSentEvents(userInfo, ref);
         }
       });
 
