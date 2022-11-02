@@ -1,19 +1,22 @@
 <div class="filter-section" [formGroup]="filterForm">
-  <span style="margin: 5px 10px 0 5px">Filter By</span>
-  <select
-    class="dropdowns width-30 m-l-5"
-    formControlName="dependsOn"
-    (change)="handleFilterChange($event)"
-  >
-    <option value="" style="display: none">Select</option>
-    <option
-      *ngFor="let responseType of dependencyResponseTypes"
-      [value]="responseType"
-      [selected]="responseType === selectedDependencyResponseType"
+  <div class="width-30 m-r-10">
+    <span style="margin: 5px 10px 0 5px">Filter By</span>
+    <!-- <p class="sub-headings m-0">Filter By</p> -->
+    <mat-select
+      class="dropdowns width-100"
+      formControlName="dependsOn"
+      placeholder="Select"
+      (openedChange)="handleFilterOpen(filterForm)"
+      (selectionChange)="handleFilterChange($event)"
     >
-      {{ responseType }}
-    </option>
-  </select>
+      <mat-option
+        *ngFor="let responseType of dependencyResponseTypes"
+        [value]="responseType"
+      >
+        {{ responseType }}
+      </mat-option>
+    </mat-select>
+  </div>
   <p style="margin: 10px 0 5px 0">
     <span
       style="

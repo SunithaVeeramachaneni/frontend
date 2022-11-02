@@ -33,6 +33,7 @@ export class AddFilterComponent implements OnInit {
   });
   dependencyResponseTypes: any[] = [];
   radiuses = ['500m', '5000m', '50000m', '500000m'];
+  filterPrevDependsOn = '';
   private _globalDatasetsData$;
   private _question;
   private _sections;
@@ -79,12 +80,12 @@ export class AddFilterComponent implements OnInit {
 
     this.filterForm.valueChanges
       .pipe(debounceTime(1000), distinctUntilChanged())
-      .subscribe((data) =>
+      .subscribe((data) => {
         this.filterDetails.emit({
           ...data,
           question: this.question
-        })
-      );
+        });
+      });
   }
 
   updateFilterForm() {
@@ -139,8 +140,42 @@ export class AddFilterComponent implements OnInit {
     });
   }
 
+  handleFilterChange1(prevDependsOn, currDependsOn) {
+    const { responseType } = this.question.value.value;
+    let allSectionQuestions = [];
+
+    this.sections.forEach((section) => {
+      const { questions: que } = section.controls;
+      allSectionQuestions = allSectionQuestions.concat(que.controls);
+    });
+
+    allSectionQuestions.forEach((question) => {
+      const { children = [], responseType: questionResponseType } =
+        question.value.value;
+
+      if (prevDependsOn === questionResponseType) {
+        const index = children.indexOf(responseType);
+        if (index !== -1) {
+          children.slice(index, 1);
+          this.updateChildren.emit({ children, question });
+        }
+      }
+      if (currDependsOn === questionResponseType) {
+        if (!children.includes(responseType)) {
+          children.push(responseType);
+          this.updateChildren.emit({ children, question });
+        }
+      }
+    });
+  }
+
+  handleFilterOpen(filterForm: any) {
+    const { dependsOn } = filterForm.value;
+    this.filterPrevDependsOn = dependsOn;
+  }
+
   handleFilterChange(event: any) {
-    const { value } = event.target as HTMLInputElement;
+    const { value } = event;
     const { responseType } = this.question.value.value;
     let allSectionQuestions = [];
 
