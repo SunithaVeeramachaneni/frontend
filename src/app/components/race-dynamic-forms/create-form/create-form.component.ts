@@ -658,9 +658,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseType: string
   ) => {
-    const { id } = response;
+    const { id, fileName } = response;
     table.get('fieldType').setValue('DD');
-    table.get('value').setValue({ id, responseType, globalDataset: true });
+    table
+      .get('value')
+      .setValue({ id, responseType, fileName, globalDataset: true });
   };
 
   handleResponses = (type: string, id: string) => {
@@ -1208,6 +1210,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           .subscribe();
         break;
       case 'TAF':
+      case 'ARD':
         this.addTableRows(i, j);
         break;
       default:
