@@ -959,6 +959,35 @@
                             />&nbsp;
                             <label for="required">Required</label>
                           </span>
+
+                          <span
+                            *ngIf="question.controls.fieldType.value === 'DF'"
+                            class="m-l-10"
+                          >
+                            <input
+                              type="checkbox"
+                              id="date"
+                              class="required-input"
+                              name="date"
+                              formControlName="value"
+                            />&nbsp;
+                            <label for="date">Default to current date</label>
+                          </span>
+
+                          <span
+                            *ngIf="question.controls.fieldType.value === 'TIF'"
+                            class="m-l-10"
+                          >
+                            <input
+                              type="checkbox"
+                              id="time"
+                              class="required-input"
+                              name="time"
+                              formControlName="value"
+                            />&nbsp;
+                            <label for="time">Default to current time</label>
+                          </span>
+
                           <span
                             *ngIf="question.controls.fieldType.value === 'LF'"
                             style="margin-left: 50px"
