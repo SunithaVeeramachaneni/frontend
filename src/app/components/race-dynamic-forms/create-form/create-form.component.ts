@@ -1386,11 +1386,11 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('file', file);
-    this.spinner.show();
+    // this.spinner.show();
     this.rdfService
       .importExcelFile$(formData, 'forms/responses/upload', info)
       .subscribe((globalResponses) => {
-        this.spinner.hide();
+        // this.spinner.hide();
         if (globalResponses.length) {
           globalResponses.forEach((globalResponse) => {
             this.createEditGlobalResponse = true;
