@@ -226,6 +226,9 @@ export class RdfService {
 
           if (question.table.length) {
             question.table.forEach((row, tableIndex) => {
+              if (row.isPublishedTillSave) {
+                return null;
+              }
               sectionPayloads.push({
                 UNIQUEKEY: row.id,
                 VALIDFROM,
@@ -247,6 +250,7 @@ export class RdfService {
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
+                PUBLISHED: row.isPublished,
                 ...this.getProperties(row)
               });
             });
@@ -309,6 +313,28 @@ export class RdfService {
     let properties = {};
     const { fieldType, id } = question;
     switch (fieldType) {
+      case 'DF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CD'
+        };
+        break;
+      }
+      case 'TIF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CT'
+        };
+        break;
+      }
+      case 'USR': {
+        properties = {
+          ...properties,
+          UIFIELDTYPE: 'LF',
+          DEFAULTVALUE: 'CU'
+        };
+        break;
+      }
       case 'LLF': {
         const { name } = question;
         properties = {
