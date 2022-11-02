@@ -82,8 +82,7 @@ export class AddFilterComponent implements OnInit {
       .subscribe((data) =>
         this.filterDetails.emit({
           ...data,
-          question: this.question,
-          globalDataset: this.globalDataset
+          question: this.question
         })
       );
   }

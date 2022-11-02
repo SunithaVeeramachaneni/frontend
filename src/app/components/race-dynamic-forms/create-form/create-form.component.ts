@@ -632,10 +632,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     response: any,
     responseType: string
   ) => {
-    const { id } = response;
+    const { id, fileName } = response;
     question.get('fieldType').setValue('DD');
     question.get('logics').setControl(this.fb.array([]));
-    question.get('value').setValue({ id, responseType, globalDataset: true });
+    question
+      .get('value')
+      .setValue({ id, responseType, fileName, globalDataset: true });
   };
 
   handleGlobalDatasetTableFieldType = (
@@ -1451,7 +1453,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       radius,
       pins,
       autoSelectColumn,
-      globalDataset,
       question
     } = data;
     question.get('value').setValue({
@@ -1463,9 +1464,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       longitudeColumn,
       radius,
       pins,
-      autoSelectColumn,
-      globalDataset: true,
-      fileName: globalDataset.fileName
+      autoSelectColumn
     });
   }
 
@@ -1514,9 +1513,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           latitudeColumn,
           longitudeColumn,
           radius,
-          pins,
-          globalDataset: true,
-          fileName: globalDataset.fileName
+          pins
         });
         const questionsObj = questions.map((ques) => {
           const { name, responseType, dependentResponseType } = ques;
@@ -1531,8 +1528,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               name,
               responseType,
               dependentResponseType,
-              fileName: globalDataset.fileName,
-              globalDataset: true,
               parentDependencyQuestionId: qid
             }
           };
