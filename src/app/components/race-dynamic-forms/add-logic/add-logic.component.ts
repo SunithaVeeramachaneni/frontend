@@ -70,7 +70,6 @@ export class AddLogicComponent implements OnInit {
     });
     this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
     this._question = question ? question : ({} as any);
-    console.log(this._question);
     this.cdrf.detectChanges();
   }
 
