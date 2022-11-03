@@ -61,7 +61,9 @@ export class TabularDependencyComponent implements OnInit {
       response,
       header
     };
-    this.handleResponseChange({ value: response });
+    if (response && header) {
+      this.handleResponseChange({ value: response });
+    }
     this.dependencyForm.patchValue(obj);
   }
 

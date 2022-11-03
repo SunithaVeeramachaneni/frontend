@@ -429,8 +429,25 @@ export class RdfService {
         }
         break;
       }
-      case 'ARD':
+      case 'ARD': {
+        properties = {
+          ...properties,
+          OVERVIEW: 'X',
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
       case 'TAF': {
+        const {
+          value: { dependsOn, fileName, globalDataset }
+        } = question;
+        if (globalDataset) {
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependsOn
+          };
+        }
         properties = {
           ...properties,
           SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
