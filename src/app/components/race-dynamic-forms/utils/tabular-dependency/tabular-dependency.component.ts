@@ -61,14 +61,8 @@ export class TabularDependencyComponent implements OnInit {
       response,
       header
     };
-    this.globalDatasetsData$
-      .pipe(
-        tap((resp: any) => {
-          const respSet = resp.find((item) => item.name === response);
-          this.filterByResponseSet$.next(respSet.values.headers);
-        })
-      )
-      .subscribe(this.dependencyForm.patchValue(obj));
+    this.handleResponseChange({ value: response });
+    this.dependencyForm.patchValue(obj);
   }
 
   handleResponseChange(event: any) {
