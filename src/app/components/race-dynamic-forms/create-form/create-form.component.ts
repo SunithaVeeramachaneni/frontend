@@ -121,7 +121,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   addLogicIgnoredFields = [
     'LTV',
-    'CB',
     'TIF',
     'SF',
     'LF',
@@ -359,6 +358,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                     name: row.name,
                     fieldType: row.fieldType,
                     value: row.value,
+                    readOnly: row.readOnly,
                     isPublished: row.isPublished,
                     isPublishedTillSave: row.isPublishedTillSave
                   });
@@ -603,6 +603,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       name: [''],
       fieldType: ['TF'],
       value: ['TF'],
+      readOnly: [false],
       isPublished: [false],
       isPublishedTillSave: [false]
     });
@@ -1182,11 +1183,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // this.currentQuestion = table;
-    table.patchValue({
-      fieldType: fieldType.type,
-      value: ''
-    });
+    table.get('fieldType').setValue(fieldType.type);
+    table.get('value').setValue('');
+    table.get('readOnly').setValue(false);
     switch (fieldType.type) {
       case 'TF':
         table.get('value').setValue('TF');
@@ -1239,13 +1238,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     }
 
     this.currentQuestion = question;
-    question.patchValue({
-      fieldType: fieldType.type,
-      required: false,
-      value: '',
-      logics: [],
-      table: []
-    });
+    question.get('fieldType').setValue(fieldType.type);
+    question.get('required').setValue(false);
+    question.get('value').setValue('');
+    // (question.get('logics') as FormArray).clear();
+    // (question.get('table') as FormArray).clear();
+
     question.hasLogic = false;
     switch (fieldType.type) {
       case 'TF':
