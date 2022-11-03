@@ -1052,6 +1052,20 @@
                           </span>
                         </div>
                         <div
+                          class="logicBilder"
+                          *ngIf="showFilterSection[i + 1][j + 1] === true"
+                        >
+                          <app-add-filter
+                            *ngIf="question.controls.value.value?.responseType"
+                            [globalDatasetsData$]="globalDatasetsData$"
+                            [question]="question"
+                            [sectionPosition]="i + 1"
+                            [sections]="this.getSections(createForm)"
+                            (filterDetails)="handleFilterDetails($event)"
+                            (updateChildren)="handleUpdateChildren($event)"
+                          ></app-add-filter>
+                        </div>
+                        <div
                           class="logicBuilder"
                           *ngIf="
                             question.controls.fieldType.value !== 'TAF' &&
@@ -1921,7 +1935,11 @@
                                           true
                                         "
                                       >
-                                        <app-add-filter
+                                        <app-tabular-dependency
+                                          [question]="question"
+                                          [globalResponse]="globalDatasetsData$"
+                                        ></app-tabular-dependency>
+                                        <!-- <app-add-filter
                                           *ngIf="
                                             question.controls.fieldType
                                               .value === 'TAF'
@@ -1940,7 +1958,7 @@
                                           (updateChildren)="
                                             handleUpdateChildren($event)
                                           "
-                                        ></app-add-filter>
+                                        ></app-add-filter> -->
                                       </div>
                                     </mat-tab>
                                   </mat-tab-group>

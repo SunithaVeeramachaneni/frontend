@@ -50,6 +50,7 @@ import { ImportQuestionsModalComponent } from './import-questions-modal/import-q
 import { AddDependencyModalComponent } from './add-dependency-modal/add-dependency-modal.component';
 import { AddFilterComponent } from './add-filter/add-filter.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { TabularDependencyComponent } from './utils/tabular-dependency/tabular-dependency.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -109,7 +110,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     McqResponseComponent,
     ImportQuestionsModalComponent,
     AddDependencyModalComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    TabularDependencyComponent
   ],
   exports: [],
   entryComponents: []
