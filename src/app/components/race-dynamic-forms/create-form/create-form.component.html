@@ -1115,24 +1115,26 @@
                                       "
                                     >
                                       <div
-                                        style="
-                                          border-radius: 5px;
-                                          padding: 5px;
-                                          display: flex;
-                                          align-items: center;
-                                          flex-direction: row;
-                                        "
-                                        (click)="addTableRows(i, j)"
+                                        class="add-logic-row"
+                                        style="margin: 2px 0 4px 15px"
                                       >
-                                        <img
-                                          src="assets/rdf-forms-icons/add-table.svg"
-                                          alt="add column"
-                                          style="
-                                            margin-right: 5px;
-                                            height: 14px;
-                                          "
-                                        />
-                                        <span>Add Column</span>
+                                        <div
+                                          style="margin: 8px"
+                                          class="add-logic-btn"
+                                          (click)="addTableRows(i, j)"
+                                        >
+                                          <img
+                                            src="assets/rdf-forms-icons/add-table.svg"
+                                            alt="add column"
+                                            style="
+                                              margin-right: 5px;
+                                              height: 14px;
+                                            "
+                                          />
+                                          <span style="color: #1351d8"
+                                            >Add Column</span
+                                          >
+                                        </div>
                                       </div>
                                       <div
                                         style="
@@ -1196,9 +1198,29 @@
                                                   placeholder="Type Question"
                                                 />
                                               </mat-form-field>
+                                              <span
+                                                *ngIf="
+                                                  row.controls.value.value
+                                                    ?.responseType &&
+                                                  row.controls.value
+                                                    .fieldType === 'TAF'
+                                                "
+                                                class="m-l-10"
+                                              >
+                                                <input
+                                                  type="checkbox"
+                                                  id="date"
+                                                  class="required-input"
+                                                  name="date"
+                                                  formControlName="readOnly"
+                                                />&nbsp;
+                                                <label for="date"
+                                                  >Read only</label
+                                                >
+                                              </span>
                                             </div>
 
-                                            <div class="width-30">
+                                            <div class="width-28">
                                               <button
                                                 cdkOverlayOrigin
                                                 #trigger="cdkOverlayOrigin"
@@ -1390,33 +1412,6 @@
                                                   keyboard_arrow_down
                                                 </mat-icon>
                                               </button>
-                                              <div
-                                                class="width-30"
-                                                style="height: 0"
-                                                *ngIf="
-                                                  getTableData(question)
-                                                    .length !== 1 &&
-                                                  tableRowSelectState[i + 1][
-                                                    j + 1
-                                                  ][k + 1] === true
-                                                "
-                                              >
-                                                <img
-                                                  src="assets/rdf-forms-icons/delete-icon.svg"
-                                                  alt="delete-icon"
-                                                  (click)="
-                                                    deleteTableRow(
-                                                      i,
-                                                      j,
-                                                      k,
-                                                      row,
-                                                      question
-                                                    )
-                                                  "
-                                                  class="delete-icon table-delete-icon"
-                                                />
-                                              </div>
-
                                               <ng-template
                                                 cdkConnectedOverlay
                                                 cdkConnectedOverlayPanelClass="custom-popover"
@@ -1923,11 +1918,38 @@
                                                 </div>
                                               </ng-template>
                                             </div>
+                                            <div
+                                              *ngIf="
+                                                getTableData(question)
+                                                  .length !== 1 &&
+                                                tableRowSelectState[i + 1][
+                                                  j + 1
+                                                ][k + 1] === true
+                                              "
+                                            >
+                                              <img
+                                                src="assets/rdf-forms-icons/delete-icon.svg"
+                                                alt="delete-icon"
+                                                (click)="
+                                                  deleteTableRow(
+                                                    i,
+                                                    j,
+                                                    k,
+                                                    row,
+                                                    question
+                                                  )
+                                                "
+                                                class="table-delete-icon"
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </mat-tab>
-                                    <mat-tab label="FILTERS">
+                                    <mat-tab
+                                      label="FILTERS"
+                                      (click)="openAddFilter(i, j, false)"
+                                    >
                                       <div
                                         class="logicBilder"
                                         *ngIf="
@@ -1941,26 +1963,6 @@
                                             globalDatasetsData$
                                           "
                                         ></app-tabular-dependency>
-                                        <!-- <app-add-filter
-                                          *ngIf="
-                                            question.controls.fieldType
-                                              .value === 'TAF'
-                                          "
-                                          [globalDatasetsData$]="
-                                            globalDatasetsData$
-                                          "
-                                          [question]="question"
-                                          [sectionPosition]="i + 1"
-                                          [sections]="
-                                            this.getSections(createForm)
-                                          "
-                                          (filterDetails)="
-                                            handleFilterDetails($event)
-                                          "
-                                          (updateChildren)="
-                                            handleUpdateChildren($event)
-                                          "
-                                        ></app-add-filter> -->
                                       </div>
                                     </mat-tab>
                                   </mat-tab-group>
@@ -2037,7 +2039,9 @@
                                     </mat-form-field>
                                     <span
                                       *ngIf="
-                                        row.controls.value.value?.responseType
+                                        row.controls.value.value
+                                          ?.responseType &&
+                                        row.controls.value.fieldType === 'TAF'
                                       "
                                       class="m-l-10"
                                     >

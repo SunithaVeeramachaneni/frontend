@@ -3,12 +3,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  Input,
-  ChangeDetectorRef
+  Input
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tabular-dependency',
@@ -39,39 +37,13 @@ export class TabularDependencyComponent implements OnInit {
     this.activeQuestion = question;
   }
 
-  constructor(private fb: FormBuilder, private cdrf: ChangeDetectorRef) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.dependencyForm = this.fb.group({
       response: new FormControl(''),
       header: new FormControl('')
     });
-
-    /* this.response.valueChanges.pipe(
-      tap((value) => {
-        const respSet = this.globalDatasetsData.find(
-          (item) => item.name === value
-        );
-        this.filterByResponseSet$.next(respSet.values.headers);
-        this.cdrf.markForCheck();
-      })
-    ); */
-
-    this.header.valueChanges.pipe(
-      tap((header) => {
-        const respSet = this.globalDatasetsData.find(
-          (item) => item.name === this.response.value
-        );
-        this.activeQuestion.get('value').setValue({
-          // ...this.activeQuestion.get('value'),
-          dependsOn: header,
-          globalDataset: true,
-          fileName: respSet.fileName,
-          id: respSet.id
-        });
-        this.cdrf.markForCheck();
-      })
-    );
   }
 
   get response() {
@@ -86,7 +58,6 @@ export class TabularDependencyComponent implements OnInit {
     const { value } = event;
     const respSet = this.globalDatasetsData.find((item) => item.name === value);
     this.filterByResponseSet$.next(respSet.values.headers);
-    // this.cdrf.markForCheck();
   }
 
   handleHeaderChange(event: any) {
@@ -95,12 +66,10 @@ export class TabularDependencyComponent implements OnInit {
       (item) => item.name === this.response.value
     );
     this.activeQuestion.get('value').setValue({
-      // ...this.activeQuestion.get('value'),
       dependsOn: header,
       globalDataset: true,
       fileName: respSet.fileName,
       id: respSet.id
     });
-    // this.cdrf.markForCheck();
   }
 }
