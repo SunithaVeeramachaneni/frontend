@@ -42,7 +42,9 @@ export class AddLogicComponent implements OnInit {
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
 
-  dropDownTypes = ['DD', 'VI', 'DDM'];
+  dropDownTypes = ['DD', 'VI', 'DDM', 'CB'];
+
+  public checkBoxResponses = ['true', 'false'];
 
   public logicsForm: FormGroup;
 
