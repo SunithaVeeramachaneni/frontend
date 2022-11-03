@@ -421,6 +421,7 @@ export class RdfService {
         }
         break;
       }
+      case 'ARD':
       case 'TAF': {
         properties = {
           ...properties,
