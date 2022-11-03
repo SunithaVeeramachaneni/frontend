@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export const fieldTypeOperatorMapping = {
+  CB: [
+    {
+      code: 'EQ',
+      symbol: '=',
+      displayName: 'is'
+    }
+  ],
   TF: [
     {
       code: 'NE',
