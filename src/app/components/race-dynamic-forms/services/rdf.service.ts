@@ -311,7 +311,7 @@ export class RdfService {
 
   getProperties(question, formId = null) {
     let properties = {};
-    const { fieldType, id } = question;
+    const { fieldType, readOnly } = question;
     switch (fieldType) {
       case 'DF': {
         properties = {
@@ -411,6 +411,12 @@ export class RdfService {
                 autoFill: autoFill.toString(),
                 parent: responseType
               })
+            };
+          }
+          if (readOnly) {
+            properties = {
+              ...properties,
+              UIFIELDTYPE: 'LF'
             };
           }
           properties = {

@@ -1171,8 +1171,7 @@
                                   <div class="width-70">
                                     <mat-form-field
                                       appearance="outline"
-                                      class="width-90"
-                                      style="margin-left: 10px"
+                                      style="margin-left: 10px; width: 78%"
                                     >
                                       <input
                                         autocomplete="off"
@@ -1182,9 +1181,24 @@
                                         placeholder="Type Question"
                                       />
                                     </mat-form-field>
+                                    <span
+                                      *ngIf="
+                                        row.controls.value.value?.responseType
+                                      "
+                                      class="m-l-10"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        id="date"
+                                        class="required-input"
+                                        name="date"
+                                        formControlName="readOnly"
+                                      />&nbsp;
+                                      <label for="date">Read only</label>
+                                    </span>
                                   </div>
 
-                                  <div class="width-30">
+                                  <div class="width-28">
                                     <button
                                       cdkOverlayOrigin
                                       #trigger="cdkOverlayOrigin"
@@ -1353,26 +1367,6 @@
                                         keyboard_arrow_down
                                       </mat-icon>
                                     </button>
-                                    <div
-                                      class="width-30"
-                                      style="height: 0"
-                                      *ngIf="
-                                        getTableData(question).length !== 1 &&
-                                        tableRowSelectState[i + 1][j + 1][
-                                          k + 1
-                                        ] === true
-                                      "
-                                    >
-                                      <img
-                                        src="assets/rdf-forms-icons/delete-icon.svg"
-                                        alt="delete-icon"
-                                        (click)="
-                                          deleteTableRow(i, j, k, row, question)
-                                        "
-                                        class="delete-icon table-delete-icon"
-                                      />
-                                    </div>
-
                                     <ng-template
                                       cdkConnectedOverlay
                                       cdkConnectedOverlayPanelClass="custom-popover"
@@ -1815,6 +1809,23 @@
                                         </div>
                                       </div>
                                     </ng-template>
+                                  </div>
+                                  <div
+                                    *ngIf="
+                                      getTableData(question).length !== 1 &&
+                                      tableRowSelectState[i + 1][j + 1][
+                                        k + 1
+                                      ] === true
+                                    "
+                                  >
+                                    <img
+                                      src="assets/rdf-forms-icons/delete-icon.svg"
+                                      alt="delete-icon"
+                                      (click)="
+                                        deleteTableRow(i, j, k, row, question)
+                                      "
+                                      class="table-delete-icon"
+                                    />
                                   </div>
                                 </div>
                               </div>
