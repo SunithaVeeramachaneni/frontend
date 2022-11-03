@@ -1187,8 +1187,11 @@
                                             <div class="width-70">
                                               <mat-form-field
                                                 appearance="outline"
-                                                class="width-90"
-                                                style="margin-left: 10px"
+                                                class="width-78"
+                                                style="
+                                                  margin-left: 10px;
+                                                  width: 78%;
+                                                "
                                               >
                                                 <input
                                                   autocomplete="off"
@@ -1201,9 +1204,7 @@
                                               <span
                                                 *ngIf="
                                                   row.controls.value.value
-                                                    ?.responseType &&
-                                                  row.controls.value
-                                                    .fieldType === 'TAF'
+                                                    ?.responseType
                                                 "
                                                 class="m-l-10"
                                               >
@@ -1950,13 +1951,7 @@
                                       label="FILTERS"
                                       (click)="openAddFilter(i, j, false)"
                                     >
-                                      <div
-                                        class="logicBilder"
-                                        *ngIf="
-                                          showFilterSection[i + 1][j + 1] ===
-                                          true
-                                        "
-                                      >
+                                      <div class="logicBilder">
                                         <app-tabular-dependency
                                           [question]="question"
                                           [globalDatasetsData$]="
@@ -2039,9 +2034,7 @@
                                     </mat-form-field>
                                     <span
                                       *ngIf="
-                                        row.controls.value.value
-                                          ?.responseType &&
-                                        row.controls.value.fieldType === 'TAF'
+                                        row.controls.value.value?.responseType
                                       "
                                       class="m-l-10"
                                     >

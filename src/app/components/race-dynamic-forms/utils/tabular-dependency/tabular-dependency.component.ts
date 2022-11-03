@@ -17,14 +17,16 @@ import { BehaviorSubject } from 'rxjs';
 export class TabularDependencyComponent implements OnInit {
   activeQuestion: any;
   public filterByResponseSet$: BehaviorSubject<any> = new BehaviorSubject([]);
-  public dependencyForm: FormGroup;
+  public dependencyForm: FormGroup = this.fb.group({
+    response: new FormControl(''),
+    header: new FormControl('')
+  });
   globalDatasetsData: any;
   private _globalDatasetsData$: any;
 
   @Input() set globalDatasetsData$(globalDatasetsData$: any) {
     this._globalDatasetsData$ = globalDatasetsData$;
     globalDatasetsData$.subscribe((data) => {
-      console.log(data);
       this.globalDatasetsData = data.data;
     });
   }
@@ -35,16 +37,12 @@ export class TabularDependencyComponent implements OnInit {
 
   @Input() set question(question: any) {
     this.activeQuestion = question;
+    this.updateDependencyForm();
   }
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
-    this.dependencyForm = this.fb.group({
-      response: new FormControl(''),
-      header: new FormControl('')
-    });
-  }
+  ngOnInit(): void {}
 
   get response() {
     return this.dependencyForm.get('response');
@@ -52,6 +50,18 @@ export class TabularDependencyComponent implements OnInit {
 
   get header() {
     return this.dependencyForm.get('header');
+  }
+
+  updateDependencyForm() {
+    const { fileName, dependsOn: header = '' } =
+      this.activeQuestion.value.value;
+    const response = fileName ? fileName.split('.')[0] : '';
+    const obj = {
+      response,
+      header
+    };
+    // this.handleResponseChange({ value: response });
+    this.dependencyForm.patchValue(obj);
   }
 
   handleResponseChange(event: any) {
