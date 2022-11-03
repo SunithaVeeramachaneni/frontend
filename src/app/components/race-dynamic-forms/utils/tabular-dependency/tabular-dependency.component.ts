@@ -23,16 +23,16 @@ export class TabularDependencyComponent implements OnInit {
     header: new FormControl('')
   });
   globalDatasetsData: any;
-  private _globalDatasetsData$: Observable<any>;
+  private _globalDatasetsData$;
 
-  @Input() set globalDatasetsData$(globalDatasetsData$: any) {
+  @Input() set globalDatasetsData$(globalDatasetsData$: Observable<any>) {
     this._globalDatasetsData$ = globalDatasetsData$;
     globalDatasetsData$.subscribe((data) => {
       this.globalDatasetsData = data.data;
     });
   }
 
-  get globalDatasetsData$(): Observable<any> {
+  get globalDatasetsData$() {
     return this._globalDatasetsData$;
   }
 
