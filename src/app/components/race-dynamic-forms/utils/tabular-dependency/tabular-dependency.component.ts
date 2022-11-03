@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tabular-dependency',
@@ -60,8 +61,14 @@ export class TabularDependencyComponent implements OnInit {
       response,
       header
     };
-    // this.handleResponseChange({ value: response });
-    this.dependencyForm.patchValue(obj);
+    this.globalDatasetsData$
+      .pipe(
+        tap((resp: any) => {
+          const respSet = resp.find((item) => item.name === response);
+          this.filterByResponseSet$.next(respSet.values.headers);
+        })
+      )
+      .subscribe(this.dependencyForm.patchValue(obj));
   }
 
   handleResponseChange(event: any) {
