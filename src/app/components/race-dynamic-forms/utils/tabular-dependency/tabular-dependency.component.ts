@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,13 +17,22 @@ import { tap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TabularDependencyComponent implements OnInit {
-  public globalResponseSet: any;
   activeQuestion: any;
   public filterByResponseSet$: BehaviorSubject<any> = new BehaviorSubject([]);
   public dependencyForm: FormGroup;
+  globalDatasetsData: any;
+  private _globalDatasetsData$: any;
 
-  @Input() set globalResponse(globalResponse: any) {
-    this.globalResponseSet = globalResponse ? globalResponse : ([] as any);
+  @Input() set globalDatasetsData$(globalDatasetsData$: any) {
+    this._globalDatasetsData$ = globalDatasetsData$;
+    globalDatasetsData$.subscribe((data) => {
+      console.log(data);
+      this.globalDatasetsData = data.data;
+    });
+  }
+
+  get globalDatasetsData$() {
+    return this._globalDatasetsData$;
   }
 
   @Input() set question(question: any) {
@@ -37,19 +47,19 @@ export class TabularDependencyComponent implements OnInit {
       header: new FormControl('')
     });
 
-    this.response.valueChanges.pipe(
+    /* this.response.valueChanges.pipe(
       tap((value) => {
-        const respSet = this.globalResponseSet.find(
+        const respSet = this.globalDatasetsData.find(
           (item) => item.name === value
         );
         this.filterByResponseSet$.next(respSet.values.headers);
         this.cdrf.markForCheck();
       })
-    );
+    ); */
 
     this.header.valueChanges.pipe(
       tap((header) => {
-        const respSet = this.globalResponseSet.find(
+        const respSet = this.globalDatasetsData.find(
           (item) => item.name === this.response.value
         );
         this.activeQuestion.get('value').setValue({
@@ -70,5 +80,27 @@ export class TabularDependencyComponent implements OnInit {
 
   get header() {
     return this.dependencyForm.get('header');
+  }
+
+  handleResponseChange(event: any) {
+    const { value } = event;
+    const respSet = this.globalDatasetsData.find((item) => item.name === value);
+    this.filterByResponseSet$.next(respSet.values.headers);
+    // this.cdrf.markForCheck();
+  }
+
+  handleHeaderChange(event: any) {
+    const { value: header } = event;
+    const respSet = this.globalDatasetsData.find(
+      (item) => item.name === this.response.value
+    );
+    this.activeQuestion.get('value').setValue({
+      // ...this.activeQuestion.get('value'),
+      dependsOn: header,
+      globalDataset: true,
+      fileName: respSet.fileName,
+      id: respSet.id
+    });
+    // this.cdrf.markForCheck();
   }
 }

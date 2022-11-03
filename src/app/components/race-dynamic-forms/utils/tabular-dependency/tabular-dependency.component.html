@@ -1,6 +1,6 @@
 <div class="filter-section" [formGroup]="dependencyForm">
   <div class="width-100 m-r-10 dis-flex">
-    <span style="margin: 5px 10px 0 5px; width: 14%; padding-top: 10px"
+    <span style="margin: 5px 10px 0 5px; width: 18%; padding-top: 10px"
       >Global Response</span
     >
     <mat-select
@@ -8,10 +8,16 @@
       class="dropdowns"
       formControlName="response"
       placeholder="Select"
+      (selectionChange)="handleResponseChange($event)"
     >
-      <mat-option *ngFor="let resp of globalResponseSet">
-        {{ resp.name }}
-      </mat-option>
+      <ng-container *ngIf="globalDatasetsData$ | async as globalDatasetsData">
+        <mat-option
+          *ngFor="let resp of globalDatasetsData.data"
+          [value]="resp.name"
+        >
+          {{ resp.name }}
+        </mat-option>
+      </ng-container>
     </mat-select>
   </div>
 
@@ -19,7 +25,7 @@
     *ngIf="filterByResponseSet$ | async as responseSetHeaders"
     class="width-100 m-r-10 dis-flex"
   >
-    <span style="margin: 5px 10px 0 5px; width: 14%; padding-top: 10px"
+    <span style="margin: 5px 10px 0 5px; width: 18%; padding-top: 10px"
       >Filter By</span
     >
     <mat-select
@@ -27,8 +33,9 @@
       class="dropdowns"
       formControlName="header"
       placeholder="Select"
+      (selectionChange)="handleHeaderChange($event)"
     >
-      <mat-option *ngFor="let header of responseSetHeaders">
+      <mat-option *ngFor="let header of responseSetHeaders" [value]="header">
         {{ header }}
       </mat-option>
     </mat-select>

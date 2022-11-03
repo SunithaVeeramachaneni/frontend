@@ -1937,7 +1937,9 @@
                                       >
                                         <app-tabular-dependency
                                           [question]="question"
-                                          [globalResponse]="globalDatasetsData$"
+                                          [globalDatasetsData$]="
+                                            globalDatasetsData$
+                                          "
                                         ></app-tabular-dependency>
                                         <!-- <app-add-filter
                                           *ngIf="
