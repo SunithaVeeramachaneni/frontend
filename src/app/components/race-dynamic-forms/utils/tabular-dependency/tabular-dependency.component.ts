@@ -6,7 +6,7 @@ import {
   Input
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 @Component({
@@ -23,7 +23,7 @@ export class TabularDependencyComponent implements OnInit {
     header: new FormControl('')
   });
   globalDatasetsData: any;
-  private _globalDatasetsData$: any;
+  private _globalDatasetsData$: Observable<any>;
 
   @Input() set globalDatasetsData$(globalDatasetsData$: any) {
     this._globalDatasetsData$ = globalDatasetsData$;
@@ -32,7 +32,7 @@ export class TabularDependencyComponent implements OnInit {
     });
   }
 
-  get globalDatasetsData$() {
+  get globalDatasetsData$(): Observable<any> {
     return this._globalDatasetsData$;
   }
 
