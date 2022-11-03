@@ -382,7 +382,8 @@ export class RdfService {
             pins: pinsCount,
             autoSelectColumn: autoFill,
             fileName,
-            globalDataset
+            globalDataset,
+            children
           },
           multi
         } = question;
@@ -416,6 +417,7 @@ export class RdfService {
             ...properties,
             FILENAME: fileName,
             DDDEPENDECYFIELD: dependsOn,
+            CHILDREN: JSON.stringify(children),
             COLUMNNAME: responseType
           };
         }

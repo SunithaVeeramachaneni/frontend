@@ -753,6 +753,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     ].get('questions') as FormArray;
     control.removeAt(j);
     this.fieldContentOpenState[i + 1][j + 1] = false;
+    if (
+      question.value.fieldType === 'DD' &&
+      question.value.value.globalDataset
+    ) {
+      this.spliceCildren(question.value.value);
+    }
     if (question.value.isPublished) {
       this.rdfService
         .deleteAbapFormField$({
@@ -800,7 +806,27 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     }
   }
 
-  spliceCildren() {}
+  spliceCildren(value) {
+    const { responseType, dependsOn } = value;
+    let allSectionQuestions = [];
+    this.getSections(this.createForm).forEach((section) => {
+      const { questions: que } = section.controls;
+      allSectionQuestions = allSectionQuestions.concat(que.controls);
+    });
+
+    allSectionQuestions.forEach((question) => {
+      const { children = [], responseType: questionResponseType } =
+        question.value.value;
+
+      if (dependsOn === questionResponseType) {
+        const index = children.indexOf(responseType);
+        if (index !== -1) {
+          children.splice(index, 1);
+          this.handleUpdateChildren({ children, question });
+        }
+      }
+    });
+  }
 
   onValueChanged(section: any, question: any, event: any) {
     const control = question.get('logics') as FormArray;
