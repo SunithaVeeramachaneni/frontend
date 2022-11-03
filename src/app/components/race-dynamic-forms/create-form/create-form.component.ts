@@ -133,8 +133,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     'RT',
     'TAF'
   ];
-
   showTableResponseType = {};
+  tableRowSelectState = {};
 
   constructor(
     private fb: FormBuilder,
@@ -178,7 +178,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               fieldType.type !== 'DD' &&
               fieldType.type !== 'DDM' &&
               fieldType.type !== 'VI' &&
-              fieldType.type !== 'TAF'
+              fieldType.type !== 'TAF' &&
+              fieldType.type !== 'ARD' &&
+              fieldType.type !== 'USR'
           );
         })
       )
@@ -308,6 +310,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
           if (!this.showTableResponseType[sc])
             this.showTableResponseType[sc] = {};
+          if (!this.tableRowSelectState[sc]) this.tableRowSelectState[sc] = {};
           if (!this.showFilterSection[sc]) this.showFilterSection[sc] = {};
           if (!this.richTextEditorToolbarState[sc])
             this.richTextEditorToolbarState[sc] = {};
@@ -335,6 +338,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                 this.popOverOpenState[sc][qc] = false;
               if (!this.showTableResponseType[sc][qc])
                 this.showTableResponseType[sc][qc] = {};
+              if (!this.tableRowSelectState[sc][qc])
+                this.tableRowSelectState[sc][qc] = {};
               if (!this.showFilterSection[sc][qc])
                 this.showFilterSection[sc][qc] = false;
               if (!this.richTextEditorToolbarState[sc][qc])
@@ -346,6 +351,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   const tc = tIndex + 1;
                   if (!this.showTableResponseType[sc][qc][tc])
                     this.showTableResponseType[sc][qc][tc] = false;
+                  if (!this.tableRowSelectState[sc][qc][tc])
+                    this.tableRowSelectState[sc][qc][tc] = false;
                   return this.fb.group({
                     id: row.id,
                     name: row.name,
@@ -587,6 +594,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   initTable = (sc, qc, tc, tableId) => {
     if (!this.showTableResponseType[sc][qc][tc])
       this.showTableResponseType[sc][qc][tc] = false;
+    if (!this.tableRowSelectState[sc][qc][tc])
+      this.tableRowSelectState[sc][qc][tc] = false;
 
     return this.fb.group({
       id: tableId,
@@ -646,7 +655,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .setValue({ id, responseType, fileName, globalDataset: true });
   };
 
-  handleGlobalDatasetTableFieldType = (
+  handleGlobalDatasetRowFieldType = (
     table: any,
     response: any,
     responseType: string
@@ -770,6 +779,28 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
 
+  deleteTableRow(i, j, k, row, question) {
+    const control = (
+      (this.createForm.get('sections') as FormArray).controls[i].get(
+        'questions'
+      ) as FormArray
+    ).controls[j].get('table') as FormArray;
+    control.removeAt(k);
+    this.tableRowSelectState[i + 1][j + 1][k + 1] = false;
+    if (row.value.isPublished) {
+      this.rdfService
+        .deleteAbapFormField$({
+          FORMNAME: `${
+            this.createForm.get('id').value
+          }TABULARFORM${question.value.id.slice(1)}`,
+          UNIQUEKEY: row.value.id
+        })
+        .subscribe();
+    }
+  }
+
+  spliceCildren() {}
+
   onValueChanged(section: any, question: any, event: any) {
     const control = question.get('logics') as FormArray;
     control.patchValue(event);
@@ -885,6 +916,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
     if (!this.showTableResponseType[sc][qc])
       this.showTableResponseType[sc][qc] = {};
+    if (!this.tableRowSelectState[sc][qc])
+      this.tableRowSelectState[sc][qc] = {};
     if (!this.showFilterSection[sc][qc]) this.showFilterSection[sc][qc] = false;
     if (!this.richTextEditorToolbarState[sc][qc])
       this.richTextEditorToolbarState[sc][qc] = false;
@@ -934,6 +967,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.fieldContentOpenState[sc]) this.fieldContentOpenState[sc] = {};
     if (!this.popOverOpenState[sc]) this.popOverOpenState[sc] = {};
     if (!this.showTableResponseType[sc]) this.showTableResponseType[sc] = {};
+    if (!this.tableRowSelectState[sc]) this.tableRowSelectState[sc] = {};
     if (!this.showFilterSection[sc]) this.showFilterSection[sc] = {};
     if (!this.richTextEditorToolbarState[sc])
       this.richTextEditorToolbarState[sc] = {};
@@ -977,7 +1011,32 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       });
     });
     this.fieldContentOpenState[sectionIndex + 1][questionIndex + 1] = true;
+    this.resetTableRowSelectState();
   };
+
+  toggleTableRowSelectState = (
+    sectionIndex,
+    questionIndex,
+    tableIndex,
+    event
+  ) => {
+    event.stopPropagation();
+    this.resetTableRowSelectState();
+    this.tableRowSelectState[sectionIndex + 1][questionIndex + 1][
+      tableIndex + 1
+    ] = true;
+  };
+
+  resetTableRowSelectState() {
+    Object.keys(this.tableRowSelectState).forEach((sKey) => {
+      Object.keys(this.tableRowSelectState[sKey]).forEach((qKey) => {
+        this.tableRowSelectState[sKey][qKey] = {};
+        Object.keys(this.tableRowSelectState[sKey][qKey]).forEach((tKey) => {
+          this.tableRowSelectState[sKey][qKey][tKey] = false;
+        });
+      });
+    });
+  }
 
   togglePopOverOpenState = (sectionIndex, questionIndex) => {
     this.popOverOpenState[sectionIndex + 1][questionIndex + 1] =
@@ -1091,7 +1150,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     this.isCustomizerOpen = false;
   }
 
-  selectTableFieldType(fieldType, table) {
+  selectRowFieldType(fieldType, table) {
     if (fieldType.type === table.get('fieldType').value) {
       return;
     }
@@ -1372,7 +1431,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         this.fieldContentOpenState[sc][qc] = false;
       if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
       if (!this.showTableResponseType[sc][qc])
-        this.showTableResponseType[sc][qc] = false;
+        this.showTableResponseType[sc][qc] = {};
+      if (!this.tableRowSelectState[sc][qc])
+        this.tableRowSelectState[sc][qc] = {};
       if (!this.showFilterSection[sc][qc])
         this.showFilterSection[sc][qc] = false;
       if (!this.richTextEditorToolbarState[sc][qc])
@@ -1559,10 +1620,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   }
 
   showReponseTypeOverlay(secIndex, queIndex, tabIndex) {
-    console.log(this.showTableResponseType);
-    console.log(secIndex, queIndex, tabIndex);
     this.showTableResponseType[secIndex + 1][queIndex + 1][tabIndex + 1] =
       !this.showTableResponseType[secIndex + 1][queIndex + 1][tabIndex + 1];
-    console.log(this.showTableResponseType);
   }
 }

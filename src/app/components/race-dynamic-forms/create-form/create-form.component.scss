@@ -257,6 +257,10 @@ select:focus {
   }
 }
 
+.table-response-type-btn {
+  width: 70%;
+}
+
 .delete-icon {
   background: white;
   height: 28px;
@@ -267,6 +271,11 @@ select:focus {
   margin-left: -37px;
   cursor: pointer;
   width: 20px;
+}
+
+.table-delete-icon {
+  left: 200px;
+  top: -45px;
 }
 
 .more-icon {

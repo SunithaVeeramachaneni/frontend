@@ -1157,11 +1157,17 @@
                               </p>
                               <div
                                 *ngFor="
-                                  let table of getTableData(question);
+                                  let row of getTableData(question);
                                   let k = index
                                 "
                               >
-                                <div class="dis-flex" [formGroupName]="k">
+                                <div
+                                  class="dis-flex"
+                                  [formGroupName]="k"
+                                  (click)="
+                                    toggleTableRowSelectState(i, j, k, $event)
+                                  "
+                                >
                                   <div class="width-70">
                                     <mat-form-field
                                       appearance="outline"
@@ -1187,20 +1193,19 @@
                                         isMCQResponseOpen = false;
                                         currentQuestion = question
                                       "
-                                      class="response-type-btn"
+                                      class="response-type-btn table-response-type-btn"
                                       [ngClass]="{
                                         'dis-flex p-t-0':
-                                          table.controls.fieldType.value ===
+                                          row.controls.fieldType.value ===
                                             'VI' ||
-                                          table.controls.fieldType.value ===
-                                            'DD'
+                                          row.controls.fieldType.value === 'DD'
                                       }"
                                     >
                                       <div
                                         *ngIf="
-                                          table.controls.fieldType.value ===
+                                          row.controls.fieldType.value ===
                                             'VI' ||
-                                            table.controls.fieldType.value ===
+                                            row.controls.fieldType.value ===
                                               'DD';
                                           else nonMCQFields
                                         "
@@ -1208,8 +1213,8 @@
                                       >
                                         <mat-chip-list
                                           *ngIf="
-                                            table.controls.value.value?.name &&
-                                            !table.controls.value.value
+                                            row.controls.value.value?.name &&
+                                            !row.controls.value.value
                                               ?.responseType
                                           "
                                           class="response-type-chips"
@@ -1222,15 +1227,13 @@
                                               fontSize: '90%'
                                             }"
                                           >
-                                            {{
-                                              table.controls.value.value?.name
-                                            }}
+                                            {{ row.controls.value.value?.name }}
                                           </mat-chip>
                                         </mat-chip-list>
                                         <mat-chip-list
                                           *ngIf="
-                                            !table.controls.value.value?.name &&
-                                            !table.controls.value.value
+                                            !row.controls.value.value?.name &&
+                                            !row.controls.value.value
                                               ?.responseType
                                           "
                                           class="response-type-chips"
@@ -1238,7 +1241,7 @@
                                           <mat-chip
                                             [ngStyle]="{
                                               color:
-                                                table.controls.value.value
+                                                row.controls.value.value
                                                   ?.values[0]?.color,
                                               backgroundColor: '#ffffff',
                                               border: '1px solid #d3d3d3',
@@ -1247,18 +1250,18 @@
                                             }"
                                           >
                                             {{
-                                              table.controls.value.value
+                                              row.controls.value.value
                                                 ?.values[0].title
                                             }}
                                           </mat-chip>
                                           <mat-chip
                                             *ngIf="
-                                              table.controls.value.value?.values
+                                              row.controls.value.value?.values
                                                 .length >= 2
                                             "
                                             [ngStyle]="{
                                               color:
-                                                table.controls.value.value
+                                                row.controls.value.value
                                                   ?.values[1]?.color,
                                               backgroundColor: '#ffffff',
                                               border: '1px solid #d3d3d3',
@@ -1267,13 +1270,13 @@
                                             }"
                                           >
                                             {{
-                                              table.controls.value.value
+                                              row.controls.value.value
                                                 ?.values[1].title
                                             }}
                                           </mat-chip>
                                           <span
                                             *ngIf="
-                                              table.controls.value.value?.values
+                                              row.controls.value.value?.values
                                                 .length > 2
                                             "
                                             style="
@@ -1281,7 +1284,7 @@
                                               margin-left: 5px;
                                             "
                                             >+ ({{
-                                              table.controls.value.value?.values
+                                              row.controls.value.value?.values
                                                 .length - 2
                                             }}
                                             more)
@@ -1289,7 +1292,7 @@
                                         </mat-chip-list>
                                         <div
                                           *ngIf="
-                                            table.controls.value.value
+                                            row.controls.value.value
                                               ?.responseType
                                           "
                                           style="
@@ -1303,7 +1306,7 @@
                                           "
                                         >
                                           {{
-                                            table.controls.value.value
+                                            row.controls.value.value
                                               ?.responseType
                                           }}
                                         </div>
@@ -1312,7 +1315,7 @@
                                         <img
                                           [src]="
                                             getFieldTypeImage(
-                                              table.controls.fieldType.value
+                                              row.controls.fieldType.value
                                             )
                                           "
                                           class="response-type-icons"
@@ -1328,7 +1331,7 @@
                                           "
                                           >{{
                                             getFieldTypeDescription(
-                                              table.controls.fieldType.value
+                                              row.controls.fieldType.value
                                             )
                                           }}
                                         </span>
@@ -1341,15 +1344,34 @@
                                         "
                                         [ngClass]="{
                                           'p-t-13':
-                                            table.controls.fieldType.value ===
+                                            row.controls.fieldType.value ===
                                               'VI' ||
-                                            table.controls.fieldType.value ===
+                                            row.controls.fieldType.value ===
                                               'DD'
                                         }"
                                       >
                                         keyboard_arrow_down
                                       </mat-icon>
                                     </button>
+                                    <div
+                                      class="width-30"
+                                      style="height: 0"
+                                      *ngIf="
+                                        getTableData(question).length !== 1 &&
+                                        tableRowSelectState[i + 1][j + 1][
+                                          k + 1
+                                        ] === true
+                                      "
+                                    >
+                                      <img
+                                        src="assets/rdf-forms-icons/delete-icon.svg"
+                                        alt="delete-icon"
+                                        (click)="
+                                          deleteTableRow(i, j, k, row, question)
+                                        "
+                                        class="delete-icon table-delete-icon"
+                                      />
+                                    </div>
 
                                     <ng-template
                                       cdkConnectedOverlay
@@ -1405,9 +1427,9 @@
                                                 let fieldType of tableFilteredFieldTypes
                                               "
                                               (click)="
-                                                selectTableFieldType(
+                                                selectRowFieldType(
                                                   fieldType,
-                                                  table
+                                                  row
                                                 );
                                                 showReponseTypeOverlay(i, j, k)
                                               "
@@ -1415,7 +1437,7 @@
                                               [ngClass]="{
                                                 active:
                                                   fieldType.type ===
-                                                  table.controls.fieldType.value
+                                                  row.controls.fieldType.value
                                               }"
                                             >
                                               <img
@@ -1470,7 +1492,7 @@
                                                       }"
                                                       (click)="
                                                         handleFieldType(
-                                                          table,
+                                                          row,
                                                           resp
                                                         );
                                                         showReponseTypeOverlay(
@@ -1502,7 +1524,7 @@
                                                           }"
                                                           (click)="
                                                             handleFieldType(
-                                                              table,
+                                                              row,
                                                               resp
                                                             );
                                                             showReponseTypeOverlay(
@@ -1601,7 +1623,7 @@
                                                     mat-flat-button
                                                     (click)="
                                                       handleFieldType(
-                                                        table,
+                                                        row,
                                                         resp
                                                       );
                                                       showReponseTypeOverlay(
@@ -1706,8 +1728,8 @@
                                                       "
                                                       class="header-elements"
                                                       (click)="
-                                                        handleGlobalDatasetTableFieldType(
-                                                          table,
+                                                        handleGlobalDatasetRowFieldType(
+                                                          row,
                                                           resp,
                                                           header
                                                         );
