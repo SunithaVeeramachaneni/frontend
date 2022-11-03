@@ -121,7 +121,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
 
   addLogicIgnoredFields = [
     'LTV',
-    'CB',
     'TIF',
     'SF',
     'LF',
