@@ -44,12 +44,22 @@
             formControlName="operand2"
             *ngIf="dropDownTypes.indexOf(question.value.fieldType) > -1"
           >
-            <option
-              class="logicOperator"
-              *ngFor="let option of question.value.value.values"
-            >
-              {{ option.title }}
-            </option>
+            <div *ngIf="question.value.fieldType !== 'CB'; else isCheckBox">
+              <option
+                class="logicOperator"
+                *ngFor="let option of question.value.value.values"
+              >
+                {{ option.title }}
+              </option>
+            </div>
+            <ng-template #isCheckBox>
+              <option
+                class="logicOperator"
+                *ngFor="let option of checkBoxResponses"
+              >
+                {{ option }}
+              </option>
+            </ng-template>
           </select>
           then
           <span

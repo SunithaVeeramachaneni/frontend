@@ -42,7 +42,9 @@ export class AddLogicComponent implements OnInit {
   fieldTypes: any = [this.fieldType];
   filteredFieldTypes: any = [this.fieldType];
 
-  dropDownTypes = ['DD', 'VI', 'DDM'];
+  dropDownTypes = ['DD', 'VI', 'DDM', 'CB'];
+
+  public checkBoxResponses = ['true', 'false'];
 
   public logicsForm: FormGroup;
 
@@ -68,6 +70,7 @@ export class AddLogicComponent implements OnInit {
     });
     this.fieldOperators = fieldTypeOperatorMapping[question.value.fieldType];
     this._question = question ? question : ({} as any);
+    console.log(this._question);
     this.cdrf.detectChanges();
   }
 
