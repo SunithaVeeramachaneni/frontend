@@ -175,7 +175,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           );
           this.tableFilteredFieldTypes = fieldTypes.filter(
             (fieldType) =>
-              fieldType.type !== 'LTV' &&
               fieldType.type !== 'DD' &&
               fieldType.type !== 'DDM' &&
               fieldType.type !== 'VI' &&
