@@ -1561,7 +1561,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         children: this.children[ques.value.id]
       });
     });
-    console.log(this.children);
   }
 
   getGlobalDatasetQuestions() {
