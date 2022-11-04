@@ -53,7 +53,8 @@
                     question.fieldType !== 'GAL' &&
                     question.fieldType !== 'ATT' &&
                     question.fieldType !== 'IMG' &&
-                    question.fieldType !== 'RT'
+                    question.fieldType !== 'RT' &&
+                    question.fieldType !== 'ARD'
                   "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
@@ -69,10 +70,23 @@
                       question.fieldType === 'GAL' ||
                       question.fieldType === 'ATT' ||
                       question.fieldType === 'IMG' ||
-                      question.fieldType === 'RT')
+                      question.fieldType === 'RT' ||
+                      question.fieldType === 'ARD')
                   "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
+
+                  <mat-icon
+                    *ngIf="question.fieldType === 'ARD'"
+                    style="
+                      font-size: 160%;
+                      float: right;
+                      margin-right: -15px;
+                      color: #3f7591;
+                    "
+                  >
+                    add
+                  </mat-icon>
                 </div>
                 <div
                   class="width-100 question-name"
@@ -90,7 +104,8 @@
                     question.fieldType !== 'GAL' &&
                     question.fieldType !== 'ATT' &&
                     question.fieldType !== 'IMG' &&
-                    question.fieldType !== 'RT'
+                    question.fieldType !== 'RT' &&
+                    question.fieldType !== 'ARD'
                   "
                 >
                   <p
@@ -281,6 +296,44 @@
                   />
                   <span>Add row</span>
                 </button>
+              </div>
+
+              <div
+                *ngIf="question.fieldType === 'ARD'"
+                style="
+                  margin: -10px 10px 10px 10px;
+                  background-color: #f6f6f6;
+                  padding: 10px 5px;
+                "
+              >
+                <p
+                  style="
+                    font-weight: 500;
+                    margin: 0;
+                    text-align: left;
+                    font-size: 90%;
+                    margin-left: 10px;
+                  "
+                >
+                  Line Item 1
+                </p>
+                <mat-icon
+                  style="
+                    font-size: 120%;
+                    float: right;
+                    position: relative;
+                    top: -15px;
+                    right: -5px;
+                  "
+                >
+                  keyboard_arrow_right
+                </mat-icon>
+                <div
+                  *ngFor="let column of question.table; let i = index"
+                  style="text-align: left"
+                >
+                  <div class="question-name">{{ column.name }}:</div>
+                </div>
               </div>
             </div>
           </div>
