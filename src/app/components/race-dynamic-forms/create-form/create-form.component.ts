@@ -118,7 +118,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   subChecked = [];
   showFilterSection = {};
   filterRequiredInfo;
-
   addLogicIgnoredFields = [
     'LTV',
     'TIF',
@@ -135,6 +134,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
   ];
   showTableResponseType = {};
   tableRowSelectState = {};
+  children = {};
+  globalDatasetQuestions: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -758,7 +759,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       question.value.fieldType === 'DD' &&
       question.value.value.globalDataset
     ) {
-      this.spliceCildren(question.value.value);
+      this.updateDependentChildrenHierarchy();
     }
     if (question.value.isPublished) {
       this.rdfService
@@ -805,28 +806,6 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         })
         .subscribe();
     }
-  }
-
-  spliceCildren(value) {
-    const { responseType, dependsOn } = value;
-    let allSectionQuestions = [];
-    this.getSections(this.createForm).forEach((section) => {
-      const { questions: que } = section.controls;
-      allSectionQuestions = allSectionQuestions.concat(que.controls);
-    });
-
-    allSectionQuestions.forEach((question) => {
-      const { children = [], responseType: questionResponseType } =
-        question.value.value;
-
-      if (dependsOn === questionResponseType) {
-        const index = children.indexOf(responseType);
-        if (index !== -1) {
-          children.splice(index, 1);
-          this.handleUpdateChildren({ children, question });
-        }
-      }
-    });
   }
 
   onValueChanged(section: any, question: any, event: any) {
@@ -1568,14 +1547,59 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       pins,
       autoSelectColumn
     });
+    this.updateDependentChildrenHierarchy();
   }
 
-  handleUpdateChildren(questionsInfo: any) {
-    const { question, children } = questionsInfo;
-    question.get('value').setValue({
-      ...question.value.value,
-      children
+  updateDependentChildrenHierarchy() {
+    this.children = {};
+    this.getGlobalDatasetQuestions();
+    this.globalDatasetQuestions.forEach((ques) => {
+      this.children[ques.value.id] = [];
+      this.getChildrenHierarchy(ques, [ques.value.value.responseType]);
+      ques.get('value').setValue({
+        ...ques.value.value,
+        children: this.children[ques.value.id]
+      });
     });
+  }
+
+  getGlobalDatasetQuestions() {
+    let allSectionQuestions = [];
+    this.getSections(this.createForm).forEach((section) => {
+      const { questions: que } = section.controls;
+      allSectionQuestions = allSectionQuestions.concat(que.controls);
+    });
+
+    this.globalDatasetQuestions = allSectionQuestions.filter((question) => {
+      const {
+        value: { globalDataset },
+        fieldType
+      } = question.value;
+      return fieldType === 'DD' && globalDataset;
+    });
+  }
+
+  getChildrenHierarchy(question, responseTypes) {
+    const {
+      value: { id: currId },
+      id: qid
+    } = question.value;
+
+    const directDependents = this.globalDatasetQuestions
+      .map((ques) => {
+        const {
+          value: { dependsOn, responseType, id }
+        } = ques.value;
+        if (currId === id && responseTypes.includes(dependsOn)) {
+          this.children[qid].push(responseType);
+          return responseType;
+        }
+      })
+      .filter((responseType) => responseType);
+
+    if (directDependents.length) {
+      this.getChildrenHierarchy(question, directDependents);
+    }
   }
 
   openDependencyModal(sectionIndex: number, question: any) {

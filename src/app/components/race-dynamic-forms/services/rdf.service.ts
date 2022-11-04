@@ -249,6 +249,7 @@ export class RdfService {
                 STATUS: 'PUBLISHED',
                 FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
                 FORMTITLE: '',
+                OVERVIEW: question.fieldType === 'ARD' ? 'X' : '',
                 ELEMENTTYPE: 'MULTIFORMTAB',
                 PUBLISHED: row.isPublished,
                 ...this.getProperties(row)
@@ -277,7 +278,7 @@ export class RdfService {
                 DEFAULTVALUE: this.getDefaultValue(aq),
                 APPNAME,
                 FORMNAME: id,
-                FORMTITLE: aq.name,
+                FORMTITLE: name,
                 STATUS: 'PUBLISHED',
                 ELEMENTTYPE: 'MULTIFORMTAB',
                 PUBLISHED: isPublished,
@@ -432,7 +433,6 @@ export class RdfService {
       case 'ARD': {
         properties = {
           ...properties,
-          OVERVIEW: 'X',
           SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
         };
         break;

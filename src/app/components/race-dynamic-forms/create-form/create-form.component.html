@@ -315,7 +315,7 @@
                           <mat-chip-list
                             *ngIf="
                               question.controls.value.value?.name &&
-                              !question.controls.value.value?.responseType
+                              !question.controls.value.value?.globalDataset
                             "
                             class="response-type-chips"
                           >
@@ -333,7 +333,7 @@
                           <mat-chip-list
                             *ngIf="
                               !question.controls.value.value?.name &&
-                              !question.controls.value.value?.responseType
+                              !question.controls.value.value?.globalDataset
                             "
                             class="response-type-chips"
                           >
@@ -383,7 +383,7 @@
                             </span>
                           </mat-chip-list>
                           <div
-                            *ngIf="question.controls.value.value?.responseType"
+                            *ngIf="question.controls.value.value?.globalDataset"
                             style="
                               white-space: nowrap;
                               display: inline-block;
@@ -911,7 +911,7 @@
                             <button
                               mat-button
                               [disabled]="
-                                question.controls.value.value?.responseType
+                                question.controls.value.value?.globalDataset
                               "
                               style="padding: 0"
                             >
@@ -919,7 +919,7 @@
                                 class="icon"
                                 [ngClass]="{
                                   'icon-disable':
-                                    question.controls.value.value?.responseType
+                                    question.controls.value.value?.globalDataset
                                 }"
                                 >link</mat-icon
                               >
@@ -934,7 +934,7 @@
 
                           <div
                             *ngIf="
-                              question.controls.value.value?.responseType &&
+                              question.controls.value.value?.globalDataset &&
                               question.controls.fieldType.value !== 'TAF' &&
                               question.controls.fieldType.value !== 'ARD'
                             "
@@ -1032,7 +1032,7 @@
                           <span
                             *ngIf="
                               question.controls.fieldType.value === 'DD' &&
-                              !question.controls.value.value?.responseType
+                              !question.controls.value.value?.globalDataset
                             "
                             style="margin-left: 20px"
                           >
@@ -1056,13 +1056,12 @@
                           *ngIf="showFilterSection[i + 1][j + 1] === true"
                         >
                           <app-add-filter
-                            *ngIf="question.controls.value.value?.responseType"
+                            *ngIf="question.controls.value.value?.globalDataset"
                             [globalDatasetsData$]="globalDatasetsData$"
                             [question]="question"
                             [sectionPosition]="i + 1"
                             [sections]="this.getSections(createForm)"
                             (filterDetails)="handleFilterDetails($event)"
-                            (updateChildren)="handleUpdateChildren($event)"
                           ></app-add-filter>
                         </div>
                         <div
@@ -1204,7 +1203,9 @@
                                               <span
                                                 *ngIf="
                                                   row.controls.value.value
-                                                    ?.responseType
+                                                    ?.globalDataset &&
+                                                  question.controls.fieldType
+                                                    .value === 'TAF'
                                                 "
                                                 class="m-l-10"
                                               >
@@ -1258,7 +1259,7 @@
                                                       row.controls.value.value
                                                         ?.name &&
                                                       !row.controls.value.value
-                                                        ?.responseType
+                                                        ?.globalDataset
                                                     "
                                                     class="response-type-chips"
                                                   >
@@ -1283,7 +1284,7 @@
                                                       !row.controls.value.value
                                                         ?.name &&
                                                       !row.controls.value.value
-                                                        ?.responseType
+                                                        ?.globalDataset
                                                     "
                                                     class="response-type-chips"
                                                   >
@@ -1348,7 +1349,7 @@
                                                   <div
                                                     *ngIf="
                                                       row.controls.value.value
-                                                        ?.responseType
+                                                        ?.globalDataset
                                                     "
                                                     style="
                                                       white-space: nowrap;
@@ -1956,6 +1957,10 @@
                                           [globalDatasetsData$]="
                                             globalDatasetsData$
                                           "
+                                          [sectionPosition]="i + 1"
+                                          [sections]="
+                                            this.getSections(createForm)
+                                          "
                                           [question]="question"
                                         ></app-tabular-dependency>
                                       </div>
@@ -2034,7 +2039,10 @@
                                     </mat-form-field>
                                     <span
                                       *ngIf="
-                                        row.controls.value.value?.responseType
+                                        row.controls.value.value
+                                          ?.globalDataset &&
+                                        question.controls.fieldType.value ===
+                                          'TAF'
                                       "
                                       class="m-l-10"
                                     >
@@ -2080,7 +2088,7 @@
                                           *ngIf="
                                             row.controls.value.value?.name &&
                                             !row.controls.value.value
-                                              ?.responseType
+                                              ?.globalDataset
                                           "
                                           class="response-type-chips"
                                         >
@@ -2099,7 +2107,7 @@
                                           *ngIf="
                                             !row.controls.value.value?.name &&
                                             !row.controls.value.value
-                                              ?.responseType
+                                              ?.globalDataset
                                           "
                                           class="response-type-chips"
                                         >
@@ -2158,7 +2166,7 @@
                                         <div
                                           *ngIf="
                                             row.controls.value.value
-                                              ?.responseType
+                                              ?.globalDataset
                                           "
                                           style="
                                             white-space: nowrap;

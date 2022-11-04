@@ -18,7 +18,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 })
 export class AddFilterComponent implements OnInit {
   @Output() filterDetails: EventEmitter<any> = new EventEmitter<any>();
-  @Output() updateChildren: EventEmitter<any> = new EventEmitter<any>();
   selectedDependencyResponseType: string;
   globalDataset: any = {};
   filterForm: FormGroup = this.fb.group({
@@ -34,6 +33,8 @@ export class AddFilterComponent implements OnInit {
   dependencyResponseTypes: any[] = [];
   radiuses = ['500m', '5000m', '50000m', '500000m'];
   prevFilterDependsOn = '';
+  children = {};
+  allSectionsGlobalDatasetQuestions: any;
   private _globalDatasetsData$;
   private _question;
   private _sections;
@@ -137,40 +138,5 @@ export class AddFilterComponent implements OnInit {
       this.dependencyResponseTypes =
         this.dependencyResponseTypes.concat(dependencies);
     });
-  }
-
-  handleFilterChange(event: any) {
-    const { value: filterDependsOn } = event;
-    const { responseType } = this.question.value.value;
-    let allSectionQuestions = [];
-
-    this.sections.forEach((section) => {
-      const { questions: que } = section.controls;
-      allSectionQuestions = allSectionQuestions.concat(que.controls);
-    });
-
-    allSectionQuestions.forEach((question) => {
-      const { children = [], responseType: questionResponseType } =
-        question.value.value;
-
-      if (this.prevFilterDependsOn === questionResponseType) {
-        const index = children.indexOf(responseType);
-        if (index !== -1) {
-          children.splice(index, 1);
-          this.updateChildren.emit({ children, question });
-        }
-      }
-      if (filterDependsOn === questionResponseType) {
-        if (!children.includes(responseType)) {
-          children.push(responseType);
-          this.updateChildren.emit({ children, question });
-        }
-      }
-    });
-  }
-
-  handleFilterOpen(filterForm: any) {
-    const { dependsOn } = filterForm.value;
-    this.prevFilterDependsOn = dependsOn;
   }
 }
