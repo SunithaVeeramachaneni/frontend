@@ -8,8 +8,6 @@
       class="dropdowns"
       formControlName="dependsOn"
       placeholder="Select"
-      (openedChange)="handleFilterOpen(filterForm)"
-      (selectionChange)="handleFilterChange($event)"
     >
       <mat-option
         *ngFor="let responseType of dependencyResponseTypes"
