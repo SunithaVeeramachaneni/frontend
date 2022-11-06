@@ -41,7 +41,7 @@ export class ReportsComponent implements OnInit {
   currentRouteUrl$: Observable<string>;
   readonly routingUrls = routingUrls;
   readonly perms = perms;
-  selectedReportSegmentControl = new FormControl('all');
+  selectedReportSegmentControl = new FormControl('recent');
   selectedReportSegment$ = this.selectedReportSegmentControl.valueChanges.pipe(
     startWith('all')
   );
