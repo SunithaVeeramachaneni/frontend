@@ -828,6 +828,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const logics = questions.at(questionIndex).get('logics') as FormArray;
     logics.patchValue(event);
     this.createForm.patchValue({ sections: sections.getRawValue() });
+    this.createForm.get('isPublishedTillSave').setValue(false);
   }
 
   onLogicDelete(section: any, question: any, event: any) {
