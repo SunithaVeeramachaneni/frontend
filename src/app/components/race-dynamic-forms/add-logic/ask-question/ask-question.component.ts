@@ -293,7 +293,8 @@ export class AskQuestionComponent implements OnInit {
       value: ['TF'],
       isPublished: [false],
       isPublishedTillSave: [false],
-      logics: this.fb.array([])
+      logics: this.fb.array([]),
+      table: this.fb.array([])
     });
   };
 

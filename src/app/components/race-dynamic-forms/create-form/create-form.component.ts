@@ -886,6 +886,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       // controlRaw.sort((a, b) => (a.position > b.position ? 1 : -1));
       // control.patchValue(controlRaw);
     }
+    this.createForm.get('isPublishedTillSave').setValue(false);
   }
 
   addLogicForQuestion(question: any, section: any, form: any) {
@@ -958,7 +959,8 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       value: ['ATT'],
       isPublished: [false],
       isPublishedTillSave: [false],
-      logics: this.fb.array([])
+      logics: this.fb.array([]),
+      table: this.fb.array([])
     });
 
   initSection = (
@@ -1080,6 +1082,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
                   row.isPublished = true;
                   row.isPublishedTillSave = true;
                 }
+              });
+              question.logics.forEach((logic) => {
+                logic.questions.forEach((que) => {
+                  if (response.includes(question.id)) {
+                    publishedCount++;
+                    que.isPublished = true;
+                    que.isPublishedTillSave = false; // It need to set to true for time being setting to false  to update the logic questions after post
+                  }
+                });
               });
             });
           });
