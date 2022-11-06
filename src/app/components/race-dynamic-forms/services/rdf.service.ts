@@ -281,7 +281,7 @@ export class RdfService {
                 FORMTITLE: name,
                 STATUS: 'PUBLISHED',
                 ELEMENTTYPE: 'MULTIFORMTAB',
-                PUBLISHED: isPublished,
+                PUBLISHED: aq.isPublished,
                 UIVALIDATION: '', //this.getValidationExpression(question),
                 UIVALIDATIONMSG: '', //this.getValidationMessage(question),
                 ...this.getProperties(aq)

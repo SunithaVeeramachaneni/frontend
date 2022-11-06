@@ -1086,7 +1086,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
               });
               question.logics.forEach((logic) => {
                 logic.questions.forEach((que) => {
-                  if (response.includes(question.id)) {
+                  if (response.includes(que.id)) {
                     publishedCount++;
                     que.isPublished = true;
                     que.isPublishedTillSave = false; // It need to set to true for time being setting to false  to update the logic questions after post
