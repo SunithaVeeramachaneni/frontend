@@ -1270,7 +1270,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.get('fieldType').setValue(fieldType.type);
     question.get('required').setValue(false);
     question.get('value').setValue('');
-    // (question.get('logics') as FormArray).clear();
+    if (fieldType.type !== 'ARD' && fieldType.type !== 'TAF') {
+      (question.get('table') as FormArray).clear();
+    }
     // (question.get('table') as FormArray).clear();
 
     question.hasLogic = false;
