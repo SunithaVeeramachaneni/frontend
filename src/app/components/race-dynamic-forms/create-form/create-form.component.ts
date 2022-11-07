@@ -752,7 +752,36 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     const control = (this.createForm.get('sections') as FormArray).controls[
       i
     ].get('questions') as FormArray;
+    const questionsToBeDeleted = [];
+    const evidenceQuestions = [];
+    if (question.value.logics) {
+      question.value.logics.forEach((logic) => {
+        if (logic.action === 'ask_evidence') {
+          questionsToBeDeleted.push(logic.askEvidence);
+          evidenceQuestions.push(logic.askEvidence);
+        } else if (logic.action === 'ask_questions') {
+          logic.questions.forEach((aq) => {
+            questionsToBeDeleted.push(aq.id);
+          });
+        }
+      });
+    }
+
     control.removeAt(j);
+    if (evidenceQuestions.length) {
+      const removeIndexes = [];
+      control.value.forEach((q, index) => {
+        if (evidenceQuestions.indexOf(q.id) > -1) {
+          removeIndexes.push(index);
+        }
+      });
+      if (removeIndexes.length) {
+        removeIndexes.forEach((index) => {
+          control.removeAt(index);
+        });
+      }
+    }
+
     this.fieldContentOpenState[i + 1][j + 1] = false;
     if (
       question.value.fieldType === 'DD' &&
@@ -767,6 +796,16 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           UNIQUEKEY: question.value.id
         })
         .subscribe();
+    }
+    if (questionsToBeDeleted.length) {
+      questionsToBeDeleted.forEach((qId) => {
+        this.rdfService
+          .deleteAbapFormField$({
+            FORMNAME: this.createForm.get('id').value,
+            UNIQUEKEY: qId
+          })
+          .subscribe();
+      });
     }
   }
 
@@ -1231,7 +1270,9 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     question.get('fieldType').setValue(fieldType.type);
     question.get('required').setValue(false);
     question.get('value').setValue('');
-    // (question.get('logics') as FormArray).clear();
+    if (fieldType.type !== 'ARD' && fieldType.type !== 'TAF') {
+      (question.get('table') as FormArray).clear();
+    }
     // (question.get('table') as FormArray).clear();
 
     question.hasLogic = false;
