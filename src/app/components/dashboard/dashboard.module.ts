@@ -54,6 +54,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SvgIconComponent } from 'src/app/shared/components/svg-icon/svg-icon.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -103,6 +104,7 @@ export const customTranslateLoader = (http: HttpClient) =>
   ],
   providers: [DatePipe],
   declarations: [
+    SvgIconComponent,
     ReportConfigurationListModalComponent,
     ReportDeleteModalComponent,
     ReportConfigurationComponent,

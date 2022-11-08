@@ -916,6 +916,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       });
       this.tenantForm.get('tenantLogo').markAsDirty();
       this.tenantLogo = this.imageUtils.getImageSrc(tenantLogo);
+      this.cdrf.markForCheck();
     };
   }
 
