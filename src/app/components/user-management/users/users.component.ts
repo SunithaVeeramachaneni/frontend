@@ -227,7 +227,7 @@ export class UsersComponent implements OnInit {
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService
-      .getRolesWithPermissions$()
+      .getRolesWithPermissions$({ includePermissions: true })
       .pipe(shareReplay(1));
     this.loggedInUserInfo$ = this.loginService.loggedInUserInfo$.pipe(
       tap(({ permissions = [] }) => this.prepareMenuActions(permissions))
@@ -426,7 +426,8 @@ export class UsersComponent implements OnInit {
       skip: this.skip,
       limit: this.limit,
       isActive: true,
-      searchKey: this.searchUser.value
+      searchKey: this.searchUser.value,
+      includeRoles: true
     });
 
   getUserCount = () => {

@@ -207,7 +207,9 @@ export class InactiveUsersComponent implements OnInit {
     });
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
-    this.rolesList$ = this.roleService.getRolesWithPermissions$();
+    this.rolesList$ = this.roleService.getRolesWithPermissions$({
+      includePermissions: true
+    });
   }
 
   getDisplayedUsers() {
@@ -258,7 +260,8 @@ export class InactiveUsersComponent implements OnInit {
       skip: this.skip,
       limit: this.limit,
       isActive: false,
-      searchKey: this.searchUser.value
+      searchKey: this.searchUser.value,
+      includeRoles: true
     });
 
   getUserCount = () => {
