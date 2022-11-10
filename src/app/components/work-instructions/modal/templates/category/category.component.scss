@@ -191,9 +191,13 @@ label {
 }
 
 .upload-img {
-  position: relative;
-  left: -10px;
-  top: 2px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+    position: relative;
+    left: -5px;
+    top: 2px;
+  }
 }
 
 .text-required {

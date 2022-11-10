@@ -79,14 +79,11 @@
                 placeholder="drop here"
               />
               <label class="uploadfilecontainertitle">
-                <span class="upload-btn p-l-10"
-                  ><img
-                    src="assets/work-instructions-icons/svg/upload-icon-blue.svg"
-                    alt=""
-                    class="upload-img"
-                  />
-                  <span class="upload-text"> UPLOAD </span></span
-                >
+                <span class="upload-btn p-l-10">
+                  <svg-icon icon="icon-upload-icon-blue" class="upload-img">
+                  </svg-icon>
+                  <span class="upload-text"> UPLOAD </span>
+                </span>
                 <span class="drop-att">or drop attachments here </span>
               </label>
             </div>
@@ -206,14 +203,13 @@
               placeholder="drop here"
             />
             <label class="uploadfilecontainertitle">
-              <span class="upload-btn p-l-10"
-                ><img
-                  src="assets/work-instructions-icons/svg/upload-icon-blue.svg"
-                  alt=""
+              <span class="upload-btn p-l-10">
+                <svg-icon
+                  icon="icon-upload-icon-blue"
                   class="upload-img"
-                />
-                <span class="upload-text"> UPLOAD </span></span
-              >
+                ></svg-icon>
+                <span class="upload-text"> UPLOAD </span>
+              </span>
               <span class="drop-att">or drop attachments here </span>
             </label>
           </div>
@@ -222,11 +218,7 @@
             *ngFor="let file of files; let i = index"
           >
             <div class="f-left p-r-10 vertical-center width-10">
-              <img
-                alt="Drag"
-                src="assets/work-instructions-icons/svg/drag_handle.svg"
-                alt=""
-              />
+              <svg-icon icon="icon-drag-handle" class="drag-handler"></svg-icon>
             </div>
             <div class="f-left p-0 width-20">
               <img
@@ -317,6 +309,7 @@
               [ngClass]="{
                 'display-toolbar': quillToolbarClass === field.Title
               }"
+              class="steps-quill-material"
               [formControlName]="field.Title"
               [(ngModel)]="field.FieldValue"
               placeholder=""

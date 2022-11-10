@@ -1,7 +1,7 @@
 <div class="bg-white categories-div categories-grid">
   <div class="categories-header" style="display: flex">
     <div class="categories-row-heading" style="width: 80%">
-      <img src="./assets/work-instructions-icons/svg/categories.svg" alt="" />
+      <svg-icon icon="icon-categories" class="categories-icon"></svg-icon>
       <span class="categories-heading">Categories</span>
     </div>
     <div style="width: 20%">
@@ -11,11 +11,7 @@
         (click)="open(catSubscribeComponent, {})"
         *appCheckUserHasPermission="[permissions.createCategory]"
       >
-        <img
-          src="./assets/work-instructions-icons/svg/addcategory.svg"
-          alt=""
-          class="categories-img"
-        />
+        <svg-icon icon="icon-addcategory" class="categories-img"></svg-icon>
         <span class="addcategory">Add Category</span>
       </button>
     </div>

@@ -38,11 +38,22 @@
   background-color: #dbe6ff;
 }
 
+.categories-icon {
+  ::ng-deep svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
 .categories-img {
-  position: relative;
-  top: 2px;
-  right: 2px;
   width: 13px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+    position: relative;
+    top: 2px;
+    right: 2px;
+  }
 }
 
 .addcategory {

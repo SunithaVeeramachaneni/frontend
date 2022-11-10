@@ -51,7 +51,19 @@
 }
 
 .create-wi-img {
-  width: 13px;
+  ::ng-deep svg {
+    width: 13px !important;
+    height: 13px !important;
+    position: relative;
+    top: 2px;
+  }
+}
+
+.dropdown-arrow {
+  ::ng-deep svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
 }
 
 .data {

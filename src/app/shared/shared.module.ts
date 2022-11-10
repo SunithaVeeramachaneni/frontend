@@ -50,6 +50,7 @@ import { VideoCallDialogComponent } from './components/collaboration/calls/video
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuillMaterialComponent } from './components/quill-material/quill-material.component';
+import { SvgIconComponent } from './components/svg-icon/svg-icon.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { QuillMaterialComponent } from './components/quill-material/quill-materi
     AccessDeniedComponent,
     PermissionsRevokeInfoModalComponent,
     BackgroundComponent,
-    QuillMaterialComponent
+    QuillMaterialComponent,
+    SvgIconComponent
   ],
   imports: [
     FormsModule,
@@ -119,7 +121,8 @@ import { QuillMaterialComponent } from './components/quill-material/quill-materi
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     BackgroundComponent,
-    QuillMaterialComponent
+    QuillMaterialComponent,
+    SvgIconComponent
   ],
   providers: [DatePipe]
 })

@@ -24,11 +24,7 @@
             routerLink="/work-instructions/create"
             *appCheckUserHasPermission="[permissions.createWorkInstruction]"
           >
-            <img
-              src="assets/work-instructions-icons/svg/createwi.svg"
-              alt=""
-              class="create-wi-img"
-            />
+            <svg-icon icon="icon-createwi" class="create-wi-img"></svg-icon>
             <span class="data"> Create Work Instruction </span>
           </mat-button-toggle>
           <mat-button-toggle
@@ -39,7 +35,7 @@
             ]"
             aria-label="More Options"
           >
-            <img src="assets/work-instructions-icons/svg/dropdown.svg" alt="" />
+            <svg-icon icon="icon-dropdown" class="dropdown-arrow"></svg-icon>
           </mat-button-toggle>
         </mat-button-toggle-group>
         <mat-menu #menu="matMenu">
