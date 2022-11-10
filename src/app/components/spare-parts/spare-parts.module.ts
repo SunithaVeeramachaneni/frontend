@@ -22,6 +22,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { SvgIconComponent } from 'src/app/shared/components/svg-icon/svg-icon.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/spare-parts/', '.json');
@@ -49,7 +50,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       defaultLanguage
     })
   ],
-  declarations: [SparePartsComponent, SPCCCardComponent],
+  declarations: [SparePartsComponent, SPCCCardComponent, SvgIconComponent],
   providers: [],
   exports: [],
   entryComponents: []
