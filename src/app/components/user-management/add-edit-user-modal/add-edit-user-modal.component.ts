@@ -160,7 +160,7 @@ export class AddEditUserModalComponent implements OnInit {
   ngOnInit() {
     const userDetails = this.data.user;
     this.permissionsList$ = this.data.permissionsList$;
-    this.rolesInput = this.data.roles;
+    this.rolesInput = this.data.roles.rows;
     this.rolesList$ = this.data.rolesList$;
     if (Object.keys(userDetails).length === 0) {
       this.dialogText = 'addUser';
@@ -262,7 +262,7 @@ export class AddEditUserModalComponent implements OnInit {
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
         const permissions = roles.find((r) => r.id === role.id).permissionIds;
-        return permissions.map((perm) => perm.id);
+        return permissions;
       })
     );
   }
