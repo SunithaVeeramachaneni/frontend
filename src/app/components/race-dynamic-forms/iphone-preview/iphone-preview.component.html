@@ -178,7 +178,7 @@
                 </div>
 
                 <div *ngIf="question.fieldType === 'GAL'" class="signature-div">
-                  <input type="text" class="signature-input-fields" />
+                  <input type="text" class="location-input-fields" />
                   <img
                     src="assets/rdf-forms-icons/location.png"
                     alt="location-icon"
@@ -191,7 +191,10 @@
                   class="attachment-div"
                 >
                   <button mat-raised-button class="attachment-btn">
-                    <svg-icon icon="icon-take-a-photo"></svg-icon>
+                    <svg-icon
+                      icon="icon-take-a-photo"
+                      class="take-a-photo-btn"
+                    ></svg-icon>
                     Take Photo
                   </button>
                 </div>

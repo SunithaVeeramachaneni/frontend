@@ -736,11 +736,11 @@
                                       margin-top: 5px;
                                     "
                                   >
-                                    <img
-                                      src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                      alt="excel-icon"
-                                      style="width: 18px"
-                                    />
+                                    <svg-icon
+                                      icon="icon-excel_icon"
+                                      class="excel-icon"
+                                    ></svg-icon>
+
                                     <input
                                       #globalResponses
                                       [hidden]="true"
@@ -1132,17 +1132,14 @@
                                           class="add-logic-btn"
                                           (click)="addTableRows(i, j)"
                                         >
-                                          <img
-                                            src="assets/rdf-forms-icons/add-table.svg"
-                                            alt="add column"
-                                            style="
-                                              margin-right: 5px;
-                                              height: 14px;
-                                            "
-                                          />
-                                          <span style="color: #1351d8"
-                                            >Add Column</span
-                                          >
+                                          <svg-icon
+                                            icon="icon-add-table"
+                                            class="add-table-columns"
+                                          ></svg-icon>
+
+                                          <span style="color: #1351d8">
+                                            Add Column
+                                          </span>
                                         </div>
                                       </div>
                                       <div
@@ -1666,10 +1663,10 @@
                                                                   )
                                                                 "
                                                               >
-                                                                <img
-                                                                  src="assets/rdf-forms-icons/edit-icon.svg"
-                                                                  alt="edit-icon"
-                                                                />
+                                                                <svg-icon
+                                                                  icon="icon-edit-icon"
+                                                                  class="edit-icon"
+                                                                ></svg-icon>
                                                               </button>
                                                             </div>
                                                           </div>
@@ -1764,10 +1761,10 @@
                                                                 )
                                                               "
                                                             >
-                                                              <img
-                                                                src="assets/rdf-forms-icons/edit-icon.svg"
-                                                                alt="edit-icon"
-                                                              />
+                                                              <svg-icon
+                                                                icon="icon-edit-icon"
+                                                                class="edit-icon"
+                                                              ></svg-icon>
                                                             </button>
                                                           </div>
                                                         </ng-container>
@@ -1864,13 +1861,10 @@
                                                               margin-top: 5px;
                                                             "
                                                           >
-                                                            <img
-                                                              src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                                              alt="excel-icon"
-                                                              style="
-                                                                width: 18px;
-                                                              "
-                                                            />
+                                                            <svg-icon
+                                                              icon="icon-excel_icon"
+                                                              class="excel-icon"
+                                                            ></svg-icon>
                                                             <input
                                                               #globalResponses
                                                               [hidden]="true"
@@ -1939,9 +1933,8 @@
                                                 ][k + 1] === true
                                               "
                                             >
-                                              <img
-                                                src="assets/rdf-forms-icons/delete-icon.svg"
-                                                alt="delete-icon"
+                                              <svg-icon
+                                                icon="icon-delete-icon"
                                                 (click)="
                                                   deleteTableRow(
                                                     i,
@@ -1952,7 +1945,7 @@
                                                   )
                                                 "
                                                 class="table-delete-icon"
-                                              />
+                                              ></svg-icon>
                                             </div>
                                           </div>
                                         </div>
@@ -1989,11 +1982,10 @@
                                     class="add-logic-btn"
                                     (click)="addTableRows(i, j)"
                                   >
-                                    <img
-                                      src="assets/rdf-forms-icons/add-table.svg"
-                                      alt="add subform"
-                                      style="margin-right: 5px; height: 14px"
-                                    />
+                                    <svg-icon
+                                      icon="icon-add-table"
+                                      class="add-subform"
+                                    ></svg-icon>
                                     <span>Add Subform</span>
                                   </div>
                                 </div>
@@ -2337,12 +2329,18 @@
                                                     *ngFor="
                                                       let resp of quickResponsesData.data
                                                     "
-                                                    style="height: 36px"
+                                                    style="
+                                                      height: 36px;
+                                                      width: 100%;
+                                                      display: flex;
+                                                    "
                                                   >
                                                     <button
                                                       style="
                                                         padding: 0 0 0 5px;
                                                         height: 36px;
+                                                        width: 90%;
+                                                        text-align: left;
                                                       "
                                                       mat-flat-button
                                                       class="quick-response"
@@ -2417,11 +2415,14 @@
                                                       </span>
                                                     </button>
                                                     <button
-                                                      mat-flat-button
+                                                      mat-icon-button
                                                       style="
                                                         float: right;
-                                                        min-width: 10px;
+                                                        width: 10%;
                                                         padding: 0;
+                                                        padding-left: 10px;
+                                                        position: relative;
+                                                        right: -5px;
                                                       "
                                                       (click)="
                                                         handleResponses(
@@ -2436,10 +2437,10 @@
                                                         )
                                                       "
                                                     >
-                                                      <img
-                                                        src="assets/rdf-forms-icons/edit-icon.svg"
-                                                        alt="edit-icon"
-                                                      />
+                                                      <svg-icon
+                                                        icon="icon-edit-icon"
+                                                        class="edit-icon"
+                                                      ></svg-icon>
                                                     </button>
                                                   </div>
                                                 </div>
@@ -2481,6 +2482,11 @@
                                                   *ngFor="
                                                     let resp of globalResponsesData.data
                                                   "
+                                                  style="
+                                                    width: 100%;
+                                                    height: 36px;
+                                                    display: flex;
+                                                  "
                                                 >
                                                   <button
                                                     mat-flat-button
@@ -2510,11 +2516,14 @@
                                                     {{ resp.name }}
                                                   </button>
                                                   <button
-                                                    mat-flat-button
+                                                    mat-icon-button
                                                     style="
                                                       float: right;
                                                       padding: 0;
-                                                      min-width: 20px;
+                                                      width: 10%;
+                                                      padding-left: 10px;
+                                                      position: relative;
+                                                      right: -15px;
                                                     "
                                                     (click)="
                                                       handleResponses(
@@ -2529,10 +2538,10 @@
                                                       )
                                                     "
                                                   >
-                                                    <img
-                                                      src="assets/rdf-forms-icons/edit-icon.svg"
-                                                      alt="edit-icon"
-                                                    />
+                                                    <svg-icon
+                                                      icon="icon-edit-icon"
+                                                      class="edit-icon"
+                                                    ></svg-icon>
                                                   </button>
                                                 </div>
                                               </ng-container>
@@ -2619,11 +2628,10 @@
                                                     margin-top: 5px;
                                                   "
                                                 >
-                                                  <img
-                                                    src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-                                                    alt="excel-icon"
-                                                    style="width: 18px"
-                                                  />
+                                                  <svg-icon
+                                                    icon="icon-excel_icon"
+                                                    class="excel-icon"
+                                                  ></svg-icon>
                                                   <input
                                                     #globalResponses
                                                     [hidden]="true"
@@ -2687,14 +2695,13 @@
                                       ] === true
                                     "
                                   >
-                                    <img
-                                      src="assets/rdf-forms-icons/delete-icon.svg"
-                                      alt="delete-icon"
+                                    <svg-icon
+                                      icon="icon-delete-icon"
                                       (click)="
                                         deleteTableRow(i, j, k, row, question)
                                       "
                                       class="table-delete-icon"
-                                    />
+                                    ></svg-icon>
                                   </div>
                                 </div>
                               </div>

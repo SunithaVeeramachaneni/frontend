@@ -312,6 +312,14 @@ select:focus {
   }
 }
 
+.add-subform {
+  ::ng-deep svg {
+    margin-right: 5px;
+    height: 18px !important;
+    width: 18px !important;
+  }
+}
+
 .more-icon {
   background: none;
   border: none;
@@ -502,4 +510,18 @@ select:focus {
 
 .icon-disable {
   color: #888 !important;
+}
+
+.excel-icon {
+  ::ng-deep svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+.add-table-columns {
+  ::ng-deep svg {
+    margin-right: 5px;
+    height: 14px !important;
+    width: 20px !important;
+  }
 }
