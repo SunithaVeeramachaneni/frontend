@@ -27,7 +27,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
-import { SvgIconComponent } from 'src/app/shared/components/svg-icon/svg-icon.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -61,12 +60,7 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     })
   ],
-  declarations: [
-    MaintenanceComponent,
-    ModalComponent,
-    MCCCardComponent,
-    SvgIconComponent
-  ],
+  declarations: [MaintenanceComponent, ModalComponent, MCCCardComponent],
   exports: [],
   entryComponents: []
 })
