@@ -592,18 +592,25 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     return form.controls.table.controls;
   }
 
-  initTable = (sc, qc, tc, tableId) => {
+  initTable = (sc, qc, tc, tableId, table = {} as any) => {
     if (!this.showTableResponseType[sc][qc][tc])
       this.showTableResponseType[sc][qc][tc] = false;
     if (!this.tableRowSelectState[sc][qc][tc])
       this.tableRowSelectState[sc][qc][tc] = false;
 
+    const {
+      name = '',
+      fieldType = 'TF',
+      value = 'TF',
+      readOnly = false
+    } = table;
+
     return this.fb.group({
       id: tableId,
-      name: [''],
-      fieldType: ['TF'],
-      value: ['TF'],
-      readOnly: [false],
+      name,
+      fieldType,
+      value,
+      readOnly,
       isPublished: [false],
       isPublishedTillSave: [false]
     });
@@ -918,7 +925,12 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     );
   }
 
-  initQuestion = (sc: number, qc: number, uqc: number) => {
+  initQuestion = (
+    sc: number,
+    qc: number,
+    uqc: number,
+    question = {} as any
+  ) => {
     if (!this.fieldContentOpenState[sc][qc])
       this.fieldContentOpenState[sc][qc] = false;
     if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
@@ -929,18 +941,36 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
     if (!this.showFilterSection[sc][qc]) this.showFilterSection[sc][qc] = false;
     if (!this.richTextEditorToolbarState[sc][qc])
       this.richTextEditorToolbarState[sc][qc] = false;
+
+    const {
+      name = '',
+      fieldType = this.fieldType.type,
+      position = '',
+      required = false,
+      multi = false,
+      value = 'TF',
+      table = []
+    } = question;
+
+    const tableFormBuilderArray = [];
+    table.forEach((tab, index) => {
+      tableFormBuilderArray.push(
+        this.initTable(sc, qc, index + 1, `T${this.getCounter()}`, tab)
+      );
+    });
+
     return this.fb.group({
       id: [`Q${uqc}`],
-      name: [''],
-      fieldType: [this.fieldType.type],
-      position: [''],
-      required: [false],
-      multi: [false],
-      value: ['TF'],
+      name,
+      fieldType,
+      position,
+      required,
+      multi,
+      value,
       isPublished: [false],
       isPublishedTillSave: [false],
       logics: this.fb.array([]),
-      table: this.fb.array([])
+      table: this.fb.array(tableFormBuilderArray)
     });
   };
 
@@ -996,16 +1026,18 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       ],
       position: [''],
       questions: section
-        ? this.addQuestionsForCopySections(section.value.questions)
+        ? this.addQuestionsForCopySections(sc, section.value.questions)
         : this.fb.array([this.initQuestion(sc, qc, uqc)])
     });
   };
 
-  addQuestionsForCopySections = (questions) => {
+  addQuestionsForCopySections = (sc, questions) => {
     const questionsForm = this.fb.array([]);
-    questions.forEach((q) => {
-      questionsForm.push(this.fb.group(q));
+    questions.forEach((q, index) => {
+      const uqc = this.getCounter();
+      questionsForm.push(this.initQuestion(sc, index + 1, uqc, q));
     });
+    this.createForm.patchValue({ isPublishedTillSave: false });
     return questionsForm;
   };
 
@@ -1434,40 +1466,15 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
         this.createForm.get('sections') as FormArray
       ).controls[sc - 1].get('questions') as FormArray;
       questionsControl.removeAt(0);
-      this.addQuestions(questionsControl, questions, 0, sc);
-    });
-    this.openAppSider$ = of(false);
-  }
-
-  addQuestions(questionsControl, questions, questionIndex, sc) {
-    questions.forEach((question, index) => {
-      const qc = index + 1;
-      if (!this.fieldContentOpenState[sc][qc])
-        this.fieldContentOpenState[sc][qc] = false;
-      if (!this.popOverOpenState[sc][qc]) this.popOverOpenState[sc][qc] = false;
-      if (!this.showTableResponseType[sc][qc])
-        this.showTableResponseType[sc][qc] = {};
-      if (!this.tableRowSelectState[sc][qc])
-        this.tableRowSelectState[sc][qc] = {};
-      if (!this.showFilterSection[sc][qc])
-        this.showFilterSection[sc][qc] = false;
-      if (!this.richTextEditorToolbarState[sc][qc])
-        this.richTextEditorToolbarState[sc][qc] = false;
-
-      const { logics, ...rest } = question;
-      questionsControl.insert(
-        questionIndex,
-        this.fb.group({
-          ...rest,
-          id: `Q${this.getCounter()}`,
-          isPublished: false,
-          isPublishedTillSave: false,
-          logics: this.fb.array([])
-        })
-      );
-      questionIndex++;
+      questions.forEach((question, index) => {
+        questionsControl.insert(
+          index,
+          this.initQuestion(sc, index + 1, this.getCounter(), question)
+        );
+      });
     });
     this.createForm.patchValue({ isPublishedTillSave: false });
+    this.openAppSider$ = of(false);
   }
 
   uploadGlobalResponses(event: any) {
@@ -1669,12 +1676,20 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
           };
         });
 
-        this.addQuestions(
-          sectionsControl[sectionIndex].controls.questions,
-          questionsObj,
-          position,
-          sectionsControl.length
-        );
+        const questionsControl =
+          sectionsControl[sectionIndex].controls.questions;
+        questions.forEach((ques, index) => {
+          questionsControl.insert(
+            index,
+            this.initQuestion(
+              sectionIndex + 1,
+              index + 1,
+              this.getCounter(),
+              ques
+            )
+          );
+        });
+        this.createForm.patchValue({ isPublishedTillSave: false });
       }
     });
   }
