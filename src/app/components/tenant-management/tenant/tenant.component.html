@@ -1900,6 +1900,94 @@
             {{ 'required' | translate: { name: 'logLevel' | translate } }}
           </mat-error>
         </p>
+        <div formGroupName="s3Details">
+          <p class="sub-headings" translate>s3Details</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>accessKeyId</mat-label>
+              <input
+                matInput
+                [placeholder]="'accessKeyId' | translate"
+                formControlName="accessKeyId"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('s3Details.accessKeyId')">
+              {{
+                errors['s3Details.accessKeyId'].name
+                  | translate
+                    : {
+                        name: 'accessKeyId' | translate,
+                        length: errors['s3Details.accessKeyId'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>secretAccessKey</mat-label>
+              <input
+                matInput
+                [placeholder]="'secretAccessKey' | translate"
+                formControlName="secretAccessKey"
+              />
+            </mat-form-field>
+            <mat-error
+              *ngIf="processValidationErrors('s3Details.secretAccessKey')"
+            >
+              {{
+                errors['s3Details.secretAccessKey'].name
+                  | translate
+                    : {
+                        name: 'secretAccessKey' | translate,
+                        length: errors['s3Details.secretAccessKey'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>bucket</mat-label>
+              <input
+                matInput
+                [placeholder]="'bucket' | translate"
+                formControlName="bucket"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('s3Details.bucket')">
+              {{
+                errors['s3Details.bucket'].name
+                  | translate
+                    : {
+                        name: 'bucket' | translate,
+                        length: errors['s3Details.bucket'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>region</mat-label>
+              <input
+                matInput
+                [placeholder]="'region' | translate"
+                formControlName="region"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('s3Details.region')">
+              {{
+                errors['s3Details.region'].name
+                  | translate
+                    : {
+                        name: 'region' | translate,
+                        length: errors['s3Details.region'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+        </div>
       </div>
       <div [hidden]="selectedID.value !== 6">
         <div class="assets">

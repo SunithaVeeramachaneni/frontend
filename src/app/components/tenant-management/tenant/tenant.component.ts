@@ -291,6 +291,44 @@ export class TenantComponent implements OnInit, AfterViewInit {
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
       logLevel: ['', [Validators.required]],
+      s3Details: this.fb.group({
+        accessKeyId: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        secretAccessKey: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        bucket: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(50),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        region: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(30),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ]
+      }),
       tenantLogo: [''],
       tenantLogoName: ['']
     });
