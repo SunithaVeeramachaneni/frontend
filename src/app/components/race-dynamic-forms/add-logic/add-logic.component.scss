@@ -112,11 +112,14 @@
 
 .delete-icon {
   background: white;
-  height: 25px;
   position: relative;
   padding: 10px;
   cursor: pointer;
-  width: 20px;
+
+  ::ng-deep svg {
+    width: 20px !important;
+    height: 25px !important;
+  }
 }
 .logicActionMenuItem {
   line-height: 0.5;

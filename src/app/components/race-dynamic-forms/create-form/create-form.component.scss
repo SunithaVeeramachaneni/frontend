@@ -73,6 +73,10 @@ select:focus {
   position: relative;
   top: 2px;
   left: -3px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
 }
 
 .section-arrow {
@@ -108,6 +112,26 @@ select:focus {
   position: relative;
   top: 3px;
   cursor: move;
+  ::ng-deep svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+.edit-icon {
+  position: relative;
+  left: -10px;
+  ::ng-deep svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+.add-questions-add-sections-btn {
+  ::ng-deep svg {
+    width: 35px !important;
+    height: 35px !important;
+  }
 }
 
 .response-type-modal {
@@ -167,13 +191,18 @@ select:focus {
 
 .delete-icon {
   background: white;
-  height: 28px;
   position: relative;
   left: 40px;
   padding: 10px;
   top: -60px;
   cursor: pointer;
-  width: 20px;
+
+  ::ng-deep svg {
+    width: 20px !important;
+    height: 28px !important;
+    position: relative;
+    top: 9px;
+  }
 }
 
 .more-icon {
@@ -314,4 +343,8 @@ select:focus {
   ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
     margin: 12px 5px 5px 5px !important;
   }
+}
+
+::ng-deep .mat-button-focus-overlay {
+  display: none;
 }

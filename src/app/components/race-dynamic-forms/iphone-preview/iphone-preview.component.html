@@ -156,44 +156,34 @@
 
                   <p *ngIf="question.fieldType === 'SF'" class="dis-flex m-0">
                     <input type="text" class="input-fields-with-icons" />
-                    <img
-                      src="assets/rdf-forms-icons/scan.svg"
-                      alt="scan"
-                      class="scan-icon"
-                    />
+                    <svg-icon icon="icon-scan" class="scan-icon"></svg-icon>
                   </p>
                 </div>
               </div>
               <div class="width-100">
                 <div
                   *ngIf="question.fieldType === 'SGF'"
-                  style="margin: -10px 0 10px -10px"
+                  style="margin: -10px 0 0 -10px"
                 >
                   <input
                     type="text"
                     placeholder="Full Name"
                     class="signature-input-fields"
                   />
-                  <img
-                    src="assets/rdf-forms-icons/signature.svg"
-                    alt="signature-icon"
-                    style="
-                      width: 35px;
-                      position: relative;
-                      left: 10px;
-                      top: 5px;
-                    "
-                  />
+                  <svg-icon
+                    icon="icon-signature"
+                    class="signature-icon"
+                  ></svg-icon>
                 </div>
 
                 <div
                   *ngIf="question.fieldType === 'GAL'"
                   style="margin: -10px 0 10px -10px"
                 >
-                  <input type="text" class="signature-input-fields" />
+                  <input type="text" class="location-input-fields" />
                   <img
                     src="assets/rdf-forms-icons/location.png"
-                    alt="signature-icon"
+                    alt="location-icon"
                     style="
                       width: 35px;
                       position: relative;
@@ -208,21 +198,8 @@
                   *ngIf="question.fieldType === 'ATT'"
                   style="margin: -5px 0 10px -10px"
                 >
-                  <button
-                    mat-raised-button
-                    style="
-                      width: 215px;
-                      position: relative;
-                      left: 5px;
-                      background-color: #0053d7;
-                      color: white;
-                      height: 34px;
-                    "
-                  >
-                    <img
-                      src="assets/rdf-forms-icons/take-a-photo.svg"
-                      alt="take-a-photo-icon"
-                    />
+                  <button mat-raised-button class="take-a-photo-btn">
+                    <svg-icon icon="icon-take-a-photo"></svg-icon>
                     Take Photo
                   </button>
                 </div>

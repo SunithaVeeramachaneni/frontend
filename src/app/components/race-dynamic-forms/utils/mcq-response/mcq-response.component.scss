@@ -39,6 +39,14 @@
     position: relative;
     left: -15px;
   }
+  .delete-icon {
+    ::ng-deep svg {
+      width: 20px !important;
+      height: 25px !important;
+      position: relative;
+      top: 7px;
+    }
+  }
 }
 
 .global_response_name_input {

@@ -183,15 +183,57 @@
   border: 1px solid #cccccc;
   padding-left: 5px;
   font-size: 90%;
+  position: relative;
+  top: -12px;
 }
 
 .signature-input-fields:focus {
   outline: none;
 }
 
+.location-input-fields {
+  width: 160px;
+  border: 1px solid #cccccc;
+  padding-left: 5px;
+  font-size: 90%;
+}
+
+.location-input-fields:focus {
+  outline: none;
+}
+
+.take-a-photo-btn {
+  width: 215px;
+  position: relative;
+  left: 5px;
+  background-color: #0053d7;
+  color: white;
+  height: 34px;
+  font-weight: 400;
+
+  ::ng-deep svg {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 2px;
+  }
+}
+
 .scan-icon {
-  width: 15px;
   margin-left: 5px;
+  ::ng-deep svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}
+
+.signature-icon {
+  position: relative;
+  left: 10px;
+  ::ng-deep svg {
+    width: 35px !important;
+    height: 35px !important;
+  }
 }
 
 .vi-values {

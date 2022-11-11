@@ -46,11 +46,10 @@
         "
       >
         <span>
-          <img
-            alt="upload"
-            src="assets/work-instructions-icons/svg/upload-white.png"
+          <svg-icon
+            icon="icon-upload-icon-white"
             class="publish-btn-icon"
-          />
+          ></svg-icon>
           <span class="publish">Publish</span>
         </span>
       </button>
@@ -82,12 +81,11 @@
               padding: 7px;
             "
           >
-            <img
+            <svg-icon
+              icon="icon-six-dots"
               cdkDragHandle
-              src="assets/rdf-forms-icons/six-dots.svg"
-              alt="six-dots"
               class="m-l-10 six-dots"
-            />
+            ></svg-icon>
             <mat-icon
               (click)="toggleOpenState(i)"
               *ngIf="isOpenState[i + 1] === true"
@@ -121,16 +119,7 @@
                 (click)="editSection(section)"
                 *ngIf="section.get('name').disabled === true"
               >
-                <img
-                  src="assets/rdf-forms-icons/edit-icon.svg"
-                  alt="edit-icon"
-                  style="
-                    position: relative;
-                    top: -3px;
-                    width: 14px;
-                    left: -10px;
-                  "
-                />
+                <svg-icon icon="icon-edit-icon" class="edit-icon"></svg-icon>
               </button>
             </span>
 
@@ -166,10 +155,10 @@
               (click)="addQuestion(i)"
               style="position: relative; left: 80px; float: right"
             >
-              <img
-                src="assets/rdf-forms-icons/add-questions.svg"
-                alt="add-questions"
-              />
+              <svg-icon
+                icon="icon-add-questions"
+                class="add-questions-add-sections-btn"
+              ></svg-icon>
             </button>
 
             <button
@@ -184,10 +173,10 @@
               (click)="addSection(i, section)"
               style="position: relative; left: 120px; top: 40px; float: right"
             >
-              <img
-                src="assets/rdf-forms-icons/add-sections.svg"
-                alt="add-sections"
-              />
+              <svg-icon
+                icon="icon-add-sections"
+                class="add-questions-add-sections-btn"
+              ></svg-icon>
             </button>
           </div>
           <div
@@ -225,12 +214,11 @@
                       [ngModel]="j + 1"
                     />
                     <div class="width-70">
-                      <img
+                      <svg-icon
+                        icon="icon-six-dots"
                         cdkDragHandle
-                        src="assets/rdf-forms-icons/six-dots.svg"
-                        alt="six-dots"
                         class="m-l-10 six-dots"
-                      />
+                      ></svg-icon>
                       <mat-form-field
                         appearance="outline"
                         class="width-90"
@@ -453,10 +441,18 @@
                                       *ngFor="
                                         let resp of quickResponsesData.data
                                       "
-                                      style="height: 36px"
+                                      style="
+                                        height: 36px;
+                                        width: 100%;
+                                        display: flex;
+                                      "
                                     >
                                       <button
-                                        style="padding: 0 0 0 5px; height: 36px"
+                                        style="
+                                          padding: 0 0 0 5px;
+                                          height: 36px;
+                                          width: 90%;
+                                        "
                                         mat-flat-button
                                         class="quick-response"
                                         [ngClass]="{
@@ -514,11 +510,13 @@
                                         </span>
                                       </button>
                                       <button
-                                        mat-flat-button
+                                        mat-icon-button
                                         style="
                                           float: right;
-                                          min-width: 10px;
                                           padding: 0;
+                                          position: relative;
+                                          width: 10%;
+                                          right: -15px;
                                         "
                                         (click)="
                                           handleResponses(
@@ -529,10 +527,10 @@
                                           togglePopOverOpenState(i, j)
                                         "
                                       >
-                                        <img
-                                          src="assets/rdf-forms-icons/edit-icon.svg"
-                                          alt="edit-icon"
-                                        />
+                                        <svg-icon
+                                          icon="icon-edit-icon"
+                                          class="edit-icon"
+                                        ></svg-icon>
                                       </button>
                                     </div>
                                   </div>
@@ -565,8 +563,20 @@
                                     *ngFor="
                                       let resp of globalResponsesData.data
                                     "
+                                    style="
+                                      height: 36px;
+                                      width: 100%;
+                                      display: flex;
+                                    "
                                   >
                                     <button
+                                      style="
+                                        width: 90%;
+                                        padding: 0;
+                                        height: 36px;
+                                        text-align: left;
+                                        padding-left: 10px;
+                                      "
                                       mat-flat-button
                                       (click)="
                                         handleMCQFieldType(
@@ -585,8 +595,14 @@
                                       {{ resp.name }}
                                     </button>
                                     <button
-                                      mat-flat-button
-                                      style="float: right"
+                                      mat-icon-button
+                                      style="
+                                        float: right;
+                                        padding: 0;
+                                        position: relative;
+                                        width: 10%;
+                                        right: -15px;
+                                      "
                                       (click)="
                                         handleResponses(
                                           'globalResponse',
@@ -596,10 +612,10 @@
                                         togglePopOverOpenState(i, j)
                                       "
                                     >
-                                      <img
-                                        src="assets/rdf-forms-icons/edit-icon.svg"
-                                        alt="edit-icon"
-                                      />
+                                      <svg-icon
+                                        icon="icon-edit-icon"
+                                        class="edit-icon"
+                                      ></svg-icon>
                                     </button>
                                   </div>
                                   <button
@@ -873,12 +889,11 @@
                     </div>
 
                     <div *ngIf="getQuestions(section).length !== 1">
-                      <img
-                        src="assets/rdf-forms-icons/delete-icon.svg"
-                        alt="delete-icon"
+                      <svg-icon
+                        icon="icon-delete-icon"
                         (click)="deleteQuestion(i, j, question)"
                         class="delete-icon"
-                      />
+                      ></svg-icon>
                     </div>
                     <!-- <mat-icon
                       class="align-icon fa-pull-right p-l-0 p-t-5 step-action"
