@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray, shareReplay } from 'rxjs/operators';
+import { map, mergeMap, toArray, shareReplay, filter } from 'rxjs/operators';
 import { ErrorInfo } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -107,6 +107,13 @@ export class RdfService {
         info
       )
       .pipe(shareReplay(1));
+
+  importExcelFile$ = (
+    form: any,
+    path: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, path, form, info);
 
   createAbapFormField$ = (
     form: any,
@@ -214,8 +221,41 @@ export class RdfService {
             PUBLISHED: isPublished,
             UIVALIDATION: expression, //this.getValidationExpression(question),
             UIVALIDATIONMSG: validationMessage, //this.getValidationMessage(question),
-            ...this.getProperties(question)
+            ...this.getProperties(question, id)
           });
+
+          if (question.table.length) {
+            question.table.forEach((row, tableIndex) => {
+              if (row.isPublishedTillSave) {
+                return null;
+              }
+              sectionPayloads.push({
+                UNIQUEKEY: row.id,
+                VALIDFROM,
+                VALIDTO,
+                VERSION,
+                SECTIONNAME: '',
+                FIELDLABEL: row.name,
+                UIPOSITION: (tableIndex + 1).toString(),
+                UIFIELDTYPE: this.getFieldType(row),
+                ACTIVE: 'X',
+                INSTRUCTION: '',
+                TEXTSTYLE: '',
+                TEXTCOLOR: '',
+                MANDATORY: '',
+                SECTIONPOSITION: sectionPosition.toString(),
+                DEFAULTVALUE: this.getDefaultValue(row),
+                APPNAME,
+                STATUS: 'PUBLISHED',
+                FORMNAME: `${id}TABULARFORM${question.id.slice(1)}`,
+                FORMTITLE: '',
+                OVERVIEW: question.fieldType === 'ARD' ? 'X' : '',
+                ELEMENTTYPE: 'MULTIFORMTAB',
+                PUBLISHED: row.isPublished,
+                ...this.getProperties(row)
+              });
+            });
+          }
 
           if (askQuestions && askQuestions.length) {
             askQuestions.forEach((aq) => {
@@ -238,10 +278,10 @@ export class RdfService {
                 DEFAULTVALUE: this.getDefaultValue(aq),
                 APPNAME,
                 FORMNAME: id,
-                FORMTITLE: aq.name,
+                FORMTITLE: name,
                 STATUS: 'PUBLISHED',
                 ELEMENTTYPE: 'MULTIFORMTAB',
-                PUBLISHED: isPublished,
+                PUBLISHED: aq.isPublished,
                 UIVALIDATION: '', //this.getValidationExpression(question),
                 UIVALIDATIONMSG: '', //this.getValidationMessage(question),
                 ...this.getProperties(aq)
@@ -270,10 +310,32 @@ export class RdfService {
     return question.fieldType === 'LF' ? question.value : '';
   }
 
-  getProperties(question) {
+  getProperties(question, formId = null) {
     let properties = {};
-    const { fieldType } = question;
+    const { fieldType, readOnly } = question;
     switch (fieldType) {
+      case 'DF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CD'
+        };
+        break;
+      }
+      case 'TIF': {
+        properties = {
+          ...properties,
+          DEFAULTVALUE: 'CT'
+        };
+        break;
+      }
+      case 'USR': {
+        properties = {
+          ...properties,
+          UIFIELDTYPE: 'LF',
+          DEFAULTVALUE: 'CU'
+        };
+        break;
+      }
       case 'LLF': {
         const { name } = question;
         properties = {
@@ -310,19 +372,85 @@ export class RdfService {
       case 'VI':
       case 'DD': {
         const {
-          value: { values },
+          value: {
+            values,
+            responseType,
+            dependsOn,
+            location,
+            latitudeColumn: lat,
+            longitudeColumn: lan,
+            radius,
+            pins: pinsCount,
+            autoSelectColumn: autoFill,
+            fileName,
+            globalDataset,
+            children
+          },
           multi
         } = question;
-        const viVALUE = values.map((item, idx) => ({
-          [`label${idx + 1}`]: item.title,
-          key: item.title,
-          color: item.color,
-          description: item.title
-        }));
+        if (!globalDataset) {
+          const viVALUE = values.map((item, idx) => ({
+            [`label${idx + 1}`]: item.title,
+            key: item.title,
+            color: item.color,
+            description: item.title
+          }));
+          properties = {
+            ...properties,
+            DDVALUE: JSON.stringify(viVALUE),
+            UIFIELDTYPE: multi ? 'DDM' : fieldType
+          };
+        } else {
+          if (location) {
+            properties = {
+              ...properties,
+              MAPDATA: JSON.stringify({
+                lat,
+                lan,
+                radius,
+                pinsCount: pinsCount.toString(),
+                autoFill: autoFill.toString(),
+                parent: responseType
+              })
+            };
+          }
+          if (readOnly) {
+            properties = {
+              ...properties,
+              UIFIELDTYPE: 'LF'
+            };
+          }
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependsOn,
+            CHILDREN: JSON.stringify(children),
+            COLUMNNAME: responseType
+          };
+        }
+        break;
+      }
+      case 'ARD': {
         properties = {
           ...properties,
-          DDVALUE: JSON.stringify(viVALUE),
-          UIFIELDTYPE: multi ? 'DDM' : fieldType
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
+        };
+        break;
+      }
+      case 'TAF': {
+        const {
+          value: { dependsOn, fileName, globalDataset }
+        } = question;
+        if (globalDataset) {
+          properties = {
+            ...properties,
+            FILENAME: fileName,
+            DDDEPENDECYFIELD: dependsOn
+          };
+        }
+        properties = {
+          ...properties,
+          SUBFORMNAME: `${formId}TABULARFORM${question.id.slice(1)}`
         };
         break;
       }
@@ -399,6 +527,7 @@ export class RdfService {
         } else {
           expression = `${expression};${globalIndex}:(E) ${evidenceQuestion} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
         }
+        validationMessage = `${validationMessage};${globalIndex}:Please take the picture`;
       }
 
       // Ask Questions;

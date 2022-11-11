@@ -3,7 +3,7 @@
     <div class="width-100">
       <div class="main-carosuel-iphone">
         <div class="iphone-header">
-          <div class="dis-flex p-5">
+          <div class="dis-flex p-5 p-b-0">
             <div class="width-60 status-bar-left">9:41</div>
             <div class="width-40 iphone-status-bar-right m-r-10">
               <mat-icon class="status-bar-icons">signal_cellular_alt</mat-icon>
@@ -16,14 +16,14 @@
           <!-- <div class="in-progress-text">in Progress</div> -->
           <mat-icon class="back-button"> keyboard_arrow_left </mat-icon>
           <div class="dis-flex">
-            <div class="width-10" style="margin-top: 18px">
+            <div class="width-10 m-t-12">
               <img
                 src="../../../../assets/rdf-forms-icons/file-icon.png"
                 alt="file-icons"
                 class="file-icon"
               />
             </div>
-            <div class="width-90 form-div" style="top: 26px !important">
+            <div class="width-90 form-div">
               <span class="form-name">
                 {{ formData.id }}
               </span>
@@ -35,20 +35,11 @@
           </div>
         </div>
 
-        <div
-          style="
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: 300px;
-            border-bottom: 1px solid #d3d3d3;
-          "
-        >
+        <div class="iphone-body-content">
           <div *ngFor="let section of formData.sections; let i = index">
             <p class="section-name">
               {{ section.name ? section.name : 'Section Name' }}
-              <mat-icon style="float: right; position: relative; top: -2px">
-                keyboard_arrow_down
-              </mat-icon>
+              <mat-icon class="section-arrow"> keyboard_arrow_down </mat-icon>
             </p>
             <div *ngFor="let question of section.questions">
               <div class="dis-flex m-b-10 m-r-15">
@@ -62,7 +53,8 @@
                     question.fieldType !== 'GAL' &&
                     question.fieldType !== 'ATT' &&
                     question.fieldType !== 'IMG' &&
-                    question.fieldType !== 'RT'
+                    question.fieldType !== 'RT' &&
+                    question.fieldType !== 'ARD'
                   "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
@@ -78,10 +70,23 @@
                       question.fieldType === 'GAL' ||
                       question.fieldType === 'ATT' ||
                       question.fieldType === 'IMG' ||
-                      question.fieldType === 'RT')
+                      question.fieldType === 'RT' ||
+                      question.fieldType === 'ARD')
                   "
                 >
                   {{ question.name ? question.name : 'Type Question' }}
+
+                  <mat-icon
+                    *ngIf="question.fieldType === 'ARD'"
+                    style="
+                      font-size: 160%;
+                      float: right;
+                      margin-right: -15px;
+                      color: #3f7591;
+                    "
+                  >
+                    add
+                  </mat-icon>
                 </div>
                 <div
                   class="width-100 question-name"
@@ -99,7 +104,8 @@
                     question.fieldType !== 'GAL' &&
                     question.fieldType !== 'ATT' &&
                     question.fieldType !== 'IMG' &&
-                    question.fieldType !== 'RT'
+                    question.fieldType !== 'RT' &&
+                    question.fieldType !== 'ARD'
                   "
                 >
                   <p
@@ -121,11 +127,7 @@
                     <input type="date" class="input-fields" />
                   </p>
 
-                  <p
-                    *ngIf="question.fieldType === 'CB'"
-                    style="float: right; margin-right: -40px"
-                    class="m-0"
-                  >
+                  <p *ngIf="question.fieldType === 'CB'" class="m-0 cb-input">
                     <input type="checkbox" />
                   </p>
 
@@ -148,8 +150,7 @@
 
                   <p
                     *ngIf="question.fieldType === 'LF'"
-                    class="default-value m-0"
-                    style="margin-right: -40px"
+                    class="default-value m-0 m-r-minus40"
                   >
                     {{ question.value }}
                   </p>
@@ -176,29 +177,20 @@
                   ></svg-icon>
                 </div>
 
-                <div
-                  *ngIf="question.fieldType === 'GAL'"
-                  style="margin: -10px 0 10px -10px"
-                >
-                  <input type="text" class="location-input-fields" />
+                <div *ngIf="question.fieldType === 'GAL'" class="signature-div">
+                  <input type="text" class="signature-input-fields" />
                   <img
                     src="assets/rdf-forms-icons/location.png"
                     alt="location-icon"
-                    style="
-                      width: 35px;
-                      position: relative;
-                      left: 10px;
-                      top: 5px;
-                      height: 20px;
-                    "
+                    class="location-icon"
                   />
                 </div>
 
                 <div
                   *ngIf="question.fieldType === 'ATT'"
-                  style="margin: -5px 0 10px -10px"
+                  class="attachment-div"
                 >
-                  <button mat-raised-button class="take-a-photo-btn">
+                  <button mat-raised-button class="attachment-btn">
                     <svg-icon icon="icon-take-a-photo"></svg-icon>
                     Take Photo
                   </button>
@@ -209,24 +201,18 @@
                     [src]="getImageSrc(question.value.base64)"
                     *ngIf="question.value.base64"
                     alt="image"
-                    style="width: 240px; height: 80px; margin-left: 10px"
+                    class="image-field"
                   />
                 </div>
 
                 <div *ngIf="question.fieldType === 'RT'">
-                  <mat-slider style="width: 230px; margin-top: -15px">
-                  </mat-slider>
+                  <mat-slider class="range-field"> </mat-slider>
                 </div>
 
-                <div
-                  *ngIf="question.fieldType === 'VI'"
-                  style="margin-bottom: 10px"
-                >
+                <div *ngIf="question.fieldType === 'VI'" class="m-b-10">
                   <div *ngIf="question.value?.values?.length > 0">
                     <div *ngIf="4 >= question.value.values.length">
-                      <mat-button-toggle-group
-                        style="height: 25px; align-items: center; width: 215px"
-                      >
+                      <mat-button-toggle-group class="vi-input">
                         <mat-button-toggle
                           class="vi-values"
                           [value]="ques.title"
@@ -242,10 +228,7 @@
                   </div>
                 </div>
 
-                <div
-                  *ngIf="question.fieldType === 'DD'"
-                  style="margin-bottom: 10px"
-                >
+                <div *ngIf="question.fieldType === 'DD'" class="m-b-10">
                   <div *ngIf="question.value?.values?.length > 0">
                     <div *ngIf="question.value.values.length > 4">
                       <mat-select class="dropdown" [multiple]="question.multi">
@@ -261,6 +244,90 @@
                       </mat-select>
                     </div>
                   </div>
+
+                  <div *ngIf="question.value?.globalDataset === true">
+                    <mat-select class="dropdown">
+                      <mat-option> 1 </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="question.fieldType === 'TAF'">
+                <div style="overflow-x: auto">
+                  <table>
+                    <tr>
+                      <th style="width: 20px; background: #e7ecef"></th>
+                      <th
+                        *ngFor="let columns of question.table; let i = index"
+                        style="width: 100px; background: #e7ecef; padding: 5px"
+                      >
+                        {{ columns.name }}
+                      </th>
+                    </tr>
+                    <tr>
+                      <td style="padding: 10px">1.</td>
+                      <td
+                        style="padding: 5px"
+                        *ngFor="let columns of question.table; let i = index"
+                      >
+                        <input type="text" size="10" />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <button
+                  style="
+                    color: #3678af;
+                    background: none;
+                    border: none;
+                    float: left;
+                  "
+                >
+                  <img
+                    src="../../../../assets/rdf-forms-icons/add-row.svg"
+                    alt="add row"
+                    style="position: relative; top: 4px; margin-right: 3px"
+                  />
+                  <span>Add row</span>
+                </button>
+              </div>
+
+              <div
+                *ngIf="question.fieldType === 'ARD'"
+                style="
+                  margin: -10px 10px 10px 10px;
+                  background-color: #f6f6f6;
+                  padding: 10px 5px;
+                "
+              >
+                <p
+                  style="
+                    font-weight: 500;
+                    margin: 0;
+                    text-align: left;
+                    font-size: 90%;
+                    margin-left: 10px;
+                  "
+                >
+                  Line Item 1
+                </p>
+                <mat-icon
+                  style="
+                    font-size: 120%;
+                    float: right;
+                    position: relative;
+                    top: -15px;
+                    right: -5px;
+                  "
+                >
+                  keyboard_arrow_right
+                </mat-icon>
+                <div
+                  *ngFor="let column of question.table; let i = index"
+                  style="text-align: left"
+                >
+                  <div class="question-name">{{ column.name }}:</div>
                 </div>
               </div>
             </div>

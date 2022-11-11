@@ -3,6 +3,22 @@
   height: 85vh;
   overflow-y: auto;
   padding-right: 14px;
+
+  ::ng-deep .mat-button-toggle {
+    background-color: #3d5afe;
+    color: white;
+  }
+
+  ::ng-deep .mat-button-toggle-group {
+    height: 40px;
+    align-items: center;
+    margin-top: 5px;
+    margin-right: 10px;
+  }
+
+  .data {
+    letter-spacing: 0.419185px;
+  }
 }
 
 .filter-icon {
@@ -22,6 +38,11 @@
 .form-name {
   font-size: 130%;
   font-weight: 500;
+  width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .form-description {
@@ -68,8 +89,48 @@
 .no-records {
   justify-content: center;
 }
+
 .formsListContainer {
   height: 68vh;
   overflow: auto;
-  //
+}
+
+.filter-btn {
+  float: right;
+  margin-top: 15px;
+  border: none;
+  background: transparent;
+}
+
+.filter-text {
+  color: #2a3eb1;
+  font-size: 110%;
+  letter-spacing: 0.419185px;
+  margin-right: 2px;
+}
+
+.filter-icon {
+  position: relative;
+  top: 3px;
+}
+
+.recent-forms-heading {
+  font-size: 140%;
+  width: 90%;
+  margin-left: 5px;
+  padding-top: 5px;
+}
+
+.forms-list {
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.white-bg {
+  background: white;
+}
+
+.forms-list-loader {
+  padding: 10px 15px;
+  background-color: #ffffff;
 }

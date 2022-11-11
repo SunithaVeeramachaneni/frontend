@@ -10,6 +10,10 @@
   margin: 0;
 }
 
+.m-5 {
+  margin: 5;
+}
+
 .m-l-0 {
   margin-left: 0px;
 }
@@ -158,6 +162,10 @@
   padding-bottom: 5px;
 }
 
+.p-b-0 {
+  padding-bottom: 0;
+}
+
 .p-t-10 {
   padding-top: 10px;
 }
@@ -202,6 +210,10 @@
   margin-top: 10px;
 }
 
+.m-t-12 {
+  margin-top: 12px;
+}
+
 .m-t-15 {
   margin-top: 15px;
 }
@@ -218,6 +230,10 @@
   margin-bottom: -35px;
 }
 
+.width-5 {
+  width: 5%;
+}
+
 .width-10 {
   width: 10%;
 }
@@ -228,6 +244,10 @@
 
 .width-25 {
   width: 25%;
+}
+
+.width-28 {
+  width: 28%;
 }
 
 .width-30 {
@@ -775,4 +795,9 @@ body {
   width: 320px;
   height: 2px;
   margin: 30px 30px;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #637bfe !important;
 }

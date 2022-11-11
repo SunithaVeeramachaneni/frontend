@@ -1,0 +1,121 @@
+.dependency-modal {
+  width: 800px;
+  height: 530px;
+  padding: 15px;
+
+  // ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  //   padding: 12px 0;
+  // }
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0 12px 0;
+  }
+
+  ::ng-deep .mat-slide-toggle-bar {
+    background-color: rgba(120, 120, 128, 0.16) !important;
+    height: 24px !important;
+    border-radius: 12px !important;
+  }
+
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #34c759 !important;
+    // height: 24px;
+    // border-radius: 12px;
+  }
+
+  ::ng-deep .mat-slide-toggle-thumb {
+    background-color: #ffffff;
+    margin-top: 5px;
+    position: relative;
+    left: 2px;
+  }
+
+  ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+    background-color: #ffffff;
+    margin-top: 5px;
+    position: relative;
+    left: -2px;
+  }
+}
+
+.settings-heading {
+  font-size: 140%;
+  margin: 5px;
+}
+
+.parent-question-div {
+  background: #eff6ff;
+  border-radius: 6px;
+  height: 41px;
+  margin-top: 7px;
+  margin-right: 15px;
+}
+
+.parent-question {
+  color: #1e40af;
+}
+
+.info-icon {
+  font-size: 150%;
+  margin: 0 3px 0 15px;
+  position: relative;
+  top: -3px;
+}
+
+.parent-question-text {
+  position: relative;
+  top: -9px;
+}
+
+.dependent-heading {
+  margin: 15px 0 5px 5px;
+  font-size: 110%;
+}
+
+.sub-headings {
+  letter-spacing: 0.419185px;
+  color: #76767b;
+  font-size: 90%;
+}
+
+.six-dots {
+  position: relative;
+  top: 3px;
+}
+
+.dropdowns {
+  height: 40px;
+  margin-top: 7px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  padding-left: 5px;
+}
+
+.input-box {
+  height: 36px;
+  margin-top: 7px;
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  padding-left: 5px;
+}
+
+.dependent-questions {
+  height: 370px;
+  overflow-y: auto;
+}
+
+.footer-btns {
+  padding: 0;
+  float: right;
+}
+
+select:focus {
+  outline: none;
+}
+
+.width-25 {
+  width: 25%;
+}
+
+.width-55 {
+  width: 55%;
+}

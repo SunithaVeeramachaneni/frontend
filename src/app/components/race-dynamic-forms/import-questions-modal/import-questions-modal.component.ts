@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   BehaviorSubject,
   combineLatest,
@@ -16,22 +17,19 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { ToastService } from 'src/app/shared/toast';
-import { RdfService } from '../services/rdf.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { defaultLimit } from 'src/app/app.constants';
+import { RdfService } from '../services/rdf.service';
 
 interface SearchEvent {
   data: 'search' | 'load' | 'infiniteScroll';
 }
 
 @Component({
-  selector: 'app-race-dynamic-forms-list-view',
-  templateUrl: './race-dynamic-forms-list-view.component.html',
-  styleUrls: ['./race-dynamic-forms-list-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-import-questions-modal',
+  templateUrl: './import-questions-modal.component.html',
+  styleUrls: ['./import-questions-modal.component.scss']
 })
-export class RaceDynamicFormsListViewComponent implements OnInit {
+export class ImportQuestionsModalComponent implements OnInit {
   searchKey = '';
   skip = 0;
   limit = defaultLimit;
@@ -46,22 +44,22 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
   formListOnScroll$: Observable<any>;
   forms$: Observable<any>;
   formsData$: Observable<any>;
-
   deleteForm$ = new BehaviorSubject<any>({} as any);
   duplicateForm$ = new BehaviorSubject<any>({} as any);
-  uploadForm$ = new BehaviorSubject<any>({} as any);
-
+  selectedItem;
+  selectedForm;
+  disableSelectBtn = true;
   private fetchForms$: ReplaySubject<SearchEvent> =
     new ReplaySubject<SearchEvent>(2);
 
   constructor(
-    private rdfService: RdfService,
-    private toaster: ToastService,
-    private router: Router,
-    private fb: FormBuilder
+    public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data,
+    private fb: FormBuilder,
+    private rdfService: RdfService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.searchForm = this.fb.group({
       search: ['']
     });
@@ -102,10 +100,9 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
       this.formsOnLoadSearch$,
       this.deleteForm$,
       this.duplicateForm$,
-      this.formListOnScroll$,
-      this.uploadForm$
+      this.formListOnScroll$
     ]).pipe(
-      map(([formsList, deleteForm, duplicateForm, scroll, uploadForms]) => {
+      map(([formsList, deleteForm, duplicateForm, scroll]) => {
         if (Object.keys(deleteForm).length) {
           initial.data = initial.data.filter(
             (form) => form.id !== deleteForm.id
@@ -119,12 +116,17 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
         if (Object.keys(scroll).length) {
           formsList = formsList.concat(scroll);
         }
-
-        if (uploadForms.length) {
-          uploadForms.forEach((form) => initial.data.splice(0, 0, form));
-        }
         initial.data = formsList;
         this.skip = initial.data.length;
+
+        initial.data.forEach((form) => {
+          let temp = 0;
+          form.sections.forEach((section) => {
+            temp += section.questions.length;
+          });
+          form.countOfQues = temp;
+        });
+
         return initial;
       })
     );
@@ -179,87 +181,21 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
       );
   }
 
-  deleteForm(form: any) {
-    of(form)
-      .pipe(
-        mergeMap(({ isPublished }) => {
-          if (isPublished) {
-            return this.rdfService.deactivateAbapForm$(form).pipe(
-              mergeMap((resp) => {
-                if (resp === null) {
-                  return this.deleteFromFromMongo(form);
-                }
-                return of({});
-              })
-            );
-          } else {
-            return this.deleteFromFromMongo(form);
-          }
-        })
-      )
-      .subscribe();
+  selectListItem(form, index) {
+    this.selectedForm = form;
+    this.selectedItem = index;
+    this.disableSelectBtn = false;
   }
 
-  deleteFromFromMongo(form) {
-    return this.rdfService.deleteForm$(form).pipe(
-      tap((deleteFrom) => {
-        if (Object.keys(deleteFrom).length) {
-          this.toaster.show({
-            text: `Form ${form.name} deleted successfully`,
-            type: 'success'
-          });
-          this.deleteForm$.next(deleteFrom);
-        }
-      })
-    );
-  }
-
-  editForm(form) {
-    this.router.navigate(['rdf-forms/edit', form.id], {
-      state: { data: form }
-    });
-  }
-
-  duplicateForm(form) {
-    return this.rdfService
-      .duplicateForm$(form)
-      .pipe(
-        tap((newForm) => {
-          if (Object.keys(newForm).length) {
-            this.toaster.show({
-              text: `Form ${newForm.name} copied successfully`,
-              type: 'success'
-            });
-            this.duplicateForm$.next(newForm);
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  uploadFile = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
-    this.rdfService
-      .importExcelFile$(formData, 'forms/upload')
-      .subscribe((data) => {
-        const newData = data.map((form) => {
-          const id = form._id;
-          const newForm = {
-            ...form,
-            id
-          };
-          delete newForm._id;
-          return newForm;
-        });
-        this.uploadForm$.next(newData);
+  selectFormElement() {
+    this.selectedForm.sections.forEach((sec) => {
+      sec.checked = false;
+      sec.questions.forEach((que) => {
+        que.checked = false;
       });
-  };
-
-  resetFile(event: Event) {
-    const file = event.target as HTMLInputElement;
-    file.value = '';
+    });
+    this.data.selectedFormData = this.selectedForm;
+    this.data.openImportQuestionsSlider = true;
+    this.dialogRef.close(this.data);
   }
 }

@@ -1,0 +1,101 @@
+<div class="filter-section" [formGroup]="filterForm">
+  <div class="width-100 m-r-10 dis-flex">
+    <span style="margin: 5px 10px 0 5px; width: 10%; padding-top: 10px"
+      >Filter By</span
+    >
+    <mat-select
+      style="width: 20%"
+      class="dropdowns"
+      formControlName="dependsOn"
+      placeholder="Select"
+    >
+      <mat-option
+        *ngFor="let responseType of dependencyResponseTypes"
+        [value]="responseType"
+      >
+        {{ responseType }}
+      </mat-option>
+    </mat-select>
+  </div>
+  <p style="margin: 10px 0 5px 0">
+    <span
+      style="
+        font-size: 90%;
+        position: relative;
+        top: -2px;
+        margin-right: 7px;
+        margin-left: 5px;
+      "
+    >
+      Enable Map Pins
+    </span>
+    <mat-slide-toggle formControlName="location"> </mat-slide-toggle>
+  </p>
+  <div
+    *ngIf="filterForm.controls.location.value === true"
+    class="dis-flex m-l-5 m-b-5"
+  >
+    <div class="width-20 m-r-10">
+      <p class="sub-headings m-0">Choose Latitude</p>
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="latitudeColumn"
+        placeholder="Select"
+      >
+        <mat-option
+          *ngFor="let responseType of globalDataset.values.headers"
+          [value]="responseType"
+        >
+          {{ responseType }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div class="width-20 m-r-10">
+      <p class="sub-headings m-0">Choose Longitude</p>
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="longitudeColumn"
+        placeholder="Select"
+      >
+        <mat-option
+          *ngFor="let responseType of globalDataset.values.headers"
+          [value]="responseType"
+        >
+          {{ responseType }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div class="width-15 m-r-10">
+      <p class="sub-headings m-0">Set Radius</p>
+      <mat-select
+        class="dropdowns width-100"
+        formControlName="radius"
+        placeholder="Select"
+      >
+        <mat-option *ngFor="let radius of radiuses" [value]="radius">{{
+          radius
+        }}</mat-option>
+      </mat-select>
+    </div>
+    <div class="width-15 m-r-10">
+      <p class="sub-headings m-0">Max No.of Pins</p>
+      <input type="number" class="input-box width-95" formControlName="pins" />
+    </div>
+    <div class="width-20 m-r-10 m-b-5">
+      <p class="sub-headings m-0">Sidepanel - List View</p>
+      <mat-select
+        multiple
+        class="dropdowns width-100"
+        formControlName="autoSelectColumn"
+        placeholder="Select"
+      >
+        <mat-option
+          *ngFor="let responseType of globalDataset.values.headers"
+          [value]="responseType"
+        >
+          {{ responseType }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+</div>

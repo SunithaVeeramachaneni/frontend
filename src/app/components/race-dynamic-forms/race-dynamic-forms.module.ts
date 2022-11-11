@@ -33,6 +33,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDividerModule } from '@angular/material/divider';
@@ -45,6 +46,11 @@ import { AskQuestionComponent } from './add-logic/ask-question/ask-question.comp
 import { MatDialogModule } from '@angular/material/dialog';
 import { SelectQuestionsDialogComponent } from './add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ImportQuestionsModalComponent } from './import-questions-modal/import-questions-modal.component';
+import { AddDependencyModalComponent } from './add-dependency-modal/add-dependency-modal.component';
+import { AddFilterComponent } from './add-filter/add-filter.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { TabularDependencyComponent } from './utils/tabular-dependency/tabular-dependency.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/maintenance/', '.json');
@@ -74,6 +80,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatMenuModule,
     MatChipsModule,
     MatButtonToggleModule,
+    MatSlideToggleModule,
     MatCheckboxModule,
     MatDialogModule,
     NgxShimmerLoadingModule,
@@ -89,7 +96,8 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    })
+    }),
+    NgxSpinnerModule
   ],
   declarations: [
     RaceDynamicFormsListViewComponent,
@@ -99,7 +107,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     AddLogicComponent,
     SelectQuestionsDialogComponent,
     AskQuestionComponent,
-    McqResponseComponent
+    McqResponseComponent,
+    ImportQuestionsModalComponent,
+    AddDependencyModalComponent,
+    AddFilterComponent,
+    TabularDependencyComponent
   ],
   exports: [],
   entryComponents: []
