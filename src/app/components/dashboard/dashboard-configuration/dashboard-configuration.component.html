@@ -65,7 +65,7 @@
         [ngClass]="dashboardDisplayMode === 'ALL' ? 'more-icon-all' : ''"
         aria-label="More Options"
       >
-        <mat-icon class="more-icon-no-color">more_horiz</mat-icon>
+        <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
       </button>
     </ng-container>
 
@@ -150,7 +150,7 @@
             ]"
             aria-label="More Options"
           >
-            <mat-icon>more_horiz</mat-icon>
+            <svg-icon icon="icon-more" class="more-icon-no-color"></svg-icon>
           </button>
           <mat-menu #widgetMenu="matMenu">
             <button

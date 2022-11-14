@@ -89,12 +89,11 @@
                 [ngClass]="{ 'text-red': role.name.length > 100 }"
               >
                 {{ role.name }}
-                <img
-                  src="assets/user-management-icons/super-admin-icon.svg"
-                  alt="super admin"
-                  class="super-admin-icon"
+                <svg-icon
+                  icon="icon-super-admin-icon"
                   *ngIf="role.name === superAdminText"
-                />
+                  class="super-admin-icon"
+                ></svg-icon>
               </span>
 
               <span class="role-count">

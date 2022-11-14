@@ -118,6 +118,10 @@
 .super-admin-icon {
   position: relative;
   top: 2px;
+  ::ng-deep svg {
+    height: 15px !important;
+    width: 20px !important;
+  }
 }
 
 .more-items {

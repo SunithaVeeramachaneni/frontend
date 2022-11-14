@@ -11,13 +11,13 @@
         <div class="width-80 m-t-14">
           <mat-form-field appearance="outline" class="m-r-10 width-100">
             <mat-label translate>reportName</mat-label>
-            <mat-icon
+            <svg-icon
               matSuffix
-              class="edit-icon"
               *ngIf="reportNameDisabled"
+              icon="icon-edit-icon"
               (click)="toggleReportInputField()"
-              >edit</mat-icon
-            >
+              class="report-edit-icon"
+            ></svg-icon>
             <input
               matInput
               *ngIf="reportNameDisabled"
@@ -54,14 +54,14 @@
             matTooltip="Mark as Favorite"
             matTooltipClass=""
           >
-            <mat-icon class="mat-icon-star">star_border</mat-icon>
+            <svg-icon icon="icon-favorites"></svg-icon>
           </span>
           <span
             *ngIf="reportDetails.report?.isFavorite"
             matTooltip="Un-Favorite"
             matTooltipClass=""
           >
-            <mat-icon class="mat-icon-star is-fav-icon">star</mat-icon>
+            <svg-icon icon="icon-fav-fill"></svg-icon>
           </span>
         </a>
       </div>
@@ -156,7 +156,10 @@
             *ngIf="reportDetails.report?.showChart"
             aria-label="Hide Chart"
           >
-            <img src="assets/dashboard-icons/show_chart.svg" alt="Show Chart" />
+            <svg-icon
+              icon="icon-show_chart"
+              class="chart-control-icon"
+            ></svg-icon>
           </button>
           <button
             mat-stroked-button
@@ -168,16 +171,16 @@
             [disabled]="!reportDetails.report?.groupBy?.length"
             aria-label="Show Chart"
           >
-            <img
-              src="assets/dashboard-icons/show_chart.svg"
+            <svg-icon
+              icon="icon-show_chart"
+              class="chart-control-icon"
               *ngIf="reportDetails.report?.groupBy?.length"
-              alt="Show Chart"
-            />
-            <img
-              src="assets/dashboard-icons/show_chart_disabled.svg"
+            ></svg-icon>
+            <svg-icon
+              icon="icon-show-chart-disabled"
+              class="chart-control-icon"
               *ngIf="!reportDetails.report?.groupBy?.length"
-              alt="Show Chart Disabled"
-            />
+            ></svg-icon>
           </button>
           <button
             mat-stroked-button
@@ -192,10 +195,16 @@
             ]"
             aria-label="Preview"
           >
-            <img
-              [src]="getImage('preview', showPreview)"
-              alt="Toggle Preview"
-            />
+            <svg-icon
+              *ngIf="showPreview"
+              icon="icon-preview-active"
+              class="chart-control-icon"
+            ></svg-icon>
+            <svg-icon
+              *ngIf="!showPreview"
+              icon="icon-preview"
+              class="chart-control-icon"
+            ></svg-icon>
           </button>
           <button
             mat-stroked-button
@@ -208,11 +217,11 @@
             [ngClass]="{ 'spinner-class btn-background': isExportInProgress }"
             aria-label="Export to Excel"
           >
-            <img
-              src="assets/dashboard-icons/export.svg"
-              alt="Export Report"
+            <svg-icon
+              icon="icon-export"
+              class="chart-control-icon"
               *ngIf="!isExportInProgress"
-            />
+            ></svg-icon>
           </button>
           <button
             mat-stroked-button
@@ -266,7 +275,7 @@
                 class="save-button-arrow"
                 aria-label="Save As"
               >
-                <mat-icon class="dropdown-arrow">arrow_drop_down</mat-icon>
+                <svg-icon icon="icon-dropdown" class="dropdown-icon"></svg-icon>
               </mat-button-toggle>
             </mat-button-toggle-group>
           </ng-template>
