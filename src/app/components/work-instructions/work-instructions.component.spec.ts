@@ -299,9 +299,6 @@ describe('WorkInstructionsComponent', () => {
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      const imgs = homeEl.querySelectorAll('.work-instructions-body img');
-      expect(imgs[0].getAttribute('src')).toContain('createwi.svg');
-      expect(imgs[1].getAttribute('src')).toContain('dropdown.svg');
       const input = homeEl.querySelectorAll('input');
       expect(input.length).toBe(2);
       expect(input[0].getAttribute('placeholder')).toBe(
@@ -368,9 +365,6 @@ describe('WorkInstructionsComponent', () => {
       (component.getAllFavsDraftsAndRecentIns as jasmine.Spy).and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      const imgs = homeEl.querySelectorAll('.work-instructions-body img');
-      expect(imgs[0].getAttribute('src')).toContain('createwi.svg');
-      expect(imgs[1].getAttribute('src')).toContain('dropdown.svg');
       const input = homeEl.querySelectorAll('input');
       expect(input.length).toBe(2);
       expect(input[0].getAttribute('placeholder')).toBe(
@@ -422,9 +416,6 @@ describe('WorkInstructionsComponent', () => {
       searchInput.value = 'testing';
       searchInput.dispatchEvent(new Event('input'));
       fixture.detectChanges();
-      const imgs = homeEl.querySelectorAll('.work-instructions-body img');
-      expect(imgs[0].getAttribute('src')).toContain('createwi.svg');
-      expect(imgs[1].getAttribute('src')).toContain('dropdown.svg');
       const input = homeEl.querySelectorAll('input');
       expect(input.length).toBe(2);
       expect(input[0].getAttribute('placeholder')).toBe(

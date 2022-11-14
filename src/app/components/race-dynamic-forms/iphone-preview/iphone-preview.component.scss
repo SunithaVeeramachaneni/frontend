@@ -466,3 +466,13 @@
     top: -3px;
   }
 }
+
+.add-row-icon {
+  margin-right: 3px;
+  ::ng-deep svg {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 2px;
+  }
+}

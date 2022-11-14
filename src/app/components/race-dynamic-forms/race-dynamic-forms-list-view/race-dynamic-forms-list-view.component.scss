@@ -19,6 +19,15 @@
   .data {
     letter-spacing: 0.419185px;
   }
+
+  .dropdown {
+    ::ng-deep svg {
+      width: 12px;
+      height: 12px;
+      position: relative;
+      top: 2px;
+    }
+  }
 }
 
 .filter-icon {

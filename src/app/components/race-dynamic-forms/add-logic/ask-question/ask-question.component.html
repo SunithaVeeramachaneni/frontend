@@ -9,12 +9,6 @@
           <div class="dis-flex">
             <input type="hidden" formControlName="position" [ngModel]="i + 1" />
             <div class="width-70">
-              <!-- <img
-                cdkDragHandle
-                src="assets/rdf-forms-icons/six-dots.svg"
-                alt="six-dots"
-                class="m-l-10 six-dots"
-              /> -->
               <mat-form-field
                 appearance="outline"
                 class="width-90"
@@ -152,12 +146,11 @@
                   fieldContentOpenState[1][i + 1] === true
                 "
               >
-                <img
-                  src="assets/rdf-forms-icons/delete-icon.svg"
-                  alt="delete-icon"
+                <svg-icon
+                  icon="icon-delete-icon"
                   (click)="deleteQuestion(i)"
                   class="delete-icon"
-                />
+                ></svg-icon>
               </div>
 
               <ng-template
@@ -282,10 +275,7 @@
                                   togglePopOverOpenState(1, i)
                                 "
                               >
-                                <img
-                                  src="assets/rdf-forms-icons/edit-icon.svg"
-                                  alt="edit-icon"
-                                />
+                                <svg-icon icon="icon-edit-icon"></svg-icon>
                               </button>
                             </div>
                           </div>
@@ -337,10 +327,7 @@
                                 togglePopOverOpenState(1, i)
                               "
                             >
-                              <img
-                                src="assets/rdf-forms-icons/edit-icon.svg"
-                                alt="edit-icon"
-                              />
+                              <svg-icon icon="icon-edit-icon"></svg-icon>
                             </button>
                           </div>
                           <button

@@ -154,9 +154,6 @@ describe('CategoryComponent', () => {
       expect(categoryEl.querySelector('.modal-card').textContent).toContain(
         'Save'
       );
-      expect(categoryEl.querySelector('img').getAttribute('src')).toContain(
-        'upload.svg'
-      );
       expect(categoryEl.querySelectorAll('img').length).toBe(
         component.coverImages.length + 1
       );

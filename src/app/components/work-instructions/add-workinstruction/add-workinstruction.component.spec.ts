@@ -332,9 +332,6 @@ describe('AddWorkinstructionComponent', () => {
         .and.callThrough();
       component.ngOnInit();
       fixture.detectChanges();
-      expect(
-        addWIEl.querySelector('.add-instruction-main img').getAttribute('src')
-      ).toContain('upload.svg');
     });
 
     describe('OverviewComponent', () => {
