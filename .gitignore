@@ -48,3 +48,4 @@ Thumbs.db
 
 package-lock.json
 .docker/env/secrets.env
+.docker/env/set-secrets-and-other-envs.bat
