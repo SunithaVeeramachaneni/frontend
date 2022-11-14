@@ -18,18 +18,30 @@
   }
 }
 
+.favorite-icon {
+  ::ng-deep svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
 .dropdown-icon {
   position: relative;
   top: 5px;
   right: 4px;
   ::ng-deep svg {
     width: 15px !important;
+    height: 20px !important;
   }
 }
 
 .chart-control-icon {
   position: relative !important;
   top: 4px;
+  ::ng-deep svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
 }
 
 .content-div {

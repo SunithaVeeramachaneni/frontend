@@ -34,6 +34,10 @@
   .more-icon-no-color {
     color: #757575;
   }
+  ::ng-deep svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
 }
 .more-icon-all {
   margin-top: 18px;

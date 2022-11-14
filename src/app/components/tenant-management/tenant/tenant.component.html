@@ -915,7 +915,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <svg-icon icon="icon-delete-forever"></svg-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
@@ -1146,7 +1149,10 @@
                       class="delete-button"
                       [ngClass]="{ 'cursor-pointer': editTenant === true }"
                     >
-                      <svg-icon icon="icon-delete-forever"></svg-icon>
+                      <svg-icon
+                        icon="icon-delete-forever"
+                        class="delete-icon"
+                      ></svg-icon>
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
