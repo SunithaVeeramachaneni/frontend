@@ -139,7 +139,7 @@ describe('RolesComponent', () => {
       .and.returnValue(of(permissions));
 
     (rolesPermissionsServiceSpy.getRolesWithPermissions$ as jasmine.Spy)
-      .withArgs()
+      .withArgs({ includePermissions: true })
       .and.returnValue(of(permissions));
 
     (rolesPermissionsServiceSpy.getUsersByRoleId$ as jasmine.Spy)
