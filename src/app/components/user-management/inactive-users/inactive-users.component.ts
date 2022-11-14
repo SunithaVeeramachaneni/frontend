@@ -18,6 +18,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  mergeMap,
   switchMap,
   tap
 } from 'rxjs/operators';
@@ -201,10 +202,7 @@ export class InactiveUsersComponent implements OnInit {
     );
 
     this.getDisplayedUsers();
-    this.getUserCount();
-    this.usersService.getRoles$().subscribe((roles) => {
-      this.roles = roles;
-    });
+
     this.configOptions.allColumns = this.columns;
     this.permissionsList$ = this.roleService.getPermissions$();
     this.rolesList$ = this.roleService.getRolesWithPermissions$({
@@ -256,25 +254,26 @@ export class InactiveUsersComponent implements OnInit {
   }
 
   getUsers = () =>
-    this.usersService.getUsers$({
-      skip: this.skip,
-      limit: this.limit,
-      isActive: false,
-      searchKey: this.searchUser.value,
-      includeRoles: true
-    });
-
-  getUserCount = () => {
-    this.userCount$ = this.fetchUsers$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() =>
-        this.usersService.getUsersCount$({
-          isActive: false,
-          searchKey: this.searchUser.value
+    this.usersService
+      .getUsers$({
+        skip: this.skip,
+        limit: this.limit,
+        isActive: false,
+        searchKey: this.searchUser.value,
+        includeRoles: true
+      })
+      .pipe(
+        mergeMap((resp: any) => {
+          this.userCount$ = of({ count: resp.count });
+          return of(resp.rows);
+        }),
+        mergeMap((resp: UserDetails[]) => {
+          resp = resp.map((user) =>
+            this.usersService.prepareUser(user, user.roles)
+          );
+          return of(resp);
         })
-      )
-    );
-  };
+      );
 
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);

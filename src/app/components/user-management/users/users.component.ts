@@ -10,6 +10,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
+  mergeMap,
   shareReplay
 } from 'rxjs/operators';
 import {
@@ -220,7 +221,20 @@ export class UsersComponent implements OnInit {
       )
       .subscribe();
     this.getDisplayedUsers();
-    this.getUserCount();
+
+    this.userCount$ = combineLatest([
+      this.userCount$,
+      this.userCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addDeactivateUserCount) {
+          count.count += update;
+          this.addDeactivateUserCount = false;
+        }
+        return count;
+      })
+    );
+
     this.usersService.getRoles$().subscribe((roles) => {
       this.roles = roles;
     });
@@ -422,37 +436,26 @@ export class UsersComponent implements OnInit {
   }
 
   getUsers = () =>
-    this.usersService.getUsers$({
-      skip: this.skip,
-      limit: this.limit,
-      isActive: true,
-      searchKey: this.searchUser.value,
-      includeRoles: true
-    });
-
-  getUserCount = () => {
-    this.userCount$ = this.fetchUsers$.pipe(
-      filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() =>
-        this.usersService.getUsersCount$({
-          isActive: true,
-          searchKey: this.searchUser.value
-        })
-      )
-    );
-    this.userCount$ = combineLatest([
-      this.userCount$,
-      this.userCountUpdate$
-    ]).pipe(
-      map(([count, update]) => {
-        if (this.addDeactivateUserCount) {
-          count.count += update;
-          this.addDeactivateUserCount = false;
-        }
-        return count;
+    this.usersService
+      .getUsers$({
+        skip: this.skip,
+        limit: this.limit,
+        isActive: true,
+        searchKey: this.searchUser.value,
+        includeRoles: true
       })
-    );
-  };
+      .pipe(
+        mergeMap((resp: any) => {
+          this.userCount$ = of({ count: resp.count });
+          return of(resp.rows);
+        }),
+        mergeMap((resp: UserDetails[]) => {
+          resp = resp.map((user) =>
+            this.usersService.prepareUser(user, user.roles)
+          );
+          return of(resp);
+        })
+      );
 
   rowLevelActionHandler = (event) => {
     const { data, action } = event;
