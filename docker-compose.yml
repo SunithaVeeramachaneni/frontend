@@ -317,14 +317,14 @@ services:
     networks:
       - app-network
 
-  catalog-and-super-tenant-migrations:
-    container_name: catalog-and-super-tenant-migrations
-    image: catalog-and-super-tenant-migrations
+  catalog-migrations:
+    container_name: catalog-migrations
+    image: catalog-migrations
     build:
       context: ${BACKEND_HOME}/UserService/init
-      dockerfile: .docker/catalog-and-super-tenant-migrations.dockerfile
+      dockerfile: .docker/catalog-migrations.dockerfile
     volumes:
-      - ${BACKEND_HOME}/UserService:/usr/src/catalog-and-super-tenant-migrations
+      - ${BACKEND_HOME}/UserService:/usr/src/catalog-migrations
     environment:
       - NODE_ENV=${APP_ENV}
       - MYSQL_HOST_NAME=mysql-local
