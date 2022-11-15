@@ -653,9 +653,19 @@
                     matInput
                     [placeholder]="'clientSecret' | translate"
                     formControlName="clientSecret"
-                    #inputClientSecret
-                    (focus)="unMaskClientSecret()"
-                    (blur)="maskClientSecret()"
+                    #clientSecret
+                    (focus)="
+                      unMaskField(
+                        tenantForm.get('erps.sap.saml.clientSecret').value,
+                        'clientSecret'
+                      )
+                    "
+                    (blur)="
+                      maskField(
+                        tenantForm.get('erps.sap.saml.clientSecret').value,
+                        'clientSecret'
+                      )
+                    "
                   />
                 </mat-form-field>
                 <mat-error
@@ -1906,9 +1916,23 @@
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>accessKeyId</mat-label>
               <input
+                autocomplete="off"
                 matInput
                 [placeholder]="'accessKeyId' | translate"
                 formControlName="accessKeyId"
+                #accessKeyId
+                (focus)="
+                  unMaskField(
+                    tenantForm.get('s3Details.accessKeyId').value,
+                    'accessKeyId'
+                  )
+                "
+                (blur)="
+                  maskField(
+                    tenantForm.get('s3Details.accessKeyId').value,
+                    'accessKeyId'
+                  )
+                "
               />
             </mat-form-field>
             <mat-error *ngIf="processValidationErrors('s3Details.accessKeyId')">
@@ -1927,9 +1951,23 @@
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>secretAccessKey</mat-label>
               <input
+                autocomplete="off"
                 matInput
                 [placeholder]="'secretAccessKey' | translate"
                 formControlName="secretAccessKey"
+                #secretAccessKey
+                (focus)="
+                  unMaskField(
+                    tenantForm.get('s3Details.secretAccessKey').value,
+                    'secretAccessKey'
+                  )
+                "
+                (blur)="
+                  maskField(
+                    tenantForm.get('s3Details.secretAccessKey').value,
+                    'secretAccessKey'
+                  )
+                "
               />
             </mat-form-field>
             <mat-error
@@ -1950,6 +1988,7 @@
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>bucket</mat-label>
               <input
+                autocomplete="off"
                 matInput
                 [placeholder]="'bucket' | translate"
                 formControlName="bucket"
@@ -1971,6 +2010,7 @@
             <mat-form-field appearance="outline" class="width-100">
               <mat-label translate>region</mat-label>
               <input
+                autocomplete="off"
                 matInput
                 [placeholder]="'region' | translate"
                 formControlName="region"

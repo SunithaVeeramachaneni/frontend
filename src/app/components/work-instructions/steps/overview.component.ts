@@ -16,7 +16,6 @@ import {
   FormControl
 } from '@angular/forms';
 import { InstructionService } from '../services/instruction.service';
-import { ActivatedRoute } from '@angular/router';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { NgZone, ViewChild } from '@angular/core';
 import { map, mergeMap, take } from 'rxjs/operators';
@@ -88,21 +87,20 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
-  triggerResize() {
-    this._ngZone.onStable
-      .pipe(take(1))
-      .subscribe(() => this.autosize.resizeToFitContent(true));
-  }
-
   constructor(
     private _ngZone: NgZone,
     private _formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private _commonSvc: WiCommonService,
     private _instructionSvc: InstructionService,
     private base64HelperService: Base64HelperService,
     private store: Store<State>
   ) {}
+
+  triggerResize() {
+    this._ngZone.onStable
+      .pipe(take(1))
+      .subscribe(() => this.autosize.resizeToFitContent(true));
+  }
 
   OnCategoryObjectsList(obj: string) {
     const categories = this.categoriesSelected;

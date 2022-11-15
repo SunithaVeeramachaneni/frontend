@@ -6,6 +6,7 @@ import {
   Nosql,
   ProtectedResource,
   Rdbms,
+  S3Details,
   Tenant,
   UserDetails
 } from './interfaces';
@@ -66,6 +67,7 @@ export const tenantsInfo: Tenant[] = [
     modules: [],
     logDBType: '',
     logLevel: '',
+    s3Details: {} as S3Details,
     collaborationType: 'msteams',
     slackConfiguration: {},
     msTeamsConfiguration: {}

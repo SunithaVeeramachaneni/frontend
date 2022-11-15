@@ -6,7 +6,6 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { InstructionService } from '../../services/instruction.service';
 import Swal from 'sweetalert2';
 import { WiCommonService } from '../../services/wi-common.services';
@@ -24,7 +23,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastService } from '../../../../shared/toast';
 import { Base64HelperService } from '../../services/base64-helper.service';
 import { Subject } from 'rxjs';
-import { Step, ErrorInfo, Instruction } from '../../../../interfaces';
+import { Step, Instruction } from '../../../../interfaces';
 import { Store } from '@ngrx/store';
 import { State } from '../../../../state/app.state';
 import * as InstructionActions from '../../state/intruction.actions';
@@ -32,11 +31,9 @@ import {
   getCurrentStep,
   getCurrentStepImages,
   getInstruction,
-  getInstructionId,
   getSteps,
   getUploadedFile
 } from '../../state/instruction.selectors';
-import { ErrorHandlerService } from '../../../../shared/error-handler/error-handler.service';
 import { permissions } from 'src/app/app.constants';
 
 @Component({
@@ -140,14 +137,12 @@ export class StepContentComponent implements OnInit, OnDestroy {
 
   constructor(
     private spinner: NgxSpinnerService,
-    private route: ActivatedRoute,
     private _commonSvc: WiCommonService,
     private _toastService: ToastService,
     private _instructionSvc: InstructionService,
     private fb: FormBuilder,
     private base64HelperService: Base64HelperService,
-    private store: Store<State>,
-    private errorHandlerService: ErrorHandlerService
+    private store: Store<State>
   ) {}
 
   handleInputChange(uploadedFile, uploadedImg) {
