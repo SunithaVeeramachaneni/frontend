@@ -179,7 +179,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
 
   getRoles() {
     const initialRolesList$ = this.roleService
-      .getRolesWithPermissions$()
+      .getRolesWithPermissions$({ includePermissions: true })
       .pipe(shareReplay(1))
       .pipe(
         tap((roles) => {
@@ -565,7 +565,7 @@ export class RolesComponent implements OnInit, AfterViewChecked {
     this.selectedRolePermissions$ = this.rolesList$.pipe(
       map((roles) => {
         const permissions = roles.find((r) => r.id === role.id)?.permissionIds;
-        if (permissions) return permissions.map((perm) => perm.id);
+        if (permissions) return permissions; //.map((perm) => perm.id);
       }),
       shareReplay(1)
     );
