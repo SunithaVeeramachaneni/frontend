@@ -75,7 +75,7 @@ describe('InactiveUsersComponent', () => {
       .and.returnValue(of(allRolesMock));
 
     (rolesPermissionsServiceSpy.getRolesWithPermissions$ as jasmine.Spy)
-      .withArgs()
+      .withArgs({ includePermissions: true })
       .and.returnValue(of(roleWithPermissionsMock));
 
     (usersServiceSpy.getUsers$ as jasmine.Spy)
@@ -83,7 +83,8 @@ describe('InactiveUsersComponent', () => {
         skip: 0,
         limit: 25,
         isActive: false,
-        searchKey: ''
+        searchKey: '',
+        includeRoles: true
       })
       .and.returnValue(of(usersMock));
 
@@ -132,28 +133,14 @@ describe('InactiveUsersComponent', () => {
       component.skip = 0;
       component.getUsers().subscribe((response) => {
         expect(response).toEqual(usersMock);
-        expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith({
+        const queryParams = {
           skip: 0,
           limit: 25,
           isActive: false,
-          searchKey: ''
-        });
-      });
-    });
-  });
-
-  describe('getUserCount', () => {
-    it('should define function', () => {
-      expect(component.getUserCount).toBeDefined();
-    });
-
-    it('should get users count', () => {
-      component.userCount$.subscribe((response) => {
-        expect(usersServiceSpy.getUsersCount$).toHaveBeenCalledWith({
-          isActive: false,
-          searchKey: ''
-        });
-        expect(response).toEqual({ count: usersMock.length });
+          searchKey: '',
+          includeRoles: true
+        };
+        expect(usersServiceSpy.getUsers$).toHaveBeenCalledWith(queryParams);
       });
     });
   });
@@ -169,7 +156,8 @@ describe('InactiveUsersComponent', () => {
           skip: 1,
           limit: 25,
           isActive: false,
-          searchKey: ''
+          searchKey: '',
+          includeRoles: true
         })
         .and.returnValue(of([]));
       component.fetchUsers$.next({ data: 'load' });

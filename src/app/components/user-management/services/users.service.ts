@@ -108,35 +108,14 @@ export class UsersService {
   getUsers$ = (
     queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<any[]> => {
+  ): Observable<any> => {
     queryParams = { ...queryParams };
-    // queryParams = {};
-    return this.appService
-      ._getResp(
-        environment.userRoleManagementApiUrl,
-        'users',
-        info,
-        queryParams
-      )
-      .pipe(
-        mergeMap((resp: any) => of(resp.rows)),
-        mergeMap((users: UserDetails[]) =>
-          from(users).pipe(
-            mergeMap((user) =>
-              this.getRolesByUserID$(user.id).pipe(
-                map((roles) => ({ roles, userID: user.id }))
-              )
-            ),
-            toArray(),
-            map((resp) =>
-              users.map((user) => {
-                const find = resp.find((r) => r.userID === user.id);
-                return this.prepareUser(user, find.roles);
-              })
-            )
-          )
-        )
-      );
+    return this.appService._getResp(
+      environment.userRoleManagementApiUrl,
+      'users',
+      info,
+      queryParams
+    );
   };
 
   getUsersCount$ = (
