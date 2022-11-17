@@ -216,10 +216,6 @@ $blue-color: #3d5afe;
       justify-content: flex-end;
     }
 
-    .apps-icon {
-      padding: 12px 10px 0 0;
-    }
-
     .user {
       border-top: $border;
       border-left: $border;
@@ -295,4 +291,10 @@ $blue-color: #3d5afe;
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.apps-icon {
+  position: relative;
+  top: 12.5px;
+  right: 10px;
 }

@@ -205,3 +205,10 @@ mat-sidenav {
   margin: 10px 13px 0 13px;
   width: 90% !important;
 }
+
+.icon-arrow {
+  ::ng-deep svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+}
