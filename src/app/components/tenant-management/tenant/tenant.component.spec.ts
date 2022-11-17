@@ -2812,15 +2812,15 @@ describe('TenantComponent', () => {
     });
   });
 
-  describe('maskClientSecret', () => {
+  describe('maskField', () => {
     it('should define function', () => {
-      expect(component.maskClientSecret).toBeDefined();
+      expect(component.maskField).toBeDefined();
     });
   });
 
-  describe('unMaskClientSecret', () => {
+  describe('unMaskField', () => {
     it('should define function', () => {
-      expect(component.unMaskClientSecret).toBeDefined();
+      expect(component.unMaskField).toBeDefined();
     });
   });
 
