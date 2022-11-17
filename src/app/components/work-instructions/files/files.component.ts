@@ -39,9 +39,9 @@ export class MediaFilesComponent implements OnInit {
     directionLinks: false
   };
   search: string;
-  order = 'updated_at';
+  order = 'updatedAt';
   reverse = true;
-  reverseObj: any = { updated_at: true };
+  reverseObj: any = { updatedAt: true };
   bulkUploadComponent = BulkUploadComponent;
   editRows = [];
   currentRouteUrl$: Observable<string>;
@@ -88,21 +88,21 @@ export class MediaFilesComponent implements OnInit {
         this.editRows = new Array(files.length).fill(false);
         const result: MediaFile[] = files.map((file) => {
           const splitFile = this.splitFileFromFolder(file);
-          const fileNameWithExtension = splitFile[2];
-          const fileName = splitFile[2].split('.').slice(0, -1).join('.');
-          const fullFilePath = file.Key;
-          const originalFileName = splitFile[2]
+          const fileNameWithExtension = splitFile[3];
+          const fileName = splitFile[3].split('.').slice(0, -1).join('.');
+          const filePath = file.Key.split('/').slice(1).join('/');
+          const originalFileName = splitFile[3]
             .split('.')
             .slice(0, -1)
             .join('.');
-          const updated_at = file.LastModified;
+          const updatedAt = file.LastModified;
           const fileType = file.MimeType.split('/')[0];
           return {
             fileNameWithExtension,
             fileName,
-            fullFilePath,
+            filePath,
             originalFileName,
-            updated_at,
+            updatedAt,
             fileType
           };
         });
@@ -131,11 +131,11 @@ export class MediaFilesComponent implements OnInit {
           failureResponse: 'throwError'
         };
         this.instructionSvc
-          .deleteFile(el.fullFilePath, info)
+          .deleteFile(el.filePath, info)
           .pipe(
             mergeMap(() =>
               this.instructionSvc
-                .getAllInstructionsByFilePath(el.fullFilePath, info)
+                .getAllInstructionsByFilePath(el.filePath, info)
                 .pipe(
                   mergeMap((instructions) =>
                     from(instructions).pipe(
@@ -215,7 +215,7 @@ export class MediaFilesComponent implements OnInit {
   };
 
   saveFile(file, index: number) {
-    let { fileName, fullFilePath, originalFileName } = file;
+    let { fileName, filePath, originalFileName } = file;
     fileName = fileName.trim();
 
     if (fileName === originalFileName) {
@@ -227,13 +227,13 @@ export class MediaFilesComponent implements OnInit {
       return;
     }
 
-    const filePathArr = fullFilePath.split('/');
+    const filePathArr = filePath.split('/');
     const fileNameArr = filePathArr[filePathArr.length - 1].split('.');
     fileNameArr[0] = fileName;
     filePathArr[filePathArr.length - 1] = fileNameArr.join('.');
     const newFilePath = filePathArr.join('/');
     const renameFileInfo = {
-      filePath: fullFilePath,
+      filePath,
       newFilePath
     };
     const info: ErrorInfo = {
@@ -265,10 +265,7 @@ export class MediaFilesComponent implements OnInit {
       .subscribe(() => {
         this.editRows[index] = false;
         this.toastService.show({
-          text:
-            "File name '" +
-            renameFileInfo.newFilePath +
-            "' updated successfully",
+          text: "File name '" + fileName + "' updated successfully",
           type: 'success'
         });
         this.getAllMediaFiles();

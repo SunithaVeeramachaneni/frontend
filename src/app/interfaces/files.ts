@@ -4,15 +4,15 @@ export interface Files {
   ETag: string;
   Size: string;
   StorageClass: string;
-  Owner:any;
+  Owner: any;
   MimeType?: string;
 }
 
 export interface MediaFile {
   fileNameWithExtension: string;
   fileName: string;
-  updated_at: string;
-  fullFilePath: string;
+  filePath: string;
   originalFileName: string;
   fileType: string;
+  updatedAt: string;
 }

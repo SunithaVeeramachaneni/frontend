@@ -51,9 +51,8 @@ export class IpadPreviewComponent implements OnInit, OnDestroy {
       .subscribe((step) => (this.step = step));
   }
 
-  getStepImage = (file: string) => {
-    return this.stepImages[`${this.step?.WI_Id}/${this.step?.StepId}/${file}`];
-  };
+  getStepImage = (file: string) =>
+    this.stepImages[`${this.step?.WI_Id}/${this.step?.StepId}/${file}`];
 
   ngOnDestroy() {
     this.stepImages = {};

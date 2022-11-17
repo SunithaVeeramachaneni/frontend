@@ -45,7 +45,9 @@ const regUrl =
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TenantComponent implements OnInit, AfterViewInit {
-  @ViewChild('inputClientSecret') inputClientSecret: ElementRef;
+  @ViewChild('clientSecret') clientSecret: ElementRef;
+  @ViewChild('accessKeyId') accessKeyId: ElementRef;
+  @ViewChild('secretAccessKey') secretAccessKey: ElementRef;
   hidePasswordDBMS = true;
   hidePasswordNoSQL = true;
   hidePasswordERPS = true;
@@ -292,6 +294,44 @@ export class TenantComponent implements OnInit, AfterViewInit {
       modules: [[], [Validators.required]],
       logDBType: ['', [Validators.required]],
       logLevel: ['', [Validators.required]],
+      s3Details: this.fb.group({
+        accessKeyId: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        secretAccessKey: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        bucket: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(50),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        region: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(30),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ]
+      }),
       tenantLogo: [''],
       tenantLogoName: ['']
     });
@@ -475,7 +515,22 @@ export class TenantComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.maskClientSecret();
+    this.maskFields();
+  }
+
+  maskFields() {
+    this.maskField(
+      this.tenantForm.get('erps.sap.saml.clientSecret').value,
+      'clientSecret'
+    );
+    this.maskField(
+      this.tenantForm.get('s3Details.accessKeyId').value,
+      'accessKeyId'
+    );
+    this.maskField(
+      this.tenantForm.get('s3Details.secretAccessKey').value,
+      'secretAccessKey'
+    );
   }
 
   setTenantFormData() {
@@ -781,6 +836,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
                 text: `Tenant '${tenantName}' updated successfully`,
                 type: 'success'
               });
+              this.maskFields();
             }
           });
       } else {
@@ -798,6 +854,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
               text: `Tenant '${tenantName}' onboarded successfully`,
               type: 'success'
             });
+            this.maskFields();
           }
         });
       }
@@ -823,19 +880,16 @@ export class TenantComponent implements OnInit, AfterViewInit {
       );
   }
 
-  maskClientSecret() {
-    const maskedValue = this.tenantForm.get('erps.sap.saml.clientSecret').value;
-    if (maskedValue.length > 3) {
-      const data =
-        maskedValue.substr(0, 3) + 'X'.repeat(maskedValue.length - 3);
-      this.inputClientSecret.nativeElement.value = data;
-    }
+  maskField(value: string, fieldId: string) {
+    const data =
+      value.length > 3
+        ? value.slice(0, 3) + 'X'.repeat(value.length - 3)
+        : value;
+    this[fieldId].nativeElement.value = data;
   }
 
-  unMaskClientSecret() {
-    this.inputClientSecret.nativeElement.value = this.tenantForm.get(
-      'erps.sap.saml.clientSecret'
-    ).value;
+  unMaskField(value: string, fieldId: string) {
+    this[fieldId].nativeElement.value = value;
   }
 
   cancel() {

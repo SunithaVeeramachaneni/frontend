@@ -19,6 +19,7 @@ export interface Tenant {
   modules: string[];
   logDBType: string;
   logLevel: string;
+  s3Details: S3Details;
   tenantLogo?: any;
   tenantLogoName?: string;
   isActive?: boolean;
@@ -108,4 +109,11 @@ export interface ScopeDeatils {
 export interface BasicCredentials {
   username: string;
   password: string;
+}
+
+export interface S3Details {
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+  region: string;
 }

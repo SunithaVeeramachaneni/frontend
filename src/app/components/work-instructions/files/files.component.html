@@ -34,19 +34,19 @@
                 ></span
               >
             </th>
-            <th scope="col" class="width-20" (click)="setOrder('updated_at')">
+            <th scope="col" class="width-20" (click)="setOrder('updatedAt')">
               Date and Time
-              <span [hidden]="reverseObj.updated_at"
+              <span [hidden]="reverseObj.updatedAt"
                 ><mat-icon
                   class="arrow"
-                  [class.arrow-inactive]="order !== 'updated_at'"
+                  [class.arrow-inactive]="order !== 'updatedAt'"
                   >arrow_downward</mat-icon
                 ></span
               >
-              <span [hidden]="!reverseObj.updated_at"
+              <span [hidden]="!reverseObj.updatedAt"
                 ><mat-icon
                   class="arrow"
-                  [class.arrow-inactive]="order !== 'updated_at'"
+                  [class.arrow-inactive]="order !== 'updatedAt'"
                   >arrow_upward</mat-icon
                 ></span
               >
@@ -82,14 +82,14 @@
 
               <td class="width-20">
                 <span class="files-data">{{
-                  obj.updated_at | dateTime: 'dd mmm yyyy | hh:mm:ss'
+                  obj.updatedAt | dateTime: 'dd mmm yyyy | hh:mm:ss'
                 }}</span>
               </td>
               <td class="width-50">
                 <span class="files-icons-list">
                   <app-player
                     [fileInfo]="{
-                      filePath: obj.fullFilePath,
+                      filePath: obj.filePath,
                       fileType: obj.fileType
                     }"
                     *ngIf="this.editRows[i] === false"
@@ -123,7 +123,7 @@
                   <button
                     class="create-wi-btn"
                     *ngIf="this.editRows[i] === false"
-                    (click)="createWorkInstruction(obj.fullFilePath)"
+                    (click)="createWorkInstruction(obj.filePath)"
                   >
                     <mat-icon class="create-wi-btn-icon">add</mat-icon>
                     <span class="create-wi-btn-text"
