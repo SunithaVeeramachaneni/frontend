@@ -26,11 +26,30 @@ export class RdfService {
     return this.currentFormValue;
   }
 
+  appSyncCreateForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'appsync/forms',
+      form,
+      info
+    );
+
   createForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'forms', form, info);
+
+  appSyncUpdateForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService
+      .patchData(environment.rdfApiUrl, `appsync/forms/${form.id}`, form, info)
+      .pipe(map((response) => (response === null ? form : response)));
 
   updateForm$ = (
     form: any,
@@ -51,6 +70,14 @@ export class RdfService {
       info
     );
 
+  appSyncDeleteForm$ = (
+    form: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService
+      ._removeData(environment.rdfApiUrl, `appsync/forms/${form.id}`, info)
+      .pipe(map((response) => (response === null ? form : response)));
+
   deleteForm$ = (
     form: any,
     info: ErrorInfo = {} as ErrorInfo
@@ -64,6 +91,28 @@ export class RdfService {
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any[]> =>
     this.appService._getResp(environment.rdfApiUrl, 'forms', info, queryParams);
+
+  getFormsAppSync$ = (
+    queryParams: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      'appsync/forms',
+      info,
+      queryParams
+    );
+
+  appSyncGetFormById$ = (
+    id: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._getRespById(
+      environment.rdfApiUrl,
+      'appsync/forms/',
+      id,
+      info
+    );
 
   getFormById$ = (
     id: string,

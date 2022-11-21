@@ -12,7 +12,7 @@ export class FormResolverService implements Resolve<any> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     const id = route.params.id;
-    return this.rdfService.getFormById$(id).pipe(
+    return this.rdfService.appSyncGetFormById$(id).pipe(
       tap((form) => {
         if (form === null || Object.keys(form).length === 0) {
           this.router.navigate(['/rdf-forms']);
