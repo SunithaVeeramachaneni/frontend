@@ -357,43 +357,45 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     // COLLABORATION CHAT SSE
-    const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
-    this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
-      collaborationSSEUrl,
-      null
-    );
-    this.eventSourceCollaboration.stream();
-    this.eventSourceCollaboration.onmessage = (event) => {
-      if (event) {
-        const eventData = JSON.parse(event.data);
-        if (!eventData.isHeartbeat) {
-          eventData.forEach((evt: any) => {
-            const { message } = evt;
-            if (
-              message.eventType === 'message' ||
-              message.messageType === 'message' ||
-              message.eventType === 'GROUP_CREATED_EVENT' ||
-              message.messageType === 'GROUP_CREATED_EVENT'
-            ) {
-              const collaborationWindowStatus =
-                ref.chatService.getCollaborationWindowStatus();
-              if (collaborationWindowStatus.isOpen) {
-                ref.chatService.newMessageReceived(message);
-              } else {
-                let unreadCount = ref.chatService.getUnreadMessageCount();
-                unreadCount = unreadCount + 1;
-                ref.chatService.setUnreadMessageCount(unreadCount);
+    if (userID) {
+      const collaborationSSEUrl = `${environment.userRoleManagementApiUrl}${userInfo.collaborationType}/sse/${userID}`;
+      this.eventSourceCollaboration = this.sseService.getEventSourceWithGet(
+        collaborationSSEUrl,
+        null
+      );
+      this.eventSourceCollaboration.stream();
+      this.eventSourceCollaboration.onmessage = (event) => {
+        if (event) {
+          const eventData = JSON.parse(event.data);
+          if (!eventData.isHeartbeat) {
+            eventData.forEach((evt: any) => {
+              const { message } = evt;
+              if (
+                message.eventType === 'message' ||
+                message.messageType === 'message' ||
+                message.eventType === 'GROUP_CREATED_EVENT' ||
+                message.messageType === 'GROUP_CREATED_EVENT'
+              ) {
+                const collaborationWindowStatus =
+                  ref.chatService.getCollaborationWindowStatus();
+                if (collaborationWindowStatus.isOpen) {
+                  ref.chatService.newMessageReceived(message);
+                } else {
+                  let unreadCount = ref.chatService.getUnreadMessageCount();
+                  unreadCount = unreadCount + 1;
+                  ref.chatService.setUnreadMessageCount(unreadCount);
+                }
+                const audio = new Audio('../assets/audio/notification.mp3');
+                audio.play();
               }
-              const audio = new Audio('../assets/audio/notification.mp3');
-              audio.play();
-            }
-          });
+            });
+          }
         }
-      }
-    };
-    this.eventSourceCollaboration.onerror = (event) => {
-      // console.log(event);
-    };
+      };
+      this.eventSourceCollaboration.onerror = (event) => {
+        // console.log(event);
+      };
+    }
 
     // JITSI AV CALLING SSE
     const jitsiSseUrl = `${environment.userRoleManagementApiUrl}jitsi/sse/${userInfo.email}`;
