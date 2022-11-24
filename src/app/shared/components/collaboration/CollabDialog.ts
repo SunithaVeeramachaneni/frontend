@@ -75,12 +75,10 @@ export class CollabDialogComponent implements OnInit, OnDestroy {
   handleTextMessaging(targetUser: any) {
     this.selectedTab = 'chats';
     this.selectedUser = targetUser;
-    this.callType = 'audio';
   }
   handleAudioMessaging(targetUser: any) {
     this.selectedTab = 'calls';
     this.selectedUser = targetUser;
-    this.callType = 'video';
   }
   handleVideoMessaging(targetUser: any) {
     this.selectedTab = 'calls';

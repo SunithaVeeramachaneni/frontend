@@ -89,6 +89,12 @@ export const tenants: Tenant[] = [
     modules: ['Dashboard'],
     logDBType: 'logDBType',
     logLevel: 'logLevel',
+    s3Details: {
+      accessKeyId: 'accessKeyId',
+      secretAccessKey: 'secretAccessKey',
+      bucket: 'bucket',
+      region: 'region'
+    },
     tenantLogo: null,
     tenantLogoName: null,
     isActive: true,

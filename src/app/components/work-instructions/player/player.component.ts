@@ -10,6 +10,7 @@ import { FileInfo } from '../../../interfaces';
 import { PlyrComponent } from 'ngx-plyr';
 import * as Plyr from 'plyr';
 import { environment } from '../../../../environments/environment';
+import { TenantService } from '../../tenant-management/services/tenant.service';
 
 @Component({
   selector: 'app-player',
@@ -33,7 +34,10 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
     return this.fileInfoData;
   }
 
-  constructor(private cdrf: ChangeDetectorRef) {}
+  constructor(
+    private cdrf: ChangeDetectorRef,
+    private tenantService: TenantService
+  ) {}
 
   ngOnInit() {}
 
@@ -80,7 +84,10 @@ export class PlayerComponent implements OnInit, AfterContentChecked {
     this.currentTime = this.player.currentTime;
   }
 
-  getS3Url = (filePath: string) => `${environment.s3BaseUrl}${filePath}`;
+  getS3Url = (filePath: string) =>
+    `${environment.s3BaseUrl}${
+      this.tenantService.getTenantInfo().tenantId
+    }/${filePath}`;
 
   getAudioTitle = (filePath: string) => {
     const splitString = filePath.includes('\\') ? '\\' : '/';

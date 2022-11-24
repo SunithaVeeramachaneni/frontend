@@ -60,7 +60,7 @@ export class WidgetService {
   ): Observable<Widget[]> =>
     this.appService._getResp(
       environment.dashboardApiUrl,
-      `dashboards/${id}/widgets/report`,
+      `widgets/${id}/report`,
       info
     );
 }

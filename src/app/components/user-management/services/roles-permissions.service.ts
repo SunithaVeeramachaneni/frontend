@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { map, mergeMap, toArray, shareReplay } from 'rxjs/operators';
@@ -12,37 +13,35 @@ export class RolesPermissionsService {
   constructor(private appService: AppService) {}
 
   getRolesWithPermissions$ = (
+    queryParams: any,
     info: ErrorInfo = {} as ErrorInfo
-  ): Observable<Role[]> =>
-    this.appService
+  ): Observable<Role[]> => {
+    queryParams = { ...queryParams };
+    return this.appService
       ._getResp(
         environment.userRoleManagementApiUrl,
         'roles',
-         info
+        info,
+        queryParams
       )
       .pipe(
+        mergeMap((resp: any) => of(resp.rows)),
         mergeMap((roles: Role[]) =>
           from(roles).pipe(
-            mergeMap((role) =>
-              this.getRolePermissionsById$(role.id).pipe(
-                map((permissions) => ({permissions, roleID: role.id}
-                ))
-              )
-            ),
-            toArray(),
-            map((resp) =>
-              roles.map((role) => {
-                const find = resp.find((r) => r.roleID === role.id);
-                return {
-                  id: role.id,
-                  name: role.name,
-                  description: role.description,
-                  permissionIds: find.permissions
-                }
-            })
+            map((role) => {
+              const permIds = role.permissions.map((p) => p.id);
+              return {
+                id: role.id,
+                name: role.name,
+                description: role.description,
+                permissionIds: permIds
+              };
+            }),
+            toArray()
           )
         )
-      ));
+      );
+  };
 
   getRoleById$ = (
     id: string,

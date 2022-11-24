@@ -7,7 +7,6 @@ export const environment = {
   wiAbapApiUrl: 'https://cwpdemo.innovapptive.com/wiabapapi/',
   userRoleManagementApiUrl:
     'https://cwpdemo.innovapptive.com/userrolemanagementapi/',
-  slackAPIUrl: 'https://cwpdemo.innovapptive.com/userrolemanagementapi/slack/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5,
