@@ -1,6 +1,6 @@
 .rdf-forms-list-screen {
   margin: 14px 0 0 0;
-  height: 85vh;
+  height: calc(100vh - 65px);
   overflow: hidden;
 
   ::ng-deep .mat-button-toggle {
@@ -81,7 +81,7 @@
 }
 
 .formsListContainer {
-  height: 68vh;
+  height: calc(100vh - 190px);
   overflow: auto;
 }
 
