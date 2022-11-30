@@ -141,6 +141,10 @@
   margin-bottom: 10px;
 }
 
+::ng-deep xng-breadcrumb .xng-breadcrumb-list {
+  flex-wrap: nowrap;
+}
+
 .displayGrid {
   display: grid;
 }
