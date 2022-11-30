@@ -77,7 +77,7 @@
       </button>
     </div>
   </div>
-  <div class="dis-flex" style="height: 75vh; overflow-y: auto">
+  <div class="dis-flex add-form">
     <div
       formArrayName="sections"
       class="left-panel"
@@ -190,7 +190,7 @@
                   sectionActiveState[i + 1] === true
                 "
                 (click)="addQuestion(i)"
-                style="position: relative; left: 80px; float: right"
+                class="add-questions-btn"
               >
                 <img
                   src="assets/rdf-forms-icons/add-questions.svg"
@@ -1053,7 +1053,10 @@
                         </div>
                         <div
                           class="logicBilder"
-                          *ngIf="showFilterSection[i + 1][j + 1] === true"
+                          *ngIf="
+                            showFilterSection[i + 1][j + 1] === true &&
+                            question.controls.value.value?.responseType
+                          "
                         >
                           <app-add-filter
                             *ngIf="question.controls.value.value?.globalDataset"
@@ -2754,6 +2757,7 @@
     <div class="right-panel" style="padding: 10px 20px">
       <app-rdf-forms-iphone-preview
         [formData]="createForm$"
+        [globalDatasetsData$]="globalDatasetsData$"
       ></app-rdf-forms-iphone-preview>
     </div>
   </div>
