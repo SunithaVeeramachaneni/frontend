@@ -1,8 +1,7 @@
 .rdf-forms-list-screen {
   margin: 14px 0 0 0;
   height: 85vh;
-  overflow-y: auto;
-  padding-right: 14px;
+  overflow: hidden;
 
   ::ng-deep .mat-button-toggle {
     background-color: #3d5afe;
