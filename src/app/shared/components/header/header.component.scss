@@ -52,6 +52,11 @@
   margin-left: 10px;
   color: #000000;
   line-height: 42px;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .header-cols {
@@ -136,6 +141,10 @@
   margin-bottom: 10px;
 }
 
+::ng-deep xng-breadcrumb .xng-breadcrumb-list {
+  flex-wrap: nowrap;
+}
+
 .displayGrid {
   display: grid;
 }
@@ -151,6 +160,11 @@
   margin-bottom: 0px;
   color: rgba(0, 0, 0, 0.6);
   font-size: 90%;
+  width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  white-space: nowrap;
 }
 
 ::ng-deep xng-breadcrumb .xng-breadcrumb-link {
