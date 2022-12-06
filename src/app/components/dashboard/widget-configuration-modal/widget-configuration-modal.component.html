@@ -98,8 +98,57 @@
               <ng-container
                 *ngIf="chartData$ | async as data; else loadingChartData"
               >
-                <app-chart [chartConfig]="chartConfig" [chartData]="data">
-                </app-chart>
+                <ng-container *ngIf="chartVarient === 'bar_x'">
+                  <app-bar-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  ></app-bar-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'bar_y'">
+                  <app-column-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-column-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'stacked_bar_y'">
+                  <app-horizontal-stacked-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-horizontal-stacked-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'stacked_bar_x'">
+                  <app-vertical-stacked-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-vertical-stacked-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'line_x'">
+                  <app-line-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-line-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'pie'">
+                  <app-pie-chart [chartConfig]="chartConfig" [chartData]="data">
+                  </app-pie-chart>
+                </ng-container>
+
+                <ng-container *ngIf="chartVarient === 'doughnut'">
+                  <app-donut-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-donut-chart>
+                </ng-container>
               </ng-container>
             </ng-container>
           </div>
