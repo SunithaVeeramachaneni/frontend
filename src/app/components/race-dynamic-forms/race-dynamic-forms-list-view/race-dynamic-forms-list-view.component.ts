@@ -157,7 +157,7 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
     this.fetchFormsListInprogress = true;
 
     return this.rdfService
-      .getForms$({
+      .getFormsAppSync$({
         skip: this.skip,
         limit: this.limit,
         isActive: true,
@@ -201,7 +201,7 @@ export class RaceDynamicFormsListViewComponent implements OnInit {
   }
 
   deleteFromFromMongo(form) {
-    return this.rdfService.deleteForm$(form).pipe(
+    return this.rdfService.appSyncDeleteForm$(form).pipe(
       tap((deleteFrom) => {
         if (Object.keys(deleteFrom).length) {
           this.toaster.show({

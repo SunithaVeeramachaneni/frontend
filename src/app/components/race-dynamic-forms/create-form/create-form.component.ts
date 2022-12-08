@@ -1197,7 +1197,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.updateForm$({ ...form, id }).pipe(
+      return this.rdfService.appSyncUpdateForm$({ ...form, id }).pipe(
         tap((updateForm) => {
           if (!ignoreStatus && Object.keys(updateForm).length) {
             this.status$.next(this.changesSaved);
@@ -1210,7 +1210,7 @@ export class CreateFormComponent implements OnInit, AfterViewInit {
       if (!ignoreStatus) {
         this.status$.next(this.saveProgress);
       }
-      return this.rdfService.createForm$(form).pipe(
+      return this.rdfService.appSyncCreateForm$(form).pipe(
         tap((createdForm) => {
           if (Object.keys(createdForm).length) {
             this.formId = createdForm.id;
