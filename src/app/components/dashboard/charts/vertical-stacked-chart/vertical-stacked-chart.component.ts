@@ -53,9 +53,15 @@ export class VerticalStackedChartComponent implements OnInit {
       }
     },
     legend: {
+      show: false,
       type: 'scroll',
       orient: 'horizontal',
-      bottom: 0
+      bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      }
     },
     grid: {
       left: '5%',
@@ -148,25 +154,18 @@ export class VerticalStackedChartComponent implements OnInit {
       } = this.chartConfig;
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-
+      this.chartOptions.legend.show = showLegends;
       this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
-      this.prepareChartData();
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
-      //this.preparedChartData = this.prepareChartData();
+      this.prepareChartData(showValues);
     }
   };
 
-  prepareChartData = () => {
+  prepareChartData = (showValues) => {
     const datasetObject = {};
     const distinct = [];
     const unique = [];
@@ -215,7 +214,7 @@ export class VerticalStackedChartComponent implements OnInit {
         type: 'bar',
         stack: 'total',
         label: {
-          show: false
+          show: showValues
         },
         emphasis: {
           focus: 'series'

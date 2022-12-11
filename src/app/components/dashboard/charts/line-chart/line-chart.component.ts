@@ -59,17 +59,22 @@ export class LineChartComponent implements OnInit {
       }
     },
     legend: {
-      show: true,
-      bottom: 0
+      show: false,
+      bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      }
     },
     xAxis: {
       type: 'category',
       axisLabel: {
         interval: 0,
-        rotate: 30,
         overflow: 'truncate',
         ellipsis: '...',
-        width: 40
+        width: 40,
+        rotate: 50
       },
       axisLine: {
         show: true
@@ -110,6 +115,9 @@ export class LineChartComponent implements OnInit {
     },
     series: {
       name: '',
+      label: {
+        show: false
+      },
       data: [],
       type: 'line'
     }
@@ -144,8 +152,8 @@ export class LineChartComponent implements OnInit {
       } = this.chartConfig;
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-      //this.chartOptions.indexAxis = indexAxis;
+      this.chartOptions.series.label.show = showValues;
+      this.chartOptions.legend.show = showLegends;
       this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
       this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
       this.chartOptions.series.name = this.chartConfig.datasetFieldName;
@@ -153,13 +161,7 @@ export class LineChartComponent implements OnInit {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
       this.prepareChartData();
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
-      //this.preparedChartData = this.prepareChartData();
     }
   };
 

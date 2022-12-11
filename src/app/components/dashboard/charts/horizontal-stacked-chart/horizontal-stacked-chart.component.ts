@@ -2,8 +2,7 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
@@ -53,24 +52,37 @@ export class HorizontalStackedChartComponent implements OnInit {
       }
     },
     legend: {
+      show: false,
       type: 'scroll',
       orient: 'horizontal',
-      bottom: 0
+      bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      }
     },
     grid: {
       left: '3%',
       right: '4%',
-      bottom: '15%',
+      bottom: '17%',
       containLabel: true
     },
-    dataZoom: {
-      show: true,
-      type: 'inside',
-      zoomOnMouseWheel: true,
-      moveOnMouseMove: true,
-      moveOnMouseWheel: false,
-      preventDefaultMouseMove: true
-    },
+    dataZoom: [
+      {
+        show: true,
+        height: '0',
+        bottom: 30,
+        minSpan: 20
+        // moveHandleStyle: {
+        //   color: 'transparent'
+        // }
+      },
+      {
+        type: 'inside',
+        minSpan: 10
+      }
+    ],
     xAxis: {
       type: 'value',
       name: '',
@@ -122,7 +134,7 @@ export class HorizontalStackedChartComponent implements OnInit {
   private chartConfigurations: any;
   private _chartData: any;
 
-  constructor(private datePipe: DatePipe, private cdrf: ChangeDetectorRef) {}
+  constructor(private datePipe: DatePipe) {}
 
   ngOnInit(): void {}
 
@@ -140,25 +152,18 @@ export class HorizontalStackedChartComponent implements OnInit {
       } = this.chartConfig;
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-
+      this.chartOptions.legend.show = showLegends;
       this.chartOptions.xAxis.name = this.chartConfig.countFieldName;
       this.chartOptions.yAxis.name = this.chartConfig.datasetFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
-      this.prepareChartData();
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
-      //this.preparedChartData = this.prepareChartData();
+      this.prepareChartData(showValues);
     }
   };
 
-  prepareChartData = () => {
+  prepareChartData = (showValues) => {
     const datasetObject = {};
     const distinct = [];
     const unique = [];
@@ -183,7 +188,6 @@ export class HorizontalStackedChartComponent implements OnInit {
         : datasetField;
     });
 
-    //this.chartOptions.yAxis.data = newDistinct;
     newOptions.yAxis.data = newDistinct;
     this.chartData.forEach((data) => {
       if (!datasetObject[data[stackFieldName]]) {
@@ -208,7 +212,7 @@ export class HorizontalStackedChartComponent implements OnInit {
         type: 'bar',
         stack: 'total',
         label: {
-          show: false
+          show: showValues
         },
         emphasis: {
           focus: 'series'
@@ -220,7 +224,5 @@ export class HorizontalStackedChartComponent implements OnInit {
 
     newOptions.series = datasets;
     this.chartOptions = newOptions;
-    this.cdrf.markForCheck();
-    console.log(this.chartOptions);
   };
 }

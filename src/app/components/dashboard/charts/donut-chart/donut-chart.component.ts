@@ -3,8 +3,10 @@ import {
   Component,
   OnInit,
   Input,
+  OnChanges,
   ChangeDetectionStrategy
 } from '@angular/core';
+import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-donut-chart',
@@ -12,7 +14,7 @@ import {
   styleUrls: ['./donut-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DonutChartComponent implements OnInit {
+export class DonutChartComponent implements OnInit, OnChanges {
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -30,6 +32,9 @@ export class DonutChartComponent implements OnInit {
     return this._chartData;
   }
 
+  @Input() width;
+  @Input() height;
+
   chartOptions: any = {
     title: {
       text: ''
@@ -37,13 +42,19 @@ export class DonutChartComponent implements OnInit {
     grid: {
       left: '5%',
       right: '3%',
-      bottom: '5%',
+      bottom: '7%',
       containLabel: true
     },
     legend: {
+      show: false,
       type: 'scroll',
       orient: 'horizontal',
       bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 20,
+        ellipsis: '...'
+      },
       data: []
     },
     tooltip: {
@@ -55,6 +66,7 @@ export class DonutChartComponent implements OnInit {
       center: ['50%', '50%'],
       selectedMode: 'single',
       label: {
+        show: false,
         formatter: '{d}%'
       },
       data: [],
@@ -98,7 +110,8 @@ export class DonutChartComponent implements OnInit {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
+      newOptions.series.label.show = showValues;
+      newOptions.legend.show = showLegends;
       //this.chartOptions.indexAxis = indexAxis;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
@@ -149,4 +162,33 @@ export class DonutChartComponent implements OnInit {
       data: converted
     };
   };
+
+  ngOnChanges() {
+    let newOption: EChartsOption = {
+      ...this.chartOptions
+    };
+    if (this.width / this.height < 2.5) {
+      newOption = {
+        ...newOption,
+        legend: {
+          bottom: 'bottom',
+          type: 'scroll'
+        }
+      };
+    }
+
+    if (this.width / this.height >= 2.5) {
+      newOption = {
+        ...newOption,
+        legend: {
+          orient: 'vertical',
+          left: 20,
+          type: 'scroll',
+          top: 40
+        }
+      };
+    }
+
+    this.chartOptions = newOption;
+  }
 }

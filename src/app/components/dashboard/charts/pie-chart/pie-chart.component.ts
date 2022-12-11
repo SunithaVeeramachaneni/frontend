@@ -3,10 +3,11 @@ import { DatePipe } from '@angular/common';
 import {
   Component,
   OnInit,
+  OnChanges,
   Input,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { wrenchTimeName } from 'src/app/app.constants';
+import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-pie-chart',
@@ -14,7 +15,7 @@ import { wrenchTimeName } from 'src/app/app.constants';
   styleUrls: ['./pie-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PieChartComponent implements OnInit {
+export class PieChartComponent implements OnInit, OnChanges {
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -32,6 +33,9 @@ export class PieChartComponent implements OnInit {
     return this._chartData;
   }
 
+  @Input() width;
+  @Input() height;
+
   chartOptions: any = {
     title: {
       text: ''
@@ -39,13 +43,19 @@ export class PieChartComponent implements OnInit {
     grid: {
       left: '5%',
       right: '3%',
-      bottom: '5%',
+      bottom: '7%',
       containLabel: true
     },
     legend: {
+      show: false,
       type: 'scroll',
       orient: 'horizontal',
       bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      },
       data: []
     },
     tooltip: {
@@ -58,6 +68,7 @@ export class PieChartComponent implements OnInit {
       selectedMode: 'single',
       selectedOffset: 20,
       label: {
+        show: false,
         formatter: '{d}%'
       },
       data: [],
@@ -101,17 +112,13 @@ export class PieChartComponent implements OnInit {
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-      //this.chartOptions.indexAxis = indexAxis;
+      newOptions.series.label.show = showValues;
+      newOptions.legend.show = showLegends;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
       this.chartOptions.title.text = this.chartTitle;
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
       this.preparedChartData = this.prepareChartData();
       newOptions.series.data = this.preparedChartData.data;
       newOptions.legend.data = this.preparedChartData.labels;
@@ -152,4 +159,33 @@ export class PieChartComponent implements OnInit {
       data: converted
     };
   };
+
+  ngOnChanges() {
+    let newOption: EChartsOption = {
+      ...this.chartOptions
+    };
+    if (this.width / this.height < 2) {
+      newOption = {
+        ...newOption,
+        legend: {
+          bottom: 'bottom',
+          type: 'scroll'
+        }
+      };
+    }
+
+    if (this.width / this.height >= 2) {
+      newOption = {
+        ...newOption,
+        legend: {
+          orient: 'vertical',
+          left: 20,
+          type: 'scroll',
+          top: 40
+        }
+      };
+    }
+
+    this.chartOptions = newOption;
+  }
 }

@@ -59,8 +59,13 @@ export class BarChartComponent implements OnInit {
       }
     },
     legend: {
-      show: true,
-      bottom: 0
+      show: false,
+      bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      }
     },
     xAxis: {
       type: 'category',
@@ -110,6 +115,9 @@ export class BarChartComponent implements OnInit {
     },
     series: {
       name: '',
+      label: {
+        show: false
+      },
       data: [],
       type: 'bar'
     }
@@ -142,24 +150,20 @@ export class BarChartComponent implements OnInit {
         datasetFields,
         countFields
       } = this.chartConfig;
+      const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-      //this.chartOptions.indexAxis = indexAxis;
-      this.chartOptions.xAxis.name = this.chartConfig.datasetFieldName;
-      this.chartOptions.yAxis.name = this.chartConfig.countFieldName;
-      this.chartOptions.series.name = this.chartConfig.datasetFieldName;
+      newOptions.series.label.show = showValues;
+      newOptions.legend.show = showLegends;
+      newOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      newOptions.yAxis.name = this.chartConfig.countFieldName;
+      newOptions.series.name = this.chartConfig.datasetFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
       this.prepareChartData();
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
-      //this.preparedChartData = this.prepareChartData();
+      this.chartOptions = newOptions;
     }
   };
 

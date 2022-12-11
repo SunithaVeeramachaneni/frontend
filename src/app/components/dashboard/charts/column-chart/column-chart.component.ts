@@ -58,8 +58,13 @@ export class ColumnChartComponent implements OnInit {
       }
     },
     legend: {
-      show: true,
-      bottom: 0
+      show: false,
+      bottom: 0,
+      textStyle: {
+        overflow: 'truncate',
+        width: 120,
+        ellipsis: '...'
+      }
     },
     xAxis: {
       type: 'value',
@@ -76,6 +81,13 @@ export class ColumnChartComponent implements OnInit {
       },
       splitLine: {
         show: false
+      },
+      axisLabel: {
+        interval: 0,
+        overflow: 'truncate',
+        ellipsis: '...',
+        width: 40,
+        rotate: 50
       }
     },
     yAxis: {
@@ -108,6 +120,9 @@ export class ColumnChartComponent implements OnInit {
     },
     series: {
       name: '',
+      label: {
+        show: false
+      },
       data: [],
       type: 'bar'
     }
@@ -140,23 +155,20 @@ export class ColumnChartComponent implements OnInit {
         datasetFields,
         countFields
       } = this.chartConfig;
+      const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
-      this.chartLegend = showLegends;
-      this.chartOptions.xAxis.name = this.chartConfig.countFieldName;
-      this.chartOptions.yAxis.name = this.chartConfig.datasetFieldName;
-      this.chartOptions.series.name = this.chartConfig.countFieldName;
+      newOptions.series.label.show = showValues;
+      newOptions.legend.show = showLegends;
+      newOptions.xAxis.name = this.chartConfig.countFieldName;
+      newOptions.yAxis.name = this.chartConfig.datasetFieldName;
+      newOptions.series.name = this.chartConfig.countFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      this.chartOptions.title.text = this.chartTitle;
       this.prepareChartData();
-      // this.chartOptions.plugins.datalabels.display = showValues
-      //   ? 'auto'
-      //   : false;
-      //this.chartOptions.plugins.datalabels.align = 'end';
-      //this.preparedChartData = this.prepareChartData();
+      this.chartOptions = newOptions;
     }
   };
 
