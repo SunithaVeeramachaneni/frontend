@@ -50,7 +50,7 @@
   "min": "{message}",
   "max": "{message}",
   "whiteSpace": "{name} is required",
-  "trimWhiteSpace": "{name} msut not start or end with spaces",
+  "trimWhiteSpace": "{name} must not start or end with spaces",
   "invalidPort": "Enter a valid port",
   "invalidLicenceCount": "Enter valid licence count",
   "invalidUrl": "Enter valid {name}",
