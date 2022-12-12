@@ -5,14 +5,15 @@ import {
   Input,
   ChangeDetectionStrategy
 } from '@angular/core';
+import * as echarts from 'echarts';
 
 @Component({
-  selector: 'app-column-chart',
-  templateUrl: './column-chart.component.html',
-  styleUrls: ['./column-chart.component.scss'],
+  selector: 'app-area-chart',
+  templateUrl: './area-chart.component.html',
+  styleUrls: ['./area-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ColumnChartComponent implements OnInit {
+export class AreaChartComponent implements OnInit {
   @Input() set chartConfig(chartConfig) {
     this.chartConfigurations = chartConfig;
     if (chartConfig.renderChart) {
@@ -67,12 +68,33 @@ export class ColumnChartComponent implements OnInit {
       }
     },
     xAxis: {
-      type: 'value',
+      type: 'category',
+      axisLabel: {
+        interval: 0,
+        // rotate: 30,
+        overflow: 'truncate',
+        ellipsis: '...',
+        width: 50
+      },
+      axisLine: {
+        show: true
+      },
+      axisTick: {
+        alignWithLabel: true
+      },
+      splitLine: {
+        show: false
+      },
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
         lineHeight: 30
       },
+      data: []
+    },
+    yAxis: {
+      type: 'value',
+      name: '',
       axisLine: {
         show: true
       },
@@ -82,26 +104,6 @@ export class ColumnChartComponent implements OnInit {
       splitLine: {
         show: false
       }
-    },
-    yAxis: {
-      type: 'category',
-      name: '',
-      axisLine: {
-        show: true
-      },
-      axisTick: {
-        alignWithLabel: true
-      },
-      splitLine: {
-        show: false
-      },
-      axisLabel: {
-        interval: 0,
-        overflow: 'truncate',
-        ellipsis: '...',
-        width: 60
-      },
-      data: []
     },
     dataZoom: {
       show: true,
@@ -117,7 +119,19 @@ export class ColumnChartComponent implements OnInit {
         show: false
       },
       data: [],
-      type: 'bar'
+      type: 'line',
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: '#7DF9FF'
+          },
+          {
+            offset: 1,
+            color: '#0D98BA'
+          }
+        ])
+      }
     }
   };
 
@@ -140,7 +154,7 @@ export class ColumnChartComponent implements OnInit {
     if (this.chartData && this.chartConfig) {
       const {
         title,
-        type = 'bar',
+        type = 'line',
         isStacked = 'false',
         indexAxis = 'x',
         showLegends = false,
@@ -148,29 +162,32 @@ export class ColumnChartComponent implements OnInit {
         datasetFields,
         countFields
       } = this.chartConfig;
+      const newOptions = { ...this.chartOptions };
       console.log(this.chartConfig);
       console.log(this.chartData);
-      const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
       newOptions.series.label.show = showValues;
       newOptions.legend.show = showLegends;
-      newOptions.xAxis.name = this.chartConfig.countFieldName;
-      newOptions.yAxis.name = this.chartConfig.datasetFieldName;
-      newOptions.series.name = this.chartConfig.countFieldName;
+      newOptions.xAxis.name = this.chartConfig.datasetFieldName;
+      newOptions.yAxis.name = this.chartConfig.countFieldName;
+      newOptions.series.name = this.chartConfig.datasetFieldName;
       this.countField = countFields.find((countField) => countField.visible);
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
       console.log(this.countField);
       console.log(this.datasetField);
+
       this.prepareChartData();
       this.chartOptions = newOptions;
+      console.log(this.chartOptions);
     }
   };
 
   prepareChartData = () => {
     const newOptions = { ...this.chartOptions };
+    console.log(newOptions);
     console.log(this.chartData);
     const reducedObject: { [key: string]: number } = this.chartData.reduce(
       (acc, data) => {
@@ -183,21 +200,19 @@ export class ColumnChartComponent implements OnInit {
       {}
     );
 
-    const sortedObject = Object.keys(reducedObject)
-      .sort()
-      .reduce((acc, val) => {
-        const value =
-          this.datasetField.type === 'date'
-            ? this.datePipe.transform(val, 'short')
-            : val;
-        acc[value] = +reducedObject[val].toFixed(2);
-        return acc;
-      }, {});
+    // const sortedObject = Object.keys(reducedObject)
+    //   .sort()
+    //   .reduce((acc, val) => {
+    //     const value =
+    //       this.datasetField.type === 'date'
+    //         ? this.datePipe.transform(val, 'short')
+    //         : val;
+    //     acc[value] = +reducedObject[val].toFixed(2);
+    //     return acc;
+    //   }, {});
 
-    newOptions.yAxis.data = Object.keys(sortedObject);
-    newOptions.series.data = Object.values(sortedObject);
-    this.chartOptions = newOptions;
-
-    console.log(this.chartOptions);
+    // newOptions.xAxis.data = Object.keys(sortedObject);
+    // newOptions.series.data = Object.values(sortedObject);
+    // this.chartOptions = newOptions;
   };
 }

@@ -69,13 +69,6 @@ export class BarChartComponent implements OnInit {
     },
     xAxis: {
       type: 'category',
-      axisLabel: {
-        interval: 0,
-        // rotate: 30,
-        overflow: 'truncate',
-        ellipsis: '...',
-        width: 50
-      },
       axisLine: {
         show: true
       },
@@ -88,7 +81,14 @@ export class BarChartComponent implements OnInit {
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
-        lineHeight: 30
+        lineHeight: 70
+      },
+      axisLabel: {
+        interval: 0,
+        overflow: 'truncate',
+        ellipsis: '...',
+        width: 40,
+        rotate: 50
       },
       data: []
     },

@@ -150,6 +150,11 @@
                   </app-donut-chart>
                 </ng-container>
               </ng-container>
+
+              <ng-container *ngIf="chartVarient === 'area'">
+                <app-area-chart [chartConfig]="chartConfig" [chartData]="data">
+                </app-area-chart>
+              </ng-container>
             </ng-container>
           </div>
           <div *ngIf="chartVarient === 'table'">

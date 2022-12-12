@@ -88,7 +88,7 @@ export class LineChartComponent implements OnInit {
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
-        lineHeight: 50
+        lineHeight: 70
       },
       data: []
     },

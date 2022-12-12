@@ -82,7 +82,7 @@ export class VerticalStackedChartComponent implements OnInit {
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
-        lineHeight: 60
+        lineHeight: 70
       },
       axisLabel: {
         interval: 0,

@@ -64,6 +64,7 @@ import { VerticalStackedChartComponent } from './charts/vertical-stacked-chart/v
 import { LineChartComponent } from './charts/line-chart/line-chart.component';
 import { PieChartComponent } from './charts/pie-chart/pie-chart.component';
 import { DonutChartComponent } from './charts/donut-chart/donut-chart.component';
+import { AreaChartComponent } from './charts/area-chart/area-chart.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -139,7 +140,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     VerticalStackedChartComponent,
     LineChartComponent,
     PieChartComponent,
-    DonutChartComponent
+    DonutChartComponent,
+    AreaChartComponent
   ],
   exports: [],
   entryComponents: []

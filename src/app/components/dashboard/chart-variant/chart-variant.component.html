@@ -52,6 +52,12 @@
         class="chart-icons"
       />
     </mat-button-toggle>
+    <mat-button-toggle value="area" [disabled]="report.groupBy?.length === 0">
+      <img
+        [src]="getImage('donut_chart', f.chartVarient.value === 'area')"
+        class="chart-icons"
+      />
+    </mat-button-toggle>
     <mat-button-toggle value="pie" [disabled]="report.groupBy?.length === 0">
       <img
         [src]="getImage('pie_chart', f.chartVarient.value === 'pie')"
