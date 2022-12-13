@@ -361,6 +361,13 @@
               ></app-line-chart>
             </ng-container>
 
+            <ng-container *ngIf="chartConfig.type === 'area'">
+              <app-area-chart
+                [chartConfig]="chartConfig"
+                [chartData]="data"
+              ></app-area-chart>
+            </ng-container>
+
             <ng-container *ngIf="chartConfig.type === 'pie'">
               <app-pie-chart
                 [chartConfig]="chartConfig"

@@ -71,10 +71,10 @@ export class AreaChartComponent implements OnInit {
       type: 'category',
       axisLabel: {
         interval: 0,
-        // rotate: 30,
         overflow: 'truncate',
         ellipsis: '...',
-        width: 50
+        width: 40,
+        rotate: 50
       },
       axisLine: {
         show: true
@@ -88,7 +88,7 @@ export class AreaChartComponent implements OnInit {
       name: '',
       nameLocation: 'middle',
       nameTextStyle: {
-        lineHeight: 30
+        lineHeight: 70
       },
       data: []
     },
@@ -200,19 +200,19 @@ export class AreaChartComponent implements OnInit {
       {}
     );
 
-    // const sortedObject = Object.keys(reducedObject)
-    //   .sort()
-    //   .reduce((acc, val) => {
-    //     const value =
-    //       this.datasetField.type === 'date'
-    //         ? this.datePipe.transform(val, 'short')
-    //         : val;
-    //     acc[value] = +reducedObject[val].toFixed(2);
-    //     return acc;
-    //   }, {});
+    const sortedObject = Object.keys(reducedObject)
+      .sort()
+      .reduce((acc, val) => {
+        const value =
+          this.datasetField.type === 'date'
+            ? this.datePipe.transform(val, 'short')
+            : val;
+        acc[value] = +reducedObject[val].toFixed(2);
+        return acc;
+      }, {});
 
-    // newOptions.xAxis.data = Object.keys(sortedObject);
-    // newOptions.series.data = Object.values(sortedObject);
-    // this.chartOptions = newOptions;
+    newOptions.xAxis.data = Object.keys(sortedObject);
+    newOptions.series.data = Object.values(sortedObject);
+    this.chartOptions = newOptions;
   };
 }

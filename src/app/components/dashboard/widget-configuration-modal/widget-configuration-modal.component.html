@@ -85,6 +85,7 @@
             >
             </app-common-filter>
           </ng-container>
+
           <div class="chart-wrapper" *ngIf="chartVarient !== 'table'">
             <h4 class="preview-heading">Preview</h4>
             <ng-container
@@ -149,11 +150,14 @@
                   >
                   </app-donut-chart>
                 </ng-container>
-              </ng-container>
 
-              <ng-container *ngIf="chartVarient === 'area'">
-                <app-area-chart [chartConfig]="chartConfig" [chartData]="data">
-                </app-area-chart>
+                <ng-container *ngIf="chartVarient === 'area'">
+                  <app-area-chart
+                    [chartConfig]="chartConfig"
+                    [chartData]="data"
+                  >
+                  </app-area-chart>
+                </ng-container>
               </ng-container>
             </ng-container>
           </div>

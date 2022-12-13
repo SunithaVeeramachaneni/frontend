@@ -167,24 +167,32 @@ export class DonutChartComponent implements OnInit, OnChanges {
     let newOption: EChartsOption = {
       ...this.chartOptions
     };
-    if (this.width / this.height < 2.5) {
+    if (this.width / this.height < 2) {
       newOption = {
         ...newOption,
         legend: {
           bottom: 'bottom',
-          type: 'scroll'
+          type: 'scroll',
+          textStyle: {
+            overflow: 'truncate',
+            width: 20
+          }
         }
       };
     }
 
-    if (this.width / this.height >= 2.5) {
+    if (this.width / this.height >= 2) {
       newOption = {
         ...newOption,
         legend: {
           orient: 'vertical',
           left: 20,
           type: 'scroll',
-          top: 40
+          top: 40,
+          textStyle: {
+            overflow: 'truncate',
+            width: 20
+          }
         }
       };
     }
