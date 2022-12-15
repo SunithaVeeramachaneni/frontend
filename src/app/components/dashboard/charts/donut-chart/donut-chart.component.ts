@@ -42,19 +42,14 @@ export class DonutChartComponent implements OnInit, OnChanges {
     grid: {
       left: '5%',
       right: '3%',
-      bottom: '7%',
+      bottom: '10%',
       containLabel: true
     },
     legend: {
       show: false,
       type: 'scroll',
       orient: 'horizontal',
-      bottom: 0,
-      textStyle: {
-        overflow: 'truncate',
-        width: 20,
-        ellipsis: '...'
-      },
+      bottom: 'bottom',
       data: []
     },
     tooltip: {
@@ -172,11 +167,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
         ...newOption,
         legend: {
           bottom: 'bottom',
-          type: 'scroll',
-          textStyle: {
-            overflow: 'truncate',
-            width: 20
-          }
+          type: 'scroll'
         }
       };
     }
@@ -191,7 +182,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
           top: 40,
           textStyle: {
             overflow: 'truncate',
-            width: 20
+            width: 100
           }
         }
       };

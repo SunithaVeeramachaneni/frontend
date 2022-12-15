@@ -140,7 +140,6 @@ export class VerticalStackedChartComponent implements OnInit {
   ngOnInit(): void {}
 
   prepareChartDetails = () => {
-    console.log(this.chartConfig);
     if (this.chartData && this.chartConfig) {
       const {
         title,

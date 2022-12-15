@@ -148,8 +148,6 @@ export class ColumnChartComponent implements OnInit {
         datasetFields,
         countFields
       } = this.chartConfig;
-      console.log(this.chartConfig);
-      console.log(this.chartData);
       const newOptions = { ...this.chartOptions };
       this.chartTitle = title;
       this.chartType = type;
@@ -162,8 +160,6 @@ export class ColumnChartComponent implements OnInit {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      console.log(this.countField);
-      console.log(this.datasetField);
       this.prepareChartData();
       this.chartOptions = newOptions;
     }
@@ -171,7 +167,6 @@ export class ColumnChartComponent implements OnInit {
 
   prepareChartData = () => {
     const newOptions = { ...this.chartOptions };
-    console.log(this.chartData);
     const reducedObject: { [key: string]: number } = this.chartData.reduce(
       (acc, data) => {
         acc[data[this.datasetField.name]] = acc[data[this.datasetField.name]]
@@ -197,7 +192,5 @@ export class ColumnChartComponent implements OnInit {
     newOptions.yAxis.data = Object.keys(sortedObject);
     newOptions.series.data = Object.values(sortedObject);
     this.chartOptions = newOptions;
-
-    console.log(this.chartOptions);
   };
 }

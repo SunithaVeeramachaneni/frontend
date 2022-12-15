@@ -181,7 +181,11 @@ export class PieChartComponent implements OnInit, OnChanges {
           orient: 'vertical',
           left: 20,
           type: 'scroll',
-          top: 40
+          top: 40,
+          textStyle: {
+            overflow: 'truncate',
+            width: 100
+          }
         }
       };
     }

@@ -21,8 +21,6 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { NgChartsModule } from 'ng2-charts';
-import { ChartComponent } from './chart/chart.component';
 import { DashboardContainerComponent } from './dashboard-container/dashboard-container.component';
 import { ReportsComponent } from './reports/reports.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
@@ -110,7 +108,6 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
-    NgChartsModule,
     GridsterModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule
@@ -120,7 +117,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReportConfigurationListModalComponent,
     ReportDeleteModalComponent,
     ReportConfigurationComponent,
-    ChartComponent,
     DashboardContainerComponent,
     ReportsComponent,
     DashboardsComponent,

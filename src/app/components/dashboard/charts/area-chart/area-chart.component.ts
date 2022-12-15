@@ -163,8 +163,6 @@ export class AreaChartComponent implements OnInit {
         countFields
       } = this.chartConfig;
       const newOptions = { ...this.chartOptions };
-      console.log(this.chartConfig);
-      console.log(this.chartData);
       this.chartTitle = title;
       this.chartType = type;
       newOptions.series.label.show = showValues;
@@ -176,19 +174,14 @@ export class AreaChartComponent implements OnInit {
       this.datasetField = datasetFields.find(
         (datasetField) => datasetField.visible
       );
-      console.log(this.countField);
-      console.log(this.datasetField);
 
       this.prepareChartData();
       this.chartOptions = newOptions;
-      console.log(this.chartOptions);
     }
   };
 
   prepareChartData = () => {
     const newOptions = { ...this.chartOptions };
-    console.log(newOptions);
-    console.log(this.chartData);
     const reducedObject: { [key: string]: number } = this.chartData.reduce(
       (acc, data) => {
         acc[data[this.datasetField.name]] = acc[data[this.datasetField.name]]
