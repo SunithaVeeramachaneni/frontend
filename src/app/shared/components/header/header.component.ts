@@ -25,6 +25,7 @@ import { Router } from '@angular/router';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { AcceptCallComponent } from '../collaboration/calls/accept-call/accept-call.component';
+import { LayoutService } from 'src/app/shared/services/layout.service';
 
 @Component({
   selector: 'app-header',
@@ -37,6 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sideNavToggle = new EventEmitter();
   @Output() outsideClickTrigger = new EventEmitter();
   @Output() signOutHandler = new EventEmitter();
+  public layoutConf: any;
 
   headerTitle$: Observable<string>;
 
@@ -66,7 +68,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private imageUtils: ImageUtils,
     private tenantService: TenantService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private layout: LayoutService
   ) {}
 
   openDialog(): void {
@@ -107,6 +110,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.layoutConf = this.layout.layoutConf;
     this.headerTitle$ = this.headerService.headerTitleAction$;
 
     this.unreadCountSubscription = this.chatService.unreadCount$.subscribe(
@@ -177,13 +181,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.audio.loop = true;
   }
 
-  openSidenav() {
-    this.sideNavToggle.emit();
-  }
+  // toggleSidenav() {
+  //   if (this.layoutConf.sidebarStyle === 'closed') {
+  //     return this.layout.publishLayoutChange({
+  //       sidebarStyle: 'full'
+  //     });
+  //   }
+  //   this.layout.publishLayoutChange({
+  //     sidebarStyle: 'closed'
+  //   });
+  // }
 
-  closeSidenav() {
-    this.outsideClickTrigger.emit();
-  }
+  // openSidenav() {
+  //   this.sideNavToggle.emit();
+  // }
+
+  // closeSidenav() {
+  //   this.outsideClickTrigger.emit();
+  // }
 
   ngOnDestroy(): void {
     if (this.collabWindowSubscription) {

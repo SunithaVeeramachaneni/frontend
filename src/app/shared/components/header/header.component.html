@@ -1,7 +1,14 @@
 <mat-toolbar class="min-toolbar">
-  <button mat-icon-button (click)="openSidenav()" aria-label="Side Menu Toggle">
+  <!-- <button
+    mat-icon-button
+    *ngIf="layoutConf.sidebarStyle !== 'compact'"
+    id="sidenavToggle"
+    (click)="toggleSidenav()"
+    matTooltip="Toggle Hide/Open"
+    aria-label="Side Menu Toggle"
+  >
     <mat-icon>menu</mat-icon>
-  </button>
+  </button> -->
 
   <div class="width-50" (click)="closeSidenav()">
     <div>

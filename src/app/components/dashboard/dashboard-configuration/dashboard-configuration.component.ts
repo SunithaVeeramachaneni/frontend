@@ -8,7 +8,9 @@ import {
   ElementRef,
   Output,
   EventEmitter,
-  HostListener
+  HostListener,
+  OnChanges,
+  DoCheck
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -43,6 +45,10 @@ import {
   WidgetsData
 } from 'src/app/interfaces';
 import { CommonService } from 'src/app/shared/services/common.service';
+import {
+  ILayoutConf,
+  LayoutService
+} from 'src/app/shared/services/layout.service';
 import { ToastService } from 'src/app/shared/toast';
 import { DashboardService } from '../services/dashboard.service';
 import { WidgetService } from '../services/widget.service';
@@ -63,7 +69,7 @@ interface CreateUpdateDeleteWidget {
   styleUrls: ['./dashboard-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardConfigurationComponent implements OnInit {
+export class DashboardConfigurationComponent implements OnInit, DoCheck {
   @ViewChild('gridsterContainer', { static: false })
   gridsterContainer: ElementRef;
   dashboards$: Observable<Dashboard[]>;
@@ -175,6 +181,7 @@ export class DashboardConfigurationComponent implements OnInit {
   mimimizeSidebar$: Observable<boolean>;
   interval$: Observable<number>;
   dashboardControl = new FormControl();
+  public layoutConf: ILayoutConf;
   readonly permissions = permissions;
   private _dashboard: Dashboard;
   private _dashboardDisplayMode: string;
@@ -185,10 +192,18 @@ export class DashboardConfigurationComponent implements OnInit {
     private commonService: CommonService,
     private widgetService: WidgetService,
     private dashboardService: DashboardService,
-    private toast: ToastService
+    private toast: ToastService,
+    private layout: LayoutService
   ) {}
 
   @HostListener('window:resize') onResize() {
+    this.dashboardService.updateGridOptions({
+      update: true,
+      subtractWidth: 150
+    });
+  }
+
+  ngDoCheck() {
     this.dashboardService.updateGridOptions({
       update: true,
       subtractWidth: 150

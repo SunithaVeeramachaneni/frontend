@@ -1,0 +1,149 @@
+<div class="sidebar-panel">
+  <div id="scroll-area" class="navigation-hold" fxLayout="column">
+    <div class="sidebar-hold">
+      <div class="branding">
+        <button
+          mat-icon-button
+          (click)="toggleCollapse()"
+          matTooltip="Toggle Hide/Open"
+          aria-label="Side Menu Toggle"
+          class="toggle-align"
+          [ngClass]="{
+            'align-toggle': layoutConf.sidebarStyle === 'compact',
+            'toggle-bg': layoutConf.sidebarStyle !== 'compact'
+          }"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+
+      <div>
+        <div class="sidebar-menu-items">
+          <mat-nav-list
+            class="menu-item"
+            *ngFor="let menuitem of menus; let i = index"
+          >
+            <ng-container
+              *ngIf="userInfo$ | async as userInfo; else loadingMenu"
+            >
+              <ul class="m-0">
+                <li
+                  routerLinkActive="selected"
+                  routerDirection="root"
+                  title="{{ menuitem.title }}"
+                  *appCheckUserHasPermission="[menuitem.permission]"
+                  class="dis-flex"
+                >
+                  <a
+                    mat-list-item
+                    class="menu-name"
+                    [routerLink]="menuitem.url"
+                    routerLinkActive="active"
+                    (click)="selectedListElement(menuitem.title)"
+                  >
+                    <img
+                      [src]="
+                        getImage(
+                          menuitem.imageName,
+                          selectedMenu === menuitem.title
+                        )
+                      "
+                      class="sidebar-icons"
+                      [alt]="menuitem.title"
+                    />
+                    <span class="menu-title">
+                      {{ menuitem.title }}
+                    </span>
+                  </a>
+                  <ng-container
+                    *ngIf="
+                      checkUserHasSubMenusPermissions(
+                        userInfo.permissions,
+                        menuitem.subPages,
+                        menuitem.permission
+                      )
+                    "
+                  >
+                    <a
+                      *ngIf="menuitem.subPages !== null"
+                      class="arrow-margin"
+                      (click)="menuitem.showSubMenu = !menuitem.showSubMenu"
+                    >
+                      <img
+                        src="assets/sidebar-icons/right-arrow.svg"
+                        [hidden]="menuitem.showSubMenu === true"
+                      />
+                      <img
+                        src="assets/sidebar-icons/down-arrow.svg"
+                        [hidden]="menuitem.showSubMenu === false"
+                      />
+                    </a>
+                  </ng-container>
+                </li>
+              </ul>
+            </ng-container>
+
+            <div
+              *ngIf="
+                menuitem.showSubMenu &&
+                menuitem.subPages !== null &&
+                subMenuShow
+              "
+              class="m-l-70"
+            >
+              <ng-container *ngIf="userInfo$ | async as userInfo">
+                <ng-container
+                  *ngIf="
+                    checkUserHasSubMenusPermissions(
+                      userInfo.permissions,
+                      menuitem.subPages,
+                      menuitem.permission
+                    )
+                  "
+                >
+                  <ul
+                    lines="none"
+                    class="p-0 m-0"
+                    *ngFor="let submenuitem of menuitem.subPages"
+                  >
+                    <a
+                      class="submenu m-0"
+                      mat-list-item
+                      [routerLink]="submenuitem.url"
+                      routerLinkActive="subSelected"
+                      *appCheckUserHasPermission="[submenuitem.permission]"
+                      (click)="selectedListElement(submenuitem.title)"
+                    >
+                      <span>{{ submenuitem.title }}</span>
+                    </a>
+                  </ul>
+                </ng-container>
+              </ng-container>
+            </div>
+          </mat-nav-list>
+        </div>
+        <img
+          src="{{ bigInnovaIcon }}"
+          class="innov-big-img"
+          alt="Innovapptive Logo"
+          *ngIf="layoutConf.sidebarStyle !== 'compact'"
+        />
+        <img
+          src="{{ smallInnovaIcon }}"
+          class="innov-small-img"
+          alt="Innovapptive Logo"
+          *ngIf="layoutConf.sidebarStyle === 'compact'"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <ng-template #loadingMenu>
+  <ngx-shimmer-loading
+    [height]="'40px'"
+    [ngClass]="{
+      'sidebar-close-loader': menuOpenClose === false,
+      'sidebar-open-loader': menuOpenClose === true
+    }"
+  ></ngx-shimmer-loading>
+</ng-template> -->

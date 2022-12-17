@@ -5,6 +5,7 @@ import { DummyComponent } from './components/dummy/dummy.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { DropDownFilterPipe } from './pipes/dropdown-filter.pipe';
 import { HeaderComponent } from './components/header/header.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { CommonFilterComponent } from './components/common-filter/common-filter.component';
 import { DateSegmentComponent } from './components/date-segment/date-segment.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -49,7 +50,7 @@ import { AcceptCallComponent } from './components/collaboration/calls/accept-cal
 import { VideoCallDialogComponent } from './components/collaboration/calls/video-call-dialog/video-call-dialog.component';
 import { AddPeopleToCallComponent } from './components/collaboration/calls/video-call-dialog/add-people-to-call/add-people-to-call.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-
+import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     CustomPaginationControlsComponent,
@@ -60,6 +61,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
+    SidebarComponent,
     CollabDialogComponent,
     UploadDialogComponent,
     VideoCallDialogComponent,
@@ -102,6 +104,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     BreadcrumbModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule,
+    RouterModule,
     TranslateModule.forChild({})
   ],
   exports: [
@@ -113,6 +116,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     DateSegmentComponent,
     CommonFilterComponent,
     HeaderComponent,
+    SidebarComponent,
     NumberToKMPipe,
     CheckUserHasPermissionDirective,
     BackgroundComponent

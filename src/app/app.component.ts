@@ -9,15 +9,10 @@ import {
 import { CommonService } from './shared/services/common.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, mergeMap, take, tap } from 'rxjs/operators';
-import {
-  defaultLanguage,
-  routingUrls,
-  bigInnovaIcon,
-  smallInnovaIcon
-} from './app.constants';
+import { defaultLanguage, routingUrls } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { UsersService } from './components/user-management/services/users.service';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
 import { environment } from 'src/environments/environment';
@@ -33,6 +28,7 @@ import { UserIdleService } from 'angular-user-idle';
 import { debounce } from './shared/utils/debounceMethod';
 import { PeopleService } from './shared/components/collaboration/people/people.service';
 import { SseService } from './shared/services/sse.service';
+import { ILayoutConf, LayoutService } from './shared/services/layout.service';
 
 const {
   dashboard,
@@ -51,15 +47,12 @@ const {
   inActiveUsers,
   tenantManagement
 } = routingUrls;
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
-  bigInnovaIcon = bigInnovaIcon;
-  smallInnovaIcon = smallInnovaIcon;
   menus = [
     {
       title: dashboard.title,
@@ -159,25 +152,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       disable: false
     }
   ];
-  loggedIn = false;
-  dark = false;
-  sidebar: boolean;
   currentRouteUrl: string;
   selectedMenu: string;
-
   eventSourceCollaboration: any;
   eventSourceJitsi: any;
   eventSourceUpdateUserPresence: any;
 
-  menuHasSubMenu = {};
   isNavigated = false;
   isUserAuthenticated = false;
-  menuOpenClose = false;
   userInfo$: Observable<UserInfo>;
   displayLoader$: Observable<boolean>;
   displayLoader: boolean;
 
   isUserOnline = false;
+
+  layoutConf: ILayoutConf = {};
+  adminContainerClasses: any = {};
+  subMenuShow = true;
+
+  private layoutConfSub: Subscription;
+  private routerEventSub: Subscription;
 
   constructor(
     private commonService: CommonService,
@@ -193,8 +187,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     private imageUtils: ImageUtils,
     private dialog: MatDialog,
     private userIdle: UserIdleService,
-    private sseService: SseService
-  ) {}
+    private sseService: SseService,
+    private layout: LayoutService
+  ) {
+    this.routerEventSub = router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((routeChange: NavigationEnd) => {
+        this.layout.adjustLayout({ route: routeChange.url });
+      });
+  }
 
   @HostListener('document:mousemove', ['$event'])
   @debounce()
@@ -255,6 +256,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   };
 
   ngOnInit() {
+    console.log(this.layout);
+    this.layoutConf = this.layout.layoutConf;
+    console.log(this.layoutConf);
+    this.layoutConfSub = this.layout.layoutConf$.subscribe((layoutConf) => {
+      this.layoutConf = layoutConf;
+      this.adminContainerClasses = this.updateAdminContainerClasses(
+        this.layoutConf
+      );
+      if (this.layoutConf.sidebarStyle === 'full') {
+        this.subMenuShow = true;
+      } else if (this.layoutConf.sidebarStyle === 'compact') {
+        this.subMenuShow = false;
+      }
+      this.cdrf.markForCheck();
+    });
+
     //Start watching for user inactivity.
     this.userIdle.startWatching();
     // Start watching when user idle is starting.
@@ -316,7 +333,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         const selectedmenu = this.menus.find((x) => x.url === splitedUrl);
         this.selectedMenu = selectedmenu?.title;
         this.commonService.setCurrentRouteUrl(this.currentRouteUrl);
-        this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl);
+        //this.menus = this.toggleSubMenu(this.menus, this.currentRouteUrl);
       });
 
     this.translateService.use(defaultLanguage);
@@ -460,65 +477,52 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.cdrf.detectChanges();
   }
 
-  getImage = (imageName: string, active: boolean) =>
-    active
-      ? `assets/sidebar-icons/${imageName}-white.svg`
-      : `assets/sidebar-icons/${imageName}-gray.svg`;
+  sidebarMouseenter(e) {
+    if (this.layoutConf.sidebarStyle === 'compact') {
+      this.layout.publishLayoutChange(
+        { sidebarStyle: 'full' },
+        { transitionClass: true }
+      );
+    }
+  }
 
   selectedListElement(title) {
-    this.menuOpenClose = false;
     this.selectedMenu = title;
   }
 
-  toggleMenu() {
-    this.menuOpenClose = !this.menuOpenClose;
-  }
-
-  closeSideNav() {
-    this.menuOpenClose = false;
-  }
-
-  toggleSubMenu(menus: any, currentRouteUrl: string) {
-    return menus.map((menuItem) => {
-      let showSubMenu = false;
-      if (
-        menuItem.subPages !== null &&
-        currentRouteUrl.indexOf(menuItem.url) === 0
-      ) {
-        showSubMenu = true;
-      }
-      return { ...menuItem, showSubMenu };
-    });
-  }
-  ngOnDestroy() {
-    // TODO: NEED TO FIGURE OUT A WAY TO CLOSE THE EVENTSOURCES GRACEFULLY....
-    // if (this.eventSourceCollaboration) {
-    //   this.eventSourceCollaboration.close();
-    // }
-    // if (this.eventSourceJitsi) {
-    //   this.eventSourceJitsi.close();
-    // }
-    // if (this.eventSourceUpdateUserPresence) {
-    //   this.eventSourceUpdateUserPresence.close();
-    // }
-  }
-
-  checkUserHasSubMenusPermissions(
-    permissions: Permission[],
-    subMenus,
-    menuPermission: string
-  ) {
+  sidebarMouseleave(e) {
     if (
-      permissions?.length &&
-      this.menuHasSubMenu[menuPermission] === undefined
+      this.layoutConf.sidebarStyle === 'full' &&
+      this.layoutConf.sidebarCompactToggle
     ) {
-      const subMenuPermission = subMenus?.find((subMenu) =>
-        permissions.find((permission) => subMenu.permission === permission.name)
+      this.layout.publishLayoutChange(
+        { sidebarStyle: 'compact' },
+        { transitionClass: true }
       );
-      const hasPermission = subMenuPermission ? true : false;
-      this.menuHasSubMenu[menuPermission] = hasPermission;
-      return hasPermission;
     }
-    return this.menuHasSubMenu[menuPermission];
+  }
+
+  updateAdminContainerClasses(layoutConf) {
+    if (layoutConf.sidebarStyle === 'full') {
+      this.subMenuShow = true;
+    } else {
+      this.subMenuShow = false;
+    }
+    return {
+      'sidebar-full': layoutConf.sidebarStyle === 'full',
+      'sidebar-compact':
+        layoutConf.sidebarStyle === 'compact' &&
+        layoutConf.navigationPos === 'side',
+      'compact-toggle-active': layoutConf.sidebarCompactToggle
+    };
+  }
+
+  ngOnDestroy() {
+    if (this.layoutConfSub) {
+      this.layoutConfSub.unsubscribe();
+    }
+    if (this.routerEventSub) {
+      this.routerEventSub.unsubscribe();
+    }
   }
 }
