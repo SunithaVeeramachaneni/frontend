@@ -35,6 +35,7 @@ import { AppService } from './shared/services/app.services';
 import { Buffer } from 'buffer';
 import * as hash from 'object-hash';
 import { SharedModule } from './shared/shared.module';
+import { FormModule } from './forms/form.module';
 import {
   TranslateCompiler,
   TranslateLoader,
@@ -62,6 +63,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
+    FormModule,
     MatSidenavModule,
     MatListModule,
     ErrorHandlerModule,

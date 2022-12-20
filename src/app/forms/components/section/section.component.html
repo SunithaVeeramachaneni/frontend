@@ -1,0 +1,59 @@
+<div class="section dis-flex" [formGroup]="sectionForm">
+  <div class="width-5">add question</div>
+  <div class="width-95">
+    <div class="section-header">
+      <mat-icon
+        (click)="toggleSectionOpenState()"
+        *ngIf="isSectionOpenState === true"
+        class="section-arrow"
+      >
+        expand_more
+      </mat-icon>
+
+      <mat-icon
+        (click)="toggleSectionpenState()"
+        *ngIf="isSectionOpenState === false"
+        class="section-arrow"
+      >
+        chevron_right
+      </mat-icon>
+
+      <a>
+        <input
+          #sectionName
+          type="text"
+          [size]="getSize(sectionName.value)"
+          class="form_section_name_input"
+          placeholder="Untitled Section"
+          formControlName="name"
+          autofocus="true"
+          autocomplete="off"
+        />
+        <button mat-icon-button class="edit-icon">
+          <img
+            src="assets/rdf-forms-icons/edit-icon.svg"
+            alt="edit-icon"
+            class="edit-icon-img"
+          />
+        </button>
+      </a>
+
+      <button
+        [matMenuTriggerFor]="sectionMenu"
+        class="more-icon"
+        aria-label="More Options"
+      >
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #sectionMenu="matMenu">
+        <button mat-menu-item class="text-red">
+          <span>Delete Page</span>
+        </button>
+      </mat-menu>
+    </div>
+    <div>
+      <app-template></app-template>
+    </div>
+  </div>
+</div>
+<ng-content></ng-content>

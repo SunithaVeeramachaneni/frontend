@@ -1,0 +1,6 @@
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
+    <app-form-list></app-form-list>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>
