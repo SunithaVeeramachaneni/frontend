@@ -1,0 +1,64 @@
+<div class="create-form-main" [formGroup]="createForm">
+  <div class="dis-flex form-header">
+    <div>
+      <div class="dis-flex">
+        <img
+          src="../../../../assets/rdf-forms-icons/form-image-upload.svg"
+          alt=""
+          (click)="formImageuploader.click()"
+        />
+        <input
+          hidden
+          type="file"
+          #formImageuploader
+          accept="image/x-png,image/jpeg"
+          (change)="uploadFormImageFile($event)"
+        />
+        <div>
+          <a class="form-title">
+            <input
+              #name
+              type="text"
+              class="form_title_input"
+              placeholder="Untitled Form"
+              formControlName="name"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+          <a class="form-description">
+            <input
+              type="text"
+              class="form_description_input"
+              placeholder="Add Form description"
+              formControlName="description"
+              autofocus="true"
+              autocomplete="off"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="dis-flex">
+      <!-- <p *ngIf="status$ | async as status" style="margin-top: 22px">
+        {{ status }}
+      </p> -->
+
+      <button mat-stroked-button class="import-btn">Import Questions</button>
+
+      <button mat-raised-button class="publish-btn">
+        <span>
+          <img
+            alt="upload"
+            src="assets/work-instructions-icons/svg/upload-white.png"
+            class="publish-btn-icon"
+          />
+          <span class="publish">Publish</span>
+        </span>
+      </button>
+    </div>
+  </div>
+  <div>
+    <app-page></app-page>
+  </div>
+</div>
