@@ -1,5 +1,35 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <ng-container *ngIf="currentRouteUrl === routingUrls.raceDynamicForms.url">
+    <div class="dis-flex container-padding">
+      <button class="widgets" (click)="openFormCreationModal()">
+        <img
+          src="assets/rdf-forms-icons/add-form.svg"
+          alt="Create"
+          width="22"
+          height="22"
+        />
+        <span class="widgets-title">Create Blank Form</span>
+      </button>
+      <button class="widgets">
+        <img
+          src="assets/rdf-forms-icons/import-excel.svg"
+          alt="Import"
+          width="25"
+          height="25"
+        />
+        <span class="widgets-title">Import from Public Library</span>
+      </button>
+      <button class="widgets">
+        <img
+          src="assets/rdf-forms-icons/export-excel.svg"
+          alt="Export"
+          width="25"
+          height="25"
+        />
+        <span class="widgets-title">Convert Excel into Form</span>
+      </button>
+    </div>
+
     <app-form-list></app-form-list>
   </ng-container>
   <router-outlet></router-outlet>

@@ -1,3 +1,5 @@
+@import '../../../../scss/colors.scss';
+
 .create-form-main {
   overflow: hidden;
   position: relative;
@@ -11,7 +13,7 @@
     top: 5px;
   }
   ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: white;
+    background: $white;
   }
 }
 
@@ -22,7 +24,7 @@
 
 input[type='text']:focus {
   outline: none;
-  caret-color: #007aff;
+  caret-color: $blue-main;
 }
 
 .form_title_input {
@@ -49,15 +51,15 @@ input[type='text']:focus {
 
 .changes-text {
   margin-top: 23px;
-  color: #76767b;
+  color: $gray-text;
   font-size: 100%;
 }
 
 .import-btn {
   width: 160px;
   height: 36px;
-  border: 1px solid #1351d8;
-  color: #1351d8;
+  border: 1px solid $blue-primary;
+  color: $blue-primary;
   margin: 12px 0 0 12px;
   border-radius: 8px;
 }
@@ -69,8 +71,8 @@ input[type='text']:focus {
 .publish-btn {
   width: 160px;
   height: 36px;
-  background-color: #1351d8;
-  border-color: #1351d8;
+  background-color: $blue-primary;
+  border-color: $blue-primary;
   border-radius: 8px;
   margin: 12px 12px 0 12px;
 }
@@ -88,7 +90,7 @@ input[type='text']:focus {
   line-height: 20px;
   align-items: center;
   letter-spacing: 0.25px;
-  color: #ffffff;
+  color: $white;
   position: relative;
   left: 3px;
 }

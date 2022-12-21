@@ -20,4 +20,8 @@ export class FormConfigurationComponent implements OnInit {
       isPublishedTillSave: [false]
     });
   }
+
+  uploadFormImageFile(e) {
+    console.log(e);
+  }
 }
