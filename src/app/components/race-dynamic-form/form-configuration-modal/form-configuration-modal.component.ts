@@ -8,7 +8,13 @@ import {
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+import { ValidationError } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -29,6 +35,7 @@ export class FormConfigurationModalComponent implements OnInit {
   tags: string[] = [];
   allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
   headerDataForm: FormGroup;
+  errors: ValidationError = {};
 
   constructor(
     public fb: FormBuilder,
@@ -44,8 +51,19 @@ export class FormConfigurationModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
-      name: [''],
+      formLogo: [''],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100)
+        ]
+      ],
       description: [''],
+      isPublic: [false],
+      isArchived: [false],
+      formStatus: ['draft'],
       tags: [this.tags]
     });
   }
@@ -94,11 +112,28 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   next() {
-    console.log(this.headerDataForm.value);
-    this.dialogRef.close(this.headerDataForm.value);
+    if (this.headerDataForm.valid) {
+      console.log(this.headerDataForm.value);
+      this.dialogRef.close(this.headerDataForm.value);
+    }
   }
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.headerDataForm.get(controlName).touched;
+    const errors = this.headerDataForm.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 }

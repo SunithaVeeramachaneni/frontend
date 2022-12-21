@@ -5,16 +5,16 @@
         src="../../../../assets/rdf-forms-icons/back-arrow.svg"
         alt="back arrow"
       />
-      <span class="back-btn-text">Back</span>
+      <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
   <div class="dis-flex form-content">
     <div class="width-5 bg-white"></div>
     <div class="width-95">
       <div class="form-detials">
-        <h2 class="heading">Set form details and Metadata</h2>
+        <h2 class="heading" translate="setFormDetailsHeading"></h2>
 
-        <p class="sub-heading">Select Form type</p>
+        <p class="sub-heading" translate="setFormTypeHeading"></p>
         <input
           type="radio"
           name="formType"
@@ -22,7 +22,7 @@
           checked
           class="margin"
         />
-        <span class="radio-btn-text"> Standalone </span><br />
+        <span class="radio-btn-text" translate="standalone"> </span><br />
 
         <input
           type="radio"
@@ -31,15 +31,15 @@
           class="margin"
           disabled
         />
-        <span class="radio-btn-text"> Embedded</span><br />
+        <span class="radio-btn-text" translate="embedded"> </span><br />
 
-        <p class="radio-sub-text">
-          On Publishing form will show in your mWorkorder app
-        </p>
+        <p class="radio-sub-text" translate="embeddedSubText"></p>
 
         <hr class="horizontal-line" />
 
-        <p class="form-name-description">Add a Form Name</p>
+        <p class="form-name-description" translate="addFormName">
+          <span class="text-red">*</span>
+        </p>
         <input
           type="text"
           name="formName"
@@ -47,9 +47,14 @@
           class="inputs"
           formControlName="name"
         />
-        <p class="form-name-description">
-          Add a short description to your form
-        </p>
+        <mat-error *ngIf="processValidationErrors('name')" class="m-5">
+          {{
+            errors.name.name
+              | translate
+                : { name: 'name' | translate, length: errors.name.length }
+          }}
+        </mat-error>
+        <p class="form-name-description" translate="addFormDescription"></p>
         <input
           type="text"
           name="formDescription"
@@ -57,7 +62,11 @@
           class="inputs"
           formControlName="description"
         />
-        <p class="form-name-description" style="margin-bottom: 0px">Tags</p>
+        <p
+          class="form-name-description"
+          style="margin-bottom: 0px"
+          translate="tags"
+        ></p>
         <mat-form-field class="chips-list width-100" appearance="outline">
           <mat-chip-list #chipList>
             <mat-chip
@@ -97,17 +106,15 @@
           color="primary"
           style="float: right"
           (click)="next()"
-        >
-          Next
-        </button>
+          translate="nextBtn"
+        ></button>
         <button
           mat-stroked-button
           color="primary"
           style="float: right; margin-right: 15px"
           (click)="onCancel()"
-        >
-          Skip
-        </button>
+          translate="skipBtn"
+        ></button>
       </div>
     </div>
   </div>
