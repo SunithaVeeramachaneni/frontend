@@ -65,8 +65,9 @@ export class FormConfigurationModalComponent implements OnInit {
     this.tagsCtrl.setValue(null);
   }
 
-  remove(fruit: string): void {
-    const index = this.tags.indexOf(fruit);
+  remove(tag: string): void {
+    this.allTags.push(tag);
+    const index = this.tags.indexOf(tag);
 
     if (index >= 0) {
       this.tags.splice(index, 1);
@@ -74,6 +75,12 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
+    const index = this.allTags.indexOf(event.option.viewValue);
+
+    if (index >= 0) {
+      this.allTags.splice(index, 1);
+    }
+
     this.tags.push(event.option.viewValue);
     this.tagsInput.nativeElement.value = '';
     this.tagsCtrl.setValue(null);
@@ -81,8 +88,8 @@ export class FormConfigurationModalComponent implements OnInit {
 
   filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    return this.tags.filter(
-      (fruit) => fruit.toLowerCase().indexOf(filterValue) === 0
+    return this.allTags.filter((tag) =>
+      tag.toLowerCase().includes(filterValue)
     );
   }
 
