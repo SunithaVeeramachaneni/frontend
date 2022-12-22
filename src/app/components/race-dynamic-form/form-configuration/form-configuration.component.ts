@@ -22,6 +22,6 @@ export class FormConfigurationComponent implements OnInit {
   }
 
   uploadFormImageFile(e) {
-    console.log(e);
+    // uploaded image  file code
   }
 }

@@ -50,16 +50,12 @@ export class FormContainerComponent implements OnInit {
   }
 
   openFormCreationModal() {
-    const dialogRef = this.dialog.open(FormConfigurationModalComponent, {
+    this.dialog.open(FormConfigurationModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
       width: '100%',
       panelClass: 'full-screen-modal'
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
     });
   }
 }

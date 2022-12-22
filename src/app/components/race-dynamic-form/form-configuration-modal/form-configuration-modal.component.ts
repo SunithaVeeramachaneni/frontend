@@ -15,6 +15,7 @@ import {
   Validators
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -38,7 +39,8 @@ export class FormConfigurationModalComponent implements OnInit {
   errors: ValidationError = {};
 
   constructor(
-    public fb: FormBuilder,
+    private fb: FormBuilder,
+    private router: Router,
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>
   ) {
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
@@ -113,8 +115,8 @@ export class FormConfigurationModalComponent implements OnInit {
 
   next() {
     if (this.headerDataForm.valid) {
-      console.log(this.headerDataForm.value);
-      this.dialogRef.close(this.headerDataForm.value);
+      this.router.navigate(['./rdf-forms/create']);
+      this.dialogRef.close();
     }
   }
 

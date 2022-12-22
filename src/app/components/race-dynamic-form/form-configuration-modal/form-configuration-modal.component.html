@@ -1,10 +1,7 @@
-<div style="background: #f2f2f2" [formGroup]="headerDataForm">
+<div class="form-header-modal" [formGroup]="headerDataForm">
   <mat-toolbar class="form-toolbar">
     <button (click)="onCancel()" class="back-btn">
-      <img
-        src="../../../../assets/rdf-forms-icons/back-arrow.svg"
-        alt="back arrow"
-      />
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
       <span class="back-btn-text" translate="backBtn"></span>
     </button>
   </mat-toolbar>
@@ -62,11 +59,7 @@
           class="inputs"
           formControlName="description"
         />
-        <p
-          class="form-name-description"
-          style="margin-bottom: 0px"
-          translate="tags"
-        ></p>
+        <p class="form-name-description m-b-0" translate="tags"></p>
         <mat-form-field class="chips-list width-100" appearance="outline">
           <mat-chip-list #chipList>
             <mat-chip
@@ -74,7 +67,7 @@
               [selectable]="selectable"
               [removable]="removable"
               (removed)="remove(tag)"
-              style="margin: 0 5px !important"
+              class="tags-mat-chips"
             >
               {{ tag }}
               <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
@@ -104,14 +97,15 @@
           mat-raised-button
           type="submit"
           color="primary"
-          style="float: right"
+          class="next-btn"
           (click)="next()"
+          [disabled]="headerDataForm.invalid || headerDataForm.pristine"
           translate="nextBtn"
         ></button>
         <button
           mat-stroked-button
           color="primary"
-          style="float: right; margin-right: 15px"
+          class="skip-btn"
           (click)="onCancel()"
           translate="skipBtn"
         ></button>
