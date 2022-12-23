@@ -1,0 +1,23 @@
+{
+  "createForm": "Create Blank Form",
+  "importForm": "Import from Public Library",
+  "exportExcel": "Convert Excel into Form",
+  "formLibrary": "Form Library",
+  "importBtn": "Import Questions",
+  "publishBtn": "Publish",
+  "backBtn": "Back",
+  "setFormDetailsHeading": "Set form details",
+  "setFormTypeHeading": "Select Form type",
+  "standalone": "Standalone",
+  "embedded": "Embedded",
+  "embeddedSubText": "On Publishing form will show in your mWorkorder app",
+  "addFormName": "Add a Form Name",
+  "addFormDescription": " Add a short description to your form",
+  "tags": "Tags",
+  "nextBtn": "Next",
+  "skipBtn": "Skip",
+  "name": "Form Name",
+  "required": "{name} is required",
+  "minlength": "{name} must be at least {length} characters",
+  "maxlength": "{name} must be at the max of {length} characters"
+}

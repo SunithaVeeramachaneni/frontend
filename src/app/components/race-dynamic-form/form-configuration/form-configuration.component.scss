@@ -1,94 +1,84 @@
+@import '../../../../scss/colors.scss';
+
 .create-form-main {
   overflow: hidden;
   position: relative;
 
-  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-    padding: 5px 0 12px 0;
-  }
-
-  ::ng-deep .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+  .form-header {
+    justify-content: space-between;
     position: relative;
-    top: 5px;
   }
-  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
-    background: white;
+
+  input[type='text']:focus {
+    outline: none;
+    caret-color: $blue-main;
   }
-}
 
-.form-header {
-  justify-content: space-between;
-  position: relative;
-}
+  .form_title_input {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    font-size: 140%;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    padding: 3px 10px;
+  }
 
-input[type='text']:focus {
-  outline: none;
-  caret-color: #007aff;
-}
+  .form_description_input {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    font-size: 100%;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    padding: 3px 10px;
+  }
 
-.form_title_input {
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  background: none;
-  font-size: 140%;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  padding: 3px 10px;
-}
+  .changes-text {
+    margin-top: 23px;
+    color: $gray-text;
+    font-size: 100%;
+  }
 
-.form_description_input {
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  background: none;
-  font-size: 100%;
-  font-weight: 500;
-  text-overflow: ellipsis;
-  padding: 3px 10px;
-}
+  .import-btn {
+    width: 160px;
+    height: 36px;
+    border: 1px solid $blue-primary;
+    color: $blue-primary;
+    margin: 12px 0 0 12px;
+    border-radius: 8px;
+  }
 
-.changes-text {
-  margin-top: 23px;
-  color: #76767b;
-  font-size: 100%;
-}
+  .import-btn:disabled {
+    border: none;
+  }
 
-.import-btn {
-  width: 160px;
-  height: 36px;
-  border: 1px solid #1351d8;
-  color: #1351d8;
-  margin: 12px 0 0 12px;
-  border-radius: 8px;
-}
+  .publish-btn {
+    width: 160px;
+    height: 36px;
+    background-color: $blue-primary;
+    border-color: $blue-primary;
+    border-radius: 8px;
+    margin: 12px 12px 0 12px;
+  }
 
-.import-btn:disabled {
-  border: none;
-}
+  .publish-btn-icon {
+    position: relative;
+    top: 2px;
+    left: -3px;
+  }
 
-.publish-btn {
-  width: 160px;
-  height: 36px;
-  background-color: #1351d8;
-  border-color: #1351d8;
-  border-radius: 8px;
-  margin: 12px 12px 0 12px;
-}
-
-.publish-btn-icon {
-  position: relative;
-  top: 2px;
-  left: -3px;
-}
-
-.publish {
-  font-style: normal;
-  font-weight: 500;
-  font-size: 100%;
-  line-height: 20px;
-  align-items: center;
-  letter-spacing: 0.25px;
-  color: #ffffff;
-  position: relative;
-  left: 3px;
+  .publish {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 100%;
+    line-height: 20px;
+    align-items: center;
+    letter-spacing: 0.25px;
+    color: $white;
+    position: relative;
+    left: 3px;
+  }
 }

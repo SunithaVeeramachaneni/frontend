@@ -4,12 +4,14 @@ import {
   Component,
   OnInit
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { FormConfigurationModalComponent } from '../form-configuration-modal/form-configuration-modal.component';
 
 @Component({
   selector: 'app-form-container',
@@ -25,11 +27,11 @@ export class FormContainerComponent implements OnInit {
     private commonService: CommonService,
     private breadcrumbService: BreadcrumbService,
     private cdrf: ChangeDetectorRef,
-    private headerService: HeaderService
+    private headerService: HeaderService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    console.log('container');
     this.currentRouteUrl$ = this.commonService.currentRouteUrlAction$.pipe(
       tap((currentRouteUrl) => {
         if (currentRouteUrl === routingUrls.raceDynamicForms.url) {
@@ -45,5 +47,15 @@ export class FormContainerComponent implements OnInit {
         }
       })
     );
+  }
+
+  openFormCreationModal() {
+    this.dialog.open(FormConfigurationModalComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal'
+    });
   }
 }

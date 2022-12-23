@@ -9,7 +9,5 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 export class FormListComponent implements OnInit {
   constructor() {}
 
-  ngOnInit(): void {
-    console.log('lisbdb bdjhndjkjdh dhgjdh dhdhfjfd ');
-  }
+  ngOnInit(): void {}
 }

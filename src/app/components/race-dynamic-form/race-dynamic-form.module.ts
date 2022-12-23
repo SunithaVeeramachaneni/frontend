@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
+import {
+  TranslateCompiler,
+  TranslateLoader,
+  TranslateModule,
+  TranslateService
+} from '@ngx-translate/core';
 import { CommonService } from 'src/app/shared/services/common.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RaceDynamicFormRoutingModule } from './race-dynamic-form-routing.module';
 import { FormModule } from 'src/app/forms/form.module';
 
@@ -15,6 +21,21 @@ import { FormConfigurationModalComponent } from './form-configuration-modal/form
 import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+
+import { HttpClient } from '@angular/common/http';
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { defaultLanguage } from 'src/app/app.constants';
+
+export const customTranslateLoader = (http: HttpClient) =>
+  new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
 
 @NgModule({
   declarations: [
@@ -28,10 +49,32 @@ import { MatButtonModule } from '@angular/material/button';
     FormConfigurationComponent
   ],
   imports: [
+    FormsModule,
+    ReactiveFormsModule,
     RaceDynamicFormRoutingModule,
     CommonModule,
     FormModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule,
+    MatToolbarModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    TranslateModule.forChild({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: customTranslateLoader,
+        deps: [HttpClient]
+      },
+      isolate: true,
+      defaultLanguage,
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
+      }
+    })
   ]
 })
 export class RaceDynamicFormModule {
