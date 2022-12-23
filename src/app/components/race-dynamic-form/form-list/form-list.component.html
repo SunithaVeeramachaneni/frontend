@@ -1,3 +1,120 @@
 <div class="list-view">
   <h2 class="heading" translate="formLibrary"></h2>
+
+  <div class="main-container" *ngIf="loggedInUserInfo$ | async">
+    <div class="users-header">
+      <span class="custom-form-field-gray-color search">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchForms' | translate"
+            autocomplete="off"
+            [formControl]="searchForm"
+          />
+          <img
+            src="../../../../assets/maintenance-icons/filterIcon.svg"
+            matSuffix
+            cdkOverlayOrigin
+            class="common-filter-icon"
+            alt="Open Filter"
+            #trigger="cdkOverlayOrigin"
+            (click)="isPopoverOpen = !isPopoverOpen"
+          />
+        </mat-form-field>
+      </span>
+      <ng-template
+        cdkConnectedOverlay
+        cdkConnectedOverlayPanelClass="custom-popover"
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        [cdkConnectedOverlayHasBackdrop]="true"
+        [cdkConnectedOverlayOpen]="isPopoverOpen"
+        [cdkConnectedOverlayOrigin]="trigger"
+        cdkConnectedOverlayWidth="400px"
+        (backdropClick)="isPopoverOpen = false"
+      >
+        <div class="filter-report-modal custom-form-field-white-color">
+          <div class="filter-form-fields" style="max-height: 350px">
+            Content here!
+          </div>
+          <button
+            mat-raised-button
+            class="btn apply-filters-btn"
+            (click)="applyFilters()"
+            type="button"
+            aria-label="Apply Filter"
+          >
+            {{ 'apply' | translate }}
+          </button>
+          <button
+            mat-button
+            color="primary"
+            class="btn reset-filters-btn"
+            (click)="clearFilters()"
+            aria-label="Cancel Filter"
+          >
+            {{ 'reset' | translate }}
+          </button>
+        </div>
+      </ng-template>
+    </div>
+    <div
+      *ngIf="forms$ | async as forms; else loadingUsers"
+      class="dis-flex users-content"
+    >
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+
+  <ng-template #loadingUsers>
+    <div style="padding: 0 20px">
+      <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+      <ngx-shimmer-loading [width]="'100%'" [height]="'20px'">
+      </ngx-shimmer-loading>
+    </div>
+  </ng-template>
 </div>

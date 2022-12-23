@@ -28,11 +28,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { DynamictableModule } from '@innovapptive.com/dynamictable';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -74,7 +78,11 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    })
+    }),
+    DynamictableModule,
+    NgxShimmerLoadingModule,
+    OverlayModule,
+    MatMenuModule
   ]
 })
 export class RaceDynamicFormModule {

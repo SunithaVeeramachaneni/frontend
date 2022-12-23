@@ -19,5 +19,6 @@
   "name": "Form Name",
   "required": "{name} is required",
   "minlength": "{name} must be at least {length} characters",
-  "maxlength": "{name} must be at the max of {length} characters"
+  "maxlength": "{name} must be at the max of {length} characters",
+  "searchForms": "Search Forms"
 }
