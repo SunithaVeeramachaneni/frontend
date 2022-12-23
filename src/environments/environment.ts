@@ -10,6 +10,7 @@ export const environment = {
   wiApiUrl: 'http://localhost:8001/',
   wiAbapApiUrl: 'http://localhost:8002/',
   userRoleManagementApiUrl: 'http://localhost:8007/',
+  formsApiUrl: 'http://localhost:8008/',
   s3BaseUrl: 'https://innovwi.s3.ap-south-1.amazonaws.com/',
   requestTimeout: 60000 * 3,
   undoRedoOffset: 5,
