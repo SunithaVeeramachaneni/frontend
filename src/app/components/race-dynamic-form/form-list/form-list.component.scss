@@ -16,4 +16,15 @@
     margin-left: 2%;
     margin-top: 1%;
   }
+  .forms-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .common-filter-icon {
+    cursor: pointer;
+  }
+  .search {
+    margin-top: 5px;
+  }
 }

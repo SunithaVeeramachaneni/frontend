@@ -10,35 +10,30 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
-  mergeMap
+  mergeMap,
+  map,
+  switchMap,
+  tap
 } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
+import { MatTableDataSource } from '@angular/material/table';
+
 import {
   CellClickActionEvent,
   Count,
   LoadEvent,
   SearchEvent,
   TableEvent,
-  UserDetails,
-  UserInfo,
-  UserTable
+  FormTableUpdate,
+  RaceDynamicForm
 } from 'src/app/interfaces';
-import { defaultLimit, superAdminText } from 'src/app/app.constants';
-import { MatTableDataSource } from '@angular/material/table';
+import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { map, switchMap, tap } from 'rxjs/operators';
-import {
-  Column,
-  ConfigOptions
-} from '@innovapptive.com/dynamictable/lib/interfaces';
-import { MatDialog } from '@angular/material/dialog';
-import { LoginService } from '../../login/services/login.service';
-import { FormControl } from '@angular/forms';
-import { UsersService } from '../../user-management/services/users.service';
-
-interface UserTableUpdate {
-  action: 'add' | 'delete' | 'edit' | 'copy' | null;
-  user: UserDetails;
-}
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-list',
@@ -49,7 +44,7 @@ interface UserTableUpdate {
 export class FormListComponent implements OnInit {
   columns: Column[] = [
     {
-      id: 'user',
+      id: 'name',
       displayName: 'Recents',
       type: 'string',
       order: 1,
@@ -64,7 +59,7 @@ export class FormListComponent implements OnInit {
       titleStyle: { 'font-weight': '500', 'font-size': '90%' },
       hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: 'title',
+      subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -73,9 +68,9 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'displayRoles',
+      id: 'createdBy',
       displayName: 'Owner',
-      type: 'string',
+      type: 'number',
       isMultiValued: true,
       order: 2,
       hasSubtitle: false,
@@ -95,7 +90,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'email',
+      id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       order: 3,
@@ -111,19 +106,33 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        background: '#f8f7b0',
-        borderRadius: '100px',
-        float: 'left',
-        padding: '8px'
+        fontFamily: 'Inter',
+        fontStyle: 'normal',
+        fontSize: '14px',
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '0 12px',
+        marginTop: '8px',
+        width: '90px',
+        height: '24px',
+        background: '#D1FAE5', // #FEF3C7
+        borderRadius: '12px',
+        flex: 'none',
+        order: 0,
+        flexGrow: 0
       },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
     },
     {
-      id: 'title',
-      displayName: 'Last Published',
-      type: 'string',
+      id: 'updatedBy',
+      displayName: 'Last Published By',
+      type: 'number',
       order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -142,9 +151,9 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'createdAt',
-      displayName: 'Last Published By At',
-      type: 'date',
+      id: 'updatedAt',
+      displayName: 'Last Published At',
+      type: 'string',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -181,32 +190,31 @@ export class FormListComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
-  selectedForms = [];
-  allFormsList = [];
+  selectedForms: RaceDynamicForm[] = [];
+  allFormsList: RaceDynamicForm[] = [];
+  allSelected = false;
   dataSource: MatTableDataSource<any>;
-  forms$: Observable<UserTable>;
+  forms$: Observable<any>;
   formsCount$: Observable<Count>;
-  addEditDeleteForm$: BehaviorSubject<UserTableUpdate> =
-    new BehaviorSubject<UserTableUpdate>({
+  addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
       action: null,
-      user: {} as UserDetails
+      form: {} as RaceDynamicForm
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
   limit = defaultLimit;
-  loggedInUserInfo$: Observable<UserInfo>;
   searchForm: FormControl;
-  addEditDeleteForm = false;
-  addDeleteFormCount = false;
+  addCopyFormCount = false;
   isPopoverOpen = false;
+  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
+  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
   constructor(
-    private usersService: UsersService,
-    public dialog: MatDialog,
-    private toast: ToastService,
-    private loginService: LoginService
+    private readonly toast: ToastService,
+    private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.fetchForms$.next({ data: 'load' });
     this.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -226,65 +234,64 @@ export class FormListComponent implements OnInit {
       this.formCountUpdate$
     ]).pipe(
       map(([count, update]) => {
-        if (this.addDeleteFormCount) {
+        if (this.addCopyFormCount) {
           count.count += update;
-          this.addDeleteFormCount = false;
+          this.addCopyFormCount = false;
         }
         return count;
       })
     );
     this.configOptions.allColumns = this.columns;
-    this.loggedInUserInfo$ = this.loginService.loggedInUserInfo$.pipe(
-      tap(() => this.prepareMenuActions())
-    );
+    this.prepareMenuActions();
   }
 
-  cellClickActionHandler = (event: CellClickActionEvent) => {
-    const {
-      columnId,
-      row: { id }
-    } = event;
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    const { columnId } = event;
     switch (columnId) {
-      case 'user':
-      case 'roles':
-      case 'email':
-      case 'createdAt':
-        this.openEditAddFormModal(event.row);
+      case 'name':
+      case 'createdBy':
+      case 'formStatus':
+      case 'updatedBy':
+      case 'updatedAt ':
+        this.openEditFormModal(event.row);
         break;
       default:
     }
   };
 
-  openEditAddFormModal(form = {} as any) {
+  openEditFormModal(form = {} as RaceDynamicForm): void {
+    // TODO: Edit api call and integration
     this.toast.show({
-      text: 'Form created successfully!',
+      text: 'Form edited successfully!',
       type: 'success'
     });
   }
 
-  openDeleteFormModal(form: any) {
+  openCopyFormModal(form: RaceDynamicForm): void {
+    // TODO: Copy api call and integration
     this.toast.show({
-      text: 'Form deactivated successfully!',
+      text: 'Form copied successfully!',
       type: 'success'
     });
+    this.selectedForms = [];
   }
 
-  getDisplayedForms() {
+  getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(() => {
         this.skip = 0;
-        return this.getUsers();
+        return this.getForms();
       })
     );
 
-    const onScrollUsers$ = this.fetchForms$.pipe(
+    const onScrollForms$ = this.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
-          return this.getUsers();
+          return this.getForms();
         } else {
-          return of([] as UserDetails[]);
+          return of([] as RaceDynamicForm[]);
         }
       })
     );
@@ -295,53 +302,18 @@ export class FormListComponent implements OnInit {
     };
     this.forms$ = combineLatest([
       formsOnLoadSearch$,
-      this.addEditDeleteForm$,
-      onScrollUsers$
+      this.addEditCopyForm$,
+      onScrollForms$
     ]).pipe(
-      map(([users, update, scrollData]) => {
+      map(([rows, _, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(100vh - 150px)'
+            tableHeight: 'calc(80vh - 150px)'
           };
-          initial.data = users;
+          initial.data = rows;
         } else {
-          if (this.addEditDeleteForm) {
-            const { user, action } = update;
-            switch (action) {
-              case 'add':
-                this.skip += 1;
-                this.addDeleteFormCount = true;
-                this.formCountUpdate$.next(+1);
-                initial.data = initial.data.concat(scrollData);
-                break;
-              case 'delete':
-                this.skip -= 1;
-                this.addDeleteFormCount = true;
-                this.formCountUpdate$.next(-1);
-                if (user.id) {
-                  const index = initial.data.findIndex(
-                    (iteratedUser) => iteratedUser.id === user.id
-                  );
-                  if (index > -1) {
-                    initial.data.splice(index, 1);
-                  }
-                }
-                break;
-              case 'edit':
-                if (user.id) {
-                  const index = initial.data.findIndex(
-                    (iteratedUser) => iteratedUser.id === user.id
-                  );
-                  if (index > -1) {
-                    initial.data[index] = user;
-                  }
-                }
-            }
-            this.addEditDeleteForm = false;
-          } else {
-            initial.data = initial.data.concat(scrollData);
-          }
+          initial.data = initial.data.concat(scrollData);
         }
 
         this.skip = initial.data.length;
@@ -351,46 +323,34 @@ export class FormListComponent implements OnInit {
     );
   }
 
-  getUsers = () =>
-    this.usersService
-      .getUsers$({
+  getForms() {
+    return this.raceDynamicFormService
+      .getForms$({
         skip: this.skip,
         limit: this.limit,
-        isActive: true,
-        searchKey: this.searchForm.value,
-        includeRoles: true
+        searchKey: this.searchForm.value
       })
       .pipe(
-        mergeMap((resp: any) => {
-          this.formsCount$ = of({ count: resp.count });
-          return of(resp.rows);
-        }),
-        mergeMap((resp: UserDetails[]) => {
-          resp = resp.map((user) =>
-            this.usersService.prepareUser(user, user.roles)
-          );
-          return of(resp);
+        mergeMap(({ count, rows }) => {
+          this.formsCount$ = of({ count });
+          return of(rows);
         })
       );
+  }
 
-  rowLevelActionHandler = (event) => {
-    const { data, action } = event;
+  rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
-      case 'delete':
-        this.openDeleteFormModal(data);
+      case 'copy':
+        this.openCopyFormModal(data);
         break;
 
       case 'edit':
-        this.openEditAddFormModal(data);
+        this.openEditFormModal(data);
         break;
 
       case 'toggleAllRows':
         let allSelected = false;
-        let forms = [];
-        forms = this.allFormsList.filter(
-          (user) => user.title !== superAdminText
-        );
-
+        const forms: RaceDynamicForm[] = [...this.allFormsList];
         if (
           this.selectedForms.length === 0 ||
           this.selectedForms.length !== forms.length
@@ -419,23 +379,23 @@ export class FormListComponent implements OnInit {
     }
   };
 
-  handleTableEvent = (event) => {
+  handleTableEvent = (event): void => {
     this.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event) => {
+  configOptionsChangeHandler = (event): void => {
     console.log('event', event);
   };
 
-  prepareMenuActions() {
+  prepareMenuActions(): void {
     const menuActions = [
+      {
+        title: 'Copy',
+        action: 'copy'
+      },
       {
         title: 'Edit',
         action: 'edit'
-      },
-      {
-        title: 'Delete',
-        action: 'delete'
       }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
@@ -443,11 +403,11 @@ export class FormListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  applyFilters() {
+  applyFilters(): void {
     this.isPopoverOpen = false;
   }
 
-  clearFilters() {
+  clearFilters(): void {
     this.isPopoverOpen = false;
   }
 }
