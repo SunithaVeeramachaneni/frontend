@@ -1,8 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { formatDistance } from 'date-fns';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { rdfMockData } from './rdf.mock';
 import { ErrorInfo, RaceDynamicForm } from 'src/app/interfaces';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from '../../../../environments/environment';
@@ -24,6 +26,26 @@ export class RaceDynamicFormService {
     this.appService
       ._getResp(environment.formsApiUrl, 'forms', info, queryParams)
       .pipe(map((resp) => this.formatForms(resp)));
+
+  getFormsMock$ = (queryParams: {
+    skip: number;
+    limit: number;
+    searchKey: string;
+  }) => {
+    if (queryParams?.searchKey) {
+      const rows = rdfMockData.paginatedForms.filter(
+        (mock) =>
+          mock.name
+            .toLowerCase()
+            ?.indexOf(queryParams.searchKey.toLowerCase()) > -1
+      );
+      return of({ paginatedForms: rows, formsCount: rows.length }).pipe(
+        map((res: any) => this.formatForms(res))
+      );
+    } else {
+      return of(rdfMockData).pipe(map((res: any) => this.formatForms(res)));
+    }
+  };
 
   private formatForms(resp: {
     formsCount: number;

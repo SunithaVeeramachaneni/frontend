@@ -269,11 +269,10 @@ export class FormListComponent implements OnInit {
 
   openCopyFormModal(form: RaceDynamicForm): void {
     // TODO: Copy api call and integration
-    this.toast.show({
-      text: 'Form copied successfully!',
-      type: 'success'
+    this.addEditCopyForm$.next({
+      action: 'copy',
+      form
     });
-    this.selectedForms = [];
   }
 
   getDisplayedForms(): void {
@@ -305,7 +304,7 @@ export class FormListComponent implements OnInit {
       this.addEditCopyForm$,
       onScrollForms$
     ]).pipe(
-      map(([rows, _, scrollData]) => {
+      map(([rows, form, scrollData]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -313,7 +312,37 @@ export class FormListComponent implements OnInit {
           };
           initial.data = rows;
         } else {
-          initial.data = initial.data.concat(scrollData);
+          if (Object.keys(form?.form).length > 0 && form.action === 'copy') {
+            const count = initial.data.filter(
+              (d) => form.form.id === d.id
+            ).length;
+            if (count < 5) {
+              form.form.name =
+                form.form.name +
+                (count - 1 === 0 ? ' Copy' : ` Copy${count - 1}`);
+              initial.data = initial.data.concat(form.form);
+              this.selectedForms = [];
+              this.toast.show({
+                text: 'Form copied successfully!',
+                type: 'success'
+              });
+            } else {
+              this.toast.show({
+                text: 'Form copy limit reached!',
+                type: 'warning'
+              });
+            }
+          } else {
+            if (form.action === 'delete') {
+              initial.data = initial.data.filter((d) => d.id !== form.form.id);
+              this.toast.show({
+                text: 'Form archive successfully!',
+                type: 'success'
+              });
+            } else {
+              initial.data = initial.data.concat(scrollData);
+            }
+          }
         }
 
         this.skip = initial.data.length;
@@ -325,7 +354,7 @@ export class FormListComponent implements OnInit {
 
   getForms() {
     return this.raceDynamicFormService
-      .getForms$({
+      .getFormsMock$({
         skip: this.skip,
         limit: this.limit,
         searchKey: this.searchForm.value
@@ -338,6 +367,13 @@ export class FormListComponent implements OnInit {
       );
   }
 
+  openArchiveModal(form: RaceDynamicForm) {
+    this.addEditCopyForm$.next({
+      action: 'delete',
+      form
+    });
+  }
+
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'copy':
@@ -346,6 +382,10 @@ export class FormListComponent implements OnInit {
 
       case 'edit':
         this.openEditFormModal(data);
+        break;
+
+      case 'archive':
+        this.openArchiveModal(data);
         break;
 
       case 'toggleAllRows':
@@ -396,6 +436,10 @@ export class FormListComponent implements OnInit {
       {
         title: 'Edit',
         action: 'edit'
+      },
+      {
+        title: 'Archive',
+        action: 'archive'
       }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
