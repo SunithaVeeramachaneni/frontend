@@ -317,11 +317,12 @@ export class FormListComponent implements OnInit {
               (d) => form.form.id === d.id
             ).length;
             if (count < 5) {
-              form.form.name =
-                form.form.name +
-                (count - 1 === 0 ? ' Copy' : ` Copy${count - 1}`);
-              initial.data = initial.data.concat(form.form);
+              const obj = { ...form.form };
+              obj.name =
+                obj.name + (count - 1 === 0 ? ' Copy' : ` Copy${count - 1}`);
+              initial.data.splice(obj.id - 1, 0, obj);
               this.selectedForms = [];
+              form.action = 'edit';
               this.toast.show({
                 text: 'Form copied successfully!',
                 type: 'success'
