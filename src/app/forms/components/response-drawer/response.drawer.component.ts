@@ -31,8 +31,6 @@ export class ResponseDrawerComponent implements OnInit {
   private id: string;
   private formsId: string;
 
-  setmethods = false;
-
   @Input() set inputResponse(responses: Observable<any>) {
     this.inputResp = responses ? responses : (of([]) as Observable<any>);
   }
@@ -48,15 +46,7 @@ export class ResponseDrawerComponent implements OnInit {
     this.id = id;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    // private mcqService: McqService,
-    private cdrf: ChangeDetectorRef
-  ) {}
-
-  openDrawer(): void {
-    this.setmethods = true;
-  }
+  constructor(private fb: FormBuilder, private cdrf: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.responseForm = this.fb.group({
@@ -130,8 +120,5 @@ export class ResponseDrawerComponent implements OnInit {
     if (element == null) return;
     else element.focus();
   }
-
-  cancelForm = () => {
-    this.setmethods = false;
-  };
+  cancelForm = () => {};
 }

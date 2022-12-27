@@ -8,11 +8,5 @@ import { Component, OnInit } from '@angular/core';
 export class TemplateComponent implements OnInit {
   constructor() {}
 
-  setmethods = false;
-
   ngOnInit(): void {}
-
-  openDrawer(): void {
-    this.setmethods = true;
-  }
 }

@@ -1,1 +1,9 @@
-<app-response-drawer></app-response-drawer>
+<div>
+  <button mat-raised-button (click)="openDrawer()" class="btn-new">
+    Add New
+  </button>
+</div>
+
+<div *ngIf="responseDrawer">
+  <app-response-type></app-response-type>
+</div>
