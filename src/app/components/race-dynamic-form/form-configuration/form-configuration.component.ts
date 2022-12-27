@@ -8,6 +8,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class FormConfigurationComponent implements OnInit {
   createForm: FormGroup;
+  indexes = [
+    {
+      pageIndex: 1,
+      sectionIndex: [1],
+      questionIndex: [1]
+    }
+  ];
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {

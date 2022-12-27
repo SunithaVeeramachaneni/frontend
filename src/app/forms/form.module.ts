@@ -13,6 +13,10 @@ import { AddFilterComponent } from './components/add-filter/add-filter.component
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -30,7 +34,11 @@ import { MatMenuModule } from '@angular/material/menu';
     ReactiveFormsModule,
     CommonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatTooltipModule,
+    DragDropModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   exports: [
     FormWidgetComponent,

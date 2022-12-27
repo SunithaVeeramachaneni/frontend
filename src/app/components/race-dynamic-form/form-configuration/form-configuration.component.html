@@ -59,6 +59,10 @@
     </div>
   </div>
   <div>
-    <app-page></app-page>
+    <app-page [indexes]="indexes">
+      <app-section [indexes]="indexes">
+        <app-template></app-template>
+      </app-section>
+    </app-page>
   </div>
 </div>
