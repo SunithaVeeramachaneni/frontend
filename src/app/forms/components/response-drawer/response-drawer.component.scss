@@ -1,0 +1,40 @@
+#app-customizer {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  width: 450px;
+  z-index: 999;
+  height: 100vh;
+  background-color: #fff;
+  .mcq-heading {
+    font-size: 1.2rem;
+    border-bottom: 1px solid #d3d3d3;
+    padding: 15px;
+    font-weight: 600;
+  }
+  .add-response {
+    color: #1315d8;
+    margin-top: 10px;
+    position: relative;
+    left: 0px;
+    background-color: transparent;
+    border: none;
+  }
+  .margin {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .dis-flex {
+    display: flex;
+    justify-content: space-between;
+  }
+  .input-forms {
+    border: none;
+
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+}

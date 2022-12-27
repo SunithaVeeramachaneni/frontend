@@ -20,22 +20,20 @@ import { isEqual } from 'lodash-es';
 @Component({
   selector: 'app-response-drawer',
   templateUrl: './response.drawer.component.html',
-  styleUrls: ['./response.drawer.component.scss'],
+  styleUrls: ['./response-drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseDrawerComponent implements OnInit {
+  @Output() dialogClose: EventEmitter<any> = new EventEmitter();
+
   public respType: string;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
   private inputResp: Observable<any>;
   private id: string;
-  private formsId: string;
 
   @Input() set inputResponse(responses: Observable<any>) {
     this.inputResp = responses ? responses : (of([]) as Observable<any>);
-  }
-  @Input() set formId(id: string) {
-    this.formsId = id;
   }
 
   @Input() set responseType(responseType: string) {
@@ -120,5 +118,7 @@ export class ResponseDrawerComponent implements OnInit {
     if (element == null) return;
     else element.focus();
   }
-  cancelForm = () => {};
+  cancelForm = () => {
+    this.dialogClose.emit(false);
+  };
 }

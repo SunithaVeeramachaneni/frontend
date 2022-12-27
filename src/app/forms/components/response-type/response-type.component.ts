@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-response-type',
@@ -6,12 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./response-type.component.scss']
 })
 export class ResponseTypeComponent implements OnInit {
-  responseDrawer = false;
+  public responseDrawer = false;
   constructor() {}
-
-  openDrawer(): void {
-    this.responseDrawer = true;
-  }
-
   ngOnInit(): void {}
 }

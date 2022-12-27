@@ -1,3 +1,4 @@
+import { MatCardModule, MatCardTitle } from '@angular/material/card';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +14,7 @@ import { AddFilterComponent } from './components/add-filter/add-filter.component
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { ResponseDrawerComponent } from './components/response-drawer/response.drawer.component';
 
 @NgModule({
@@ -24,7 +26,8 @@ import { ResponseDrawerComponent } from './components/response-drawer/response.d
     ResponseTypeComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    ResponseDrawerComponent
   ],
   exports: [
     FormWidgetComponent,
@@ -41,7 +44,9 @@ import { ResponseDrawerComponent } from './components/response-drawer/response.d
     ReactiveFormsModule,
     CommonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatButtonModule,
+    MatCardModule
   ]
 })
 export class FormModule {}
