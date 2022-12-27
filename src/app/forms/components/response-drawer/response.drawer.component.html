@@ -1,0 +1,85 @@
+<div>
+  <button mat-raised-button (click)="openDrawer()" class="btn-new">
+    Add New
+  </button>
+</div>
+
+<div id="app-customizer" *ngIf="setmethods">
+  <mat-card class="p-0">
+    <mat-card-title class="m-0 light-gray">
+      <div class="mcq-heading">Multiple Choice Responses</div>
+    </mat-card-title>
+    <div [formGroup]="responseForm">
+      <div style="padding-left: 10px; font-weight: 'bold'" class="margin">
+        Response
+      </div>
+      <mat-card-content>
+        <div class="width-100" formArrayName="responses">
+          <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
+            <div *ngFor="let response of getResponseList(); let i = index">
+              <div
+                [formGroupName]="i"
+                class="dis-flex"
+                style="border-bottom: 1px solid #e0e0e0; height: 45px"
+              >
+                <input
+                  matInput
+                  formControlName="title"
+                  placeholder="Response Title"
+                  autocomplete="off"
+                  class="input-forms"
+                  (keyup.enter)="initResponse(); keytab($event)"
+                />
+                <div>
+                  <input
+                    matInput
+                    class="input-forms"
+                    type="color"
+                    style="
+                      width: 30px;
+                      height: 30px;
+                      position: relative;
+                      top: 10px;
+                    "
+                    formControlName="color"
+                    [hidden]="respType === 'globalResponse'"
+                  />
+                  <button
+                    mat-flat-button
+                    (click)="deleteResponse(i)"
+                    color="#545F70"
+                    style="float: right; padding: 0; min-width: 40px"
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/delete-icon.svg"
+                      style="width: 15px"
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button mat-flat-button (click)="initResponse()" class="add-response">
+          + Add Response
+        </button>
+      </mat-card-content>
+    </div>
+    <button
+      mat-raised-button
+      (click)="submitResponses()"
+      color="primary"
+      style="width: 46%; margin-right: 10px; margin-left: 10px"
+      [disabled]="isFormNotUpdated === true || responseForm.pristine"
+    >
+      Apply
+    </button>
+    <button
+      mat-stroked-button
+      style="width: 46%; margin-right: 10px"
+      (click)="cancelForm()"
+    >
+      Cancel
+    </button>
+  </mat-card>
+</div>

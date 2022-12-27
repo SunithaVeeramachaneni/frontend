@@ -1,3 +1,5 @@
+import { ResponseDrawerComponent } from './components/response-drawer/response.drawer.component';
+import { MatButtonModule } from '@angular/material/button';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,6 +15,7 @@ import { AddFilterComponent } from './components/add-filter/add-filter.component
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -23,14 +26,17 @@ import { MatMenuModule } from '@angular/material/menu';
     ResponseTypeComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    ResponseDrawerComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatCardModule,
+    MatButtonModule
   ],
   exports: [
     FormWidgetComponent,

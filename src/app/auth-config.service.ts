@@ -50,8 +50,8 @@ export class AuthConfigService {
       configId: tenantId,
       authority,
       authWellknownEndpointUrl: authority,
-      redirectUrl: redirectUri,
-      postLogoutRedirectUri: redirectUri,
+      redirectUrl: 'http://localhost:4200',
+      postLogoutRedirectUri: 'http://localhost:4200',
       clientId,
       scope: `openid profile offline_access email ${scope}`,
       responseType: 'code',
@@ -72,7 +72,7 @@ export class AuthConfigService {
   defaultAuthConfig() {
     const authority =
       'https://login.microsoftonline.com/f8e6f04b-2b9f-43ab-ba8a-b4c367088723/v2.0';
-    const redirectUri = 'https://cwpdev.innovapptive.com/';
+    const redirectUri = 'https://cwpdemo.innovapptive.com/';
     return {
       configId: 'default',
       authority,

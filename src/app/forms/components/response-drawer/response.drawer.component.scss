@@ -1,0 +1,50 @@
+#app-customizer {
+  position: fixed;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  width: 450px;
+  z-index: 999;
+  height: 100vh;
+  background-color: #fff;
+}
+
+#app-customizer .mcq-heading {
+  font-size: 110%;
+  border-bottom: 1px solid #d3d3d3;
+  padding: 15px;
+  padding-left: 0;
+}
+
+#app-customizer .add-response {
+  color: #1315d8;
+  margin-top: 10px;
+  position: relative;
+  left: 0px;
+  background-color: transparent;
+  border: none;
+}
+
+.dis-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-forms {
+  border: none;
+}
+
+.input-forms:focus {
+  border: none;
+  outline: none;
+}
+
+.margin {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-new {
+  margin-top: 1rem;
+  float: right;
+}

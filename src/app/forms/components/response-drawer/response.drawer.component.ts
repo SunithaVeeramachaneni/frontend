@@ -18,12 +18,12 @@ import {
 import { isEqual } from 'lodash-es';
 
 @Component({
-  selector: 'app-response-type',
-  templateUrl: './response-type.component.html',
-  styleUrls: ['./response-type.component.scss'],
+  selector: 'app-response-drawer',
+  templateUrl: './response.drawer.component.html',
+  styleUrls: ['./response.drawer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ResponseTypeComponent implements OnInit {
+export class ResponseDrawerComponent implements OnInit {
   public respType: string;
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
