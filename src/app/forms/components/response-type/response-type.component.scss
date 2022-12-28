@@ -1,0 +1,26 @@
+.response-type-modal {
+  height: 520px;
+  width: 600px;
+
+  .content {
+    height: 480px;
+    overflow-y: scroll;
+    padding: 0 15px;
+  }
+
+  .response-field-types {
+    padding: 10px 0 5px 10px;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+
+  .response-field-types:hover,
+  .active {
+    background-color: #ebedfe;
+  }
+
+  .response-type-icons {
+    width: 15px;
+    height: 15px;
+  }
+}

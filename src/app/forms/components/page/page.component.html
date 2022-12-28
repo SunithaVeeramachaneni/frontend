@@ -1,61 +1,84 @@
-<div class="dis-flex" [formGroup]="pageForm">
-  <div class="width-70">
-    <div class="page-header">
-      <mat-icon
-        (click)="togglePageOpenState()"
-        *ngIf="isPageOpenState === true"
-        class="page-arrow"
-      >
-        expand_more
-      </mat-icon>
+<div class="dis-flex pages" [formGroup]="pageForm">
+  <div class="width-70" formArrayName="pages">
+    <div *ngFor="let page of getPages(pageForm); let i = index">
+      <div [formGroupName]="i">
+        <div class="page-header">
+          <input type="hidden" formControlName="position" [ngModel]="i + 1" />
+          <mat-icon
+            (click)="togglePageOpenState(i)"
+            *ngIf="isPageOpenState[i + 1] === true"
+            class="page-arrow"
+          >
+            expand_more
+          </mat-icon>
+          <mat-icon
+            (click)="togglePageOpenState(i)"
+            *ngIf="isPageOpenState[i + 1] === false"
+            class="page-arrow"
+          >
+            chevron_right
+          </mat-icon>
 
-      <mat-icon
-        (click)="togglePageOpenState()"
-        *ngIf="isPageOpenState === false"
-        class="page-arrow"
-      >
-        chevron_right
-      </mat-icon>
+          <a matTooltip="{{ page.get('name').value }}">
+            <input
+              #pageName
+              type="text"
+              formControlName="name"
+              [size]="getSize(pageName.value)"
+              class="form_page_name_input"
+              placeholder="Untitled Page"
+              autocomplete="off"
+              (keyup.enter)="page.get('name').disable()"
+            />
+            <button
+              mat-icon-button
+              (click)="editPage(page)"
+              class="edit-icon"
+              *ngIf="page.get('name').disabled === true"
+            >
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                class="edit-icon-img"
+              />
+            </button>
+          </a>
 
-      <a>
-        <input
-          #pageName
-          type="text"
-          [size]="getSize(pageName.value)"
-          class="form_page_name_input"
-          placeholder="Untitled Page"
-          formControlName="name"
-          autofocus="true"
-          autocomplete="off"
-        />
-        <button mat-icon-button class="edit-icon">
+          <button
+            [matMenuTriggerFor]="sectionMenu"
+            class="more-icon"
+            aria-label="More Options"
+          >
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+          <mat-menu #sectionMenu="matMenu">
+            <button
+              mat-menu-item
+              (click)="deletePage(i, page)"
+              class="text-red"
+              [disabled]="getPages(pageForm).length === 1"
+            >
+              <span>Delete Page</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div *ngIf="isPageOpenState[i + 1] === true">
+          <ng-content></ng-content>
+          <!-- <app-section></app-section> -->
+        </div>
+
+        <button class="add-page-btn" (click)="addPage(i)">
           <img
-            src="assets/rdf-forms-icons/edit-icon.svg"
-            alt="edit-icon"
-            class="edit-icon-img"
+            src="assets/rdf-forms-icons/add-page.svg"
+            alt="add page"
+            class="add-page-btn-icon"
           />
+          Add Page
         </button>
-      </a>
-
-      <button
-        [matMenuTriggerFor]="pageMenu"
-        class="more-icon"
-        aria-label="More Options"
-      >
-        <mat-icon>more_horiz</mat-icon>
-      </button>
-      <mat-menu #pageMenu="matMenu">
-        <button mat-menu-item class="text-red">
-          <span>Delete Page</span>
-        </button>
-      </mat-menu>
-    </div>
-    <div>
-      <app-section></app-section>
+      </div>
     </div>
   </div>
   <div class="width-30">
     <app-preview></app-preview>
   </div>
 </div>
-<ng-content></ng-content>

@@ -1,0 +1,104 @@
+@import '../../../../scss/colors.scss';
+
+.questions {
+  background: $white;
+  background: #ffffff;
+  padding-bottom: 1px;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+
+  .floating-btns {
+    position: absolute;
+    left: 10px;
+    border: 1px solid $border-color;
+    border-radius: 7px;
+    margin-top: -60px;
+    display: none;
+  }
+
+  .questions-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+
+  .delete-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
+
+  .questions-delete-btn-text {
+    margin: 0;
+    font-size: 75%;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: $black;
+  }
+
+  .questions-div {
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 10px;
+    padding-bottom: 3px;
+  }
+
+  .six-dots {
+    position: relative;
+    top: 3px;
+    cursor: move;
+  }
+
+  .question-input {
+    padding: 5px;
+    border: none;
+    margin-left: 10px;
+  }
+
+  .question-input:focus {
+    outline: none;
+  }
+
+  .question-input:focus + .floating-btns {
+    display: block;
+  }
+
+  // .question-input:hover + .floating-btns {
+  //   display: block;
+  // }
+
+  .divider {
+    font-size: 150%;
+    color: $border-color;
+    position: relative;
+    top: 7px;
+    margin-right: 20px;
+  }
+
+  .response-type-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    position: relative;
+    top: 12px;
+    text-align: left;
+
+    .response-type-icons {
+      position: relative;
+      top: -2px;
+    }
+
+    .response-type-text {
+      white-space: nowrap;
+      display: inline-block;
+      text-overflow: ellipsis;
+      width: 70%;
+      overflow: hidden;
+    }
+  }
+}

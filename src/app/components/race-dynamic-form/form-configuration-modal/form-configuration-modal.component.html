@@ -1,1 +1,115 @@
-<p>form-configuration-modal works!</p>
+<div class="form-header-modal" [formGroup]="headerDataForm">
+  <mat-toolbar class="form-toolbar">
+    <button (click)="onCancel()" class="back-btn">
+      <img src="assets/rdf-forms-icons/back-arrow.svg" alt="back arrow" />
+      <span class="back-btn-text" translate="backBtn"></span>
+    </button>
+  </mat-toolbar>
+  <div class="dis-flex form-content">
+    <div class="width-5 bg-white"></div>
+    <div class="width-95">
+      <div class="form-detials">
+        <h2 class="heading" translate="setFormDetailsHeading"></h2>
+
+        <p class="sub-heading" translate="setFormTypeHeading"></p>
+        <input
+          type="radio"
+          name="formType"
+          value="Standalone"
+          checked
+          class="margin"
+        />
+        <span class="radio-btn-text" translate="standalone"> </span><br />
+
+        <input
+          type="radio"
+          name="formType"
+          value="Embedded"
+          class="margin"
+          disabled
+        />
+        <span class="radio-btn-text" translate="embedded"> </span><br />
+
+        <p class="radio-sub-text" translate="embeddedSubText"></p>
+
+        <hr class="horizontal-line" />
+
+        <p class="form-name-description" translate="addFormName">
+          <span class="text-red">*</span>
+        </p>
+        <input
+          type="text"
+          name="formName"
+          placeholder="eg. Inspection Check"
+          class="inputs"
+          formControlName="name"
+        />
+        <mat-error *ngIf="processValidationErrors('name')" class="m-5">
+          {{
+            errors.name.name
+              | translate
+                : { name: 'name' | translate, length: errors.name.length }
+          }}
+        </mat-error>
+        <p class="form-name-description" translate="addFormDescription"></p>
+        <input
+          type="text"
+          name="formDescription"
+          placeholder="60 minutes"
+          class="inputs"
+          formControlName="description"
+        />
+        <p class="form-name-description m-b-0" translate="tags"></p>
+        <mat-form-field class="chips-list width-100" appearance="outline">
+          <mat-chip-list #chipList>
+            <mat-chip
+              *ngFor="let tag of tags"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="remove(tag)"
+              class="tags-mat-chips"
+            >
+              {{ tag }}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input
+              placeholder="Start typing to see tags"
+              [matChipInputFor]="chipList"
+              [matAutocomplete]="auto"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              (matChipInputTokenEnd)="add($event)"
+              #tagsInput
+              [formControl]="tagsCtrl"
+            />
+          </mat-chip-list>
+
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="selected($event)"
+          >
+            <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+              {{ tag }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          type="submit"
+          color="primary"
+          class="next-btn"
+          (click)="next()"
+          [disabled]="headerDataForm.invalid || headerDataForm.pristine"
+          translate="nextBtn"
+        ></button>
+        <button
+          mat-stroked-button
+          color="primary"
+          class="skip-btn"
+          (click)="onCancel()"
+          translate="skipBtn"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>
