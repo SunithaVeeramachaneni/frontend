@@ -9,6 +9,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ResponseTypeComponent implements OnInit {
   allFieldTypes;
   isCustomizerOpen = false;
+  public responseDrawer = false;
+  public sliderdrawer = false;
   constructor(
     public dialogRef: MatDialogRef<ResponseTypeComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any

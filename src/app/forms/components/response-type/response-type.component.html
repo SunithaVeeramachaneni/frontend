@@ -1,3 +1,27 @@
+<div>
+  <button mat-raised-button (click)="responseDrawer = true" class="btn-new">
+    Add New
+  </button>
+
+  <button mat-raised-button (click)="sliderdrawer = true" class="btn-new">
+    open slider
+  </button>
+</div>
+
+<div *ngIf="responseDrawer">
+  <app-response-drawer
+    (dialogClose)="responseDrawer = false"
+  ></app-response-drawer>
+</div>
+
+<div *ngIf="sliderdrawer">
+  <app-response-drawer
+    [responseDrawer]="false"
+    [sliderDrawer]="true"
+    (dialogClose)="sliderdrawer = false"
+  ></app-response-drawer>
+</div>
+
 <div class="response-type-modal">
   <h1>
     <mat-icon (click)="onCancel()" style="cursor: pointer"> clear </mat-icon>

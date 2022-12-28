@@ -1,3 +1,7 @@
+import { MatSliderModule } from '@angular/material/slider';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { ResponseDrawerComponent } from './components/response-drawer/response.drawer.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -27,7 +31,8 @@ import { MatInputModule } from '@angular/material/input';
     ResponseTypeComponent,
     PreviewComponent,
     AddLogicComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    ResponseDrawerComponent
   ],
   imports: [
     FormsModule,
@@ -38,7 +43,11 @@ import { MatInputModule } from '@angular/material/input';
     MatTooltipModule,
     DragDropModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule,
+    MatSliderModule
   ],
   exports: [
     FormWidgetComponent,
