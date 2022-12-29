@@ -144,6 +144,141 @@
 
         <p class="m-0">
           <mat-form-field appearance="outline" class="width-100">
+            <mat-label translate>tenantDomainName</mat-label>
+            <input
+              matInput
+              [placeholder]="'tenantDomainName' | translate"
+              formControlName="tenantDomainName"
+            />
+          </mat-form-field>
+          <mat-error *ngIf="processValidationErrors('tenantDomainName')">
+            {{
+              errors.tenantDomainName.name
+                | translate
+                  : {
+                      name: 'tenantDomainName' | translate,
+                      length: errors.tenantDomainName.length
+                    }
+            }}
+          </mat-error>
+        </p>
+
+        <p class="m-0">
+          <mat-form-field appearance="outline" class="width-100">
+            <mat-label translate>cboTenantDomainUrl</mat-label>
+            <input
+              matInput
+              [placeholder]="'cboTenantDomainUrl' | translate"
+              formControlName="cboTenantDomainUrl"
+            />
+          </mat-form-field>
+          <mat-error *ngIf="processValidationErrors('cboTenantDomainUrl')">
+            {{
+              errors.cboTenantDomainUrl.name
+                | translate
+                  : {
+                      name: 'cboTenantDomainUrl' | translate,
+                      length: errors.cboTenantDomainUrl.length
+                    }
+            }}
+          </mat-error>
+        </p>
+
+        <p class="sub-headings" translate>cognitoDetails</p>
+
+        <div formGroupName="cognito">
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>region</mat-label>
+              <input
+                matInput
+                [placeholder]="'region' | translate"
+                formControlName="region"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('cognito.region')">
+              {{
+                errors['cognito.region'].name
+                  | translate
+                    : {
+                        name: 'region' | translate,
+                        length: errors['cognito.region'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>userPoolId</mat-label>
+              <input
+                matInput
+                [placeholder]="'userPoolId' | translate"
+                formControlName="userPoolId"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('cognito.userPoolId')">
+              {{
+                errors['cognito.userPoolId'].name
+                  | translate
+                    : {
+                        name: 'userPoolId' | translate,
+                        length: errors['cognito.userPoolId'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>domain</mat-label>
+              <input
+                matInput
+                [placeholder]="'domain' | translate"
+                formControlName="domain"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('cognito.domain')">
+              {{
+                errors['cognito.domain'].name
+                  | translate
+                    : {
+                        name: 'domain' | translate,
+                        length: errors['cognito.domain'].length
+                      }
+              }}
+            </mat-error>
+          </p>
+
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>redirectUrl</mat-label>
+              <input
+                matInput
+                [placeholder]="'redirectUrl' | translate"
+                formControlName="redirectUrl"
+              />
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('cognito.redirectUrl')">
+              {{
+                errors['cognito.redirectUrl'].name
+                  | translate
+                    : {
+                        name: 'redirectUrl' | translate,
+                        length: errors['cognito.redirectUrl'].length,
+                        message:
+                          'invalidUrl'
+                          | translate : { name: 'redirectUrl' | translate }
+                      }
+              }}
+            </mat-error>
+          </p>
+        </div>
+
+        <p class="sub-headings" translate>idpDetails</p>
+
+        <p class="m-0">
+          <mat-form-field appearance="outline" class="width-100">
             <mat-label translate>tenantIdp</mat-label>
             <mat-select formControlName="tenantIdp">
               <mat-option *ngFor="let idp of idps" [value]="idp">
@@ -157,28 +292,7 @@
               tenantForm.get('tenantIdp').touched
             "
           >
-            {{ 'required' | translate: { name: 'tenantIdp' | translate } }}
-          </mat-error>
-        </p>
-
-        <p class="m-0">
-          <mat-form-field appearance="outline" class="width-100">
-            <mat-label translate>clientId</mat-label>
-            <input
-              matInput
-              [placeholder]="'clientId' | translate"
-              formControlName="clientId"
-            />
-          </mat-form-field>
-          <mat-error *ngIf="processValidationErrors('clientId')">
-            {{
-              errors.clientId.name
-                | translate
-                  : {
-                      name: 'clientId' | translate,
-                      length: errors.clientId.length
-                    }
-            }}
+            {{ 'required' | translate : { name: 'tenantIdp' | translate } }}
           </mat-error>
         </p>
 
@@ -200,52 +314,7 @@
                       length: errors.authority.length,
                       message:
                         'invalidUrl'
-                        | translate: { name: 'authority' | translate }
-                    }
-            }}
-          </mat-error>
-        </p>
-
-        <p class="m-0">
-          <mat-form-field appearance="outline" class="width-100">
-            <mat-label translate>redirectUri</mat-label>
-            <input
-              matInput
-              [placeholder]="'redirectUri' | translate"
-              formControlName="redirectUri"
-            />
-          </mat-form-field>
-          <mat-error *ngIf="processValidationErrors('redirectUri')">
-            {{
-              errors.redirectUri.name
-                | translate
-                  : {
-                      name: 'redirectUri' | translate,
-                      length: errors.redirectUri.length,
-                      message:
-                        'invalidUrl'
-                        | translate: { name: 'redirectUri' | translate }
-                    }
-            }}
-          </mat-error>
-        </p>
-
-        <p class="m-0">
-          <mat-form-field appearance="outline" class="width-100">
-            <mat-label translate>tenantDomainName</mat-label>
-            <input
-              matInput
-              [placeholder]="'tenantDomainName' | translate"
-              formControlName="tenantDomainName"
-            />
-          </mat-form-field>
-          <mat-error *ngIf="processValidationErrors('tenantDomainName')">
-            {{
-              errors.tenantDomainName.name
-                | translate
-                  : {
-                      name: 'tenantDomainName' | translate,
-                      length: errors.tenantDomainName.length
+                        | translate : { name: 'authority' | translate }
                     }
             }}
           </mat-error>
@@ -363,7 +432,7 @@
                           length: errors['erps.sap.baseUrl'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'baseUrl' | translate }
+                            | translate : { name: 'baseUrl' | translate }
                         }
                 }}
               </mat-error>
@@ -387,7 +456,7 @@
                           length: errors['erps.sap.oauth2Url'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'oauth2Url' | translate }
+                            | translate : { name: 'oauth2Url' | translate }
                         }
                 }}
               </mat-error>
@@ -617,7 +686,7 @@
                             length: errors['erps.sap.saml.oauth2Url'].length,
                             message:
                               'invalidUrl'
-                              | translate: { name: 'oauth2Url' | translate }
+                              | translate : { name: 'oauth2Url' | translate }
                           }
                   }}
                 </mat-error>
@@ -641,6 +710,29 @@
                         : {
                             name: 'grantType' | translate,
                             length: errors['erps.sap.saml.grantType'].length
+                          }
+                  }}
+                </mat-error>
+              </p>
+
+              <p class="m-0">
+                <mat-form-field appearance="outline" class="width-100">
+                  <mat-label translate>clientId</mat-label>
+                  <input
+                    matInput
+                    [placeholder]="'clientId' | translate"
+                    formControlName="clientId"
+                  />
+                </mat-form-field>
+                <mat-error
+                  *ngIf="processValidationErrors('erps.sap.saml.clientId')"
+                >
+                  {{
+                    errors['erps.sap.saml.clientId'].name
+                      | translate
+                        : {
+                            name: 'clientId' | translate,
+                            length: errors['erps.sap.saml.clientId'].length
                           }
                   }}
                 </mat-error>
@@ -814,7 +906,7 @@
                             errors['protectedResources.sap.issuer'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -929,7 +1021,7 @@
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
-                    {{ 'required' | translate: { name: 'url' | translate } }}
+                    {{ 'required' | translate : { name: 'url' | translate } }}
                   </mat-error>
                   <mat-error
                     *ngIf="
@@ -1015,7 +1107,7 @@
                               .length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -1044,7 +1136,7 @@
                             errors['protectedResources.node.issuer'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -1160,7 +1252,7 @@
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
-                    {{ 'required' | translate: { name: 'url' | translate } }}
+                    {{ 'required' | translate : { name: 'url' | translate } }}
                   </mat-error>
                   <mat-error
                     *ngIf="
@@ -1349,7 +1441,7 @@
                 tenantForm.get('rdbms.dialect').touched
               "
             >
-              {{ 'required' | translate: { name: 'dialect' | translate } }}
+              {{ 'required' | translate : { name: 'dialect' | translate } }}
             </mat-error>
           </p>
         </div>
@@ -1373,7 +1465,7 @@
                 tenantForm.get('nosql.prefix').touched
               "
             >
-              {{ 'required' | translate: { name: 'prefix' | translate } }}
+              {{ 'required' | translate : { name: 'prefix' | translate } }}
             </mat-error>
           </p>
           <p class="m-0">
@@ -1518,7 +1610,7 @@
             >
               {{
                 'required'
-                  | translate: { name: 'collaborationType' | translate }
+                  | translate : { name: 'collaborationType' | translate }
               }}
             </mat-error>
           </p>
@@ -1847,7 +1939,7 @@
               tenantForm.get('products').touched
             "
           >
-            {{ 'required' | translate: { name: 'products' | translate } }}
+            {{ 'required' | translate : { name: 'products' | translate } }}
           </mat-error>
         </p>
 
@@ -1866,7 +1958,7 @@
               tenantForm.get('modules').touched
             "
           >
-            {{ 'required' | translate: { name: 'modules' | translate } }}
+            {{ 'required' | translate : { name: 'modules' | translate } }}
           </mat-error>
         </p>
 
@@ -1888,7 +1980,7 @@
               tenantForm.get('logDBType').touched
             "
           >
-            {{ 'required' | translate: { name: 'logDBType' | translate } }}
+            {{ 'required' | translate : { name: 'logDBType' | translate } }}
           </mat-error>
         </p>
 
@@ -1907,7 +1999,7 @@
               tenantForm.get('logLevel').touched
             "
           >
-            {{ 'required' | translate: { name: 'logLevel' | translate } }}
+            {{ 'required' | translate : { name: 'logLevel' | translate } }}
           </mat-error>
         </p>
         <div formGroupName="s3Details">

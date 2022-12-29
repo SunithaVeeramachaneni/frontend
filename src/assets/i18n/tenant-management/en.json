@@ -60,7 +60,7 @@
   "tenantIdp": "Tenant IDP",
   "clientId": "Client ID",
   "authority": "Authority URL",
-  "redirectUri": "Redirect URI",
+  "redirectUrl": "Redirect URL",
   "tenantDomainName": "Tenant Domain Name",
   "firstName": "First Name",
   "lastName": "Last Name",
@@ -111,5 +111,10 @@
   "accessKeyId": "Access Key Id",
   "secretAccessKey": "Secret Access Key",
   "bucket": "Bucket",
-  "region": "Region"
+  "region": "Region",
+  "cboTenantDomainUrl": "CBO Tenant Domain Url",
+  "cognitoDetails": "Cognito Details",
+  "userPoolId": "User Pool Id",
+  "domain": "Domain",
+  "idpDetails": "Identity Provider Details"
 }

@@ -5,10 +5,10 @@ export interface Tenant {
   tenantId: string;
   tenantName: string;
   tenantIdp: string;
-  clientId: string;
   authority: string;
-  redirectUri: string;
   tenantDomainName: string;
+  cboTenantDomainUrl: string;
+  cognito: Cognito;
   tenantAdmin: UserDetails;
   erps: { [key: string]: Erp };
   protectedResources: { [key: string]: ProtectedResource };
@@ -56,6 +56,7 @@ export interface Erp {
 export interface Saml {
   oauth2Url: string;
   grantType: string;
+  clientId: string;
   clientSecret: string;
   resource: string;
   tokenUse: string;
@@ -116,4 +117,11 @@ export interface S3Details {
   secretAccessKey: string;
   bucket: string;
   region: string;
+}
+
+export interface Cognito {
+  userPoolId: string;
+  region: string;
+  domain: string;
+  redirectUrl: string;
 }

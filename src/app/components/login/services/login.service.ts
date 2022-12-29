@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
-import { ConfigUserDataResult } from 'angular-auth-oidc-client';
-import { BehaviorSubject } from 'rxjs';
+import { Auth } from 'aws-amplify';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Permission, UserInfo } from 'src/app/interfaces';
-import { CommonService } from 'src/app/shared/services/common.service';
-import { TenantService } from '../../tenant-management/services/tenant.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
   private loggedInUserInfo = {} as UserInfo;
-  private loggedInEmail: string;
+  private loggedInUserSession: any;
+  private isUserAuthenticated: boolean;
 
   private isUserAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   private loggedInUserInfoSubject = new BehaviorSubject<UserInfo>(
@@ -21,12 +21,10 @@ export class LoginService {
   isUserAuthenticated$ = this.isUserAuthenticatedSubject.asObservable();
   loggedInUserInfo$ = this.loggedInUserInfoSubject.asObservable();
 
-  constructor(
-    private commonService: CommonService,
-    private tenantService: TenantService
-  ) {}
+  constructor() {}
 
   setUserAuthenticated(isUserAuthenticated: boolean) {
+    this.isUserAuthenticated = isUserAuthenticated;
     this.isUserAuthenticatedSubject.next(isUserAuthenticated);
   }
 
@@ -34,29 +32,6 @@ export class LoginService {
     this.loggedInUserInfoSubject.next(userInfo);
     this.loggedInUserInfo = userInfo;
   }
-
-  performPostLoginActions = (
-    configUserDataResult: ConfigUserDataResult,
-    configIds: string[]
-  ) => {
-    const {
-      configId,
-      userData: { email }
-    } = configUserDataResult;
-    this.loggedInEmail = email;
-    const tenantInfo = this.tenantService
-      .getTenantsInfo()
-      .find((tenant) => tenant.tenantId === configId);
-    const { protectedResources } = tenantInfo;
-    const { node, sap } = protectedResources || {};
-
-    this.tenantService.setTenantInfo(tenantInfo);
-    this.commonService.setProtectedResources(node);
-    this.commonService.setProtectedResources(sap);
-    this.setUserAuthenticated(true);
-
-    configIds.forEach((key) => sessionStorage.removeItem(key));
-  };
 
   checkUserHasPermission(permissions: Permission[], checkPermissions: string) {
     if (checkPermissions) {
@@ -77,7 +52,17 @@ export class LoginService {
     return this.loggedInUserInfo;
   }
 
-  getLoggedInEmail(): string {
-    return this.loggedInEmail;
+  getLoggedInUserSession(): any {
+    return this.loggedInUserSession;
   }
+
+  loggedInUserSession$ = (): Observable<any> =>
+    from(Auth.currentSession()).pipe(
+      tap((userSession) => {
+        this.loggedInUserSession = userSession;
+      })
+    );
+
+  isUserAuthenticatedObservable$ = (): Observable<boolean> =>
+    of(this.isUserAuthenticated);
 }

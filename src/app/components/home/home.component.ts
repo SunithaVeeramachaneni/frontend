@@ -35,8 +35,9 @@ export class HomeComponent implements OnInit {
             returnUrl !== '/access-denied'
           ) {
             sessionStorage.removeItem('returnUrl');
-            this.router.navigate([returnUrl]);
+            this.router.navigateByUrl(returnUrl);
           } else {
+            sessionStorage.removeItem('returnUrl');
             this.navigateToModule();
           }
         })

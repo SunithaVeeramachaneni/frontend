@@ -69,7 +69,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'User Management',
     'Work Instructions Authoring'
   ];
-  idps = ['azure'];
+  idps = ['Azure'];
   mongoDBPrefixes = ['mongodb', 'mongodb+srv'];
   dialects = ['mysql'];
   logDbTypes = ['rdbms', 'nosql'];
@@ -129,30 +129,11 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.validateUnique('tenantName')
       ],
       tenantIdp: ['', [Validators.required]],
-      clientId: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(100),
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ]
-      ],
       authority: [
         '',
         [
           Validators.required,
           Validators.maxLength(255),
-          Validators.pattern(regUrl),
-          WhiteSpaceValidator.whiteSpace,
-          WhiteSpaceValidator.trimWhiteSpace
-        ]
-      ],
-      redirectUri: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(100),
           Validators.pattern(regUrl),
           WhiteSpaceValidator.whiteSpace,
           WhiteSpaceValidator.trimWhiteSpace
@@ -168,6 +149,58 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ],
         this.validateUnique('tenantDomainName')
       ],
+      cboTenantDomainUrl: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          WhiteSpaceValidator.whiteSpace,
+          WhiteSpaceValidator.trimWhiteSpace
+        ],
+        this.validateUnique('cboTenantDomainUrl')
+      ],
+      cognito: this.fb.group({
+        region: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        userPoolId: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        domain: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        redirectUrl: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            Validators.pattern(regUrl),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ]
+      }),
       tenantAdmin: this.fb.group({
         firstName: [
           '',
@@ -565,7 +598,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
       this.tenantForm.get('tenantId').disable();
       this.tenantForm.get('tenantName').disable();
       this.tenantForm.get('tenantDomainName').disable();
+      this.tenantForm.get('cboTenantDomainUrl').disable();
       this.tenantForm.get('tenantAdmin').disable();
+      this.tenantForm.get('cognito').disable();
     }
   }
 
@@ -666,6 +701,15 @@ export class TenantComponent implements OnInit, AfterViewInit {
           ]
         ],
         grantType: [
+          '',
+          [
+            Validators.required,
+            Validators.maxLength(100),
+            WhiteSpaceValidator.whiteSpace,
+            WhiteSpaceValidator.trimWhiteSpace
+          ]
+        ],
+        clientId: [
           '',
           [
             Validators.required,
@@ -848,7 +892,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
             this.tenantForm.get('tenantId').disable();
             this.tenantForm.get('tenantName').disable();
             this.tenantForm.get('tenantDomainName').disable();
+            this.tenantForm.get('cboTenantDomainUrl').disable();
             this.tenantForm.get('tenantAdmin').disable();
+            this.tenantForm.get('cognito').disable();
             this.toast.show({
               text: `Tenant '${tenantName}' onboarded successfully`,
               type: 'success'
@@ -871,10 +917,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
         debounceTime(500),
         distinctUntilChanged(),
         map((tenants) => {
-          if (tenants.count) {
-            return { exists: true };
+          if (this.tenantData && control.value === this.tenantData[field]) {
+            return null;
           }
-          return null;
+          return tenants.count ? { exists: true } : null;
         })
       );
   }
@@ -907,7 +953,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
     this.tenantForm.get('tenantId').disable();
     this.tenantForm.get('tenantName').disable();
     this.tenantForm.get('tenantDomainName').disable();
+    this.tenantForm.get('cboTenantDomainUrl').disable();
     this.tenantForm.get('tenantAdmin').disable();
+    this.tenantForm.get('cognito').disable();
     this.tenantForm.get('rdbms.database').disable();
     this.tenantForm.get('nosql.database').disable();
   }

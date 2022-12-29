@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginErrorComponent } from './login-error/login-error.component';
-import { LoginComponent } from './login.component';
+import { SigninComponent } from './signin/signin.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: LoginComponent
+    component: SigninComponent
   },
   {
     path: 'inactive',

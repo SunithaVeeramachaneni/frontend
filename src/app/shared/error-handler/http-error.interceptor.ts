@@ -46,7 +46,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           this.commonService.setDisplayLoader(false);
           this.router.navigate(['login/inactive'], {
             queryParams: {
-              email: this.loginService.getLoggedInEmail(),
+              email: this.loginService.getLoggedInUserInfo().email,
               reason: 'inactive'
             }
           });
@@ -55,7 +55,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           this.commonService.setDisplayLoader(false);
           this.router.navigate(['login/unknown'], {
             queryParams: {
-              email: this.loginService.getLoggedInEmail(),
+              email: this.loginService.getLoggedInUserInfo().email,
               reason: 'unknown'
             }
           });

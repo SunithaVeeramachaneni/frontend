@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { HeaderService } from '../../services/header.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 import { UserInfo } from '../../../interfaces';
 import { filter, map, tap } from 'rxjs/operators';
@@ -25,6 +24,7 @@ import { Router } from '@angular/router';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { AcceptCallComponent } from '../collaboration/calls/accept-call/accept-call.component';
+import { Auth } from 'aws-amplify';
 
 @Component({
   selector: 'app-header',
@@ -59,7 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     public uploadDialog: MatDialog,
     private headerService: HeaderService,
-    public oidcSecurityService: OidcSecurityService,
     private chatService: ChatService,
     public dialog: MatDialog,
     private cdrf: ChangeDetectorRef,
@@ -197,9 +196,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   signout() {
     this.signOutHandler.emit();
     this.isOpen = false;
-    const { tenantId: configId } = this.tenantService.getTenantInfo();
-    this.oidcSecurityService.logoffAndRevokeTokens(configId).subscribe();
-    sessionStorage.clear();
+    Auth.signOut({ global: true });
   }
 
   profileImage(buffer: any) {

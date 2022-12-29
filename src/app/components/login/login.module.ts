@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { LoginRoutingModule } from './login-routing.module';
 
-import { LoginComponent } from './login.component';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import {
@@ -20,6 +19,10 @@ import { LoginErrorComponent } from './login-error/login-error.component';
 import { LoginErrorModalComponent } from './login-error-modal/login-error-modal.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { SigninComponent } from './signin/signin.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/login/', '.json');
 
@@ -32,6 +35,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SharedModule,
     MatAutocompleteModule,
     MatFormFieldModule,
+    MatCardModule,
+    MatButtonModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -44,9 +49,14 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
-    })
+    }),
+    NgxShimmerLoadingModule
   ],
-  declarations: [LoginComponent, LoginErrorComponent, LoginErrorModalComponent],
+  declarations: [
+    LoginErrorComponent,
+    LoginErrorModalComponent,
+    SigninComponent
+  ],
   exports: [],
   entryComponents: []
 })

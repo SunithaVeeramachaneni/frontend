@@ -20,7 +20,7 @@ export class AccessDeniedComponent implements OnInit {
     this.headerService.setHeaderTitle('Access Denied');
     this.route.queryParams.subscribe((parmas) => {
       const { url } = parmas;
-      this.url = `${window.location.origin}/#${url}`;
+      this.url = `${window.location.origin}${url}`;
     });
   }
 }

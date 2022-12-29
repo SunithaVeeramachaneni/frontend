@@ -1,0 +1,23 @@
+<app-background *ngIf="displaySignIn; else loading">
+  <div class="signin-container">
+    <mat-card>
+      <mat-card-content>
+        <div class="signin">
+          <button
+            mat-raised-button
+            type="button"
+            color="primary"
+            class="sso-button"
+            (click)="singleSignOn()"
+          >
+            {{ 'signinWith' | translate }} {{ providerName }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</app-background>
+<ng-template #loading>
+  <ngx-shimmer-loading [width]="'100%'" [height]="'100%'">
+  </ngx-shimmer-loading>
+</ng-template>

@@ -17,7 +17,7 @@ import {
 } from './app.constants';
 import { TranslateService } from '@ngx-translate/core';
 import { UsersService } from './components/user-management/services/users.service';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, EMPTY, interval, Observable, of } from 'rxjs';
 import { Permission, Tenant, UserInfo } from './interfaces';
 import { LoginService } from './components/login/services/login.service';
 import { environment } from 'src/environments/environment';
@@ -344,6 +344,22 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.displayLoader$ = this.commonService.displayLoader$.pipe(
       tap((display) => (this.displayLoader = display))
     );
+
+    interval(60000)
+      .pipe(
+        mergeMap(() => {
+          const userSession = this.loginService.getLoggedInUserSession();
+          if (userSession) {
+            const tokenClaims: any = userSession.getAccessToken().payload;
+            if (tokenClaims.exp - Math.round(Date.now() / 1000) < 20) {
+              return this.loginService.loggedInUserSession$();
+            }
+            return of(EMPTY);
+          }
+          return of(EMPTY);
+        })
+      )
+      .subscribe();
   }
 
   registerServerSentEvents(userInfo, ref) {

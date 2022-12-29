@@ -1,32 +1,21 @@
-import { NgModule } from '@angular/core';
-import {
-  AuthModule,
-  StsConfigHttpLoader,
-  StsConfigLoader
-} from 'angular-auth-oidc-client';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AuthConfigService } from './auth-config.service';
+import { HttpClientModule } from '@angular/common/http';
 
-const httpLoaderFactory = (authConfigService: AuthConfigService) => {
-  const authConfigs = [];
-  Array.from(Array(authConfigService.getAuthConfigsCount()).keys()).forEach(
-    (v, i) => {
-      const config$ = authConfigService.getAuthConfig$(i);
-      authConfigs.push(config$);
-    }
-  );
-  return new StsConfigHttpLoader(authConfigs);
-};
+const authCofigFactrory = (authConfigService: AuthConfigService) => () =>
+  authConfigService.getTenantConfig$();
 
 @NgModule({
-  imports: [
-    AuthModule.forRoot({
-      loader: {
-        provide: StsConfigLoader,
-        useFactory: httpLoaderFactory,
-        deps: [AuthConfigService]
-      }
-    })
-  ],
-  exports: [AuthModule]
+  declarations: [],
+  imports: [CommonModule, HttpClientModule],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: authCofigFactrory,
+      deps: [AuthConfigService],
+      multi: true
+    }
+  ]
 })
 export class AuthConfigModule {}

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { TenantService } from '../../tenant-management/services/tenant.service';
+import { Auth } from 'aws-amplify';
 import { LoginErrorModalComponent } from '../login-error-modal/login-error-modal.component';
 
 @Component({
@@ -10,20 +9,12 @@ import { LoginErrorModalComponent } from '../login-error-modal/login-error-modal
   styleUrls: ['./login-error.component.scss']
 })
 export class LoginErrorComponent implements OnInit {
-  constructor(
-    private dialog: MatDialog,
-    private tenantService: TenantService,
-    private oidcSecurityService: OidcSecurityService
-  ) {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     const dialogRef = this.dialog.open(LoginErrorModalComponent, {
       disableClose: true
     });
-    dialogRef.afterClosed().subscribe(() => {
-      const { tenantId } = this.tenantService.getTenantInfo();
-      this.oidcSecurityService.logoffAndRevokeTokens(tenantId).subscribe();
-      sessionStorage.clear();
-    });
+    dialogRef.afterClosed().subscribe(() => Auth.signOut({ global: true }));
   }
 }
