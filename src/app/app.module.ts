@@ -18,6 +18,7 @@ import { HttpRequestInterceptor } from './shared/interceptor/http-request.interc
 import { ErrorHandlerModule } from './shared/error-handler/error-handler.module';
 
 import { SharedModule } from './shared/shared.module';
+import { FormModule } from './forms/form.module';
 import {
   TranslateCompiler,
   TranslateLoader,
@@ -44,6 +45,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
+    FormModule,
     MatSidenavModule,
     MatListModule,
     ErrorHandlerModule,

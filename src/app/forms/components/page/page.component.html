@@ -1,0 +1,61 @@
+<div class="dis-flex" [formGroup]="pageForm">
+  <div class="width-70">
+    <div class="page-header">
+      <mat-icon
+        (click)="togglePageOpenState()"
+        *ngIf="isPageOpenState === true"
+        class="page-arrow"
+      >
+        expand_more
+      </mat-icon>
+
+      <mat-icon
+        (click)="togglePageOpenState()"
+        *ngIf="isPageOpenState === false"
+        class="page-arrow"
+      >
+        chevron_right
+      </mat-icon>
+
+      <a>
+        <input
+          #pageName
+          type="text"
+          [size]="getSize(pageName.value)"
+          class="form_page_name_input"
+          placeholder="Untitled Page"
+          formControlName="name"
+          autofocus="true"
+          autocomplete="off"
+        />
+        <button mat-icon-button class="edit-icon">
+          <img
+            src="assets/rdf-forms-icons/edit-icon.svg"
+            alt="edit-icon"
+            class="edit-icon-img"
+          />
+        </button>
+      </a>
+
+      <button
+        [matMenuTriggerFor]="pageMenu"
+        class="more-icon"
+        aria-label="More Options"
+      >
+        <mat-icon>more_horiz</mat-icon>
+      </button>
+      <mat-menu #pageMenu="matMenu">
+        <button mat-menu-item class="text-red">
+          <span>Delete Page</span>
+        </button>
+      </mat-menu>
+    </div>
+    <div>
+      <app-section></app-section>
+    </div>
+  </div>
+  <div class="width-30">
+    <app-preview></app-preview>
+  </div>
+</div>
+<ng-content></ng-content>

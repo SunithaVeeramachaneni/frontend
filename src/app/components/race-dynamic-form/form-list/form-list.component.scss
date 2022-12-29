@@ -1,0 +1,13 @@
+@import '../../../../scss/colors.scss';
+
+.list-view {
+  background-color: $white;
+  height: calc(100vh - 205px);
+
+  .heading {
+    font-weight: 700;
+    font-size: 130%;
+    color: $blue-head;
+    margin: 0;
+  }
+}
