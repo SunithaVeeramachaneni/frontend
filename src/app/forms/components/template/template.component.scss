@@ -3,7 +3,7 @@
 .questions {
   background: $white;
   background: #ffffff;
-  padding-bottom: 1px;
+  padding-bottom: 10px;
   border-bottom-left-radius: 7px;
   border-bottom-right-radius: 7px;
 
@@ -44,8 +44,6 @@
 
   .questions-div {
     border-bottom: 1px solid $border-color;
-    margin-bottom: 10px;
-    padding-bottom: 3px;
   }
 
   .six-dots {
@@ -55,9 +53,10 @@
   }
 
   .question-input {
-    padding: 5px;
+    padding: 7px;
     border: none;
     margin-left: 10px;
+    width: auto;
   }
 
   .question-input:focus {
@@ -91,14 +90,63 @@
     .response-type-icons {
       position: relative;
       top: -2px;
+      width: 14px;
+      height: 14px;
     }
 
     .response-type-text {
       white-space: nowrap;
       display: inline-block;
       text-overflow: ellipsis;
-      width: 70%;
+      width: 60%;
       overflow: hidden;
+    }
+
+    .response-type-btn-arrow {
+      float: right;
+      position: relative;
+      top: -4px;
+    }
+  }
+
+  .justify-content {
+    justify-content: flex-end;
+  }
+
+  .input-fields {
+    background: #f3f3f3;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 10px;
+    justify-content: center;
+
+    .m-l-50 {
+      margin-left: 50px;
+    }
+
+    .m-l-20 {
+      margin-left: 20px;
+    }
+
+    .default-field-input-box {
+      border: 1px solid $border-color;
+      border-radius: 3px;
+    }
+
+    .text-field-select {
+      border: none;
+      background: transparent;
+      -webkit-appearance: none;
+      width: 110px;
+      color: #3d5afe;
+    }
+
+    .required-input {
+      position: relative;
+      top: 2px;
     }
   }
 }

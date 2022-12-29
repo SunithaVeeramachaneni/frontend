@@ -1,15 +1,6 @@
 @import '../../../../scss/colors.scss';
 
 .section {
-  border-top-width: 0px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-style: solid;
-  border-color: $border-color;
-  background: $gray2;
-  border-radius: 0px 0px 10px 10px;
-
   .section-margin {
     margin: 0 12px 12px 30px;
   }
@@ -28,7 +19,7 @@
 
     input[type='text']:focus {
       outline: none;
-      caret-color: $blue-head;
+      caret-color: $white;
     }
 
     .section-arrow {
@@ -51,6 +42,10 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+    }
+
+    .form_section_name_input:disabled {
+      color: $white;
     }
 
     .section-name {

@@ -2,7 +2,6 @@
 
 .pages {
   overflow-y: auto;
-  height: 75vh;
 
   .page-header {
     background: #ffffff;
@@ -41,6 +40,8 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+      position: relative;
+      top: 3px;
     }
 
     .page-name {
@@ -85,5 +86,17 @@
       position: relative;
       top: 2px;
     }
+  }
+
+  .section-content {
+    border-top-width: 0px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-style: solid;
+    border-color: $border-color;
+    background: $gray2;
+    border-radius: 0px 0px 10px 10px;
+    padding-bottom: 10px;
   }
 }

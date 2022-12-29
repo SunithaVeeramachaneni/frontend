@@ -1,38 +1,28 @@
 <div class="questions" [formGroup]="questionForm">
-  <div formArrayName="questions">
-    <div
-      cdkDrop
-      cdkDropList
-      (cdkDropListDropped)="drop($event)"
-      [cdkDropListData]="getQuestions(questionForm)"
-      cdkDropListGroup
-    >
+  <div>
+    <div>
       <div
-        cdkDrag
-        *ngFor="let question of getQuestions(questionForm); let k = index"
+        class="dis-flex questions-div"
+        (click)="toggleFieldContentOpenState()"
       >
-        <div [formGroupName]="k">
-          <div class="dis-flex questions-div">
-            <input type="hidden" formControlName="position" [ngModel]="k + 1" />
-            <div class="width-70 m-t-10">
-              <img
-                cdkDragHandle
-                src="assets/rdf-forms-icons/six-dots.svg"
-                alt="six-dots"
-                class="m-l-10 six-dots"
-              />
+        <input type="hidden" formControlName="position" />
+        <div class="width-70 m-t-10">
+          <img
+            src="assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+            class="m-l-10 six-dots"
+          />
 
-              <input
-                autocomplete="off"
-                type="text"
-                matInput
-                formControlName="name"
-                placeholder="Type Question"
-                class="width-90 question-input"
-                *ngIf="question.controls.fieldType.value !== 'LLF'"
-                (keyup.enter)="addQuestion(k)"
-              />
-              <!-- <quill-material
+          <input
+            autocomplete="off"
+            type="text"
+            formControlName="name"
+            placeholder="Type Question"
+            class="width-90 question-input"
+            *ngIf="questionForm.get('fieldType').value !== 'LLF'"
+            (keyup.enter)="addQuestion(questionForm.get('index').value)"
+          />
+          <!-- <quill-material
                   formControlName="name"
                   placeholder="Type Question"
                   [ngClass]="{
@@ -43,207 +33,194 @@
                   (editorFocus)="handleEditorFocus($event, i, j)"
                 >
                 </quill-material> -->
-              <div class="floating-btns">
-                <button class="questions-btn" (click)="addQuestion(k)">
-                  <img
-                    src="assets/rdf-forms-icons/add-question.svg"
-                    alt="add questions"
-                  />
-                  <p class="questions-delete-btn-text">Question</p>
-                </button>
-                <br />
-
-                <button
-                  class="delete-btn"
-                  (click)="deleteQuestion(k)"
-                  [disabled]="getQuestions(questionForm).length === 1"
-                >
-                  <img
-                    src="assets/rdf-forms-icons/delete-question.svg"
-                    alt="delete questions"
-                  />
-                  <p class="questions-delete-btn-text">Delete</p>
-                </button>
-              </div>
-            </div>
-
-            <span class="divider">|</span>
-
-            <div class="width-30">
-              <button
-                (click)="openResponseTypeModal(question)"
-                class="response-type-btn"
-              >
-                <img
-                  [src]="getFieldTypeImage(question.controls.fieldType.value)"
-                  class="response-type-icons"
-                />&nbsp;
-                <span class="response-type-text">
-                  {{
-                    getFieldTypeDescription(question.controls.fieldType.value)
-                  }}
-                </span>
-                <mat-icon style="float: right; position: relative; top: -4px">
-                  keyboard_arrow_down
-                </mat-icon>
-              </button>
-            </div>
-          </div>
-
-          <div *ngIf="question.controls.fieldType.value === 'IMG'">
-            <input
-              #insertImages
-              [hidden]="true"
-              type="file"
-              accept="image/jpeg,image/jpg,image/png"
-              (change)="insertImageHandler($event, question)"
-            />
-          </div>
-
-          <div
-            class="dis-flex"
-            [ngClass]="{
-              height: question.controls.fieldType.value === 'LLF'
-            }"
-            style="justify-content: flex-end"
-          >
-            <div
-              style="
-                background: #f3f3f3;
-                border-radius: 5px;
-                padding: 15px 10px 10px 10px;
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                margin: 0 10px;
-                justify-content: center;
-              "
-              *ngIf="question.controls.fieldType.value !== 'LLF'"
+          <div class="floating-btns">
+            <button
+              class="questions-btn"
+              (click)="addQuestion(questionForm.get('index').value)"
             >
-              <div *ngIf="question.controls.fieldType.value !== 'IMG'">
-                <div class="add-logic-row">
-                  <span
-                    *ngIf="
-                      question.controls.fieldType.value !== 'TAF' &&
-                      question.controls.fieldType.value !== 'ARD'
-                    "
-                  >
-                    <input
-                      type="checkbox"
-                      id="required"
-                      class="required-input"
-                      name="required"
-                      formControlName="required"
-                    />&nbsp;
-                    <label for="required">Required</label>
-                  </span>
+              <img
+                src="assets/rdf-forms-icons/add-question.svg"
+                alt="add questions"
+              />
+              <p class="questions-delete-btn-text">Question</p>
+            </button>
+            <br />
 
-                  <span
-                    *ngIf="question.controls.fieldType.value === 'DF'"
-                    class="m-l-10"
-                  >
-                    <input
-                      type="checkbox"
-                      id="date"
-                      class="required-input"
-                      name="date"
-                      formControlName="value"
-                    />&nbsp;
-                    <label for="date">Default to current date</label>
-                  </span>
+            <button
+              class="delete-btn"
+              (click)="deleteQuestion()"
+              [disabled]="questionForm.length === 1"
+            >
+              <img
+                src="assets/rdf-forms-icons/delete-question.svg"
+                alt="delete questions"
+              />
+              <p class="questions-delete-btn-text">Delete</p>
+            </button>
+          </div>
+        </div>
 
-                  <span
-                    *ngIf="question.controls.fieldType.value === 'TIF'"
-                    class="m-l-10"
-                  >
-                    <input
-                      type="checkbox"
-                      id="time"
-                      class="required-input"
-                      name="time"
-                      formControlName="value"
-                    />&nbsp;
-                    <label for="time">Default to current time</label>
-                  </span>
+        <span class="divider">|</span>
 
-                  <span
-                    *ngIf="question.controls.fieldType.value === 'LF'"
-                    style="margin-left: 50px"
-                  >
-                    <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
-                    <input
-                      type="text"
-                      id="defaultValue"
-                      formControlName="value"
-                      style="border: 1px solid #cccccc; border-radius: 3px"
-                    />
-                  </span>
-                  <span
-                    *ngIf="question.controls.fieldType.value === 'TF'"
-                    style="margin-left: 50px"
-                  >
-                    <label>Format:</label>&nbsp;
+        <div class="width-30">
+          <button (click)="openResponseType = true" class="response-type-btn">
+            <img
+              [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
+              class="response-type-icons"
+            />&nbsp;
+            <span class="response-type-text">
+              {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
+            </span>
+            <mat-icon class="response-type-btn-arrow">
+              keyboard_arrow_down
+            </mat-icon>
+          </button>
 
-                    <select
-                      formControlName="value"
-                      style="
-                        border: none;
-                        background: transparent;
-                        -webkit-appearance: none;
-                        width: 110px;
-                        color: #3d5afe;
-                      "
-                    >
-                      <option value="TF">Short Answer</option>
-                      <option value="LTV">Long Answer</option>
-                    </select>
-                  </span>
-                  <span
-                    *ngIf="
-                      question.controls.fieldType.value === 'DD' &&
-                      !question.controls.value.value?.globalDataset
-                    "
-                    style="margin-left: 20px"
-                  >
-                    <input
-                      type="checkbox"
-                      id="multi"
-                      class="required-input"
-                      name="multi"
-                      formControlName="multi"
-                      (click)="
-                        question
-                          .get('multi')
-                          .setValue(!question.controls.multi.value)
-                      "
-                    />&nbsp;
-                    <label for="multi"> Multi Selection </label>
-                  </span>
-                </div>
-              </div>
-              <div *ngIf="question.controls.fieldType.value === 'IMG'">
-                <div
-                  class="width-50 bg-white dis-flex"
-                  *ngIf="question.controls.value.value"
-                >
-                  <img
-                    class="insert-image"
-                    [src]="getImageSrc(question.controls.value.value.base64)"
-                    alt="image"
-                  />
-                  <div>
-                    <span style="font-size: 90%">
-                      {{ question.controls.value.value.name }}
-                    </span>
-                    <br />
-                    <span style="font-size: 80%">
-                      {{
-                        (question.controls.value.value.size / 1024).toFixed(2)
-                      }}
-                      KB
-                    </span>
-                  </div>
-                </div>
+          <div *ngIf="openResponseType === true">
+            <app-response-type
+              (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+              (openResponseTypeModalEvent)="
+                openResponseTypeModalEventHandler($event)
+              "
+              [fieldTypes]="fieldTypes"
+              [question]="questionInfo"
+            ></app-response-type>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+
+      <div
+        class="dis-flex justify-content"
+        [ngClass]="{
+          height: questionForm.get('fieldType').value === 'LLF'
+        }"
+        *ngIf="fieldContentOpenState === true"
+      >
+        <div
+          class="input-fields"
+          *ngIf="questionForm.get('fieldType').value !== 'LLF'"
+        >
+          <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
+            <div class="add-logic-row">
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value !== 'TAF' &&
+                  questionForm.get('fieldType').value !== 'ARD'
+                "
+              >
+                <input
+                  type="checkbox"
+                  id="required"
+                  class="required-input"
+                  name="required"
+                  formControlName="required"
+                />&nbsp;
+                <label for="required">Required</label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="date"
+                  class="required-input"
+                  name="date"
+                  formControlName="value"
+                />&nbsp;
+                <label for="date">Default to current date</label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <input
+                  type="checkbox"
+                  id="time"
+                  class="required-input"
+                  name="time"
+                  formControlName="value"
+                />&nbsp;
+                <label for="time">Default to current time</label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                class="m-l-50"
+              >
+                <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
+                <input
+                  type="text"
+                  id="defaultValue"
+                  formControlName="value"
+                  xlass="default-field-input-box"
+                />
+              </span>
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TF'"
+                class="m-l-50"
+              >
+                <label>Format:</label>&nbsp;
+
+                <select formControlName="value" class="text-field-select">
+                  <option value="TF">Short Answer</option>
+                  <option value="LTV">Long Answer</option>
+                </select>
+              </span>
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value === 'DD' &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="m-l-20"
+              >
+                <input
+                  type="checkbox"
+                  id="multi"
+                  class="required-input"
+                  name="multi"
+                  formControlName="multi"
+                  (click)="
+                    questionForm
+                      .get('multi')
+                      .setValue(!questionForm.get('multi').value)
+                  "
+                />&nbsp;
+                <label for="multi"> Multi Selection </label>
+              </span>
+            </div>
+          </div>
+          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+            <div
+              class="width-50 bg-white dis-flex"
+              *ngIf="questionForm.get('value').value"
+            >
+              <img
+                class="insert-image"
+                [src]="getImageSrc(questionForm.get('value').value.base64)"
+                alt="image"
+              />
+              <div>
+                <span>
+                  {{ questionForm.get('value').value.name }}
+                </span>
+                <br />
+                <span>
+                  {{ (questionForm.get('value').value.size / 1024).toFixed(2) }}
+                  KB
+                </span>
               </div>
             </div>
           </div>

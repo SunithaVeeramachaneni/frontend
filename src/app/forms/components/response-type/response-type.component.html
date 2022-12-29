@@ -24,7 +24,9 @@
 
 <div class="response-type-modal">
   <h1>
-    <mat-icon (click)="onCancel()" style="cursor: pointer"> clear </mat-icon>
+    <mat-icon (click)="toggleResponseTypeModal(false)" style="cursor: pointer">
+      clear
+    </mat-icon>
     <span style="position: relative; top: -7px; left: 5px"> Responses </span>
   </h1>
 
@@ -32,11 +34,11 @@
     <div class="width-50">
       <h2 style="color: #e8743b">QUESTIONS</h2>
       <li
-        *ngFor="let fieldType of allFieldTypes"
+        *ngFor="let fieldType of fieldTypes"
         (click)="selectFieldType(fieldType)"
         class="response-field-types"
         [ngClass]="{
-          active: fieldType.type === this.data.question.controls.fieldType.value
+          active: fieldType.type === question.fieldType
         }"
       >
         <img
@@ -238,7 +240,7 @@
             Add Manually
           </button>
         </ng-container>
-      </div> -->
+   -->
     </div>
   </div>
 </div>

@@ -1,6 +1,11 @@
 .response-type-modal {
-  height: 520px;
-  width: 600px;
+  height: 500px;
+  width: 550px;
+  border: 1px solid;
+  position: absolute;
+  left: 40%;
+  top: 20px;
+  background: white;
 
   .content {
     height: 480px;
