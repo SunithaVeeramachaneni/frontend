@@ -57,12 +57,14 @@
     .edit-icon {
       border: none;
       background-color: $blue-head;
+      width: 10px;
+      height: 10px;
+      position: relative;
+      top: -3px;
+      left: -10px;
 
       .edit-icon-img {
-        position: relative;
-        top: 2px;
         width: 14px;
-        left: -10px;
       }
     }
 

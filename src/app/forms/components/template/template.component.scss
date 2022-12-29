@@ -44,6 +44,11 @@
 
   .questions-div {
     border-bottom: 1px solid $border-color;
+
+    .question-input-box {
+      margin-top: 7px;
+      margin-bottom: 5px;
+    }
   }
 
   .six-dots {
