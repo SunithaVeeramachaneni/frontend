@@ -1,0 +1,32 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cboinnovapptivedev-staging-60407-authRole",
+      "UnauthRoleArn": "arn:aws:iam::036250956481:role/amplify-cboinnovapptivedev-staging-60407-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::036250956481:role/amplify-cboinnovapptivedev-staging-60407-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-cboinnovapptivedev-staging-60407-deployment",
+      "UnauthRoleName": "amplify-cboinnovapptivedev-staging-60407-unauthRole",
+      "StackName": "amplify-cboinnovapptivedev-staging-60407",
+      "StackId": "arn:aws:cloudformation:us-east-1:036250956481:stack/amplify-cboinnovapptivedev-staging-60407/4629d850-85ac-11ed-bb32-1285303b9b69",
+      "AmplifyAppId": "d3t8jg94qeiqho"
+    },
+    "categories": {
+      "auth": {
+        "cboinnovapptivedev": {
+          "userPoolId": "us-east-1_QX5QNKNZY",
+          "userPoolName": "CBOInnovapptiveDev",
+          "webClientId": "3cb5qno4tfmqmibqbdeid0cu9l",
+          "nativeClientId": "3cb5qno4tfmqmibqbdeid0cu9l",
+          "identityPoolId": "us-east-1:425d796c-8f7b-4515-b088-f931f4f5d0b2",
+          "identityPoolName": "CBOInnovapptiveDev",
+          "allowUnauthenticatedIdentities": true,
+          "authRoleArn": "arn:aws:iam::036250956481:role/Cognito_CBOInnovapptiveDevAuth_Role",
+          "authRoleName": "Cognito_CBOInnovapptiveDevAuth_Role",
+          "unauthRoleArn": "arn:aws:iam::036250956481:role/Cognito_CBOInnovapptiveDevUnauth_Role",
+          "unauthRoleName": "Cognito_CBOInnovapptiveDevUnauth_Role"
+        }
+      }
+    }
+  }
+}

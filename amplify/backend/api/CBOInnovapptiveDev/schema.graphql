@@ -1,0 +1,64 @@
+type FormDetail @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  version: String
+  FORMS: String
+  formlistID: ID! @index(name: "byFormList")
+  FormList: FormList @belongsTo(fields: ["formlistID"])
+}
+
+type AuthoredFormDetail @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  version: String
+  FORMS: String
+  FormInspections: [FormInspection] @hasMany(indexName: "byAuthoredFormDetail", fields: ["id"])
+  FormList: FormList @belongsTo(fields: ["formlistID"])
+  formlistID: ID! @index(name: "byFormList")
+}
+
+type FormInspection @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  formData: String
+  status: String
+  SubmittedDate: String
+  SubmittedTime: String
+  authoredForm: AuthoredFormDetail @belongsTo(fields: ["authoredformdetailID"])
+  authoredformdetailID: ID! @index(name: "byAuthoredFormDetail")
+}
+
+type FormList @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Title: String
+  Description: String
+  Image: String
+  Owner: String
+  PublishedDate: String
+  Status: String
+  updatedBy: String
+  authoredFormDetails: [AuthoredFormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
+  FormDetails: [FormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
+}
+
+type FormsMetaData @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  description: String
+  formLogo: String
+  isPublic: Boolean
+  isArchived: Boolean
+  tags: [AWSJSON]
+  formStatus: FormStatusEnum
+  createdBy: String
+  updatedBy: String
+}
+
+type FormsJSON @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  pages: [AWSJSON!]
+  formId: String
+}
+
+enum FormStatusEnum {
+  DRAFT
+  PUBLISHED
+}
+ 

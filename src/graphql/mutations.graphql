@@ -1,0 +1,481 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateFormDetail(
+  $input: CreateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  createFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormDetail(
+  $input: UpdateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  updateFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormDetail(
+  $input: DeleteFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  deleteFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateAuthoredFormDetail(
+  $input: CreateAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  createAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateAuthoredFormDetail(
+  $input: UpdateAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  updateAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteAuthoredFormDetail(
+  $input: DeleteAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  deleteAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormInspection(
+  $input: CreateFormInspectionInput!
+  $condition: ModelFormInspectionConditionInput
+) {
+  createFormInspection(input: $input, condition: $condition) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormInspection(
+  $input: UpdateFormInspectionInput!
+  $condition: ModelFormInspectionConditionInput
+) {
+  updateFormInspection(input: $input, condition: $condition) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormInspection(
+  $input: DeleteFormInspectionInput!
+  $condition: ModelFormInspectionConditionInput
+) {
+  deleteFormInspection(input: $input, condition: $condition) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormList(
+  $input: CreateFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  createFormList(input: $input, condition: $condition) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormList(
+  $input: UpdateFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  updateFormList(input: $input, condition: $condition) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormList(
+  $input: DeleteFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  deleteFormList(input: $input, condition: $condition) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormsMetaData(
+  $input: CreateFormsMetaDataInput!
+  $condition: ModelFormsMetaDataConditionInput
+) {
+  createFormsMetaData(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormsMetaData(
+  $input: UpdateFormsMetaDataInput!
+  $condition: ModelFormsMetaDataConditionInput
+) {
+  updateFormsMetaData(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormsMetaData(
+  $input: DeleteFormsMetaDataInput!
+  $condition: ModelFormsMetaDataConditionInput
+) {
+  deleteFormsMetaData(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormsJSON(
+  $input: CreateFormsJSONInput!
+  $condition: ModelFormsJSONConditionInput
+) {
+  createFormsJSON(input: $input, condition: $condition) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormsJSON(
+  $input: UpdateFormsJSONInput!
+  $condition: ModelFormsJSONConditionInput
+) {
+  updateFormsJSON(input: $input, condition: $condition) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormsJSON(
+  $input: DeleteFormsJSONInput!
+  $condition: ModelFormsJSONConditionInput
+) {
+  deleteFormsJSON(input: $input, condition: $condition) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}

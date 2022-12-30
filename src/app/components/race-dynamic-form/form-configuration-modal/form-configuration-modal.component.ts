@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -16,6 +17,8 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { LoginService } from '../../login/services/login.service';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -41,7 +44,9 @@ export class FormConfigurationModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public dialogRef: MatDialogRef<FormConfigurationModalComponent>
+    public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly loginService: LoginService
   ) {
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
@@ -113,10 +118,26 @@ export class FormConfigurationModalComponent implements OnInit {
     );
   }
 
+  createFormList() {
+    const { title } = this.loginService.getLoggedInUserInfo();
+    this.raceDynamicFormService
+      .createFormList$({
+        Title: this.headerDataForm.value.name,
+        Description: this.headerDataForm.value.description,
+        Owner: title,
+        updatedBy: title,
+        Image: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+      })
+      .subscribe(() => {
+        this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+        this.router.navigate(['./rdf-forms']);
+        this.dialogRef.close();
+      });
+  }
+
   next() {
     if (this.headerDataForm.valid) {
-      this.router.navigate(['./rdf-forms/create']);
-      this.dialogRef.close();
+      this.createFormList();
     }
   }
 

@@ -1,0 +1,124 @@
+{
+  "api": {
+    "CBOInnovapptiveDev": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 30,
+              "description": "api key description"
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "cboinnovapptivedev": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_cboinnovapptivedev_allowUnauthenticatedIdentities": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_authRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_authRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_identityPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    },
+    "AMPLIFY_auth_cboinnovapptivedev_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "cboinnovapptivedev"
+        }
+      ]
+    }
+  }
+}

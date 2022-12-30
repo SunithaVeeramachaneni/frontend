@@ -1,0 +1,451 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onCreateFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onUpdateFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onDeleteFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    formlistID
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateAuthoredFormDetail(
+  $filter: ModelSubscriptionAuthoredFormDetailFilterInput
+) {
+  onCreateAuthoredFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateAuthoredFormDetail(
+  $filter: ModelSubscriptionAuthoredFormDetailFilterInput
+) {
+  onUpdateAuthoredFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteAuthoredFormDetail(
+  $filter: ModelSubscriptionAuthoredFormDetailFilterInput
+) {
+  onDeleteAuthoredFormDetail(filter: $filter) {
+    id
+    version
+    FORMS
+    FormInspections {
+      nextToken
+      startedAt
+    }
+    FormList {
+      id
+      Title
+      Description
+      Image
+      Owner
+      PublishedDate
+      Status
+      updatedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormInspection(
+  $filter: ModelSubscriptionFormInspectionFilterInput
+) {
+  onCreateFormInspection(filter: $filter) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormInspection(
+  $filter: ModelSubscriptionFormInspectionFilterInput
+) {
+  onUpdateFormInspection(filter: $filter) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormInspection(
+  $filter: ModelSubscriptionFormInspectionFilterInput
+) {
+  onDeleteFormInspection(filter: $filter) {
+    id
+    formData
+    status
+    SubmittedDate
+    SubmittedTime
+    authoredForm {
+      id
+      version
+      FORMS
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    authoredformdetailID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
+  onCreateFormList(filter: $filter) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
+  onUpdateFormList(filter: $filter) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
+  onDeleteFormList(filter: $filter) {
+    id
+    Title
+    Description
+    Image
+    Owner
+    PublishedDate
+    Status
+    updatedBy
+    authoredFormDetails {
+      nextToken
+      startedAt
+    }
+    FormDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormsMetaData(
+  $filter: ModelSubscriptionFormsMetaDataFilterInput
+) {
+  onCreateFormsMetaData(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormsMetaData(
+  $filter: ModelSubscriptionFormsMetaDataFilterInput
+) {
+  onUpdateFormsMetaData(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormsMetaData(
+  $filter: ModelSubscriptionFormsMetaDataFilterInput
+) {
+  onDeleteFormsMetaData(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    isArchived
+    tags
+    formStatus
+    createdBy
+    updatedBy
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
+  onCreateFormsJSON(filter: $filter) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
+  onUpdateFormsJSON(filter: $filter) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
+  onDeleteFormsJSON(filter: $filter) {
+    id
+    pages
+    formId
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}

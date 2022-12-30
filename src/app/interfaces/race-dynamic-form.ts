@@ -1,3 +1,5 @@
+import { GetFormListQuery } from '../API.service';
+
 export interface Tags {
   text: string;
 }
@@ -19,5 +21,5 @@ export interface RaceDynamicForm {
 
 export interface FormTableUpdate {
   action: 'add' | 'delete' | 'edit' | 'copy' | null;
-  form: RaceDynamicForm;
+  form: GetFormListQuery;
 }
