@@ -91,15 +91,14 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - WI_DB_QUEUE=WI_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
     ports:
       - '8001:8001'
     depends_on:
       - mongo
       - mysql
       - redis-cluster
-      - authentication-factory
       - rabbitmq
     networks:
       - app-network
@@ -167,6 +166,8 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     ports:
       - '8003:8003'
     depends_on:
@@ -204,8 +205,9 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - DASHBOARD_DB_QUEUE=Dashboard_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8004:8004'
     depends_on:
@@ -254,6 +256,8 @@ services:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     ports:
       - '8006:8006'
     depends_on:
@@ -291,9 +295,10 @@ services:
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - JAAS_PRIVATE_KEY_PATH=/usr/src/user-service/.docker/jaas-private-key/key.json
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - WI_DB_QUEUE=WI_DB_Queue
-      - DASHBOARD_DB_QUEUE=Dashboard_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8007:8007'
     depends_on:
@@ -334,6 +339,8 @@ services:
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
       - AWS_S3_SECRET_ACCESS_KEY=${AWS_S3_SECRET_ACCESS_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     ports:
       - '8008:8008'
     depends_on:
@@ -357,6 +364,8 @@ services:
     environment:
       - NODE_ENV=${APP_ENV}
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     networks:
       - app-network
 
