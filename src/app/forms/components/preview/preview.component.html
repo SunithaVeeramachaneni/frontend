@@ -1,1 +1,98 @@
-<p>preview works!</p>
+<mat-tree
+  [dataSource]="dataSource"
+  [treeControl]="treeControl"
+  class="example-tree"
+>
+  <!-- This is the tree node template for expandable nodes -->
+  <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+    <div class="mat-tree-node">
+      <div class="section-question">
+        <div class="flex-custom">
+          <button
+            mat-icon-button
+            matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.name"
+          >
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{
+                treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'
+              }}
+            </mat-icon>
+          </button>
+          <p>Section 1</p>
+        </div>
+        <div>
+          <p>0/4</p>
+        </div>
+      </div>
+    </div>
+    <!-- There is inline padding applied to this div using styles.
+    This padding value depends on the mat-icon-button width.  -->
+    <div
+      [class.example-tree-invisible]="!treeControl.isExpanded(node)"
+      role="group"
+    >
+      <div class="question-list">
+        <h4>Choose only one option out of the following options?</h4>
+
+        <ul class="answer-list">
+          <li>
+            <label>
+              <input type="radio" />
+              Safe
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" />
+              Moderate
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" />
+              At risk
+            </label>
+          </li>
+          <li>
+            <label>
+              <input type="radio" />
+              Other
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <div class="question-list">
+        <h4>Enter the color of the flame</h4>
+        <input type="text" class="input-question" placeholder="Enter" />
+      </div>
+      <div class="question-list">
+        <h4>Time of event</h4>
+        <input type="time" class="input-question" placeholder="Time format" />
+      </div>
+
+      <div class="question-list">
+        <h4>Attach the required files</h4>
+        <label class="relative-file">
+          <input type="file" mat-raised-button color="primary" />
+          <button mat-raised-button color="primary" class="">
+            <img src="assets/rdf-forms-icons/attach-icon.svg" />
+            Add Attachments
+          </button>
+        </label>
+      </div>
+
+      <div class="question-list">
+        <h4>Date Range Label</h4>
+        <div class="flex-custom">
+          <input type="date" class="input-question" />
+          <div>
+            <span class="question-span">-</span>
+          </div>
+          <input type="date" class="input-question" />
+        </div>
+      </div>
+    </div>
+  </mat-nested-tree-node>
+</mat-tree>

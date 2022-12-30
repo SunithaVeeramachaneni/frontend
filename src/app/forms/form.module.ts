@@ -1,3 +1,4 @@
+import { MatTreeModule } from '@angular/material/tree';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -47,7 +48,8 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatSliderModule
+    MatSliderModule,
+    MatTreeModule
   ],
   exports: [
     FormWidgetComponent,

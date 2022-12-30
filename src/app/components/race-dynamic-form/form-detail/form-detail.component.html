@@ -1,1 +1,76 @@
-<p>form-detail works!</p>
+<div id="opendetail">
+  <mat-card>
+    <div>
+      <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
+      <h1 class="detail-heading">Bulletin Board Posting</h1>
+    </div>
+
+    <div class="name-heading">
+      <div>
+        <p class="color-gray">Created by</p>
+      </div>
+
+      <div class="flex-custom">
+        <h4 class="create-name">John Paul</h4>
+        <span class="dots"></span>
+        <p class="date-name color-gray">22 Nov 2022 - 10:20 AM</p>
+      </div>
+    </div>
+
+    <div>
+      <h4>Preview</h4>
+
+      <div>
+        <div class="name-heading">
+          <div class="flex-custom">
+            <h4 class="create-name">3 PAGES</h4>
+            <span class="dots"></span>
+            <p class="date-name color-gray">67 QUESTIONS</p>
+          </div>
+          <div class="w-full">
+            <button mat-raised-button class="w-full btn-push btn-primary-blue">
+              Import
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="question-bg">
+    <div>
+      <h3 class="question-heading headind-accordian">
+        {{ setnamevaribale }}
+        <label [matMenuTriggerFor]="menu">
+          <img src="assets/rdf-forms-icons/arrow-down.svg" />
+        </label>
+      </h3>
+
+      <mat-menu #menu="matMenu">
+        <button
+          class="btn-range"
+          (click)="openMenu('Mid Range Switchgear (Page 1/3)')"
+          mat-menu-item
+        >
+          1. Mid Range Switchgear
+        </button>
+        <button
+          class="btn-range"
+          (click)="openMenu('High Range Switchgear (Page 2/3)')"
+          mat-menu-item
+        >
+          2. High Range Switchgear
+        </button>
+        <button
+          class="btn-range"
+          (click)="openMenu('Low Range Switchgear (Page 3/3)')"
+          mat-menu-item
+        >
+          3. Low Range Switchgear
+        </button>
+      </mat-menu>
+    </div>
+
+    <app-preview></app-preview>
+  </div>
+</div>

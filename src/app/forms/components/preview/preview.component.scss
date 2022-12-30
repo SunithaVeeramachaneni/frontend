@@ -1,0 +1,107 @@
+.section-question {
+  background: rgba(103, 58, 183, 0.08);
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+  width: 100%;
+  border-radius: 6px;
+}
+.flex-custom {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  .flex-img {
+    margin-right: 5px;
+  }
+  .create-name {
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .date-name {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
+.question-list {
+  background: #ffffff;
+  border-radius: 10px;
+  font-weight: 500;
+
+  padding: 5px;
+  margin-top: 8px;
+
+  h4 {
+    padding: 10px 5px;
+    font-weight: 500;
+
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  .question-span {
+    padding: 0px 10px;
+  }
+
+  .input-question {
+    width: 100%;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    background: #ffffff;
+    height: 40px;
+    padding-left: 0.5rem;
+  }
+
+  .answer-list {
+    margin: 0;
+    padding: 0;
+    li {
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      padding: 8px;
+
+      margin-bottom: 4px;
+    }
+  }
+  .relative-file {
+    position: relative;
+
+    input {
+      opacity: 0;
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 99;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}
+.example-tree-invisible {
+  display: none;
+}
+
+.example-tree ul,
+.example-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+/*
+ * This padding sets alignment of the nested nodes.
+ */
+.example-tree .mat-nested-tree-node div[role='group'] {
+  padding-left: 0px;
+}
+
+/*
+ * Padding for leaf nodes.
+ * Leaf nodes need to have padding so as to align with other non-leaf nodes
+ * under the same parent.
+ */
+.example-tree div[role='group'] > .mat-tree-node {
+  padding-left: 40px;
+}
