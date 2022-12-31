@@ -35,7 +35,7 @@ export class AuthConfigService {
       .getTenantInfoByTenantDomainUrlHost$(this.document.location.host, info)
       .pipe(
         map((tenant: Tenant) => {
-          if (Object.keys(tenant).length) {
+          if (tenant && Object.keys(tenant).length) {
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();

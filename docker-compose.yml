@@ -48,6 +48,7 @@ services:
       context: .
       dockerfile: .docker/nginx.dockerfile
     volumes:
+      - ./.docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - ./dist/cwp:/usr/share/nginx/html
     ports:
       - '80:80'
