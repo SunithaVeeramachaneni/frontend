@@ -32,7 +32,7 @@ export class AuthConfigService {
     info: ErrorInfo = {} as ErrorInfo
   ): Promise<OpenIdConfiguration> =>
     this.tenantService
-      .getTenantInfoByTenantDomainUrlHost$(this.document.location.host, info)
+      .getTenantInfoByTenantUrlDomainName$(this.document.location.host, info)
       .pipe(
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
