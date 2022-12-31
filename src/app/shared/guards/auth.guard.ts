@@ -27,18 +27,10 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     // Checking user is authenticated or not
-    return this.oidcSecurityService.checkAuthMultiple().pipe(
-      mergeMap((loginResponses) => {
-        const authResponse = loginResponses.find(
-          (loginResponse) => loginResponse.isAuthenticated === true
-        );
-        if (authResponse) {
-          const { configId, userData } = authResponse;
-          const configIds = loginResponses
-            .map(({ isAuthenticated, configId: id }) =>
-              isAuthenticated === false ? id : undefined
-            )
-            .filter((id) => id);
+    return this.oidcSecurityService.checkAuth().pipe(
+      mergeMap((loginResponse) => {
+        if (loginResponse.isAuthenticated) {
+          const { userData } = loginResponse;
           // Checking user is having permission to access the route
           this.commonService.setDisplayLoader(true);
           return this.loginService.loggedInUserInfo$.pipe(
@@ -58,10 +50,10 @@ export class AuthGuard implements CanActivate {
                   return false;
                 }
               }
-              this.loginService.performPostLoginActions(
-                { configId, userData },
-                configIds
-              );
+              this.loginService.performPostLoginActions({
+                userData,
+                allUserData: []
+              });
               return true;
             })
           );

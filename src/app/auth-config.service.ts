@@ -1,44 +1,47 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/member-ordering */
-import { Injectable } from '@angular/core';
-import { LogLevel, OpenIdConfiguration } from 'angular-auth-oidc-client';
+import { Inject, Injectable } from '@angular/core';
+import {
+  LogLevel,
+  OidcSecurityService,
+  OpenIdConfiguration
+} from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Buffer } from 'buffer';
+import * as hash from 'object-hash';
 import { environment } from 'src/environments/environment';
 import { ErrorInfo, Tenant } from './interfaces';
 import { TenantService } from './components/tenant-management/services/tenant.service';
-
-declare const TENANTS_COUNT: string;
-
+import { DOCUMENT } from '@angular/common';
+import { AppService } from './shared/services/app.services';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthConfigService {
-  tenantsInfo$: Observable<Tenant[]>;
-  authConfigsCount = TENANTS_COUNT ? +TENANTS_COUNT : 1;
+  tenantsInfo$: Observable<Tenant>;
 
-  constructor(private tenantService: TenantService) {}
+  constructor(
+    private tenantService: TenantService,
+    private appService: AppService,
+    private oidcSecurityService: OidcSecurityService,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
 
   getAuthConfig$ = (
-    index: number,
     info: ErrorInfo = {} as ErrorInfo
-  ): Promise<OpenIdConfiguration> => {
-    if (!this.tenantsInfo$) {
-      this.tenantsInfo$ = this.tenantService.getTenantsInfo$(info);
-    }
-    return this.tenantsInfo$
+  ): Promise<OpenIdConfiguration> =>
+    this.tenantService
+      .getTenantInfoByTenantDomainUrlHost$(this.document.location.host, info)
       .pipe(
-        map((tenants: Tenant[]) => {
-          const tenant = tenants.find((v, i) => i === index);
-          if (tenant) {
+        map((tenant: Tenant) => {
+          if (Object.keys(tenant).length) {
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();
         })
       )
       .toPromise();
-  };
-
-  getAuthConfigsCount = (): number => this.authConfigsCount;
 
   prepareAuthConfig = (tenant: Tenant) => {
     const { tenantId, authority, clientId, protectedResources, redirectUri } =
@@ -92,4 +95,43 @@ export class AuthConfigService {
       secureRoutes: []
     };
   }
+
+  getAccessTokenUsingRefreshToken$ = (protectedResource) => {
+    const { tenantId: configId } = this.tenantService.getTenantInfo();
+    const config = this.oidcSecurityService.getConfiguration(configId);
+    const {
+      authWellknownEndpoints: { tokenEndpoint },
+      clientId
+    } = config;
+    const { urls, scope } = protectedResource;
+    const data = {
+      grant_type: 'refresh_token',
+      client_id: clientId,
+      refresh_token: this.oidcSecurityService.getRefreshToken(configId),
+      scope
+    };
+    return this.appService
+      .getAccessTokenUsingRefreshToken(tokenEndpoint, data)
+      .pipe(
+        map((response) => {
+          if (Object.keys(response).length) {
+            const { exp } = JSON.parse(
+              Buffer.from(
+                response.access_token.split('.')[1],
+                'base64'
+              ).toString()
+            );
+            response = {
+              ...response,
+              access_token_expires_at: exp * 1000
+            };
+            delete response.id_token;
+            delete response.refresh_token;
+            sessionStorage.setItem(hash(urls), JSON.stringify(response));
+            return response;
+          }
+          return response;
+        })
+      );
+  };
 }

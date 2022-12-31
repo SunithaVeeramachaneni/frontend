@@ -3,6 +3,7 @@ import { SSE } from 'sse.js';
 import { CommonService } from './common.service';
 import * as hash from 'object-hash';
 import { TenantService } from 'src/app/components/tenant-management/services/tenant.service';
+import { AuthConfigService } from 'src/app/auth-config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class SseService {
 
   constructor(
     private commonService: CommonService,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private authConfigService: AuthConfigService
   ) {}
 
   /**
@@ -86,9 +88,20 @@ export class SseService {
     if (protectedResource && Object.keys(protectedResource).length) {
       const { urls } = protectedResource;
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { token_type, access_token } =
-        JSON.parse(sessionStorage.getItem(hash(urls))) || {};
-      authorization = `${token_type} ${access_token}`;
+      const tokenInfo = JSON.parse(sessionStorage.getItem(hash(urls)));
+      if (tokenInfo) {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { token_type, access_token } = tokenInfo;
+        authorization = `${token_type} ${access_token}`;
+      } else {
+        (async () => {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          const { token_type, access_token } = await this.authConfigService
+            .getAccessTokenUsingRefreshToken$(protectedResource)
+            .toPromise();
+          authorization = `${token_type} ${access_token}`;
+        })();
+      }
     }
     return {
       payload: formData,
