@@ -16,6 +16,7 @@ export class FormConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.createForm = this.fb.group({
       id: [''],
+      logo: [''],
       name: [''],
       description: [''],
       counter: [1],
