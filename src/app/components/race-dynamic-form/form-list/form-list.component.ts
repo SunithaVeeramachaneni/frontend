@@ -181,9 +181,6 @@ export class FormListComponent implements OnInit {
     tableHeight: 'calc(100vh - 150px)',
     groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
-  selectedForms: GetFormListQuery[] = [];
-  allFormsList: GetFormListQuery[] = [];
-  allSelected = false;
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
   formsCount$: Observable<Count>;
@@ -251,7 +248,6 @@ export class FormListComponent implements OnInit {
   };
 
   openEditFormModal(form = {} as GetFormListQuery): void {
-    // TODO: Edit api call and integration
     this.toast.show({
       text: 'Form edited successfully!',
       type: 'success'
@@ -259,7 +255,6 @@ export class FormListComponent implements OnInit {
   }
 
   openCopyFormModal(form: GetFormListQuery): void {
-    // TODO: Copy api call and integration
     this.addEditCopyForm$.next({
       action: 'copy',
       form
@@ -303,38 +298,14 @@ export class FormListComponent implements OnInit {
           };
           initial.data = rows;
         } else {
-          if (Object.keys(form?.form).length > 0 && form.action === 'copy') {
-            const count = initial.data.filter(
-              (d) => form.form.id === d.id
-            ).length;
-            if (count < 5) {
-              const obj = { ...form.form };
-              obj.Title =
-                obj.Title + (count - 1 === 0 ? ' Copy' : ` Copy${count - 1}`);
-              const index = initial.data.findIndex((x) => x.id === obj.id);
-              initial.data.splice(index, 0, obj);
-              this.selectedForms = [];
-              form.action = 'edit';
-              this.toast.show({
-                text: 'Form copied successfully!',
-                type: 'success'
-              });
-            } else {
-              this.toast.show({
-                text: 'Form copy limit reached!',
-                type: 'warning'
-              });
-            }
+          if (form.action === 'delete') {
+            initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            this.toast.show({
+              text: 'Form archive successfully!',
+              type: 'success'
+            });
           } else {
-            if (form.action === 'delete') {
-              initial.data = initial.data.filter((d) => d.id !== form.form.id);
-              this.toast.show({
-                text: 'Form archive successfully!',
-                type: 'success'
-              });
-            } else {
-              initial.data = initial.data.concat(scrollData);
-            }
+            initial.data = initial.data.concat(scrollData);
           }
         }
 
@@ -361,17 +332,12 @@ export class FormListComponent implements OnInit {
   }
 
   openArchiveModal(form: GetFormListQuery): void {
-    this.raceDynamicFormService.deleteForm$(form?.id).subscribe(
-      (res) => {
-        this.addEditCopyForm$.next({
-          action: 'delete',
-          form
-        });
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    this.raceDynamicFormService.deleteForm$(form?.id).subscribe(() => {
+      this.addEditCopyForm$.next({
+        action: 'delete',
+        form
+      });
+    });
   }
 
   rowLevelActionHandler = ({ data, action }): void => {
@@ -387,34 +353,6 @@ export class FormListComponent implements OnInit {
       case 'archive':
         this.openArchiveModal(data);
         break;
-
-      case 'toggleAllRows':
-        let allSelected = false;
-        const forms: GetFormListQuery[] = [...this.allFormsList];
-        if (
-          this.selectedForms.length === 0 ||
-          this.selectedForms.length !== forms.length
-        ) {
-          allSelected = true;
-          this.selectedForms = forms;
-        } else {
-          allSelected = false;
-          this.selectedForms = [];
-        }
-        break;
-
-      case 'toggleRowSelect':
-        const index = this.selectedForms.findIndex(
-          (form) => form.id === data.id
-        );
-        if (index !== -1) {
-          this.selectedForms = this.selectedForms.filter(
-            (form) => form.id !== data.id
-          );
-        } else {
-          this.selectedForms.push(data);
-        }
-        break;
       default:
     }
   };
@@ -429,10 +367,10 @@ export class FormListComponent implements OnInit {
 
   prepareMenuActions(): void {
     const menuActions = [
-      {
-        title: 'Copy',
-        action: 'copy'
-      },
+      // {
+      //   title: 'Copy',
+      //   action: 'copy'
+      // },
       {
         title: 'Edit',
         action: 'edit'

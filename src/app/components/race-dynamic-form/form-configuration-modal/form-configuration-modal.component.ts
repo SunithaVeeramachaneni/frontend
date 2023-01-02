@@ -121,7 +121,7 @@ export class FormConfigurationModalComponent implements OnInit {
   createFormList() {
     const { title } = this.loginService.getLoggedInUserInfo();
     this.raceDynamicFormService
-      .createFormList$({
+      .createForm$({
         Title: this.headerDataForm.value.name,
         Description: this.headerDataForm.value.description,
         Owner: title,
