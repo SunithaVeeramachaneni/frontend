@@ -20,6 +20,7 @@ import { tap } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
+import { FormService } from '../../services/form.service';
 @Component({
   selector: 'app-template',
   templateUrl: './template.component.html',
@@ -62,7 +63,8 @@ export class TemplateComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private imageUtils: ImageUtils
+    private imageUtils: ImageUtils,
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -142,6 +144,10 @@ export class TemplateComponent implements OnInit {
       default:
       // do nothing
     }
+  }
+
+  sliderOpen() {
+    this.formService.setsliderOpenState(true);
   }
 
   insertImageHandler(event) {

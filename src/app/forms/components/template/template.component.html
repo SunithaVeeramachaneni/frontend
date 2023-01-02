@@ -1,6 +1,6 @@
 <div class="questions" [formGroup]="questionForm">
   <div>
-    <div>
+    <div [ngClass]="{ 'highlight-bg': fieldContentOpenState === true }">
       <div
         class="dis-flex questions-div"
         (click)="toggleFieldContentOpenState()"
@@ -19,20 +19,8 @@
             formControlName="name"
             placeholder="Type Question"
             class="width-90 question-input"
-            *ngIf="questionForm.get('fieldType').value !== 'LLF'"
             (keyup.enter)="addQuestion(questionForm.get('index').value)"
           />
-          <!-- <quill-material
-                  formControlName="name"
-                  placeholder="Type Question"
-                  [ngClass]="{
-                    'display-toolbar': richTextEditorToolbarState[i + 1][j + 1]
-                  }"
-                  class="instruction-quill-box"
-                  *ngIf="question.controls.fieldType.value === 'LLF'"
-                  (editorFocus)="handleEditorFocus($event, i, j)"
-                >
-                </quill-material> -->
           <div class="floating-btns">
             <button
               class="questions-btn"
@@ -63,15 +51,105 @@
         <span class="divider">|</span>
 
         <div class="width-30">
-          <button (click)="openResponseType = true" class="response-type-btn">
-            <img
-              [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
-              class="response-type-icons"
-            />&nbsp;
-            <span class="response-type-text">
-              {{ getFieldTypeDescription(questionForm.get('fieldType').value) }}
-            </span>
-            <mat-icon class="response-type-btn-arrow">
+          <button
+            (click)="openResponseType = true"
+            class="response-type-btn"
+            [ngClass]="{
+              'dis-flex p-t-0':
+                questionForm.get('fieldType').value === 'VI' ||
+                questionForm.get('fieldType').value === 'DD'
+            }"
+          >
+            <div
+              *ngIf="
+                questionForm.get('fieldType').value === 'VI' ||
+                  questionForm.get('fieldType').value === 'DD';
+                else nonMCQFields
+              "
+              class="chip-list"
+            >
+              <mat-chip-list
+                *ngIf="
+                  questionForm.get('value').value?.name &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="response-type-chips"
+              >
+                <mat-chip
+                  [ngStyle]="{
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #d3d3d3',
+                    minHeight: '24px',
+                    fontSize: '90%'
+                  }"
+                >
+                  {{ questionForm.get('value').value?.name }}
+                </mat-chip>
+              </mat-chip-list>
+              <mat-chip-list
+                *ngIf="
+                  !questionForm.get('value').value?.name &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="response-type-chips"
+              >
+                <mat-chip
+                  [ngStyle]="{
+                    color: questionForm.get('value').value?.values[0]?.color,
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #d3d3d3',
+                    minHeight: '24px',
+                    fontSize: '90%'
+                  }"
+                >
+                  {{ questionForm.get('value').value?.values[0].title }}
+                </mat-chip>
+                <mat-chip
+                  *ngIf="questionForm.get('value').value?.values.length >= 2"
+                  [ngStyle]="{
+                    color: questionForm.get('value').value?.values[1]?.color,
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #d3d3d3',
+                    minHeight: '24px',
+                    fontSize: '90%'
+                  }"
+                >
+                  {{ questionForm.get('value').value?.values[1].title }}
+                </mat-chip>
+                <span
+                  *ngIf="questionForm.get('value').value?.values.length > 2"
+                  class="ellipsis-more"
+                  >+ ({{ questionForm.get('value').value?.values.length - 2 }}
+                  more)
+                </span>
+              </mat-chip-list>
+              <div
+                *ngIf="questionForm.get('value').value?.globalDataset"
+                class="globalset-res-type"
+              >
+                {{ questionForm.get('value').value?.responseType }}
+              </div>
+            </div>
+
+            <ng-template #nonMCQFields>
+              <img
+                [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
+                class="response-type-icons"
+              />&nbsp;
+              <span class="response-type-text">
+                {{
+                  getFieldTypeDescription(questionForm.get('fieldType').value)
+                }}
+              </span>
+            </ng-template>
+            <mat-icon
+              class="response-type-btn-arrow"
+              [ngClass]="{
+                'p-t-13':
+                  questionForm.get('fieldType').value === 'VI' ||
+                  questionForm.get('fieldType').value === 'DD'
+              }"
+            >
               keyboard_arrow_down
             </mat-icon>
           </button>
@@ -101,18 +179,13 @@
 
       <div
         class="dis-flex justify-content"
-        [ngClass]="{
-          height: questionForm.get('fieldType').value === 'LLF'
-        }"
         *ngIf="fieldContentOpenState === true"
       >
-        <div
-          class="input-fields"
-          *ngIf="questionForm.get('fieldType').value !== 'LLF'"
-        >
+        <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-            <div class="add-logic-row">
+            <div>
               <span
+                class="m-l-40"
                 *ngIf="
                   questionForm.get('fieldType').value !== 'TAF' &&
                   questionForm.get('fieldType').value !== 'ARD'
@@ -158,27 +231,37 @@
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
-                class="m-l-50"
+                class="m-l-40"
               >
                 <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
                 <input
                   type="text"
                   id="defaultValue"
                   formControlName="value"
-                  xlass="default-field-input-box"
+                  class="default-field-input-box"
                 />
               </span>
               <span
                 *ngIf="questionForm.get('fieldType').value === 'TF'"
                 class="m-l-50"
               >
-                <label>Format:</label>&nbsp;
+                <label>Type:</label>&nbsp;
 
                 <select formControlName="value" class="text-field-select">
                   <option value="TF">Short Answer</option>
                   <option value="LTV">Long Answer</option>
                 </select>
               </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'RT'"
+                (click)="sliderOpen()"
+                class="m-l-50"
+              >
+                <label>Range: </label>&nbsp;
+              </span>
+              <app-response-type-side-drawer></app-response-type-side-drawer>
+
               <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'DD' &&
@@ -198,7 +281,7 @@
                       .setValue(!questionForm.get('multi').value)
                   "
                 />&nbsp;
-                <label for="multi"> Multi Selection </label>
+                <label for="multi">Allow more than one selection</label>
               </span>
             </div>
           </div>

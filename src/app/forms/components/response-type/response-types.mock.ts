@@ -10,15 +10,6 @@ export const fieldTypesMock = {
       id: '63775eed42f051892309cdc3'
     },
     {
-      type: 'LLF',
-      description: 'Instruction',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.990Z',
-      id: '63775eed42f051892309cdc4'
-    },
-    {
       type: 'TF',
       description: 'Text Answer',
       createdBy: 'Innovapptive',

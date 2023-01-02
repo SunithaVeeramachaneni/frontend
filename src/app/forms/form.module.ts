@@ -1,7 +1,6 @@
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { ResponseDrawerComponent } from './components/response-drawer/response.drawer.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +20,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
+import { ResponseTypeSideDrawerComponent } from './components/response-type-side-drawer/response-type-side-drawer.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,7 @@ import { MatInputModule } from '@angular/material/input';
     PreviewComponent,
     AddLogicComponent,
     AddFilterComponent,
-    ResponseDrawerComponent
+    ResponseTypeSideDrawerComponent
   ],
   imports: [
     FormsModule,
@@ -47,7 +48,8 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatSliderModule
+    MatSliderModule,
+    MatChipsModule
   ],
   exports: [
     FormWidgetComponent,
