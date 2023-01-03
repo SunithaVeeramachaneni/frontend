@@ -48,6 +48,7 @@ services:
       context: .
       dockerfile: .docker/nginx.dockerfile
     volumes:
+      - ./.docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
       - ./dist/cwp:/usr/share/nginx/html
     ports:
       - '80:80'
@@ -91,15 +92,14 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - WI_DB_QUEUE=WI_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
     ports:
       - '8001:8001'
     depends_on:
       - mongo
       - mysql
       - redis-cluster
-      - authentication-factory
       - rabbitmq
     networks:
       - app-network
@@ -167,6 +167,8 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     ports:
       - '8003:8003'
     depends_on:
@@ -204,8 +206,9 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - DASHBOARD_DB_QUEUE=Dashboard_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8004:8004'
     depends_on:
@@ -254,6 +257,8 @@ services:
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
       - NODE_ENV=${APP_ENV}
       - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     ports:
       - '8006:8006'
     depends_on:
@@ -291,11 +296,52 @@ services:
       - REDIS_TTL=${REDIS_TTL}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - JAAS_PRIVATE_KEY_PATH=/usr/src/user-service/.docker/jaas-private-key/key.json
-      - RABBITMQ_URL=amqp://rabbitmq-local:5672
-      - WI_DB_QUEUE=WI_DB_Queue
-      - DASHBOARD_DB_QUEUE=Dashboard_DB_Queue
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+      - WI_DB_QUEUE=${WI_DB_QUEUE}
+      - DASHBOARD_DB_QUEUE=${DASHBOARD_DB_QUEUE}
     ports:
       - '8007:8007'
+    depends_on:
+      - mysql
+      - redis-cluster
+      - rabbitmq
+    networks:
+      - app-network
+
+  rdf-service:
+    container_name: rdf-service-local
+    image: rdf-service-local
+    build:
+      context: ${BACKEND_HOME}/RaceDynamicForms
+      dockerfile: .docker/rdf-service.dockerfile
+      args:
+        - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+    volumes:
+      - ${BACKEND_HOME}/RaceDynamicForms:/usr/src/rdf-service
+      - /usr/src/rdf-service/node_modules
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/rdf-service/authentication-factory
+      - ${SHARED_PACKAGES_HOME}/nodejs/authentication-factory:/usr/src/authentication-factory
+      - authentication-factory-modules:/usr/src/authentication-factory/node_modules
+    environment:
+      - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - NODE_ENV=${APP_ENV}
+      - NODE_CONFIG_ENV=${DEPLOYMENT_ENV}
+      - MYSQL_HOST_NAME=mysql-local
+      - MYSQL_PORT=3306
+      - MYSQL_USER_NAME=${MYSQL_USER_NAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - CATALOG_TABLE_NAME=${CATALOG_TABLE_NAME}
+      - REDIS_NODES=redis-node-1:6373 redis-node-2:6374 redis-node-3:6375 redis-node-4:6376 redis-node-5:6377 redis-node-6:6378
+      - REDIS_HOST_NAME=${REDIS_HOST_NAME}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_TTL=${REDIS_TTL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
+    ports:
+      - '8008:8008'
     depends_on:
       - mysql
       - redis-cluster
@@ -317,6 +363,8 @@ services:
     environment:
       - NODE_ENV=${APP_ENV}
       - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - LOGGING_QUEUE_NAME=${LOGGING_QUEUE_NAME}
     networks:
       - app-network
 
