@@ -29,7 +29,7 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.ListFormLists(
         {
-          Title: {
+          name: {
             contains: queryParams?.searchKey || ''
           }
         },
@@ -42,18 +42,28 @@ export class RaceDynamicFormService {
   createForm$(
     formListQuery: Pick<
       GetFormListQuery,
-      'Title' | 'Description' | 'Owner' | 'updatedBy' | 'Image'
+      | 'name'
+      | 'formLogo'
+      | 'description'
+      | 'author'
+      | 'lastPublishedBy'
+      | 'publishedDate'
+      | 'tags'
+      | 'formType'
     >
   ) {
     return from(
       this.awsApiService.CreateFormList({
-        Image: formListQuery.Image ?? '',
-        Title: formListQuery?.Title ?? '',
-        Description: formListQuery.Description ?? '',
-        Status: 'draft',
-        Owner: formListQuery.Owner ?? '',
-        PublishedDate: new Date().toISOString(),
-        updatedBy: formListQuery.updatedBy ?? ''
+        formLogo: formListQuery.formLogo ?? '',
+        name: formListQuery?.name ?? '',
+        description: formListQuery.description ?? '',
+        formStatus: 'draft',
+        author: formListQuery.author ?? '',
+        publishedDate: new Date().toISOString(),
+        lastPublishedBy: formListQuery.lastPublishedBy ?? '',
+        formType: formListQuery.formType ?? '',
+        tags: formListQuery.tags || null,
+        isPublic: true
       })
     );
   }
@@ -63,6 +73,10 @@ export class RaceDynamicFormService {
   }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
+    console.log(
+      '🚀 ~ file: rdf.service.ts:66 ~ RaceDynamicFormService ~ formatGraphQLFormsResponse ~ resp',
+      resp
+    );
     const rows =
       resp.items
         .sort(
@@ -79,11 +93,11 @@ export class RaceDynamicFormService {
               display: 'block',
               padding: '0px 10px'
             },
-            image: p?.Image,
+            image: p?.formLogo,
             condition: true
           },
-          updatedBy: p.updatedBy,
-          createdBy: p.Owner,
+          updatedBy: p.lastPublishedBy,
+          createdBy: p.author,
           updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
             addSuffix: true
           })

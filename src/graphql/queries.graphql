@@ -1,25 +1,119 @@
 # this is an auto generated file. This will be overwritten
-query GetFormDetail($id: ID!) {
-  getFormDetail(id: $id) {
+query GetFormSubmissionDetail($id: ID!) {
+  getFormSubmissionDetail(id: $id) {
     id
-    version
-    FORMS
-    formlistID
-    FormList {
+    formData
+    formSubmissionDetailId {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListFormSubmissionDetails(
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFormSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formsubmissionsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncFormSubmissionDetails(
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncFormSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      formData
+      formsubmissionsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query FormSubmissionDetailsByFormsubmissionsID(
+  $formsubmissionsID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  formSubmissionDetailsByFormsubmissionsID(
+    formsubmissionsID: $formsubmissionsID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formsubmissionsID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetFormDetail($id: ID!) {
+  getFormDetail(id: $id) {
+    id
+    formData
+    formlistID
     createdAt
     updatedAt
     _version
@@ -35,8 +129,7 @@ query ListFormDetails(
   listFormDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      version
-      FORMS
+      formData
       formlistID
       createdAt
       updatedAt
@@ -62,8 +155,7 @@ query SyncFormDetails(
   ) {
     items {
       id
-      version
-      FORMS
+      formData
       formlistID
       createdAt
       updatedAt
@@ -91,8 +183,7 @@ query FormDetailsByFormlistID(
   ) {
     items {
       id
-      version
-      FORMS
+      formData
       formlistID
       createdAt
       updatedAt
@@ -108,27 +199,31 @@ query GetAuthoredFormDetail($id: ID!) {
   getAuthoredFormDetail(id: $id) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    formlistID
     createdAt
     updatedAt
     _version
@@ -149,7 +244,9 @@ query ListAuthoredFormDetails(
     items {
       id
       version
-      FORMS
+      formStatus
+      counter
+      pages
       formlistID
       createdAt
       updatedAt
@@ -176,7 +273,9 @@ query SyncAuthoredFormDetails(
     items {
       id
       version
-      FORMS
+      formStatus
+      counter
+      pages
       formlistID
       createdAt
       updatedAt
@@ -205,7 +304,9 @@ query AuthoredFormDetailsByFormlistID(
     items {
       id
       version
-      FORMS
+      formStatus
+      counter
+      pages
       formlistID
       createdAt
       updatedAt
@@ -217,25 +318,46 @@ query AuthoredFormDetailsByFormlistID(
     startedAt
   }
 }
-query GetFormInspection($id: ID!) {
-  getFormInspection(id: $id) {
+query GetFormSubmissions($id: ID!) {
+  getFormSubmissions(id: $id) {
     id
-    formData
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
     status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
       id
-      version
-      FORMS
-      formlistID
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    authoredformdetailID
+    formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -243,19 +365,26 @@ query GetFormInspection($id: ID!) {
     _lastChangedAt
   }
 }
-query ListFormInspections(
-  $filter: ModelFormInspectionFilterInput
+query ListFormSubmissions(
+  $filter: ModelFormSubmissionsFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listFormInspections(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  listFormSubmissions(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      formData
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
       status
-      SubmittedDate
-      SubmittedTime
-      authoredformdetailID
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
@@ -266,13 +395,13 @@ query ListFormInspections(
     startedAt
   }
 }
-query SyncFormInspections(
-  $filter: ModelFormInspectionFilterInput
+query SyncFormSubmissions(
+  $filter: ModelFormSubmissionsFilterInput
   $limit: Int
   $nextToken: String
   $lastSync: AWSTimestamp
 ) {
-  syncFormInspections(
+  syncFormSubmissions(
     filter: $filter
     limit: $limit
     nextToken: $nextToken
@@ -280,11 +409,18 @@ query SyncFormInspections(
   ) {
     items {
       id
-      formData
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
       status
-      SubmittedDate
-      SubmittedTime
-      authoredformdetailID
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
@@ -295,15 +431,15 @@ query SyncFormInspections(
     startedAt
   }
 }
-query FormInspectionsByAuthoredformdetailID(
-  $authoredformdetailID: ID!
+query FormSubmissionsByFormlistID(
+  $formlistID: ID!
   $sortDirection: ModelSortDirection
-  $filter: ModelFormInspectionFilterInput
+  $filter: ModelFormSubmissionsFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  formInspectionsByAuthoredformdetailID(
-    authoredformdetailID: $authoredformdetailID
+  formSubmissionsByFormlistID(
+    formlistID: $formlistID
     sortDirection: $sortDirection
     filter: $filter
     limit: $limit
@@ -311,11 +447,18 @@ query FormInspectionsByAuthoredformdetailID(
   ) {
     items {
       id
-      formData
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
       status
-      SubmittedDate
-      SubmittedTime
-      authoredformdetailID
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
@@ -329,18 +472,28 @@ query FormInspectionsByAuthoredformdetailID(
 query GetFormList($id: ID!) {
   getFormList(id: $id) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }
@@ -359,13 +512,19 @@ query ListFormLists(
   listFormLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
@@ -390,13 +549,19 @@ query SyncFormLists(
   ) {
     items {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version

@@ -36,7 +36,7 @@ import { GetFormListQuery } from 'src/app/API.service';
 export class FormListComponent implements OnInit {
   columns: Column[] = [
     {
-      id: 'Title',
+      id: 'name',
       displayName: 'Recents',
       type: 'string',
       order: 1,
@@ -51,7 +51,7 @@ export class FormListComponent implements OnInit {
       titleStyle: { 'font-weight': '500', 'font-size': '90%' },
       hasSubtitle: true,
       showMenuOptions: false,
-      subtitleColumn: 'Description',
+      subtitleColumn: 'description',
       subtitleStyle: {
         'font-size': '80%',
         color: 'darkgray'
@@ -60,7 +60,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'Owner',
+      id: 'author',
       displayName: 'Owner',
       type: 'number',
       isMultiValued: true,
@@ -82,7 +82,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'Status',
+      id: 'formStatus',
       displayName: 'Status',
       type: 'string',
       order: 3,
@@ -122,7 +122,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'updatedBy',
+      id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
       order: 4,

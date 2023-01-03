@@ -1,28 +1,117 @@
 # this is an auto generated file. This will be overwritten
-mutation CreateFormDetail(
-  $input: CreateFormDetailInput!
-  $condition: ModelFormDetailConditionInput
+mutation CreateFormSubmissionDetail(
+  $input: CreateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
 ) {
-  createFormDetail(input: $input, condition: $condition) {
+  createFormSubmissionDetail(input: $input, condition: $condition) {
     id
-    version
-    FORMS
-    formlistID
-    FormList {
+    formData
+    formSubmissionDetailId {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormSubmissionDetail(
+  $input: UpdateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  updateFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formSubmissionDetailId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormSubmissionDetail(
+  $input: DeleteFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  deleteFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formSubmissionDetailId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormDetail(
+  $input: CreateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  createFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
     createdAt
     updatedAt
     _version
@@ -36,24 +125,8 @@ mutation UpdateFormDetail(
 ) {
   updateFormDetail(input: $input, condition: $condition) {
     id
-    version
-    FORMS
+    formData
     formlistID
-    FormList {
-      id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
     createdAt
     updatedAt
     _version
@@ -67,24 +140,8 @@ mutation DeleteFormDetail(
 ) {
   deleteFormDetail(input: $input, condition: $condition) {
     id
-    version
-    FORMS
+    formData
     formlistID
-    FormList {
-      id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
     createdAt
     updatedAt
     _version
@@ -99,27 +156,31 @@ mutation CreateAuthoredFormDetail(
   createAuthoredFormDetail(input: $input, condition: $condition) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    formlistID
     createdAt
     updatedAt
     _version
@@ -134,27 +195,31 @@ mutation UpdateAuthoredFormDetail(
   updateAuthoredFormDetail(input: $input, condition: $condition) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    formlistID
     createdAt
     updatedAt
     _version
@@ -169,20 +234,70 @@ mutation DeleteAuthoredFormDetail(
   deleteAuthoredFormDetail(input: $input, condition: $condition) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormSubmissions(
+  $input: CreateFormSubmissionsInput!
+  $condition: ModelFormSubmissionsConditionInput
+) {
+  createFormSubmissions(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
@@ -190,6 +305,10 @@ mutation DeleteAuthoredFormDetail(
       _lastChangedAt
     }
     formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -197,28 +316,49 @@ mutation DeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-mutation CreateFormInspection(
-  $input: CreateFormInspectionInput!
-  $condition: ModelFormInspectionConditionInput
+mutation UpdateFormSubmissions(
+  $input: UpdateFormSubmissionsInput!
+  $condition: ModelFormSubmissionsConditionInput
 ) {
-  createFormInspection(input: $input, condition: $condition) {
+  updateFormSubmissions(input: $input, condition: $condition) {
     id
-    formData
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
     status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
       id
-      version
-      FORMS
-      formlistID
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    authoredformdetailID
+    formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -226,57 +366,49 @@ mutation CreateFormInspection(
     _lastChangedAt
   }
 }
-mutation UpdateFormInspection(
-  $input: UpdateFormInspectionInput!
-  $condition: ModelFormInspectionConditionInput
+mutation DeleteFormSubmissions(
+  $input: DeleteFormSubmissionsInput!
+  $condition: ModelFormSubmissionsConditionInput
 ) {
-  updateFormInspection(input: $input, condition: $condition) {
+  deleteFormSubmissions(input: $input, condition: $condition) {
     id
-    formData
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
     status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
       id
-      version
-      FORMS
-      formlistID
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    authoredformdetailID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation DeleteFormInspection(
-  $input: DeleteFormInspectionInput!
-  $condition: ModelFormInspectionConditionInput
-) {
-  deleteFormInspection(input: $input, condition: $condition) {
-    id
-    formData
-    status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
-      id
-      version
-      FORMS
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
+    formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
     }
-    authoredformdetailID
     createdAt
     updatedAt
     _version
@@ -290,18 +422,28 @@ mutation CreateFormList(
 ) {
   createFormList(input: $input, condition: $condition) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }
@@ -318,18 +460,28 @@ mutation UpdateFormList(
 ) {
   updateFormList(input: $input, condition: $condition) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }
@@ -346,18 +498,28 @@ mutation DeleteFormList(
 ) {
   deleteFormList(input: $input, condition: $condition) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }

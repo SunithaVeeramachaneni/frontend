@@ -1,27 +1,113 @@
 # this is an auto generated file. This will be overwritten
-subscription OnCreateFormDetail(
-  $filter: ModelSubscriptionFormDetailFilterInput
+subscription OnCreateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
 ) {
-  onCreateFormDetail(filter: $filter) {
+  onCreateFormSubmissionDetail(filter: $filter) {
     id
-    version
-    FORMS
-    formlistID
-    FormList {
+    formData
+    formSubmissionDetailId {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
+) {
+  onUpdateFormSubmissionDetail(filter: $filter) {
+    id
+    formData
+    formSubmissionDetailId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
+) {
+  onDeleteFormSubmissionDetail(filter: $filter) {
+    id
+    formData
+    formSubmissionDetailId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    formsubmissionsID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onCreateFormDetail(filter: $filter) {
+    id
+    formData
+    formlistID
     createdAt
     updatedAt
     _version
@@ -34,24 +120,8 @@ subscription OnUpdateFormDetail(
 ) {
   onUpdateFormDetail(filter: $filter) {
     id
-    version
-    FORMS
+    formData
     formlistID
-    FormList {
-      id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
     createdAt
     updatedAt
     _version
@@ -64,24 +134,8 @@ subscription OnDeleteFormDetail(
 ) {
   onDeleteFormDetail(filter: $filter) {
     id
-    version
-    FORMS
+    formData
     formlistID
-    FormList {
-      id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
     createdAt
     updatedAt
     _version
@@ -95,27 +149,31 @@ subscription OnCreateAuthoredFormDetail(
   onCreateAuthoredFormDetail(filter: $filter) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    formlistID
     createdAt
     updatedAt
     _version
@@ -129,27 +187,31 @@ subscription OnUpdateAuthoredFormDetail(
   onUpdateAuthoredFormDetail(filter: $filter) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    formlistID
     createdAt
     updatedAt
     _version
@@ -163,20 +225,69 @@ subscription OnDeleteAuthoredFormDetail(
   onDeleteAuthoredFormDetail(filter: $filter) {
     id
     version
-    FORMS
-    FormInspections {
-      nextToken
-      startedAt
-    }
-    FormList {
+    formStatus
+    counter
+    pages
+    formlistID
+    formList {
       id
-      Title
-      Description
-      Image
-      Owner
-      PublishedDate
-      Status
-      updatedBy
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormSubmissions(
+  $filter: ModelSubscriptionFormSubmissionsFilterInput
+) {
+  onCreateFormSubmissions(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
@@ -184,6 +295,10 @@ subscription OnDeleteAuthoredFormDetail(
       _lastChangedAt
     }
     formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -191,27 +306,48 @@ subscription OnDeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-subscription OnCreateFormInspection(
-  $filter: ModelSubscriptionFormInspectionFilterInput
+subscription OnUpdateFormSubmissions(
+  $filter: ModelSubscriptionFormSubmissionsFilterInput
 ) {
-  onCreateFormInspection(filter: $filter) {
+  onUpdateFormSubmissions(filter: $filter) {
     id
-    formData
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
     status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
       id
-      version
-      FORMS
-      formlistID
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    authoredformdetailID
+    formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -219,55 +355,48 @@ subscription OnCreateFormInspection(
     _lastChangedAt
   }
 }
-subscription OnUpdateFormInspection(
-  $filter: ModelSubscriptionFormInspectionFilterInput
+subscription OnDeleteFormSubmissions(
+  $filter: ModelSubscriptionFormSubmissionsFilterInput
 ) {
-  onUpdateFormInspection(filter: $filter) {
+  onDeleteFormSubmissions(filter: $filter) {
     id
-    formData
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
     status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
+    assignee
+    dueDate
+    version
+    submittedBy
+    formListId {
       id
-      version
-      FORMS
-      formlistID
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
     }
-    authoredformdetailID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnDeleteFormInspection(
-  $filter: ModelSubscriptionFormInspectionFilterInput
-) {
-  onDeleteFormInspection(filter: $filter) {
-    id
-    formData
-    status
-    SubmittedDate
-    SubmittedTime
-    authoredForm {
-      id
-      version
-      FORMS
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
+    formlistID
+    formSubmissionDetails {
+      nextToken
+      startedAt
     }
-    authoredformdetailID
     createdAt
     updatedAt
     _version
@@ -278,18 +407,28 @@ subscription OnDeleteFormInspection(
 subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
   onCreateFormList(filter: $filter) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }
@@ -303,18 +442,28 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
 subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
   onUpdateFormList(filter: $filter) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }
@@ -328,18 +477,28 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
 subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
   onDeleteFormList(filter: $filter) {
     id
-    Title
-    Description
-    Image
-    Owner
-    PublishedDate
-    Status
-    updatedBy
-    authoredFormDetails {
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formDetails {
       nextToken
       startedAt
     }
-    FormDetails {
+    formSubmissions {
+      nextToken
+      startedAt
+    }
+    authoredFormDetails {
       nextToken
       startedAt
     }

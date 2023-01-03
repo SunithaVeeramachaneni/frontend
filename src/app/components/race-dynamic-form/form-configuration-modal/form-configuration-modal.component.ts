@@ -40,7 +40,7 @@ export class FormConfigurationModalComponent implements OnInit {
   allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
-
+  formType = 'Standalone';
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -120,13 +120,17 @@ export class FormConfigurationModalComponent implements OnInit {
 
   createFormList() {
     const { title } = this.loginService.getLoggedInUserInfo();
+    // eslint-disable-next-line no-debugger
+    debugger;
     this.raceDynamicFormService
       .createForm$({
-        Title: this.headerDataForm.value.name,
-        Description: this.headerDataForm.value.description,
-        Owner: title,
-        updatedBy: title,
-        Image: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+        name: this.headerDataForm.value.name,
+        description: this.headerDataForm.value.description,
+        author: title,
+        lastPublishedBy: title,
+        formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
+        tags: ['tag1', 'tag2'],
+        formType: this.formType
       })
       .subscribe(() => {
         this.raceDynamicFormService.fetchForms$.next({ data: 'load' });

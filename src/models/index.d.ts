@@ -9,38 +9,94 @@ export enum FormStatusEnum {
 
 
 
-type EagerFormDetail = {
+type EagerFormSubmissionDetail = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly version?: string | null;
-  readonly FORMS?: string | null;
-  readonly formlistID: string;
-  readonly FormList?: FormList | null;
+  readonly formData?: string | null;
+  readonly formSubmissionDetailId?: FormSubmissions | null;
+  readonly formsubmissionsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
+  readonly formSubmissionsFormSubmissionDetailsId?: string | null;
 }
 
-type LazyFormDetail = {
+type LazyFormSubmissionDetail = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly version?: string | null;
-  readonly FORMS?: string | null;
-  readonly formlistID: string;
-  readonly FormList: AsyncItem<FormList | undefined>;
+  readonly formData?: string | null;
+  readonly formSubmissionDetailId: AsyncItem<FormSubmissions | undefined>;
+  readonly formsubmissionsID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
+  readonly formSubmissionsFormSubmissionDetailsId?: string | null;
 }
 
-export declare type FormDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormDetail : LazyFormDetail
+export declare type FormSubmissionDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissionDetail : LazyFormSubmissionDetail
 
-export declare const FormDetail: (new (init: ModelInit<FormDetail>) => FormDetail) & {
-  copyOf(source: FormDetail, mutator: (draft: MutableModel<FormDetail>) => MutableModel<FormDetail> | void): FormDetail;
+export declare const FormSubmissionDetail: (new (init: ModelInit<FormSubmissionDetail>) => FormSubmissionDetail) & {
+  copyOf(source: FormSubmissionDetail, mutator: (draft: MutableModel<FormSubmissionDetail>) => MutableModel<FormSubmissionDetail> | void): FormSubmissionDetail;
+}
+
+type EagerFormSubmissions = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormSubmissions, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly formListId?: FormList | null;
+  readonly formlistID: string;
+  readonly formSubmissionDetails?: (FormSubmissionDetail | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  readonly formListFormSubmissionsId?: string | null;
+}
+
+type LazyFormSubmissions = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormSubmissions, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly formListId: AsyncItem<FormList | undefined>;
+  readonly formlistID: string;
+  readonly formSubmissionDetails: AsyncCollection<FormSubmissionDetail>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  readonly formListFormSubmissionsId?: string | null;
+}
+
+export declare type FormSubmissions = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissions : LazyFormSubmissions
+
+export declare const FormSubmissions: (new (init: ModelInit<FormSubmissions>) => FormSubmissions) & {
+  copyOf(source: FormSubmissions, mutator: (draft: MutableModel<FormSubmissions>) => MutableModel<FormSubmissions> | void): FormSubmissions;
 }
 
 type EagerFormList = {
@@ -49,15 +105,22 @@ type EagerFormList = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly Title?: string | null;
-  readonly Description?: string | null;
-  readonly Image?: string | null;
-  readonly Owner?: string | null;
-  readonly PublishedDate?: string | null;
-  readonly Status?: string | null;
-  readonly updatedBy?: string | null;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly publishedDate?: string | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly formStatus?: string | null;
+  readonly assignee?: string | null;
+  readonly tags?: (string | null)[] | null;
+  readonly lastPublishedBy?: string | null;
+  readonly author?: string | null;
+  readonly formType?: string | null;
+  readonly formDetails?: (FormDetail | null)[] | null;
+  readonly formSubmissions?: (FormSubmissions | null)[] | null;
   readonly authoredFormDetails?: (AuthoredFormDetail | null)[] | null;
-  readonly FormDetails?: (FormDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -68,15 +131,22 @@ type LazyFormList = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly Title?: string | null;
-  readonly Description?: string | null;
-  readonly Image?: string | null;
-  readonly Owner?: string | null;
-  readonly PublishedDate?: string | null;
-  readonly Status?: string | null;
-  readonly updatedBy?: string | null;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly publishedDate?: string | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly formStatus?: string | null;
+  readonly assignee?: string | null;
+  readonly tags?: (string | null)[] | null;
+  readonly lastPublishedBy?: string | null;
+  readonly author?: string | null;
+  readonly formType?: string | null;
+  readonly formDetails: AsyncCollection<FormDetail>;
+  readonly formSubmissions: AsyncCollection<FormSubmissions>;
   readonly authoredFormDetails: AsyncCollection<AuthoredFormDetail>;
-  readonly FormDetails: AsyncCollection<FormDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -87,6 +157,36 @@ export declare const FormList: (new (init: ModelInit<FormList>) => FormList) & {
   copyOf(source: FormList, mutator: (draft: MutableModel<FormList>) => MutableModel<FormList> | void): FormList;
 }
 
+type EagerFormDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyFormDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type FormDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormDetail : LazyFormDetail
+
+export declare const FormDetail: (new (init: ModelInit<FormDetail>) => FormDetail) & {
+  copyOf(source: FormDetail, mutator: (draft: MutableModel<FormDetail>) => MutableModel<FormDetail> | void): FormDetail;
+}
+
 type EagerAuthoredFormDetail = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<AuthoredFormDetail, 'id'>;
@@ -94,10 +194,11 @@ type EagerAuthoredFormDetail = {
   };
   readonly id: string;
   readonly version?: string | null;
-  readonly FORMS?: string | null;
-  readonly FormInspections?: (FormInspection | null)[] | null;
-  readonly FormList?: FormList | null;
+  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
+  readonly counter?: number | null;
+  readonly pages?: string | null;
   readonly formlistID: string;
+  readonly formList?: FormList | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -109,10 +210,11 @@ type LazyAuthoredFormDetail = {
   };
   readonly id: string;
   readonly version?: string | null;
-  readonly FORMS?: string | null;
-  readonly FormInspections: AsyncCollection<FormInspection>;
-  readonly FormList: AsyncItem<FormList | undefined>;
+  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
+  readonly counter?: number | null;
+  readonly pages?: string | null;
   readonly formlistID: string;
+  readonly formList: AsyncItem<FormList | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -121,44 +223,6 @@ export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled
 
 export declare const AuthoredFormDetail: (new (init: ModelInit<AuthoredFormDetail>) => AuthoredFormDetail) & {
   copyOf(source: AuthoredFormDetail, mutator: (draft: MutableModel<AuthoredFormDetail>) => MutableModel<AuthoredFormDetail> | void): AuthoredFormDetail;
-}
-
-type EagerFormInspection = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormInspection, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly formData?: string | null;
-  readonly status?: string | null;
-  readonly SubmittedDate?: string | null;
-  readonly SubmittedTime?: string | null;
-  readonly authoredForm?: AuthoredFormDetail | null;
-  readonly authoredformdetailID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyFormInspection = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormInspection, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly formData?: string | null;
-  readonly status?: string | null;
-  readonly SubmittedDate?: string | null;
-  readonly SubmittedTime?: string | null;
-  readonly authoredForm: AsyncItem<AuthoredFormDetail | undefined>;
-  readonly authoredformdetailID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type FormInspection = LazyLoading extends LazyLoadingDisabled ? EagerFormInspection : LazyFormInspection
-
-export declare const FormInspection: (new (init: ModelInit<FormInspection>) => FormInspection) & {
-  copyOf(source: FormInspection, mutator: (draft: MutableModel<FormInspection>) => MutableModel<FormInspection> | void): FormInspection;
 }
 
 type EagerFormsMetaData = {
