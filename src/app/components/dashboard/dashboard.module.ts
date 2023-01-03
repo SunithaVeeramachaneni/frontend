@@ -21,8 +21,6 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { NgChartsModule } from 'ng2-charts';
-import { ChartComponent } from './chart/chart.component';
 import { DashboardContainerComponent } from './dashboard-container/dashboard-container.component';
 import { ReportsComponent } from './reports/reports.component';
 import { DashboardsComponent } from './dashboards/dashboards.component';
@@ -54,6 +52,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+
+import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
+import { ColumnChartComponent } from './charts/column-chart/column-chart.component';
+import { HorizontalStackedChartComponent } from './charts/horizontal-stacked-chart/horizontal-stacked-chart.component';
+import { VerticalStackedChartComponent } from './charts/vertical-stacked-chart/vertical-stacked-chart.component';
+import { LineChartComponent } from './charts/line-chart/line-chart.component';
+import { PieChartComponent } from './charts/pie-chart/pie-chart.component';
+import { DonutChartComponent } from './charts/donut-chart/donut-chart.component';
+import { AreaChartComponent } from './charts/area-chart/area-chart.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/dashboard/', '.json');
@@ -82,6 +91,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
+    NgxEchartsModule.forRoot({
+      echarts
+    }),
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -96,7 +108,6 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
-    NgChartsModule,
     GridsterModule,
     NgxShimmerLoadingModule,
     NgxSpinnerModule
@@ -106,7 +117,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     ReportConfigurationListModalComponent,
     ReportDeleteModalComponent,
     ReportConfigurationComponent,
-    ChartComponent,
     DashboardContainerComponent,
     ReportsComponent,
     DashboardsComponent,
@@ -119,7 +129,15 @@ export const customTranslateLoader = (http: HttpClient) =>
     AlertDialog,
     WidgetDeleteModalComponent,
     ReportSaveAsModalComponent,
-    DynamicFiltersComponent
+    DynamicFiltersComponent,
+    BarChartComponent,
+    ColumnChartComponent,
+    HorizontalStackedChartComponent,
+    VerticalStackedChartComponent,
+    LineChartComponent,
+    PieChartComponent,
+    DonutChartComponent,
+    AreaChartComponent
   ],
   exports: [],
   entryComponents: []
