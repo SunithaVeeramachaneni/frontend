@@ -1,33 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-section',
   templateUrl: './section.component.html',
-  styleUrls: ['./section.component.scss']
+  styleUrls: ['./section.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectionComponent implements OnInit {
+  @Input() set sectionData(data) {
+    this.sectionInfo = data;
+    this.sectionForm.patchValue(this.sectionInfo);
+  }
+  get sectionData() {
+    return this.sectionInfo;
+  }
+  @Output() addSectionEvent: EventEmitter<number> = new EventEmitter();
+
   isSectionOpenState = true;
-  sectionForm: FormGroup;
+  sectionInfo;
+
+  sectionForm: FormGroup = this.fb.group({
+    id: '',
+    index: '',
+    name: {
+      value: '',
+      disabled: true
+    },
+    position: ''
+  });
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
-    this.sectionForm = this.fb.group({
-      id: [''],
-      name: [''],
-      position: ['']
-    });
+  ngOnInit() {}
+
+  addSection(index) {
+    this.addSectionEvent.emit(index);
   }
 
-  togglePageOpenState() {
+  toggleSectionOpenState = () => {
     this.isSectionOpenState = !this.isSectionOpenState;
+  };
+
+  editSection() {
+    this.sectionForm.get('name').enable();
   }
+
+  deleteSection() {}
 
   getSize(value) {
     if (value && value === value.toUpperCase()) {
       return value.length;
     }
-    return value ? value.length - 3 : -1;
+    return value.length - 1;
   }
 }

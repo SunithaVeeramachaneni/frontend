@@ -1,0 +1,88 @@
+@import '../../../../scss/colors.scss';
+
+.response-type-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+
+  .response-type-icons {
+    position: relative;
+    top: 12px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .response-type-text {
+    white-space: nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 60%;
+    overflow: hidden;
+    position: relative;
+    top: 13px;
+  }
+
+  .response-type-btn-arrow {
+    float: right;
+    position: relative;
+    top: 8px;
+  }
+
+  .response-type-chips {
+    text-overflow: ellipsis;
+    width: 100%;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+
+    ::ng-deep .mat-chip-list-wrapper {
+      flex-wrap: nowrap;
+    }
+  }
+
+  .chip-list {
+    width: 90%;
+    ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+      position: relative;
+      top: 12px;
+    }
+  }
+
+  .quick-response {
+    ::ng-deep .mat-button-wrapper {
+      display: flex;
+      width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-top: 10px;
+    }
+
+    ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+      margin: 12px 5px 5px 5px !important;
+    }
+  }
+
+  .globalset-res-type {
+    white-space: nowrap;
+    display: inline-block;
+    text-overflow: ellipsis;
+    width: 95%;
+    overflow: hidden;
+    position: relative;
+    top: 12px;
+  }
+
+  .ellipsis-more {
+    position: relative;
+    top: 15px;
+  }
+
+  .chips {
+    background-color: $white;
+    border: 1px solid $border-color;
+    min-height: 24px;
+    font-size: 90%;
+  }
+}

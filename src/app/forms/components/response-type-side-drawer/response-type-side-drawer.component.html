@@ -1,0 +1,140 @@
+<div class="app-customizer" *ngIf="sliderOpenState$ | async as sliderState">
+  <mat-card class="p-0" *ngIf="sliderState === true">
+    <mat-card-title class="m-0 light-gray">
+      <div class="mcq-heading" translate="slider"></div>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="dis-flex">
+        <div class="width-50">
+          <label for="min" translate="from"></label><br />
+          <input
+            id="min"
+            type="number"
+            class="slider-inputs"
+            [(ngModel)]="sliderOptions.min"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+        <div class="width-50 text-align-end">
+          <label for="max" translate="to"></label><br />
+          <input
+            id="max"
+            type="number"
+            class="slider-inputs"
+            [(ngModel)]="sliderOptions.max"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+      <mat-slider
+        [max]="sliderOptions.max"
+        [min]="sliderOptions.min"
+        [step]="sliderOptions.increment"
+        [(ngModel)]="sliderOptions.value"
+        [ngModelOptions]="{ standalone: true }"
+        class="width-100"
+      >
+      </mat-slider>
+      <div>
+        <label for="incre" translate="increment"></label>
+        <br />
+        <input
+          id="incre"
+          type="number"
+          class="slider-inputs"
+          [(ngModel)]="sliderOptions.increment"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <br />
+      <br />
+      <button
+        mat-raised-button
+        color="primary"
+        class="apply-slider-btn"
+        (click)="applySliderOptions(sliderOptions)"
+        translate="apply"
+      ></button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="cancel-slider"
+        (click)="cancelSlider()"
+        translate="cancel"
+      ></button>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div
+  class="app-customizer"
+  *ngIf="multipleChoiceOpenState$ | async as multipleChoiceState"
+>
+  <mat-card class="p-0" *ngIf="multipleChoiceState === true">
+    <mat-card-title class="m-0 light-gray">
+      <div class="mcq-heading" translate="mcqHeading"></div>
+    </mat-card-title>
+    <div [formGroup]="responseForm">
+      <div class="margin response-heading" translate="response"></div>
+      <mat-card-content>
+        <div class="width-100" formArrayName="responses">
+          <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
+            <div *ngFor="let response of getResponseList(); let i = index">
+              <div [formGroupName]="i" class="dis-flex response-list">
+                <input
+                  matInput
+                  formControlName="title"
+                  placeholder="Response Title"
+                  autocomplete="off"
+                  class="input-forms"
+                  (keyup.enter)="initResponse(); keytab($event)"
+                />
+                <div>
+                  <input
+                    matInput
+                    class="input-forms"
+                    type="color"
+                    class="color-type"
+                    formControlName="color"
+                    [hidden]="respType === 'globalResponse'"
+                  />
+                  <button
+                    mat-flat-button
+                    (click)="deleteResponse(i)"
+                    color="#545F70"
+                    class="delete-btn"
+                  >
+                    <img
+                      src="assets/rdf-forms-icons/delete-icon.svg"
+                      class="delete-btn-icon"
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          mat-flat-button
+          (click)="initResponse()"
+          class="add-response"
+          translate="addRes"
+        ></button>
+      </mat-card-content>
+    </div>
+    <button
+      mat-raised-button
+      (click)="submitResponses()"
+      color="primary"
+      class="submit-response-btn"
+      [disabled]="isFormNotUpdated === true || responseForm.pristine"
+      translate="apply"
+    ></button>
+    <button
+      mat-stroked-button
+      class="cancel-response-btn"
+      (click)="cancelResponse()"
+      translate="cancel"
+    ></button>
+  </mat-card>
+</div>
