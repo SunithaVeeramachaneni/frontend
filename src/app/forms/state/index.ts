@@ -10,10 +10,10 @@ export interface State extends AppState.State {
   feature: FromModuleState;
 }
 
-const selectRDFFeatureState = createFeatureSelector<FromModuleState>('feature');
+const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(
-  selectRDFFeatureState,
+  selectFeatureState,
   (state) => state.formConfiguration
 );
 
