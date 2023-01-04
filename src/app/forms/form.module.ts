@@ -58,6 +58,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
+    MatTooltipModule,
     TranslateModule.forChild({})
   ],
   exports: [
