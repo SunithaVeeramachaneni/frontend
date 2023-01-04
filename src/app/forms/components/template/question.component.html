@@ -1,11 +1,17 @@
-<div class="questions" [formGroup]="questionForm">
+<div
+  class="questions"
+  [formGroup]="questionForm"
+  *ngIf="{
+    question: question$ | async,
+    sectionQuestions: sectionQuestions$ | async
+  }"
+>
   <div>
     <div>
       <div
         class="dis-flex questions-div"
         (click)="toggleFieldContentOpenState()"
       >
-        <input type="hidden" formControlName="position" />
         <div class="width-70 question-input-box">
           <img
             src="assets/rdf-forms-icons/six-dots.svg"
@@ -20,7 +26,7 @@
             placeholder="Type Question"
             class="width-90 question-input"
             *ngIf="questionForm.get('fieldType').value !== 'LLF'"
-            (keyup.enter)="addQuestion(questionForm.get('index').value)"
+            (keyup.enter)="addQuestion(questionForm.get('position').value)"
           />
           <!-- <quill-material
                   formControlName="name"
@@ -36,7 +42,7 @@
           <div class="floating-btns">
             <button
               class="questions-btn"
-              (click)="addQuestion(questionForm.get('index').value)"
+              (click)="addQuestion(questionForm.get('position').value)"
             >
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
@@ -49,7 +55,7 @@
             <button
               class="delete-btn"
               (click)="deleteQuestion()"
-              [disabled]="questionForm.length === 1"
+              [disabled]="sectionQuestions.length === 1"
             >
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"
@@ -83,7 +89,7 @@
                 openResponseTypeModalEventHandler($event)
               "
               [fieldTypes]="fieldTypes"
-              [question]="questionInfo"
+              [question]="question"
             ></app-response-type>
           </div>
         </div>

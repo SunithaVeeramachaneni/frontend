@@ -1,4 +1,8 @@
-<div class="section dis-flex" [formGroup]="sectionForm">
+<div
+  class="section dis-flex"
+  [formGroup]="sectionForm"
+  *ngIf="section$ | async"
+>
   <div class="width-5"></div>
   <div class="width-95 section-margin">
     <div>
@@ -69,7 +73,7 @@
 
       <button
         class="add-section-btn"
-        (click)="addSection(sectionForm.get('index').value)"
+        (click)="addSection(sectionForm.get('position').value)"
       >
         <img
           src="assets/rdf-forms-icons/add-section.svg"

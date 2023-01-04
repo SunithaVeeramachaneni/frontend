@@ -16,6 +16,9 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -41,7 +44,8 @@ export class FormConfigurationModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public dialogRef: MatDialogRef<FormConfigurationModalComponent>
+    public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
+    private store: Store<State>
   ) {
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
@@ -53,7 +57,6 @@ export class FormConfigurationModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
-      formLogo: [''],
       name: [
         '',
         [
@@ -66,6 +69,7 @@ export class FormConfigurationModalComponent implements OnInit {
       isPublic: [false],
       isArchived: [false],
       formStatus: ['draft'],
+      formType: ['standalone'],
       tags: [this.tags]
     });
   }
@@ -115,7 +119,12 @@ export class FormConfigurationModalComponent implements OnInit {
 
   next() {
     if (this.headerDataForm.valid) {
-      this.router.navigate(['./rdf-forms/create']);
+      this.store.dispatch(
+        FormConfigurationActions.addFormMetadata({
+          formMetadata: this.headerDataForm.value
+        })
+      );
+      this.router.navigate(['/rdf-forms/create']);
       this.dialogRef.close();
     }
   }

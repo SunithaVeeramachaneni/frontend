@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   Input,
@@ -7,7 +8,11 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { getPage, State } from 'src/app/forms/state';
+import { AddPageEvent, Page } from 'src/app/interfaces';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -15,32 +20,41 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageComponent implements OnInit {
-  @Input() set pageData(data) {
-    this.pageInfo = data;
-    this.pageForm.setValue(data);
+  @Input() set pageIndex(pageIndex: number) {
+    this._pageIndex = pageIndex;
   }
-  get pageData() {
-    return this.pageInfo;
+  get pageIndex() {
+    return this._pageIndex;
   }
 
-  @Output() addPageEvent: EventEmitter<number> = new EventEmitter();
+  @Output() addPageEvent: EventEmitter<AddPageEvent> =
+    new EventEmitter<AddPageEvent>();
 
   isPageOpenState = true;
   pageForm: FormGroup = this.fb.group({
     name: '',
-    index: ''
+    position: ''
   });
-  pageInfo;
+  page$: Observable<Page>;
+  private _pageIndex: number;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
+  constructor(private fb: FormBuilder, private store: Store<State>) {}
 
-  ngOnInit() {}
-
-  addPage(index) {
-    this.addPageEvent.emit(index);
+  ngOnInit() {
+    this.page$ = this.store.select(getPage(this.pageIndex)).pipe(
+      tap((page) => {
+        this.pageForm.patchValue(page, {
+          emitEvent: false
+        });
+      })
+    );
   }
 
-  togglePageOpenState = (idx: number) => {
+  addPage(position: number) {
+    this.addPageEvent.emit({ pageIndex: position });
+  }
+
+  togglePageOpenState = () => {
     this.isPageOpenState = !this.isPageOpenState;
   };
 

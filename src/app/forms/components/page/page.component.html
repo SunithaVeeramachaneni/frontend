@@ -1,4 +1,4 @@
-<div class="pages" [formGroup]="pageForm">
+<div class="pages" [formGroup]="pageForm" *ngIf="page$ | async">
   <div class="page-header">
     <mat-icon
       (click)="togglePageOpenState()"
@@ -17,7 +17,7 @@
 
     <a>
       <span class="form_page_name_input">
-        Page {{ pageForm.get('index').value + 1 }}
+        Page {{ pageForm.get('position').value }}
       </span>
     </a>
 
@@ -38,7 +38,10 @@
     <ng-content></ng-content>
   </div>
 
-  <button class="add-page-btn" (click)="addPage(pageForm.get('index').value)">
+  <button
+    class="add-page-btn"
+    (click)="addPage(pageForm.get('position').value)"
+  >
     <img
       src="assets/rdf-forms-icons/add-page.svg"
       alt="add page"
