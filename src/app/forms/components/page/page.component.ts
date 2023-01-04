@@ -1,32 +1,50 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
-  styleUrls: ['./page.component.scss']
+  styleUrls: ['./page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PageComponent implements OnInit {
+  @Input() set pageData(data) {
+    this.pageInfo = data;
+    this.pageForm.setValue(data);
+  }
+  get pageData() {
+    return this.pageInfo;
+  }
+
+  @Output() addPageEvent: EventEmitter<number> = new EventEmitter();
+
   isPageOpenState = true;
-  pageForm: FormGroup;
+  pageForm: FormGroup = this.fb.group({
+    name: '',
+    index: ''
+  });
+  pageInfo;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-    this.pageForm = this.fb.group({
-      id: [''],
-      name: ['']
-    });
+  ngOnInit() {}
+
+  addPage(index) {
+    this.addPageEvent.emit(index);
   }
 
-  togglePageOpenState() {
+  togglePageOpenState = (idx: number) => {
     this.isPageOpenState = !this.isPageOpenState;
-  }
+  };
 
-  getSize(value) {
-    if (value && value === value.toUpperCase()) {
-      return value.length;
-    }
-    return value ? value.length - 3 : -1;
+  deletePage() {
+    //delete
   }
 }
