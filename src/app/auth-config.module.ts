@@ -6,16 +6,8 @@ import {
 } from 'angular-auth-oidc-client';
 import { AuthConfigService } from './auth-config.service';
 
-const httpLoaderFactory = (authConfigService: AuthConfigService) => {
-  const authConfigs = [];
-  Array.from(Array(authConfigService.getAuthConfigsCount()).keys()).forEach(
-    (v, i) => {
-      const config$ = authConfigService.getAuthConfig$(i);
-      authConfigs.push(config$);
-    }
-  );
-  return new StsConfigHttpLoader(authConfigs);
-};
+const httpLoaderFactory = (authConfigService: AuthConfigService) =>
+  new StsConfigHttpLoader(authConfigService.getAuthConfig$());
 
 @NgModule({
   imports: [

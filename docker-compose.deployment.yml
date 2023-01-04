@@ -61,7 +61,6 @@ services:
       dockerfile: .docker/nginx.${DEPLOYMENT_ENV}.dockerfile
       args:
         - NPM_AUTH_TOKEN=${NPM_AUTH_TOKEN}
-        - TENANTS_COUNT=${TENANTS_COUNT}
     restart: always
     ports:
       - '80:80'

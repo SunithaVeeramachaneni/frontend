@@ -52,6 +52,13 @@ export class WidgetComponent implements OnInit {
   get height(): number {
     return this._height;
   }
+
+  @Input() set width(width: number) {
+    this._width = width;
+  }
+  get width(): number {
+    return this._width;
+  }
   @Output() widgetAction: EventEmitter<WidgetAction> =
     new EventEmitter<WidgetAction>();
   chartConfig: AppChartConfig;
@@ -84,8 +91,9 @@ export class WidgetComponent implements OnInit {
   limit = defaultLimit;
   countType: string;
   countField: string;
+  public _height: number;
+  public _width: number;
   private _widget: Widget;
-  private _height: number;
 
   constructor(private reportConfigService: ReportConfigurationService) {}
 
