@@ -58,11 +58,46 @@
       </button>
     </div>
   </div>
-  <div>
-    <app-page [indexes]="indexes">
-      <app-section [indexes]="indexes">
-        <app-template></app-template>
-      </app-section>
-    </app-page>
+  <div class="dis-flex form">
+    <div class="width-70">
+      <ng-container *ngFor="let page of getPages(); let pageIndex = index">
+        <app-page
+          [pageData]="getPageData(pageIndex)"
+          (addPageEvent)="addPageEventHandler($event)"
+        >
+          <ng-container
+            *ngFor="
+              let section of getSections(pageIndex);
+              let sectionIndex = index
+            "
+          >
+            <app-section
+              [sectionData]="getSectionData(pageIndex, sectionIndex)"
+              (addSectionEvent)="addSectionEventHandler($event, pageIndex)"
+            >
+              <ng-container
+                *ngFor="
+                  let question of getSectionQuestions(pageIndex, section.id);
+                  let questionIndex = index
+                "
+              >
+                <app-template
+                  [questionData]="
+                    getQuestionData(pageIndex, questionIndex, section.id)
+                  "
+                  (addQuestionEvent)="
+                    addQuestionEventHandler($event, pageIndex, section.id)
+                  "
+                ></app-template>
+              </ng-container>
+            </app-section>
+          </ng-container>
+        </app-page>
+      </ng-container>
+    </div>
+    <div class="width-30">
+      <app-iphone></app-iphone>
+      <!-- <app-preview></app-preview> -->
+    </div>
   </div>
 </div>

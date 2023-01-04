@@ -1,3 +1,10 @@
+import {
+  MatBottomSheet,
+  MatBottomSheetModule
+} from '@angular/material/bottom-sheet';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
@@ -15,6 +22,7 @@ import { ResponseTypeComponent } from './components/response-type/response-type.
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
+import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -33,7 +41,8 @@ import { MatInputModule } from '@angular/material/input';
     PreviewComponent,
     AddLogicComponent,
     AddFilterComponent,
-    ResponseDrawerComponent
+    ResponseDrawerComponent,
+    IphoneComponent
   ],
   imports: [
     FormsModule,
@@ -49,7 +58,11 @@ import { MatInputModule } from '@angular/material/input';
     MatIconModule,
     MatCardModule,
     MatSliderModule,
-    MatTreeModule
+    MatTreeModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatSelectModule,
+    MatBottomSheetModule
   ],
   exports: [
     FormWidgetComponent,
@@ -58,6 +71,7 @@ import { MatInputModule } from '@angular/material/input';
     TemplateComponent,
     ResponseTypeComponent,
     PreviewComponent,
+    IphoneComponent,
     AddLogicComponent,
     AddFilterComponent
   ]

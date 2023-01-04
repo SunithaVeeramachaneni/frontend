@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { NestedTreeControl } from '@angular/cdk/tree';
+import { fieldTypesMock } from '../response-type/response-types.mock';
+import {
+  MatBottomSheet,
+  MatBottomSheetRef
+} from '@angular/material/bottom-sheet';
 
 /**
  * Food data with nested structure.
@@ -22,16 +27,41 @@ const TREE_DATA: FoodNode[] = [
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss']
 })
-export class PreviewComponent implements OnInit {
+export class PreviewComponent implements OnInit, AfterViewInit {
+  @ViewChild('tree') tree;
   treeControl = new NestedTreeControl<FoodNode>((node) => node.children);
   dataSource = new MatTreeNestedDataSource<FoodNode>();
 
-  constructor() {
+  fieldTypes: any;
+  arrayField = false;
+  sliderOptions = {
+    value: 0,
+    min: 0,
+    max: 100,
+    increment: 1
+  };
+  constructor(private _bottomSheet: MatBottomSheet) {
     this.dataSource.data = TREE_DATA;
   }
 
   hasChild = (_: number, node: FoodNode) =>
     !!node.children && node.children.length > 0;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.fieldTypes = fieldTypesMock.fieldTypes;
+  }
+  ngAfterViewInit() {
+    this.tree.treeControl.expandAll();
+  }
+  formatLabel(value: number): string {
+    if (value >= 1000) {
+      return Math.round(value / 1000) + 'k';
+    }
+
+    return `${value}`;
+  }
+
+  openBottomSheet(): void {
+    this.arrayField = !this.arrayField;
+  }
 }
