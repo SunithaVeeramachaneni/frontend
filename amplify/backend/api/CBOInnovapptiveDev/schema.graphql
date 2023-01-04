@@ -17,8 +17,8 @@ type AuthoredFormDetail @model @auth(rules: [{allow: public}]) {
   formStatus: FormStatusEnum
   counter: Int
   pages: String
-  formlistID: ID! @index(name: "byFormList")
-  formList: FormList @belongsTo(fields: ["formlistID"])
+  formListId: ID! @index(name: "byFormList")
+  formList: FormList @belongsTo(fields: ["formListId"])
 }
 
 type FormSubmissions @model @auth(rules: [{allow: public}]) {
@@ -57,25 +57,6 @@ type FormList @model @auth(rules: [{allow: public}]) {
   formDetails: [FormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
   formSubmissions: [FormSubmissions] @hasMany(indexName: "byFormList", fields: ["id"])
   authoredFormDetails: [AuthoredFormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
-}
-
-type FormsMetaData @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String
-  description: String
-  formLogo: String
-  isPublic: Boolean
-  isArchived: Boolean
-  tags: [AWSJSON]
-  formStatus: FormStatusEnum
-  createdBy: String
-  updatedBy: String
-}
-
-type FormsJSON @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  pages: [AWSJSON!]
-  formId: String
 }
 
 enum FormStatusEnum {

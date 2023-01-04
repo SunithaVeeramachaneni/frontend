@@ -152,7 +152,7 @@ subscription OnCreateAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -190,7 +190,7 @@ subscription OnUpdateAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -228,7 +228,7 @@ subscription OnDeleteAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -502,105 +502,6 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnCreateFormsMetaData(
-  $filter: ModelSubscriptionFormsMetaDataFilterInput
-) {
-  onCreateFormsMetaData(filter: $filter) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnUpdateFormsMetaData(
-  $filter: ModelSubscriptionFormsMetaDataFilterInput
-) {
-  onUpdateFormsMetaData(filter: $filter) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnDeleteFormsMetaData(
-  $filter: ModelSubscriptionFormsMetaDataFilterInput
-) {
-  onDeleteFormsMetaData(filter: $filter) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnCreateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-  onCreateFormsJSON(filter: $filter) {
-    id
-    pages
-    formId
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnUpdateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-  onUpdateFormsJSON(filter: $filter) {
-    id
-    pages
-    formId
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnDeleteFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-  onDeleteFormsJSON(filter: $filter) {
-    id
-    pages
-    formId
     createdAt
     updatedAt
     _version

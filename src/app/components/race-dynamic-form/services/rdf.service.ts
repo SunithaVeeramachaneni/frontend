@@ -73,10 +73,6 @@ export class RaceDynamicFormService {
   }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
-    console.log(
-      '🚀 ~ file: rdf.service.ts:66 ~ RaceDynamicFormService ~ formatGraphQLFormsResponse ~ resp',
-      resp
-    );
     const rows =
       resp.items
         .sort(

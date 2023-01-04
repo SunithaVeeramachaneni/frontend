@@ -159,7 +159,7 @@ mutation CreateAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -198,7 +198,7 @@ mutation UpdateAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -237,7 +237,7 @@ mutation DeleteAuthoredFormDetail(
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -523,117 +523,6 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation CreateFormsMetaData(
-  $input: CreateFormsMetaDataInput!
-  $condition: ModelFormsMetaDataConditionInput
-) {
-  createFormsMetaData(input: $input, condition: $condition) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation UpdateFormsMetaData(
-  $input: UpdateFormsMetaDataInput!
-  $condition: ModelFormsMetaDataConditionInput
-) {
-  updateFormsMetaData(input: $input, condition: $condition) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation DeleteFormsMetaData(
-  $input: DeleteFormsMetaDataInput!
-  $condition: ModelFormsMetaDataConditionInput
-) {
-  deleteFormsMetaData(input: $input, condition: $condition) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation CreateFormsJSON(
-  $input: CreateFormsJSONInput!
-  $condition: ModelFormsJSONConditionInput
-) {
-  createFormsJSON(input: $input, condition: $condition) {
-    id
-    pages
-    formId
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation UpdateFormsJSON(
-  $input: UpdateFormsJSONInput!
-  $condition: ModelFormsJSONConditionInput
-) {
-  updateFormsJSON(input: $input, condition: $condition) {
-    id
-    pages
-    formId
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation DeleteFormsJSON(
-  $input: DeleteFormsJSONInput!
-  $condition: ModelFormsJSONConditionInput
-) {
-  deleteFormsJSON(input: $input, condition: $condition) {
-    id
-    pages
-    formId
     createdAt
     updatedAt
     _version

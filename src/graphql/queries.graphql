@@ -202,7 +202,7 @@ query GetAuthoredFormDetail($id: ID!) {
     formStatus
     counter
     pages
-    formlistID
+    formListId
     formList {
       id
       name
@@ -247,7 +247,7 @@ query ListAuthoredFormDetails(
       formStatus
       counter
       pages
-      formlistID
+      formListId
       createdAt
       updatedAt
       _version
@@ -276,7 +276,7 @@ query SyncAuthoredFormDetails(
       formStatus
       counter
       pages
-      formlistID
+      formListId
       createdAt
       updatedAt
       _version
@@ -287,15 +287,15 @@ query SyncAuthoredFormDetails(
     startedAt
   }
 }
-query AuthoredFormDetailsByFormlistID(
-  $formlistID: ID!
+query AuthoredFormDetailsByFormListId(
+  $formListId: ID!
   $sortDirection: ModelSortDirection
   $filter: ModelAuthoredFormDetailFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  authoredFormDetailsByFormlistID(
-    formlistID: $formlistID
+  authoredFormDetailsByFormListId(
+    formListId: $formListId
     sortDirection: $sortDirection
     filter: $filter
     limit: $limit
@@ -307,7 +307,7 @@ query AuthoredFormDetailsByFormlistID(
       formStatus
       counter
       pages
-      formlistID
+      formListId
       createdAt
       updatedAt
       _version
@@ -562,143 +562,6 @@ query SyncFormLists(
       lastPublishedBy
       author
       formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    nextToken
-    startedAt
-  }
-}
-query GetFormsMetaData($id: ID!) {
-  getFormsMetaData(id: $id) {
-    id
-    name
-    description
-    formLogo
-    isPublic
-    isArchived
-    tags
-    formStatus
-    createdBy
-    updatedBy
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-query ListFormsMetaData(
-  $filter: ModelFormsMetaDataFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listFormsMetaData(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      isArchived
-      tags
-      formStatus
-      createdBy
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    nextToken
-    startedAt
-  }
-}
-query SyncFormsMetaData(
-  $filter: ModelFormsMetaDataFilterInput
-  $limit: Int
-  $nextToken: String
-  $lastSync: AWSTimestamp
-) {
-  syncFormsMetaData(
-    filter: $filter
-    limit: $limit
-    nextToken: $nextToken
-    lastSync: $lastSync
-  ) {
-    items {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      isArchived
-      tags
-      formStatus
-      createdBy
-      updatedBy
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    nextToken
-    startedAt
-  }
-}
-query GetFormsJSON($id: ID!) {
-  getFormsJSON(id: $id) {
-    id
-    pages
-    formId
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-query ListFormsJSONS(
-  $filter: ModelFormsJSONFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listFormsJSONS(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      pages
-      formId
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    nextToken
-    startedAt
-  }
-}
-query SyncFormsJSONS(
-  $filter: ModelFormsJSONFilterInput
-  $limit: Int
-  $nextToken: String
-  $lastSync: AWSTimestamp
-) {
-  syncFormsJSONS(
-    filter: $filter
-    limit: $limit
-    nextToken: $nextToken
-    lastSync: $lastSync
-  ) {
-    items {
-      id
-      pages
-      formId
       createdAt
       updatedAt
       _version

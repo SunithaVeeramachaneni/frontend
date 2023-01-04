@@ -7,7 +7,7 @@ const FormStatusEnum = {
   "PUBLISHED": "PUBLISHED"
 };
 
-const { FormSubmissionDetail, FormSubmissions, FormList, FormDetail, AuthoredFormDetail, FormsMetaData, FormsJSON } = initSchema(schema);
+const { FormSubmissionDetail, FormSubmissions, FormList, FormDetail, AuthoredFormDetail } = initSchema(schema);
 
 export {
   FormSubmissionDetail,
@@ -15,7 +15,5 @@ export {
   FormList,
   FormDetail,
   AuthoredFormDetail,
-  FormsMetaData,
-  FormsJSON,
   FormStatusEnum
 };

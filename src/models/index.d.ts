@@ -197,7 +197,7 @@ type EagerAuthoredFormDetail = {
   readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
   readonly counter?: number | null;
   readonly pages?: string | null;
-  readonly formlistID: string;
+  readonly formListId: string;
   readonly formList?: FormList | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -213,7 +213,7 @@ type LazyAuthoredFormDetail = {
   readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
   readonly counter?: number | null;
   readonly pages?: string | null;
-  readonly formlistID: string;
+  readonly formListId: string;
   readonly formList: AsyncItem<FormList | undefined>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -223,78 +223,4 @@ export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled
 
 export declare const AuthoredFormDetail: (new (init: ModelInit<AuthoredFormDetail>) => AuthoredFormDetail) & {
   copyOf(source: AuthoredFormDetail, mutator: (draft: MutableModel<AuthoredFormDetail>) => MutableModel<AuthoredFormDetail> | void): AuthoredFormDetail;
-}
-
-type EagerFormsMetaData = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormsMetaData, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly name?: string | null;
-  readonly description?: string | null;
-  readonly formLogo?: string | null;
-  readonly isPublic?: boolean | null;
-  readonly isArchived?: boolean | null;
-  readonly tags?: (string | null)[] | null;
-  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
-  readonly createdBy?: string | null;
-  readonly updatedBy?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyFormsMetaData = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormsMetaData, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly name?: string | null;
-  readonly description?: string | null;
-  readonly formLogo?: string | null;
-  readonly isPublic?: boolean | null;
-  readonly isArchived?: boolean | null;
-  readonly tags?: (string | null)[] | null;
-  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
-  readonly createdBy?: string | null;
-  readonly updatedBy?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type FormsMetaData = LazyLoading extends LazyLoadingDisabled ? EagerFormsMetaData : LazyFormsMetaData
-
-export declare const FormsMetaData: (new (init: ModelInit<FormsMetaData>) => FormsMetaData) & {
-  copyOf(source: FormsMetaData, mutator: (draft: MutableModel<FormsMetaData>) => MutableModel<FormsMetaData> | void): FormsMetaData;
-}
-
-type EagerFormsJSON = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormsJSON, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly pages?: string[] | null;
-  readonly formId?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyFormsJSON = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormsJSON, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly pages?: string[] | null;
-  readonly formId?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type FormsJSON = LazyLoading extends LazyLoadingDisabled ? EagerFormsJSON : LazyFormsJSON
-
-export declare const FormsJSON: (new (init: ModelInit<FormsJSON>) => FormsJSON) & {
-  copyOf(source: FormsJSON, mutator: (draft: MutableModel<FormsJSON>) => MutableModel<FormsJSON> | void): FormsJSON;
 }

@@ -25,12 +25,6 @@ export type __SubscriptionContainer = {
   onCreateFormList: OnCreateFormListSubscription;
   onUpdateFormList: OnUpdateFormListSubscription;
   onDeleteFormList: OnDeleteFormListSubscription;
-  onCreateFormsMetaData: OnCreateFormsMetaDataSubscription;
-  onUpdateFormsMetaData: OnUpdateFormsMetaDataSubscription;
-  onDeleteFormsMetaData: OnDeleteFormsMetaDataSubscription;
-  onCreateFormsJSON: OnCreateFormsJSONSubscription;
-  onUpdateFormsJSON: OnUpdateFormsJSONSubscription;
-  onDeleteFormsJSON: OnDeleteFormsJSONSubscription;
 };
 
 export type CreateFormSubmissionDetailInput = {
@@ -206,7 +200,7 @@ export type AuthoredFormDetail = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: FormList | null;
   createdAt: string;
   updatedAt: string;
@@ -272,7 +266,7 @@ export type CreateAuthoredFormDetailInput = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   _version?: number | null;
 };
 
@@ -281,7 +275,7 @@ export type ModelAuthoredFormDetailConditionInput = {
   formStatus?: ModelFormStatusEnumInput | null;
   counter?: ModelIntInput | null;
   pages?: ModelStringInput | null;
-  formlistID?: ModelIDInput | null;
+  formListId?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   or?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   not?: ModelAuthoredFormDetailConditionInput | null;
@@ -310,7 +304,7 @@ export type UpdateAuthoredFormDetailInput = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID?: string | null;
+  formListId?: string | null;
   _version?: number | null;
 };
 
@@ -443,112 +437,6 @@ export type DeleteFormListInput = {
   _version?: number | null;
 };
 
-export type CreateFormsMetaDataInput = {
-  id?: string | null;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  _version?: number | null;
-};
-
-export type ModelFormsMetaDataConditionInput = {
-  name?: ModelStringInput | null;
-  description?: ModelStringInput | null;
-  formLogo?: ModelStringInput | null;
-  isPublic?: ModelBooleanInput | null;
-  isArchived?: ModelBooleanInput | null;
-  tags?: ModelStringInput | null;
-  formStatus?: ModelFormStatusEnumInput | null;
-  createdBy?: ModelStringInput | null;
-  updatedBy?: ModelStringInput | null;
-  and?: Array<ModelFormsMetaDataConditionInput | null> | null;
-  or?: Array<ModelFormsMetaDataConditionInput | null> | null;
-  not?: ModelFormsMetaDataConditionInput | null;
-};
-
-export type FormsMetaData = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateFormsMetaDataInput = {
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  _version?: number | null;
-};
-
-export type DeleteFormsMetaDataInput = {
-  id: string;
-  _version?: number | null;
-};
-
-export type CreateFormsJSONInput = {
-  id?: string | null;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  _version?: number | null;
-};
-
-export type ModelFormsJSONConditionInput = {
-  pages?: ModelStringInput | null;
-  formId?: ModelStringInput | null;
-  and?: Array<ModelFormsJSONConditionInput | null> | null;
-  or?: Array<ModelFormsJSONConditionInput | null> | null;
-  not?: ModelFormsJSONConditionInput | null;
-};
-
-export type FormsJSON = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateFormsJSONInput = {
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  _version?: number | null;
-};
-
-export type DeleteFormsJSONInput = {
-  id: string;
-  _version?: number | null;
-};
-
 export type ModelFormSubmissionDetailFilterInput = {
   id?: ModelIDInput | null;
   formData?: ModelStringInput | null;
@@ -578,7 +466,7 @@ export type ModelAuthoredFormDetailFilterInput = {
   formStatus?: ModelFormStatusEnumInput | null;
   counter?: ModelIntInput | null;
   pages?: ModelStringInput | null;
-  formlistID?: ModelIDInput | null;
+  formListId?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
   not?: ModelAuthoredFormDetailFilterInput | null;
@@ -626,45 +514,6 @@ export type ModelFormListFilterInput = {
 export type ModelFormListConnection = {
   __typename: "ModelFormListConnection";
   items: Array<FormList | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type ModelFormsMetaDataFilterInput = {
-  id?: ModelIDInput | null;
-  name?: ModelStringInput | null;
-  description?: ModelStringInput | null;
-  formLogo?: ModelStringInput | null;
-  isPublic?: ModelBooleanInput | null;
-  isArchived?: ModelBooleanInput | null;
-  tags?: ModelStringInput | null;
-  formStatus?: ModelFormStatusEnumInput | null;
-  createdBy?: ModelStringInput | null;
-  updatedBy?: ModelStringInput | null;
-  and?: Array<ModelFormsMetaDataFilterInput | null> | null;
-  or?: Array<ModelFormsMetaDataFilterInput | null> | null;
-  not?: ModelFormsMetaDataFilterInput | null;
-};
-
-export type ModelFormsMetaDataConnection = {
-  __typename: "ModelFormsMetaDataConnection";
-  items: Array<FormsMetaData | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type ModelFormsJSONFilterInput = {
-  id?: ModelIDInput | null;
-  pages?: ModelStringInput | null;
-  formId?: ModelStringInput | null;
-  and?: Array<ModelFormsJSONFilterInput | null> | null;
-  or?: Array<ModelFormsJSONFilterInput | null> | null;
-  not?: ModelFormsJSONFilterInput | null;
-};
-
-export type ModelFormsJSONConnection = {
-  __typename: "ModelFormsJSONConnection";
-  items: Array<FormsJSON | null>;
   nextToken?: string | null;
   startedAt?: number | null;
 };
@@ -721,7 +570,7 @@ export type ModelSubscriptionAuthoredFormDetailFilterInput = {
   formStatus?: ModelSubscriptionStringInput | null;
   counter?: ModelSubscriptionIntInput | null;
   pages?: ModelSubscriptionStringInput | null;
-  formlistID?: ModelSubscriptionIDInput | null;
+  formListId?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
 };
@@ -778,29 +627,6 @@ export type ModelSubscriptionFormListFilterInput = {
   formType?: ModelSubscriptionStringInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
-};
-
-export type ModelSubscriptionFormsMetaDataFilterInput = {
-  id?: ModelSubscriptionIDInput | null;
-  name?: ModelSubscriptionStringInput | null;
-  description?: ModelSubscriptionStringInput | null;
-  formLogo?: ModelSubscriptionStringInput | null;
-  isPublic?: ModelSubscriptionBooleanInput | null;
-  isArchived?: ModelSubscriptionBooleanInput | null;
-  tags?: ModelSubscriptionStringInput | null;
-  formStatus?: ModelSubscriptionStringInput | null;
-  createdBy?: ModelSubscriptionStringInput | null;
-  updatedBy?: ModelSubscriptionStringInput | null;
-  and?: Array<ModelSubscriptionFormsMetaDataFilterInput | null> | null;
-  or?: Array<ModelSubscriptionFormsMetaDataFilterInput | null> | null;
-};
-
-export type ModelSubscriptionFormsJSONFilterInput = {
-  id?: ModelSubscriptionIDInput | null;
-  pages?: ModelSubscriptionStringInput | null;
-  formId?: ModelSubscriptionStringInput | null;
-  and?: Array<ModelSubscriptionFormsJSONFilterInput | null> | null;
-  or?: Array<ModelSubscriptionFormsJSONFilterInput | null> | null;
 };
 
 export type CreateFormSubmissionDetailMutation = {
@@ -945,7 +771,7 @@ export type CreateAuthoredFormDetailMutation = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -982,7 +808,7 @@ export type UpdateAuthoredFormDetailMutation = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -1019,7 +845,7 @@ export type DeleteAuthoredFormDetailMutation = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -1310,99 +1136,6 @@ export type DeleteFormListMutation = {
   _lastChangedAt: number;
 };
 
-export type CreateFormsMetaDataMutation = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateFormsMetaDataMutation = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type DeleteFormsMetaDataMutation = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type CreateFormsJSONMutation = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateFormsJSONMutation = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type DeleteFormsJSONMutation = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
 export type GetFormSubmissionDetailQuery = {
   __typename: "FormSubmissionDetail";
   id: string;
@@ -1557,7 +1290,7 @@ export type GetAuthoredFormDetailQuery = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -1596,7 +1329,7 @@ export type ListAuthoredFormDetailsQuery = {
     formStatus?: FormStatusEnum | null;
     counter?: number | null;
     pages?: string | null;
-    formlistID: string;
+    formListId: string;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1616,7 +1349,7 @@ export type SyncAuthoredFormDetailsQuery = {
     formStatus?: FormStatusEnum | null;
     counter?: number | null;
     pages?: string | null;
-    formlistID: string;
+    formListId: string;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1627,7 +1360,7 @@ export type SyncAuthoredFormDetailsQuery = {
   startedAt?: number | null;
 };
 
-export type AuthoredFormDetailsByFormlistIDQuery = {
+export type AuthoredFormDetailsByFormListIdQuery = {
   __typename: "ModelAuthoredFormDetailConnection";
   items: Array<{
     __typename: "AuthoredFormDetail";
@@ -1636,7 +1369,7 @@ export type AuthoredFormDetailsByFormlistIDQuery = {
     formStatus?: FormStatusEnum | null;
     counter?: number | null;
     pages?: string | null;
-    formlistID: string;
+    formListId: string;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1871,119 +1604,6 @@ export type SyncFormListsQuery = {
   startedAt?: number | null;
 };
 
-export type GetFormsMetaDataQuery = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type ListFormsMetaDataQuery = {
-  __typename: "ModelFormsMetaDataConnection";
-  items: Array<{
-    __typename: "FormsMetaData";
-    id: string;
-    name?: string | null;
-    description?: string | null;
-    formLogo?: string | null;
-    isPublic?: boolean | null;
-    isArchived?: boolean | null;
-    tags?: Array<string | null> | null;
-    formStatus?: FormStatusEnum | null;
-    createdBy?: string | null;
-    updatedBy?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type SyncFormsMetaDataQuery = {
-  __typename: "ModelFormsMetaDataConnection";
-  items: Array<{
-    __typename: "FormsMetaData";
-    id: string;
-    name?: string | null;
-    description?: string | null;
-    formLogo?: string | null;
-    isPublic?: boolean | null;
-    isArchived?: boolean | null;
-    tags?: Array<string | null> | null;
-    formStatus?: FormStatusEnum | null;
-    createdBy?: string | null;
-    updatedBy?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type GetFormsJSONQuery = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type ListFormsJSONSQuery = {
-  __typename: "ModelFormsJSONConnection";
-  items: Array<{
-    __typename: "FormsJSON";
-    id: string;
-    pages?: Array<string> | null;
-    formId?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type SyncFormsJSONSQuery = {
-  __typename: "ModelFormsJSONConnection";
-  items: Array<{
-    __typename: "FormsJSON";
-    id: string;
-    pages?: Array<string> | null;
-    formId?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
 export type OnCreateFormSubmissionDetailSubscription = {
   __typename: "FormSubmissionDetail";
   id: string;
@@ -2126,7 +1746,7 @@ export type OnCreateAuthoredFormDetailSubscription = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -2163,7 +1783,7 @@ export type OnUpdateAuthoredFormDetailSubscription = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -2200,7 +1820,7 @@ export type OnDeleteAuthoredFormDetailSubscription = {
   formStatus?: FormStatusEnum | null;
   counter?: number | null;
   pages?: string | null;
-  formlistID: string;
+  formListId: string;
   formList?: {
     __typename: "FormList";
     id: string;
@@ -2491,99 +2111,6 @@ export type OnDeleteFormListSubscription = {
   _lastChangedAt: number;
 };
 
-export type OnCreateFormsMetaDataSubscription = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnUpdateFormsMetaDataSubscription = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnDeleteFormsMetaDataSubscription = {
-  __typename: "FormsMetaData";
-  id: string;
-  name?: string | null;
-  description?: string | null;
-  formLogo?: string | null;
-  isPublic?: boolean | null;
-  isArchived?: boolean | null;
-  tags?: Array<string | null> | null;
-  formStatus?: FormStatusEnum | null;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnCreateFormsJSONSubscription = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnUpdateFormsJSONSubscription = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnDeleteFormsJSONSubscription = {
-  __typename: "FormsJSON";
-  id: string;
-  pages?: Array<string> | null;
-  formId?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
 @Injectable({
   providedIn: "root"
 })
@@ -2837,7 +2364,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -2892,7 +2419,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -2947,7 +2474,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -3347,195 +2874,6 @@ export class APIService {
     )) as any;
     return <DeleteFormListMutation>response.data.deleteFormList;
   }
-  async CreateFormsMetaData(
-    input: CreateFormsMetaDataInput,
-    condition?: ModelFormsMetaDataConditionInput
-  ): Promise<CreateFormsMetaDataMutation> {
-    const statement = `mutation CreateFormsMetaData($input: CreateFormsMetaDataInput!, $condition: ModelFormsMetaDataConditionInput) {
-        createFormsMetaData(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <CreateFormsMetaDataMutation>response.data.createFormsMetaData;
-  }
-  async UpdateFormsMetaData(
-    input: UpdateFormsMetaDataInput,
-    condition?: ModelFormsMetaDataConditionInput
-  ): Promise<UpdateFormsMetaDataMutation> {
-    const statement = `mutation UpdateFormsMetaData($input: UpdateFormsMetaDataInput!, $condition: ModelFormsMetaDataConditionInput) {
-        updateFormsMetaData(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateFormsMetaDataMutation>response.data.updateFormsMetaData;
-  }
-  async DeleteFormsMetaData(
-    input: DeleteFormsMetaDataInput,
-    condition?: ModelFormsMetaDataConditionInput
-  ): Promise<DeleteFormsMetaDataMutation> {
-    const statement = `mutation DeleteFormsMetaData($input: DeleteFormsMetaDataInput!, $condition: ModelFormsMetaDataConditionInput) {
-        deleteFormsMetaData(input: $input, condition: $condition) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteFormsMetaDataMutation>response.data.deleteFormsMetaData;
-  }
-  async CreateFormsJSON(
-    input: CreateFormsJSONInput,
-    condition?: ModelFormsJSONConditionInput
-  ): Promise<CreateFormsJSONMutation> {
-    const statement = `mutation CreateFormsJSON($input: CreateFormsJSONInput!, $condition: ModelFormsJSONConditionInput) {
-        createFormsJSON(input: $input, condition: $condition) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <CreateFormsJSONMutation>response.data.createFormsJSON;
-  }
-  async UpdateFormsJSON(
-    input: UpdateFormsJSONInput,
-    condition?: ModelFormsJSONConditionInput
-  ): Promise<UpdateFormsJSONMutation> {
-    const statement = `mutation UpdateFormsJSON($input: UpdateFormsJSONInput!, $condition: ModelFormsJSONConditionInput) {
-        updateFormsJSON(input: $input, condition: $condition) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateFormsJSONMutation>response.data.updateFormsJSON;
-  }
-  async DeleteFormsJSON(
-    input: DeleteFormsJSONInput,
-    condition?: ModelFormsJSONConditionInput
-  ): Promise<DeleteFormsJSONMutation> {
-    const statement = `mutation DeleteFormsJSON($input: DeleteFormsJSONInput!, $condition: ModelFormsJSONConditionInput) {
-        deleteFormsJSON(input: $input, condition: $condition) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteFormsJSONMutation>response.data.deleteFormsJSON;
-  }
   async GetFormSubmissionDetail(
     id: string
   ): Promise<GetFormSubmissionDetailQuery> {
@@ -3868,7 +3206,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -3921,7 +3259,7 @@ export class APIService {
             formStatus
             counter
             pages
-            formlistID
+            formListId
             createdAt
             updatedAt
             _version
@@ -3963,7 +3301,7 @@ export class APIService {
             formStatus
             counter
             pages
-            formlistID
+            formListId
             createdAt
             updatedAt
             _version
@@ -3992,15 +3330,15 @@ export class APIService {
     )) as any;
     return <SyncAuthoredFormDetailsQuery>response.data.syncAuthoredFormDetails;
   }
-  async AuthoredFormDetailsByFormlistID(
-    formlistID: string,
+  async AuthoredFormDetailsByFormListId(
+    formListId: string,
     sortDirection?: ModelSortDirection,
     filter?: ModelAuthoredFormDetailFilterInput,
     limit?: number,
     nextToken?: string
-  ): Promise<AuthoredFormDetailsByFormlistIDQuery> {
-    const statement = `query AuthoredFormDetailsByFormlistID($formlistID: ID!, $sortDirection: ModelSortDirection, $filter: ModelAuthoredFormDetailFilterInput, $limit: Int, $nextToken: String) {
-        authoredFormDetailsByFormlistID(formlistID: $formlistID, sortDirection: $sortDirection, filter: $filter, limit: $limit, nextToken: $nextToken) {
+  ): Promise<AuthoredFormDetailsByFormListIdQuery> {
+    const statement = `query AuthoredFormDetailsByFormListId($formListId: ID!, $sortDirection: ModelSortDirection, $filter: ModelAuthoredFormDetailFilterInput, $limit: Int, $nextToken: String) {
+        authoredFormDetailsByFormListId(formListId: $formListId, sortDirection: $sortDirection, filter: $filter, limit: $limit, nextToken: $nextToken) {
           __typename
           items {
             __typename
@@ -4009,7 +3347,7 @@ export class APIService {
             formStatus
             counter
             pages
-            formlistID
+            formListId
             createdAt
             updatedAt
             _version
@@ -4021,7 +3359,7 @@ export class APIService {
         }
       }`;
     const gqlAPIServiceArguments: any = {
-      formlistID
+      formListId
     };
     if (sortDirection) {
       gqlAPIServiceArguments.sortDirection = sortDirection;
@@ -4038,8 +3376,8 @@ export class APIService {
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
-    return <AuthoredFormDetailsByFormlistIDQuery>(
-      response.data.authoredFormDetailsByFormlistID
+    return <AuthoredFormDetailsByFormListIdQuery>(
+      response.data.authoredFormDetailsByFormListId
     );
   }
   async GetFormSubmissions(id: string): Promise<GetFormSubmissionsQuery> {
@@ -4408,231 +3746,6 @@ export class APIService {
     )) as any;
     return <SyncFormListsQuery>response.data.syncFormLists;
   }
-  async GetFormsMetaData(id: string): Promise<GetFormsMetaDataQuery> {
-    const statement = `query GetFormsMetaData($id: ID!) {
-        getFormsMetaData(id: $id) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      id
-    };
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <GetFormsMetaDataQuery>response.data.getFormsMetaData;
-  }
-  async ListFormsMetaData(
-    filter?: ModelFormsMetaDataFilterInput,
-    limit?: number,
-    nextToken?: string
-  ): Promise<ListFormsMetaDataQuery> {
-    const statement = `query ListFormsMetaData($filter: ModelFormsMetaDataFilterInput, $limit: Int, $nextToken: String) {
-        listFormsMetaData(filter: $filter, limit: $limit, nextToken: $nextToken) {
-          __typename
-          items {
-            __typename
-            id
-            name
-            description
-            formLogo
-            isPublic
-            isArchived
-            tags
-            formStatus
-            createdBy
-            updatedBy
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <ListFormsMetaDataQuery>response.data.listFormsMetaData;
-  }
-  async SyncFormsMetaData(
-    filter?: ModelFormsMetaDataFilterInput,
-    limit?: number,
-    nextToken?: string,
-    lastSync?: number
-  ): Promise<SyncFormsMetaDataQuery> {
-    const statement = `query SyncFormsMetaData($filter: ModelFormsMetaDataFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
-        syncFormsMetaData(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
-          __typename
-          items {
-            __typename
-            id
-            name
-            description
-            formLogo
-            isPublic
-            isArchived
-            tags
-            formStatus
-            createdBy
-            updatedBy
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    if (lastSync) {
-      gqlAPIServiceArguments.lastSync = lastSync;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <SyncFormsMetaDataQuery>response.data.syncFormsMetaData;
-  }
-  async GetFormsJSON(id: string): Promise<GetFormsJSONQuery> {
-    const statement = `query GetFormsJSON($id: ID!) {
-        getFormsJSON(id: $id) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      id
-    };
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <GetFormsJSONQuery>response.data.getFormsJSON;
-  }
-  async ListFormsJSONS(
-    filter?: ModelFormsJSONFilterInput,
-    limit?: number,
-    nextToken?: string
-  ): Promise<ListFormsJSONSQuery> {
-    const statement = `query ListFormsJSONS($filter: ModelFormsJSONFilterInput, $limit: Int, $nextToken: String) {
-        listFormsJSONS(filter: $filter, limit: $limit, nextToken: $nextToken) {
-          __typename
-          items {
-            __typename
-            id
-            pages
-            formId
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <ListFormsJSONSQuery>response.data.listFormsJSONS;
-  }
-  async SyncFormsJSONS(
-    filter?: ModelFormsJSONFilterInput,
-    limit?: number,
-    nextToken?: string,
-    lastSync?: number
-  ): Promise<SyncFormsJSONSQuery> {
-    const statement = `query SyncFormsJSONS($filter: ModelFormsJSONFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
-        syncFormsJSONS(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
-          __typename
-          items {
-            __typename
-            id
-            pages
-            formId
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    if (lastSync) {
-      gqlAPIServiceArguments.lastSync = lastSync;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <SyncFormsJSONSQuery>response.data.syncFormsJSONS;
-  }
   OnCreateFormSubmissionDetailListener(
     filter?: ModelSubscriptionFormSubmissionDetailFilterInput
   ): Observable<
@@ -4897,7 +4010,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -4955,7 +4068,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -5013,7 +4126,7 @@ export class APIService {
           formStatus
           counter
           pages
-          formlistID
+          formListId
           formList {
             __typename
             id
@@ -5428,207 +4541,6 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     ) as Observable<
       SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormList">>
-    >;
-  }
-
-  OnCreateFormsMetaDataListener(
-    filter?: ModelSubscriptionFormsMetaDataFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormsMetaData">>
-  > {
-    const statement = `subscription OnCreateFormsMetaData($filter: ModelSubscriptionFormsMetaDataFilterInput) {
-        onCreateFormsMetaData(filter: $filter) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateFormsMetaData">
-      >
-    >;
-  }
-
-  OnUpdateFormsMetaDataListener(
-    filter?: ModelSubscriptionFormsMetaDataFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormsMetaData">>
-  > {
-    const statement = `subscription OnUpdateFormsMetaData($filter: ModelSubscriptionFormsMetaDataFilterInput) {
-        onUpdateFormsMetaData(filter: $filter) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateFormsMetaData">
-      >
-    >;
-  }
-
-  OnDeleteFormsMetaDataListener(
-    filter?: ModelSubscriptionFormsMetaDataFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormsMetaData">>
-  > {
-    const statement = `subscription OnDeleteFormsMetaData($filter: ModelSubscriptionFormsMetaDataFilterInput) {
-        onDeleteFormsMetaData(filter: $filter) {
-          __typename
-          id
-          name
-          description
-          formLogo
-          isPublic
-          isArchived
-          tags
-          formStatus
-          createdBy
-          updatedBy
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteFormsMetaData">
-      >
-    >;
-  }
-
-  OnCreateFormsJSONListener(
-    filter?: ModelSubscriptionFormsJSONFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormsJSON">>
-  > {
-    const statement = `subscription OnCreateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-        onCreateFormsJSON(filter: $filter) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateFormsJSON">>
-    >;
-  }
-
-  OnUpdateFormsJSONListener(
-    filter?: ModelSubscriptionFormsJSONFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormsJSON">>
-  > {
-    const statement = `subscription OnUpdateFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-        onUpdateFormsJSON(filter: $filter) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateFormsJSON">>
-    >;
-  }
-
-  OnDeleteFormsJSONListener(
-    filter?: ModelSubscriptionFormsJSONFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormsJSON">>
-  > {
-    const statement = `subscription OnDeleteFormsJSON($filter: ModelSubscriptionFormsJSONFilterInput) {
-        onDeleteFormsJSON(filter: $filter) {
-          __typename
-          id
-          pages
-          formId
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteFormsJSON">>
     >;
   }
 }
