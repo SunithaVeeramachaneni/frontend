@@ -1,0 +1,47 @@
+<span class="table-field">
+  <button class="add-column-btn" (click)="addTab()">
+    <img
+      src="assets/rdf-forms-icons/add-column.svg"
+      alt="add column"
+      class="add-column-icon"
+    />
+    <span class="add-column-text" translate="addColumn"></span>
+  </button>
+
+  <span class="rows m-l-20">
+    <span class="rows-text" translate="rows"></span>
+    <input type="number" class="rows-input m-l-10" value="2" />
+  </span>
+
+  <span class="m-l-20">
+    <input type="checkbox" class="fix-no-of-rows-checkbox" checked />
+    <span class="m-l-10" translate="fixNoofRows"></span>
+  </span>
+
+  <mat-tab-group
+    mat-stretch-tabs="false"
+    mat-align-tabs="start"
+    [selectedIndex]="selected.value"
+    (selectedIndexChange)="selected.setValue($event)"
+  >
+    <mat-tab *ngFor="let tab of tabs; let index = index">
+      <ng-template mat-tab-label>
+        <a matTooltip="{{ tab }}" class="labels"> {{ tab }} </a>
+      </ng-template>
+      <button
+        class="delete-button"
+        [disabled]="tabs.length === 1"
+        (click)="removeTab(index)"
+      >
+        <img
+          src="assets/rdf-forms-icons/delete-icon.svg"
+          alt="delete icon"
+          class="delete-icon"
+        />
+      </button>
+      <span class="m-l-20" translate="columnName"></span>
+      <input type="text" name="column" />
+      <span class="m-l-20" translate="responseType"></span>
+    </mat-tab>
+  </mat-tab-group>
+</span>

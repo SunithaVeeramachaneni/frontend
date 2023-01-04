@@ -58,7 +58,7 @@ export class FormConfigurationModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.headerDataForm = this.fb.group({
-      formLogo: [''],
+      formType: ['Standalone'],
       name: [
         '',
         [

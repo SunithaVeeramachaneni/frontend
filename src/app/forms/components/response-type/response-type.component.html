@@ -1,1 +1,52 @@
-<p>response-type works!</p>
+<div class="response-type-modal">
+  <h1 class="modal-heading">
+    <mat-icon (click)="toggleResponseTypeModal(false)" class="cancel-icon">
+      clear
+    </mat-icon>
+    <span class="response-heading" translate="responseHeading"></span>
+  </h1>
+
+  <div class="dis-flex content">
+    <div class="width-50">
+      <h2 class="orange-color" translate="questionHeading"></h2>
+      <li
+        *ngFor="let fieldType of fieldTypes"
+        (click)="selectFieldType(fieldType)"
+        class="response-field-types"
+        [ngClass]="{
+          active: fieldType.type === question.fieldType
+        }"
+      >
+        <img
+          [src]="getFieldTypeImage(fieldType.type)"
+          class="response-type-icons"
+        />&nbsp;
+        <span class="response-type-description">
+          {{ fieldType.description }}
+        </span>
+      </li>
+    </div>
+    <div class="width-50">
+      <div>
+        <h2 class="orange-color" translate="multiChoiceHeading"></h2>
+
+        <button
+          class="add-new-btn"
+          (click)="handleResponses('quickResponse', '-1')"
+          translate="addNew"
+        ></button>
+      </div>
+      <div class="height-50">
+        <h2 class="orange-color" translate="globalResponseHeading"></h2>
+      </div>
+
+      <div *ngIf="isMCQResponseOpen">
+        <app-response-type-side-drawer></app-response-type-side-drawer>
+      </div>
+
+      <div *ngIf="question.fieldType === 'RT'">
+        <app-response-type-side-drawer></app-response-type-side-drawer>
+      </div>
+    </div>
+  </div>
+</div>

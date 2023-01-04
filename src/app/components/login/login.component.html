@@ -1,85 +1,20 @@
 <app-background>
-  <form
-    class="centered"
-    [formGroup]="loginForm"
-    (ngSubmit)="redirectToTenantIdp()"
-  >
-    <h2 class="m-0" translate>welcome</h2>
-    <h3 class="m-t-5 m-b-5 p-t-10" translate>signinInfo</h3>
-    <input
-      type="text"
-      matInput
-      [placeholder]="'companyOrDomainNamePlaceholder' | translate"
-      class="company-or-domain-input"
-      formControlName="companyOrDomainName"
-      autofocus="false"
-      (keyup.enter)="onEnter()"
-      [matAutocomplete]="auto"
-    />
-    <mat-autocomplete #auto="matAutocomplete">
-      <ng-container *ngIf="tenantsInfo$ | async as tenantsInfo">
-        <mat-option
-          *ngFor="let tenantInfo of tenantsInfo"
-          [value]="tenantInfo.tenantName"
-        >
-          {{ tenantInfo.tenantName }}
-        </mat-option>
-        <mat-option
-          *ngFor="let tenantInfo of tenantsInfo"
-          [value]="tenantInfo.tenantDomainName"
-        >
-          {{ tenantInfo.tenantDomainName }}
-        </mat-option>
-      </ng-container>
-    </mat-autocomplete>
-    <mat-error
-      *ngIf="
-        loginForm.get('companyOrDomainName').touched &&
-        loginForm.get('companyOrDomainName').errors?.required
-      "
-    >
-      {{ 'required' | translate: { name: 'companyOrDomainName' | translate } }}
-    </mat-error>
-    <mat-error
-      *ngIf="
-        loginForm.get('companyOrDomainName').touched &&
-        loginForm.get('companyOrDomainName').errors?.whiteSpace
-      "
-    >
-      {{
-        'whiteSpace' | translate: { name: 'companyOrDomainName' | translate }
-      }}
-    </mat-error>
-    <mat-error
-      *ngIf="
-        !loginForm.get('companyOrDomainName').errors?.whiteSpace &&
-        loginForm.get('companyOrDomainName').touched &&
-        loginForm.get('companyOrDomainName').errors?.maxlength
-      "
-    >
-      {{
-        'maxlength'
-          | translate
-            : {
-                name: 'companyOrDomainName' | translate,
-                length: loginForm.get('companyOrDomainName').errors?.maxlength
-                  .requiredLength
-              }
-      }}
-    </mat-error>
-    <mat-error
-      *ngIf="
-        !loginForm.get('companyOrDomainName').errors?.whiteSpace &&
-        loginForm.get('companyOrDomainName').touched &&
-        loginForm.get('companyOrDomainName').errors?.invalidCompanyOrDomaniName
-      "
-    >
-      {{ 'invalidCompanyOrDomaniName' | translate }}
-    </mat-error>
-    <button
-      class="next-btn"
-      [disabled]="!loginForm.valid || loginForm.pristine"
-      translate="next"
-    ></button>
-  </form>
+  <div class="login-container">
+    <mat-card>
+      <mat-card-content>
+        <div class="login">
+          <button
+            mat-raised-button
+            type="button"
+            color="primary"
+            class="sso-button"
+            (click)="singleSignOn()"
+          >
+            {{ 'signinWith' | translate }}
+            {{ tenantInfo.tenantIdp | titlecase }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </app-background>
