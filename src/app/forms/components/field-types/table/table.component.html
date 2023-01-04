@@ -28,20 +28,28 @@
       <ng-template mat-tab-label>
         <a matTooltip="{{ tab }}" class="labels"> {{ tab }} </a>
       </ng-template>
-      <button
-        class="delete-button"
-        [disabled]="tabs.length === 1"
-        (click)="removeTab(index)"
-      >
-        <img
-          src="assets/rdf-forms-icons/delete-icon.svg"
-          alt="delete icon"
-          class="delete-icon"
-        />
-      </button>
-      <span class="m-l-20" translate="columnName"></span>
-      <input type="text" name="column" />
-      <span class="m-l-20" translate="responseType"></span>
+      <span class="table-content">
+        <button
+          class="delete-button"
+          [disabled]="tabs.length === 1"
+          (click)="removeTab(index)"
+        >
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete icon"
+            class="delete-icon"
+          />
+        </button>
+        <span class="labels" translate="columnName"></span>
+        <input type="text" name="column" class="input-field" />
+        <span class="labels" translate="responseType"></span>
+        <app-response-type-button
+          [questionForm]="questionForm"
+          [fieldTypes]="fieldTypes"
+          [title]="'table response type'"
+        >
+        </app-response-type-button>
+      </span>
     </mat-tab>
   </mat-tab-group>
 </span>

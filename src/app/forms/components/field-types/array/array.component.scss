@@ -1,0 +1,64 @@
+@import '../../../../../scss/colors.scss';
+
+.array-field {
+  .add-sub-fields-btn {
+    background: transparent;
+    border: none;
+    color: $blue-main;
+    .add-sub-fields-icon {
+      position: relative;
+      top: 2px;
+      right: 5px;
+    }
+
+    .add-sub-fields-text {
+      font-size: 90%;
+    }
+  }
+
+  .array-content {
+    border-bottom: 1px solid $border-color;
+  }
+
+  .delete-button {
+    border: none;
+    background-color: $white;
+
+    .delete-icon {
+      width: 15px;
+      height: 15px;
+      position: relative;
+      top: 7px;
+    }
+  }
+
+  .question-input-box {
+    margin-top: 10px;
+  }
+
+  .six-dots {
+    position: relative;
+    top: 2px;
+    width: 9px;
+    cursor: move;
+  }
+
+  .question-input {
+    padding: 7px;
+    border: none;
+    margin-left: 10px;
+    width: auto;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  .divider {
+    font-size: 150%;
+    color: $border-color;
+    position: relative;
+    top: 7px;
+    margin-right: 20px;
+  }
+}
