@@ -47,6 +47,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
       id: [''],
+      formLogo: [''],
       name: [''],
       description: [''],
       counter: [0],

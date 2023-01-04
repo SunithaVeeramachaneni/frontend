@@ -1,10 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
-import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
@@ -104,22 +99,5 @@ export class SectionComponent implements OnInit {
       return value.length;
     }
     return value.length - 1;
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
   }
 }

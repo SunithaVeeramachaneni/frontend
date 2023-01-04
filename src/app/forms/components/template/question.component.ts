@@ -1,10 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
-import {
   Component,
   ElementRef,
   Input,
@@ -27,6 +22,7 @@ import {
 } from 'src/app/interfaces';
 import { getQuestion, getSectionQuestions, State } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
+import { FormService } from '../../services/form.service';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -87,7 +83,8 @@ export class QuestionComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
-    private store: Store<State>
+    private store: Store<State>,
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -128,16 +125,6 @@ export class QuestionComponent implements OnInit {
 
   deleteQuestion() {
     console.log('delete question');
-  }
-
-  getFieldTypeImage(type) {
-    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
-  }
-
-  getFieldTypeDescription(type) {
-    return type
-      ? this.fieldTypes.find((field) => field.type === type)?.description
-      : null;
   }
 
   openResponseTypeModalEventHandler(value) {
@@ -196,6 +183,10 @@ export class QuestionComponent implements OnInit {
     }
   }
 
+  sliderOpen() {
+    this.formService.setsliderOpenState(true);
+  }
+
   insertImageHandler(event) {
     let base64: string;
     const { files } = event.target as HTMLInputElement;
@@ -219,22 +210,5 @@ export class QuestionComponent implements OnInit {
 
   toggleFieldContentOpenState() {
     this.fieldContentOpenState = true;
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
   }
 }

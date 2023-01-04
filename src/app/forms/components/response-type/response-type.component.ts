@@ -1,4 +1,5 @@
 import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-response-type',
@@ -12,8 +13,9 @@ export class ResponseTypeComponent implements OnInit {
   @Input() fieldTypes;
   @Input() question;
 
-  public responseDrawer = false;
-  public sliderdrawer = false;
+  public isMCQResponseOpen = false;
+
+  constructor(private formService: FormService) {}
 
   ngOnInit(): void {}
 
@@ -23,9 +25,21 @@ export class ResponseTypeComponent implements OnInit {
 
   selectFieldType(fieldType) {
     this.selectFieldTypeEvent.emit(fieldType);
+    if (fieldType.type === 'RT') {
+      this.formService.setsliderOpenState(true);
+    }
+    this.openResponseTypeModalEvent.emit(false);
   }
 
   toggleResponseTypeModal(value) {
     this.openResponseTypeModalEvent.emit(value);
+  }
+
+  handleResponses() {
+    this.isMCQResponseOpen = true;
+    if (this.isMCQResponseOpen) {
+      this.formService.setMultiChoiceOpenState(true);
+      this.openResponseTypeModalEvent.emit(false);
+    }
   }
 }

@@ -1,12 +1,6 @@
 @import '../../../../scss/colors.scss';
 
 .questions {
-  background: $white;
-  background: #ffffff;
-  padding-bottom: 10px;
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
-
   .floating-btns {
     position: absolute;
     left: 10px;
@@ -51,9 +45,15 @@
     }
   }
 
+  .highlight-bg {
+    border: 2px solid $blue-main;
+    border-radius: 4px;
+  }
+
   .six-dots {
     position: relative;
-    top: 3px;
+    top: 2px;
+    width: 9px;
     cursor: move;
   }
 
@@ -64,17 +64,13 @@
     width: auto;
   }
 
-  .question-input:focus {
+  input:focus {
     outline: none;
   }
 
   .question-input:focus + .floating-btns {
     display: block;
   }
-
-  // .question-input:hover + .floating-btns {
-  //   display: block;
-  // }
 
   .divider {
     font-size: 150%;
@@ -84,61 +80,30 @@
     margin-right: 20px;
   }
 
-  .response-type-btn {
-    width: 100%;
-    background: transparent;
-    border: none;
-    position: relative;
-    top: 12px;
-    text-align: left;
-
-    .response-type-icons {
-      position: relative;
-      top: -2px;
-      width: 14px;
-      height: 14px;
-    }
-
-    .response-type-text {
-      white-space: nowrap;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 60%;
-      overflow: hidden;
-    }
-
-    .response-type-btn-arrow {
-      float: right;
-      position: relative;
-      top: -4px;
-    }
-  }
-
   .justify-content {
     justify-content: flex-end;
   }
 
   .input-fields {
-    background: #f3f3f3;
-    border-radius: 5px;
-    padding: 10px;
+    background: $white;
+    padding: 7px;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    margin: 0 10px;
+    width: 98%;
+    border-left: 1px solid $border-color;
+    border-right: 1px solid $border-color;
     justify-content: center;
 
     .m-l-50 {
       margin-left: 50px;
     }
 
-    .m-l-20 {
-      margin-left: 20px;
-    }
-
     .default-field-input-box {
       border: 1px solid $border-color;
       border-radius: 3px;
+      background: $white;
+      height: 25px;
+      width: 40%;
     }
 
     .text-field-select {
@@ -146,7 +111,7 @@
       background: transparent;
       -webkit-appearance: none;
       width: 110px;
-      color: #3d5afe;
+      color: $blue-main;
     }
 
     .required-input {
