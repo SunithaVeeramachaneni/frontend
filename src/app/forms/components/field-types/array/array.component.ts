@@ -21,4 +21,8 @@ export class ArrayComponent implements OnInit {
       fieldTye: 'LF'
     });
   }
+
+  delete(index) {
+    this.arrayFields.splice(index, 1);
+  }
 }
