@@ -17,7 +17,7 @@
 
     <a>
       <span class="form_page_name_input">
-        Page {{ pageForm.get('index').value + 1 }}
+        {{ 'page' | translate }} {{ pageForm.get('index').value + 1 }}
       </span>
     </a>
 
@@ -30,7 +30,7 @@
     </button>
     <mat-menu #pageMenu="matMenu">
       <button mat-menu-item (click)="deletePage()" class="text-red">
-        <span>Delete Page</span>
+        <span translate="deletePage"></span>
       </button>
     </mat-menu>
   </div>
@@ -44,6 +44,6 @@
       alt="add page"
       class="add-page-btn-icon"
     />
-    Add Page
+    {{ 'addPage' | translate }}
   </button>
 </div>

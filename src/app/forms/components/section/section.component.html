@@ -59,7 +59,7 @@
         </button>
         <mat-menu #sectionMenu="matMenu">
           <button mat-menu-item (click)="deleteSection()" class="text-red">
-            <span>Delete Section</span>
+            <span translate="deleteSection"></span>
           </button>
         </mat-menu>
       </div>
@@ -76,7 +76,7 @@
           alt="add section"
           class="add-section-btn-icon"
         />
-        Add Section
+        {{ 'addSection' | translate }}
       </button>
     </div>
   </div>

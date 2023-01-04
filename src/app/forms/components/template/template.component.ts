@@ -1,9 +1,4 @@
 import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
-import {
   Component,
   ElementRef,
   Input,
@@ -76,16 +71,6 @@ export class TemplateComponent implements OnInit {
   }
 
   deleteQuestion() {}
-
-  getFieldTypeImage(type) {
-    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
-  }
-
-  getFieldTypeDescription(type) {
-    return type
-      ? this.fieldTypes.find((field) => field.type === type)?.description
-      : null;
-  }
 
   openResponseTypeModalEventHandler(value) {
     this.openResponseType = value;
@@ -173,22 +158,5 @@ export class TemplateComponent implements OnInit {
 
   toggleFieldContentOpenState() {
     this.fieldContentOpenState = true;
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
   }
 }

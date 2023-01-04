@@ -21,6 +21,7 @@
             class="width-90 question-input"
             (keyup.enter)="addQuestion(questionForm.get('index').value)"
           />
+
           <div class="floating-btns">
             <button
               class="questions-btn"
@@ -30,7 +31,7 @@
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
               />
-              <p class="questions-delete-btn-text">Question</p>
+              <p class="questions-delete-btn-text" translate="question"></p>
             </button>
             <br />
 
@@ -43,7 +44,7 @@
                 src="assets/rdf-forms-icons/delete-question.svg"
                 alt="delete questions"
               />
-              <p class="questions-delete-btn-text">Delete</p>
+              <p class="questions-delete-btn-text" translate="delete"></p>
             </button>
           </div>
         </div>
@@ -51,109 +52,12 @@
         <span class="divider">|</span>
 
         <div class="width-30">
-          <button
-            (click)="openResponseType = true"
-            class="response-type-btn"
-            [ngClass]="{
-              'dis-flex p-t-0':
-                questionForm.get('fieldType').value === 'VI' ||
-                questionForm.get('fieldType').value === 'DD'
-            }"
+          <app-response-type-button
+            (openResponseTypeEvent)="openResponseType = true"
+            [questionForm]="questionForm"
+            [fieldTypes]="fieldTypes"
           >
-            <div
-              *ngIf="
-                questionForm.get('fieldType').value === 'VI' ||
-                  questionForm.get('fieldType').value === 'DD';
-                else nonMCQFields
-              "
-              class="chip-list"
-            >
-              <mat-chip-list
-                *ngIf="
-                  questionForm.get('value').value?.name &&
-                  !questionForm.get('value').value?.globalDataset
-                "
-                class="response-type-chips"
-              >
-                <mat-chip
-                  [ngStyle]="{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d3d3d3',
-                    minHeight: '24px',
-                    fontSize: '90%'
-                  }"
-                >
-                  {{ questionForm.get('value').value?.name }}
-                </mat-chip>
-              </mat-chip-list>
-              <mat-chip-list
-                *ngIf="
-                  !questionForm.get('value').value?.name &&
-                  !questionForm.get('value').value?.globalDataset
-                "
-                class="response-type-chips"
-              >
-                <mat-chip
-                  [ngStyle]="{
-                    color: questionForm.get('value').value?.values[0]?.color,
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d3d3d3',
-                    minHeight: '24px',
-                    fontSize: '90%'
-                  }"
-                >
-                  {{ questionForm.get('value').value?.values[0].title }}
-                </mat-chip>
-                <mat-chip
-                  *ngIf="questionForm.get('value').value?.values.length >= 2"
-                  [ngStyle]="{
-                    color: questionForm.get('value').value?.values[1]?.color,
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #d3d3d3',
-                    minHeight: '24px',
-                    fontSize: '90%'
-                  }"
-                >
-                  {{ questionForm.get('value').value?.values[1].title }}
-                </mat-chip>
-                <span
-                  *ngIf="questionForm.get('value').value?.values.length > 2"
-                  class="ellipsis-more"
-                  >+ ({{ questionForm.get('value').value?.values.length - 2 }}
-                  more)
-                </span>
-              </mat-chip-list>
-              <div
-                *ngIf="questionForm.get('value').value?.globalDataset"
-                class="globalset-res-type"
-              >
-                {{ questionForm.get('value').value?.responseType }}
-              </div>
-            </div>
-
-            <ng-template #nonMCQFields>
-              <img
-                [src]="getFieldTypeImage(questionForm.get('fieldType').value)"
-                class="response-type-icons"
-              />&nbsp;
-              <span class="response-type-text">
-                {{
-                  getFieldTypeDescription(questionForm.get('fieldType').value)
-                }}
-              </span>
-            </ng-template>
-            <mat-icon
-              class="response-type-btn-arrow"
-              [ngClass]="{
-                'p-t-13':
-                  questionForm.get('fieldType').value === 'VI' ||
-                  questionForm.get('fieldType').value === 'DD'
-              }"
-            >
-              keyboard_arrow_down
-            </mat-icon>
-          </button>
-
+          </app-response-type-button>
           <div *ngIf="openResponseType === true">
             <app-response-type
               (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
@@ -184,13 +88,7 @@
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div>
-              <span
-                class="m-l-40"
-                *ngIf="
-                  questionForm.get('fieldType').value !== 'TAF' &&
-                  questionForm.get('fieldType').value !== 'ARD'
-                "
-              >
+              <span class="m-l-40">
                 <input
                   type="checkbox"
                   id="required"
@@ -198,7 +96,14 @@
                   name="required"
                   formControlName="required"
                 />&nbsp;
-                <label for="required">Required</label>
+                <label for="required" translate="requiredtext"></label>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'TAF'"
+              >
+                <app-table></app-table>
               </span>
 
               <span
@@ -212,7 +117,7 @@
                   name="date"
                   formControlName="value"
                 />&nbsp;
-                <label for="date">Default to current date</label>
+                <label for="date" translate="dateLabel"></label>
               </span>
 
               <span
@@ -226,14 +131,15 @@
                   name="time"
                   formControlName="value"
                 />&nbsp;
-                <label for="time">Default to current time</label>
+                <label for="time" translate="timeLabel"></label>
               </span>
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="m-l-40"
               >
-                <label for="defaultValue">Default Value</label>&nbsp;&nbsp;
+                <label for="defaultValue" translate="defaultValue"> </label>
+                &nbsp;&nbsp;
                 <input
                   type="text"
                   id="defaultValue"
@@ -241,15 +147,16 @@
                   class="default-field-input-box"
                 />
               </span>
+
               <span
                 *ngIf="questionForm.get('fieldType').value === 'TF'"
                 class="m-l-50"
               >
-                <label>Type:</label>&nbsp;
+                <label translate="type"></label>&nbsp;
 
                 <select formControlName="value" class="text-field-select">
-                  <option value="TF">Short Answer</option>
-                  <option value="LTV">Long Answer</option>
+                  <option value="TF" translate="shortAns"></option>
+                  <option value="LTV" translate="longAns"></option>
                 </select>
               </span>
 
@@ -258,7 +165,7 @@
                 (click)="sliderOpen()"
                 class="m-l-50"
               >
-                <label>Range: </label>&nbsp;
+                <label translate="range"></label>&nbsp;
               </span>
               <app-response-type-side-drawer></app-response-type-side-drawer>
 
@@ -281,10 +188,11 @@
                       .setValue(!questionForm.get('multi').value)
                   "
                 />&nbsp;
-                <label for="multi">Allow more than one selection</label>
+                <label for="multi" translate="multiLabel"></label>
               </span>
             </div>
           </div>
+
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
             <div
               class="width-50 bg-white dis-flex"
