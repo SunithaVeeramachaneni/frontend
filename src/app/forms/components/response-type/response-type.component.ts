@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
+import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-response-type',
@@ -7,58 +7,39 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./response-type.component.scss']
 })
 export class ResponseTypeComponent implements OnInit {
-  allFieldTypes;
-  isCustomizerOpen = false;
-  public responseDrawer = false;
-  public sliderdrawer = false;
-  constructor(
-    public dialogRef: MatDialogRef<ResponseTypeComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+  @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter();
+  @Output() openResponseTypeModalEvent: EventEmitter<any> = new EventEmitter();
 
-  ngOnInit(): void {
-    this.allFieldTypes = this.data.fieldTypes;
-  }
+  @Input() fieldTypes;
+  @Input() question;
+
+  public isMCQResponseOpen = false;
+
+  constructor(private formService: FormService) {}
+
+  ngOnInit(): void {}
 
   getFieldTypeImage(type) {
     return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
   }
 
   selectFieldType(fieldType) {
-    if (fieldType.type === this.data.question.get('fieldType').value) {
-      return;
+    this.selectFieldTypeEvent.emit(fieldType);
+    if (fieldType.type === 'RT') {
+      this.formService.setsliderOpenState(true);
     }
-
-    this.data.question.get('fieldType').setValue(fieldType.type);
-    this.data.question.get('required').setValue(false);
-    this.data.question.get('value').setValue('');
-
-    switch (fieldType.type) {
-      case 'TF':
-        this.data.question.get('value').setValue('TF');
-        break;
-      case 'VI':
-        this.isCustomizerOpen = true;
-        this.data.question.get('value').setValue([]);
-        break;
-      case 'RT':
-        this.isCustomizerOpen = true;
-        const sliderValue = {
-          value: 0,
-          min: 0,
-          max: 100,
-          increment: 1
-        };
-        this.data.question.get('value').setValue(sliderValue);
-        //this.sliderOptions = sliderValue;
-        break;
-      default:
-      // do nothing
-    }
-    this.dialogRef.close();
+    this.openResponseTypeModalEvent.emit(false);
   }
 
-  onCancel(): void {
-    this.dialogRef.close();
+  toggleResponseTypeModal(value) {
+    this.openResponseTypeModalEvent.emit(value);
+  }
+
+  handleResponses() {
+    this.isMCQResponseOpen = true;
+    if (this.isMCQResponseOpen) {
+      this.formService.setMultiChoiceOpenState(true);
+      this.openResponseTypeModalEvent.emit(false);
+    }
   }
 }

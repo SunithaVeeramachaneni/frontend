@@ -1,0 +1,53 @@
+@import '../../../../../scss/colors.scss';
+
+.table-field {
+  .add-column-btn {
+    background: transparent;
+    border: none;
+    color: $blue-main;
+    .add-column-icon {
+      position: relative;
+      top: 2px;
+      right: 5px;
+    }
+
+    .add-column-text {
+      font-size: 90%;
+    }
+  }
+
+  .rows {
+    .rows-text {
+      color: $blue-main;
+    }
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      opacity: 1;
+      height: 35px;
+    }
+    .rows-input {
+      width: 40px;
+      padding: 7px 0 7px 10px;
+      border: 1px solid $blue-main;
+      border-radius: 4px;
+    }
+  }
+
+  .fix-no-of-rows-checkbox {
+    position: relative;
+    top: 2px;
+    left: 5px;
+  }
+
+  .delete-button {
+    border: none;
+    background-color: $white;
+
+    .delete-icon {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      top: 5px;
+    }
+  }
+}

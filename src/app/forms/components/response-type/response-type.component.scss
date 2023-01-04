@@ -1,6 +1,33 @@
+@import '../../../../scss/colors.scss';
+
 .response-type-modal {
-  height: 520px;
-  width: 600px;
+  height: 500px;
+  width: 550px;
+  border: 1px solid;
+  position: absolute;
+  left: 40%;
+  top: 20px;
+  background: $white;
+  z-index: 1000;
+
+  .modal-heading {
+    margin: 15px 10px 5px 10px;
+  }
+
+  .cancel-icon {
+    cursor: pointer;
+    font-size: 150%;
+  }
+
+  .response-heading {
+    position: relative;
+    top: -7px;
+    left: 5px;
+  }
+
+  .orange-color {
+    color: $orange-text;
+  }
 
   .content {
     height: 480px;
@@ -16,11 +43,27 @@
 
   .response-field-types:hover,
   .active {
-    background-color: #ebedfe;
+    background-color: $hover-bg2;
   }
 
   .response-type-icons {
     width: 15px;
     height: 15px;
+  }
+
+  .response-type-description {
+    position: relative;
+    top: -2px;
+  }
+
+  .add-new-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 10px;
+  }
+
+  .height-50 {
+    height: 50%;
   }
 }

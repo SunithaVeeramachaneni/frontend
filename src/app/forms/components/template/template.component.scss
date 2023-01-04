@@ -1,12 +1,6 @@
 @import '../../../../scss/colors.scss';
 
 .questions {
-  background: $white;
-  background: #ffffff;
-  padding-bottom: 1px;
-  border-bottom-left-radius: 7px;
-  border-bottom-right-radius: 7px;
-
   .floating-btns {
     position: absolute;
     left: 10px;
@@ -44,33 +38,39 @@
 
   .questions-div {
     border-bottom: 1px solid $border-color;
-    margin-bottom: 10px;
-    padding-bottom: 3px;
+
+    .question-input-box {
+      margin-top: 7px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .highlight-bg {
+    border: 2px solid $blue-main;
+    border-radius: 4px;
   }
 
   .six-dots {
     position: relative;
-    top: 3px;
+    top: 2px;
+    width: 9px;
     cursor: move;
   }
 
   .question-input {
-    padding: 5px;
+    padding: 7px;
     border: none;
     margin-left: 10px;
+    width: auto;
   }
 
-  .question-input:focus {
+  input:focus {
     outline: none;
   }
 
   .question-input:focus + .floating-btns {
     display: block;
   }
-
-  // .question-input:hover + .floating-btns {
-  //   display: block;
-  // }
 
   .divider {
     font-size: 150%;
@@ -80,25 +80,43 @@
     margin-right: 20px;
   }
 
-  .response-type-btn {
-    width: 100%;
-    background: transparent;
-    border: none;
-    position: relative;
-    top: 12px;
-    text-align: left;
+  .justify-content {
+    justify-content: flex-end;
+  }
 
-    .response-type-icons {
-      position: relative;
-      top: -2px;
+  .input-fields {
+    background: $white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-left: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    justify-content: center;
+
+    .m-l-50 {
+      margin-left: 50px;
     }
 
-    .response-type-text {
-      white-space: nowrap;
-      display: inline-block;
-      text-overflow: ellipsis;
-      width: 70%;
-      overflow: hidden;
+    .default-field-input-box {
+      border: 1px solid $border-color;
+      border-radius: 3px;
+      background: $white;
+      height: 25px;
+      width: 40%;
+    }
+
+    .text-field-select {
+      border: none;
+      background: transparent;
+      -webkit-appearance: none;
+      width: 110px;
+      color: $blue-main;
+    }
+
+    .required-input {
+      position: relative;
+      top: 2px;
     }
   }
 }

@@ -1,100 +1,83 @@
 <div class="section dis-flex" [formGroup]="sectionForm">
   <div class="width-5"></div>
-  <div
-    class="width-95"
-    formArrayName="sections"
-    cdkDrop
-    cdkDropList
-    (cdkDropListDropped)="drop($event)"
-    [cdkDropListData]="getSections(sectionForm)"
-    cdkDropListGroup
-  >
-    <div
-      *ngFor="let section of getSections(sectionForm); let j = index"
-      cdkDrag
-    >
-      <div [formGroupName]="j" class="section-margin">
-        <input type="hidden" formControlName="position" [ngModel]="j + 1" />
-        <div class="section-header">
-          <img
-            cdkDragHandle
-            src="assets/rdf-forms-icons/six-dots-white.svg"
-            alt="six-dots"
-            class="m-l-10 six-dots"
-            *ngIf="isSectionOpenState[j + 1] === false"
+  <div class="width-95 section-margin">
+    <div>
+      <input type="hidden" formControlName="position" />
+      <div class="section-header">
+        <img
+          src="assets/rdf-forms-icons/six-dots-white.svg"
+          alt="six-dots"
+          class="m-l-10 six-dots"
+          *ngIf="isSectionOpenState === false"
+        />
+        <mat-icon
+          (click)="toggleSectionOpenState()"
+          *ngIf="isSectionOpenState === true"
+          class="section-arrow"
+        >
+          expand_more
+        </mat-icon>
+        <mat-icon
+          (click)="toggleSectionOpenState()"
+          *ngIf="isSectionOpenState === false"
+          class="section-arrow"
+        >
+          chevron_right
+        </mat-icon>
+
+        <a>
+          <input
+            #sectionName
+            type="text"
+            formControlName="name"
+            [size]="getSize(sectionName.value)"
+            class="form_section_name_input"
+            placeholder="Untitled Section"
+            autocomplete="off"
+            (keyup.enter)="sectionForm.get('name').disable()"
           />
-          <mat-icon
-            (click)="toggleSectionOpenState(j)"
-            *ngIf="isSectionOpenState[j + 1] === true"
-            class="section-arrow"
-          >
-            expand_more
-          </mat-icon>
-          <mat-icon
-            (click)="toggleSectionOpenState(j)"
-            *ngIf="isSectionOpenState[j + 1] === false"
-            class="section-arrow"
-          >
-            chevron_right
-          </mat-icon>
-
-          <a matTooltip="{{ section.get('name').value }}">
-            <input
-              #sectionName
-              type="text"
-              formControlName="name"
-              [size]="getSize(sectionName.value)"
-              class="form_section_name_input"
-              placeholder="Untitled Section"
-              autocomplete="off"
-              (keyup.enter)="section.get('name').disable()"
-            />
-            <button
-              mat-icon-button
-              (click)="editSection(section)"
-              class="edit-icon"
-              *ngIf="section.get('name').disabled === true"
-            >
-              <img
-                src="assets/rdf-forms-icons/edit-icon-white.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
-            </button>
-          </a>
-
           <button
-            [matMenuTriggerFor]="sectionMenu"
-            class="more-icon"
-            aria-label="More Options"
+            mat-icon-button
+            (click)="editSection()"
+            class="edit-icon"
+            *ngIf="sectionForm.get('name').disabled === true"
           >
-            <mat-icon>more_horiz</mat-icon>
+            <img
+              src="assets/rdf-forms-icons/edit-icon-white.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
+            />
           </button>
-          <mat-menu #sectionMenu="matMenu">
-            <button
-              mat-menu-item
-              (click)="deleteSection(j, section)"
-              class="text-red"
-              [disabled]="getSections(sectionForm).length === 1"
-            >
-              <span>Delete Section</span>
-            </button>
-          </mat-menu>
-        </div>
-        <div *ngIf="isSectionOpenState[j + 1] === true">
-          <ng-content></ng-content>
-          <!-- <app-template></app-template> -->
-        </div>
+        </a>
 
-        <button class="add-section-btn" (click)="addSection(j)">
-          <img
-            src="assets/rdf-forms-icons/add-section.svg"
-            alt="add section"
-            class="add-section-btn-icon"
-          />
-          Add Section
+        <button
+          [matMenuTriggerFor]="sectionMenu"
+          class="more-icon"
+          aria-label="More Options"
+        >
+          <mat-icon>more_horiz</mat-icon>
         </button>
+        <mat-menu #sectionMenu="matMenu">
+          <button mat-menu-item (click)="deleteSection()" class="text-red">
+            <span translate="deleteSection"></span>
+          </button>
+        </mat-menu>
       </div>
+      <div *ngIf="isSectionOpenState === true" class="questions-content">
+        <ng-content></ng-content>
+      </div>
+
+      <button
+        class="add-section-btn"
+        (click)="addSection(sectionForm.get('index').value)"
+      >
+        <img
+          src="assets/rdf-forms-icons/add-section.svg"
+          alt="add section"
+          class="add-section-btn-icon"
+        />
+        {{ 'addSection' | translate }}
+      </button>
     </div>
   </div>
 </div>

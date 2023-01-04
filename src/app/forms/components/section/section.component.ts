@@ -1,108 +1,64 @@
 import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem
-} from '@angular/cdk/drag-drop';
-import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-section',
   templateUrl: './section.component.html',
-  styleUrls: ['./section.component.scss']
+  styleUrls: ['./section.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectionComponent implements OnInit {
-  // @Input() set pageIndex(index) {
-  //   this.pageCount = index;
-  //   console.log(this.pageCount);
-  // }
-  // get pageIndex() {
-  //   return this.pageCount;
-  // }
+  @Input() set sectionData(data) {
+    this.sectionInfo = data;
+    this.sectionForm.patchValue(this.sectionInfo);
+  }
+  get sectionData() {
+    return this.sectionInfo;
+  }
+  @Output() addSectionEvent: EventEmitter<number> = new EventEmitter();
 
-  @Input() indexes;
-  isSectionOpenState = {};
-  sectionForm: FormGroup;
-  pageCount;
+  isSectionOpenState = true;
+  sectionInfo;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
+  sectionForm: FormGroup = this.fb.group({
+    id: '',
+    index: '',
+    name: {
+      value: '',
+      disabled: true
+    },
+    position: ''
+  });
 
-  ngOnInit() {
-    console.log(this.pageCount);
-    this.sectionForm = this.fb.group({
-      sections: this.fb.array([this.initSection(1)])
-    });
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit() {}
+
+  addSection(index) {
+    this.addSectionEvent.emit(index);
   }
 
-  getSections(form) {
-    return form.controls.sections.controls;
-  }
-
-  initSection = (sc: number, section = null, sectionName = null) => {
-    if (!this.isSectionOpenState[sc]) this.isSectionOpenState[sc] = true;
-
-    return this.fb.group({
-      uid: [`uid${sc}`],
-      name: [
-        {
-          value:
-            section && sectionName === null
-              ? `${section.get('name').value} Copy`
-              : sectionName
-              ? sectionName
-              : `Section ${sc}`,
-          disabled: true
-        }
-      ],
-      position: ['']
-    });
+  toggleSectionOpenState = () => {
+    this.isSectionOpenState = !this.isSectionOpenState;
   };
 
-  addSection(index: number, section: any = null, sectionName = null) {
-    const control = this.sectionForm.get('sections') as FormArray;
-    control.insert(
-      index + 1,
-      this.initSection(control.length + 1, section, sectionName)
-    );
-    //this.indexes.sectionIndex.push(index + 1);
-    console.log(this.indexes);
+  editSection() {
+    this.sectionForm.get('name').enable();
   }
 
-  toggleSectionOpenState = (idx: number) => {
-    this.isSectionOpenState[idx + 1] = !this.isSectionOpenState[idx + 1];
-  };
-
-  editSection(e) {
-    e.get('name').enable();
-  }
-
-  deleteSection(i, section) {
-    const control = this.sectionForm.get('pages') as FormArray;
-    control.removeAt(i);
-  }
+  deleteSection() {}
 
   getSize(value) {
     if (value && value === value.toUpperCase()) {
       return value.length;
     }
     return value.length - 1;
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    }
   }
 }

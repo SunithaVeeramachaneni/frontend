@@ -1,244 +1,52 @@
-<div>
-  <button mat-raised-button (click)="responseDrawer = true" class="btn-new">
-    Add New
-  </button>
-
-  <button mat-raised-button (click)="sliderdrawer = true" class="btn-new">
-    open slider
-  </button>
-</div>
-
-<div *ngIf="responseDrawer">
-  <app-response-drawer
-    (dialogClose)="responseDrawer = false"
-  ></app-response-drawer>
-</div>
-
-<div *ngIf="sliderdrawer">
-  <app-response-drawer
-    [responseDrawer]="false"
-    [sliderDrawer]="true"
-    (dialogClose)="sliderdrawer = false"
-  ></app-response-drawer>
-</div>
-
 <div class="response-type-modal">
-  <h1>
-    <mat-icon (click)="onCancel()" style="cursor: pointer"> clear </mat-icon>
-    <span style="position: relative; top: -7px; left: 5px"> Responses </span>
+  <h1 class="modal-heading">
+    <mat-icon (click)="toggleResponseTypeModal(false)" class="cancel-icon">
+      clear
+    </mat-icon>
+    <span class="response-heading" translate="responseHeading"></span>
   </h1>
 
   <div class="dis-flex content">
     <div class="width-50">
-      <h2 style="color: #e8743b">QUESTIONS</h2>
+      <h2 class="orange-color" translate="questionHeading"></h2>
       <li
-        *ngFor="let fieldType of allFieldTypes"
+        *ngFor="let fieldType of fieldTypes"
         (click)="selectFieldType(fieldType)"
         class="response-field-types"
         [ngClass]="{
-          active: fieldType.type === this.data.question.controls.fieldType.value
+          active: fieldType.type === question.fieldType
         }"
       >
         <img
           [src]="getFieldTypeImage(fieldType.type)"
           class="response-type-icons"
         />&nbsp;
-        <span style="position: relative; top: -2px">
+        <span class="response-type-description">
           {{ fieldType.description }}
         </span>
       </li>
     </div>
     <div class="width-50">
-      <!-- <div>
-        <h2 style="color: #e8743b">MULTIPLE CHOICE RESPONSES</h2>
-        <ng-container *ngIf="quickResponsesData$ | async as quickResponsesData">
-          <div>
-            <div
-              *ngFor="let resp of quickResponsesData.data"
-              style="height: 36px"
-            >
-              <button
-                style="padding: 0 0 0 5px; height: 36px"
-                mat-flat-button
-                class="quick-response"
-                [ngClass]="{
-                  active: currentQuestion?.controls.value.value.id === resp.id
-                }"
-                (click)="
-                  handleFieldType(question, resp); togglePopOverOpenState(i, j)
-                "
-              >
-                <mat-chip-list *ngFor="let val of resp.values; let i = index">
-                  <mat-chip
-                    *ngIf="i < 2"
-                    style="margin-left: 10px"
-                    [ngStyle]="{
-                      color: val?.color,
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #d3d3d3',
-                      minHeight: '24px',
-                      fontSize: '90%'
-                    }"
-                    (click)="
-                      handleFieldType(question, resp);
-                      togglePopOverOpenState(i, j)
-                    "
-                  >
-                    {{ val.title }}
-                  </mat-chip>
-                </mat-chip-list>
-                <span
-                  *ngIf="resp.values.length > 2"
-                  style="margin-top: -10px; margin-left: 5px; font-weight: 400"
-                >
-                  + ({{ resp.values.length - 2 }}
-                  more)
-                </span>
-              </button>
-              <button
-                mat-flat-button
-                style="float: right; min-width: 10px; padding: 0"
-                (click)="
-                  handleResponses('quickResponse', resp.id);
-                  isMCQResponseOpen = true;
-                  togglePopOverOpenState(i, j)
-                "
-              >
-                <img
-                  src="assets/rdf-forms-icons/edit-icon.svg"
-                  alt="edit-icon"
-                />
-              </button>
-            </div>
-          </div>
-          <button
-            style="
-              color: #3d5afe;
-              border: none;
-              background: none;
-              padding: 10px;
-            "
-            (click)="
-              handleResponses('quickResponse', '-1');
-              isMCQResponseOpen = true;
-              togglePopOverOpenState(i, j)
-            "
-          >
-            Add New
-          </button>
-        </ng-container>
-      </div> -->
-      <!-- <div style="height: 50%">
-        <h2 style="color: #e8743b">GLOBAL RESPONSES</h2>
-        <ng-container
-          *ngIf="globalResponsesData$ | async as globalResponsesData"
-        >
-          <div *ngFor="let resp of globalResponsesData.data">
-            <button
-              mat-flat-button
-              (click)="
-                handleFieldType(question, resp); togglePopOverOpenState(i, j)
-              "
-              style="padding: 0 0 0 10px; width: 85%; text-align: left"
-              [ngClass]="{
-                active: currentQuestion?.controls.value.value.name === resp.name
-              }"
-            >
-              {{ resp.name }}
-            </button>
-            <button
-              mat-flat-button
-              style="float: right; padding: 0; min-width: 20px"
-              (click)="
-                handleResponses('globalResponse', resp.id);
-                isMCQResponseOpen = true;
-                togglePopOverOpenState(i, j)
-              "
-            >
-              <img src="assets/rdf-forms-icons/edit-icon.svg" alt="edit-icon" />
-            </button>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="globalDatasetsData$ | async as globalDatasetsData">
-          <div *ngFor="let resp of globalDatasetsData.data">
-            <button
-              mat-flat-button
-              style="padding: 0 0 0 10px; width: 85%; text-align: left"
-              [ngClass]="{
-                active: currentQuestion?.controls.value.value.name === resp.name
-              }"
-            >
-              {{ resp.name }}
-            </button>
-            <button
-              mat-flat-button
-              style="float: right; padding: 0; min-width: 20px"
-              (click)="handleResponses('globalDataset', resp.id)"
-              [matMenuTriggerFor]="menu"
-            >
-              <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-              <button
-                mat-menu-item
-                *ngFor="let header of resp.values.headers"
-                class="header-elements"
-                (click)="
-                  handleGlobalDatasetFieldType(question, resp, header);
-                  togglePopOverOpenState(i, j);
-                  hideShowFilterState(i, j)
-                "
-              >
-                <span>{{ header }}</span>
-              </button>
-            </mat-menu>
-          </div>
-          <button
-            style="
-              color: #3d5afe;
-              border: none;
-              background: none;
-              margin-top: 5px;
-            "
-          >
-            <img
-              src="../../../../assets/rdf-forms-icons/excel_icon.svg"
-              alt="excel-icon"
-              style="width: 18px"
-            />
-            <input
-              #globalResponses
-              [hidden]="true"
-              type="file"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              (change)="uploadGlobalResponses($event)"
-              (click)="resetFile($event)"
-            />
-            <span
-              style="position: relative; top: -4px; left: 7px"
-              (click)="globalResponses.click()"
-            >
-              Add From Excel
-            </span>
-          </button>
-          <br />
-          <button
-            style="
-              color: #3d5afe;
-              border: none;
-              background: none;
-              margin-top: 5px;
-            "
-            (click)="
-              handleResponses('globalResponse', '-1');
-              isMCQResponseOpen = true;
-              togglePopOverOpenState(i, j)
-            "
-          >
-            Add Manually
-          </button>
-        </ng-container>
-      </div> -->
+      <div>
+        <h2 class="orange-color" translate="multiChoiceHeading"></h2>
+
+        <button
+          class="add-new-btn"
+          (click)="handleResponses('quickResponse', '-1')"
+          translate="addNew"
+        ></button>
+      </div>
+      <div class="height-50">
+        <h2 class="orange-color" translate="globalResponseHeading"></h2>
+      </div>
+
+      <div *ngIf="isMCQResponseOpen">
+        <app-response-type-side-drawer></app-response-type-side-drawer>
+      </div>
+
+      <div *ngIf="question.fieldType === 'RT'">
+        <app-response-type-side-drawer></app-response-type-side-drawer>
+      </div>
     </div>
   </div>
 </div>
