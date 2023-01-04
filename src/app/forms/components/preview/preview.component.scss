@@ -4,11 +4,21 @@
   background: $blue-head;
   display: flex;
   justify-content: space-between;
-  padding: 0px 10px;
-  width: 100%;
+  padding: 0px 6px;
+  // width: 100%;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   color: $white;
+  // margin-left: 7px;
+  // margin-right: 7px;
+
+  .fix-arrow {
+    position: relative;
+    left: -3px;
+    top: 1px;
+    margin-right: 4px;
+    cursor: pointer;
+  }
 }
 p {
   font-size: 12px;
@@ -112,7 +122,7 @@ p {
  */
 .example-tree .mat-nested-tree-node div[role='group'] {
   padding-left: 0px;
-  background: $table-bg;
+  background: $gray1-bg;
 }
 
 /*
@@ -129,17 +139,37 @@ p {
   margin-top: -1.5rem;
   overflow: hidden;
   overflow-y: auto;
-  background: $table-bg;
-  padding: 4px;
+  // background: $gray1-bg;
+  padding: 0px;
+}
+
+.border-inside {
+  border: 1px solid;
+  border-color: $gray6;
+  margin-left: 10px;
+  margin-right: 10px;
+  padding-bottom: 12px;
+  border-top: 0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 #preview {
+  .read-only-field {
+    margin-top: -6px;
+  }
   .read-box {
     background-color: $white;
     border-radius: 6px;
-    margin: 6px;
+    margin: 4px;
+    margin-left: 7px;
+    margin-right: 7px;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
     p {
-      color: $gray2;
+      color: $gray4;
       padding-top: 0.7rem;
       padding-left: 0.3rem;
       margin-bottom: 0;
@@ -147,7 +177,7 @@ p {
     }
     h3 {
       font-weight: 500;
-      font-size: 13px;
+      font-size: 11px;
       padding-left: 0.3rem;
       padding-bottom: 0.7rem;
       margin-top: 6px;
@@ -251,7 +281,7 @@ p {
       padding-right: 0.5rem;
 
       span {
-        color: $gray-font;
+        color: $gray5;
         font-size: 12px;
       }
     }
@@ -345,7 +375,7 @@ p {
     margin-right: 0.5rem;
 
     thead {
-      background-color: $table-bg;
+      background-color: $gray1-bg;
       padding: 5px;
     }
     td {
@@ -355,7 +385,7 @@ p {
       padding: 4px;
     }
     .bg-color {
-      background-color: $table-bg;
+      background-color: $gray1-bg;
     }
   }
   .file-form {
@@ -440,12 +470,44 @@ p {
   font-size: 12px;
 }
 
-::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
-  padding: 0 0.75em 0 0.75em !important;
+// ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+//   padding: 0 0.75em 0 0.75em !important;
+// }
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0.6em 0 0.6em 0 !important;
 }
 
-::ng-deep .mat-form-field-infix {
-  padding: 0.3em 0 !important;
+// ::ng-deep .mat-form-field-infix {
+//   border-top: 0;
+// }
+
+// ::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+//   top: 2.5em;
+//   margin-top: -0.25em;
+// }
+
+// ::ng-deep .mat-form-field-infix {
+//   padding: 0.3em 0 !important;
+// }
+
+::ng-deep .mat-form-field-label-wrapper {
+  top: -18.5px;
+}
+
+::ng-deep .mat-select-value {
+  position: relative;
+  top: -5px;
+}
+
+::ng-deep
+  .mat-form-field-can-float.mat-form-field-should-float
+  .mat-form-field-label,
+.mat-form-field-can-float
+  .mat-input-server:focus
+  + .mat-form-field-label-wrapper
+  .mat-form-field-label {
+  margin-top: 1px !important;
 }
 
 ::ng-deep mat-label {
@@ -456,9 +518,27 @@ p {
 
 @media (min-width: 1024px) and (max-width: 1280px) {
   .mat-tree-margin {
-    padding: 0px;
+    padding: 4px;
+    max-height: 363px;
   }
   #preview .read-box {
     margin: 0;
+    margin-left: 7px;
+    margin-right: 7px;
   }
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  #preview .read-box {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  .section-question {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  margin: 0 !important;
 }

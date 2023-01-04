@@ -21,12 +21,13 @@
 
 .absolute-bottom {
   position: absolute;
-  bottom: -3.6rem;
+  bottom: -3.4rem;
   display: flex;
   justify-content: space-between;
   margin-top: 1rem;
   width: 78%;
   left: 2rem;
+  align-items: center;
 }
 
 button.btn-next {
@@ -129,6 +130,7 @@ button.btn-previous {
   .bg-iphone {
     width: 250px;
     background-size: 250px 506px;
+    padding-bottom: 11rem !important;
   }
   .top-header {
     margin-left: 0.9rem;

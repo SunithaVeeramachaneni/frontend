@@ -1,11 +1,6 @@
-import {
-  MatBottomSheet,
-  MatBottomSheetModule
-} from '@angular/material/bottom-sheet';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatTreeModule } from '@angular/material/tree';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -68,7 +63,6 @@ import { TranslateModule } from '@ngx-translate/core';
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
-    MatTreeModule,
     MatCheckboxModule,
     MatButtonToggleModule,
     MatSelectModule,
