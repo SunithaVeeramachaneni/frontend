@@ -12,7 +12,7 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { tap } from 'rxjs/operators';
-import { timer } from 'rxjs';
+import { Observable, timer } from 'rxjs';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { FormService } from '../../services/form.service';
@@ -39,7 +39,7 @@ export class TemplateComponent implements OnInit {
   fieldTypes: any = [this.fieldType];
   fieldContentOpenState = false;
   currentQuestion: any;
-  openResponseType = false;
+  openResponseTypeModal$: Observable<boolean>;
 
   questionForm: FormGroup = this.fb.group({
     sectionId: '',
@@ -64,6 +64,7 @@ export class TemplateComponent implements OnInit {
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
   }
 
   addQuestion(index) {
@@ -71,10 +72,6 @@ export class TemplateComponent implements OnInit {
   }
 
   deleteQuestion() {}
-
-  openResponseTypeModalEventHandler(value) {
-    this.openResponseType = value;
-  }
 
   selectFieldTypeEventHandler(fieldType) {
     if (fieldType.type === this.questionForm.get('fieldType').value) {
@@ -85,7 +82,7 @@ export class TemplateComponent implements OnInit {
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
-    this.openResponseType = false;
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
 
     switch (fieldType.type) {
       case 'TF':
