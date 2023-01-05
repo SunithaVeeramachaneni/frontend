@@ -169,7 +169,7 @@ export class FormListComponent implements OnInit {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -198,6 +198,7 @@ export class FormListComponent implements OnInit {
   isPopoverOpen = false;
   filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
   closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  formsListCount$: Observable<number>;
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService
@@ -216,6 +217,7 @@ export class FormListComponent implements OnInit {
         })
       )
       .subscribe();
+    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([

@@ -127,6 +127,11 @@ export const routingUrls = {
     url: '/rdf-forms',
     title: 'Race Dynamic Forms',
     permission: permissions.viewForms
+  },
+  submissionForms: {
+    url: '/rdf-forms/submissions',
+    title: 'Submissions',
+    permission: permissions.viewForms
   }
 };
 

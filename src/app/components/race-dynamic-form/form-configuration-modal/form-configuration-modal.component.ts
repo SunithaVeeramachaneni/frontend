@@ -123,17 +123,15 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   createFormList() {
-    const { title } = this.loginService.getLoggedInUserInfo();
-    // eslint-disable-next-line no-debugger
-    debugger;
+    const { firstName, lastName } = this.loginService.getLoggedInUserInfo();
     this.raceDynamicFormService
       .createForm$({
         name: this.headerDataForm.value.name,
         description: this.headerDataForm.value.description,
-        author: title,
-        lastPublishedBy: title,
+        author: `${firstName} ${lastName}`,
+        lastPublishedBy: `${firstName} ${lastName}`,
         formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
-        tags: ['tag1', 'tag2'],
+        tags: this.tags,
         formType: this.formType
       })
       .subscribe(() => {

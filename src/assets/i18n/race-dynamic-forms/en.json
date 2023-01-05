@@ -56,5 +56,6 @@
   "rows": "Rows",
   "fixNoofRows": "Fix no. of rows",
   "columnName": "Enter Column name",
-  "responseType": "Choose Response Type"
+  "responseType": "Choose Response Type",
+  "submissions": "Submissions"
 }

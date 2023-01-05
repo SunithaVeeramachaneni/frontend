@@ -3,6 +3,18 @@
     <div class="forms-header">
       <h2 class="heading" translate="formLibrary"></h2>
       <span class="custom-form-field-gray-color search">
+        <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
+          <span class="forms-count">
+            {{ totalCount }}
+          </span>
+          <span class="forms-text">{{
+            'formLibrary'
+              | translate
+                : {
+                    count: totalCount || 0
+                  }
+          }}</span>
+        </span>
         <mat-form-field appearance="outline">
           <mat-icon matPrefix class="searchIcon">search</mat-icon>
           <input

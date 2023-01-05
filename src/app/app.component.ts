@@ -50,7 +50,8 @@ const {
   inActiveTenants,
   inActiveUsers,
   tenantManagement,
-  raceDynamicForms
+  raceDynamicForms,
+  submissionForms
 } = routingUrls;
 
 @Component({
@@ -130,8 +131,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       imageName: 'rdf-forms',
       showSubMenu: false,
       permission: raceDynamicForms.permission,
-      subPages: null,
-      disable: false
+      disable: false,
+      subPages: [
+        {
+          title: raceDynamicForms.title,
+          url: raceDynamicForms.url,
+          permission: raceDynamicForms.permission
+        },
+        {
+          title: submissionForms.title,
+          url: submissionForms.url,
+          permission: submissionForms.permission
+        }
+      ]
     },
     {
       title: workInstructions.title,
