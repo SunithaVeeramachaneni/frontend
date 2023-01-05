@@ -7,17 +7,14 @@
   }"
 >
   <div>
-    <div [ngClass]="{ 'highlight-bg': fieldContentOpenState === true }">
-      <div
-        class="dis-flex questions-div"
-        (click)="toggleFieldContentOpenState()"
-      >
+    <div>
+      <div class="dis-flex questions-div">
         <div class="width-70 question-input-box">
-          <img
+          <!-- <img
             src="assets/rdf-forms-icons/six-dots.svg"
             alt="six-dots"
             class="m-l-10 six-dots"
-          />
+          /> -->
 
           <input
             autocomplete="off"
@@ -87,10 +84,7 @@
         />
       </div>
 
-      <div
-        class="dis-flex justify-content"
-        *ngIf="fieldContentOpenState === true"
-      >
+      <div class="dis-flex justify-content">
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div>

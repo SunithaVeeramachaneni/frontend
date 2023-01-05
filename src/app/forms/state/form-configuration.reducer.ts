@@ -83,6 +83,38 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    FormConfigurationActions.updatePage,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, index) => {
+        if (index === action.pageIndex) {
+          const sectionPositionMap = action.data;
+          let sections = page.sections.map((section, sectionIndex) => {
+            const sec = Object.assign({}, section, {
+              position: sectionPositionMap[section.id]
+            });
+            return sec;
+          });
+          sections = sections.sort((a, b) => a.position - b.position);
+          let questionsSorted = [];
+          sections.forEach((section) => {
+            const ques = page.questions.filter(
+              (question) => question.sectionId === section.id
+            );
+            questionsSorted = questionsSorted.concat(ques);
+          });
+          console.log({ ...page, questions: questionsSorted, sections });
+          return { ...page, sections };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+
+  on(
     FormConfigurationActions.addQuestion,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
@@ -129,6 +161,79 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             return question;
           });
           return { ...page, questions };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+  on(
+    FormConfigurationActions.transferQuestionFromSection,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = page.questions.map((question) => {
+            if (question.id === action.questionId) {
+              const que = Object.assign({}, question, {
+                sectionId: action.destinationSectionId,
+                position: action.currentIndex + 1
+              });
+              return que;
+            }
+            return question;
+          });
+          let sectionQuestions = questions.filter(
+            (question) => question.sectionId === action.destinationSectionId
+          );
+          let sourceSectionQuestions = questions.filter(
+            (question) => question.sectionId === action.sourceSectionId
+          );
+
+          const remainingQuestions = questions.filter(
+            (question) =>
+              question.sectionId !== action.destinationSectionId &&
+              question.sectionId !== action.sourceSectionId
+          );
+
+          sectionQuestions = sectionQuestions.map((question, index) => {
+            if (index > action.currentIndex) {
+              const que = Object.assign({}, question, {
+                position: index + 1
+              });
+              return que;
+            }
+            return question;
+          });
+
+          sourceSectionQuestions = sourceSectionQuestions.map(
+            (question, index) => {
+              if (action.previousIndex === 0) {
+                const que = Object.assign({}, question, {
+                  position: index + 1
+                });
+                return que;
+              }
+              if (index >= action.previousIndex) {
+                const que = Object.assign({}, question, {
+                  position: index - 1
+                });
+                return que;
+              }
+              return question;
+            }
+          );
+
+          return {
+            ...page,
+            questions: [
+              ...sectionQuestions,
+              ...sourceSectionQuestions,
+              ...remainingQuestions
+            ]
+          };
         }
         return page;
       });

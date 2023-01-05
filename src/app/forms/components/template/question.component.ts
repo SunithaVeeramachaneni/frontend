@@ -57,7 +57,6 @@ export class QuestionComponent implements OnInit {
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
-  fieldContentOpenState = false;
   openResponseType = false;
 
   questionForm: FormGroup = this.fb.group({
@@ -206,9 +205,5 @@ export class QuestionComponent implements OnInit {
 
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
-  }
-
-  toggleFieldContentOpenState() {
-    this.fieldContentOpenState = true;
   }
 }

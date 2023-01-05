@@ -21,6 +21,14 @@ export const addSection = createAction(
   }>()
 );
 
+export const updatePage = createAction(
+  '[Form Configuration] updatePage',
+  props<{
+    data: any;
+    pageIndex: number;
+  }>()
+);
+
 export const updateSection = createAction(
   '[Form Configuration] updateSection',
   props<{ section: Section; pageIndex: number }>()
@@ -41,6 +49,18 @@ export const updateQuestion = createAction(
   props<{
     question: Question;
     sectionId: string;
+    pageIndex: number;
+  }>()
+);
+
+export const transferQuestionFromSection = createAction(
+  '[Form Configuration] transferQuestionFromSection',
+  props<{
+    questionId: string;
+    currentIndex: number;
+    previousIndex: number;
+    sourceSectionId: string;
+    destinationSectionId: string;
     pageIndex: number;
   }>()
 );

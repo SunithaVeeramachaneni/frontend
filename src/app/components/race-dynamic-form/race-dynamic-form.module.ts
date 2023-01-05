@@ -35,6 +35,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -54,6 +55,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormsModule,
     ReactiveFormsModule,
     RaceDynamicFormRoutingModule,
+    DragDropModule,
     CommonModule,
     FormModule,
     MatButtonModule,
