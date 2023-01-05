@@ -1,4 +1,3 @@
-import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
@@ -93,7 +92,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     DynamictableModule,
     NgxShimmerLoadingModule,
     OverlayModule,
-    MatMenuModule,
     MatSelectModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
