@@ -8,9 +8,11 @@ import { BehaviorSubject } from 'rxjs';
 export class FormService {
   private sliderOpenStateSubject = new BehaviorSubject<boolean>(false);
   private multiChoiceOpenStateSubject = new BehaviorSubject<boolean>(false);
+  private openResponseTypeSubject = new BehaviorSubject<boolean>(false);
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
+  openResponseType$ = this.openResponseTypeSubject.asObservable();
 
   constructor() {}
 
@@ -20,5 +22,9 @@ export class FormService {
 
   setMultiChoiceOpenState(open: boolean) {
     this.multiChoiceOpenStateSubject.next(open);
+  }
+
+  setOpenResponseType(open: boolean) {
+    this.openResponseTypeSubject.next(open);
   }
 }

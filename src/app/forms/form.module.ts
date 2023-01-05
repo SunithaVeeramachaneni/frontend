@@ -31,6 +31,12 @@ import { ResponseTypeSideDrawerComponent } from './components/response-type-side
 import { TableComponent } from './components/field-types/table/table.component';
 import { ResponseTypeButtonComponent } from './components/response-type-button/response-type-button.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { ArrayComponent } from './components/field-types/array/array.component';
+import { DateComponent } from './components/field-types/date/date.component';
+import { TimeComponent } from './components/field-types/time/time.component';
+import { ReadOnlyComponent } from './components/field-types/read-only/read-only.component';
+import { TextComponent } from './components/field-types/text/text.component';
+import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +51,13 @@ import { TranslateModule } from '@ngx-translate/core';
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
-    IphoneComponent
+    IphoneComponent,
+    ArrayComponent,
+    DateComponent,
+    TimeComponent,
+    ReadOnlyComponent,
+    TextComponent,
+    DropDownComponent
   ],
   imports: [
     FormsModule,

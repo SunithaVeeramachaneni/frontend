@@ -8,7 +8,6 @@ import { FormService } from '../../services/form.service';
 })
 export class ResponseTypeComponent implements OnInit {
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter();
-  @Output() openResponseTypeModalEvent: EventEmitter<any> = new EventEmitter();
 
   @Input() fieldTypes;
   @Input() question;
@@ -28,18 +27,18 @@ export class ResponseTypeComponent implements OnInit {
     if (fieldType.type === 'RT') {
       this.formService.setsliderOpenState(true);
     }
-    this.openResponseTypeModalEvent.emit(false);
+    this.formService.setOpenResponseType(false);
   }
 
   toggleResponseTypeModal(value) {
-    this.openResponseTypeModalEvent.emit(value);
+    this.formService.setOpenResponseType(false);
   }
 
   handleResponses() {
     this.isMCQResponseOpen = true;
     if (this.isMCQResponseOpen) {
       this.formService.setMultiChoiceOpenState(true);
-      this.openResponseTypeModalEvent.emit(false);
+      this.formService.setOpenResponseType(false);
     }
   }
 }

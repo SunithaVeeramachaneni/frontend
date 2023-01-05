@@ -1,0 +1,9 @@
+@import '../../../../../scss/colors.scss';
+
+.text-field-select {
+  border: none;
+  background: transparent;
+  -webkit-appearance: none;
+  width: 110px;
+  color: $blue-main;
+}
