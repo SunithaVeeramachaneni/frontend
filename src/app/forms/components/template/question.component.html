@@ -23,7 +23,7 @@
             autocomplete="off"
             type="text"
             formControlName="name"
-            placeholder="Type Question"
+            [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
             (keyup.enter)="addQuestion(questionForm.get('position').value)"
           />
