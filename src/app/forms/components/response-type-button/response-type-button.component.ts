@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-response-type-button',
@@ -8,8 +9,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class ResponseTypeButtonComponent implements OnInit {
   @Input() questionForm;
   @Input() fieldTypes;
-  @Output() openResponseTypeEvent: EventEmitter<boolean> = new EventEmitter();
-  constructor() {}
+  @Input() title;
+  constructor(private formService: FormService) {}
 
   ngOnInit(): void {}
 
@@ -21,5 +22,9 @@ export class ResponseTypeButtonComponent implements OnInit {
     return type
       ? this.fieldTypes.find((field) => field.type === type)?.description
       : null;
+  }
+
+  openResponseModal() {
+    this.formService.setOpenResponseType(true);
   }
 }

@@ -1,10 +1,11 @@
 <button
-  (click)="openResponseTypeEvent.emit(true)"
+  (click)="openResponseModal()"
   class="response-type-btn"
   [ngClass]="{
     'dis-flex p-t-0':
       questionForm.get('fieldType').value === 'VI' ||
-      questionForm.get('fieldType').value === 'DD'
+      questionForm.get('fieldType').value === 'DD',
+    border: title === 'table response type'
   }"
 >
   <div

@@ -84,7 +84,7 @@
                 <input
                   matInput
                   formControlName="title"
-                  placeholder="Response Title"
+                  [placeholder]="'responseTitle' | translate"
                   autocomplete="off"
                   class="input-forms"
                   (keyup.enter)="initResponse(); keytab($event)"

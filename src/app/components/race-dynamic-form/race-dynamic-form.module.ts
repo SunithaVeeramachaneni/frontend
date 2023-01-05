@@ -1,3 +1,7 @@
+import { MatMenuModule } from '@angular/material/menu';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatCardModule } from '@angular/material/card';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -68,7 +72,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatFormFieldModule,
     MatIconModule,
     MatAutocompleteModule,
+    MatCardModule,
+    MatTreeModule,
     MatInputModule,
+    MatMenuModule,
+    MatExpansionModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

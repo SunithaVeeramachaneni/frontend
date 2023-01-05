@@ -58,7 +58,7 @@ export class QuestionComponent implements OnInit {
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   fieldContentOpenState = false;
-  openResponseType = false;
+  openResponseTypeModal$: Observable<boolean>;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -89,6 +89,7 @@ export class QuestionComponent implements OnInit {
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(() => {
@@ -127,10 +128,6 @@ export class QuestionComponent implements OnInit {
     console.log('delete question');
   }
 
-  openResponseTypeModalEventHandler(value) {
-    this.openResponseType = value;
-  }
-
   selectFieldTypeEventHandler(fieldType) {
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
@@ -139,7 +136,7 @@ export class QuestionComponent implements OnInit {
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
-    this.openResponseType = false;
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
 
     switch (fieldType.type) {
       case 'TF':

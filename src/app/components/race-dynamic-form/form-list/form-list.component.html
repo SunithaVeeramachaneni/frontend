@@ -2,6 +2,15 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="formLibrary"></h2>
+
+      <button mat-raised-button (click)="toggleMenu()">Add Button</button>
+
+      <div id="openviewtab">
+        <app-form-detail
+          [@slideInOut]="menuState"
+          (slideInOut)="menuState = 'out'"
+        ></app-form-detail>
+      </div>
       <span class="custom-form-field-gray-color search">
         <mat-form-field appearance="outline">
           <mat-icon matPrefix class="searchIcon">search</mat-icon>

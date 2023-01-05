@@ -124,7 +124,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       id: `Q${this.formConf.counter.value}`,
       sectionId,
       name: '',
-      fieldType: 'RT',
+      fieldType: 'TF',
       position: questionIndex + 1,
       required: false,
       multi: false,
