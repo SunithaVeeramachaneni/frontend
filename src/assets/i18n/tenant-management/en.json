@@ -111,5 +111,6 @@
   "accessKeyId": "Access Key Id",
   "secretAccessKey": "Secret Access Key",
   "bucket": "Bucket",
-  "region": "Region"
+  "region": "Region",
+  "amplifyConfig": "Amplify config"
 }

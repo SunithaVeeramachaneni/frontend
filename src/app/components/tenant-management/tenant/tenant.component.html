@@ -2028,6 +2028,26 @@
             </mat-error>
           </p>
         </div>
+
+        <div>
+          <p class="sub-headings" translate>amplifyConfig</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>amplifyConfig</mat-label>
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                [placeholder]="'amplifyConfig' | translate"
+                formControlName="amplifyConfig"
+              ></textarea>
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('amplifyConfig')">
+              {{
+                'required' | translate : { name: 'amplifyConfig' | translate }
+              }}
+            </mat-error>
+          </p>
+        </div>
       </div>
       <div [hidden]="selectedID.value !== 6">
         <div class="assets">
