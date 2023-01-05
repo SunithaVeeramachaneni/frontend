@@ -1,11 +1,17 @@
-<div class="questions" [formGroup]="questionForm">
+<div
+  class="questions"
+  [formGroup]="questionForm"
+  *ngIf="{
+    question: question$ | async,
+    sectionQuestions: sectionQuestions$ | async
+  }"
+>
   <div>
     <div [ngClass]="{ 'highlight-bg': fieldContentOpenState === true }">
       <div
         class="dis-flex questions-div"
         (click)="toggleFieldContentOpenState()"
       >
-        <input type="hidden" formControlName="position" />
         <div class="width-70 question-input-box">
           <img
             src="assets/rdf-forms-icons/six-dots.svg"
@@ -19,13 +25,13 @@
             formControlName="name"
             placeholder="Type Question"
             class="width-90 question-input"
-            (keyup.enter)="addQuestion(questionForm.get('index').value)"
+            (keyup.enter)="addQuestion(questionForm.get('position').value)"
           />
 
           <div class="floating-btns">
             <button
               class="questions-btn"
-              (click)="addQuestion(questionForm.get('index').value)"
+              (click)="addQuestion(questionForm.get('position').value)"
             >
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
@@ -38,7 +44,7 @@
             <button
               class="delete-btn"
               (click)="deleteQuestion()"
-              [disabled]="questionForm.length === 1"
+              [disabled]="sectionQuestions.length === 1"
             >
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"
@@ -62,7 +68,7 @@
               <app-response-type
                 (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
                 [fieldTypes]="fieldTypes"
-                [question]="questionInfo"
+                [question]="question"
               ></app-response-type>
             </ng-container>
           </div>
