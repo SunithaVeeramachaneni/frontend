@@ -20,7 +20,8 @@
   "required": "{name} is required",
   "minlength": "{name} must be at least {length} characters",
   "maxlength": "{name} must be at the max of {length} characters",
-
+  "changesSaved": "All Changes Saved",
+  "changesInProgress": "Saving Changes In Progress",
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",

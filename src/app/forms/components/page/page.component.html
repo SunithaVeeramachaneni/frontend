@@ -1,4 +1,8 @@
-<div class="pages" [formGroup]="pageForm" *ngIf="page$ | async">
+<div
+  class="pages"
+  [formGroup]="pageForm"
+  *ngIf="{ page: page$ | async, pagesCount: pagesCount$ | async } as props"
+>
   <div class="page-header">
     <mat-icon
       (click)="togglePageOpenState()"
@@ -29,7 +33,12 @@
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #pageMenu="matMenu">
-      <button mat-menu-item (click)="deletePage()" class="text-red">
+      <button
+        mat-menu-item
+        (click)="deletePage()"
+        class="text-red"
+        [disabled]="props.pagesCount === 1"
+      >
         <span translate="deletePage"></span>
       </button>
     </mat-menu>
@@ -38,10 +47,7 @@
     <ng-content></ng-content>
   </div>
 
-  <button
-    class="add-page-btn"
-    (click)="addPage(pageForm.get('position').value)"
-  >
+  <button class="add-page-btn" (click)="addPage()">
     <img
       src="assets/rdf-forms-icons/add-page.svg"
       alt="add page"

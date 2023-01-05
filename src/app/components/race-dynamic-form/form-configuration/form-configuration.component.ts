@@ -7,14 +7,18 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import {
-  AddPageEvent,
-  AddQuestionEvent,
-  AddSectionEvent,
-  FormMetadata,
-  UpdateQuestionEvent,
-  UpdateSectionEvent
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  tap
+} from 'rxjs/operators';
+import { isEqual } from 'lodash-es';
+import {
+  PageEvent,
+  QuestionEvent,
+  SectionEvent,
+  FormMetadata
 } from 'src/app/interfaces';
 import {
   getFormMetadata,
@@ -41,6 +45,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   questionIndexes: any;
+  saveStatus = 'done';
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
@@ -53,6 +58,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       counter: [0],
       formStatus: ['draft']
     });
+
+    this.formConfiguration.valueChanges
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        pairwise(),
+        tap(([previous, current]) => {
+          console.log(previous);
+          console.log(current);
+          if (!isEqual(previous, current)) {
+            this.store.dispatch(
+              FormConfigurationActions.updateFormMetadata({
+                formMetadata: this.formConfiguration.value
+              })
+            );
+          }
+        })
+      )
+      .subscribe();
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
@@ -73,6 +97,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       FormConfigurationActions.addPage({
         page: this.getPageObject(0, 0, 0),
         pageIndex: 0
+      })
+    );
+
+    this.store.dispatch(
+      FormConfigurationActions.updateFormMetadata({
+        formMetadata: this.formConfiguration.value
       })
     );
   }
@@ -123,60 +153,101 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     };
   }
 
-  addPageEventHandler(event: AddPageEvent) {
-    const { pageIndex } = event;
-    this.store.dispatch(
-      FormConfigurationActions.addPage({
-        page: this.getPageObject(pageIndex, 0, 0),
-        pageIndex
-      })
-    );
+  pageEventHandler(event: PageEvent) {
+    const { pageIndex, type } = event;
+    switch (type) {
+      case 'add':
+        this.store.dispatch(
+          FormConfigurationActions.addPage({
+            page: this.getPageObject(pageIndex, 0, 0),
+            pageIndex
+          })
+        );
+        break;
+
+      case 'delete':
+        this.store.dispatch(
+          FormConfigurationActions.deletePage({
+            pageIndex
+          })
+        );
+        break;
+    }
   }
 
-  addSectionEventHandler(event: AddSectionEvent) {
-    const { pageIndex, sectionIndex } = event;
-    const section = this.getSection(pageIndex, sectionIndex);
-    this.store.dispatch(
-      FormConfigurationActions.addSection({
-        section,
-        question: this.getQuestion(0, section.id),
-        pageIndex,
-        sectionIndex
-      })
-    );
+  sectionEventHandler(event: SectionEvent) {
+    const { pageIndex, sectionIndex, section, type } = event;
+    switch (type) {
+      case 'add':
+        {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const section = this.getSection(pageIndex, sectionIndex);
+          this.store.dispatch(
+            FormConfigurationActions.addSection({
+              section,
+              question: this.getQuestion(0, section.id),
+              pageIndex,
+              sectionIndex
+            })
+          );
+        }
+        break;
+
+      case 'update':
+        this.store.dispatch(
+          FormConfigurationActions.updateSection({
+            section,
+            sectionIndex,
+            pageIndex
+          })
+        );
+        break;
+
+      case 'delete':
+        this.store.dispatch(
+          FormConfigurationActions.deleteSection({
+            sectionIndex,
+            sectionId: section.id,
+            pageIndex
+          })
+        );
+        break;
+    }
   }
 
-  updateSectionEventHandler(event: UpdateSectionEvent) {
-    const { section, pageIndex } = event;
-    this.store.dispatch(
-      FormConfigurationActions.updateSection({
-        section,
-        pageIndex
-      })
-    );
-  }
+  questionEventHandler(event: QuestionEvent) {
+    const { pageIndex, questionIndex, sectionId, question, type } = event;
+    switch (type) {
+      case 'add':
+        this.store.dispatch(
+          FormConfigurationActions.addQuestion({
+            question: this.getQuestion(questionIndex, sectionId),
+            pageIndex,
+            sectionId,
+            questionIndex
+          })
+        );
+        break;
 
-  addQuestionEventHandler(event: AddQuestionEvent) {
-    const { pageIndex, questionIndex, sectionId } = event;
-    this.store.dispatch(
-      FormConfigurationActions.addQuestion({
-        question: this.getQuestion(questionIndex, sectionId),
-        pageIndex,
-        sectionId,
-        questionIndex
-      })
-    );
-  }
+      case 'update':
+        this.store.dispatch(
+          FormConfigurationActions.updateQuestion({
+            question,
+            questionIndex,
+            pageIndex
+          })
+        );
+        break;
 
-  updateQuestionEventHandler(event: UpdateQuestionEvent) {
-    const { question, sectionId, pageIndex } = event;
-    this.store.dispatch(
-      FormConfigurationActions.updateQuestion({
-        question,
-        sectionId,
-        pageIndex
-      })
-    );
+      case 'delete':
+        this.store.dispatch(
+          FormConfigurationActions.deleteQuestion({
+            questionIndex,
+            pageIndex
+          })
+        );
+        break;
+    }
   }
 
   uploadFormImageFile(e) {

@@ -43,6 +43,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { AuthConfigService } from './auth-config.service';
+import { EffectsModule } from '@ngrx/effects';
 
 registerLocaleData(localeEn, 'en');
 
@@ -86,7 +87,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       registrationStrategy: 'registerImmediately'
-    })
+    }),
+    EffectsModule.forRoot()
   ],
   providers: [
     {

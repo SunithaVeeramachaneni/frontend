@@ -44,6 +44,12 @@
       </div>
     </div>
     <div class="dis-flex">
+      <div class="save-status" [hidden]="saveStatus !== 'done'">
+        {{ 'changesSaved' | translate }}
+      </div>
+      <div class="save-status" [hidden]="saveStatus === 'done'">
+        {{ 'changesInProgress' | translate }}
+      </div>
       <button
         mat-stroked-button
         class="import-btn"
@@ -67,7 +73,7 @@
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"
-          (addPageEvent)="addPageEventHandler($event)"
+          (pageEvent)="pageEventHandler($event)"
         >
           <ng-container *ngIf="sectionIds$ | async as sectionIds">
             <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
@@ -77,8 +83,7 @@
                 <app-section
                   [pageIndex]="pageIndex"
                   [sectionIndex]="sectionIndex"
-                  (addSectionEvent)="addSectionEventHandler($event)"
-                  (updateSectionEvent)="updateSectionEventHandler($event)"
+                  (sectionEvent)="sectionEventHandler($event)"
                 >
                   <ng-container
                     *ngIf="questionIndexes$ | async as questionIndexes"
@@ -94,10 +99,7 @@
                         [pageIndex]="pageIndex"
                         [sectionId]="sectionIds[pageIndex][sectionIndex]"
                         [questionIndex]="questionIndex"
-                        (addQuestionEvent)="addQuestionEventHandler($event)"
-                        (updateQuestionEvent)="
-                          updateQuestionEventHandler($event)
-                        "
+                        (questionEvent)="questionEventHandler($event)"
                       ></app-question>
                     </ng-container>
                   </ng-container>
