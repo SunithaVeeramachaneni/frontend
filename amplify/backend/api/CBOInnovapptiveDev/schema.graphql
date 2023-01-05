@@ -1,10 +1,3 @@
-type FormSubmissionDetail @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  formData: String
-  formSubmissionDetailId: FormSubmissions @belongsTo
-  formsubmissionsID: ID! @index(name: "byFormSubmissions")
-}
-
 type FormDetail @model @auth(rules: [{allow: public}]) {
   id: ID!
   formData: String
@@ -13,15 +6,21 @@ type FormDetail @model @auth(rules: [{allow: public}]) {
 
 type AuthoredFormDetail @model @auth(rules: [{allow: public}]) {
   id: ID!
-  version: String
   formStatus: FormStatusEnum
-  counter: Int
+  version: String
   pages: String
-  formListId: ID! @index(name: "byFormList")
-  formList: FormList @belongsTo(fields: ["formListId"])
+  counter: Int
+  formlistID: ID! @index(name: "byFormList")
 }
 
-type FormSubmissions @model @auth(rules: [{allow: public}]) {
+type FormSubmissionDetail @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  formData: String
+  formsubmissionlistID: ID! @index(name: "byFormSubmissionList")
+  formlistID: ID! @index(name: "byFormList")
+}
+
+type FormSubmissionList @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
   description: String
@@ -34,9 +33,7 @@ type FormSubmissions @model @auth(rules: [{allow: public}]) {
   dueDate: String
   version: String
   submittedBy: String
-  formListId: FormList @belongsTo
-  formlistID: ID! @index(name: "byFormList")
-  formSubmissionDetails: [FormSubmissionDetail] @hasMany(indexName: "byFormSubmissions", fields: ["id"])
+  FormSubmissionListFormSubmissionDetail: [FormSubmissionDetail] @hasMany(indexName: "byFormSubmissionList", fields: ["id"])
 }
 
 type FormList @model @auth(rules: [{allow: public}]) {
@@ -54,9 +51,9 @@ type FormList @model @auth(rules: [{allow: public}]) {
   lastPublishedBy: String
   author: String
   formType: String
-  formDetails: [FormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
-  formSubmissions: [FormSubmissions] @hasMany(indexName: "byFormList", fields: ["id"])
-  authoredFormDetails: [AuthoredFormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
+  FormListFormSubmissionDetail: [FormSubmissionDetail] @hasMany(indexName: "byFormList", fields: ["id"])
+  FormListAuthoredFormDetail: [AuthoredFormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
+  FormListFormDetail: [FormDetail] @hasMany(indexName: "byFormList", fields: ["id"])
 }
 
 enum FormStatusEnum {

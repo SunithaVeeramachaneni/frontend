@@ -1,109 +1,4 @@
 # this is an auto generated file. This will be overwritten
-mutation CreateFormSubmissionDetail(
-  $input: CreateFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  createFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation UpdateFormSubmissionDetail(
-  $input: UpdateFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  updateFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation DeleteFormSubmissionDetail(
-  $input: DeleteFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  deleteFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
 mutation CreateFormDetail(
   $input: CreateFormDetailInput!
   $condition: ModelFormDetailConditionInput
@@ -155,32 +50,11 @@ mutation CreateAuthoredFormDetail(
 ) {
   createAuthoredFormDetail(input: $input, condition: $condition) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -194,32 +68,11 @@ mutation UpdateAuthoredFormDetail(
 ) {
   updateAuthoredFormDetail(input: $input, condition: $condition) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -233,32 +86,11 @@ mutation DeleteAuthoredFormDetail(
 ) {
   deleteAuthoredFormDetail(input: $input, condition: $condition) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -266,11 +98,59 @@ mutation DeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-mutation CreateFormSubmissions(
-  $input: CreateFormSubmissionsInput!
-  $condition: ModelFormSubmissionsConditionInput
+mutation CreateFormSubmissionDetail(
+  $input: CreateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
 ) {
-  createFormSubmissions(input: $input, condition: $condition) {
+  createFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormSubmissionDetail(
+  $input: UpdateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  updateFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormSubmissionDetail(
+  $input: DeleteFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  deleteFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormSubmissionList(
+  $input: CreateFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
+) {
+  createFormSubmissionList(input: $input, condition: $condition) {
     id
     name
     description
@@ -283,29 +163,7 @@ mutation CreateFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -316,11 +174,11 @@ mutation CreateFormSubmissions(
     _lastChangedAt
   }
 }
-mutation UpdateFormSubmissions(
-  $input: UpdateFormSubmissionsInput!
-  $condition: ModelFormSubmissionsConditionInput
+mutation UpdateFormSubmissionList(
+  $input: UpdateFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
 ) {
-  updateFormSubmissions(input: $input, condition: $condition) {
+  updateFormSubmissionList(input: $input, condition: $condition) {
     id
     name
     description
@@ -333,29 +191,7 @@ mutation UpdateFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -366,11 +202,11 @@ mutation UpdateFormSubmissions(
     _lastChangedAt
   }
 }
-mutation DeleteFormSubmissions(
-  $input: DeleteFormSubmissionsInput!
-  $condition: ModelFormSubmissionsConditionInput
+mutation DeleteFormSubmissionList(
+  $input: DeleteFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
 ) {
-  deleteFormSubmissions(input: $input, condition: $condition) {
+  deleteFormSubmissionList(input: $input, condition: $condition) {
     id
     name
     description
@@ -383,29 +219,7 @@ mutation DeleteFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -435,15 +249,15 @@ mutation CreateFormList(
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }
@@ -473,15 +287,15 @@ mutation UpdateFormList(
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }
@@ -511,15 +325,15 @@ mutation DeleteFormList(
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }

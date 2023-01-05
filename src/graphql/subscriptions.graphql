@@ -1,106 +1,4 @@
 # this is an auto generated file. This will be overwritten
-subscription OnCreateFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onCreateFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnUpdateFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onUpdateFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnDeleteFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onDeleteFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formSubmissionDetailId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      location
-      roundType
-      status
-      assignee
-      dueDate
-      version
-      submittedBy
-      formlistID
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formsubmissionsID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
 subscription OnCreateFormDetail(
   $filter: ModelSubscriptionFormDetailFilterInput
 ) {
@@ -148,32 +46,11 @@ subscription OnCreateAuthoredFormDetail(
 ) {
   onCreateAuthoredFormDetail(filter: $filter) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -186,32 +63,11 @@ subscription OnUpdateAuthoredFormDetail(
 ) {
   onUpdateAuthoredFormDetail(filter: $filter) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -224,32 +80,11 @@ subscription OnDeleteAuthoredFormDetail(
 ) {
   onDeleteAuthoredFormDetail(filter: $filter) {
     id
-    version
     formStatus
-    counter
+    version
     pages
-    formListId
-    formList {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
+    counter
+    formlistID
     createdAt
     updatedAt
     _version
@@ -257,10 +92,55 @@ subscription OnDeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-subscription OnCreateFormSubmissions(
-  $filter: ModelSubscriptionFormSubmissionsFilterInput
+subscription OnCreateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
 ) {
-  onCreateFormSubmissions(filter: $filter) {
+  onCreateFormSubmissionDetail(filter: $filter) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
+) {
+  onUpdateFormSubmissionDetail(filter: $filter) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
+) {
+  onDeleteFormSubmissionDetail(filter: $filter) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormSubmissionList(
+  $filter: ModelSubscriptionFormSubmissionListFilterInput
+) {
+  onCreateFormSubmissionList(filter: $filter) {
     id
     name
     description
@@ -273,29 +153,7 @@ subscription OnCreateFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -306,10 +164,10 @@ subscription OnCreateFormSubmissions(
     _lastChangedAt
   }
 }
-subscription OnUpdateFormSubmissions(
-  $filter: ModelSubscriptionFormSubmissionsFilterInput
+subscription OnUpdateFormSubmissionList(
+  $filter: ModelSubscriptionFormSubmissionListFilterInput
 ) {
-  onUpdateFormSubmissions(filter: $filter) {
+  onUpdateFormSubmissionList(filter: $filter) {
     id
     name
     description
@@ -322,29 +180,7 @@ subscription OnUpdateFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -355,10 +191,10 @@ subscription OnUpdateFormSubmissions(
     _lastChangedAt
   }
 }
-subscription OnDeleteFormSubmissions(
-  $filter: ModelSubscriptionFormSubmissionsFilterInput
+subscription OnDeleteFormSubmissionList(
+  $filter: ModelSubscriptionFormSubmissionListFilterInput
 ) {
-  onDeleteFormSubmissions(filter: $filter) {
+  onDeleteFormSubmissionList(filter: $filter) {
     id
     name
     description
@@ -371,29 +207,7 @@ subscription OnDeleteFormSubmissions(
     dueDate
     version
     submittedBy
-    formListId {
-      id
-      name
-      description
-      formLogo
-      isPublic
-      publishedDate
-      location
-      roundType
-      formStatus
-      assignee
-      tags
-      lastPublishedBy
-      author
-      formType
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-    }
-    formlistID
-    formSubmissionDetails {
+    FormSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -420,15 +234,15 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }
@@ -455,15 +269,15 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }
@@ -490,15 +304,15 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    formDetails {
+    FormListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    formSubmissions {
+    FormListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    authoredFormDetails {
+    FormListFormDetail {
       nextToken
       startedAt
     }

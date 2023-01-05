@@ -1,7 +1,7 @@
 export const schema = {
     "models": {
-        "FormSubmissionDetail": {
-            "name": "FormSubmissionDetail",
+        "FormDetail": {
+            "name": "FormDetail",
             "fields": {
                 "id": {
                     "name": "id",
@@ -17,23 +17,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "formSubmissionDetailId": {
-                    "name": "formSubmissionDetailId",
-                    "isArray": false,
-                    "type": {
-                        "model": "FormSubmissions"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "formSubmissionsFormSubmissionDetailsId"
-                        ]
-                    }
-                },
-                "formsubmissionsID": {
-                    "name": "formsubmissionsID",
+                "formlistID": {
+                    "name": "formlistID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -54,17 +39,10 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "formSubmissionsFormSubmissionDetailsId": {
-                    "name": "formSubmissionsFormSubmissionDetailsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
-            "pluralName": "FormSubmissionDetails",
+            "pluralName": "FormDetails",
             "attributes": [
                 {
                     "type": "model",
@@ -73,9 +51,9 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byFormSubmissions",
+                        "name": "byFormList",
                         "fields": [
-                            "formsubmissionsID"
+                            "formlistID"
                         ]
                     }
                 },
@@ -97,8 +75,197 @@ export const schema = {
                 }
             ]
         },
-        "FormSubmissions": {
-            "name": "FormSubmissions",
+        "AuthoredFormDetail": {
+            "name": "AuthoredFormDetail",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "formStatus": {
+                    "name": "formStatus",
+                    "isArray": false,
+                    "type": {
+                        "enum": "FormStatusEnum"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "version": {
+                    "name": "version",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "pages": {
+                    "name": "pages",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "counter": {
+                    "name": "counter",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "formlistID": {
+                    "name": "formlistID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "AuthoredFormDetails",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byFormList",
+                        "fields": [
+                            "formlistID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "FormSubmissionDetail": {
+            "name": "FormSubmissionDetail",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "formData": {
+                    "name": "formData",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "formsubmissionlistID": {
+                    "name": "formsubmissionlistID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "formlistID": {
+                    "name": "formlistID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "FormSubmissionDetails",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byFormSubmissionList",
+                        "fields": [
+                            "formsubmissionlistID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byFormList",
+                        "fields": [
+                            "formlistID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "FormSubmissionList": {
+            "name": "FormSubmissionList",
             "fields": {
                 "id": {
                     "name": "id",
@@ -184,30 +351,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "formListId": {
-                    "name": "formListId",
-                    "isArray": false,
-                    "type": {
-                        "model": "FormList"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "formListFormSubmissionsId"
-                        ]
-                    }
-                },
-                "formlistID": {
-                    "name": "formlistID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "formSubmissionDetails": {
-                    "name": "formSubmissionDetails",
+                "FormSubmissionListFormSubmissionDetail": {
+                    "name": "FormSubmissionListFormSubmissionDetail",
                     "isArray": true,
                     "type": {
                         "model": "FormSubmissionDetail"
@@ -218,7 +363,7 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "formsubmissionsID"
+                            "formsubmissionlistID"
                         ]
                     }
                 },
@@ -237,30 +382,14 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "formListFormSubmissionsId": {
-                    "name": "formListFormSubmissionsId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
-            "pluralName": "FormSubmissions",
+            "pluralName": "FormSubmissionLists",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byFormList",
-                        "fields": [
-                            "formlistID"
-                        ]
-                    }
                 },
                 {
                     "type": "auth",
@@ -382,8 +511,40 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "formDetails": {
-                    "name": "formDetails",
+                "FormListFormSubmissionDetail": {
+                    "name": "FormListFormSubmissionDetail",
+                    "isArray": true,
+                    "type": {
+                        "model": "FormSubmissionDetail"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "formlistID"
+                        ]
+                    }
+                },
+                "FormListAuthoredFormDetail": {
+                    "name": "FormListAuthoredFormDetail",
+                    "isArray": true,
+                    "type": {
+                        "model": "AuthoredFormDetail"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "formlistID"
+                        ]
+                    }
+                },
+                "FormListFormDetail": {
+                    "name": "FormListFormDetail",
                     "isArray": true,
                     "type": {
                         "model": "FormDetail"
@@ -395,38 +556,6 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
                             "formlistID"
-                        ]
-                    }
-                },
-                "formSubmissions": {
-                    "name": "formSubmissions",
-                    "isArray": true,
-                    "type": {
-                        "model": "FormSubmissions"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "formlistID"
-                        ]
-                    }
-                },
-                "authoredFormDetails": {
-                    "name": "authoredFormDetails",
-                    "isArray": true,
-                    "type": {
-                        "model": "AuthoredFormDetail"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "formList"
                         ]
                     }
                 },
@@ -471,194 +600,6 @@ export const schema = {
                     }
                 }
             ]
-        },
-        "FormDetail": {
-            "name": "FormDetail",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "formData": {
-                    "name": "formData",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "formlistID": {
-                    "name": "formlistID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "FormDetails",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byFormList",
-                        "fields": [
-                            "formlistID"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "AuthoredFormDetail": {
-            "name": "AuthoredFormDetail",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "version": {
-                    "name": "version",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "formStatus": {
-                    "name": "formStatus",
-                    "isArray": false,
-                    "type": {
-                        "enum": "FormStatusEnum"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "counter": {
-                    "name": "counter",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "pages": {
-                    "name": "pages",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "formListId": {
-                    "name": "formListId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "formList": {
-                    "name": "formList",
-                    "isArray": false,
-                    "type": {
-                        "model": "FormList"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "formListId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "AuthoredFormDetails",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byFormList",
-                        "fields": [
-                            "formListId"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
         }
     },
     "enums": {
@@ -672,5 +613,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "df78bbe8c7f4cd17fe310ed22ce266d3"
+    "version": "3cf1b7ef41df3ecfe0427189cf6b06fd"
 };
