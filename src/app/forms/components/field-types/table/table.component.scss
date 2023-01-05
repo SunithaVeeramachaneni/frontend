@@ -60,4 +60,20 @@
       white-space: nowrap;
     }
   }
+
+  .table-content {
+    display: flex;
+    padding: 7px;
+
+    .labels {
+      margin: 15px 10px 0 20px;
+    }
+
+    .input-field {
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      height: 26px;
+      margin-top: 8px;
+    }
+  }
 }

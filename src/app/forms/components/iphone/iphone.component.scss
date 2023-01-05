@@ -1,0 +1,172 @@
+@import '../../../../scss/colors.scss';
+
+.bg-iphone {
+  background-image: url('../../../../assets/img/iphonep.png');
+  background-size: contain;
+  // height: 75vh;
+  width: 300px;
+  height: 250px;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 297px 552px;
+  min-height: 100%;
+  overflow: hidden;
+  position: fixed;
+  right: 50px;
+  z-index: 99;
+}
+.relative {
+  position: relative;
+}
+
+.absolute-bottom {
+  position: absolute;
+  bottom: -3.4rem;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  width: 78%;
+  left: 2rem;
+  align-items: center;
+}
+
+button.btn-next {
+  height: 38px;
+  background: #2a3eb1;
+  color: $white;
+  border: none;
+  width: 80px;
+  border-radius: 5px;
+  margin-left: 0.4rem;
+}
+
+button.btn-previous {
+  height: 38px;
+  color: #2a3eb1;
+  border: none;
+  width: 80px;
+  border-radius: 5px;
+  background-color: transparent;
+  margin-left: 0.4rem;
+}
+
+.top-header {
+  position: absolute;
+  top: 0;
+  background-color: $white;
+  width: 88%;
+
+  margin-left: 1.1rem;
+  margin-top: -0.4rem;
+  text-align: center;
+
+  p {
+    margin-top: -0.5rem;
+  }
+}
+
+.d-flex-top {
+  display: flex;
+}
+
+.absolute-bottom {
+  p {
+    margin-right: 1rem;
+  }
+}
+
+.top-header {
+  h3 {
+    font-size: 12px;
+  }
+  p {
+    font-size: 11px;
+  }
+}
+
+.iphone-preview {
+  padding: 1rem;
+  height: 330px;
+  overflow: hidden;
+  // overflow-y: auto;
+  padding-top: 5rem;
+  margin-top: 3rem;
+}
+
+// media queries
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .bg-iphone {
+    width: 250px;
+    background-size: 250px 506px;
+  }
+  .top-header {
+    margin-left: 0.9rem;
+  }
+  .iphone-preview {
+    height: 292px;
+  }
+  .absolute-bottom {
+    width: 85%;
+    bottom: -3.2rem;
+    align-items: center;
+    left: 0.8rem;
+  }
+  button.btn-previous {
+    height: 35px;
+    width: 70px;
+  }
+  button.btn-next {
+    height: 35px;
+    width: 70px;
+  }
+  .absolute-bottom p {
+    margin-right: 0;
+    margin-left: 1rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .bg-iphone {
+    width: 250px;
+    background-size: 250px 506px;
+    padding-bottom: 11rem !important;
+  }
+  .top-header {
+    margin-left: 0.9rem;
+  }
+  .iphone-preview {
+    height: 292px;
+  }
+  .absolute-bottom {
+    width: 85%;
+    bottom: -3.2rem;
+    align-items: center;
+    left: 0.8rem;
+  }
+  button.btn-previous {
+    height: 35px;
+    width: 70px;
+  }
+  button.btn-next {
+    height: 35px;
+    width: 70px;
+  }
+  .absolute-bottom p {
+    margin-right: 0;
+    margin-left: 1rem;
+  }
+
+  .bottom-header h3 {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .bg-iphone {
+    right: 30px;
+    margin-left: 1.3rem;
+    position: inherit;
+    padding-bottom: 8rem;
+  }
+}
