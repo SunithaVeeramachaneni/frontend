@@ -1,4 +1,8 @@
-<div class="create-form-main" [formGroup]="createForm">
+<div
+  class="create-form-main"
+  [formGroup]="formConfiguration"
+  *ngIf="formMetadata$ | async"
+>
   <div class="dis-flex form-header">
     <div>
       <div class="dis-flex">
@@ -60,37 +64,46 @@
   </div>
   <div class="dis-flex form">
     <div class="width-70">
-      <ng-container *ngFor="let page of getPages(); let pageIndex = index">
+      <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
-          [pageData]="getPageData(pageIndex)"
+          [pageIndex]="pageIndex"
           (addPageEvent)="addPageEventHandler($event)"
         >
-          <ng-container
-            *ngFor="
-              let section of getSections(pageIndex);
-              let sectionIndex = index
-            "
-          >
-            <app-section
-              [sectionData]="getSectionData(pageIndex, sectionIndex)"
-              (addSectionEvent)="addSectionEventHandler($event, pageIndex)"
-            >
+          <ng-container *ngIf="sectionIds$ | async as sectionIds">
+            <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
               <ng-container
-                *ngFor="
-                  let question of getSectionQuestions(pageIndex, section.id);
-                  let questionIndex = index
-                "
+                *ngFor="let sectionIndex of sectionIndexes[pageIndex]"
               >
-                <app-template
-                  [questionData]="
-                    getQuestionData(pageIndex, questionIndex, section.id)
-                  "
-                  (addQuestionEvent)="
-                    addQuestionEventHandler($event, pageIndex, section.id)
-                  "
-                ></app-template>
+                <app-section
+                  [pageIndex]="pageIndex"
+                  [sectionIndex]="sectionIndex"
+                  (addSectionEvent)="addSectionEventHandler($event)"
+                  (updateSectionEvent)="updateSectionEventHandler($event)"
+                >
+                  <ng-container
+                    *ngIf="questionIndexes$ | async as questionIndexes"
+                  >
+                    <ng-container
+                      *ngFor="
+                        let questionIndex of questionIndexes[pageIndex][
+                          sectionIndex
+                        ]
+                      "
+                    >
+                      <app-question
+                        [pageIndex]="pageIndex"
+                        [sectionId]="sectionIds[pageIndex][sectionIndex]"
+                        [questionIndex]="questionIndex"
+                        (addQuestionEvent)="addQuestionEventHandler($event)"
+                        (updateQuestionEvent)="
+                          updateQuestionEventHandler($event)
+                        "
+                      ></app-question>
+                    </ng-container>
+                  </ng-container>
+                </app-section>
               </ng-container>
-            </app-section>
+            </ng-container>
           </ng-container>
         </app-page>
       </ng-container>

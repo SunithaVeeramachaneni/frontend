@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,6 +8,15 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { getSection, State } from 'src/app/forms/state';
+import {
+  AddSectionEvent,
+  Section,
+  UpdateSectionEvent
+} from 'src/app/interfaces';
 
 @Component({
   selector: 'app-section',
@@ -15,34 +25,63 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectionComponent implements OnInit {
-  @Input() set sectionData(data) {
-    this.sectionInfo = data;
-    this.sectionForm.patchValue(this.sectionInfo);
+  @Input() set pageIndex(pageIndex: number) {
+    this._pageIndex = pageIndex;
   }
-  get sectionData() {
-    return this.sectionInfo;
+  get pageIndex() {
+    return this._pageIndex;
   }
-  @Output() addSectionEvent: EventEmitter<number> = new EventEmitter();
-
+  @Input() set sectionIndex(sectionIndex: number) {
+    this._sectionIndex = sectionIndex;
+  }
+  get sectionIndex() {
+    return this._sectionIndex;
+  }
+  @Output() addSectionEvent: EventEmitter<AddSectionEvent> =
+    new EventEmitter<AddSectionEvent>();
+  @Output() updateSectionEvent: EventEmitter<UpdateSectionEvent> =
+    new EventEmitter<UpdateSectionEvent>();
   isSectionOpenState = true;
-  sectionInfo;
-
   sectionForm: FormGroup = this.fb.group({
     id: '',
-    index: '',
     name: {
       value: '',
       disabled: true
     },
     position: ''
   });
+  section$: Observable<Section>;
+  private _pageIndex: number;
+  private _sectionIndex: number;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private store: Store<State>) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.sectionForm.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe(() => {
+        this.updateSectionEvent.emit({
+          section: this.sectionForm.getRawValue(),
+          pageIndex: this.pageIndex
+        });
+      });
 
-  addSection(index) {
-    this.addSectionEvent.emit(index);
+    this.section$ = this.store
+      .select(getSection(this.pageIndex, this.sectionIndex))
+      .pipe(
+        tap((section) => {
+          this.sectionForm.patchValue(section, {
+            emitEvent: false
+          });
+        })
+      );
+  }
+
+  addSection(position: number) {
+    this.addSectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: position
+    });
   }
 
   toggleSectionOpenState = () => {

@@ -24,14 +24,17 @@
     [selectedIndex]="selected.value"
     (selectedIndexChange)="selected.setValue($event)"
   >
-    <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+    <mat-tab *ngFor="let tab of tabs; let index = index">
+      <ng-template mat-tab-label>
+        <a matTooltip="{{ tab }}" class="labels"> {{ tab }} </a>
+      </ng-template>
       <button
         class="delete-button"
         [disabled]="tabs.length === 1"
         (click)="removeTab(index)"
       >
         <img
-          src="../../../../../assets/rdf-forms-icons/delete-icon.svg"
+          src="assets/rdf-forms-icons/delete-icon.svg"
           alt="delete icon"
           class="delete-icon"
         />

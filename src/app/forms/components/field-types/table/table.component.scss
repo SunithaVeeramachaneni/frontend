@@ -50,4 +50,14 @@
       top: 5px;
     }
   }
+
+  ::ng-deep .mat-tab-labels {
+    width: 120px;
+    .labels {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      white-space: nowrap;
+    }
+  }
 }

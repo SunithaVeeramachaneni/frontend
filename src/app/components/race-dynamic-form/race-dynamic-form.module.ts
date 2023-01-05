@@ -37,6 +37,8 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
+import { StoreModule } from '@ngrx/store';
+import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -82,6 +84,9 @@ export const customTranslateLoader = (http: HttpClient) =>
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       }
+    }),
+    StoreModule.forFeature('feature', {
+      formConfiguration: formConfigurationReducer
     })
   ]
 })

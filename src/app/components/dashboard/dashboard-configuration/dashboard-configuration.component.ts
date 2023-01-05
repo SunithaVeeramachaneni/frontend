@@ -130,9 +130,9 @@ export class DashboardConfigurationComponent implements OnInit {
     minRows: 12,
     maxRows: 1200,
     maxItemCols: 12,
-    minItemCols: 1,
+    minItemCols: 5,
     maxItemRows: 100,
-    minItemRows: 1,
+    minItemRows: 6,
     maxItemArea: 2500,
     minItemArea: 1,
     defaultItemCols: 1,
@@ -172,6 +172,7 @@ export class DashboardConfigurationComponent implements OnInit {
     initCallback: this.gridInit.bind(this)
   };
   widgetHeights: any = {};
+  widgetWidths: any = {};
   mimimizeSidebar$: Observable<boolean>;
   interval$: Observable<number>;
   dashboardControl = new FormControl();
@@ -294,6 +295,10 @@ export class DashboardConfigurationComponent implements OnInit {
     const widgetFound = this.widgets.find(
       (widget) => widget.config.id === config.id
     );
+    this.widgetWidths = {
+      ...this.widgetWidths,
+      [widgetFound.id]: gridsterItemComponent.width
+    };
     this.widgetHeights = {
       ...this.widgetHeights,
       [widgetFound.id]: gridsterItemComponent.height

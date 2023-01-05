@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
-import { TemplateComponent } from './components/template/template.component';
+import { QuestionComponent } from './components/template/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
@@ -37,7 +37,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormWidgetComponent,
     PageComponent,
     SectionComponent,
-    TemplateComponent,
+    QuestionComponent,
     ResponseTypeComponent,
     PreviewComponent,
     AddLogicComponent,
@@ -66,13 +66,14 @@ import { TranslateModule } from '@ngx-translate/core';
     MatCheckboxModule,
     MatButtonToggleModule,
     MatSelectModule,
+    MatTooltipModule,
     TranslateModule.forChild({})
   ],
   exports: [
     FormWidgetComponent,
     PageComponent,
     SectionComponent,
-    TemplateComponent,
+    QuestionComponent,
     ResponseTypeComponent,
     PreviewComponent,
     IphoneComponent,
