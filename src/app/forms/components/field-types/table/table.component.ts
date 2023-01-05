@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -7,6 +7,8 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
+  @Input() questionForm;
+  @Input() fieldTypes;
   tabs = [];
   selected = new FormControl(0);
 
