@@ -7,7 +7,8 @@ import { map } from 'rxjs/operators';
 import {
   APIService,
   GetFormListQuery,
-  ListFormListsQuery
+  ListFormListsQuery,
+  UpdateFormDetailInput
 } from 'src/app/API.service';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
@@ -72,12 +73,26 @@ export class RaceDynamicFormService {
   }
 
   createFormDetail$(formConfig, pages) {
-    this.formatFormData(formConfig, pages);
-    return from(this.awsApiService.ListFormDetails());
-    // this.awsApiService.CreateFormDetail({
-    //   formlistID: formConfig.id,
-    //   formData: this.formatFormData(formConfig, pages)
-    // })
+    return from(
+      this.awsApiService.CreateFormDetail({
+        formlistID: formConfig.id,
+        formData: this.formatFormData(formConfig, pages)
+      })
+    );
+  }
+
+  updateFormDetail$(formConfig, pages) {
+    return from(
+      this.awsApiService.UpdateFormDetail(
+        {
+          formlistID: formConfig.id,
+          formData: this.formatFormData(formConfig, pages)
+        } as UpdateFormDetailInput,
+        {
+          formlistID: formConfig.id
+        }
+      )
+    );
   }
 
   formatFormData = (form, pages): string => {

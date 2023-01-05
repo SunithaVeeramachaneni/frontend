@@ -101,3 +101,14 @@ export const getQuestionIndexes = createSelector(
       return acc;
     }, {})
 );
+
+export const getPublishFormDetails = createSelector(
+  selectFormConfigurationState,
+  (state) => {
+    const { pages, formMetadata } = state;
+    return {
+      pages,
+      formStatus: formMetadata.formStatus
+    };
+  }
+);

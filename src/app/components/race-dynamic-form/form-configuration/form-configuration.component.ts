@@ -6,13 +6,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   AddPageEvent,
   AddQuestionEvent,
   AddSectionEvent,
   FormMetadata,
+  Page,
   UpdateQuestionEvent,
   UpdateSectionEvent
 } from 'src/app/interfaces';
@@ -23,6 +24,7 @@ import {
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
+  getPublishFormDetails,
   State
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -38,7 +40,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
-  pages$: Observable<any>;
+  pages$: Observable<Page[]>;
+  formDetails$: Observable<any>;
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
   sectionIds$: Observable<any>;
@@ -82,10 +85,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
+    this.formDetails$ = this.store.select(getPublishFormDetails);
     this.formConfiguration.valueChanges.subscribe(console.log);
     this.pages$ = this.store.select(getPages).pipe(tap((pages) => pages));
-    this.pages$.subscribe(console.log);
-    this.store.select(getFormMetadata).subscribe(console.log);
+    // this.pages$.subscribe(console.log);
+    // this.store.select(getFormMetadata).subscribe(console.log);
   }
 
   get formConf() {
@@ -195,11 +199,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    let pages;
-    this.pages$.subscribe((value) => (pages = value));
-    this.raceDynamicFormService
-      .createFormDetail$(this.formConfiguration.value, pages)
-      .subscribe(console.log);
+    this.formDetails$
+      .pipe(
+        tap((formDetails) => {
+          const formConfig = this.formConfiguration.value;
+          console.log(formConfig);
+          if (formDetails.formStatus === 'published') {
+            this.raceDynamicFormService.updateFormDetail$(
+              formConfig,
+              formDetails.pages
+            );
+          } else
+            this.raceDynamicFormService.createFormDetail$(
+              formConfig,
+              formDetails.pages
+            );
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {
