@@ -19,12 +19,14 @@ import {
 import {
   getFormMetadata,
   getPageIndexes,
+  getPages,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
   State
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -36,13 +38,18 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
+  pages$: Observable<any>;
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   questionIndexes: any;
 
-  constructor(private fb: FormBuilder, private store: Store<State>) {}
+  constructor(
+    private fb: FormBuilder,
+    private store: Store<State>,
+    private raceDynamicFormService: RaceDynamicFormService
+  ) {}
 
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
@@ -75,6 +82,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
+    this.formConfiguration.valueChanges.subscribe(console.log);
+    this.pages$ = this.store.select(getPages).pipe(tap((pages) => pages));
+    this.pages$.subscribe(console.log);
+    this.store.select(getFormMetadata).subscribe(console.log);
   }
 
   get formConf() {
@@ -181,6 +192,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   uploadFormImageFile(e) {
     // uploaded image  file code
+  }
+
+  publishFormDetail() {
+    let pages;
+    this.pages$.subscribe((value) => (pages = value));
+    this.raceDynamicFormService
+      .createFormDetail$(this.formConfiguration.value, pages)
+      .subscribe(console.log);
   }
 
   ngOnDestroy(): void {
