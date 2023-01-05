@@ -1,1 +1,310 @@
-<p>preview works!</p>
+<div>
+  <div class="example-tree mat-tree-margin">
+    <div class="border-inside">
+      <div class="mat-tree-node">
+        <div class="section-question">
+          <div class="flex-custom">
+            <mat-icon
+              (click)="toggleSectionOpenState()"
+              *ngIf="isSectionOpenState === true"
+              class="fix-arrow"
+            >
+              expand_more
+            </mat-icon>
+            <mat-icon
+              (click)="toggleSectionOpenState()"
+              *ngIf="isSectionOpenState === false"
+              class="fix-arrow"
+            >
+              chevron_right
+            </mat-icon>
+
+            <p>Section 1</p>
+          </div>
+          <div>
+            <p>0/4</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="isSectionOpenState === true">
+        <div id="preview">
+          <!-- read box -->
+          <div class="read-only-field">
+            <div class="read-box">
+              <p>Color of the flame</p>
+              <h3>Red at 100 ATM and Orange at 50 ATM</h3>
+            </div>
+          </div>
+
+          <!-- text answer -->
+
+          <div class="text-answer-field">
+            <div class="read-box">
+              <p class="form-heading">What is the Pressure Reading?</p>
+              <input type="text" class="form-reading" placeholder="Enter" />
+            </div>
+          </div>
+
+          <!-- long answer -->
+          <div class="long-text-answer-field">
+            <div class="read-box">
+              <p class="form-heading">What is the Pressure Reading?</p>
+              <textarea class="form-reading-1" placeholder="Enter"></textarea>
+            </div>
+          </div>
+
+          <!-- number -->
+          <div class="number-field">
+            <div class="read-box">
+              <p class="form-heading">What is the temperature Reading?</p>
+              <input type="number" class="form-reading" placeholder="Enter" />
+            </div>
+          </div>
+
+          <!-- scan field -->
+          <div class="scan-field">
+            <div class="read-box">
+              <p class="form-heading">Scan the asset</p>
+              <div class="flex-custom">
+                <input
+                  type="text"
+                  class="form-reading"
+                  placeholder="Choose item"
+                />
+                <img src="assets/rdf-forms-icons/scan-bg.svg" />
+              </div>
+            </div>
+          </div>
+
+          <!-- date-feild -->
+          <div class="date-field">
+            <div class="read-box">
+              <p class="form-heading">Choose the date and time</p>
+              <input type="date" class="form-reading" placeholder="Enter" />
+            </div>
+          </div>
+
+          <!-- Checkbox -->
+          <div class="checkbox-field">
+            <div class="read-box checkbox-field">
+              <p class="form-check">Material is red in color</p>
+              <section class="example-section">
+                <mat-checkbox class="example-margin"></mat-checkbox>
+              </section>
+            </div>
+          </div>
+
+          <!-- time feild  -->
+
+          <div class="time-field">
+            <div class="read-box">
+              <p class="form-heading">Choose the date and time</p>
+              <input type="time" class="form-reading" placeholder="Enter" />
+            </div>
+          </div>
+
+          <!-- multiple feild  -->
+
+          <div class="multiple-select-field">
+            <div class="read-box">
+              <p class="form-heading">What is the Pressure Reading?</p>
+              <div class="multi-select">
+                <mat-button-toggle-group
+                  name="fontStyle"
+                  aria-label="Font Style"
+                >
+                  <mat-button-toggle value="Yes">Yes</mat-button-toggle>
+                  <mat-button-toggle value="No">No</mat-button-toggle>
+                  <mat-button-toggle value="Option 3"
+                    >Option 3</mat-button-toggle
+                  >
+                  <mat-button-toggle value="Option 4"
+                    >Option 4</mat-button-toggle
+                  >
+                </mat-button-toggle-group>
+              </div>
+            </div>
+          </div>
+
+          <!-- pick list feild  -->
+
+          <div class="pick-list-field">
+            <div class="read-box">
+              <p class="form-heading">What is the Pressure Reading?</p>
+              <div class="select-option">
+                <mat-form-field appearance="outline">
+                  <mat-label>Select Options</mat-label>
+                  <mat-select>
+                    <mat-option value="yes">Yes</mat-option>
+                    <mat-option value="no">No</mat-option>
+                    <mat-option value="no1">Other op 1</mat-option>
+                    <mat-option value="no2">Other op 2</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <!-- signature field  -->
+
+          <div class="signature-field">
+            <div class="read-box">
+              <p class="form-heading">Enter your signature</p>
+              <div class="set-icon-relative">
+                <input type="text" class="form-reading" placeholder="Enter" />
+                <img src="assets/rdf-forms-icons/signature.svg" />
+              </div>
+            </div>
+          </div>
+
+          <!-- attachment -->
+
+          <div class="attachment-field">
+            <div class="read-box">
+              <p class="form-heading">Add an attachment</p>
+              <div class="file-form">
+                <label class="relative-file">
+                  <input type="file" mat-raised-button color="primary" />
+                  <button mat-raised-button color="primary" class="">
+                    <img src="assets/rdf-forms-icons/attach-icon.svg" />
+                    Add Attachments
+                  </button>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- slider -->
+
+          <div class="slider-field">
+            <div class="read-box">
+              <p class="form-heading">Enter Location</p>
+              <div class="slider-form">
+                <span>01</span>
+                <mat-slider
+                  [max]="sliderOptions.max"
+                  [min]="sliderOptions.min"
+                  [step]="sliderOptions.increment"
+                  [(ngModel)]="sliderOptions.value"
+                  [ngModelOptions]="{ standalone: true }"
+                  color="primary"
+                  class="width-100"
+                >
+                </mat-slider>
+                <span>10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- location field  -->
+
+          <div class="location-field">
+            <div class="read-box">
+              <p class="form-heading">Enter Location</p>
+              <div class="set-icon-relative">
+                <input type="text" class="form-reading" placeholder="Enter" />
+                <img src="assets/rdf-forms-icons/location.svg" />
+              </div>
+            </div>
+          </div>
+
+          <!-- insert image field  -->
+
+          <div class="insert-image-field">
+            <div class="read-box">
+              <p class="form-heading">Insert Image</p>
+
+              <img src="assets/img/insert-image.png" class="insert-img" />
+            </div>
+          </div>
+
+          <!-- Tabular Format  -->
+
+          <div class="insert-image-field">
+            <div class="read-box">
+              <p class="form-heading">Gas Inspection of Tyre</p>
+
+              <table class="table-class">
+                <thead>
+                  <tr>
+                    <td>Title</td>
+                    <td>ID</td>
+                    <td>Pressure</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="bg-color">1</td>
+                    <td><input type="text" class="input-p" /></td>
+                    <td><input type="text" class="input-p" /></td>
+                  </tr>
+                  <tr>
+                    <td class="bg-color">1</td>
+                    <td><input type="text" class="input-p" /></td>
+                    <td><input type="text" class="input-p" /></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="add-new-button">
+                <img src="assets/img/add-new.svg" />
+                <label>Add new</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Range -->
+
+          <div class="location-field">
+            <div class="read-box">
+              <p class="form-heading">Date</p>
+              <div class="date-range">
+                <input type="date" class="form-reading" placeholder="From" />
+                <span>-</span>
+                <input type="date" class="form-reading" placeholder="To" />
+              </div>
+            </div>
+          </div>
+
+          <!-- array field -->
+          <div class="location-field">
+            <div class="array-field-box">
+              <label>
+                <img
+                  class="img-array"
+                  src="assets/rdf-forms-icons/array-arrow.svg"
+                />
+              </label>
+              <p class="head-array">Gas inspection of tyre (1)</p>
+            </div>
+            <div class="read-box">
+              <div class="add-new-button">
+                <img src="assets/img/add-new.svg" />
+                <label (click)="openBottomSheet()">Add new</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-bottom-array" *ngIf="arrayField">
+            <div class="bottom-header">
+              <p class="red-h">Delete</p>
+              <h3>Gas Inspection tyre 1</h3>
+              <p>Done</p>
+            </div>
+
+            <div class="form-type">
+              <div>
+                <label class="type-label">Type ID*</label>
+                <input type="text" class="form-control-type" />
+              </div>
+              <div>
+                <label class="type-label">Type Pressure</label>
+                <input class="form-control-type" type="text" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

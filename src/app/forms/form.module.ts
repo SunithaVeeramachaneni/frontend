@@ -1,3 +1,6 @@
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +17,7 @@ import { ResponseTypeComponent } from './components/response-type/response-type.
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
+import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -47,6 +51,7 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
     ResponseTypeSideDrawerComponent,
     TableComponent,
     ResponseTypeButtonComponent,
+    IphoneComponent,
     ArrayComponent,
     DateComponent,
     TimeComponent,
@@ -70,6 +75,9 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatSelectModule,
     MatTooltipModule,
     TranslateModule.forChild({})
   ],
@@ -80,6 +88,7 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
     QuestionComponent,
     ResponseTypeComponent,
     PreviewComponent,
+    IphoneComponent,
     AddLogicComponent,
     AddFilterComponent
   ]
