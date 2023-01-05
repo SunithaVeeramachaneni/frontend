@@ -38,6 +38,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
+import { StoreModule } from '@ngrx/store';
+import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -84,7 +86,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     NgxShimmerLoadingModule,
     OverlayModule,
     MatMenuModule,
-    MatSelectModule
+    MatSelectModule,
+    StoreModule.forFeature('feature', {
+      formConfiguration: formConfigurationReducer
+    })
   ]
 })
 export class RaceDynamicFormModule {

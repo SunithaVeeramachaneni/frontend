@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   Component,
   ElementRef,
@@ -10,67 +11,121 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { tap } from 'rxjs/operators';
-import { timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { Observable, timer } from 'rxjs';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
+import {
+  AddQuestionEvent,
+  Question,
+  UpdateQuestionEvent
+} from 'src/app/interfaces';
+import { getQuestion, getSectionQuestions, State } from 'src/app/forms/state';
+import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 @Component({
-  selector: 'app-template',
-  templateUrl: './template.component.html',
-  styleUrls: ['./template.component.scss'],
+  selector: 'app-question',
+  templateUrl: './question.component.html',
+  styleUrls: ['./question.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TemplateComponent implements OnInit {
-  @Output() addQuestionEvent: EventEmitter<number> = new EventEmitter();
+export class QuestionComponent implements OnInit {
+  @Output() addQuestionEvent: EventEmitter<AddQuestionEvent> =
+    new EventEmitter<AddQuestionEvent>();
+  @Output() updateQuestionEvent: EventEmitter<UpdateQuestionEvent> =
+    new EventEmitter<UpdateQuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
 
-  @Input() set questionData(data) {
-    this.questionInfo = data;
-    this.questionForm.setValue(this.questionInfo);
+  @Input() set pageIndex(pageIndex: number) {
+    this._pageIndex = pageIndex;
   }
-  get questionData() {
-    return this.questionInfo;
+  get pageIndex() {
+    return this._pageIndex;
+  }
+  @Input() set sectionId(sectionId: string) {
+    this._sectionId = sectionId;
+  }
+  get sectionId() {
+    return this._sectionId;
+  }
+  @Input() set questionIndex(questionIndex: number) {
+    this._questionIndex = questionIndex;
+  }
+  get questionIndex() {
+    return this._questionIndex;
   }
 
-  questionInfo;
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   fieldContentOpenState = false;
-  currentQuestion: any;
   openResponseType = false;
 
   questionForm: FormGroup = this.fb.group({
-    sectionId: '',
-    index: '',
     id: '',
+    sectionId: '',
     name: '',
     fieldType: 'TF',
-    position: 1,
+    position: '',
     required: false,
     multi: false,
     value: '',
     isPublished: false,
     isPublishedTillSave: false
   });
+  question$: Observable<Question>;
+  question: Question;
+  sectionQuestions$: Observable<Question[]>;
+  sectionQuestions: Question[];
+  private _pageIndex: number;
+  private _sectionId: string;
+  private _questionIndex: number;
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog,
     private imageUtils: ImageUtils,
+    private store: Store<State>,
     private formService: FormService
   ) {}
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.questionForm.valueChanges
+      .pipe(debounceTime(500), distinctUntilChanged())
+      .subscribe(() => {
+        this.updateQuestionEvent.emit({
+          pageIndex: this.pageIndex,
+          sectionId: this.sectionId,
+          question: this.questionForm.value
+        });
+      });
+
+    this.question$ = this.store
+      .select(getQuestion(this.pageIndex, this.sectionId, this.questionIndex))
+      .pipe(
+        tap((question) => {
+          this.question = question;
+          this.questionForm.patchValue(question, {
+            emitEvent: false
+          });
+        })
+      );
+
+    this.sectionQuestions$ = this.store
+      .select(getSectionQuestions(this.pageIndex, this.sectionId))
+      .pipe(tap((questions) => (this.sectionQuestions = questions)));
   }
 
-  addQuestion(index) {
-    this.addQuestionEvent.emit(index);
+  addQuestion(position: number) {
+    this.addQuestionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionId: this.sectionId,
+      questionIndex: position
+    });
   }
 
-  deleteQuestion() {}
+  deleteQuestion() {
+    console.log('delete question');
+  }
 
   openResponseTypeModalEventHandler(value) {
     this.openResponseType = value;
@@ -81,7 +136,6 @@ export class TemplateComponent implements OnInit {
       return;
     }
 
-    this.currentQuestion = this.questionInfo;
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
@@ -109,9 +163,7 @@ export class TemplateComponent implements OnInit {
       case 'IMG':
         let index = 0;
         let found = false;
-        if (
-          this.questionForm.get('id').value === this.currentQuestion.value.id
-        ) {
+        if (this.questionForm.get('id').value === this.question.value.id) {
           found = true;
         }
         if (!found && this.questionForm.get('fieldType').value === 'IMG') {
@@ -148,7 +200,7 @@ export class TemplateComponent implements OnInit {
         size: (files[0].size / 1024).toFixed(2),
         base64: image
       };
-      this.currentQuestion.get('value').setValue(value);
+      this.questionForm.get('value').setValue(value);
     };
   }
 

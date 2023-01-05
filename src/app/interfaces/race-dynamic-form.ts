@@ -4,7 +4,7 @@ export interface Tags {
   text: string;
 }
 
-export interface RaceDynamicForm {
+interface RaceDynamicForm {
   id: number;
   name: string;
   description: string;

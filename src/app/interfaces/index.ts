@@ -20,3 +20,4 @@ export * from './tenant';
 export * from './validation-error';
 export * from './events';
 export * from './race-dynamic-form';
+export * from './form-configuration';
