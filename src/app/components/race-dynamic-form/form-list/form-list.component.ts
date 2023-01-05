@@ -7,7 +7,8 @@ import {
   mergeMap,
   map,
   switchMap,
-  tap
+  tap,
+  catchError
 } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
@@ -327,6 +328,10 @@ export class FormListComponent implements OnInit {
         mergeMap(({ count, rows }) => {
           this.formsCount$ = of({ count });
           return of(rows);
+        }),
+        catchError(() => {
+          this.formsCount$ = of({ count: 0 });
+          return of([]);
         })
       );
   }
