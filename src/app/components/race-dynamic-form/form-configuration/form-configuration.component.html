@@ -1,7 +1,10 @@
 <div
   class="create-form-main"
   [formGroup]="formConfiguration"
-  *ngIf="formMetadata$ | async"
+  *ngIf="{
+    formMetadata: formMetadata$ | async,
+    authoredFormDetail: authoredFormDetail$ | async
+  }"
 >
   <div class="dis-flex form-header">
     <div>

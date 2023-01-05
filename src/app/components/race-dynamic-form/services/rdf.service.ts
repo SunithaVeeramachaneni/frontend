@@ -8,9 +8,15 @@ import {
   APIService,
   GetFormListQuery,
   ListFormListsQuery,
+  UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
+import {
+  FormMetadata,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +74,12 @@ export class RaceDynamicFormService {
     );
   }
 
+  updateForm$(formMetaData) {
+    const { isArchived, ...form } = formMetaData;
+    console.log(form);
+    return from(this.awsApiService.UpdateFormList(form));
+  }
+
   deleteForm$(id: string) {
     return from(this.awsApiService.DeleteFormList({ id }, {}));
   }
@@ -88,6 +100,33 @@ export class RaceDynamicFormService {
           formlistID: formConfig.id,
           formData: this.formatFormData(formConfig, pages)
         } as UpdateFormDetailInput,
+        {
+          formlistID: formConfig.id
+        }
+      )
+    );
+  }
+
+  createAuthoredFormDetail$(formDetails) {
+    return from(
+      this.awsApiService.CreateAuthoredFormDetail({
+        formStatus: formDetails.formStatus,
+        formlistID: formDetails.formMetadata.id,
+        pages: JSON.stringify(formDetails.pages),
+        counter: formDetails.counter
+      })
+    );
+  }
+
+  updateAuthoredFormDetail$(formConfig, pages) {
+    return from(
+      this.awsApiService.UpdateAuthoredFormDetail(
+        {
+          formStatus: formConfig.formStatus,
+          formlistID: formConfig.id,
+          pages: JSON.stringify(pages),
+          counter: formConfig.counter
+        } as UpdateAuthoredFormDetailInput,
         {
           formlistID: formConfig.id
         }

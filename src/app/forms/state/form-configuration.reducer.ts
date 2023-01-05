@@ -1,6 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
-import { FormConfigurationActions } from './actions';
+import {
+  FormConfigurationActions,
+  FormConfigurationApiActions
+} from './actions';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
@@ -26,9 +29,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationApiActions.createFormSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formMetadata: { ...state.formMetadata, ...action.formMetaData }
+    })
+  ),
+  on(
     FormConfigurationActions.updateFormMetadata,
     (state, action): FormConfigurationState => {
-      const { counter, formStatus, ...formMetadata } = action.formMetadata;
+      const { formStatus, ...formMetadata } = action.formMetadata;
       return {
         ...state,
         formMetadata: {
@@ -37,10 +47,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           formStatus:
             state.formStatus === 'published' ? state.formStatus : formStatus
         },
-        counter,
         formStatus
       };
     }
+  ),
+  on(
+    FormConfigurationActions.updateCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      counter: action.counter
+    })
   ),
   on(
     FormConfigurationActions.addPage,

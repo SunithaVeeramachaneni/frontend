@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
+import { FormConfigurationState } from '../form-configuration.reducer';
 
 export const createForm = createAction(
   '[Form Configuration Modal Component] createFrom',
@@ -23,12 +24,17 @@ export const updateFormMetadata = createAction(
 
 export const createAuthoredFormDetail = createAction(
   '[Form Configuration Component] createAuthoredFormDetail',
-  props<{ pages: Page[] }>()
+  props<{ formDetails: any }>()
 );
 
 export const updateAuthoredFormDetail = createAction(
   '[Form Configuration Component] updateAuthoredFormDetail',
   props<{ pages: Page[] }>()
+);
+
+export const updateCounter = createAction(
+  '[Form Configuration Component] updateCounter',
+  props<{ counter: number }>()
 );
 
 export const addPage = createAction(

@@ -28,7 +28,7 @@ import {
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
-  getPublishFormDetails,
+  getFormDetails,
   State
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -50,8 +50,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   sectionIndexes: any;
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
+  authoredFormDetail$: Observable<any>;
   questionIndexes: any;
   saveStatus = 'done';
+  formMetaData: FormMetadata;
 
   constructor(
     private fb: FormBuilder,
@@ -75,12 +77,27 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          console.log(previous);
-          console.log(current);
-          if (!isEqual(previous, current)) {
+          const { counter: prevCounter, ...prev } = previous;
+          const { counter: currCounter, ...curr } = current;
+
+          if (!isEqual(prev, curr)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({
-                formMetadata: this.formConfiguration.value
+                formMetadata: curr
+              })
+            );
+
+            this.store.dispatch(
+              FormConfigurationActions.updateForm({
+                formMetadata: this.formMetaData
+              })
+            );
+          }
+
+          if (prevCounter !== currCounter) {
+            this.store.dispatch(
+              FormConfigurationActions.updateCounter({
+                counter: currCounter
               })
             );
           }
@@ -90,8 +107,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description } = formMetadata;
-        this.formConfiguration.patchValue({ name, description });
+        const { name, description, id } = formMetadata;
+        this.formMetaData = formMetadata;
+        this.formConfiguration.patchValue({ name, description, id });
       })
     );
     this.pageIndexes$ = this.store.select(getPageIndexes);
@@ -109,17 +127,31 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
-    this.formDetails$ = this.store.select(getPublishFormDetails);
+    this.formDetails$ = this.store.select(getFormDetails);
     this.formConfiguration.valueChanges.subscribe(console.log);
     this.pages$ = this.store.select(getPages).pipe(tap((pages) => pages));
     // this.pages$.subscribe(console.log);
     // this.store.select(getFormMetadata).subscribe(console.log);
 
+    const { counter, ...currentFormMetaData } = this.formMetaData;
     this.store.dispatch(
       FormConfigurationActions.updateFormMetadata({
-        formMetadata: this.formConfiguration.value
+        formMetadata: currentFormMetaData
       })
     );
+
+    this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
+      tap((formDetails) => {
+        console.log(formDetails);
+        if (formDetails.pages.length && formDetails.formMetadata.id) {
+          this.store.dispatch(
+            FormConfigurationActions.createAuthoredFormDetail(formDetails)
+          );
+        }
+      })
+    );
+
+    this.authoredFormDetail$.subscribe();
   }
 
   get formConf() {
@@ -275,7 +307,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         tap((formDetails) => {
           const formConfig = this.formConfiguration.value;
           console.log(formConfig);
-          if (formDetails.formStatus === 'published') {
+          if (formDetails.formMetadata.formStatus === 'published') {
             this.raceDynamicFormService.updateFormDetail$(
               formConfig,
               formDetails.pages

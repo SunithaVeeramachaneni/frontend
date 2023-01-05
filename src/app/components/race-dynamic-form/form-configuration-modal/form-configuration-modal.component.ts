@@ -123,32 +123,43 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   createFormList() {
-    const { title } = this.loginService.getLoggedInUserInfo();
-    // eslint-disable-next-line no-debugger
-    debugger;
-    this.raceDynamicFormService
-      .createForm$({
-        name: this.headerDataForm.value.name,
-        description: this.headerDataForm.value.description,
-        author: title,
-        lastPublishedBy: title,
-        formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
-        tags: ['tag1', 'tag2'],
-        formType: this.formType
-      })
-      .subscribe(() => {
-        this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-        this.router.navigate(['./rdf-forms']);
-        this.dialogRef.close();
-      });
+    const { email } = this.loginService.getLoggedInUserInfo();
+    console.log(this.loginService.getLoggedInUserInfo());
+
+    // this.raceDynamicFormService
+    //   .createForm$({
+    //     name: this.headerDataForm.value.name,
+    //     description: this.headerDataForm.value.description,
+    //     author: email,
+    //     lastPublishedBy: email,
+    //     formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
+    //     tags: ['tag1', 'tag2'],
+    //     formType: this.formType
+    //   })
+    //   .subscribe(() => {
+    //     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+    //     this.router.navigate(['./rdf-forms']);
+    //     this.dialogRef.close();
+    //   });
   }
 
   next() {
     if (this.headerDataForm.valid) {
+      const { email } = this.loginService.getLoggedInUserInfo();
       this.createFormList();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
           formMetadata: this.headerDataForm.value
+        })
+      );
+      this.store.dispatch(
+        FormConfigurationActions.createForm({
+          formMetadata: {
+            ...this.headerDataForm.value,
+            author: email,
+            lastPublishedBy: email,
+            formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+          }
         })
       );
       this.router.navigate(['/rdf-forms/create']);
