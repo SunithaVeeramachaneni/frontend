@@ -11,12 +11,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
-import { getSection, State } from 'src/app/forms/state';
-import {
-  AddSectionEvent,
-  Section,
-  UpdateSectionEvent
-} from 'src/app/interfaces';
+import { getSection, getSectionsCount, State } from 'src/app/forms/state';
+import { SectionEvent, Section } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-section',
@@ -37,10 +33,8 @@ export class SectionComponent implements OnInit {
   get sectionIndex() {
     return this._sectionIndex;
   }
-  @Output() addSectionEvent: EventEmitter<AddSectionEvent> =
-    new EventEmitter<AddSectionEvent>();
-  @Output() updateSectionEvent: EventEmitter<UpdateSectionEvent> =
-    new EventEmitter<UpdateSectionEvent>();
+  @Output() sectionEvent: EventEmitter<SectionEvent> =
+    new EventEmitter<SectionEvent>();
   isSectionOpenState = true;
   sectionForm: FormGroup = this.fb.group({
     id: '',
@@ -51,6 +45,7 @@ export class SectionComponent implements OnInit {
     position: ''
   });
   section$: Observable<Section>;
+  sectionsCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionIndex: number;
 
@@ -58,13 +53,19 @@ export class SectionComponent implements OnInit {
 
   ngOnInit() {
     this.sectionForm.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe(() => {
-        this.updateSectionEvent.emit({
-          section: this.sectionForm.getRawValue(),
-          pageIndex: this.pageIndex
-        });
-      });
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        tap(() => {
+          this.sectionEvent.emit({
+            section: this.sectionForm.getRawValue(),
+            sectionIndex: this.sectionIndex,
+            pageIndex: this.pageIndex,
+            type: 'update'
+          });
+        })
+      )
+      .subscribe();
 
     this.section$ = this.store
       .select(getSection(this.pageIndex, this.sectionIndex))
@@ -75,12 +76,15 @@ export class SectionComponent implements OnInit {
           });
         })
       );
+
+    this.sectionsCount$ = this.store.select(getSectionsCount(this.pageIndex));
   }
 
-  addSection(position: number) {
-    this.addSectionEvent.emit({
+  addSection() {
+    this.sectionEvent.emit({
       pageIndex: this.pageIndex,
-      sectionIndex: position
+      sectionIndex: this.sectionIndex + 1,
+      type: 'add'
     });
   }
 
@@ -92,7 +96,14 @@ export class SectionComponent implements OnInit {
     this.sectionForm.get('name').enable();
   }
 
-  deleteSection() {}
+  deleteSection() {
+    this.sectionEvent.emit({
+      pageIndex: this.pageIndex,
+      sectionIndex: this.sectionIndex,
+      section: this.sectionForm.getRawValue(),
+      type: 'delete'
+    });
+  }
 
   getSize(value) {
     if (value && value === value.toUpperCase()) {

@@ -39,6 +39,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -87,7 +89,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     }),
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
-    })
+    }),
+    EffectsModule.forFeature([FormConfigurationEffects])
   ]
 })
 export class RaceDynamicFormModule {

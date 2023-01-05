@@ -15,12 +15,12 @@ import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Observable, timer } from 'rxjs';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
+import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
-  AddQuestionEvent,
-  Question,
-  UpdateQuestionEvent
-} from 'src/app/interfaces';
-import { getQuestion, getSectionQuestions, State } from 'src/app/forms/state';
+  getQuestion,
+  getSectionQuestionsCount,
+  State
+} from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 @Component({
@@ -30,10 +30,8 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionComponent implements OnInit {
-  @Output() addQuestionEvent: EventEmitter<AddQuestionEvent> =
-    new EventEmitter<AddQuestionEvent>();
-  @Output() updateQuestionEvent: EventEmitter<UpdateQuestionEvent> =
-    new EventEmitter<UpdateQuestionEvent>();
+  @Output() questionEvent: EventEmitter<QuestionEvent> =
+    new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
 
   @Input() set pageIndex(pageIndex: number) {
@@ -74,8 +72,7 @@ export class QuestionComponent implements OnInit {
   });
   question$: Observable<Question>;
   question: Question;
-  sectionQuestions$: Observable<Question[]>;
-  sectionQuestions: Question[];
+  sectionQuestionsCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionId: string;
   private _questionIndex: number;
@@ -91,14 +88,19 @@ export class QuestionComponent implements OnInit {
     this.fieldTypes = fieldTypesMock.fieldTypes;
     this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
-      .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe(() => {
-        this.updateQuestionEvent.emit({
-          pageIndex: this.pageIndex,
-          sectionId: this.sectionId,
-          question: this.questionForm.value
-        });
-      });
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged(),
+        tap(() =>
+          this.questionEvent.emit({
+            pageIndex: this.pageIndex,
+            question: this.questionForm.value,
+            questionIndex: this.questionIndex,
+            type: 'update'
+          })
+        )
+      )
+      .subscribe();
 
     this.question$ = this.store
       .select(getQuestion(this.pageIndex, this.sectionId, this.questionIndex))
@@ -111,21 +113,26 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    this.sectionQuestions$ = this.store
-      .select(getSectionQuestions(this.pageIndex, this.sectionId))
-      .pipe(tap((questions) => (this.sectionQuestions = questions)));
+    this.sectionQuestionsCount$ = this.store.select(
+      getSectionQuestionsCount(this.pageIndex, this.sectionId)
+    );
   }
 
-  addQuestion(position: number) {
-    this.addQuestionEvent.emit({
+  addQuestion() {
+    this.questionEvent.emit({
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
-      questionIndex: position
+      questionIndex: this.questionIndex + 1,
+      type: 'add'
     });
   }
 
   deleteQuestion() {
-    console.log('delete question');
+    this.questionEvent.emit({
+      pageIndex: this.pageIndex,
+      questionIndex: this.questionIndex,
+      type: 'delete'
+    });
   }
 
   selectFieldTypeEventHandler(fieldType) {
