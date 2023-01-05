@@ -22,6 +22,9 @@
   "maxlength": "{name} must be at the max of {length} characters",
   "searchForms": "Search Forms",
   "filters": "FILTERS",
+  "changesSaved": "All Changes Saved",
+  "changesInProgress": "Saving Changes In Progress",
+
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",

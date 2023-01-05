@@ -1,7 +1,10 @@
 <div
   class="section dis-flex"
   [formGroup]="sectionForm"
-  *ngIf="section$ | async"
+  *ngIf="{
+    section: section$ | async,
+    sectionsCount: sectionsCount$ | async
+  } as props"
 >
   <div class="width-5"></div>
   <div class="width-95 section-margin">
@@ -62,7 +65,12 @@
           <mat-icon>more_horiz</mat-icon>
         </button>
         <mat-menu #sectionMenu="matMenu">
-          <button mat-menu-item (click)="deleteSection()" class="text-red">
+          <button
+            mat-menu-item
+            (click)="deleteSection()"
+            class="text-red"
+            [disabled]="props.sectionsCount === 1"
+          >
             <span translate="deleteSection"></span>
           </button>
         </mat-menu>
@@ -71,10 +79,7 @@
         <ng-content></ng-content>
       </div>
 
-      <button
-        class="add-section-btn"
-        (click)="addSection(sectionForm.get('position').value)"
-      >
+      <button class="add-section-btn" (click)="addSection()">
         <img
           src="assets/rdf-forms-icons/add-section.svg"
           alt="add section"

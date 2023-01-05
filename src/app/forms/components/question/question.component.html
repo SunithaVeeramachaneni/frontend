@@ -3,8 +3,8 @@
   [formGroup]="questionForm"
   *ngIf="{
     question: question$ | async,
-    sectionQuestions: sectionQuestions$ | async
-  }"
+    sectionQuestionsCount: sectionQuestionsCount$ | async
+  } as props"
 >
   <div>
     <div [ngClass]="{ 'highlight-bg': fieldContentOpenState === true }">
@@ -25,14 +25,11 @@
             formControlName="name"
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
-            (keyup.enter)="addQuestion(questionForm.get('position').value)"
+            (keyup.enter)="addQuestion()"
           />
 
           <div class="floating-btns">
-            <button
-              class="questions-btn"
-              (click)="addQuestion(questionForm.get('position').value)"
-            >
+            <button class="questions-btn" (click)="addQuestion()">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
@@ -44,7 +41,7 @@
             <button
               class="delete-btn"
               (click)="deleteQuestion()"
-              [disabled]="sectionQuestions.length === 1"
+              [disabled]="props.sectionQuestionsCount === 1"
             >
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"

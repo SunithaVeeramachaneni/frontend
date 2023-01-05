@@ -12,7 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
-import { QuestionComponent } from './components/template/question.component';
+import { QuestionComponent } from './components/question/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
