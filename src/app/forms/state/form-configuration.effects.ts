@@ -52,6 +52,50 @@ export class FormConfigurationEffects {
     )
   );
 
+  createFormDetail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FormConfigurationActions.createFormDetail),
+      concatMap((action) =>
+        this.raceDynamicFormService.createFormDetail$(action).pipe(
+          map((formDetail) =>
+            FormConfigurationApiActions.createFormDetailSuccess({
+              formDetail
+            })
+          ),
+          catchError((error) =>
+            of(
+              FormConfigurationApiActions.createFormDetailFailure({
+                error
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  updateFormDetail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FormConfigurationActions.updateFormDetail),
+      concatMap((action) =>
+        this.raceDynamicFormService.updateFormDetail$(action).pipe(
+          map((formDetail) =>
+            FormConfigurationApiActions.updateFormDetailSuccess({
+              formDetail
+            })
+          ),
+          catchError((error) =>
+            of(
+              FormConfigurationApiActions.updateFormDetailFailure({
+                error
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
   createAuthoredFormDetail$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FormConfigurationActions.createAuthoredFormDetail),

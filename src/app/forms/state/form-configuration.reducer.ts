@@ -11,6 +11,8 @@ export interface FormConfigurationState {
   counter: number;
   formStatus: string;
   authoredFormDetailId: string;
+  formDetailId: string;
+  authoredFormDetailVersion: number;
 }
 
 const initialState = {
@@ -18,7 +20,9 @@ const initialState = {
   pages: [] as Page[],
   counter: 0,
   formStatus: 'Draft',
-  authoredFormDetailId: ''
+  authoredFormDetailId: '',
+  formDetailId: '',
+  authoredFormDetailVersion: 1
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -41,7 +45,28 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationApiActions.createAuthoredFromDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      authoredFormDetailId: action.authoredFormDetail.id
+      authoredFormDetailId: action.authoredFormDetail.id,
+      authoredFormDetailVersion: action.authoredFormDetail.version + 1
+    })
+  ),
+  on(
+    FormConfigurationApiActions.createFormDetailSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: 'Published',
+      formMetadata: {
+        ...state.formMetadata,
+        formStatus: 'Published'
+      },
+      formDetailId: action.formDetail.id
+    })
+  ),
+  on(
+    FormConfigurationApiActions.updateFormDetailSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formStatus: 'Published',
+      formDetailId: action.formDetail.id
     })
   ),
   on(
@@ -56,7 +81,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           formStatus:
             state.formStatus === 'Published' ? state.formStatus : formStatus
         },
-        formStatus
+        formStatus: 'Draft'
       };
     }
   ),
@@ -64,7 +89,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationActions.updateCounter,
     (state, action): FormConfigurationState => ({
       ...state,
-      counter: action.counter
+      counter: action.counter,
+      formStatus: 'Draft'
     })
   ),
   on(
@@ -77,7 +103,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state.pages
           .slice(action.pageIndex)
           .map((page) => ({ ...page, position: page.position + 1 }))
-      ]
+      ],
+      formStatus: 'Draft'
     })
   ),
   on(
@@ -89,7 +116,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state.pages
           .slice(action.pageIndex + 1)
           .map((page) => ({ ...page, position: page.position - 1 }))
-      ]
+      ],
+      formStatus: 'Draft'
     })
   ),
   on(
@@ -115,7 +143,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),
@@ -138,7 +167,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),
@@ -167,7 +197,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),
@@ -199,7 +230,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),
@@ -222,7 +254,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),
@@ -249,7 +282,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft'
       };
     }
   ),

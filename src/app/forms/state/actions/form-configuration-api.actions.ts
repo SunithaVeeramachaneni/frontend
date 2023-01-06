@@ -21,6 +21,34 @@ export const updateFormFailure = createAction(
   props<{ error: string }>()
 );
 
+export const createFormDetailSuccess = createAction(
+  '[Form Configuration Component] createFormDetailSuccess',
+  props<{
+    formDetail: any;
+  }>()
+);
+
+export const createFormDetailFailure = createAction(
+  '[Form Configuration Component] createFormDetailFailure',
+  props<{
+    error: string;
+  }>()
+);
+
+export const updateFormDetailSuccess = createAction(
+  '[Form Configuration Component] updateFormDetailSuccess',
+  props<{
+    formDetail: any;
+  }>()
+);
+
+export const updateFormDetailFailure = createAction(
+  '[Form Configuration Component] updateFormDetailFailure',
+  props<{
+    error: string;
+  }>()
+);
+
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] createAuthoredFromDetailSuccess',
   props<{ authoredFormDetail: any }>()

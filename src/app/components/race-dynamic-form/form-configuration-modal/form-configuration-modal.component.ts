@@ -43,7 +43,6 @@ export class FormConfigurationModalComponent implements OnInit {
   allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
-  formType = 'Standalone';
   constructor(
     private fb: FormBuilder,
     private router: Router,

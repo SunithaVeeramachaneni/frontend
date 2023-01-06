@@ -85,24 +85,30 @@ export class RaceDynamicFormService {
     return from(this.awsApiService.DeleteFormList({ id }, {}));
   }
 
-  createFormDetail$(formConfig, pages) {
+  createFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateFormDetail({
-        formlistID: formConfig.id,
-        formData: this.formatFormData(formConfig, pages)
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
       })
     );
   }
 
-  updateFormDetail$(formConfig, pages) {
+  updateFormDetail$(formDetails) {
     return from(
       this.awsApiService.UpdateFormDetail(
         {
-          formlistID: formConfig.id,
-          formData: this.formatFormData(formConfig, pages)
+          formlistID: formDetails.formListId,
+          formData: this.formatFormData(
+            formDetails.formMetadata,
+            formDetails.pages
+          )
         } as UpdateFormDetailInput,
         {
-          formlistID: formConfig.id
+          formlistID: formDetails.formListId
         }
       )
     );
@@ -114,7 +120,8 @@ export class RaceDynamicFormService {
         formStatus: formDetails.formStatus.toUpperCase(),
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter
+        counter: formDetails.counter,
+        version: formDetails.authoredFormDetailVersion
       })
     );
   }

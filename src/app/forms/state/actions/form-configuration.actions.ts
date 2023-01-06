@@ -22,6 +22,24 @@ export const updateFormMetadata = createAction(
   props<{ formMetadata: FormMetadata }>()
 );
 
+export const createFormDetail = createAction(
+  '[Form Configuration Component] createFormDetail',
+  props<{
+    formMetadata: FormMetadata;
+    pages: Page[];
+    formListId: string;
+  }>()
+);
+
+export const updateFormDetail = createAction(
+  '[Form Configuration Component] updateFormDetail',
+  props<{
+    formMetadata: FormMetadata;
+    pages: Page[];
+    formListId: string;
+  }>()
+);
+
 export const createAuthoredFormDetail = createAction(
   '[Form Configuration Component] createAuthoredFormDetail',
   props<{
@@ -29,6 +47,7 @@ export const createAuthoredFormDetail = createAction(
     counter: number;
     pages: Page[];
     formListId: string;
+    authoredFormDetailVersion: number;
   }>()
 );
 

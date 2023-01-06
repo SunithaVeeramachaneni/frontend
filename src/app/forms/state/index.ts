@@ -127,6 +127,8 @@ export const getFormDetails = createSelector(
     counter: state.counter,
     pages: state.pages,
     formListId: state.formMetadata.id,
-    authoredFormDetailId: state.authoredFormDetailId
+    authoredFormDetailId: state.authoredFormDetailId,
+    formDetailId: state.formDetailId,
+    authoredFormDetailVersion: state.authoredFormDetailVersion
   })
 );

@@ -24,7 +24,6 @@ import {
 import {
   getFormMetadata,
   getPageIndexes,
-  getPages,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
@@ -137,7 +136,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
-        ({ formStatus, formListId, counter, pages, authoredFormDetailId }) => {
+        ({
+          formStatus,
+          formListId,
+          counter,
+          pages,
+          authoredFormDetailId,
+          authoredFormDetailVersion
+        }) => {
           if (pages.length && formListId) {
             if (authoredFormDetailId) {
               this.store.dispatch(
@@ -155,7 +161,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   formStatus,
                   formListId,
                   counter,
-                  pages
+                  pages,
+                  authoredFormDetailVersion
                 })
               );
             }
@@ -316,17 +323,53 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formDetails$
       .pipe(
         tap((formDetails) => {
+          const {
+            pages,
+            formListId,
+            formDetailId,
+            counter,
+            formStatus,
+            authoredFormDetailId,
+            authoredFormDetailVersion
+          } = formDetails;
           const formConfig = this.formConfiguration.value;
-          if (formDetails.formMetadata.formStatus === 'published') {
-            this.raceDynamicFormService.updateFormDetail$(
-              formConfig,
-              formDetails.pages
+          if (formDetailId) {
+            this.store.dispatch(
+              FormConfigurationActions.updateFormDetail({
+                formMetadata: formConfig,
+                formListId,
+                pages
+              })
             );
-          } else
-            this.raceDynamicFormService.createFormDetail$(
-              formConfig,
-              formDetails.pages
+          } else {
+            this.store.dispatch(
+              FormConfigurationActions.createFormDetail({
+                formMetadata: formConfig,
+                formListId,
+                pages
+              })
             );
+          }
+
+          this.store.dispatch(
+            FormConfigurationActions.updateAuthoredFormDetail({
+              formStatus: 'Published',
+              formListId,
+              counter,
+              pages,
+              authoredFormDetailId
+            })
+          );
+
+          this.store.dispatch(
+            FormConfigurationActions.createAuthoredFormDetail({
+              formStatus: 'Draft',
+              formListId,
+              counter,
+              pages,
+              authoredFormDetailVersion
+            })
+          );
         })
       )
       .subscribe();
