@@ -2,10 +2,7 @@ import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
 
-export enum FormStatusEnum {
-  DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED"
-}
+
 
 
 
@@ -45,7 +42,7 @@ type EagerAuthoredFormDetail = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
+  readonly formStatus?: string | null;
   readonly version?: string | null;
   readonly pages?: string | null;
   readonly counter?: number | null;
@@ -60,7 +57,7 @@ type LazyAuthoredFormDetail = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly formStatus?: FormStatusEnum | keyof typeof FormStatusEnum | null;
+  readonly formStatus?: string | null;
   readonly version?: string | null;
   readonly pages?: string | null;
   readonly counter?: number | null;
@@ -124,7 +121,7 @@ type EagerFormSubmissionList = {
   readonly dueDate?: string | null;
   readonly version?: string | null;
   readonly submittedBy?: string | null;
-  readonly FormSubmissionListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly formSubmissionListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -146,7 +143,7 @@ type LazyFormSubmissionList = {
   readonly dueDate?: string | null;
   readonly version?: string | null;
   readonly submittedBy?: string | null;
-  readonly FormSubmissionListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
+  readonly formSubmissionListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -176,9 +173,9 @@ type EagerFormList = {
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
   readonly formType?: string | null;
-  readonly FormListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
-  readonly FormListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
-  readonly FormListFormDetail?: (FormDetail | null)[] | null;
+  readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
+  readonly formListFormDetail?: (FormDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -202,9 +199,9 @@ type LazyFormList = {
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
   readonly formType?: string | null;
-  readonly FormListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
-  readonly FormListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
-  readonly FormListFormDetail: AsyncCollection<FormDetail>;
+  readonly formListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
+  readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
+  readonly formListFormDetail: AsyncCollection<FormDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

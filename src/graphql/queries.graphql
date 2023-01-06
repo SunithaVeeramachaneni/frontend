@@ -324,7 +324,7 @@ query GetFormSubmissionList($id: ID!) {
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -419,15 +419,15 @@ query GetFormList($id: ID!) {
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }

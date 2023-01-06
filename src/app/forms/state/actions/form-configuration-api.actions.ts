@@ -3,7 +3,7 @@ import { FormMetadata, Page } from 'src/app/interfaces';
 
 export const createFormSuccess = createAction(
   '[Form Configuration Service] createFormSuccess',
-  props<{ formMetaData: FormMetadata }>()
+  props<{ formMetadata: FormMetadata }>()
 );
 
 export const createFormFailure = createAction(

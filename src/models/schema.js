@@ -88,9 +88,7 @@ export const schema = {
                 "formStatus": {
                     "name": "formStatus",
                     "isArray": false,
-                    "type": {
-                        "enum": "FormStatusEnum"
-                    },
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -351,8 +349,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "FormSubmissionListFormSubmissionDetail": {
-                    "name": "FormSubmissionListFormSubmissionDetail",
+                "formSubmissionListFormSubmissionDetail": {
+                    "name": "formSubmissionListFormSubmissionDetail",
                     "isArray": true,
                     "type": {
                         "model": "FormSubmissionDetail"
@@ -511,8 +509,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "FormListFormSubmissionDetail": {
-                    "name": "FormListFormSubmissionDetail",
+                "formListFormSubmissionDetail": {
+                    "name": "formListFormSubmissionDetail",
                     "isArray": true,
                     "type": {
                         "model": "FormSubmissionDetail"
@@ -527,8 +525,8 @@ export const schema = {
                         ]
                     }
                 },
-                "FormListAuthoredFormDetail": {
-                    "name": "FormListAuthoredFormDetail",
+                "formListAuthoredFormDetail": {
+                    "name": "formListAuthoredFormDetail",
                     "isArray": true,
                     "type": {
                         "model": "AuthoredFormDetail"
@@ -543,8 +541,8 @@ export const schema = {
                         ]
                     }
                 },
-                "FormListFormDetail": {
-                    "name": "FormListFormDetail",
+                "formListFormDetail": {
+                    "name": "formListFormDetail",
                     "isArray": true,
                     "type": {
                         "model": "FormDetail"
@@ -602,16 +600,8 @@ export const schema = {
             ]
         }
     },
-    "enums": {
-        "FormStatusEnum": {
-            "name": "FormStatusEnum",
-            "values": [
-                "DRAFT",
-                "PUBLISHED"
-            ]
-        }
-    },
+    "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "3cf1b7ef41df3ecfe0427189cf6b06fd"
+    "version": "16803994e90b8a647d047c4c5d0b9e0a"
 };
