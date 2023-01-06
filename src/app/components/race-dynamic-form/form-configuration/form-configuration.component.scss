@@ -97,15 +97,15 @@
 }
 .questionContainer {
   display: flex;
-  .six-dots {
-    position: relative;
-    top: 2px;
-    width: 9px;
-    cursor: move;
-  }
   .question {
     width: 100%;
   }
+}
+.six-dots {
+  position: relative;
+  top: 2px;
+  width: 9px;
+  cursor: move;
 }
 .highlight-bg {
   border: 2px solid $blue-main;

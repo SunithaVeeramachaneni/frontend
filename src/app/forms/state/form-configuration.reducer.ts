@@ -313,6 +313,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             }
             return question;
           });
+          sectionQuestions = sectionQuestions.sort(
+            (a, b) => a.position - b.position
+          );
 
           sourceSectionQuestions = sourceSectionQuestions.map(
             (question, index) => {

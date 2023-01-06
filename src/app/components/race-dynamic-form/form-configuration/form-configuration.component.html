@@ -85,11 +85,8 @@
               cdkDropListGroup
             >
               <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
-                <div
-                  cdkDrag
-                  *ngFor="let sectionIndex of sectionIndexes[pageIndex]"
-                >
-                  <div class="dis-flex">
+                <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
+                  <div class="dis-flex" cdkDrag>
                     <img
                       cdkDragHandle
                       src="assets/rdf-forms-icons/six-dots.svg"
@@ -151,6 +148,7 @@
                               <app-question
                                 class="question"
                                 [pageIndex]="pageIndex"
+                                [questionId]="questionObj.id"
                                 [sectionId]="
                                   sectionIds[pageIndex][sectionIndex]
                                 "

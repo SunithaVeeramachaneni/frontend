@@ -78,8 +78,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          console.log(previous);
-          console.log(current);
           if (!isEqual(previous, current)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({

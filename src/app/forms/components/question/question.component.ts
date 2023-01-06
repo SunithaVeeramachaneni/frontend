@@ -18,6 +18,7 @@ import { fieldTypesMock } from '../response-type/response-types.mock';
 import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
   getQuestion,
+  getQuestionByID,
   getSectionQuestionsCount,
   State
 } from 'src/app/forms/state';
@@ -33,6 +34,13 @@ export class QuestionComponent implements OnInit {
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+
+  @Input() set questionId(id: string) {
+    this._id = id;
+  }
+  get questionId() {
+    return this._id;
+  }
 
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
@@ -75,6 +83,7 @@ export class QuestionComponent implements OnInit {
   question: Question;
   sectionQuestionsCount$: Observable<number>;
   private _pageIndex: number;
+  private _id: string;
   private _sectionId: string;
   private _questionIndex: number;
 
@@ -104,7 +113,7 @@ export class QuestionComponent implements OnInit {
       .subscribe();
 
     this.question$ = this.store
-      .select(getQuestion(this.pageIndex, this.sectionId, this.questionIndex))
+      .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
       .pipe(
         tap((question) => {
           this.question = question;
