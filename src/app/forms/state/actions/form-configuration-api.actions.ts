@@ -13,7 +13,7 @@ export const createFormFailure = createAction(
 
 export const updateFormSuccess = createAction(
   '[Form Configuration Service] updateFormSuccess',
-  props<{ formMetadata: FormMetadata }>()
+  props<{ formMetadata: any }>()
 );
 
 export const updateFormFailure = createAction(
@@ -23,7 +23,7 @@ export const updateFormFailure = createAction(
 
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] createAuthoredFromDetailSuccess',
-  props<{ pages: Page[] }>()
+  props<{ authoredFormDetail: any }>()
 );
 
 export const createAuthoredFromDetailFailure = createAction(
@@ -33,7 +33,7 @@ export const createAuthoredFromDetailFailure = createAction(
 
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] updateAuthoredFromDetailSuccess',
-  props<{ pages: Page[] }>()
+  props<{ authoredFormDetail: any }>()
 );
 
 export const updateAuthoredFromDetailFailure = createAction(

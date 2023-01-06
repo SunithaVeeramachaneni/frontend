@@ -16,17 +16,22 @@
           type="radio"
           name="formType"
           value="Standalone"
-          checked
+          id="1"
           class="margin"
+          [(ngModel)]="formType"
+          [ngModelOptions]="{ standalone: true }"
         />
         <span class="radio-btn-text" translate="standalone"> </span><br />
 
         <input
+          id="2"
           type="radio"
           name="formType"
           value="Embedded"
-          class="margin"
           disabled
+          class="margin"
+          [(ngModel)]="formType"
+          [ngModelOptions]="{ standalone: true }"
         />
         <span class="radio-btn-text" translate="embedded"> </span><br />
 

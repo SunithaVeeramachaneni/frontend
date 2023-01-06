@@ -333,7 +333,8 @@ export class TenantComponent implements OnInit, AfterViewInit {
         ]
       }),
       tenantLogo: [''],
-      tenantLogoName: ['']
+      tenantLogoName: [''],
+      amplifyConfig: ['', [Validators.required]]
     });
 
     this.slackConfiguration = this.fb.group({
@@ -554,6 +555,10 @@ export class TenantComponent implements OnInit, AfterViewInit {
         this.tenantLogo = '';
       }
 
+      tenant.amplifyConfig =
+        tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'object'
+          ? JSON.stringify(tenant?.amplifyConfig)
+          : '';
       this.tenantForm.patchValue(tenant);
       (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
         'urls',
@@ -818,6 +823,9 @@ export class TenantComponent implements OnInit, AfterViewInit {
   saveTenant() {
     if (this.tenantForm.valid && this.tenantForm.dirty) {
       const { id, ...tenant } = this.tenantForm.getRawValue();
+      if (tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'string') {
+        tenant.amplifyConfig = JSON.parse(tenant.amplifyConfig);
+      }
       tenant.erps.sap.scopes = JSON.parse(tenant.erps.sap.scopes);
       this.spinner.show();
 

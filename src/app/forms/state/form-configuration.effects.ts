@@ -9,18 +9,24 @@ import {
   FormConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 
 @Injectable()
 export class FormConfigurationEffects {
-  constructor(private actions$: Actions) {}
+  constructor(
+    private actions$: Actions,
+    private raceDynamicFormService: RaceDynamicFormService
+  ) {}
 
   createForm$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FormConfigurationActions.createForm),
       concatMap((action) =>
-        of(action.formMetadata).pipe(
-          map((formMetadata) =>
-            FormConfigurationApiActions.createFormSuccess({ formMetadata })
+        this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
+          map((response) =>
+            FormConfigurationApiActions.createFormSuccess({
+              formMetadata: { id: response.id, ...action.formMetadata }
+            })
           ),
           catchError((error) =>
             of(FormConfigurationApiActions.createFormFailure({ error }))
@@ -34,7 +40,7 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateForm),
       concatMap((action) =>
-        of(action.formMetadata).pipe(
+        this.raceDynamicFormService.updateForm$(action.formMetadata).pipe(
           map((formMetadata) =>
             FormConfigurationApiActions.updateFormSuccess({ formMetadata })
           ),
@@ -50,10 +56,10 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.createAuthoredFormDetail),
       concatMap((action) =>
-        of(action.pages).pipe(
-          map((pages) =>
+        this.raceDynamicFormService.createAuthoredFormDetail$(action).pipe(
+          map((authoredFormDetail) =>
             FormConfigurationApiActions.createAuthoredFromDetailSuccess({
-              pages
+              authoredFormDetail
             })
           ),
           catchError((error) =>
@@ -72,10 +78,10 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateAuthoredFormDetail),
       concatMap((action) =>
-        of(action.pages).pipe(
-          map((pages) =>
+        this.raceDynamicFormService.updateAuthoredFormDetail$(action).pipe(
+          map((authoredFormDetail) =>
             FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
-              pages
+              authoredFormDetail
             })
           ),
           catchError((error) =>

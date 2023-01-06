@@ -1,4 +1,3 @@
-import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
@@ -32,11 +31,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 
 import { HttpClient } from '@angular/common/http';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { defaultLanguage } from 'src/app/app.constants';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { EffectsModule } from '@ngrx/effects';
@@ -87,6 +91,10 @@ export const customTranslateLoader = (http: HttpClient) =>
         useClass: TranslateMessageFormatCompiler
       }
     }),
+    DynamictableModule,
+    NgxShimmerLoadingModule,
+    OverlayModule,
+    MatSelectModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),

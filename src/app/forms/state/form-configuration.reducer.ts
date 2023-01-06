@@ -1,19 +1,24 @@
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
-import { FormConfigurationActions } from './actions';
+import {
+  FormConfigurationActions,
+  FormConfigurationApiActions
+} from './actions';
 
 export interface FormConfigurationState {
   formMetadata: FormMetadata;
   pages: Page[];
   counter: number;
   formStatus: string;
+  authoredFormDetailId: string;
 }
 
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
   counter: 0,
-  formStatus: 'draft'
+  formStatus: 'Draft',
+  authoredFormDetailId: ''
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -26,21 +31,41 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationApiActions.createFormSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formMetadata: { ...state.formMetadata, ...action.formMetadata }
+    })
+  ),
+  on(
+    FormConfigurationApiActions.createAuthoredFromDetailSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      authoredFormDetailId: action.authoredFormDetail.id
+    })
+  ),
+  on(
     FormConfigurationActions.updateFormMetadata,
     (state, action): FormConfigurationState => {
-      const { counter, formStatus, ...formMetadata } = action.formMetadata;
+      const { formStatus, ...formMetadata } = action.formMetadata;
       return {
         ...state,
         formMetadata: {
           ...state.formMetadata,
           ...formMetadata,
           formStatus:
-            state.formStatus === 'published' ? state.formStatus : formStatus
+            state.formStatus === 'Published' ? state.formStatus : formStatus
         },
-        counter,
         formStatus
       };
     }
+  ),
+  on(
+    FormConfigurationActions.updateCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      counter: action.counter
+    })
   ),
   on(
     FormConfigurationActions.addPage,

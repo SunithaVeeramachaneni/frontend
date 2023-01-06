@@ -6,6 +6,34 @@ import {
   animate
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  mergeMap,
+  map,
+  switchMap,
+  tap,
+  catchError
+} from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import {
+  Column,
+  ConfigOptions
+} from '@innovapptive.com/dynamictable/lib/interfaces';
+import { MatTableDataSource } from '@angular/material/table';
+
+import {
+  CellClickActionEvent,
+  Count,
+  TableEvent,
+  FormTableUpdate
+} from 'src/app/interfaces';
+import { defaultLimit } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { GetFormListQuery } from 'src/app/API.service';
 
 @Component({
   selector: 'app-form-list',
@@ -34,8 +62,370 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 export class FormListComponent implements OnInit {
   public menuState = 'out';
 
-  constructor() {}
-  ngOnInit(): void {}
+  columns: Column[] = [
+    {
+      id: 'name',
+      displayName: 'Recents',
+      type: 'string',
+      order: 1,
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      hasSubtitle: true,
+      showMenuOptions: false,
+      subtitleColumn: 'description',
+      subtitleStyle: {
+        'font-size': '80%',
+        color: 'darkgray'
+      },
+      hasPreTextImage: true,
+      hasPostTextImage: false
+    },
+    {
+      id: 'author',
+      displayName: 'Owner',
+      type: 'number',
+      isMultiValued: true,
+      order: 2,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'formStatus',
+      displayName: 'Status',
+      type: 'string',
+      order: 3,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {
+        fontFamily: 'Inter',
+        fontStyle: 'normal',
+        fontSize: '14px',
+        textTransform: 'capitalize',
+        fontWeight: 500,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '0 12px',
+        marginTop: '8px',
+        width: '90px',
+        height: '24px',
+        background: '#D1FAE5', // #FEF3C7
+        borderRadius: '12px',
+        flex: 'none',
+        order: 0,
+        flexGrow: 0
+      },
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'lastPublishedBy',
+      displayName: 'Last Published By',
+      type: 'number',
+      order: 4,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: false,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'updatedAt',
+      displayName: 'Last Published At',
+      type: 'string',
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: true,
+      titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    }
+  ];
+
+  configOptions: ConfigOptions = {
+    tableID: 'formsTable',
+    rowsExpandable: false,
+    enableRowsSelection: true,
+    enablePagination: false,
+    displayFilterPanel: false,
+    displayActionsColumn: false,
+    rowLevelActions: {
+      menuActions: []
+    },
+    groupByColumns: [],
+    pageSizeOptions: [10, 25, 50, 75, 100],
+    allColumns: [],
+    tableHeight: 'calc(100vh - 150px)',
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+  };
+  dataSource: MatTableDataSource<any>;
+  forms$: Observable<any>;
+  formsCount$: Observable<Count>;
+  addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
+      action: null,
+      form: {} as GetFormListQuery
+    });
+  formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  skip = 0;
+  limit = defaultLimit;
+  searchForm: FormControl;
+  addCopyFormCount = false;
+  isPopoverOpen = false;
+  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
+  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  constructor(
+    private readonly toast: ToastService,
+    private readonly raceDynamicFormService: RaceDynamicFormService
+  ) {}
+
+  ngOnInit(): void {
+    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+    this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
+    this.searchForm = new FormControl('');
+    this.searchForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => {
+          this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+        })
+      )
+      .subscribe();
+    this.getDisplayedForms();
+
+    this.formsCount$ = combineLatest([
+      this.formsCount$,
+      this.formCountUpdate$
+    ]).pipe(
+      map(([count, update]) => {
+        if (this.addCopyFormCount) {
+          count.count += update;
+          this.addCopyFormCount = false;
+        }
+        return count;
+      })
+    );
+    this.configOptions.allColumns = this.columns;
+    this.prepareMenuActions();
+  }
+
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    const { columnId } = event;
+    switch (columnId) {
+      case 'name':
+      case 'createdBy':
+      case 'formStatus':
+      case 'updatedBy':
+      case 'updatedAt ':
+        this.openEditFormModal(event.row);
+        break;
+      default:
+    }
+  };
+
+  openEditFormModal(form = {} as GetFormListQuery): void {
+    this.toast.show({
+      text: 'Form edited successfully!',
+      type: 'success'
+    });
+  }
+
+  openCopyFormModal(form: GetFormListQuery): void {
+    this.addEditCopyForm$.next({
+      action: 'copy',
+      form
+    });
+  }
+
+  getDisplayedForms(): void {
+    const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
+      filter(({ data }) => data === 'load' || data === 'search'),
+      switchMap(() => {
+        this.skip = 0;
+        return this.getForms();
+      })
+    );
+
+    const onScrollForms$ = this.raceDynamicFormService.fetchForms$.pipe(
+      filter(({ data }) => data !== 'load' && data !== 'search'),
+      switchMap(({ data }) => {
+        if (data === 'infiniteScroll') {
+          return this.getForms();
+        } else {
+          return of([] as GetFormListQuery[]);
+        }
+      })
+    );
+
+    const initial = {
+      columns: this.columns,
+      data: []
+    };
+    this.forms$ = combineLatest([
+      formsOnLoadSearch$,
+      this.addEditCopyForm$,
+      onScrollForms$
+    ]).pipe(
+      map(([rows, form, scrollData]) => {
+        if (this.skip === 0) {
+          this.configOptions = {
+            ...this.configOptions,
+            tableHeight: 'calc(80vh - 150px)'
+          };
+          initial.data = rows;
+        } else {
+          if (form.action === 'delete') {
+            initial.data = initial.data.filter((d) => d.id !== form.form.id);
+            this.toast.show({
+              text: 'Form archive successfully!',
+              type: 'success'
+            });
+          } else {
+            console.log(this.skip);
+            console.log(scrollData.length);
+            initial.data = initial.data.concat(scrollData);
+          }
+        }
+
+        this.skip = initial.data.length;
+        this.dataSource = new MatTableDataSource(initial.data);
+        return initial;
+      })
+    );
+  }
+
+  getForms() {
+    return this.raceDynamicFormService
+      .getFormsList$({
+        skip: this.skip,
+        limit: this.limit,
+        searchKey: this.searchForm.value
+      })
+      .pipe(
+        mergeMap(({ count, rows }) => {
+          this.formsCount$ = of({ count });
+          return of(rows);
+        }),
+        catchError(() => {
+          this.formsCount$ = of({ count: 0 });
+          return of([]);
+        })
+      );
+  }
+
+  openArchiveModal(form: GetFormListQuery): void {
+    this.raceDynamicFormService.deleteForm$(form?.id).subscribe(() => {
+      this.addEditCopyForm$.next({
+        action: 'delete',
+        form
+      });
+    });
+  }
+
+  rowLevelActionHandler = ({ data, action }): void => {
+    switch (action) {
+      case 'copy':
+        this.openCopyFormModal(data);
+        break;
+
+      case 'edit':
+        this.openEditFormModal(data);
+        break;
+
+      case 'archive':
+        this.openArchiveModal(data);
+        break;
+      default:
+    }
+  };
+
+  handleTableEvent = (event): void => {
+    this.raceDynamicFormService.fetchForms$.next(event);
+  };
+
+  configOptionsChangeHandler = (event): void => {
+    console.log('event', event);
+  };
+
+  prepareMenuActions(): void {
+    const menuActions = [
+      // {
+      //   title: 'Copy',
+      //   action: 'copy'
+      // },
+      {
+        title: 'Edit',
+        action: 'edit'
+      },
+      {
+        title: 'Archive',
+        action: 'archive'
+      }
+    ];
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
+  }
+
+  applyFilters(): void {
+    this.isPopoverOpen = false;
+  }
+
+  clearFilters(): void {
+    this.isPopoverOpen = false;
+  }
 
   toggleMenu() {
     this.menuState = this.menuState === 'out' ? 'in' : 'out';

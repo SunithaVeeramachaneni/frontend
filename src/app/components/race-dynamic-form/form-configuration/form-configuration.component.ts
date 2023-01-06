@@ -18,17 +18,21 @@ import {
   PageEvent,
   QuestionEvent,
   SectionEvent,
-  FormMetadata
+  FormMetadata,
+  Page
 } from 'src/app/interfaces';
 import {
   getFormMetadata,
   getPageIndexes,
+  getPages,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
+  getFormDetails,
   State
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration',
@@ -40,14 +44,22 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
+  pages$: Observable<Page[]>;
+  formDetails$: Observable<any>;
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
+  authoredFormDetail$: Observable<any>;
   questionIndexes: any;
   saveStatus = 'done';
+  formMetaData: FormMetadata;
 
-  constructor(private fb: FormBuilder, private store: Store<State>) {}
+  constructor(
+    private fb: FormBuilder,
+    private store: Store<State>,
+    private raceDynamicFormService: RaceDynamicFormService
+  ) {}
 
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
@@ -56,7 +68,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       name: [''],
       description: [''],
       counter: [0],
-      formStatus: ['draft']
+      formStatus: ['Draft']
     });
 
     this.formConfiguration.valueChanges
@@ -65,12 +77,19 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          console.log(previous);
-          console.log(current);
-          if (!isEqual(previous, current)) {
+          const { counter: prevCounter, ...prev } = previous;
+          const { counter: currCounter, ...curr } = current;
+
+          if (!isEqual(prev, curr)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({
-                formMetadata: this.formConfiguration.value
+                formMetadata: curr
+              })
+            );
+
+            this.store.dispatch(
+              FormConfigurationActions.updateForm({
+                formMetadata: this.formMetaData
               })
             );
           }
@@ -78,10 +97,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
+    this.formConfiguration
+      .get('counter')
+      .valueChanges.pipe(
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        tap((counter) =>
+          this.store.dispatch(
+            FormConfigurationActions.updateCounter({
+              counter
+            })
+          )
+        )
+      )
+      .subscribe();
+
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description } = formMetadata;
-        this.formConfiguration.patchValue({ name, description });
+        const { name, description, id } = formMetadata;
+        this.formMetaData = formMetadata;
+        this.formConfiguration.patchValue({ name, description, id });
       })
     );
     this.pageIndexes$ = this.store.select(getPageIndexes);
@@ -99,11 +133,35 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
+    this.formDetails$ = this.store.select(getFormDetails);
 
-    this.store.dispatch(
-      FormConfigurationActions.updateFormMetadata({
-        formMetadata: this.formConfiguration.value
-      })
+    this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
+      tap(
+        ({ formStatus, formListId, counter, pages, authoredFormDetailId }) => {
+          if (pages.length && formListId) {
+            if (authoredFormDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.updateAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages,
+                  authoredFormDetailId
+                })
+              );
+            } else {
+              this.store.dispatch(
+                FormConfigurationActions.createAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages
+                })
+              );
+            }
+          }
+        }
+      )
     );
   }
 
@@ -252,6 +310,26 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   uploadFormImageFile(e) {
     // uploaded image  file code
+  }
+
+  publishFormDetail() {
+    this.formDetails$
+      .pipe(
+        tap((formDetails) => {
+          const formConfig = this.formConfiguration.value;
+          if (formDetails.formMetadata.formStatus === 'published') {
+            this.raceDynamicFormService.updateFormDetail$(
+              formConfig,
+              formDetails.pages
+            );
+          } else
+            this.raceDynamicFormService.createFormDetail$(
+              formConfig,
+              formDetails.pages
+            );
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {

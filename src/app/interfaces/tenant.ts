@@ -30,6 +30,7 @@ export interface Tenant {
   updatedBy?: string;
   createdAt?: string;
   updatedAt?: string;
+  amplifyConfig?: any;
 }
 
 export interface ProtectedResource {
