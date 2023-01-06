@@ -101,6 +101,63 @@
               </span>
 
               <span
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                class="m-l-40"
+              >
+                <app-read-only
+                  (defaultValue)="questionForm.get('value').setValue($event)"
+                ></app-read-only>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TF'"
+                class="m-l-50"
+              >
+                <app-text
+                  (inputTextAnswer)="questionForm.get('value').setValue($event)"
+                ></app-text>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <app-date
+                  (checkedToDefaultDate)="
+                    questionForm.get('value').setValue($event)
+                  "
+                ></app-date>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <app-time
+                  (checkedToDefaultTime)="
+                    questionForm.get('value').setValue($event)
+                  "
+                >
+                </app-time>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'RT'"
+                (click)="sliderOpen()"
+                class="m-l-50"
+              >
+                <label translate="range"></label>&nbsp;
+                <span class="range-values">
+                  {{ questionForm.get('value').value.min }} -
+                  {{ questionForm.get('value').value.max }}
+                </span>
+              </span>
+              <app-response-type-side-drawer
+                [question]="question"
+                (setSliderValues)="questionForm.get('value').setValue($event)"
+              ></app-response-type-side-drawer>
+
+              <span
                 class="m-l-40"
                 *ngIf="questionForm.get('fieldType').value === 'TAF'"
               >
@@ -121,43 +178,6 @@
               </span>
 
               <span
-                *ngIf="questionForm.get('fieldType').value === 'DF'"
-                class="m-l-10"
-              >
-                <app-date></app-date>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'TIF'"
-                class="m-l-10"
-              >
-                <app-time></app-time>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'LF'"
-                class="m-l-40"
-              >
-                <app-read-only></app-read-only>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'TF'"
-                class="m-l-50"
-              >
-                <app-text></app-text>
-              </span>
-
-              <span
-                *ngIf="questionForm.get('fieldType').value === 'RT'"
-                (click)="sliderOpen()"
-                class="m-l-50"
-              >
-                <label translate="range"></label>&nbsp;
-              </span>
-              <app-response-type-side-drawer></app-response-type-side-drawer>
-
-              <span
                 *ngIf="
                   questionForm.get('fieldType').value === 'DD' &&
                   !questionForm.get('value').value?.globalDataset
@@ -169,8 +189,15 @@
             </div>
           </div>
 
+          <input
+            #insertImages
+            [hidden]="true"
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            (change)="insertImageHandler($event)"
+          />
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-            <!-- <app-image></app-image> -->
+            <app-image [questionForm]="questionForm"></app-image>
           </div>
         </div>
       </div>

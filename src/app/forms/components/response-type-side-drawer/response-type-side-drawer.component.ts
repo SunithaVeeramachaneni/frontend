@@ -25,6 +25,8 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseTypeSideDrawerComponent implements OnInit {
+  @Output() setSliderValues: EventEmitter<any> = new EventEmitter();
+  @Input() question;
   sliderOpenState$: Observable<boolean>;
   multipleChoiceOpenState$: Observable<boolean>;
   public responseForm: FormGroup;
@@ -104,8 +106,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   };
 
   applySliderOptions(values) {
+    this.setSliderValues.emit(values);
     this.formService.setsliderOpenState(false);
-    //code here
   }
 
   cancelSlider = () => {

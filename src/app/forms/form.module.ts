@@ -38,6 +38,9 @@ import { ReadOnlyComponent } from './components/field-types/read-only/read-only.
 import { TextComponent } from './components/field-types/text/text.component';
 import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
+import { StoreModule } from '@ngrx/store';
+import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { ImageComponent } from './components/field-types/image/image.component';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -57,7 +60,8 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
     TimeComponent,
     ReadOnlyComponent,
     TextComponent,
-    DropDownComponent
+    DropDownComponent,
+    ImageComponent
   ],
   imports: [
     FormsModule,
@@ -79,6 +83,9 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
     MatButtonToggleModule,
     MatSelectModule,
     MatTooltipModule,
+    StoreModule.forFeature('feature', {
+      formConfiguration: formConfigurationReducer
+    }),
     TranslateModule.forChild({})
   ],
   exports: [

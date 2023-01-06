@@ -136,6 +136,7 @@ export class QuestionComponent implements OnInit {
   }
 
   selectFieldTypeEventHandler(fieldType) {
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
     }
@@ -143,18 +144,15 @@ export class QuestionComponent implements OnInit {
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
 
     switch (fieldType.type) {
       case 'TF':
         this.questionForm.get('value').setValue('TF');
         break;
       case 'VI':
-        //this.isCustomizerOpen = true;
         this.questionForm.get('value').setValue([]);
         break;
       case 'RT':
-        //this.isCustomizerOpen = true;
         const sliderValue = {
           value: 0,
           min: 0,
@@ -162,25 +160,10 @@ export class QuestionComponent implements OnInit {
           increment: 1
         };
         this.questionForm.get('value').setValue(sliderValue);
-        //this.sliderOptions = sliderValue;
         break;
       case 'IMG':
-        let index = 0;
-        let found = false;
-        if (this.questionForm.get('id').value === this.question.value.id) {
-          found = true;
-        }
-        if (!found && this.questionForm.get('fieldType').value === 'IMG') {
-          index++;
-        }
-
-        timer(0)
-          .pipe(
-            tap(() => {
-              this.insertImages.toArray()[index]?.nativeElement.click();
-            })
-          )
-          .subscribe();
+        const index = 0;
+        this.insertImages.toArray()[index]?.nativeElement.click();
         break;
       default:
       // do nothing

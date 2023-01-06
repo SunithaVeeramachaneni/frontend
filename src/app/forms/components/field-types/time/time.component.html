@@ -1,2 +1,9 @@
-<input type="checkbox" id="time" class="required-input" name="time" />&nbsp;
+<input
+  type="checkbox"
+  id="time"
+  class="required-input"
+  name="time"
+  checked="timeChecked"
+  (click)="toggleChecked()"
+/>&nbsp;
 <label for="time" translate="timeLabel"></label>

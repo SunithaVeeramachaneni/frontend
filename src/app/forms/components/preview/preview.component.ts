@@ -1,32 +1,16 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatTreeNestedDataSource } from '@angular/material/tree';
-import { NestedTreeControl } from '@angular/cdk/tree';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { State, getPages } from 'src/app/forms/state';
+import { Observable } from 'rxjs';
 import { fieldTypesMock } from '../response-type/response-types.mock';
-
-/**
- * Food data with nested structure.
- * Each node has a name and an optional list of children.
- */
-interface FoodNode {
-  name: string;
-  children?: FoodNode[];
-}
-
-const TREE_DATA: FoodNode[] = [
-  {
-    name: '',
-    children: [{ name: '' }]
-  }
-];
+import { map, tap } from 'rxjs/operators';
+import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss']
 })
-export class PreviewComponent implements OnInit, AfterViewInit {
-  @ViewChild('tree') tree;
-  treeControl = new NestedTreeControl<FoodNode>((node) => node.children);
-  dataSource = new MatTreeNestedDataSource<FoodNode>();
+export class PreviewComponent implements OnInit {
   isSectionOpenState = true;
   fieldTypes: any;
   arrayField = false;
@@ -36,25 +20,34 @@ export class PreviewComponent implements OnInit, AfterViewInit {
     max: 100,
     increment: 1
   };
-  constructor() {
-    this.dataSource.data = TREE_DATA;
-  }
+  previewFormData$: Observable<any>;
+  previewFormData = [];
 
-  hasChild = (_: number, node: FoodNode) =>
-    !!node.children && node.children.length > 0;
+  constructor(private store: Store<State>, private imageUtils: ImageUtils) {}
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.previewFormData$ = this.store.select(getPages).pipe(
+      map((previewFormData) => {
+        let sectionData;
+        previewFormData.forEach((page) => {
+          sectionData = page.sections.map((section) => {
+            const questionsArray = [];
+            page.questions.forEach((question) => {
+              if (section.id === question.sectionId) {
+                questionsArray.push(question);
+              }
+            });
+            return { ...section, questions: questionsArray };
+          });
+        });
+        return sectionData;
+      })
+    );
   }
-  ngAfterViewInit() {
-    this.tree.treeControl.expandAll();
-  }
-  formatLabel(value: number): string {
-    if (value >= 1000) {
-      return Math.round(value / 1000) + 'k';
-    }
 
-    return `${value}`;
+  getImageSrc(base64) {
+    return this.imageUtils.getImageSrc(base64);
   }
 
   openBottomSheet(): void {

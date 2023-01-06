@@ -1,112 +1,153 @@
-<div>
-  <div class="example-tree mat-tree-margin">
-    <div class="border-inside">
-      <div class="mat-tree-node">
-        <div class="section-question">
-          <div class="flex-custom">
-            <mat-icon
-              (click)="toggleSectionOpenState()"
-              *ngIf="isSectionOpenState === true"
-              class="fix-arrow"
-            >
-              expand_more
-            </mat-icon>
-            <mat-icon
-              (click)="toggleSectionOpenState()"
-              *ngIf="isSectionOpenState === false"
-              class="fix-arrow"
-            >
-              chevron_right
-            </mat-icon>
+<div class="preview" *ngIf="previewFormData$ | async as sectionData">
+  <div *ngFor="let section of sectionData" class="preview-content">
+    <div class="section-header">
+      <mat-icon
+        (click)="toggleSectionOpenState()"
+        *ngIf="isSectionOpenState === true"
+        class="fix-arrow"
+      >
+        expand_more
+      </mat-icon>
+      <mat-icon
+        (click)="toggleSectionOpenState()"
+        *ngIf="isSectionOpenState === false"
+        class="fix-arrow"
+      >
+        chevron_right
+      </mat-icon>
 
-            <p>Section 1</p>
-          </div>
-          <div>
-            <p>0/4</p>
+      <span class="section-name">{{ section.name }}</span>
+      <span class="section-count">0/{{ sectionData.length }}</span>
+    </div>
+
+    <div *ngIf="isSectionOpenState === true">
+      <div id="preview" *ngFor="let question of section.questions">
+        <div class="field-types">
+          <div class="each-fieldtype">
+            <p class="question-name">
+              {{ question.name ? question.name : 'Type Question' }}
+            </p>
+
+            <!-- read only  -->
+            <h3 class="read-only-field" *ngIf="question.fieldType === 'LF'">
+              {{ question.value }}
+            </h3>
+
+            <!-- text answer  -->
+            <input
+              type="text"
+              class="text-answer"
+              placeholder="Enter"
+              *ngIf="question.fieldType === 'TF' && question.value === 'TF'"
+            />
+
+            <!-- long text answer  -->
+            <textarea
+              class="long-text-answer"
+              placeholder="Enter"
+              *ngIf="question.fieldType === 'TF' && question.value === 'LTV'"
+            ></textarea>
+
+            <!-- number  -->
+            <input
+              type="number"
+              class="number"
+              placeholder="Enter"
+              *ngIf="question.fieldType === 'NF'"
+            />
+
+            <!-- scan  -->
+            <div class="dis-flex" *ngIf="question.fieldType === 'SF'">
+              <input
+                type="text"
+                class="text-answer"
+                placeholder="Choose item"
+              />
+              <img src="assets/rdf-forms-icons/scan-bg.svg" class="scan-icon" />
+            </div>
+
+            <!-- date  -->
+            <input
+              type="date"
+              class="text-answer"
+              placeholder="Enter"
+              *ngIf="question.fieldType === 'DF'"
+            />
+
+            <!-- time  -->
+            <input
+              type="time"
+              class="text-answer"
+              placeholder="Enter"
+              *ngIf="question.fieldType === 'TIF'"
+            />
+
+            <!-- checkbox  -->
+            <mat-checkbox
+              class="checkbox"
+              *ngIf="question.fieldType === 'CB'"
+            ></mat-checkbox>
+
+            <!-- signature  -->
+            <div *ngIf="question.fieldType === 'SGF'">
+              <input type="text" class="text-answer" placeholder="Enter" />
+              <img
+                src="assets/rdf-forms-icons/signature.svg"
+                class="signature-icon"
+              />
+            </div>
+
+            <!-- slider  -->
+            <div class="slider-form" *ngIf="question.fieldType === 'RT'">
+              <span class="slider-values">{{ question.value.min }}</span>
+              <mat-slider
+                [max]="question.value.max"
+                [min]="question.value.min"
+                [step]="question.value.increment"
+                [(ngModel)]="question.value.value"
+                [ngModelOptions]="{ standalone: true }"
+                color="primary"
+                class="slider"
+              >
+              </mat-slider>
+              <span class="slider-values">{{ question.value.max }}</span>
+            </div>
+
+            <!-- location  -->
+            <div *ngIf="question.fieldType === 'GAL'">
+              <input type="text" class="text-answer" placeholder="Enter" />
+              <img
+                src="assets/rdf-forms-icons/location.svg"
+                class="signature-icon"
+              />
+            </div>
+
+            <!-- attachment -->
+            <button class="attachment" *ngIf="question.fieldType === 'ATT'">
+              <img src="assets/rdf-forms-icons/attach-icon.svg" />
+              Add Attachments
+            </button>
+
+            <div class="dis-flex" *ngIf="question.fieldType === 'DFR'">
+              <input type="date" class="text-answer" placeholder="From" />
+              <span class="date-range-hypion">-</span>
+              <input type="date" class="text-answer" placeholder="To" />
+            </div>
+
+            <div *ngIf="question.fieldType === 'IMG'">
+              <img
+                [src]="getImageSrc(question.value.base64)"
+                *ngIf="question.value?.base64"
+                alt="image"
+                class="image-field"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div *ngIf="isSectionOpenState === true">
-        <div id="preview">
-          <!-- read box -->
-          <div class="read-only-field">
-            <div class="read-box">
-              <p>Color of the flame</p>
-              <h3>Red at 100 ATM and Orange at 50 ATM</h3>
-            </div>
-          </div>
+        <!-- multiple feild  -->
 
-          <!-- text answer -->
-
-          <div class="text-answer-field">
-            <div class="read-box">
-              <p class="form-heading">What is the Pressure Reading?</p>
-              <input type="text" class="form-reading" placeholder="Enter" />
-            </div>
-          </div>
-
-          <!-- long answer -->
-          <div class="long-text-answer-field">
-            <div class="read-box">
-              <p class="form-heading">What is the Pressure Reading?</p>
-              <textarea class="form-reading-1" placeholder="Enter"></textarea>
-            </div>
-          </div>
-
-          <!-- number -->
-          <div class="number-field">
-            <div class="read-box">
-              <p class="form-heading">What is the temperature Reading?</p>
-              <input type="number" class="form-reading" placeholder="Enter" />
-            </div>
-          </div>
-
-          <!-- scan field -->
-          <div class="scan-field">
-            <div class="read-box">
-              <p class="form-heading">Scan the asset</p>
-              <div class="flex-custom">
-                <input
-                  type="text"
-                  class="form-reading"
-                  placeholder="Choose item"
-                />
-                <img src="assets/rdf-forms-icons/scan-bg.svg" />
-              </div>
-            </div>
-          </div>
-
-          <!-- date-feild -->
-          <div class="date-field">
-            <div class="read-box">
-              <p class="form-heading">Choose the date and time</p>
-              <input type="date" class="form-reading" placeholder="Enter" />
-            </div>
-          </div>
-
-          <!-- Checkbox -->
-          <div class="checkbox-field">
-            <div class="read-box checkbox-field">
-              <p class="form-check">Material is red in color</p>
-              <section class="example-section">
-                <mat-checkbox class="example-margin"></mat-checkbox>
-              </section>
-            </div>
-          </div>
-
-          <!-- time feild  -->
-
-          <div class="time-field">
-            <div class="read-box">
-              <p class="form-heading">Choose the date and time</p>
-              <input type="time" class="form-reading" placeholder="Enter" />
-            </div>
-          </div>
-
-          <!-- multiple feild  -->
-
-          <div class="multiple-select-field">
+        <!-- <div class="multiple-select-field">
             <div class="read-box">
               <p class="form-heading">What is the Pressure Reading?</p>
               <div class="multi-select">
@@ -125,10 +166,10 @@
                 </mat-button-toggle-group>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- pick list feild  -->
-
+        <!-- pick list feild  -->
+        <!--
           <div class="pick-list-field">
             <div class="read-box">
               <p class="form-heading">What is the Pressure Reading?</p>
@@ -144,84 +185,23 @@
                 </mat-form-field>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- signature field  -->
+        <!-- attachment -->
 
-          <div class="signature-field">
-            <div class="read-box">
-              <p class="form-heading">Enter your signature</p>
-              <div class="set-icon-relative">
-                <input type="text" class="form-reading" placeholder="Enter" />
-                <img src="assets/rdf-forms-icons/signature.svg" />
-              </div>
-            </div>
-          </div>
+        <!-- insert image field  -->
 
-          <!-- attachment -->
-
-          <div class="attachment-field">
-            <div class="read-box">
-              <p class="form-heading">Add an attachment</p>
-              <div class="file-form">
-                <label class="relative-file">
-                  <input type="file" mat-raised-button color="primary" />
-                  <button mat-raised-button color="primary" class="">
-                    <img src="assets/rdf-forms-icons/attach-icon.svg" />
-                    Add Attachments
-                  </button>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- slider -->
-
-          <div class="slider-field">
-            <div class="read-box">
-              <p class="form-heading">Enter Location</p>
-              <div class="slider-form">
-                <span>01</span>
-                <mat-slider
-                  [max]="sliderOptions.max"
-                  [min]="sliderOptions.min"
-                  [step]="sliderOptions.increment"
-                  [(ngModel)]="sliderOptions.value"
-                  [ngModelOptions]="{ standalone: true }"
-                  color="primary"
-                  class="width-100"
-                >
-                </mat-slider>
-                <span>10</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- location field  -->
-
-          <div class="location-field">
-            <div class="read-box">
-              <p class="form-heading">Enter Location</p>
-              <div class="set-icon-relative">
-                <input type="text" class="form-reading" placeholder="Enter" />
-                <img src="assets/rdf-forms-icons/location.svg" />
-              </div>
-            </div>
-          </div>
-
-          <!-- insert image field  -->
-
-          <div class="insert-image-field">
+        <!-- <div class="insert-image-field">
             <div class="read-box">
               <p class="form-heading">Insert Image</p>
 
               <img src="assets/img/insert-image.png" class="insert-img" />
             </div>
-          </div>
+          </div> -->
 
-          <!-- Tabular Format  -->
+        <!-- Tabular Format  -->
 
-          <div class="insert-image-field">
+        <!-- <div class="insert-image-field">
             <div class="read-box">
               <p class="form-heading">Gas Inspection of Tyre</p>
 
@@ -251,10 +231,10 @@
                 <label>Add new</label>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- Data Range -->
-
+        <!-- Data Range -->
+        <!--
           <div class="location-field">
             <div class="read-box">
               <p class="form-heading">Date</p>
@@ -264,10 +244,10 @@
                 <input type="date" class="form-reading" placeholder="To" />
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- array field -->
-          <div class="location-field">
+        <!-- array field -->
+        <!-- <div class="location-field">
             <div class="array-field-box">
               <label>
                 <img
@@ -283,9 +263,9 @@
                 <label (click)="openBottomSheet()">Add new</label>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <div class="bg-bottom-array" *ngIf="arrayField">
+        <!-- <div class="bg-bottom-array" *ngIf="arrayField">
             <div class="bottom-header">
               <p class="red-h">Delete</p>
               <h3>Gas Inspection tyre 1</h3>
@@ -302,8 +282,7 @@
                 <input class="form-control-type" type="text" />
               </div>
             </div>
-          </div>
-        </div>
+          </div> -->
       </div>
     </div>
   </div>

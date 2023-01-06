@@ -27,15 +27,15 @@ export const fieldTypesMock = {
       createdAt: '2022-11-18T10:31:09.990Z',
       id: '63775eed42f051892309cdc6'
     },
-    {
-      type: 'DD',
-      description: 'Picklist',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdc7'
-    },
+    // {
+    //   type: 'DD',
+    //   description: 'Picklist',
+    //   createdBy: 'Innovapptive',
+    //   updatedBy: null,
+    //   updatedAt: null,
+    //   createdAt: '2022-11-18T10:31:09.991Z',
+    //   id: '63775eed42f051892309cdc7'
+    // },
     {
       type: 'SF',
       description: 'Scan',
@@ -90,15 +90,15 @@ export const fieldTypesMock = {
       createdAt: '2022-11-18T10:31:09.991Z',
       id: '63775eed42f051892309cdcd'
     },
-    {
-      type: 'VI',
-      description: 'Multiple Choice Answers',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdce'
-    },
+    // {
+    //   type: 'VI',
+    //   description: 'Multiple Choice Answers',
+    //   createdBy: 'Innovapptive',
+    //   updatedBy: null,
+    //   updatedAt: null,
+    //   createdAt: '2022-11-18T10:31:09.993Z',
+    //   id: '63775eed42f051892309cdce'
+    // },
     {
       type: 'RT',
       description: 'Slider',
@@ -118,15 +118,6 @@ export const fieldTypesMock = {
       id: '63775eed42f051892309cdd0'
     },
     {
-      type: 'LTV',
-      description: 'Long Text Answer',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd1'
-    },
-    {
       type: 'GAL',
       description: 'Geo Location',
       createdBy: 'Innovapptive',
@@ -135,15 +126,15 @@ export const fieldTypesMock = {
       createdAt: '2022-11-18T10:31:09.993Z',
       id: '63775eed42f051892309cdd2'
     },
-    {
-      type: 'DDM',
-      description: 'Multiple Select Choice answers',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd3'
-    },
+    // {
+    //   type: 'DDM',
+    //   description: 'Multiple Select Choice answers',
+    //   createdBy: 'Innovapptive',
+    //   updatedBy: null,
+    //   updatedAt: null,
+    //   createdAt: '2022-11-18T10:31:09.993Z',
+    //   id: '63775eed42f051892309cdd3'
+    // },
     {
       type: 'DFR',
       description: 'Date Range',

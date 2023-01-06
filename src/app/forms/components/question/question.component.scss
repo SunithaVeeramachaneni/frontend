@@ -61,7 +61,7 @@
     padding: 7px;
     border: none;
     margin-left: 10px;
-    width: auto;
+    width: 90%;
   }
 
   input:focus {
@@ -101,6 +101,10 @@
     .required-input {
       position: relative;
       top: 2px;
+    }
+
+    .range-values {
+      color: $blue-main;
     }
   }
 }

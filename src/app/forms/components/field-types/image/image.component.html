@@ -1,0 +1,20 @@
+<div
+  class="width-50 bg-white dis-flex image-container"
+  *ngIf="questionForm.get('value').value !== ''"
+>
+  <img
+    class="insert-image"
+    [src]="getImageSrc(questionForm.get('value').value.base64)"
+    alt="image"
+  />
+  <div>
+    <span class="image-text">
+      {{ questionForm.get('value').value.name }}
+    </span>
+    <br />
+    <span class="image-sub-text">
+      {{ (questionForm.get('value').value.size / 1024).toFixed(2) }}
+      KB
+    </span>
+  </div>
+</div>
