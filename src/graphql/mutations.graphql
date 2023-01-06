@@ -163,7 +163,7 @@ mutation CreateFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -191,7 +191,7 @@ mutation UpdateFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -219,7 +219,7 @@ mutation DeleteFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -249,15 +249,15 @@ mutation CreateFormList(
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
@@ -287,15 +287,15 @@ mutation UpdateFormList(
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
@@ -325,15 +325,15 @@ mutation DeleteFormList(
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
