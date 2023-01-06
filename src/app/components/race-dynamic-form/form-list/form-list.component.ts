@@ -333,6 +333,8 @@ export class FormListComponent implements OnInit {
               type: 'success'
             });
           } else {
+            console.log(this.skip);
+            console.log(scrollData.length);
             initial.data = initial.data.concat(scrollData);
           }
         }

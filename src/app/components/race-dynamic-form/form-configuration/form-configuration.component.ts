@@ -134,10 +134,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       })
     );
     this.formDetails$ = this.store.select(getFormDetails);
-    this.formConfiguration.valueChanges.subscribe(console.log);
-    this.pages$ = this.store.select(getPages).pipe(tap((pages) => pages));
-    // this.pages$.subscribe(console.log);
-    // this.store.select(getFormMetadata).subscribe(console.log);
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
@@ -321,7 +317,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .pipe(
         tap((formDetails) => {
           const formConfig = this.formConfiguration.value;
-          console.log(formConfig);
           if (formDetails.formMetadata.formStatus === 'published') {
             this.raceDynamicFormService.updateFormDetail$(
               formConfig,
