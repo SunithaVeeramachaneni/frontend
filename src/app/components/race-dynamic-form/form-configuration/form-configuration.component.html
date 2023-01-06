@@ -44,6 +44,12 @@
       </div>
     </div>
     <div class="dis-flex">
+      <div class="save-status" [hidden]="saveStatus !== 'done'">
+        {{ 'changesSaved' | translate }}
+      </div>
+      <div class="save-status" [hidden]="saveStatus === 'done'">
+        {{ 'changesInProgress' | translate }}
+      </div>
       <button
         mat-stroked-button
         class="import-btn"
@@ -67,7 +73,7 @@
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"
-          (addPageEvent)="addPageEventHandler($event)"
+          (pageEvent)="pageEventHandler($event)"
           cdkDropListGroup
         >
           <ng-container *ngIf="sectionIds$ | async as sectionIds">
@@ -94,8 +100,7 @@
                       class="sectionContainer"
                       [pageIndex]="pageIndex"
                       [sectionIndex]="sectionIndex"
-                      (addSectionEvent)="addSectionEventHandler($event)"
-                      (updateSectionEvent)="updateSectionEventHandler($event)"
+                      (sectionEvent)="sectionEventHandler($event)"
                     >
                       <ng-container
                         *ngIf="questionIndexes$ | async as questionIndexes"
@@ -150,12 +155,7 @@
                                   sectionIds[pageIndex][sectionIndex]
                                 "
                                 [questionIndex]="questionIndex"
-                                (addQuestionEvent)="
-                                  addQuestionEventHandler($event)
-                                "
-                                (updateQuestionEvent)="
-                                  updateQuestionEventHandler($event)
-                                "
+                                (questionEvent)="questionEventHandler($event)"
                               ></app-question>
                             </div>
                           </ng-container>
@@ -171,7 +171,8 @@
       </ng-container>
     </div>
     <div class="width-30">
-      <app-preview></app-preview>
+      <app-iphone></app-iphone>
+      <!-- <app-preview></app-preview> -->
     </div>
   </div>
 </div>

@@ -1,3 +1,7 @@
+import { MatMenuModule } from '@angular/material/menu';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatCardModule } from '@angular/material/card';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -36,6 +40,8 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { EffectsModule } from '@ngrx/effects';
+import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -65,7 +71,11 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatFormFieldModule,
     MatIconModule,
     MatAutocompleteModule,
+    MatCardModule,
+    MatTreeModule,
     MatInputModule,
+    MatMenuModule,
+    MatExpansionModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -81,7 +91,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     }),
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
-    })
+    }),
+    EffectsModule.forFeature([FormConfigurationEffects])
   ]
 })
 export class RaceDynamicFormModule {

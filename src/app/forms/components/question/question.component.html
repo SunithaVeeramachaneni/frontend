@@ -3,8 +3,8 @@
   [formGroup]="questionForm"
   *ngIf="{
     question: question$ | async,
-    sectionQuestions: sectionQuestions$ | async
-  }"
+    sectionQuestionsCount: sectionQuestionsCount$ | async
+  } as props"
 >
   <div>
     <div>
@@ -20,16 +20,13 @@
             autocomplete="off"
             type="text"
             formControlName="name"
-            placeholder="Type Question"
+            [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
-            (keyup.enter)="addQuestion(questionForm.get('position').value)"
+            (keyup.enter)="addQuestion()"
           />
 
           <div class="floating-btns">
-            <button
-              class="questions-btn"
-              (click)="addQuestion(questionForm.get('position').value)"
-            >
+            <button class="questions-btn" (click)="addQuestion()">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
@@ -41,7 +38,7 @@
             <button
               class="delete-btn"
               (click)="deleteQuestion()"
-              [disabled]="sectionQuestions.length === 1"
+              [disabled]="props.sectionQuestionsCount === 1"
             >
               <img
                 src="assets/rdf-forms-icons/delete-question.svg"
@@ -56,20 +53,18 @@
 
         <div class="width-30">
           <app-response-type-button
-            (openResponseTypeEvent)="openResponseType = true"
             [questionForm]="questionForm"
             [fieldTypes]="fieldTypes"
           >
           </app-response-type-button>
-          <div *ngIf="openResponseType === true">
-            <app-response-type
-              (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
-              (openResponseTypeModalEvent)="
-                openResponseTypeModalEventHandler($event)
-              "
-              [fieldTypes]="fieldTypes"
-              [question]="question"
-            ></app-response-type>
+          <div *ngIf="openResponseTypeModal$ | async as openResponseTypeModal">
+            <ng-container *ngIf="openResponseTypeModal === true">
+              <app-response-type
+                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+                [fieldTypes]="fieldTypes"
+                [question]="question"
+              ></app-response-type>
+            </ng-container>
           </div>
         </div>
       </div>
@@ -103,61 +98,48 @@
                 class="m-l-40"
                 *ngIf="questionForm.get('fieldType').value === 'TAF'"
               >
-                <app-table></app-table>
+                <app-table
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-table>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'ARD'"
+              >
+                <app-array
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-array>
               </span>
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'DF'"
                 class="m-l-10"
               >
-                <input
-                  type="checkbox"
-                  id="date"
-                  class="required-input"
-                  name="date"
-                  formControlName="value"
-                />&nbsp;
-                <label for="date" translate="dateLabel"></label>
+                <app-date></app-date>
               </span>
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'TIF'"
                 class="m-l-10"
               >
-                <input
-                  type="checkbox"
-                  id="time"
-                  class="required-input"
-                  name="time"
-                  formControlName="value"
-                />&nbsp;
-                <label for="time" translate="timeLabel"></label>
+                <app-time></app-time>
               </span>
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="m-l-40"
               >
-                <label for="defaultValue" translate="defaultValue"> </label>
-                &nbsp;&nbsp;
-                <input
-                  type="text"
-                  id="defaultValue"
-                  formControlName="value"
-                  class="default-field-input-box"
-                />
+                <app-read-only></app-read-only>
               </span>
 
               <span
                 *ngIf="questionForm.get('fieldType').value === 'TF'"
                 class="m-l-50"
               >
-                <label translate="type"></label>&nbsp;
-
-                <select formControlName="value" class="text-field-select">
-                  <option value="TF" translate="shortAns"></option>
-                  <option value="LTV" translate="longAns"></option>
-                </select>
+                <app-text></app-text>
               </span>
 
               <span
@@ -176,44 +158,13 @@
                 "
                 class="m-l-20"
               >
-                <input
-                  type="checkbox"
-                  id="multi"
-                  class="required-input"
-                  name="multi"
-                  formControlName="multi"
-                  (click)="
-                    questionForm
-                      .get('multi')
-                      .setValue(!questionForm.get('multi').value)
-                  "
-                />&nbsp;
-                <label for="multi" translate="multiLabel"></label>
+                <app-drop-down></app-drop-down>
               </span>
             </div>
           </div>
 
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-            <div
-              class="width-50 bg-white dis-flex"
-              *ngIf="questionForm.get('value').value"
-            >
-              <img
-                class="insert-image"
-                [src]="getImageSrc(questionForm.get('value').value.base64)"
-                alt="image"
-              />
-              <div>
-                <span>
-                  {{ questionForm.get('value').value.name }}
-                </span>
-                <br />
-                <span>
-                  {{ (questionForm.get('value').value.size / 1024).toFixed(2) }}
-                  KB
-                </span>
-              </div>
-            </div>
+            <!-- <app-image></app-image> -->
           </div>
         </div>
       </div>

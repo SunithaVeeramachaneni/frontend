@@ -27,6 +27,11 @@ export const getPages = createSelector(
   (state) => state.pages
 );
 
+export const getPagesCount = createSelector(
+  selectFormConfigurationState,
+  (state) => state.pages.length
+);
+
 export const getPage = (pageIndex: number) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages.find((page, index) => index === pageIndex)
@@ -41,7 +46,14 @@ export const getSection = (pageIndex: number, sectionIndex: number) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .sections.find((section, index) => index === sectionIndex)
+      ?.sections.find((section, index) => index === sectionIndex)
+  );
+
+export const getSectionsCount = (pageIndex: number) =>
+  createSelector(
+    selectFormConfigurationState,
+    (state) =>
+      state.pages.find((page, index) => index === pageIndex)?.sections.length
   );
 
 export const getSectionIndexes = createSelector(
@@ -70,7 +82,7 @@ export const getQuestion = (
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .questions.find(
+      ?.questions.find(
         (question) =>
           question.sectionId === sectionId &&
           question.position === questionIndex + 1
@@ -82,6 +94,19 @@ export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
     state.pages
       .find((page, index) => index === pageIndex)
       .questions.filter((question) => question.sectionId === sectionId)
+  );
+
+export const getSectionQuestionsCount = (
+  pageIndex: number,
+  sectionId: string
+) =>
+  createSelector(
+    selectFormConfigurationState,
+    (state) =>
+      state.pages
+        .find((page, index) => index === pageIndex)
+        ?.questions.filter((question) => question.sectionId === sectionId)
+        .length
   );
 
 export const getQuestionIndexes = createSelector(

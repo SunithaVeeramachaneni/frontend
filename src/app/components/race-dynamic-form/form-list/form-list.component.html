@@ -1,3 +1,12 @@
 <div class="list-view">
   <h2 class="heading" translate="formLibrary"></h2>
+
+  <!-- <button mat-raised-button (click)="toggleMenu()">Add Button</button> -->
+</div>
+
+<div id="openviewtab">
+  <app-form-detail
+    [@slideInOut]="menuState"
+    (slideInOut)="menuState = 'out'"
+  ></app-form-detail>
 </div>

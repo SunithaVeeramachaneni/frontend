@@ -20,7 +20,8 @@
   "required": "{name} is required",
   "minlength": "{name} must be at least {length} characters",
   "maxlength": "{name} must be at the max of {length} characters",
-
+  "changesSaved": "All Changes Saved",
+  "changesInProgress": "Saving Changes In Progress",
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",
@@ -55,5 +56,8 @@
   "rows": "Rows",
   "fixNoofRows": "Fix no. of rows",
   "columnName": "Enter Column name",
-  "responseType": "Choose Response Type"
+  "responseType": "Choose Response Type",
+  "addSubFields": "Add Sub Fields",
+  "typeQuestion": "Type Question",
+  "responseTitle": "Response Title"
 }

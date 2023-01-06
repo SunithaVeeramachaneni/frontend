@@ -1,3 +1,6 @@
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,11 +12,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormWidgetComponent } from './components/form-widget/form-widget.component';
 import { PageComponent } from './components/page/page.component';
 import { SectionComponent } from './components/section/section.component';
-import { QuestionComponent } from './components/template/question.component';
+import { QuestionComponent } from './components/question/question.component';
 import { ResponseTypeComponent } from './components/response-type/response-type.component';
 import { PreviewComponent } from './components/preview/preview.component';
 import { AddLogicComponent } from './components/add-logic/add-logic.component';
 import { AddFilterComponent } from './components/add-filter/add-filter.component';
+import { IphoneComponent } from './components/iphone/iphone.component';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -27,6 +31,12 @@ import { ResponseTypeSideDrawerComponent } from './components/response-type-side
 import { TableComponent } from './components/field-types/table/table.component';
 import { ResponseTypeButtonComponent } from './components/response-type-button/response-type-button.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { ArrayComponent } from './components/field-types/array/array.component';
+import { DateComponent } from './components/field-types/date/date.component';
+import { TimeComponent } from './components/field-types/time/time.component';
+import { ReadOnlyComponent } from './components/field-types/read-only/read-only.component';
+import { TextComponent } from './components/field-types/text/text.component';
+import { DropDownComponent } from './components/field-types/drop-down/drop-down.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +50,14 @@ import { TranslateModule } from '@ngx-translate/core';
     AddFilterComponent,
     ResponseTypeSideDrawerComponent,
     TableComponent,
-    ResponseTypeButtonComponent
+    ResponseTypeButtonComponent,
+    IphoneComponent,
+    ArrayComponent,
+    DateComponent,
+    TimeComponent,
+    ReadOnlyComponent,
+    TextComponent,
+    DropDownComponent
   ],
   imports: [
     FormsModule,
@@ -58,6 +75,9 @@ import { TranslateModule } from '@ngx-translate/core';
     MatSliderModule,
     MatChipsModule,
     MatTabsModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatSelectModule,
     MatTooltipModule,
     TranslateModule.forChild({})
   ],
@@ -68,6 +88,7 @@ import { TranslateModule } from '@ngx-translate/core';
     QuestionComponent,
     ResponseTypeComponent,
     PreviewComponent,
+    IphoneComponent,
     AddLogicComponent,
     AddFilterComponent
   ]
