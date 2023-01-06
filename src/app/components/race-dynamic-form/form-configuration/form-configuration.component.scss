@@ -95,3 +95,33 @@
     margin-top: 0.6rem;
   }
 }
+.questionContainer {
+  display: flex;
+  .question {
+    width: 100%;
+  }
+}
+.six-dots {
+  position: relative;
+  top: 2px;
+  width: 9px;
+  cursor: move;
+}
+.highlight-bg {
+  border: 2px solid $blue-main;
+  border-radius: 4px;
+}
+
+.sectionMinimumDragArea {
+  min-height: 50px;
+}
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+.section-dragHandle {
+  position: relative;
+  top: -55px;
+}
+.sectionContainer {
+  width: 100%;
+}
