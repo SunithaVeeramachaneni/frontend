@@ -13,25 +13,36 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
+
 import { isEqual } from 'lodash-es';
 import {
   PageEvent,
   QuestionEvent,
   SectionEvent,
   FormMetadata,
-  Page
+  Page,
+  Question,
+  Section
 } from 'src/app/interfaces';
+
 import {
+  getSectionQuestions,
   getFormMetadata,
   getPageIndexes,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  State
+  State,
+  getPage
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { RaceDynamicFormService } from '../services/rdf.service';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-form-configuration',
@@ -53,6 +64,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   questionIndexes: any;
   saveStatus = 'done';
   formMetaData: FormMetadata;
+  fieldContentOpenState = false;
 
   constructor(
     private fb: FormBuilder,
@@ -363,51 +375,85 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         isFormDetailPublished: true
       })
     );
-    // this.formDetails$
-    //   .pipe(
-    //     tap((formDetails) => {
-    //       const {
-    //         pages,
-    //         formListId,
-    //         formDetailId,
-    //         counter,
-    //         formStatus,
-    //         authoredFormDetailId,
-    //         authoredFormDetailVersion
-    //       } = formDetails;
-    //       const formConfig = this.formConfiguration.value;
-    //       if (formDetailId) {
-    //       } else {
-    //         this.store.dispatch(
-    //           FormConfigurationActions.createFormDetail({
-    //             formMetadata: formConfig,
-    //             formListId,
-    //             pages
-    //           })
-    //         );
-    //       }
+  }
 
-    //       // this.store.dispatch(
-    //       //   FormConfigurationActions.updateAuthoredFormDetail({
-    //       //     formStatus: 'Published',
-    //       //     formListId,
-    //       //     counter,
-    //       //     pages,
-    //       //     authoredFormDetailId
-    //       //   })
-    //       // );
+  toggleFieldContentOpenState() {
+    this.fieldContentOpenState = true;
+  }
 
-    //       // this.store.dispatch(
-    //       //   FormConfigurationActions.createAuthoredFormDetail({
-    //       //     formStatus: 'Draft',
-    //       //     formListId,
-    //       //     counter,
-    //       //     pages,
-    //       //     authoredFormDetailVersion
-    //       //   })
-    //       // );
-    //     })
-    //   )
+  dropSection(event: CdkDragDrop<any>, pageIndex: number) {
+    const data = event.container.data.slice();
+
+    if (event.previousContainer === event.container) {
+      moveItemInArray(data, event.previousIndex, event.currentIndex);
+      const sectionPositionMap = {};
+      data.forEach((section: Section, index) => {
+        sectionPositionMap[section.id] = index + 1;
+      });
+      this.store.dispatch(
+        FormConfigurationActions.updatePage({
+          pageIndex,
+          data: sectionPositionMap
+        })
+      );
+    }
+  }
+
+  drop(event: CdkDragDrop<any>, pageIndex, sectionId) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+      event.container.data.forEach((question: Question, index) => {
+        this.store.dispatch(
+          FormConfigurationActions.updateQuestionBySection({
+            question: Object.assign({}, question, {
+              position: index + 1,
+              sectionId
+            }),
+            sectionId,
+            pageIndex
+          })
+        );
+      });
+    } else {
+      const questionId = event.previousContainer.data[event.previousIndex].id;
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+
+      this.store.dispatch(
+        FormConfigurationActions.transferQuestionFromSection({
+          questionId,
+          currentIndex: event.currentIndex,
+          previousIndex: event.previousIndex,
+          sourceSectionId: event.previousContainer.id,
+          destinationSectionId: event.container.id,
+          pageIndex
+        })
+      );
+    }
+  }
+
+  getQuestionsOfSection(pageIndex, sectionIndex) {
+    let sectionQuestions;
+    this.store
+      .select(getSectionQuestions(pageIndex, sectionIndex))
+      .subscribe((v) => (sectionQuestions = v));
+    return sectionQuestions;
+  }
+
+  getSectionsOfPage(pageIndex) {
+    let pageSections;
+    this.store
+      .select(getPage(pageIndex))
+      .subscribe((v) => (pageSections = v.sections));
+    return pageSections;
   }
 
   ngOnDestroy(): void {

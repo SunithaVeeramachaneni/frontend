@@ -91,6 +91,14 @@ export const addSection = createAction(
   }>()
 );
 
+export const updatePage = createAction(
+  '[Form Configuration] updatePage',
+  props<{
+    data: any;
+    pageIndex: number;
+  }>()
+);
+
 export const updateSection = createAction(
   '[Form Configuration Component] updateSection',
   props<{ section: Section; sectionIndex: number; pageIndex: number }>()
@@ -111,6 +119,15 @@ export const addQuestion = createAction(
   }>()
 );
 
+export const updateQuestionBySection = createAction(
+  '[Form Configuration Component] updateQuestionBySection',
+  props<{
+    question: Question;
+    sectionId: string;
+    pageIndex: number;
+  }>()
+);
+
 export const updateQuestion = createAction(
   '[Form Configuration Component] updateQuestion',
   props<{
@@ -124,6 +141,18 @@ export const deleteQuestion = createAction(
   '[Form Configuration Component] deleteQuestion',
   props<{
     questionIndex: number;
+    pageIndex: number;
+  }>()
+);
+
+export const transferQuestionFromSection = createAction(
+  '[Form Configuration] transferQuestionFromSection',
+  props<{
+    questionId: string;
+    currentIndex: number;
+    previousIndex: number;
+    sourceSectionId: string;
+    destinationSectionId: string;
     pageIndex: number;
   }>()
 );
