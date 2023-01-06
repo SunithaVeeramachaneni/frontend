@@ -298,12 +298,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestion({
+          FormConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
             }),
-            questionIndex: index,
+            sectionId,
             pageIndex
           })
         );

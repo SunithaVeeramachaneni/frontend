@@ -226,6 +226,30 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    FormConfigurationActions.updateQuestionBySection,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = page.questions.map((question) => {
+            if (
+              question.sectionId === action.sectionId &&
+              question.position === action.question.position
+            ) {
+              return action.question;
+            }
+            return question;
+          });
+          return { ...page, questions };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+  on(
     FormConfigurationActions.deleteQuestion,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {

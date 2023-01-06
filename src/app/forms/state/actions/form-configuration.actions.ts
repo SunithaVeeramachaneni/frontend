@@ -79,6 +79,15 @@ export const addQuestion = createAction(
   }>()
 );
 
+export const updateQuestionBySection = createAction(
+  '[Form Configuration Component] updateQuestionBySection',
+  props<{
+    question: Question;
+    sectionId: string;
+    pageIndex: number;
+  }>()
+);
+
 export const updateQuestion = createAction(
   '[Form Configuration Component] updateQuestion',
   props<{
