@@ -34,7 +34,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationApiActions.createFormSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formMetadata: { ...state.formMetadata, ...action.formMetaData }
+      formMetadata: { ...state.formMetadata, ...action.formMetadata }
     })
   ),
   on(
