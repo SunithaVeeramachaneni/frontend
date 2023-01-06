@@ -128,12 +128,14 @@
               Add Attachments
             </button>
 
+            <!-- Date Range -->
             <div class="dis-flex" *ngIf="question.fieldType === 'DFR'">
               <input type="date" class="text-answer" placeholder="From" />
               <span class="date-range-hypion">-</span>
               <input type="date" class="text-answer" placeholder="To" />
             </div>
 
+            <!-- Insert Image -->
             <div *ngIf="question.fieldType === 'IMG'">
               <img
                 [src]="getImageSrc(question.value.base64)"
@@ -142,62 +144,38 @@
                 class="image-field"
               />
             </div>
+
+            <!-- Dropdown -->
+            <div *ngIf="question.fieldType === 'DD'">
+              <mat-form-field appearance="outline" class="dropdown">
+                <mat-select [multiple]="question.multi" placeholder="Enter">
+                  <mat-option
+                    *ngFor="let value of question.value.values"
+                    [value]="value.title"
+                    [ngStyle]="{ color: value.color }"
+                  >
+                    {{ value.title }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Visible Input -->
+            <div *ngIf="question.fieldType === 'VI'">
+              <mat-button-toggle-group>
+                <mat-button-toggle
+                  *ngFor="let question of question.value.values"
+                  [value]="question.title"
+                  [ngStyle]="{
+                    color: question.color
+                  }"
+                >
+                  {{ question.title }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
           </div>
         </div>
-
-        <!-- multiple feild  -->
-
-        <!-- <div class="multiple-select-field">
-            <div class="read-box">
-              <p class="form-heading">What is the Pressure Reading?</p>
-              <div class="multi-select">
-                <mat-button-toggle-group
-                  name="fontStyle"
-                  aria-label="Font Style"
-                >
-                  <mat-button-toggle value="Yes">Yes</mat-button-toggle>
-                  <mat-button-toggle value="No">No</mat-button-toggle>
-                  <mat-button-toggle value="Option 3"
-                    >Option 3</mat-button-toggle
-                  >
-                  <mat-button-toggle value="Option 4"
-                    >Option 4</mat-button-toggle
-                  >
-                </mat-button-toggle-group>
-              </div>
-            </div>
-          </div> -->
-
-        <!-- pick list feild  -->
-        <!--
-          <div class="pick-list-field">
-            <div class="read-box">
-              <p class="form-heading">What is the Pressure Reading?</p>
-              <div class="select-option">
-                <mat-form-field appearance="outline">
-                  <mat-label>Select Options</mat-label>
-                  <mat-select>
-                    <mat-option value="yes">Yes</mat-option>
-                    <mat-option value="no">No</mat-option>
-                    <mat-option value="no1">Other op 1</mat-option>
-                    <mat-option value="no2">Other op 2</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div> -->
-
-        <!-- attachment -->
-
-        <!-- insert image field  -->
-
-        <!-- <div class="insert-image-field">
-            <div class="read-box">
-              <p class="form-heading">Insert Image</p>
-
-              <img src="assets/img/insert-image.png" class="insert-img" />
-            </div>
-          </div> -->
 
         <!-- Tabular Format  -->
 
@@ -229,19 +207,6 @@
               <div class="add-new-button">
                 <img src="assets/img/add-new.svg" />
                 <label>Add new</label>
-              </div>
-            </div>
-          </div> -->
-
-        <!-- Data Range -->
-        <!--
-          <div class="location-field">
-            <div class="read-box">
-              <p class="form-heading">Date</p>
-              <div class="date-range">
-                <input type="date" class="form-reading" placeholder="From" />
-                <span>-</span>
-                <input type="date" class="form-reading" placeholder="To" />
               </div>
             </div>
           </div> -->

@@ -184,7 +184,9 @@
                 "
                 class="m-l-20"
               >
-                <app-drop-down></app-drop-down>
+                <app-drop-down
+                  (checkedMultiple)="questionForm.get('multi').setValue($event)"
+                ></app-drop-down>
               </span>
             </div>
           </div>
