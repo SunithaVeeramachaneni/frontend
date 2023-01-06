@@ -33,7 +33,7 @@ export const createAuthoredFromDetailFailure = createAction(
 
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] updateAuthoredFromDetailSuccess',
-  props<{ pages: Page[] }>()
+  props<{ authoredFormDetail: any }>()
 );
 
 export const updateAuthoredFromDetailFailure = createAction(

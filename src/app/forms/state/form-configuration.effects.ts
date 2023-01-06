@@ -56,22 +56,20 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.createAuthoredFormDetail),
       concatMap((action) =>
-        this.raceDynamicFormService
-          .createAuthoredFormDetail$(action.formDetails)
-          .pipe(
-            map((response) =>
-              FormConfigurationApiActions.createAuthoredFromDetailSuccess({
-                authoredFormDetail: response
+        this.raceDynamicFormService.createAuthoredFormDetail$(action).pipe(
+          map((authoredFormDetail) =>
+            FormConfigurationApiActions.createAuthoredFromDetailSuccess({
+              authoredFormDetail
+            })
+          ),
+          catchError((error) =>
+            of(
+              FormConfigurationApiActions.createAuthoredFromDetailFailure({
+                error
               })
-            ),
-            catchError((error) =>
-              of(
-                FormConfigurationApiActions.createAuthoredFromDetailFailure({
-                  error
-                })
-              )
             )
           )
+        )
       )
     )
   );
@@ -80,10 +78,10 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateAuthoredFormDetail),
       concatMap((action) =>
-        of(action.pages).pipe(
-          map((pages) =>
+        this.raceDynamicFormService.updateAuthoredFormDetail$(action).pipe(
+          map((authoredFormDetail) =>
             FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
-              pages
+              authoredFormDetail
             })
           ),
           catchError((error) =>

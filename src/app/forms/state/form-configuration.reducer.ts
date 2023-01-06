@@ -10,13 +10,15 @@ export interface FormConfigurationState {
   pages: Page[];
   counter: number;
   formStatus: string;
+  authoredFormDetailId: string;
 }
 
 const initialState = {
   formMetadata: {} as FormMetadata,
   pages: [] as Page[],
   counter: 0,
-  formStatus: 'draft'
+  formStatus: 'Draft',
+  authoredFormDetailId: ''
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -36,6 +38,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationApiActions.createAuthoredFromDetailSuccess,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      authoredFormDetailId: action.authoredFormDetail.id
+    })
+  ),
+  on(
     FormConfigurationActions.updateFormMetadata,
     (state, action): FormConfigurationState => {
       const { formStatus, ...formMetadata } = action.formMetadata;
@@ -45,7 +54,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ...state.formMetadata,
           ...formMetadata,
           formStatus:
-            state.formStatus === 'published' ? state.formStatus : formStatus
+            state.formStatus === 'Published' ? state.formStatus : formStatus
         },
         formStatus
       };

@@ -73,8 +73,8 @@ export class FormConfigurationModalComponent implements OnInit {
       description: [''],
       isPublic: [false],
       isArchived: [false],
-      formStatus: ['draft'],
-      formType: ['standalone'],
+      formStatus: ['Draft'],
+      formType: ['Standalone'],
       tags: [this.tags]
     });
   }
@@ -145,7 +145,7 @@ export class FormConfigurationModalComponent implements OnInit {
 
   next() {
     if (this.headerDataForm.valid) {
-      const { email } = this.loginService.getLoggedInUserInfo();
+      const userName = this.loginService.getLoggedInUserName();
       this.createFormList();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
@@ -156,8 +156,8 @@ export class FormConfigurationModalComponent implements OnInit {
         FormConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
-            author: email,
-            lastPublishedBy: email,
+            author: userName,
+            lastPublishedBy: userName,
             formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
           }
         })

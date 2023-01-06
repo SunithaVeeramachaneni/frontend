@@ -122,5 +122,11 @@ export const getQuestionIndexes = createSelector(
 
 export const getFormDetails = createSelector(
   selectFormConfigurationState,
-  (state) => state
+  (state) => ({
+    formStatus: state.formStatus,
+    counter: state.counter,
+    pages: state.pages,
+    formListId: state.formMetadata.id,
+    authoredFormDetailId: state.authoredFormDetailId
+  })
 );

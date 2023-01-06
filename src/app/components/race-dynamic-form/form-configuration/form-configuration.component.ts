@@ -68,7 +68,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       name: [''],
       description: [''],
       counter: [0],
-      formStatus: ['draft']
+      formStatus: ['Draft']
     });
 
     this.formConfiguration.valueChanges
@@ -93,15 +93,21 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               })
             );
           }
-
-          if (prevCounter !== currCounter) {
-            this.store.dispatch(
-              FormConfigurationActions.updateCounter({
-                counter: currCounter
-              })
-            );
-          }
         })
+      )
+      .subscribe();
+
+    this.formConfiguration
+      .get('counter')
+      .valueChanges.pipe(
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        tap((counter) =>
+          this.store.dispatch(
+            FormConfigurationActions.updateCounter({
+              counter
+            })
+          )
+        )
       )
       .subscribe();
 
@@ -133,25 +139,34 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     // this.pages$.subscribe(console.log);
     // this.store.select(getFormMetadata).subscribe(console.log);
 
-    const { counter, ...currentFormMetaData } = this.formMetaData;
-    this.store.dispatch(
-      FormConfigurationActions.updateFormMetadata({
-        formMetadata: currentFormMetaData
-      })
-    );
-
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
-      tap((formDetails) => {
-        console.log(formDetails);
-        if (formDetails.pages.length && formDetails.formMetadata.id) {
-          this.store.dispatch(
-            FormConfigurationActions.createAuthoredFormDetail(formDetails)
-          );
+      tap(
+        ({ formStatus, formListId, counter, pages, authoredFormDetailId }) => {
+          if (pages.length && formListId) {
+            if (authoredFormDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.updateAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages,
+                  authoredFormDetailId
+                })
+              );
+            } else {
+              this.store.dispatch(
+                FormConfigurationActions.createAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages
+                })
+              );
+            }
+          }
         }
-      })
+      )
     );
-
-    this.authoredFormDetail$.subscribe();
   }
 
   get formConf() {

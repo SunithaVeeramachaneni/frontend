@@ -56,6 +56,8 @@ export class RaceDynamicFormService {
       | 'publishedDate'
       | 'tags'
       | 'formType'
+      | 'formStatus'
+      | 'isPublic'
     >
   ) {
     return from(
@@ -63,20 +65,19 @@ export class RaceDynamicFormService {
         formLogo: formListQuery.formLogo ?? '',
         name: formListQuery?.name ?? '',
         description: formListQuery.description ?? '',
-        formStatus: 'draft',
+        formStatus: formListQuery.formStatus ?? '',
         author: formListQuery.author ?? '',
         publishedDate: new Date().toISOString(),
         lastPublishedBy: formListQuery.lastPublishedBy ?? '',
         formType: formListQuery.formType ?? '',
         tags: formListQuery.tags || null,
-        isPublic: true
+        isPublic: formListQuery.isPublic
       })
     );
   }
 
   updateForm$(formMetaData) {
     const { isArchived, ...form } = formMetaData;
-    console.log(form);
     return from(this.awsApiService.UpdateFormList(form));
   }
 
@@ -110,27 +111,23 @@ export class RaceDynamicFormService {
   createAuthoredFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateAuthoredFormDetail({
-        formStatus: formDetails.formStatus,
-        formlistID: formDetails.formMetadata.id,
+        formStatus: formDetails.formStatus.toUpperCase(),
+        formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter
       })
     );
   }
 
-  updateAuthoredFormDetail$(formConfig, pages) {
+  updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredFormDetail(
-        {
-          formStatus: formConfig.formStatus,
-          formlistID: formConfig.id,
-          pages: JSON.stringify(pages),
-          counter: formConfig.counter
-        } as UpdateAuthoredFormDetailInput,
-        {
-          formlistID: formConfig.id
-        }
-      )
+      this.awsApiService.UpdateAuthoredFormDetail({
+        formStatus: formDetails.formStatus.toUpperCase(),
+        formlistID: formDetails.formListId,
+        pages: JSON.stringify(formDetails.pages),
+        counter: formDetails.counter,
+        id: formDetails.authoredFormDetailId
+      } as UpdateAuthoredFormDetailInput)
     );
   }
 
