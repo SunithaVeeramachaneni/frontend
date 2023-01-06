@@ -122,9 +122,11 @@
                         >
                           <ng-container
                             *ngFor="
-                              let questionIndex of questionIndexes[pageIndex][
-                                sectionIndex
-                              ]
+                              let questionObj of getQuestionsOfSection(
+                                pageIndex,
+                                sectionIds[pageIndex][sectionIndex]
+                              );
+                              let questionIndex = index
                             "
                           >
                             <div

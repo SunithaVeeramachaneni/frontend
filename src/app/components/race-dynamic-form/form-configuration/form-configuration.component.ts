@@ -2,8 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy,
-  ChangeDetectorRef
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -54,11 +53,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   fieldContentOpenState = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private store: Store<State>,
-    private cdrf: ChangeDetectorRef
-  ) {}
+  constructor(private fb: FormBuilder, private store: Store<State>) {}
 
   ngOnInit(): void {
     this.formConfiguration = this.fb.group({
@@ -218,7 +213,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           data: sectionPositionMap
         })
       );
-      this.cdrf.markForCheck();
     }
   }
 

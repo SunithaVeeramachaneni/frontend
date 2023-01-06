@@ -95,14 +95,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             return sec;
           });
           sections = sections.sort((a, b) => a.position - b.position);
-          let questionsSorted = [];
-          sections.forEach((section) => {
-            const ques = page.questions.filter(
-              (question) => question.sectionId === section.id
-            );
-            questionsSorted = questionsSorted.concat(ques);
-          });
-          console.log({ ...page, questions: questionsSorted, sections });
           return { ...page, sections };
         }
         return page;
