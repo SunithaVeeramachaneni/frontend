@@ -117,11 +117,11 @@ export class RaceDynamicFormService {
   createAuthoredFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateAuthoredFormDetail({
-        formStatus: formDetails.formStatus.toUpperCase(),
+        formStatus: formDetails.formStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion
+        version: formDetails.authoredFormDetailVersion.toString()
       })
     );
   }
@@ -129,7 +129,7 @@ export class RaceDynamicFormService {
   updateAuthoredFormDetail$(formDetails) {
     return from(
       this.awsApiService.UpdateAuthoredFormDetail({
-        formStatus: formDetails.formStatus.toUpperCase(),
+        formStatus: formDetails.formStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,

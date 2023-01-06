@@ -13,6 +13,7 @@ export interface FormConfigurationState {
   authoredFormDetailId: string;
   formDetailId: string;
   authoredFormDetailVersion: number;
+  isFormDetailPublished: boolean;
 }
 
 const initialState = {
@@ -22,7 +23,8 @@ const initialState = {
   formStatus: 'Draft',
   authoredFormDetailId: '',
   formDetailId: '',
-  authoredFormDetailVersion: 1
+  authoredFormDetailVersion: 1,
+  isFormDetailPublished: false
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -46,7 +48,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
-      authoredFormDetailVersion: action.authoredFormDetail.version + 1
+      authoredFormDetailVersion:
+        parseInt(action.authoredFormDetail.version, 10) + 1
     })
   ),
   on(
@@ -58,7 +61,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state.formMetadata,
         formStatus: 'Published'
       },
-      formDetailId: action.formDetail.id
+      formDetailId: action.formDetail.id,
+      isFormDetailPublished: false
     })
   ),
   on(
@@ -66,7 +70,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: 'Published',
-      formDetailId: action.formDetail.id
+      formDetailId: action.formDetail.id,
+      isFormDetailPublished: false
     })
   ),
   on(
@@ -91,6 +96,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       counter: action.counter,
       formStatus: 'Draft'
+    })
+  ),
+  on(
+    FormConfigurationActions.updateIsFormDetailPublished,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      isFormDetailPublished: action.isFormDetailPublished
     })
   ),
   on(

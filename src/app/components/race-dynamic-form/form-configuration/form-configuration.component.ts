@@ -132,7 +132,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
-    this.formDetails$ = this.store.select(getFormDetails);
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
@@ -142,9 +141,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           counter,
           pages,
           authoredFormDetailId,
-          authoredFormDetailVersion
+          authoredFormDetailVersion,
+          isFormDetailPublished,
+          formDetailId
         }) => {
           if (pages.length && formListId) {
+            const formConfig = this.formConfiguration.value;
             if (authoredFormDetailId) {
               this.store.dispatch(
                 FormConfigurationActions.updateAuthoredFormDetail({
@@ -156,6 +158,42 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 })
               );
             } else {
+              this.store.dispatch(
+                FormConfigurationActions.createAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages,
+                  authoredFormDetailVersion
+                })
+              );
+            }
+
+            if (isFormDetailPublished && formDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.updateFormDetail({
+                  formMetadata: formConfig,
+                  formListId,
+                  pages
+                })
+              );
+              this.store.dispatch(
+                FormConfigurationActions.createAuthoredFormDetail({
+                  formStatus,
+                  formListId,
+                  counter,
+                  pages,
+                  authoredFormDetailVersion
+                })
+              );
+            } else if (isFormDetailPublished && !formDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.createFormDetail({
+                  formMetadata: formConfig,
+                  formListId,
+                  pages
+                })
+              );
               this.store.dispatch(
                 FormConfigurationActions.createAuthoredFormDetail({
                   formStatus,
@@ -320,59 +358,56 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    this.formDetails$
-      .pipe(
-        tap((formDetails) => {
-          const {
-            pages,
-            formListId,
-            formDetailId,
-            counter,
-            formStatus,
-            authoredFormDetailId,
-            authoredFormDetailVersion
-          } = formDetails;
-          const formConfig = this.formConfiguration.value;
-          if (formDetailId) {
-            this.store.dispatch(
-              FormConfigurationActions.updateFormDetail({
-                formMetadata: formConfig,
-                formListId,
-                pages
-              })
-            );
-          } else {
-            this.store.dispatch(
-              FormConfigurationActions.createFormDetail({
-                formMetadata: formConfig,
-                formListId,
-                pages
-              })
-            );
-          }
+    this.store.dispatch(
+      FormConfigurationActions.updateIsFormDetailPublished({
+        isFormDetailPublished: true
+      })
+    );
+    // this.formDetails$
+    //   .pipe(
+    //     tap((formDetails) => {
+    //       const {
+    //         pages,
+    //         formListId,
+    //         formDetailId,
+    //         counter,
+    //         formStatus,
+    //         authoredFormDetailId,
+    //         authoredFormDetailVersion
+    //       } = formDetails;
+    //       const formConfig = this.formConfiguration.value;
+    //       if (formDetailId) {
+    //       } else {
+    //         this.store.dispatch(
+    //           FormConfigurationActions.createFormDetail({
+    //             formMetadata: formConfig,
+    //             formListId,
+    //             pages
+    //           })
+    //         );
+    //       }
 
-          this.store.dispatch(
-            FormConfigurationActions.updateAuthoredFormDetail({
-              formStatus: 'Published',
-              formListId,
-              counter,
-              pages,
-              authoredFormDetailId
-            })
-          );
+    //       // this.store.dispatch(
+    //       //   FormConfigurationActions.updateAuthoredFormDetail({
+    //       //     formStatus: 'Published',
+    //       //     formListId,
+    //       //     counter,
+    //       //     pages,
+    //       //     authoredFormDetailId
+    //       //   })
+    //       // );
 
-          this.store.dispatch(
-            FormConfigurationActions.createAuthoredFormDetail({
-              formStatus: 'Draft',
-              formListId,
-              counter,
-              pages,
-              authoredFormDetailVersion
-            })
-          );
-        })
-      )
-      .subscribe();
+    //       // this.store.dispatch(
+    //       //   FormConfigurationActions.createAuthoredFormDetail({
+    //       //     formStatus: 'Draft',
+    //       //     formListId,
+    //       //     counter,
+    //       //     pages,
+    //       //     authoredFormDetailVersion
+    //       //   })
+    //       // );
+    //     })
+    //   )
   }
 
   ngOnDestroy(): void {

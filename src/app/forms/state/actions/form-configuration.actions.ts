@@ -61,6 +61,11 @@ export const updateAuthoredFormDetail = createAction(
   }>()
 );
 
+export const updateIsFormDetailPublished = createAction(
+  '[Form Configuration Component] updateIsFormDetailPublished',
+  props<{ isFormDetailPublished: boolean }>()
+);
+
 export const updateCounter = createAction(
   '[Form Configuration Component] updateCounter',
   props<{ counter: number }>()
