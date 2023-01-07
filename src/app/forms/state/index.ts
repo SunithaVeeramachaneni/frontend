@@ -107,7 +107,7 @@ export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .questions.filter((question) => question.sectionId === sectionId)
+      ?.questions.filter((question) => question.sectionId === sectionId)
   );
 
 export const getSectionQuestionsCount = (
@@ -153,4 +153,14 @@ export const getFormDetails = createSelector(
     authoredFormDetailVersion: state.authoredFormDetailVersion,
     isFormDetailPublished: state.isFormDetailPublished
   })
+);
+
+export const getCreateOrEditForm = createSelector(
+  selectFormConfigurationState,
+  (state) => state.createOrEditForm
+);
+
+export const getFormSaveStatus = createSelector(
+  selectFormConfigurationState,
+  (state) => state.formSaveStatus
 );

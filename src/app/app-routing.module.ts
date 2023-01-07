@@ -68,7 +68,7 @@ export const routes: Routes = [
       )
   },
   {
-    path: 'rdf-forms',
+    path: 'forms',
     loadChildren: () =>
       import('./components/race-dynamic-form/race-dynamic-form.module').then(
         (m) => m.RaceDynamicFormModule

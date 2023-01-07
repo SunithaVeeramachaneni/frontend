@@ -61,14 +61,19 @@ export const updateAuthoredFormDetail = createAction(
   }>()
 );
 
+export const updateCounter = createAction(
+  '[Form Configuration Component] updateCounter',
+  props<{ counter: number }>()
+);
+
 export const updateIsFormDetailPublished = createAction(
   '[Form Configuration Component] updateIsFormDetailPublished',
   props<{ isFormDetailPublished: boolean }>()
 );
 
-export const updateCounter = createAction(
-  '[Form Configuration Component] updateCounter',
-  props<{ counter: number }>()
+export const updateCreateOrEditForm = createAction(
+  '[Form Configuration Component] updateCreateOrEditForm',
+  props<{ createOrEditForm: boolean }>()
 );
 
 export const addPage = createAction(

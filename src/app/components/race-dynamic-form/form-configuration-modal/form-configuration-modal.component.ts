@@ -130,6 +130,11 @@ export class FormConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
+        FormConfigurationActions.updateCreateOrEditForm({
+          createOrEditForm: true
+        })
+      );
+      this.store.dispatch(
         FormConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
@@ -139,7 +144,7 @@ export class FormConfigurationModalComponent implements OnInit {
           }
         })
       );
-      this.router.navigate(['/rdf-forms/create']);
+      this.router.navigate(['/forms/create']);
       this.dialogRef.close();
     }
   }

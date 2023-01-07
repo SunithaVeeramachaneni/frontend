@@ -23,8 +23,7 @@
   "searchForms": "Search Forms",
   "filters": "FILTERS",
   "changesSaved": "All Changes Saved",
-  "changesInProgress": "Saving Changes In Progress",
-
+  "savingChanges": "Saving Changes...",
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -34,15 +34,19 @@ import {
   getSectionIndexes,
   getFormDetails,
   State,
-  getPage
+  getPage,
+  getCreateOrEditForm,
+  getFormSaveStatus
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem
 } from '@angular/cdk/drag-drop';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-configuration',
@@ -61,15 +65,20 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
+  createOrEditForm$: Observable<boolean>;
+  formSaveStatus$: Observable<string>;
   questionIndexes: any;
-  saveStatus = 'done';
+  formStatus: string;
+  formSaveStatus = 'Saved';
   formMetaData: FormMetadata;
   fieldContentOpenState = false;
 
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private raceDynamicFormService: RaceDynamicFormService
+    private headerService: HeaderService,
+    private breadcrumbService: BreadcrumbService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -82,9 +91,17 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: ['Draft']
     });
 
+    const fornName = this.formConf.name.value
+      ? this.formConf.name.value
+      : 'Untitled Form';
+    this.headerService.setHeaderTitle(fornName);
+    this.breadcrumbService.set('@formName', {
+      label: fornName
+    });
+
     this.formConfiguration.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
@@ -93,14 +110,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
           if (!isEqual(prev, curr)) {
             this.store.dispatch(
-              FormConfigurationActions.updateFormMetadata({
-                formMetadata: curr
-              })
-            );
-
-            this.store.dispatch(
               FormConfigurationActions.updateForm({
-                formMetadata: this.formMetaData
+                formMetadata: { ...this.formMetaData, ...curr }
               })
             );
           }
@@ -127,6 +138,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         const { name, description, id } = formMetadata;
         this.formMetaData = formMetadata;
         this.formConfiguration.patchValue({ name, description, id });
+        const formName = name ? name : 'Untitled Form';
+        this.headerService.setHeaderTitle(formName);
+        this.breadcrumbService.set('@formName', {
+          label: formName
+        });
       })
     );
     this.pageIndexes$ = this.store.select(getPageIndexes);
@@ -157,6 +173,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           isFormDetailPublished,
           formDetailId
         }) => {
+          this.formStatus = formStatus;
           if (pages.length && formListId) {
             const formConfig = this.formConfiguration.value;
             if (authoredFormDetailId) {
@@ -220,6 +237,18 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         }
       )
     );
+
+    this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
+      tap((createOrEditForm) => {
+        if (!createOrEditForm) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
+
+    this.formSaveStatus$ = this.store
+      .select(getFormSaveStatus)
+      .pipe(tap((formSaveStatus) => (this.formSaveStatus = formSaveStatus)));
   }
 
   get formConf() {
@@ -452,7 +481,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     let pageSections;
     this.store
       .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v.sections));
+      .subscribe((v) => (pageSections = v?.sections));
     return pageSections;
   }
 

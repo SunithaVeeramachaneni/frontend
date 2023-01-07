@@ -3,7 +3,9 @@
   [formGroup]="formConfiguration"
   *ngIf="{
     formMetadata: formMetadata$ | async,
-    authoredFormDetail: authoredFormDetail$ | async
+    authoredFormDetail: authoredFormDetail$ | async,
+    createOrEditForm: createOrEditForm$ | async,
+    formSaveStatus: formSaveStatus$ | async
   }"
 >
   <div class="dis-flex form-header">
@@ -47,11 +49,11 @@
       </div>
     </div>
     <div class="dis-flex">
-      <div class="save-status" [hidden]="saveStatus !== 'done'">
+      <div class="save-status" [hidden]="formSaveStatus !== 'Saved'">
         {{ 'changesSaved' | translate }}
       </div>
-      <div class="save-status" [hidden]="saveStatus === 'done'">
-        {{ 'changesInProgress' | translate }}
+      <div class="save-status" [hidden]="formSaveStatus !== 'Saving'">
+        {{ 'savingChanges' | translate }}
       </div>
       <button
         mat-stroked-button
@@ -63,6 +65,7 @@
         mat-raised-button
         class="publish-btn"
         (click)="publishFormDetail()"
+        [disabled]="formStatus === 'Published'"
       >
         <span>
           <img
