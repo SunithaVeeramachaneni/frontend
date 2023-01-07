@@ -43,7 +43,6 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { AuthConfigService } from './auth-config.service';
-import { Amplify } from 'aws-amplify';
 import { EffectsModule } from '@ngrx/effects';
 
 registerLocaleData(localeEn, 'en');
@@ -114,13 +113,6 @@ export class AppModule {
     private loginService: LoginService,
     private authConfigService: AuthConfigService
   ) {
-    // Added to get amplify configuration
-    this.authConfigService.tenantsInfo$?.subscribe((tenant) => {
-      if (tenant?.amplifyConfig) {
-        Amplify.configure(tenant?.amplifyConfig);
-      }
-    });
-
     this.eventService
       .registerForEvents()
       .pipe(
