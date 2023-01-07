@@ -197,13 +197,11 @@ export class RaceDynamicFormService {
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
-          publishedDate: formatDistance(
-            new Date(p?.publishedDate),
-            new Date(),
-            {
-              addSuffix: true
-            }
-          )
+          publishedDate: p.publishedDate
+            ? formatDistance(new Date(p.publishedDate), new Date(), {
+                addSuffix: true
+              })
+            : ''
         })) || [];
     const count = resp?.items.length || 0;
     this.nextToken = resp?.nextToken || '';
