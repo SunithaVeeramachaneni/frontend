@@ -171,21 +171,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailId,
           authoredFormDetailVersion,
           isFormDetailPublished,
-          formDetailId
+          formDetailId,
+          formSaveStatus
         }) => {
           this.formStatus = formStatus;
           if (pages.length && formListId) {
             const formConfig = this.formConfiguration.value;
             if (authoredFormDetailId) {
-              this.store.dispatch(
-                FormConfigurationActions.updateAuthoredFormDetail({
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailId
-                })
-              );
+              if (formSaveStatus !== 'Saved') {
+                this.store.dispatch(
+                  FormConfigurationActions.updateAuthoredFormDetail({
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailId
+                  })
+                );
+              }
             } else {
               this.store.dispatch(
                 FormConfigurationActions.createAuthoredFormDetail({

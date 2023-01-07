@@ -103,7 +103,8 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService.createAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
             FormConfigurationApiActions.createAuthoredFromDetailSuccess({
-              authoredFormDetail
+              authoredFormDetail,
+              formSaveStatus: 'Saved'
             })
           ),
           catchError((error) =>
@@ -125,7 +126,8 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService.updateAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
             FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
-              authoredFormDetail
+              authoredFormDetail,
+              formSaveStatus: 'Saved'
             })
           ),
           catchError((error) =>

@@ -61,14 +61,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       authoredFormDetailId: action.authoredFormDetail.id,
       authoredFormDetailVersion:
         parseInt(action.authoredFormDetail.version, 10) + 1,
-      formSaveStatus: 'Saved'
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formSaveStatus: 'Saved'
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(

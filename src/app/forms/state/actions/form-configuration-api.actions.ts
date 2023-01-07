@@ -51,7 +51,7 @@ export const updateFormDetailFailure = createAction(
 
 export const createAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] createAuthoredFromDetailSuccess',
-  props<{ authoredFormDetail: any }>()
+  props<{ authoredFormDetail: any; formSaveStatus: string }>()
 );
 
 export const createAuthoredFromDetailFailure = createAction(
@@ -61,7 +61,7 @@ export const createAuthoredFromDetailFailure = createAction(
 
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration Service] updateAuthoredFromDetailSuccess',
-  props<{ authoredFormDetail: any }>()
+  props<{ authoredFormDetail: any; formSaveStatus: string }>()
 );
 
 export const updateAuthoredFromDetailFailure = createAction(

@@ -151,7 +151,8 @@ export const getFormDetails = createSelector(
     authoredFormDetailId: state.authoredFormDetailId,
     formDetailId: state.formDetailId,
     authoredFormDetailVersion: state.authoredFormDetailVersion,
-    isFormDetailPublished: state.isFormDetailPublished
+    isFormDetailPublished: state.isFormDetailPublished,
+    formSaveStatus: state.formSaveStatus
   })
 );
 
