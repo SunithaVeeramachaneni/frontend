@@ -25,7 +25,8 @@ export class FormConfigurationEffects {
         this.raceDynamicFormService.createForm$(action.formMetadata).pipe(
           map((response) =>
             FormConfigurationApiActions.createFormSuccess({
-              formMetadata: { id: response.id, ...action.formMetadata }
+              formMetadata: { id: response.id, ...action.formMetadata },
+              formSaveStatus: 'Saved'
             })
           ),
           catchError((error) =>
@@ -41,8 +42,11 @@ export class FormConfigurationEffects {
       ofType(FormConfigurationActions.updateForm),
       concatMap((action) =>
         this.raceDynamicFormService.updateForm$(action.formMetadata).pipe(
-          map((formMetadata) =>
-            FormConfigurationApiActions.updateFormSuccess({ formMetadata })
+          map(() =>
+            FormConfigurationApiActions.updateFormSuccess({
+              formMetadata: action.formMetadata,
+              formSaveStatus: 'Saved'
+            })
           ),
           catchError((error) =>
             of(FormConfigurationApiActions.updateFormFailure({ error }))

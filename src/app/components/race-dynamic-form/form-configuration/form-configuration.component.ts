@@ -105,10 +105,16 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const { counter: prevCounter, ...prev } = previous;
-          const { counter: currCounter, ...curr } = current;
+          const { counter: prevCounter, id: prevId, ...prev } = previous;
+          const { counter: currCounter, id: currId, ...curr } = current;
 
           if (!isEqual(prev, curr)) {
+            this.store.dispatch(
+              FormConfigurationActions.updateFormMetadata({
+                formMetadata: this.formConfiguration.value
+              })
+            );
+
             this.store.dispatch(
               FormConfigurationActions.updateForm({
                 formMetadata: { ...this.formMetaData, ...curr }

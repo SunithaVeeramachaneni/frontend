@@ -139,7 +139,6 @@ export class FormConfigurationModalComponent implements OnInit {
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,
-            lastPublishedBy: userName,
             formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
           }
         })

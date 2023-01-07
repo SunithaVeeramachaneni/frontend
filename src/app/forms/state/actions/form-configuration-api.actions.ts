@@ -3,7 +3,7 @@ import { FormMetadata, Page } from 'src/app/interfaces';
 
 export const createFormSuccess = createAction(
   '[Form Configuration Service] createFormSuccess',
-  props<{ formMetadata: FormMetadata }>()
+  props<{ formMetadata: FormMetadata; formSaveStatus: string }>()
 );
 
 export const createFormFailure = createAction(
@@ -13,7 +13,7 @@ export const createFormFailure = createAction(
 
 export const updateFormSuccess = createAction(
   '[Form Configuration Service] updateFormSuccess',
-  props<{ formMetadata: any }>()
+  props<{ formMetadata: any; formSaveStatus: string }>()
 );
 
 export const updateFormFailure = createAction(
