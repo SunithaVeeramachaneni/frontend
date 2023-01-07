@@ -7,7 +7,7 @@ import {
   OpenIdConfiguration
 } from 'angular-auth-oidc-client';
 import { Amplify } from 'aws-amplify';
-import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import * as hash from 'object-hash';
@@ -20,7 +20,7 @@ import { AppService } from './shared/services/app.services';
   providedIn: 'root'
 })
 export class AuthConfigService {
-  tenantsInfo$: BehaviorSubject<Tenant> = new BehaviorSubject(null);
+  tenantsInfo$: Observable<Tenant>;
 
   constructor(
     private tenantService: TenantService,
@@ -38,7 +38,6 @@ export class AuthConfigService {
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
             Amplify.configure(tenant?.amplifyConfig); // Added tenant based Amplify configure
-            this.tenantsInfo$.next(tenant);
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();

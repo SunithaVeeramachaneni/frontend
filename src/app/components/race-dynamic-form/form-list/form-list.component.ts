@@ -171,7 +171,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'updatedAt',
+      id: 'publishedDate',
       displayName: 'Last Published At',
       type: 'string',
       order: 5,
@@ -268,7 +268,7 @@ export class FormListComponent implements OnInit {
       case 'author':
       case 'formStatus':
       case 'lastPublishedBy':
-      case 'updatedAt ':
+      case 'publishedDate':
         this.openEditFormModal(event.row);
         break;
       default:

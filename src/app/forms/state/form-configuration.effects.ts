@@ -69,7 +69,8 @@ export class FormConfigurationEffects {
               this.raceDynamicFormService.updateForm$({
                 ...formDetail.formMetadata,
                 lastPublishedBy: this.loginService.getLoggedInUserName(),
-                publishedDate: new Date().toISOString()
+                publishedDate: new Date().toISOString(),
+                formStatus: 'Published'
               }),
               this.raceDynamicFormService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
