@@ -89,6 +89,27 @@ export const getQuestion = (
       )
   );
 
+export const getQuestionByID = (
+  pageIndex: number,
+  sectionId: string,
+  questionId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      ?.questions.find(
+        (question) =>
+          question.sectionId === sectionId && question.id === questionId
+      )
+  );
+
+export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      .questions.filter((question) => question.sectionId === sectionId)
+  );
+
 export const getSectionQuestionsCount = (
   pageIndex: number,
   sectionId: string
