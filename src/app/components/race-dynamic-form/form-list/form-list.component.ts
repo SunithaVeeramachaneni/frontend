@@ -223,8 +223,8 @@ export class FormListComponent implements OnInit {
   searchForm: FormControl;
   addCopyFormCount = false;
   isPopoverOpen = false;
-  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
-  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  closeIcon = 'assets/img/svg/cancel-icon.svg';
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService
@@ -265,9 +265,9 @@ export class FormListComponent implements OnInit {
     const { columnId } = event;
     switch (columnId) {
       case 'name':
-      case 'createdBy':
+      case 'author':
       case 'formStatus':
-      case 'updatedBy':
+      case 'lastPublishedBy':
       case 'updatedAt ':
         this.openEditFormModal(event.row);
         break;
@@ -333,8 +333,6 @@ export class FormListComponent implements OnInit {
               type: 'success'
             });
           } else {
-            console.log(this.skip);
-            console.log(scrollData.length);
             initial.data = initial.data.concat(scrollData);
           }
         }
@@ -402,17 +400,21 @@ export class FormListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       // {
-      //   title: 'Copy',
+      //   title: 'Edit Template',
+      //   action: 'edit'
+      // },
+      // {
+      //   title: 'Copy Template',
       //   action: 'copy'
       // },
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
       {
         title: 'Archive',
         action: 'archive'
       }
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
