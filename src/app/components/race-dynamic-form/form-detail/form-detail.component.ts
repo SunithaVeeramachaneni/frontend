@@ -26,7 +26,6 @@ export class FormDetailComponent implements OnInit {
   }
 
   openMenu(type) {
-    console.log(type);
     this.setnamevaribale = type;
   }
 }

@@ -27,6 +27,7 @@ export const createFormDetail = createAction(
     formMetadata: FormMetadata;
     pages: Page[];
     formListId: string;
+    authoredFormDetail: any;
   }>()
 );
 
@@ -36,6 +37,8 @@ export const updateFormDetail = createAction(
     formMetadata: FormMetadata;
     pages: Page[];
     formListId: string;
+    formDetailId: string;
+    authoredFormDetail: any;
   }>()
 );
 
@@ -69,6 +72,11 @@ export const updateCounter = createAction(
 export const updateIsFormDetailPublished = createAction(
   '[Form Configuration Component] updateIsFormDetailPublished',
   props<{ isFormDetailPublished: boolean }>()
+);
+
+export const updateFormPublishStatus = createAction(
+  '[Form Configuration Component] updateFormPublishStatus',
+  props<{ formPublishStatus: string }>()
 );
 
 export const updateCreateOrEditForm = createAction(

@@ -25,6 +25,7 @@ export const createFormDetailSuccess = createAction(
   '[Form Configuration Component] createFormDetailSuccess',
   props<{
     formDetail: any;
+    formPublishStatus: string;
   }>()
 );
 
@@ -39,6 +40,7 @@ export const updateFormDetailSuccess = createAction(
   '[Form Configuration Component] updateFormDetailSuccess',
   props<{
     formDetail: any;
+    formPublishStatus: string;
   }>()
 );
 

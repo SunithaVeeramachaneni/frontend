@@ -52,8 +52,6 @@ export class RaceDynamicFormService {
       | 'formLogo'
       | 'description'
       | 'author'
-      | 'lastPublishedBy'
-      | 'publishedDate'
       | 'tags'
       | 'formType'
       | 'formStatus'
@@ -67,8 +65,6 @@ export class RaceDynamicFormService {
         description: formListQuery.description ?? '',
         formStatus: formListQuery.formStatus ?? '',
         author: formListQuery.author ?? '',
-        publishedDate: new Date().toISOString(),
-        lastPublishedBy: formListQuery.lastPublishedBy ?? '',
         formType: formListQuery.formType ?? '',
         tags: formListQuery.tags || null,
         isPublic: formListQuery.isPublic
@@ -99,18 +95,14 @@ export class RaceDynamicFormService {
 
   updateFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateFormDetail(
-        {
-          formlistID: formDetails.formListId,
-          formData: this.formatFormData(
-            formDetails.formMetadata,
-            formDetails.pages
-          )
-        } as UpdateFormDetailInput,
-        {
-          formlistID: formDetails.formListId
-        }
-      )
+      this.awsApiService.UpdateFormDetail({
+        id: formDetails.formDetailId,
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
+      } as UpdateFormDetailInput)
     );
   }
 

@@ -394,7 +394,7 @@ export class FormListComponent implements OnInit {
   };
 
   configOptionsChangeHandler = (event): void => {
-    console.log('event', event);
+    // console.log('event', event);
   };
 
   prepareMenuActions(): void {

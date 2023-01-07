@@ -24,6 +24,8 @@
   "filters": "FILTERS",
   "changesSaved": "All Changes Saved",
   "savingChanges": "Saving Changes...",
+  "changesPublished": "All Changes Published",
+  "publishingChanges": "Publishing Changes...",
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",

@@ -36,7 +36,8 @@ import {
   State,
   getPage,
   getCreateOrEditForm,
-  getFormSaveStatus
+  getFormSaveStatus,
+  getFormPublishStatus
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
@@ -67,10 +68,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
   formSaveStatus$: Observable<string>;
+  formPublishStatus$: Observable<string>;
   questionIndexes: any;
   formStatus: string;
-  formSaveStatus = 'Saved';
-  formMetaData: FormMetadata;
+  formSaveStatus: string;
+  formPublishStatus: string;
+  isFormDetailPublished: string;
+  formMetadata: FormMetadata;
   fieldContentOpenState = false;
 
   constructor(
@@ -111,13 +115,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({
-                formMetadata: this.formConfiguration.value
+                formMetadata: curr
               })
             );
 
             this.store.dispatch(
               FormConfigurationActions.updateForm({
-                formMetadata: { ...this.formMetaData, ...curr }
+                formMetadata: { ...this.formMetadata, ...curr }
               })
             );
           }
@@ -142,7 +146,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         const { name, description, id } = formMetadata;
-        this.formMetaData = formMetadata;
+        this.formMetadata = formMetadata;
         this.formConfiguration.patchValue({ name, description, id });
         const formName = name ? name : 'Untitled Form';
         this.headerService.setHeaderTitle(formName);
@@ -170,8 +174,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
         ({
+          formMetadata,
           formStatus,
-          formListId,
           counter,
           pages,
           authoredFormDetailId,
@@ -181,8 +185,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formSaveStatus
         }) => {
           this.formStatus = formStatus;
+          const { id: formListId } = formMetadata;
+          this.isFormDetailPublished = isFormDetailPublished;
           if (pages.length && formListId) {
-            const formConfig = this.formConfiguration.value;
             if (authoredFormDetailId) {
               if (formSaveStatus !== 'Saved') {
                 this.store.dispatch(
@@ -210,35 +215,32 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             if (isFormDetailPublished && formDetailId) {
               this.store.dispatch(
                 FormConfigurationActions.updateFormDetail({
-                  formMetadata: formConfig,
+                  formMetadata,
                   formListId,
-                  pages
-                })
-              );
-              this.store.dispatch(
-                FormConfigurationActions.createAuthoredFormDetail({
-                  formStatus,
-                  formListId,
-                  counter,
                   pages,
-                  authoredFormDetailVersion
+                  formDetailId,
+                  authoredFormDetail: {
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailVersion
+                  }
                 })
               );
             } else if (isFormDetailPublished && !formDetailId) {
               this.store.dispatch(
                 FormConfigurationActions.createFormDetail({
-                  formMetadata: formConfig,
+                  formMetadata,
                   formListId,
-                  pages
-                })
-              );
-              this.store.dispatch(
-                FormConfigurationActions.createAuthoredFormDetail({
-                  formStatus,
-                  formListId,
-                  counter,
                   pages,
-                  authoredFormDetailVersion
+                  authoredFormDetail: {
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailVersion
+                  }
                 })
               );
             }
@@ -258,6 +260,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formSaveStatus$ = this.store
       .select(getFormSaveStatus)
       .pipe(tap((formSaveStatus) => (this.formSaveStatus = formSaveStatus)));
+
+    this.formPublishStatus$ = this.store
+      .select(getFormPublishStatus)
+      .pipe(
+        tap((formPublishStatus) => (this.formPublishStatus = formPublishStatus))
+      );
   }
 
   get formConf() {
@@ -408,6 +416,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
+    this.store.dispatch(
+      FormConfigurationActions.updateFormPublishStatus({
+        formPublishStatus: 'Publishing'
+      })
+    );
     this.store.dispatch(
       FormConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true

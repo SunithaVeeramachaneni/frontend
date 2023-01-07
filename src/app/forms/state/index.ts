@@ -144,10 +144,10 @@ export const getQuestionIndexes = createSelector(
 export const getFormDetails = createSelector(
   selectFormConfigurationState,
   (state) => ({
+    formMetadata: state.formMetadata,
     formStatus: state.formStatus,
     counter: state.counter,
     pages: state.pages,
-    formListId: state.formMetadata.id,
     authoredFormDetailId: state.authoredFormDetailId,
     formDetailId: state.formDetailId,
     authoredFormDetailVersion: state.authoredFormDetailVersion,
@@ -164,4 +164,9 @@ export const getCreateOrEditForm = createSelector(
 export const getFormSaveStatus = createSelector(
   selectFormConfigurationState,
   (state) => state.formSaveStatus
+);
+
+export const getFormPublishStatus = createSelector(
+  selectFormConfigurationState,
+  (state) => state.formPublishStatus
 );

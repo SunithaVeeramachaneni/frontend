@@ -16,6 +16,7 @@ export interface FormConfigurationState {
   isFormDetailPublished: boolean;
   createOrEditForm: boolean;
   formSaveStatus: string;
+  formPublishStatus: string;
 }
 
 const initialState = {
@@ -28,7 +29,8 @@ const initialState = {
   authoredFormDetailVersion: 1,
   isFormDetailPublished: false,
   createOrEditForm: false,
-  formSaveStatus: ''
+  formSaveStatus: '',
+  formPublishStatus: ''
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -62,8 +64,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
-      authoredFormDetailVersion:
-        parseInt(action.authoredFormDetail.version, 10) + 1,
       formSaveStatus: action.formSaveStatus
     })
   ),
@@ -84,7 +84,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         formStatus: 'Published'
       },
       formDetailId: action.formDetail.id,
-      isFormDetailPublished: false
+      authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
+      isFormDetailPublished: false,
+      formPublishStatus: action.formPublishStatus
     })
   ),
   on(
@@ -93,7 +95,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       formStatus: 'Published',
       formDetailId: action.formDetail.id,
-      isFormDetailPublished: false
+      authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
+      isFormDetailPublished: false,
+      formPublishStatus: action.formPublishStatus
     })
   ),
   on(
@@ -127,6 +131,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       isFormDetailPublished: action.isFormDetailPublished
+    })
+  ),
+  on(
+    FormConfigurationActions.updateFormPublishStatus,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      formPublishStatus: action.formPublishStatus
     })
   ),
   on(

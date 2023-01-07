@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 
-import { map, catchError, concatMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { map, catchError, concatMap, mergeMap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
@@ -10,12 +10,14 @@ import {
   FormConfigurationApiActions
 } from './actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { LoginService } from 'src/app/components/login/services/login.service';
 
 @Injectable()
 export class FormConfigurationEffects {
   constructor(
     private actions$: Actions,
-    private raceDynamicFormService: RaceDynamicFormService
+    private raceDynamicFormService: RaceDynamicFormService,
+    private loginService: LoginService
   ) {}
 
   createForm$ = createEffect(() =>
@@ -59,12 +61,29 @@ export class FormConfigurationEffects {
   createFormDetail$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FormConfigurationActions.createFormDetail),
-      concatMap((action) =>
-        this.raceDynamicFormService.createFormDetail$(action).pipe(
-          map((formDetail) =>
-            FormConfigurationApiActions.createFormDetailSuccess({
-              formDetail
-            })
+      concatMap((action) => {
+        const { authoredFormDetail, ...formDetail } = action;
+        return this.raceDynamicFormService.createFormDetail$(formDetail).pipe(
+          mergeMap((response) =>
+            forkJoin([
+              this.raceDynamicFormService.updateForm$({
+                ...formDetail.formMetadata,
+                lastPublishedBy: this.loginService.getLoggedInUserName(),
+                publishedDate: new Date().toISOString()
+              }),
+              this.raceDynamicFormService.createAuthoredFormDetail$({
+                ...authoredFormDetail,
+                authoredFormDetailVersion:
+                  authoredFormDetail.authoredFormDetailVersion + 1
+              })
+            ]).pipe(
+              map(() =>
+                FormConfigurationApiActions.createFormDetailSuccess({
+                  formDetail: response,
+                  formPublishStatus: 'Published'
+                })
+              )
+            )
           ),
           catchError((error) =>
             of(
@@ -73,20 +92,37 @@ export class FormConfigurationEffects {
               })
             )
           )
-        )
-      )
+        );
+      })
     )
   );
 
   updateFormDetail$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateFormDetail),
-      concatMap((action) =>
-        this.raceDynamicFormService.updateFormDetail$(action).pipe(
-          map((formDetail) =>
-            FormConfigurationApiActions.updateFormDetailSuccess({
-              formDetail
-            })
+      concatMap((action) => {
+        const { authoredFormDetail, ...formDetail } = action;
+        return this.raceDynamicFormService.updateFormDetail$(formDetail).pipe(
+          mergeMap((response) =>
+            forkJoin([
+              this.raceDynamicFormService.updateForm$({
+                ...formDetail.formMetadata,
+                lastPublishedBy: this.loginService.getLoggedInUserName(),
+                publishedDate: new Date().toISOString()
+              }),
+              this.raceDynamicFormService.createAuthoredFormDetail$({
+                ...authoredFormDetail,
+                authoredFormDetailVersion:
+                  authoredFormDetail.authoredFormDetailVersion + 1
+              })
+            ]).pipe(
+              map(() =>
+                FormConfigurationApiActions.updateFormDetailSuccess({
+                  formDetail: response,
+                  formPublishStatus: 'Published'
+                })
+              )
+            )
           ),
           catchError((error) =>
             of(
@@ -95,8 +131,8 @@ export class FormConfigurationEffects {
               })
             )
           )
-        )
-      )
+        );
+      })
     )
   );
 
