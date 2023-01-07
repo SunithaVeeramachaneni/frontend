@@ -146,6 +146,7 @@ export const updateQuestion = createAction(
   props<{
     question: Question;
     questionIndex: number;
+    sectionId: string;
     pageIndex: number;
   }>()
 );
@@ -154,6 +155,7 @@ export const deleteQuestion = createAction(
   '[Form Configuration Component] deleteQuestion',
   props<{
     questionIndex: number;
+    sectionId: string;
     pageIndex: number;
   }>()
 );

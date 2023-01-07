@@ -395,6 +395,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           FormConfigurationActions.updateQuestion({
             question,
             questionIndex,
+            sectionId,
             pageIndex
           })
         );
@@ -404,6 +405,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.store.dispatch(
           FormConfigurationActions.deleteQuestion({
             questionIndex,
+            sectionId,
             pageIndex
           })
         );

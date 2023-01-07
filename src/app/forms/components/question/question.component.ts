@@ -104,6 +104,7 @@ export class QuestionComponent implements OnInit {
         tap(() =>
           this.questionEvent.emit({
             pageIndex: this.pageIndex,
+            sectionId: this.sectionId,
             question: this.questionForm.value,
             questionIndex: this.questionIndex,
             type: 'update'
@@ -140,6 +141,7 @@ export class QuestionComponent implements OnInit {
   deleteQuestion() {
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
+      sectionId: this.sectionId,
       questionIndex: this.questionIndex,
       type: 'delete'
     });
