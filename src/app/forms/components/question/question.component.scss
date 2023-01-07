@@ -2,12 +2,14 @@
 
 .questions {
   .floating-btns {
-    position: absolute;
-    left: 10px;
+    position: relative;
+    left: -85px;
+    top: 40px;
     border: 1px solid $border-color;
     border-radius: 7px;
-    margin-top: -60px;
+    margin-top: -100px;
     display: none;
+    width: 55px;
   }
 
   .questions-btn {

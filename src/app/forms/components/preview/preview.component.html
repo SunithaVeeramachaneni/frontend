@@ -24,7 +24,7 @@
       <div id="preview" *ngFor="let question of section.questions">
         <div class="field-types">
           <div class="each-fieldtype">
-            <p class="question-name">
+            <p class="question-name" *ngIf="question.fieldType !== 'ARD'">
               {{ question.name ? question.name : 'Type Question' }}
             </p>
 
@@ -174,21 +174,15 @@
                 </mat-button-toggle>
               </mat-button-toggle-group>
             </div>
-          </div>
-        </div>
 
-        <!-- Tabular Format  -->
-
-        <!-- <div class="insert-image-field">
-            <div class="read-box">
-              <p class="form-heading">Gas Inspection of Tyre</p>
-
+            <!-- Tabular  -->
+            <div *ngIf="question.fieldType === 'TAF'">
               <table class="table-class">
                 <thead>
                   <tr>
-                    <td>Title</td>
-                    <td>ID</td>
-                    <td>Pressure</td>
+                    <td></td>
+                    <td>Column 1</td>
+                    <td>Column 2</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,56 +192,57 @@
                     <td><input type="text" class="input-p" /></td>
                   </tr>
                   <tr>
-                    <td class="bg-color">1</td>
+                    <td class="bg-color">2</td>
                     <td><input type="text" class="input-p" /></td>
                     <td><input type="text" class="input-p" /></td>
                   </tr>
                 </tbody>
               </table>
               <div class="add-new-button">
-                <img src="assets/img/add-new.svg" />
+                <img src="assets/img/add-new.svg" class="add-new-icon" />
                 <label>Add new</label>
               </div>
             </div>
-          </div> -->
 
-        <!-- array field -->
-        <!-- <div class="location-field">
-            <div class="array-field-box">
+            <!-- Array-->
+            <div *ngIf="question.fieldType === 'ARD'">
               <label>
                 <img
                   class="img-array"
+                  (click)="openBottomSheet()"
                   src="assets/rdf-forms-icons/array-arrow.svg"
                 />
               </label>
-              <p class="head-array">Gas inspection of tyre (1)</p>
-            </div>
-            <div class="read-box">
+              <span class="array-heading">
+                {{ question.name ? question.name : 'Type Question' }}
+              </span>
+
               <div class="add-new-button">
-                <img src="assets/img/add-new.svg" />
-                <label (click)="openBottomSheet()">Add new</label>
+                <img src="assets/img/add-new.svg" class="add-new-icon" />
+                <label>Add new</label>
               </div>
             </div>
-          </div> -->
+          </div>
+        </div>
 
-        <!-- <div class="bg-bottom-array" *ngIf="arrayField">
-            <div class="bottom-header">
-              <p class="red-h">Delete</p>
-              <h3>Gas Inspection tyre 1</h3>
-              <p>Done</p>
-            </div>
+        <div class="bg-bottom-array" *ngIf="arrayField">
+          <div class="bottom-header">
+            <p class="red-h">Delete</p>
+            <h3>Gas Inspection tyre 1</h3>
+            <p>Done</p>
+          </div>
 
-            <div class="form-type">
-              <div>
-                <label class="type-label">Type ID*</label>
-                <input type="text" class="form-control-type" />
-              </div>
-              <div>
-                <label class="type-label">Type Pressure</label>
-                <input class="form-control-type" type="text" />
-              </div>
+          <div class="form-type">
+            <div>
+              <label class="type-label">Type ID*</label>
+              <input type="text" class="form-control-type" />
             </div>
-          </div> -->
+            <div>
+              <label class="type-label">Type Pressure</label>
+              <input class="form-control-type" type="text" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

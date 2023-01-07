@@ -5,7 +5,9 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -21,6 +23,7 @@ import { SectionEvent, Section } from 'src/app/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectionComponent implements OnInit {
+  @ViewChild('sectionName') sectionName: ElementRef;
   @Input() set pageIndex(pageIndex: number) {
     this._pageIndex = pageIndex;
   }
@@ -94,6 +97,7 @@ export class SectionComponent implements OnInit {
 
   editSection() {
     this.sectionForm.get('name').enable();
+    this.sectionName.nativeElement.focus();
   }
 
   deleteSection() {

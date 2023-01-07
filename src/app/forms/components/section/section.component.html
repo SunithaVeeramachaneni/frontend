@@ -36,8 +36,9 @@
           <input
             #sectionName
             type="text"
+            autofocus
             formControlName="name"
-            [size]="getSize(sectionName.value)"
+            [size]="sectionName.value !== '' ? getSize(sectionName.value) : 6"
             class="form_section_name_input"
             placeholder="Untitled Section"
             autocomplete="off"

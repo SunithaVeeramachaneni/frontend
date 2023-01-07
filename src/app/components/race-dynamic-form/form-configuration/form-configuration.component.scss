@@ -90,7 +90,7 @@
   }
 
   .form {
-    height: 75vh;
+    height: calc(100vh - 150px);
     overflow-y: auto;
     margin-top: 0.6rem;
   }

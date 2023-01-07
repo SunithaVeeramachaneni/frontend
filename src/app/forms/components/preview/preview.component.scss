@@ -198,6 +198,90 @@
         ::ng-deep .mat-button-toggle-label-content {
           line-height: 32px;
         }
+
+        .table-class {
+          width: 97%;
+          border: 1px solid $gray3;
+          margin-top: 7px;
+
+          thead {
+            background-color: $gray1-bg;
+            padding: 5px;
+          }
+          td {
+            padding: 4px;
+            text-align: center;
+          }
+          tbody td {
+            padding: 4px;
+          }
+          .bg-color {
+            background-color: $gray1-bg;
+          }
+          .input-p {
+            width: 80%;
+          }
+        }
+        .add-new-icon {
+          width: 15px;
+          margin-top: 5px;
+          position: relative;
+          top: 2px;
+          margin-right: 5px;
+        }
+
+        .img-array {
+          margin-right: 5px;
+          width: 10px;
+          position: relative;
+          top: 1px;
+        }
+
+        .array-heading {
+          font-weight: 500;
+          font-size: 110%;
+          color: $black;
+        }
+      }
+    }
+
+    .bg-bottom-array {
+      background: $white;
+      // padding: 0px;
+
+      .bottom-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 0.5rem;
+        align-items: center;
+        border-bottom: 1px solid $gray3;
+        font-size: 14px;
+
+        p {
+          font-size: 12px;
+        }
+
+        .red-h {
+          color: $red-main;
+        }
+      }
+      .form-control-type {
+        width: 100%;
+        border: 1px solid $gray3;
+        height: 35px;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+      }
+      .type-label {
+        font-size: 13px;
+        padding-bottom: 5px;
+        display: block;
+      }
+      .form-type {
+        margin-left: 0.4rem;
+        margin-right: 0.9rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
       }
     }
   }
