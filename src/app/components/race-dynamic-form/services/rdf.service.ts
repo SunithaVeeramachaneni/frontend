@@ -11,7 +11,6 @@ import {
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import { TimeAgoPipe } from 'src/app/shared/pipes/time-ago.pipe';
 import {
   FormMetadata,
   LoadEvent,
@@ -26,10 +25,7 @@ export class RaceDynamicFormService {
   nextToken = '';
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  constructor(
-    private readonly awsApiService: APIService,
-    private timeAgo: TimeAgoPipe
-  ) {}
+  constructor(private readonly awsApiService: APIService) {}
 
   getFormsList$(queryParams: {
     skip?: number;
@@ -201,7 +197,13 @@ export class RaceDynamicFormService {
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
-          publishedDate: this.timeAgo.transform(p.publishedDate)
+          publishedDate: formatDistance(
+            new Date(p?.publishedDate),
+            new Date(),
+            {
+              addSuffix: true
+            }
+          )
         })) || [];
     const count = resp?.items.length || 0;
     this.nextToken = resp?.nextToken || '';
