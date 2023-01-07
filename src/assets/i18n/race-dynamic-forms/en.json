@@ -59,5 +59,6 @@
   "responseType": "Choose Response Type",
   "addSubFields": "Add Sub Fields",
   "typeQuestion": "Type Question",
-  "responseTitle": "Response Title"
+  "responseTitle": "Response Title",
+  "addLogicBtn": "Add Logic"
 }

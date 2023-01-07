@@ -82,6 +82,23 @@
     border-right: 1px solid $border-color;
     justify-content: center;
 
+    .questionActionsRow {
+      display: flex;
+      align-items: center;
+      .addLogicBtn {
+        color: $blue-main;
+        font-weight: 400;
+        .icon {
+          transform: rotate(120deg);
+          font-size: 12pt;
+          margin-top: -5px;
+        }
+      }
+    }
+    .addLogicRow {
+      width: 100%;
+    }
+
     .m-l-50 {
       margin-left: 50px;
     }

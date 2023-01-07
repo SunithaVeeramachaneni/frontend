@@ -117,6 +117,32 @@ export const transferQuestionFromSection = createAction(
   }>()
 );
 
+export const addLogicToQuestion = createAction(
+  '[Form Configuration Component] addLogicToQuestion',
+  props<{
+    pageIndex: number;
+    questionId: string;
+    logic: any;
+  }>()
+);
+
+export const updateQuestionLogics = createAction(
+  '[Form Configuration Component] updateQuestionLogics',
+  props<{
+    questionId: string;
+    pageIndex: number;
+    logics: any[];
+  }>()
+);
+export const deleteQuestionLogic = createAction(
+  '[Form Configuration Component] deleteQuestionLogic',
+  props<{
+    questionId: string;
+    pageIndex: number;
+    logicId: string;
+  }>()
+);
+
 export const resetFormConfiguration = createAction(
   '[Form Configuration Component] resetFormConfiguration'
 );

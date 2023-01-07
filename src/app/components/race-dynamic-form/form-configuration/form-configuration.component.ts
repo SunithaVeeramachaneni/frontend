@@ -132,7 +132,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       name: 'Page',
       position: pageIndex + 1,
       sections: [section],
-      questions: [this.getQuestion(questionIndex, section.id)]
+      questions: [this.getQuestion(questionIndex, section.id)],
+      logics: []
     };
   }
 

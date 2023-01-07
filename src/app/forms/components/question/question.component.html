@@ -82,7 +82,24 @@
       <div class="dis-flex justify-content">
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-            <div>
+            <div class="questionActionsRow">
+              <button
+                mat-button
+                color="primary"
+                class="addLogicBtn"
+                *ngIf="
+                  addLogicNotAppliedFields.indexOf(
+                    questionForm.get('fieldType').value
+                  ) < 0
+                "
+                (click)="
+                  addLogicToQuestion(pageIndex, questionForm.get('id').value)
+                "
+              >
+                <mat-icon class="icon">link</mat-icon>
+                <span translate="addLogicBtn"></span>
+              </button>
+
               <span class="m-l-40">
                 <input
                   type="checkbox"
@@ -160,6 +177,21 @@
               >
                 <app-drop-down></app-drop-down>
               </span>
+            </div>
+            <div
+              class="addLogicRow"
+              *ngIf="
+                getQuestionLogics(pageIndex, questionForm.get('id').value)
+                  | async as questionLogics
+              "
+            >
+              <app-add-logic
+                *ngIf="questionLogics.length"
+                [questionId]="questionForm.get('id').value"
+                [fieldType]="questionForm.get('fieldType').value"
+                [pageIndex]="pageIndex"
+                (logicEvent)="logicEventHandler($event)"
+              ></app-add-logic>
             </div>
           </div>
 

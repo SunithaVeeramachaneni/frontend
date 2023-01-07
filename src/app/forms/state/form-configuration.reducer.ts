@@ -358,5 +358,66 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       ...initialState
     })
+  ),
+  on(
+    FormConfigurationActions.addLogicToQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          return {
+            ...page,
+            logics: [...page.logics, action.logic]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+  on(
+    FormConfigurationActions.updateQuestionLogics,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          let filteredLogics = page.logics.filter(
+            (l) => l.questionId !== action.questionId
+          );
+          filteredLogics = filteredLogics.concat(action.logics);
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+  on(
+    FormConfigurationActions.deleteQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (l) => l.id !== action.logicId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
   )
 );

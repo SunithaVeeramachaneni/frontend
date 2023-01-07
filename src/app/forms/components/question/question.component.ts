@@ -13,17 +13,21 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Observable, timer } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
-  getQuestion,
   getQuestionByID,
   getSectionQuestionsCount,
-  State
+  State,
+  getQuestionLogics
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
+import { FormConfigurationActions } from '../../state/actions';
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -66,6 +70,22 @@ export class QuestionComponent implements OnInit {
   openResponseType = false;
   fieldContentOpenState = false;
   openResponseTypeModal$: Observable<boolean>;
+
+  addLogicNotAppliedFields = [
+    'LTV',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT',
+    'TAF',
+    'ARD'
+  ];
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -220,5 +240,60 @@ export class QuestionComponent implements OnInit {
 
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
+  }
+
+  getQuestionLogics(pageIndex: number, questionId: string) {
+    return this.store.select(getQuestionLogics(pageIndex, questionId));
+  }
+
+  addLogicToQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      FormConfigurationActions.addLogicToQuestion({
+        pageIndex,
+        questionId,
+        logic: this.constructLogic(pageIndex, questionId)
+      })
+    );
+  }
+  constructLogic(pageIndex: number, questionId: string) {
+    return {
+      id: uuidv4(),
+      questionId,
+      pageIndex,
+      operator: 'EQ',
+      operand1: '',
+      operand2: '',
+      action: '',
+      logicTitle: '',
+      expression: '',
+      questions: [],
+      mandateQuestions: [],
+      hideQuestions: []
+    };
+  }
+
+  logicEventHandler(event) {
+    console.log(event);
+    const { logics, type, questionId, pageIndex } = event;
+    switch (type) {
+      case 'update':
+        this.store.dispatch(
+          FormConfigurationActions.updateQuestionLogics({
+            questionId,
+            pageIndex,
+            logics
+          })
+        );
+        break;
+      case 'delete':
+        this.store.dispatch(
+          FormConfigurationActions.deleteQuestionLogic({
+            questionId,
+            pageIndex,
+            logicId: event.logicId
+          })
+        );
+        break;
+    }
   }
 }

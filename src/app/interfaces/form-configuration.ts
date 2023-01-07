@@ -22,6 +22,7 @@ export interface Page {
   position: number;
   sections: Section[];
   questions: Question[];
+  logics: any[];
 }
 
 export interface Section {
