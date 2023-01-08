@@ -171,7 +171,7 @@ export class FormListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'updatedAt',
+      id: 'publishedDate',
       displayName: 'Last Published At',
       type: 'string',
       order: 5,
@@ -223,8 +223,10 @@ export class FormListComponent implements OnInit {
   searchForm: FormControl;
   addCopyFormCount = false;
   isPopoverOpen = false;
-  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
-  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  closeIcon = 'assets/img/svg/cancel-icon.svg';
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
+
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService
@@ -265,10 +267,10 @@ export class FormListComponent implements OnInit {
     const { columnId } = event;
     switch (columnId) {
       case 'name':
-      case 'createdBy':
+      case 'author':
       case 'formStatus':
-      case 'updatedBy':
-      case 'updatedAt ':
+      case 'lastPublishedBy':
+      case 'publishedDate':
         this.openEditFormModal(event.row);
         break;
       default:
@@ -333,8 +335,6 @@ export class FormListComponent implements OnInit {
               type: 'success'
             });
           } else {
-            console.log(this.skip);
-            console.log(scrollData.length);
             initial.data = initial.data.concat(scrollData);
           }
         }
@@ -381,7 +381,8 @@ export class FormListComponent implements OnInit {
         break;
 
       case 'edit':
-        this.openEditFormModal(data);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        // this.openEditFormModal(data);
         break;
 
       case 'archive':
@@ -396,23 +397,27 @@ export class FormListComponent implements OnInit {
   };
 
   configOptionsChangeHandler = (event): void => {
-    console.log('event', event);
+    // console.log('event', event);
   };
 
   prepareMenuActions(): void {
     const menuActions = [
-      // {
-      //   title: 'Copy',
-      //   action: 'copy'
-      // },
       {
-        title: 'Edit',
+        title: 'Edit Template',
         action: 'edit'
       },
+      // {
+      //   title: 'Copy Template',
+      //   action: 'copy'
+      // },
       {
         title: 'Archive',
         action: 'archive'
       }
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -425,9 +430,5 @@ export class FormListComponent implements OnInit {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-  }
-
-  toggleMenu() {
-    this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }
 }

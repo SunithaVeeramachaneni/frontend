@@ -6,7 +6,8 @@ import {
   OidcSecurityService,
   OpenIdConfiguration
 } from 'angular-auth-oidc-client';
-import { BehaviorSubject } from 'rxjs';
+import { Amplify } from 'aws-amplify';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import * as hash from 'object-hash';
@@ -19,7 +20,7 @@ import { AppService } from './shared/services/app.services';
   providedIn: 'root'
 })
 export class AuthConfigService {
-  tenantsInfo$: BehaviorSubject<Tenant> = new BehaviorSubject(null);
+  tenantsInfo$: Observable<Tenant>;
 
   constructor(
     private tenantService: TenantService,
@@ -36,7 +37,7 @@ export class AuthConfigService {
       .pipe(
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
-            this.tenantsInfo$.next(tenant);
+            Amplify.configure(tenant?.amplifyConfig); // Added tenant based Amplify configure
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();
@@ -45,14 +46,8 @@ export class AuthConfigService {
       .toPromise();
 
   prepareAuthConfig = (tenant: Tenant) => {
-    const {
-      tenantId,
-      authority,
-      clientId,
-      protectedResources,
-      redirectUri,
-      amplifyConfig
-    } = tenant || {};
+    const { tenantId, authority, clientId, protectedResources, redirectUri } =
+      tenant || {};
     const { sap, node } = protectedResources || {};
     const { urls, scope } = sap || {};
 
@@ -75,8 +70,7 @@ export class AuthConfigService {
       secureRoutes: urls,
       customParamsRefreshTokenRequest: {
         scope
-      },
-      amplifyConfig: amplifyConfig || null
+      }
     };
   };
 
@@ -100,8 +94,7 @@ export class AuthConfigService {
       autoUserInfo: false,
       useRefreshToken: true,
       logLevel: environment.production ? LogLevel.Error : LogLevel.Warn,
-      secureRoutes: [],
-      amplifyConfig: null
+      secureRoutes: []
     };
   }
 

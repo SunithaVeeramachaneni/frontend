@@ -18,8 +18,7 @@
           value="Standalone"
           id="1"
           class="margin"
-          [(ngModel)]="formType"
-          [ngModelOptions]="{ standalone: true }"
+          formControlName="formType"
         />
         <span class="radio-btn-text" translate="standalone"> </span><br />
 
@@ -28,10 +27,9 @@
           type="radio"
           name="formType"
           value="Embedded"
-          disabled
+          [disabled]="true"
           class="margin"
-          [(ngModel)]="formType"
-          [ngModelOptions]="{ standalone: true }"
+          formControlName="formType"
         />
         <span class="radio-btn-text" translate="embedded"> </span><br />
 

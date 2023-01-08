@@ -57,7 +57,7 @@ export interface SectionEvent {
 
 export interface QuestionEvent {
   pageIndex: number;
-  sectionId?: string;
+  sectionId: string;
   question?: Question;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';

@@ -29,21 +29,25 @@ import {
   getSectionQuestions,
   getFormMetadata,
   getPageIndexes,
-  getPages,
   getQuestionIndexes,
   getSectionIds,
   getSectionIndexes,
   getFormDetails,
   State,
-  getPage
+  getPage,
+  getCreateOrEditForm,
+  getFormSaveStatus,
+  getFormPublishStatus
 } from 'src/app/forms/state';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
   transferArrayItem
 } from '@angular/cdk/drag-drop';
+import { HeaderService } from 'src/app/shared/services/header.service';
+import { BreadcrumbService } from 'xng-breadcrumb';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-configuration',
@@ -62,15 +66,23 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   sectionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
+  createOrEditForm$: Observable<boolean>;
+  formSaveStatus$: Observable<string>;
+  formPublishStatus$: Observable<string>;
   questionIndexes: any;
-  saveStatus = 'done';
-  formMetaData: FormMetadata;
+  formStatus: string;
+  formSaveStatus: string;
+  formPublishStatus: string;
+  isFormDetailPublished: string;
+  formMetadata: FormMetadata;
   fieldContentOpenState = false;
 
   constructor(
     private fb: FormBuilder,
     private store: Store<State>,
-    private raceDynamicFormService: RaceDynamicFormService
+    private headerService: HeaderService,
+    private breadcrumbService: BreadcrumbService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -83,16 +95,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: ['Draft']
     });
 
+    const fornName = this.formConf.name.value
+      ? this.formConf.name.value
+      : 'Untitled Form';
+    this.headerService.setHeaderTitle(fornName);
+    this.breadcrumbService.set('@formName', {
+      label: fornName
+    });
+
     this.formConfiguration.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const { counter: prevCounter, ...prev } = previous;
-          const { counter: currCounter, ...curr } = current;
+          const { counter: prevCounter, id: prevId, ...prev } = previous;
+          const { counter: currCounter, id: currId, ...curr } = current;
 
-          if (!isEqual(previous, current)) {
+          if (!isEqual(prev, curr)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({
                 formMetadata: curr
@@ -101,7 +121,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             this.store.dispatch(
               FormConfigurationActions.updateForm({
-                formMetadata: this.formMetaData
+                formMetadata: { ...this.formMetadata, ...curr }
               })
             );
           }
@@ -126,8 +146,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
         const { name, description, id } = formMetadata;
-        this.formMetaData = formMetadata;
+        this.formMetadata = formMetadata;
         this.formConfiguration.patchValue({ name, description, id });
+        const formName = name ? name : 'Untitled Form';
+        this.headerService.setHeaderTitle(formName);
+        this.breadcrumbService.set('@formName', {
+          label: formName
+        });
       })
     );
     this.pageIndexes$ = this.store.select(getPageIndexes);
@@ -145,29 +170,77 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pageIndex: 0
       })
     );
-    this.formDetails$ = this.store.select(getFormDetails);
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
-        ({ formStatus, formListId, counter, pages, authoredFormDetailId }) => {
+        ({
+          formMetadata,
+          formStatus,
+          counter,
+          pages,
+          authoredFormDetailId,
+          authoredFormDetailVersion,
+          isFormDetailPublished,
+          formDetailId,
+          formSaveStatus
+        }) => {
+          this.formStatus = formStatus;
+          const { id: formListId } = formMetadata;
+          this.isFormDetailPublished = isFormDetailPublished;
           if (pages.length && formListId) {
             if (authoredFormDetailId) {
-              this.store.dispatch(
-                FormConfigurationActions.updateAuthoredFormDetail({
-                  formStatus,
-                  formListId,
-                  counter,
-                  pages,
-                  authoredFormDetailId
-                })
-              );
+              if (formSaveStatus !== 'Saved') {
+                this.store.dispatch(
+                  FormConfigurationActions.updateAuthoredFormDetail({
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailId
+                  })
+                );
+              }
             } else {
               this.store.dispatch(
                 FormConfigurationActions.createAuthoredFormDetail({
                   formStatus,
                   formListId,
                   counter,
-                  pages
+                  pages,
+                  authoredFormDetailVersion
+                })
+              );
+            }
+
+            if (isFormDetailPublished && formDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.updateFormDetail({
+                  formMetadata,
+                  formListId,
+                  pages,
+                  formDetailId,
+                  authoredFormDetail: {
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailVersion
+                  }
+                })
+              );
+            } else if (isFormDetailPublished && !formDetailId) {
+              this.store.dispatch(
+                FormConfigurationActions.createFormDetail({
+                  formMetadata,
+                  formListId,
+                  pages,
+                  authoredFormDetail: {
+                    formStatus,
+                    formListId,
+                    counter,
+                    pages,
+                    authoredFormDetailVersion
+                  }
                 })
               );
             }
@@ -175,6 +248,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         }
       )
     );
+
+    this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
+      tap((createOrEditForm) => {
+        if (!createOrEditForm) {
+          this.router.navigate(['/forms']);
+        }
+      })
+    );
+
+    this.formSaveStatus$ = this.store
+      .select(getFormSaveStatus)
+      .pipe(tap((formSaveStatus) => (this.formSaveStatus = formSaveStatus)));
+
+    this.formPublishStatus$ = this.store
+      .select(getFormPublishStatus)
+      .pipe(
+        tap((formPublishStatus) => (this.formPublishStatus = formPublishStatus))
+      );
   }
 
   get formConf() {
@@ -304,6 +395,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           FormConfigurationActions.updateQuestion({
             question,
             questionIndex,
+            sectionId,
             pageIndex
           })
         );
@@ -313,6 +405,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.store.dispatch(
           FormConfigurationActions.deleteQuestion({
             questionIndex,
+            sectionId,
             pageIndex
           })
         );
@@ -325,23 +418,16 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   }
 
   publishFormDetail() {
-    this.formDetails$
-      .pipe(
-        tap((formDetails) => {
-          const formConfig = this.formConfiguration.value;
-          if (formDetails.formMetadata.formStatus === 'published') {
-            this.raceDynamicFormService.updateFormDetail$(
-              formConfig,
-              formDetails.pages
-            );
-          } else
-            this.raceDynamicFormService.createFormDetail$(
-              formConfig,
-              formDetails.pages
-            );
-        })
-      )
-      .subscribe();
+    this.store.dispatch(
+      FormConfigurationActions.updateFormPublishStatus({
+        formPublishStatus: 'Publishing'
+      })
+    );
+    this.store.dispatch(
+      FormConfigurationActions.updateIsFormDetailPublished({
+        isFormDetailPublished: true
+      })
+    );
   }
 
   toggleFieldContentOpenState() {
@@ -419,7 +505,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     let pageSections;
     this.store
       .select(getPage(pageIndex))
-      .subscribe((v) => (pageSections = v.sections));
+      .subscribe((v) => (pageSections = v?.sections));
     return pageSections;
   }
 

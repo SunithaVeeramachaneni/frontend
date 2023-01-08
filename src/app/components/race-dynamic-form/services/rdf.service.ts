@@ -52,8 +52,6 @@ export class RaceDynamicFormService {
       | 'formLogo'
       | 'description'
       | 'author'
-      | 'lastPublishedBy'
-      | 'publishedDate'
       | 'tags'
       | 'formType'
       | 'formStatus'
@@ -67,8 +65,6 @@ export class RaceDynamicFormService {
         description: formListQuery.description ?? '',
         formStatus: formListQuery.formStatus ?? '',
         author: formListQuery.author ?? '',
-        publishedDate: new Date().toISOString(),
-        lastPublishedBy: formListQuery.lastPublishedBy ?? '',
         formType: formListQuery.formType ?? '',
         tags: formListQuery.tags || null,
         isPublic: formListQuery.isPublic
@@ -85,36 +81,39 @@ export class RaceDynamicFormService {
     return from(this.awsApiService.DeleteFormList({ id }, {}));
   }
 
-  createFormDetail$(formConfig, pages) {
+  createFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateFormDetail({
-        formlistID: formConfig.id,
-        formData: this.formatFormData(formConfig, pages)
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
       })
     );
   }
 
-  updateFormDetail$(formConfig, pages) {
+  updateFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateFormDetail(
-        {
-          formlistID: formConfig.id,
-          formData: this.formatFormData(formConfig, pages)
-        } as UpdateFormDetailInput,
-        {
-          formlistID: formConfig.id
-        }
-      )
+      this.awsApiService.UpdateFormDetail({
+        id: formDetails.formDetailId,
+        formlistID: formDetails.formListId,
+        formData: this.formatFormData(
+          formDetails.formMetadata,
+          formDetails.pages
+        )
+      } as UpdateFormDetailInput)
     );
   }
 
   createAuthoredFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateAuthoredFormDetail({
-        formStatus: formDetails.formStatus.toUpperCase(),
+        formStatus: formDetails.formStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
-        counter: formDetails.counter
+        counter: formDetails.counter,
+        version: formDetails.authoredFormDetailVersion.toString()
       })
     );
   }
@@ -122,7 +121,7 @@ export class RaceDynamicFormService {
   updateAuthoredFormDetail$(formDetails) {
     return from(
       this.awsApiService.UpdateAuthoredFormDetail({
-        formStatus: formDetails.formStatus.toUpperCase(),
+        formStatus: formDetails.formStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
@@ -196,11 +195,13 @@ export class RaceDynamicFormService {
             image: p?.formLogo,
             condition: true
           },
-          updatedBy: p.lastPublishedBy,
-          createdBy: p.author,
-          updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
-            addSuffix: true
-          })
+          lastPublishedBy: p.lastPublishedBy,
+          author: p.author,
+          publishedDate: p.publishedDate
+            ? formatDistance(new Date(p.publishedDate), new Date(), {
+                addSuffix: true
+              })
+            : ''
         })) || [];
     const count = resp?.items.length || 0;
     this.nextToken = resp?.nextToken || '';

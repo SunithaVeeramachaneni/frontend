@@ -40,10 +40,9 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
+  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
-  formType = 'Standalone';
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -131,16 +130,20 @@ export class FormConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
+        FormConfigurationActions.updateCreateOrEditForm({
+          createOrEditForm: true
+        })
+      );
+      this.store.dispatch(
         FormConfigurationActions.createForm({
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,
-            lastPublishedBy: userName,
             formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
           }
         })
       );
-      this.router.navigate(['/rdf-forms/create']);
+      this.router.navigate(['/forms/create']);
       this.dialogRef.close();
     }
   }

@@ -57,7 +57,7 @@ export class SectionComponent implements OnInit {
   ngOnInit() {
     this.sectionForm.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
           this.sectionEvent.emit({

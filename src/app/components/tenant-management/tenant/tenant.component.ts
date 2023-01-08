@@ -334,7 +334,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
       }),
       tenantLogo: [''],
       tenantLogoName: [''],
-      amplifyConfig: ['', [Validators.required]]
+      amplifyConfig: ['', [Validators.required, this.jsonValidator()]]
     });
 
     this.slackConfiguration = this.fb.group({
@@ -557,7 +557,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
 
       tenant.amplifyConfig =
         tenant?.amplifyConfig && typeof tenant?.amplifyConfig === 'object'
-          ? JSON.stringify(tenant?.amplifyConfig)
+          ? JSON.stringify(tenant?.amplifyConfig, null, ' ')
           : '';
       this.tenantForm.patchValue(tenant);
       (this.tenantForm.get('protectedResources.sap') as FormGroup).setControl(
@@ -886,6 +886,17 @@ export class TenantComponent implements OnInit, AfterViewInit {
           return null;
         })
       );
+  }
+
+  jsonValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      try {
+        JSON.parse(control.value);
+        return null;
+      } catch (err) {
+        return { isInvalidJSON: true };
+      }
+    };
   }
 
   maskField(value: string, fieldId: string) {
