@@ -1,4 +1,4 @@
-<div [formGroup]="logicsForm" *ngIf="getLogicsList().length">
+<div [formGroup]="logicsForm" *ngIf="getLogicsList()">
   <div formArrayName="logics">
     <mat-tab-group>
       <mat-tab
@@ -117,6 +117,13 @@
             Ask Questions!
           </div>
         </div>
+      </mat-tab>
+      <mat-tab disabled>
+        <ng-template mat-tab-label>
+          <button mat-icon-button>
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
   </div>

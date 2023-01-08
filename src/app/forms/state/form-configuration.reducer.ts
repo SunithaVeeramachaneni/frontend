@@ -377,20 +377,60 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+  // on(
+  //   FormConfigurationActions.updateQuestionLogics,
+  //   (state, action): FormConfigurationState => {
+  //     const pages = state.pages.map((page, pageIndex) => {
+  //       if (pageIndex === action.pageIndex) {
+  //         let filteredLogics = page.logics.filter(
+  //           (l) => l.questionId !== action.questionId
+  //         );
+  //         filteredLogics = filteredLogics.concat(action.logics);
+  //         return {
+  //           ...page,
+  //           logics: [...filteredLogics]
+  //         };
+  //       }
+  //       return page;
+  //     });
+  //     return {
+  //       ...state,
+  //       pages
+  //     };
+  //   }
+  // ),
+
   on(
-    FormConfigurationActions.updateQuestionLogics,
+    FormConfigurationActions.updateQuestionLogic,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
-          let filteredLogics = page.logics.filter(
-            (l) => l.questionId !== action.questionId
-          );
-          filteredLogics = filteredLogics.concat(action.logics);
+          const logics = page.logics.map((logic) => {
+            const logicObj = Object.assign({}, logic);
+            if (logic.id === action.logic.id) {
+              return action.logic;
+            }
+            return logicObj;
+          });
+
           return {
             ...page,
-            logics: [...filteredLogics]
+            logics
           };
         }
+
+        // if (pageIndex === action.pageIndex) {
+
+        //   let filteredLogics = page.logics.filter(
+        //     (l) => l.questionId !== action.questionId
+        //   );
+        //   filteredLogics = filteredLogics.concat(action.logic);
+
+        //   return {
+        //     ...page,
+        //     logics: [...filteredLogics]
+        //   };
+        // }
         return page;
       });
       return {
@@ -399,6 +439,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.deleteQuestionLogic,
     (state, action): FormConfigurationState => {

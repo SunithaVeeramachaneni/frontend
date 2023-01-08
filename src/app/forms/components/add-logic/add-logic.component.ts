@@ -1,8 +1,16 @@
 /* eslint-disable no-underscore-dangle */
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewEncapsulation
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { isEqual } from 'date-fns';
+import { isEqual } from 'lodash-es';
+import { merge } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -15,7 +23,8 @@ import { getQuestionLogics, State } from '../../state';
 @Component({
   selector: 'app-add-logic',
   templateUrl: './add-logic.component.html',
-  styleUrls: ['./add-logic.component.scss']
+  styleUrls: ['./add-logic.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AddLogicComponent implements OnInit {
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -79,50 +88,43 @@ export class AddLogicComponent implements OnInit {
             expression: logic.expression || '',
             questions: this.fb.array([]),
             mandateQuestions: this.fb.array([]),
-            hideQuestions: this.fb.array([]),
-            validationMessage: logic.validationMessage || ''
+            hideQuestions: this.fb.array([])
           });
         });
-        this.logicsForm = this.fb.group({
-          logics: this.fb.array(logicsFormArray)
-        });
-        console.log(this.logicsForm.getRawValue());
-      });
+        this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
 
-    this.logicsForm
-      .get('logics')
-      .valueChanges.pipe(
-        pairwise(),
-        debounceTime(1000),
-        distinctUntilChanged(),
-        tap(([prev, curr]) => {
-          curr.forEach((q) => {
-            if (!isEqual(curr, prev)) {
-              curr = curr.map((logic) => {
-                if (!logic.logicTitle || !logic.logicTitle.length) {
-                  const logicSymbol = this.fieldOperators.find(
-                    (op) => op.code === logic.operator
-                  );
-                  if (logicSymbol) {
-                    logic.logicTitle = `${logicSymbol.symbol} ${logic.operand2}`;
-                  } else {
-                    logic.logicTitle = `${logic.operator} ${logic.operand2}`;
+        merge(
+          // eslint-disable-next-line @typescript-eslint/dot-notation
+          ...this.logicsForm.get('logics')['controls'].map((control, index) => {
+            control.valueChanges
+              .pipe(
+                pairwise(),
+                debounceTime(1000),
+                distinctUntilChanged(),
+                tap(([prev, curr]) => {
+                  if (!isEqual(curr, prev)) {
+                    const logicSymbol = this.fieldOperators.find(
+                      (op) => op.code === curr.operator
+                    );
+                    if (logicSymbol) {
+                      curr.logicTitle = `${logicSymbol.symbol} ${curr.operand2}`;
+                    } else {
+                      curr.logicTitle = `${curr.operator} ${curr.operand2}`;
+                    }
+                    this.logicEvent.emit({
+                      questionId: this.questionId,
+                      pageIndex: this.pageIndex,
+                      logicIndex: index,
+                      type: 'update_logic',
+                      logic: curr
+                    });
                   }
-                }
-                return logic;
-              });
-              // console.log(curr);
-              this.logicEvent.emit({
-                questionId: this.questionId,
-                pageIndex: this.pageIndex,
-                type: 'update',
-                logics: curr
-              });
-            }
-          });
-        })
-      )
-      .subscribe();
+                })
+              )
+              .subscribe();
+          })
+        );
+      });
   }
 
   deleteLogic(logicId, questionId, pageIndex) {
@@ -130,7 +132,6 @@ export class AddLogicComponent implements OnInit {
   }
 
   getLogicsList() {
-    const logicList = (this.logicsForm.get('logics') as FormArray).controls;
-    return logicList;
+    return (this.logicsForm.get('logics') as FormArray).controls;
   }
 }
