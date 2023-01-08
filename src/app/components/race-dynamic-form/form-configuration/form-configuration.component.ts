@@ -217,7 +217,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       position: questionIndex + 1,
       required: false,
       multi: false,
-      value: 'TF',
+      value: '',
       isPublished: false,
       isPublishedTillSave: false
     };

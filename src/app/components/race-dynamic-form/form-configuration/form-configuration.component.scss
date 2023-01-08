@@ -95,18 +95,41 @@
     margin-top: 0.6rem;
   }
 }
+
 .questionContainer {
   display: flex;
+
   .question {
     width: 100%;
   }
+
+  .question-drag-handler {
+    height: 40px;
+    border-bottom: 1px solid $border-color;
+
+    .question-six-dots {
+      padding-left: 15px;
+      position: relative;
+      top: 15px;
+      width: 10px;
+      cursor: move;
+    }
+  }
 }
-.six-dots {
+
+.section-drag-handler {
   position: relative;
-  top: 2px;
-  width: 9px;
-  cursor: move;
+  width: 5%;
+
+  .section-six-dots {
+    position: absolute;
+    top: 28px;
+    left: 92px;
+    width: 10px;
+    cursor: move;
+  }
 }
+
 .highlight-bg {
   border: 2px solid $blue-main;
   border-radius: 4px;
@@ -115,13 +138,11 @@
 .sectionMinimumDragArea {
   min-height: 50px;
 }
+
 .cdk-drag-placeholder {
   opacity: 0;
 }
-.section-dragHandle {
-  position: relative;
-  top: -55px;
-}
+
 .sectionContainer {
-  width: 100%;
+  width: 95%;
 }
