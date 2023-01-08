@@ -233,7 +233,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                     counter,
                     pages,
                     authoredFormDetailVersion
-                  }
+                  },
+                  formListDynamoDBVersion
                 })
               );
             } else if (isFormDetailPublished && !formDetailId) {
@@ -248,7 +249,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                     counter,
                     pages,
                     authoredFormDetailVersion
-                  }
+                  },
+                  formListDynamoDBVersion
                 })
               );
             }

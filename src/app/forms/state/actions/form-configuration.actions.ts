@@ -28,6 +28,7 @@ export const createFormDetail = createAction(
     pages: Page[];
     formListId: string;
     authoredFormDetail: any;
+    formListDynamoDBVersion: number;
   }>()
 );
 
@@ -39,7 +40,8 @@ export const updateFormDetail = createAction(
     formListId: string;
     formDetailId: string;
     authoredFormDetail: any;
-    formDetailDynamoDBVersion: string;
+    formDetailDynamoDBVersion: number;
+    formListDynamoDBVersion: number;
   }>()
 );
 
