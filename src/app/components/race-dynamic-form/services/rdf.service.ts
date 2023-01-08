@@ -72,9 +72,14 @@ export class RaceDynamicFormService {
     );
   }
 
-  updateForm$(formMetaData) {
-    const { isArchived, ...form } = formMetaData;
-    return from(this.awsApiService.UpdateFormList(form));
+  updateForm$(formMetaDataDetails) {
+    const { isArchived, ...form } = formMetaDataDetails.formMetadata;
+    return from(
+      this.awsApiService.UpdateFormList({
+        ...form,
+        _version: formMetaDataDetails.formListDynamoDBVersion
+      })
+    );
   }
 
   deleteForm$(id: string) {
@@ -101,7 +106,8 @@ export class RaceDynamicFormService {
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
-        )
+        ),
+        _version: formDetails.formDetailDynamoDBVersion
       } as UpdateFormDetailInput)
     );
   }
@@ -125,7 +131,8 @@ export class RaceDynamicFormService {
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        id: formDetails.authoredFormDetailId
+        id: formDetails.authoredFormDetailId,
+        _version: formDetails.authoredFormDetailDynamoDBVersion
       } as UpdateAuthoredFormDetailInput)
     );
   }
