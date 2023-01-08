@@ -73,11 +73,11 @@ export class RaceDynamicFormService {
   }
 
   updateForm$(formMetaDataDetails) {
-    const { isArchived, ...form } = formMetaDataDetails.formMetaData;
+    const { isArchived, ...form } = formMetaDataDetails.formMetadata;
     return from(
       this.awsApiService.UpdateFormList({
         ...form,
-        _version: formMetaDataDetails.formDetailDynamoDBVersion
+        _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );
   }
