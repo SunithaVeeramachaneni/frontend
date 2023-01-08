@@ -67,26 +67,20 @@
 
             then
             <span
-              *ngIf="logic.value.action && logic.value.action === 'MANDATE'"
+              *ngIf="logic.value.mandateQuestions.length"
               class="mandateAction"
+              (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
             >
               Mandate ({{ logic.value.mandateQuestions.length }}) Questions
               <mat-icon>edit</mat-icon>
             </span>
             <span
-              *ngIf="logic.value.action && logic.value.action === 'HIDE'"
+              *ngIf="logic.value.hideQuestions.length"
               class="mandateAction"
+              (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
             >
               Hide ({{ logic.value.hideQuestions.length }}) Questions
               <mat-icon>edit</mat-icon>
-            </span>
-            <span
-              *ngIf="
-                logic.value.action && logic.value.action === 'ask_evidence'
-              "
-              class="mandateAction"
-            >
-              Ask Evidence
             </span>
             <span
               *ngIf="
@@ -100,16 +94,25 @@
               + action
             </button>
             <mat-menu #menu="matMenu">
-              <button class="logicActionMenuItem" mat-menu-item>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
+              >
                 Mandate Questions
               </button>
-              <button class="logicActionMenuItem" mat-menu-item>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
+              >
                 Hide Questions
               </button>
-              <button mat-menu-item class="logicActionMenuItem">
-                Ask Evidence
-              </button>
-              <button class="logicActionMenuItem" mat-menu-item>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="triggerMenuAction('ask_questions', i, logic)"
+              >
                 Ask Questions
               </button>
             </mat-menu>
@@ -124,7 +127,10 @@
       </mat-tab>
       <mat-tab disabled>
         <ng-template mat-tab-label>
-          <button mat-icon-button>
+          <button
+            mat-icon-button
+            (click)="addLogicToQuestion(questionId, pageIndex)"
+          >
             <mat-icon>add_circle</mat-icon>
           </button>
         </ng-template>

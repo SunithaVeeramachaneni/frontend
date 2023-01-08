@@ -275,18 +275,18 @@ export class QuestionComponent implements OnInit {
   }
 
   logicEventHandler(event) {
-    const { logics, type, questionId, pageIndex } = event;
+    const { type, questionId, pageIndex } = event;
     switch (type) {
-      // case 'update':
-      //   this.store.dispatch(
-      //     FormConfigurationActions.updateQuestionLogics({
-      //       questionId,
-      //       pageIndex,
-      //       logics
-      //     })
-      //   );
-      //   break;
-      case 'update_logic':
+      case 'create':
+        this.store.dispatch(
+          FormConfigurationActions.addLogicToQuestion({
+            pageIndex,
+            questionId,
+            logic: this.constructLogic(pageIndex, questionId)
+          })
+        );
+        break;
+      case 'update':
         this.store.dispatch(
           FormConfigurationActions.updateQuestionLogic({
             questionId,

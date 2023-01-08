@@ -46,6 +46,8 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
+import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -59,7 +61,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,
-    FormConfigurationComponent
+    FormConfigurationComponent,
+    SelectQuestionsDialogComponent
   ],
   imports: [
     FormsModule,
@@ -97,6 +100,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     NgxShimmerLoadingModule,
     OverlayModule,
     MatSelectModule,
+    MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
