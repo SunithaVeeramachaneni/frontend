@@ -8,7 +8,7 @@ export const createForm = createAction(
 
 export const updateForm = createAction(
   '[Form Configuration Component] updateForm',
-  props<{ formMetadata: FormMetadata }>()
+  props<{ formMetadata: FormMetadata; formListDynamoDBVersion: number }>()
 );
 
 export const addFormMetadata = createAction(
@@ -39,6 +39,7 @@ export const updateFormDetail = createAction(
     formListId: string;
     formDetailId: string;
     authoredFormDetail: any;
+    formDetailDynamoDBVersion: string;
   }>()
 );
 
@@ -61,6 +62,7 @@ export const updateAuthoredFormDetail = createAction(
     pages: Page[];
     formListId: string;
     authoredFormDetailId: string;
+    authoredFormDetailDynamoDBVersion: number;
   }>()
 );
 

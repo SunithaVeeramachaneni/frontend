@@ -76,6 +76,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   isFormDetailPublished: string;
   formMetadata: FormMetadata;
   fieldContentOpenState = false;
+  formListVersion: number;
 
   constructor(
     private fb: FormBuilder,
@@ -121,7 +122,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
             this.store.dispatch(
               FormConfigurationActions.updateForm({
-                formMetadata: { ...this.formMetadata, ...curr }
+                formMetadata: { ...this.formMetadata, ...curr },
+                formListDynamoDBVersion: this.formListVersion
               })
             );
           }
@@ -182,8 +184,12 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailVersion,
           isFormDetailPublished,
           formDetailId,
-          formSaveStatus
+          formSaveStatus,
+          formListDynamoDBVersion,
+          formDetailDynamoDBVersion,
+          authoredFormDetailDynamoDBVersion
         }) => {
+          this.formListVersion = formListDynamoDBVersion;
           this.formStatus = formStatus;
           const { id: formListId } = formMetadata;
           this.isFormDetailPublished = isFormDetailPublished;
@@ -196,7 +202,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                     formListId,
                     counter,
                     pages,
-                    authoredFormDetailId
+                    authoredFormDetailId,
+                    authoredFormDetailDynamoDBVersion
                   })
                 );
               }
@@ -219,6 +226,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                   formListId,
                   pages,
                   formDetailId,
+                  formDetailDynamoDBVersion,
                   authoredFormDetail: {
                     formStatus,
                     formListId,

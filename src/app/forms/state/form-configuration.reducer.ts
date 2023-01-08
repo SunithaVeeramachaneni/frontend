@@ -17,6 +17,9 @@ export interface FormConfigurationState {
   createOrEditForm: boolean;
   formSaveStatus: string;
   formPublishStatus: string;
+  formListDynamoDBVersion: number;
+  formDetailDynamoDBVersion: number;
+  authoredFormDetailDynamoDBVersion: number;
 }
 
 const initialState = {
@@ -30,7 +33,10 @@ const initialState = {
   isFormDetailPublished: false,
   createOrEditForm: false,
   formSaveStatus: '',
-  formPublishStatus: ''
+  formPublishStatus: '',
+  formListDynamoDBVersion: 0,
+  formDetailDynamoDBVersion: 0,
+  authoredFormDetailDynamoDBVersion: 0
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -49,14 +55,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...state.formMetadata, ...action.formMetadata },
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1
     })
   ),
   on(
     FormConfigurationApiActions.updateFormSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1
     })
   ),
   on(
@@ -64,14 +72,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
     })
   ),
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formSaveStatus: action.formSaveStatus
+      formSaveStatus: action.formSaveStatus,
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
     })
   ),
   on(
@@ -86,7 +96,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailId: action.formDetail.id,
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
-      formPublishStatus: action.formPublishStatus
+      formPublishStatus: action.formPublishStatus,
+      formDetailDynamoDBVersion: action.formDetail._version
     })
   ),
   on(
@@ -97,7 +108,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailId: action.formDetail.id,
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
-      formPublishStatus: action.formPublishStatus
+      formPublishStatus: action.formPublishStatus,
+      formDetailDynamoDBVersion: action.formDetail._version
     })
   ),
   on(

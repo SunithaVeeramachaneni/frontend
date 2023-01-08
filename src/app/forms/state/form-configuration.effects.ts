@@ -43,7 +43,7 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateForm),
       concatMap((action) =>
-        this.raceDynamicFormService.updateForm$(action.formMetadata).pipe(
+        this.raceDynamicFormService.updateForm$(action).pipe(
           map(() =>
             FormConfigurationApiActions.updateFormSuccess({
               formMetadata: action.formMetadata,
