@@ -1,0 +1,346 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateFormDetail(
+  $input: CreateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  createFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormDetail(
+  $input: UpdateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  updateFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormDetail(
+  $input: DeleteFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  deleteFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateAuthoredFormDetail(
+  $input: CreateAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  createAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateAuthoredFormDetail(
+  $input: UpdateAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  updateAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteAuthoredFormDetail(
+  $input: DeleteAuthoredFormDetailInput!
+  $condition: ModelAuthoredFormDetailConditionInput
+) {
+  deleteAuthoredFormDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormSubmissionDetail(
+  $input: CreateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  createFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormSubmissionDetail(
+  $input: UpdateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  updateFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormSubmissionDetail(
+  $input: DeleteFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
+) {
+  deleteFormSubmissionDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormSubmissionList(
+  $input: CreateFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
+) {
+  createFormSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formSubmissionListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormSubmissionList(
+  $input: UpdateFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
+) {
+  updateFormSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formSubmissionListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormSubmissionList(
+  $input: DeleteFormSubmissionListInput!
+  $condition: ModelFormSubmissionListConditionInput
+) {
+  deleteFormSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formSubmissionListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormList(
+  $input: CreateFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  createFormList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    formListAuthoredFormDetail {
+      nextToken
+      startedAt
+    }
+    formListFormDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormList(
+  $input: UpdateFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  updateFormList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    formListAuthoredFormDetail {
+      nextToken
+      startedAt
+    }
+    formListFormDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormList(
+  $input: DeleteFormListInput!
+  $condition: ModelFormListConditionInput
+) {
+  deleteFormList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    formListAuthoredFormDetail {
+      nextToken
+      startedAt
+    }
+    formListFormDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}

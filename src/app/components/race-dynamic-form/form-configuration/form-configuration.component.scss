@@ -71,6 +71,10 @@
     margin: 12px 12px 0 12px;
   }
 
+  .publish-btn:disabled {
+    background-color: $disabled-color;
+  }
+
   .publish-btn-icon {
     position: relative;
     top: 2px;

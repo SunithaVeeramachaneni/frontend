@@ -6,6 +6,7 @@ import {
   OidcSecurityService,
   OpenIdConfiguration
 } from 'angular-auth-oidc-client';
+import { Amplify } from 'aws-amplify';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Buffer } from 'buffer';
@@ -36,6 +37,7 @@ export class AuthConfigService {
       .pipe(
         map((tenant: Tenant) => {
           if (tenant && Object.keys(tenant).length) {
+            Amplify.configure(tenant?.amplifyConfig); // Added tenant based Amplify configure
             return this.prepareAuthConfig(tenant);
           }
           return this.defaultAuthConfig();

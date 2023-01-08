@@ -1,7 +1,13 @@
 <div
   class="create-form-main"
   [formGroup]="formConfiguration"
-  *ngIf="formMetadata$ | async"
+  *ngIf="{
+    formMetadata: formMetadata$ | async,
+    authoredFormDetail: authoredFormDetail$ | async,
+    createOrEditForm: createOrEditForm$ | async,
+    formSaveStatus: formSaveStatus$ | async,
+    formPublishStatus: formPublishStatus$ | async
+  }"
 >
   <div class="dis-flex form-header">
     <div>
@@ -44,11 +50,35 @@
       </div>
     </div>
     <div class="dis-flex">
-      <div class="save-status" [hidden]="saveStatus !== 'done'">
+      <div
+        class="save-status"
+        [hidden]="
+          formSaveStatus !== 'Saved' ||
+          formStatus !== 'Draft' ||
+          isFormDetailPublished
+        "
+      >
         {{ 'changesSaved' | translate }}
       </div>
-      <div class="save-status" [hidden]="saveStatus === 'done'">
-        {{ 'changesInProgress' | translate }}
+      <div
+        class="save-status"
+        [hidden]="formSaveStatus !== 'Saving' || isFormDetailPublished"
+      >
+        {{ 'savingChanges' | translate }}
+      </div>
+      <div
+        class="save-status"
+        [hidden]="
+          formPublishStatus !== 'Published' || formStatus !== 'Published'
+        "
+      >
+        {{ 'changesPublished' | translate }}
+      </div>
+      <div
+        class="save-status"
+        [hidden]="formPublishStatus !== 'Publishing' || !isFormDetailPublished"
+      >
+        {{ 'publishingChanges' | translate }}
       </div>
       <button
         mat-stroked-button
@@ -56,7 +86,12 @@
         translate="importBtn"
       ></button>
 
-      <button mat-raised-button class="publish-btn">
+      <button
+        mat-raised-button
+        class="publish-btn"
+        (click)="publishFormDetail()"
+        [disabled]="formStatus === 'Published' || isFormDetailPublished"
+      >
         <span>
           <img
             alt="upload"

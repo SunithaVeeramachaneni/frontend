@@ -16,17 +16,20 @@
           type="radio"
           name="formType"
           value="Standalone"
-          checked
+          id="1"
           class="margin"
+          formControlName="formType"
         />
         <span class="radio-btn-text" translate="standalone"> </span><br />
 
         <input
+          id="2"
           type="radio"
           name="formType"
           value="Embedded"
+          [disabled]="true"
           class="margin"
-          disabled
+          formControlName="formType"
         />
         <span class="radio-btn-text" translate="embedded"> </span><br />
 

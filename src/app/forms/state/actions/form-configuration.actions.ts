@@ -21,14 +21,67 @@ export const updateFormMetadata = createAction(
   props<{ formMetadata: FormMetadata }>()
 );
 
+export const createFormDetail = createAction(
+  '[Form Configuration Component] createFormDetail',
+  props<{
+    formMetadata: FormMetadata;
+    pages: Page[];
+    formListId: string;
+    authoredFormDetail: any;
+  }>()
+);
+
+export const updateFormDetail = createAction(
+  '[Form Configuration Component] updateFormDetail',
+  props<{
+    formMetadata: FormMetadata;
+    pages: Page[];
+    formListId: string;
+    formDetailId: string;
+    authoredFormDetail: any;
+  }>()
+);
+
 export const createAuthoredFormDetail = createAction(
   '[Form Configuration Component] createAuthoredFormDetail',
-  props<{ pages: Page[] }>()
+  props<{
+    formStatus: string;
+    counter: number;
+    pages: Page[];
+    formListId: string;
+    authoredFormDetailVersion: number;
+  }>()
 );
 
 export const updateAuthoredFormDetail = createAction(
   '[Form Configuration Component] updateAuthoredFormDetail',
-  props<{ pages: Page[] }>()
+  props<{
+    formStatus: string;
+    counter: number;
+    pages: Page[];
+    formListId: string;
+    authoredFormDetailId: string;
+  }>()
+);
+
+export const updateCounter = createAction(
+  '[Form Configuration Component] updateCounter',
+  props<{ counter: number }>()
+);
+
+export const updateIsFormDetailPublished = createAction(
+  '[Form Configuration Component] updateIsFormDetailPublished',
+  props<{ isFormDetailPublished: boolean }>()
+);
+
+export const updateFormPublishStatus = createAction(
+  '[Form Configuration Component] updateFormPublishStatus',
+  props<{ formPublishStatus: string }>()
+);
+
+export const updateCreateOrEditForm = createAction(
+  '[Form Configuration Component] updateCreateOrEditForm',
+  props<{ createOrEditForm: boolean }>()
 );
 
 export const addPage = createAction(
@@ -93,6 +146,7 @@ export const updateQuestion = createAction(
   props<{
     question: Question;
     questionIndex: number;
+    sectionId: string;
     pageIndex: number;
   }>()
 );
@@ -101,6 +155,7 @@ export const deleteQuestion = createAction(
   '[Form Configuration Component] deleteQuestion',
   props<{
     questionIndex: number;
+    sectionId: string;
     pageIndex: number;
   }>()
 );
