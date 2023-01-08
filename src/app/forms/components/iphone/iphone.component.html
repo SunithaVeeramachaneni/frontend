@@ -1,13 +1,13 @@
-<div class="bg-iphone">
+<div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
   <div class="iphone-header">
-    <h3 class="form-heading">Process Plant weekly Safety</h3>
-    <p class="form-description">Inspection 5</p>
+    <h3 class="form-heading">{{ formMetadata.name }}</h3>
+    <p class="form-description">{{ formMetadata.description }}</p>
   </div>
   <div class="iphone-preview">
     <app-preview></app-preview>
   </div>
-  <div class="iphone-footer">
-    <span class="page-count">1/2</span>
+  <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
+    <span class="page-count">1 / {{ pagesCount }}</span>
 
     <button class="btn-next">Next</button>
     <button class="btn-previous">Previous</button>
