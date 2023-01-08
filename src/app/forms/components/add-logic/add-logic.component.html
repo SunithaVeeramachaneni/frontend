@@ -21,7 +21,11 @@
 
             <input type="hidden" formControlName="action" />
             If answer
-            <select class="logicCondition" formControlName="operator">
+            <select
+              class="logicCondition"
+              formControlName="operator"
+              (ngModelChange)="operatorChanged(logic.value, i, $event)"
+            >
               <option
                 class="logicOperator"
                 value="{{ operator.code }}"

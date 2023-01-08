@@ -134,4 +134,22 @@ export class AddLogicComponent implements OnInit {
   getLogicsList() {
     return (this.logicsForm.get('logics') as FormArray).controls;
   }
+
+  operatorChanged(logic, index, event) {
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.operator
+    );
+    if (logicSymbol) {
+      logic.logicTitle = `${logicSymbol.symbol} ${logic.operand2}`;
+    } else {
+      logic.logicTitle = `${logic.operator} ${logic.operand2}`;
+    }
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update_logic',
+      logic
+    });
+  }
 }
