@@ -40,7 +40,7 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
+  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   constructor(
