@@ -19,7 +19,7 @@ import {
   tap
 } from 'rxjs/operators';
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
-import { getQuestionLogics, State } from '../../state';
+import { getQuestionLogics, getSectionQuestions, State } from '../../state';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
 @Component({
@@ -36,6 +36,13 @@ export class AddLogicComponent implements OnInit {
   }
   get questionId() {
     return this._questionId;
+  }
+
+  @Input() set sectionId(id: string) {
+    this._sectionId = id;
+  }
+  get sectionId() {
+    return this._sectionId;
   }
 
   @Input() set pageIndex(pageIndex: number) {
@@ -67,6 +74,7 @@ export class AddLogicComponent implements OnInit {
 
   private _pageIndex: number;
   private _questionId: string;
+  private _sectionId: string;
   private _fieldType: string;
 
   constructor(
@@ -84,8 +92,9 @@ export class AddLogicComponent implements OnInit {
         logicsFormArray = logicsT.map((logic) => {
           const mandateQuestions = logic.mandateQuestions;
           const hideQuestions = logic.hideQuestions;
-          let mandateQuestionsFormArray = [];
+          const askQuestions = logic.questions;
 
+          let mandateQuestionsFormArray = [];
           if (mandateQuestions && mandateQuestions.length) {
             mandateQuestionsFormArray = mandateQuestions.map((mq) =>
               this.fb.control(mq)
@@ -99,6 +108,24 @@ export class AddLogicComponent implements OnInit {
             );
           }
 
+          let askQuestionsFormArray = [];
+          if (askQuestions && askQuestions.length) {
+            askQuestionsFormArray = askQuestions.map((aq) =>
+              this.fb.group({
+                id: aq.id || '',
+                sectionId: aq.sectionId || '',
+                name: aq.name || '',
+                fieldType: aq.fieldType || 'TF',
+                position: aq.position || '',
+                required: aq.required || false,
+                multi: aq.multi || false,
+                value: aq.value || '',
+                isPublished: aq.isPublished || false,
+                isPublishedTillSave: aq.isPublishedTillSave || false
+              })
+            );
+          }
+
           return this.fb.group({
             id: logic.id || '',
             questionId: logic.questionId || '',
@@ -109,7 +136,7 @@ export class AddLogicComponent implements OnInit {
             action: logic.action || '',
             logicTitle: logic.logicTitle || '',
             expression: logic.expression || '',
-            questions: this.fb.array([]),
+            questions: this.fb.array(askQuestionsFormArray),
             mandateQuestions: this.fb.array(mandateQuestionsFormArray),
             hideQuestions: this.fb.array(hideQuestionsFormArray)
           });
@@ -160,6 +187,21 @@ export class AddLogicComponent implements OnInit {
 
   getLogicsList() {
     return (this.logicsForm.get('logics') as FormArray).controls;
+  }
+
+  getSectionQuestions(pageIndex, logicId) {
+    const sectionId = `AQ_${logicId}`;
+    let askQuestions;
+    this.store
+      .select(getSectionQuestions(pageIndex, sectionId))
+      .subscribe((v) => {
+        askQuestions = v;
+      });
+    return askQuestions;
+  }
+
+  askQuestionEventHandler(event) {
+    //
   }
 
   operatorChanged(logic, index, event) {
@@ -213,6 +255,12 @@ export class AddLogicComponent implements OnInit {
     });
   }
   triggerMenuAction(action, index, logic) {
-    console.log(action, logic);
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'ask_question_create',
+      logic
+    });
   }
 }

@@ -320,6 +320,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestion,
     (state, action): FormConfigurationState => {
@@ -515,28 +516,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
-  // on(
-  //   FormConfigurationActions.updateQuestionLogics,
-  //   (state, action): FormConfigurationState => {
-  //     const pages = state.pages.map((page, pageIndex) => {
-  //       if (pageIndex === action.pageIndex) {
-  //         let filteredLogics = page.logics.filter(
-  //           (l) => l.questionId !== action.questionId
-  //         );
-  //         filteredLogics = filteredLogics.concat(action.logics);
-  //         return {
-  //           ...page,
-  //           logics: [...filteredLogics]
-  //         };
-  //       }
-  //       return page;
-  //     });
-  //     return {
-  //       ...state,
-  //       pages
-  //     };
-  //   }
-  // ),
 
   on(
     FormConfigurationActions.updateQuestionLogic,
@@ -556,19 +535,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
             logics
           };
         }
-
-        // if (pageIndex === action.pageIndex) {
-
-        //   let filteredLogics = page.logics.filter(
-        //     (l) => l.questionId !== action.questionId
-        //   );
-        //   filteredLogics = filteredLogics.concat(action.logic);
-
-        //   return {
-        //     ...page,
-        //     logics: [...filteredLogics]
-        //   };
-        // }
         return page;
       });
       return {
@@ -596,6 +562,30 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages
+      };
+    }
+  ),
+
+  on(
+    FormConfigurationActions.askQuestionsCreate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = JSON.parse(JSON.stringify(page.questions));
+          questions.push(action.question);
+
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formSaveStatus: 'Saving'
       };
     }
   )

@@ -65,6 +65,13 @@ export class QuestionComponent implements OnInit {
     return this._questionIndex;
   }
 
+  @Input() set isAskQuestion(isAskQuestion: boolean) {
+    this._isAskQuestion = isAskQuestion;
+  }
+  get isAskQuestion() {
+    return this._isAskQuestion;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   openResponseType = false;
@@ -106,6 +113,7 @@ export class QuestionComponent implements OnInit {
   private _id: string;
   private _sectionId: string;
   private _questionIndex: number;
+  private _isAskQuestion: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -301,6 +309,29 @@ export class QuestionComponent implements OnInit {
             questionId,
             pageIndex,
             logicId: event.logicId
+          })
+        );
+        break;
+      case 'ask_question_create':
+        const newQuestion = {
+          id: `AQ_${uuidv4()}`,
+          sectionId: `AQ_${event.logic.id}`,
+          name: '',
+          fieldType: 'TF',
+          position: 0,
+          required: false,
+          multi: false,
+          value: '',
+          isPublished: false,
+          isPublishedTillSave: false
+        };
+        this.store.dispatch(
+          FormConfigurationActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion
           })
         );
         break;

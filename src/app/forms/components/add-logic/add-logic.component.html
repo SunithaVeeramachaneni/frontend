@@ -82,12 +82,7 @@
               Hide ({{ logic.value.hideQuestions.length }}) Questions
               <mat-icon>edit</mat-icon>
             </span>
-            <span
-              *ngIf="
-                logic.value.action && logic.value.action === 'ask_questions'
-              "
-              class="mandateAction"
-            >
+            <span *ngIf="logic.value.questions.length" class="mandateAction">
               Ask Questions
             </span>
             <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
@@ -111,17 +106,45 @@
               <button
                 class="logicActionMenuItem"
                 mat-menu-item
-                (click)="triggerMenuAction('ask_questions', i, logic)"
+                (click)="triggerMenuAction('ask_questions', i, logic.value)"
               >
                 Ask Questions
               </button>
             </mat-menu>
           </div>
           <div
-            *ngIf="logic.value.action === 'ask_questions' && false"
+            *ngIf="getSectionQuestions(pageIndex, logic.value.id).length"
             class="logicAskQuestions"
           >
-            Ask Questions!
+            <ng-container
+              *ngFor="
+                let questionObj of getSectionQuestions(
+                  pageIndex,
+                  logic.value.id
+                );
+                let questionIndex = index
+              "
+            >
+              <div class="askQuestion">
+                <!-- <img
+                  cdkDragHandle
+                  src="assets/rdf-forms-icons/six-dots.svg"
+                  alt="six-dots"
+                  class="m-l-10 six-dots"
+                /> -->
+                <div class="questionContainer">
+                  <app-question
+                    class="question"
+                    [pageIndex]="pageIndex"
+                    [questionId]="questionObj.id"
+                    [sectionId]="sectionId"
+                    [questionIndex]="questionIndex"
+                    [isAskQuestion]="true"
+                    (questionEvent)="askQuestionEventHandler($event)"
+                  ></app-question>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
       </mat-tab>

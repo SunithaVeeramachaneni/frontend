@@ -9,7 +9,13 @@
   <div>
     <div>
       <div class="dis-flex questions-div">
-        <div class="width-70 question-input-box">
+        <div
+          class="width-70 question-input-box"
+          [ngClass]="{
+            'width-60': isAskQuestion,
+            'width-70': !isAskQuestion
+          }"
+        >
           <!-- <img
             src="assets/rdf-forms-icons/six-dots.svg"
             alt="six-dots"
@@ -25,7 +31,7 @@
             (keyup.enter)="addQuestion()"
           />
 
-          <div class="floating-btns">
+          <div class="floating-btns" *ngIf="!isAskQuestion">
             <button class="questions-btn" (click)="addQuestion()">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
@@ -48,9 +54,7 @@
             </button>
           </div>
         </div>
-
         <span class="divider">|</span>
-
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
@@ -67,6 +71,13 @@
             </ng-container>
           </div>
         </div>
+        <div *ngIf="isAskQuestion">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+          />
+        </div>
       </div>
 
       <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
@@ -79,7 +90,7 @@
         />
       </div>
 
-      <div class="dis-flex justify-content">
+      <div class="dis-flex justify-content" *ngIf="!isAskQuestion">
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div class="questionActionsRow">
@@ -190,6 +201,7 @@
                 [questionId]="questionForm.get('id').value"
                 [fieldType]="questionForm.get('fieldType').value"
                 [pageIndex]="pageIndex"
+                [sectionId]="sectionId"
                 (logicEvent)="logicEventHandler($event)"
               ></app-add-logic>
             </div>

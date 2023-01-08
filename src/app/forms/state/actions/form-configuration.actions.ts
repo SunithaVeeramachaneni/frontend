@@ -181,15 +181,6 @@ export const addLogicToQuestion = createAction(
   }>()
 );
 
-// export const updateQuestionLogics = createAction(
-//   '[Form Configuration Component] updateQuestionLogics',
-//   props<{
-//     questionId: string;
-//     pageIndex: number;
-//     logics: any[];
-//   }>()
-// );
-
 export const updateQuestionLogic = createAction(
   '[Form Configuration Component] updateQuestionLogic',
   props<{
@@ -205,6 +196,17 @@ export const deleteQuestionLogic = createAction(
     questionId: string;
     pageIndex: number;
     logicId: string;
+  }>()
+);
+
+export const askQuestionsCreate = createAction(
+  '[Form Configuration Component] askQuestionsCreate',
+  props<{
+    questionId: string;
+    pageIndex: number;
+    logicIndex: number;
+    logicId: string;
+    question: Question;
   }>()
 );
 

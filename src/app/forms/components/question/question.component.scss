@@ -28,6 +28,15 @@
     border-bottom-right-radius: 7px;
   }
 
+  .delete-icon {
+    background: white;
+    height: 25px;
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    width: 20px;
+  }
+
   .questions-delete-btn-text {
     margin: 0;
     font-size: 75%;
