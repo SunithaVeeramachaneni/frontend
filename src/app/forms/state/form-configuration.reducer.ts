@@ -97,7 +97,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
       formPublishStatus: action.formPublishStatus,
-      formDetailDynamoDBVersion: action.formDetail._version
+      formDetailDynamoDBVersion: action.formDetail._version,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      authoredFormDetailDynamoDBVersion:
+        state.authoredFormDetailDynamoDBVersion + 1
     })
   ),
   on(
@@ -109,7 +112,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
       formPublishStatus: action.formPublishStatus,
-      formDetailDynamoDBVersion: action.formDetail._version
+      formDetailDynamoDBVersion: action.formDetail._version,
+      formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
+      authoredFormDetailDynamoDBVersion:
+        state.authoredFormDetailDynamoDBVersion + 1
     })
   ),
   on(
