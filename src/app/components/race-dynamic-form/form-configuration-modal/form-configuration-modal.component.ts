@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -16,6 +17,8 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
+import { RaceDynamicFormService } from '../services/rdf.service';
+import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
@@ -37,14 +40,15 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
+  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
-
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly loginService: LoginService,
     private store: Store<State>
   ) {
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
@@ -68,8 +72,8 @@ export class FormConfigurationModalComponent implements OnInit {
       description: [''],
       isPublic: [false],
       isArchived: [false],
-      formStatus: ['draft'],
-      formType: ['standalone'],
+      formStatus: ['Draft'],
+      formType: ['Standalone'],
       tags: [this.tags]
     });
   }
@@ -119,12 +123,27 @@ export class FormConfigurationModalComponent implements OnInit {
 
   next() {
     if (this.headerDataForm.valid) {
+      const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
           formMetadata: this.headerDataForm.value
         })
       );
-      this.router.navigate(['/rdf-forms/create']);
+      this.store.dispatch(
+        FormConfigurationActions.updateCreateOrEditForm({
+          createOrEditForm: true
+        })
+      );
+      this.store.dispatch(
+        FormConfigurationActions.createForm({
+          formMetadata: {
+            ...this.headerDataForm.value,
+            author: userName,
+            formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+          }
+        })
+      );
+      this.router.navigate(['/forms/create']);
       this.dialogRef.close();
     }
   }

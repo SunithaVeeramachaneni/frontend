@@ -1,12 +1,78 @@
 <div class="list-view">
-  <h2 class="heading" translate="formLibrary"></h2>
+  <div class="main-container">
+    <div class="forms-header">
+      <h2 class="heading" translate="formLibrary"></h2>
+      <div id="openviewtab">
+        <app-form-detail
+          [@slideInOut]="menuState"
+          (slideInOut)="menuState = 'out'"
+        ></app-form-detail>
+      </div>
+      <span class="custom-form-field-gray-color search">
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchForms' | translate"
+            autocomplete="off"
+            [formControl]="searchForm"
+          />
+          <img
+            [src]="filterIcon"
+            matSuffix
+            cdkOverlayOrigin
+            class="common-filter-icon"
+            alt="Open Filter"
+            #trigger="cdkOverlayOrigin"
+            (click)="isPopoverOpen = !isPopoverOpen"
+          />
+        </mat-form-field>
+      </span>
+      <ng-template
+        cdkConnectedOverlay
+        cdkConnectedOverlayPanelClass="custom-popover"
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        [cdkConnectedOverlayHasBackdrop]="true"
+        [cdkConnectedOverlayOpen]="isPopoverOpen"
+        [cdkConnectedOverlayOrigin]="trigger"
+        cdkConnectedOverlayWidth="400px"
+        (backdropClick)="isPopoverOpen = false"
+      >
+        <div class="filter-modal custom-form-field-white-color">
+          <div class="m-b-10 filter-header">
+            <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
+            <button
+              class="filter-modal-cancel"
+              (click)="isPopoverOpen = false"
+              aria-label="Close Filter"
+            >
+              <img [src]="closeIcon" alt="Close Filter" />
+            </button>
+          </div>
+          <div>{{ 'filters' | translate }}</div>
+        </div>
+      </ng-template>
+    </div>
 
-  <!-- <button mat-raised-button (click)="toggleMenu()">Add Button</button> -->
-</div>
+    <div *ngIf="forms$ | async as forms; else loadingForms">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
 
-<div id="openviewtab">
-  <app-form-detail
-    [@slideInOut]="menuState"
-    (slideInOut)="menuState = 'out'"
-  ></app-form-detail>
+  <ng-template #loadingForms>
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </ng-template>
 </div>

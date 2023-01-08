@@ -99,11 +99,12 @@ export class QuestionComponent implements OnInit {
     this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         tap(() =>
           this.questionEvent.emit({
             pageIndex: this.pageIndex,
+            sectionId: this.sectionId,
             question: this.questionForm.value,
             questionIndex: this.questionIndex,
             type: 'update'
@@ -140,6 +141,7 @@ export class QuestionComponent implements OnInit {
   deleteQuestion() {
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
+      sectionId: this.sectionId,
       questionIndex: this.questionIndex,
       type: 'delete'
     });

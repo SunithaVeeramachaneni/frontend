@@ -1,7 +1,7 @@
 export interface RaceDynamicForm extends FormMetadata {
   pages: Page[];
   counter: number;
-  formStatus: 'draft' | 'published';
+  formStatus: 'Draft' | 'Published';
 }
 
 export interface FormMetadata {
@@ -11,8 +11,8 @@ export interface FormMetadata {
   formLogo: string;
   isPublic: boolean;
   isArchived: boolean;
-  formType: 'standalone' | 'embedded';
-  formStatus: 'draft' | 'published';
+  formType: 'Standalone' | 'Embedded';
+  formStatus: 'Draft' | 'Published';
   tags: string[];
   counter?: number;
 }
@@ -57,7 +57,7 @@ export interface SectionEvent {
 
 export interface QuestionEvent {
   pageIndex: number;
-  sectionId?: string;
+  sectionId: string;
   question?: Question;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
