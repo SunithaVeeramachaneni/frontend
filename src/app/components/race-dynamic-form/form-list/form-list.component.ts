@@ -225,6 +225,8 @@ export class FormListComponent implements OnInit {
   isPopoverOpen = false;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
+  ghostLoading = new Array(12).fill(0).map((v, i) => i);
+
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService
@@ -379,7 +381,8 @@ export class FormListComponent implements OnInit {
         break;
 
       case 'edit':
-        this.openEditFormModal(data);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        // this.openEditFormModal(data);
         break;
 
       case 'archive':
@@ -399,10 +402,10 @@ export class FormListComponent implements OnInit {
 
   prepareMenuActions(): void {
     const menuActions = [
-      // {
-      //   title: 'Edit Template',
-      //   action: 'edit'
-      // },
+      {
+        title: 'Edit Template',
+        action: 'edit'
+      },
       // {
       //   title: 'Copy Template',
       //   action: 'copy'
@@ -427,9 +430,5 @@ export class FormListComponent implements OnInit {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-  }
-
-  toggleMenu() {
-    this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }
 }
