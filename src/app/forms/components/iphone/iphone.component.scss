@@ -1,0 +1,44 @@
+@import '../../../../scss/colors.scss';
+
+.bg-iphone {
+  background-image: url('../../../../assets/img/iphonep.png');
+  width: 270px;
+  height: 250px;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 270px 550px;
+  min-height: 100%;
+  overflow: hidden;
+  position: fixed;
+  right: 50px;
+}
+
+.heading {
+  text-align: center;
+  margin-top: 210px;
+  color: $dark-gray;
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .bg-iphone {
+    width: 250px;
+    background-size: 250px 470px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .bg-iphone {
+    right: 30px;
+    margin-left: 1.3rem;
+    position: inherit;
+    padding-bottom: 8rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .bg-iphone {
+    width: 250px;
+    background-size: 250px 500px;
+    padding-bottom: 11rem !important;
+  }
+}

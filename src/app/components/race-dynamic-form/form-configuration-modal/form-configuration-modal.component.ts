@@ -40,10 +40,9 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Tag 1', 'Tag 2', 'Tag 3'];
+  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
   headerDataForm: FormGroup;
   errors: ValidationError = {};
-  formType = 'Standalone';
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -73,8 +72,8 @@ export class FormConfigurationModalComponent implements OnInit {
       description: [''],
       isPublic: [false],
       isArchived: [false],
-      formStatus: ['draft'],
-      formType: ['standalone'],
+      formStatus: ['Draft'],
+      formType: ['Standalone'],
       tags: [this.tags]
     });
   }
@@ -122,34 +121,29 @@ export class FormConfigurationModalComponent implements OnInit {
     );
   }
 
-  createFormList() {
-    const { firstName, lastName } = this.loginService.getLoggedInUserInfo();
-    this.raceDynamicFormService
-      .createForm$({
-        name: this.headerDataForm.value.name,
-        description: this.headerDataForm.value.description,
-        author: `${firstName} ${lastName}`,
-        lastPublishedBy: `${firstName} ${lastName}`,
-        formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png',
-        tags: this.tags,
-        formType: this.formType
-      })
-      .subscribe(() => {
-        this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-        this.router.navigate(['./rdf-forms']);
-        this.dialogRef.close();
-      });
-  }
-
   next() {
     if (this.headerDataForm.valid) {
-      this.createFormList();
+      const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
           formMetadata: this.headerDataForm.value
         })
       );
-      this.router.navigate(['/rdf-forms/create']);
+      this.store.dispatch(
+        FormConfigurationActions.updateCreateOrEditForm({
+          createOrEditForm: true
+        })
+      );
+      this.store.dispatch(
+        FormConfigurationActions.createForm({
+          formMetadata: {
+            ...this.headerDataForm.value,
+            author: userName,
+            formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+          }
+        })
+      );
+      this.router.navigate(['/forms/create']);
       this.dialogRef.close();
     }
   }

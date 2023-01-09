@@ -11,8 +11,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { getPage, State } from 'src/app/forms/state';
-import { AddPageEvent, Page } from 'src/app/interfaces';
+import { getPage, getPagesCount, State } from 'src/app/forms/state';
+import { PageEvent, Page } from 'src/app/interfaces';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -27,8 +27,7 @@ export class PageComponent implements OnInit {
     return this._pageIndex;
   }
 
-  @Output() addPageEvent: EventEmitter<AddPageEvent> =
-    new EventEmitter<AddPageEvent>();
+  @Output() pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
   isPageOpenState = true;
   pageForm: FormGroup = this.fb.group({
@@ -36,6 +35,7 @@ export class PageComponent implements OnInit {
     position: ''
   });
   page$: Observable<Page>;
+  pagesCount$: Observable<number>;
   private _pageIndex: number;
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
@@ -48,10 +48,12 @@ export class PageComponent implements OnInit {
         });
       })
     );
+
+    this.pagesCount$ = this.store.select(getPagesCount);
   }
 
-  addPage(position: number) {
-    this.addPageEvent.emit({ pageIndex: position });
+  addPage() {
+    this.pageEvent.emit({ pageIndex: this.pageIndex + 1, type: 'add' });
   }
 
   togglePageOpenState = () => {
@@ -59,6 +61,6 @@ export class PageComponent implements OnInit {
   };
 
   deletePage() {
-    //delete
+    this.pageEvent.emit({ pageIndex: this.pageIndex, type: 'delete' });
   }
 }

@@ -51,6 +51,13 @@
     border-radius: 8px;
   }
 
+  .save-status {
+    padding-top: 22px;
+    font-weight: 500;
+    font-size: 100%;
+    line-height: 20px;
+  }
+
   .import-btn:disabled {
     border: none;
   }
@@ -62,6 +69,10 @@
     border-color: $blue-primary;
     border-radius: 8px;
     margin: 12px 12px 0 12px;
+  }
+
+  .publish-btn:disabled {
+    background-color: $disabled-color;
   }
 
   .publish-btn-icon {
@@ -85,5 +96,36 @@
   .form {
     height: 75vh;
     overflow-y: auto;
+    margin-top: 0.6rem;
   }
+}
+.questionContainer {
+  display: flex;
+  .question {
+    width: 100%;
+  }
+}
+.six-dots {
+  position: relative;
+  top: 2px;
+  width: 9px;
+  cursor: move;
+}
+.highlight-bg {
+  border: 2px solid $blue-main;
+  border-radius: 4px;
+}
+
+.sectionMinimumDragArea {
+  min-height: 50px;
+}
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+.section-dragHandle {
+  position: relative;
+  top: -55px;
+}
+.sectionContainer {
+  width: 100%;
 }

@@ -1,0 +1,94 @@
+@import '../../../../scss/colors.scss';
+
+.questions {
+  .floating-btns {
+    position: absolute;
+    left: 10px;
+    border: 1px solid $border-color;
+    border-radius: 7px;
+    margin-top: -60px;
+    display: none;
+  }
+
+  .questions-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+
+  .delete-btn {
+    background-color: $white;
+    border: none;
+    width: 55px;
+    padding: 5px 0px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
+
+  .questions-delete-btn-text {
+    margin: 0;
+    font-size: 75%;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: $black;
+  }
+
+  .questions-div {
+    border-bottom: 1px solid $border-color;
+
+    .question-input-box {
+      margin-top: 7px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .question-input {
+    padding: 7px;
+    border: none;
+    margin-left: 10px;
+    width: auto;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  .question-input:focus + .floating-btns {
+    display: block;
+  }
+
+  .divider {
+    font-size: 150%;
+    color: $border-color;
+    position: relative;
+    top: 7px;
+    margin-right: 20px;
+  }
+
+  .justify-content {
+    justify-content: flex-end;
+  }
+
+  .input-fields {
+    background: $white;
+    padding: 7px;
+    display: flex;
+    flex-direction: column;
+    width: 98%;
+    border-left: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    justify-content: center;
+
+    .m-l-50 {
+      margin-left: 50px;
+    }
+
+    .required-input {
+      position: relative;
+      top: 2px;
+    }
+  }
+}

@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
@@ -14,7 +13,7 @@ const routes: Routes = [
     component: FormContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: 'Race Dynamic Forms' },
+      breadcrumb: { label: 'Forms' },
       permissions: [permissions.viewForms]
     },
     children: [
@@ -28,6 +27,16 @@ const routes: Routes = [
         }
       },
       {
+        path: 'edit/:id',
+        component: FormConfigurationComponent,
+        canActivate: [AuthGuard],
+        // resolve: { form: FormResolverService },
+        data: {
+          breadcrumb: { label: 'Edit Form', alias: 'formName' },
+          permissions: [permissions.updateForm]
+        }
+      },
+      {
         path: 'submissions',
         component: SubmissionComponent,
         canActivate: [AuthGuard],
@@ -36,22 +45,12 @@ const routes: Routes = [
           permissions: [permissions.viewForms]
         }
       }
-      // {
-      //   path: 'edit/:id',
-      //   component: CreateFormComponent,
-      //   canActivate: [AuthGuard],
-      //   resolve: { form: FormResolverService },
-      //   data: {
-      //     breadcrumb: { label: 'Edit Form', alias: 'formName' },
-      //     permissions: [permissions.updateForm]
-      //   }
-      // }
     ]
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes), ReactiveFormsModule],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
 export class RaceDynamicFormRoutingModule {}

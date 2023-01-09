@@ -2,6 +2,12 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="formLibrary"></h2>
+      <div id="openviewtab">
+        <app-form-detail
+          [@slideInOut]="menuState"
+          (slideInOut)="menuState = 'out'"
+        ></app-form-detail>
+      </div>
       <span class="custom-form-field-gray-color search">
         <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
           <span class="forms-count">
@@ -74,8 +80,8 @@
   </div>
 
   <ng-template #loadingForms>
-    <div style="padding: 0 20px">
-      <div *ngFor="let number of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]">
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
         </ngx-shimmer-loading>
       </div>

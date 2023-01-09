@@ -22,6 +22,10 @@
   "maxlength": "{name} must be at the max of {length} characters",
   "searchForms": "Search Forms",
   "filters": "FILTERS",
+  "changesSaved": "All Changes Saved",
+  "savingChanges": "Saving Changes...",
+  "changesPublished": "All Changes Published",
+  "publishingChanges": "Publishing Changes...",
   "page": "Page",
   "deletePage": "Delete Page",
   "addPage": "Add Page",
@@ -57,5 +61,8 @@
   "fixNoofRows": "Fix no. of rows",
   "columnName": "Enter Column name",
   "responseType": "Choose Response Type",
-  "submissions": "Submissions"
+  "submissions": "Submissions",
+  "addSubFields": "Add Sub Fields",
+  "typeQuestion": "Type Question",
+  "responseTitle": "Response Title"
 }

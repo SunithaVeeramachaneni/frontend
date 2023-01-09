@@ -123,7 +123,7 @@ export type DeleteFormDetailInput = {
 
 export type CreateAuthoredFormDetailInput = {
   id?: string | null;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -131,13 +131,8 @@ export type CreateAuthoredFormDetailInput = {
   _version?: number | null;
 };
 
-export enum FormStatusEnum {
-  DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED"
-}
-
 export type ModelAuthoredFormDetailConditionInput = {
-  formStatus?: ModelFormStatusEnumInput | null;
+  formStatus?: ModelStringInput | null;
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
@@ -145,11 +140,6 @@ export type ModelAuthoredFormDetailConditionInput = {
   and?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   or?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   not?: ModelAuthoredFormDetailConditionInput | null;
-};
-
-export type ModelFormStatusEnumInput = {
-  eq?: FormStatusEnum | null;
-  ne?: FormStatusEnum | null;
 };
 
 export type ModelIntInput = {
@@ -167,7 +157,7 @@ export type ModelIntInput = {
 export type AuthoredFormDetail = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -181,7 +171,7 @@ export type AuthoredFormDetail = {
 
 export type UpdateAuthoredFormDetailInput = {
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -291,7 +281,7 @@ export type FormSubmissionList = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
+  formSubmissionListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -380,9 +370,9 @@ export type FormList = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
-  FormListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
-  FormListFormDetail?: ModelFormDetailConnection | null;
+  formListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
+  formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
+  formListFormDetail?: ModelFormDetailConnection | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -443,7 +433,7 @@ export enum ModelSortDirection {
 
 export type ModelAuthoredFormDetailFilterInput = {
   id?: ModelIDInput | null;
-  formStatus?: ModelFormStatusEnumInput | null;
+  formStatus?: ModelStringInput | null;
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
@@ -665,7 +655,7 @@ export type DeleteFormDetailMutation = {
 export type CreateAuthoredFormDetailMutation = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -680,7 +670,7 @@ export type CreateAuthoredFormDetailMutation = {
 export type UpdateAuthoredFormDetailMutation = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -695,7 +685,7 @@ export type UpdateAuthoredFormDetailMutation = {
 export type DeleteAuthoredFormDetailMutation = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -760,7 +750,7 @@ export type CreateFormSubmissionListMutation = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -786,7 +776,7 @@ export type UpdateFormSubmissionListMutation = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -812,7 +802,7 @@ export type DeleteFormSubmissionListMutation = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -840,17 +830,17 @@ export type CreateFormListMutation = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -878,17 +868,17 @@ export type UpdateFormListMutation = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -916,17 +906,17 @@ export type DeleteFormListMutation = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1004,7 +994,7 @@ export type FormDetailsByFormlistIDQuery = {
 export type GetAuthoredFormDetailQuery = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -1021,7 +1011,7 @@ export type ListAuthoredFormDetailsQuery = {
   items: Array<{
     __typename: "AuthoredFormDetail";
     id: string;
-    formStatus?: FormStatusEnum | null;
+    formStatus?: string | null;
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
@@ -1041,7 +1031,7 @@ export type SyncAuthoredFormDetailsQuery = {
   items: Array<{
     __typename: "AuthoredFormDetail";
     id: string;
-    formStatus?: FormStatusEnum | null;
+    formStatus?: string | null;
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
@@ -1061,7 +1051,7 @@ export type AuthoredFormDetailsByFormlistIDQuery = {
   items: Array<{
     __typename: "AuthoredFormDetail";
     id: string;
-    formStatus?: FormStatusEnum | null;
+    formStatus?: string | null;
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
@@ -1175,7 +1165,7 @@ export type GetFormSubmissionListQuery = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1255,17 +1245,17 @@ export type GetFormListQuery = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1372,7 +1362,7 @@ export type OnDeleteFormDetailSubscription = {
 export type OnCreateAuthoredFormDetailSubscription = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -1387,7 +1377,7 @@ export type OnCreateAuthoredFormDetailSubscription = {
 export type OnUpdateAuthoredFormDetailSubscription = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -1402,7 +1392,7 @@ export type OnUpdateAuthoredFormDetailSubscription = {
 export type OnDeleteAuthoredFormDetailSubscription = {
   __typename: "AuthoredFormDetail";
   id: string;
-  formStatus?: FormStatusEnum | null;
+  formStatus?: string | null;
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
@@ -1467,7 +1457,7 @@ export type OnCreateFormSubmissionListSubscription = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1493,7 +1483,7 @@ export type OnUpdateFormSubmissionListSubscription = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1519,7 +1509,7 @@ export type OnDeleteFormSubmissionListSubscription = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
-  FormSubmissionListFormSubmissionDetail?: {
+  formSubmissionListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1547,17 +1537,17 @@ export type OnCreateFormListSubscription = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1585,17 +1575,17 @@ export type OnUpdateFormListSubscription = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1623,17 +1613,17 @@ export type OnDeleteFormListSubscription = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
-  FormListFormSubmissionDetail?: {
+  formListFormSubmissionDetail?: {
     __typename: "ModelFormSubmissionDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListAuthoredFormDetail?: {
+  formListAuthoredFormDetail?: {
     __typename: "ModelAuthoredFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
-  FormListFormDetail?: {
+  formListFormDetail?: {
     __typename: "ModelFormDetailConnection";
     nextToken?: string | null;
     startedAt?: number | null;
@@ -1944,7 +1934,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -1988,7 +1978,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -2032,7 +2022,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -2078,17 +2068,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -2132,17 +2122,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -2186,17 +2176,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -2750,7 +2740,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -2886,17 +2876,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -3337,7 +3327,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -3384,7 +3374,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -3431,7 +3421,7 @@ export class APIService {
           dueDate
           version
           submittedBy
-          FormSubmissionListFormSubmissionDetail {
+          formSubmissionListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
@@ -3478,17 +3468,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -3533,17 +3523,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt
@@ -3588,17 +3578,17 @@ export class APIService {
           lastPublishedBy
           author
           formType
-          FormListFormSubmissionDetail {
+          formListFormSubmissionDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListAuthoredFormDetail {
+          formListAuthoredFormDetail {
             __typename
             nextToken
             startedAt
           }
-          FormListFormDetail {
+          formListFormDetail {
             __typename
             nextToken
             startedAt

@@ -1,7 +1,13 @@
 <div
   class="create-form-main"
   [formGroup]="formConfiguration"
-  *ngIf="formMetadata$ | async"
+  *ngIf="{
+    formMetadata: formMetadata$ | async,
+    authoredFormDetail: authoredFormDetail$ | async,
+    createOrEditForm: createOrEditForm$ | async,
+    formSaveStatus: formSaveStatus$ | async,
+    formPublishStatus: formPublishStatus$ | async
+  }"
 >
   <div class="dis-flex form-header">
     <div>
@@ -44,13 +50,48 @@
       </div>
     </div>
     <div class="dis-flex">
+      <div
+        class="save-status"
+        [hidden]="
+          formSaveStatus !== 'Saved' ||
+          formStatus !== 'Draft' ||
+          isFormDetailPublished
+        "
+      >
+        {{ 'changesSaved' | translate }}
+      </div>
+      <div
+        class="save-status"
+        [hidden]="formSaveStatus !== 'Saving' || isFormDetailPublished"
+      >
+        {{ 'savingChanges' | translate }}
+      </div>
+      <div
+        class="save-status"
+        [hidden]="
+          formPublishStatus !== 'Published' || formStatus !== 'Published'
+        "
+      >
+        {{ 'changesPublished' | translate }}
+      </div>
+      <div
+        class="save-status"
+        [hidden]="formPublishStatus !== 'Publishing' || !isFormDetailPublished"
+      >
+        {{ 'publishingChanges' | translate }}
+      </div>
       <button
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
       ></button>
 
-      <button mat-raised-button class="publish-btn">
+      <button
+        mat-raised-button
+        class="publish-btn"
+        (click)="publishFormDetail()"
+        [disabled]="formStatus === 'Published' || isFormDetailPublished"
+      >
         <span>
           <img
             alt="upload"
@@ -67,49 +108,104 @@
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"
-          (addPageEvent)="addPageEventHandler($event)"
+          (pageEvent)="pageEventHandler($event)"
+          cdkDropListGroup
         >
           <ng-container *ngIf="sectionIds$ | async as sectionIds">
-            <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
-              <ng-container
-                *ngFor="let sectionIndex of sectionIndexes[pageIndex]"
-              >
-                <app-section
-                  [pageIndex]="pageIndex"
-                  [sectionIndex]="sectionIndex"
-                  (addSectionEvent)="addSectionEventHandler($event)"
-                  (updateSectionEvent)="updateSectionEventHandler($event)"
-                >
-                  <ng-container
-                    *ngIf="questionIndexes$ | async as questionIndexes"
-                  >
-                    <ng-container
-                      *ngFor="
-                        let questionIndex of questionIndexes[pageIndex][
-                          sectionIndex
-                        ]
-                      "
+            <div
+              cdkDrop
+              cdkDropList
+              (cdkDropListDropped)="dropSection($event, pageIndex)"
+              [cdkDropListData]="getSectionsOfPage(pageIndex)"
+              cdkDropListGroup
+            >
+              <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
+                <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
+                  <div class="dis-flex" cdkDrag>
+                    <img
+                      cdkDragHandle
+                      src="assets/rdf-forms-icons/six-dots.svg"
+                      alt="six-dots"
+                      class="m-l-10 six-dots section-dragHandle"
+                    />
+                    <app-section
+                      class="sectionContainer"
+                      [pageIndex]="pageIndex"
+                      [sectionIndex]="sectionIndex"
+                      (sectionEvent)="sectionEventHandler($event)"
                     >
-                      <app-question
-                        [pageIndex]="pageIndex"
-                        [sectionId]="sectionIds[pageIndex][sectionIndex]"
-                        [questionIndex]="questionIndex"
-                        (addQuestionEvent)="addQuestionEventHandler($event)"
-                        (updateQuestionEvent)="
-                          updateQuestionEventHandler($event)
-                        "
-                      ></app-question>
-                    </ng-container>
-                  </ng-container>
-                </app-section>
+                      <ng-container
+                        *ngIf="questionIndexes$ | async as questionIndexes"
+                      >
+                        <div
+                          class="sectionMinimumDragArea"
+                          cdkDrop
+                          cdkDropList
+                          (cdkDropListDropped)="
+                            drop(
+                              $event,
+                              pageIndex,
+                              sectionIds[pageIndex][sectionIndex]
+                            )
+                          "
+                          [cdkDropListData]="
+                            getQuestionsOfSection(
+                              pageIndex,
+                              sectionIds[pageIndex][sectionIndex]
+                            )
+                          "
+                          [id]="sectionIds[pageIndex][sectionIndex]"
+                          cdkDropListGroup
+                        >
+                          <ng-container
+                            *ngFor="
+                              let questionObj of getQuestionsOfSection(
+                                pageIndex,
+                                sectionIds[pageIndex][sectionIndex]
+                              );
+                              let questionIndex = index
+                            "
+                          >
+                            <div
+                              cdkDrag
+                              class="questionContainer"
+                              [ngClass]="{
+                                'highlight-bg': fieldContentOpenState === true
+                              }"
+                              (click)="toggleFieldContentOpenState()"
+                            >
+                              <img
+                                cdkDragHandle
+                                src="assets/rdf-forms-icons/six-dots.svg"
+                                alt="six-dots"
+                                class="m-l-10 six-dots"
+                              />
+                              <app-question
+                                class="question"
+                                [pageIndex]="pageIndex"
+                                [questionId]="questionObj.id"
+                                [sectionId]="
+                                  sectionIds[pageIndex][sectionIndex]
+                                "
+                                [questionIndex]="questionIndex"
+                                (questionEvent)="questionEventHandler($event)"
+                              ></app-question>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                    </app-section>
+                  </div>
+                </div>
               </ng-container>
-            </ng-container>
+            </div>
           </ng-container>
         </app-page>
       </ng-container>
     </div>
     <div class="width-30">
-      <app-preview></app-preview>
+      <app-iphone></app-iphone>
+      <!-- <app-preview></app-preview> -->
     </div>
   </div>
 </div>

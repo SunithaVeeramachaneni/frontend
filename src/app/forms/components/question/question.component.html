@@ -1,0 +1,174 @@
+<div
+  class="questions"
+  [formGroup]="questionForm"
+  *ngIf="{
+    question: question$ | async,
+    sectionQuestionsCount: sectionQuestionsCount$ | async
+  } as props"
+>
+  <div>
+    <div>
+      <div class="dis-flex questions-div">
+        <div class="width-70 question-input-box">
+          <!-- <img
+            src="assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+            class="m-l-10 six-dots"
+          /> -->
+
+          <input
+            autocomplete="off"
+            type="text"
+            formControlName="name"
+            [placeholder]="'typeQuestion' | translate"
+            class="width-90 question-input"
+            (keyup.enter)="addQuestion()"
+          />
+
+          <div class="floating-btns">
+            <button class="questions-btn" (click)="addQuestion()">
+              <img
+                src="assets/rdf-forms-icons/add-question.svg"
+                alt="add questions"
+              />
+              <p class="questions-delete-btn-text" translate="question"></p>
+            </button>
+            <br />
+
+            <button
+              class="delete-btn"
+              (click)="deleteQuestion()"
+              [disabled]="props.sectionQuestionsCount === 1"
+            >
+              <img
+                src="assets/rdf-forms-icons/delete-question.svg"
+                alt="delete questions"
+              />
+              <p class="questions-delete-btn-text" translate="delete"></p>
+            </button>
+          </div>
+        </div>
+
+        <span class="divider">|</span>
+
+        <div class="width-30">
+          <app-response-type-button
+            [questionForm]="questionForm"
+            [fieldTypes]="fieldTypes"
+          >
+          </app-response-type-button>
+          <div *ngIf="openResponseTypeModal$ | async as openResponseTypeModal">
+            <ng-container *ngIf="openResponseTypeModal === true">
+              <app-response-type
+                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+                [fieldTypes]="fieldTypes"
+                [question]="question"
+              ></app-response-type>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+
+      <div class="dis-flex justify-content">
+        <div class="input-fields">
+          <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
+            <div>
+              <span class="m-l-40">
+                <input
+                  type="checkbox"
+                  id="required"
+                  class="required-input"
+                  name="required"
+                  formControlName="required"
+                />&nbsp;
+                <label for="required" translate="requiredtext"></label>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'TAF'"
+              >
+                <app-table
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-table>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'ARD'"
+              >
+                <app-array
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-array>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <app-date></app-date>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <app-time></app-time>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                class="m-l-40"
+              >
+                <app-read-only></app-read-only>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TF'"
+                class="m-l-50"
+              >
+                <app-text></app-text>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'RT'"
+                (click)="sliderOpen()"
+                class="m-l-50"
+              >
+                <label translate="range"></label>&nbsp;
+              </span>
+              <app-response-type-side-drawer></app-response-type-side-drawer>
+
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value === 'DD' &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="m-l-20"
+              >
+                <app-drop-down></app-drop-down>
+              </span>
+            </div>
+          </div>
+
+          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+            <!-- <app-image></app-image> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-content></ng-content>

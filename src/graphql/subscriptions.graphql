@@ -153,7 +153,7 @@ subscription OnCreateFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -180,7 +180,7 @@ subscription OnUpdateFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -207,7 +207,7 @@ subscription OnDeleteFormSubmissionList(
     dueDate
     version
     submittedBy
-    FormSubmissionListFormSubmissionDetail {
+    formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
@@ -234,15 +234,15 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
@@ -269,15 +269,15 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
@@ -304,15 +304,15 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
-    FormListFormSubmissionDetail {
+    formListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    FormListAuthoredFormDetail {
+    formListAuthoredFormDetail {
       nextToken
       startedAt
     }
-    FormListFormDetail {
+    formListFormDetail {
       nextToken
       startedAt
     }
