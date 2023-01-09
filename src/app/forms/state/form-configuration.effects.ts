@@ -43,7 +43,7 @@ export class FormConfigurationEffects {
     this.actions$.pipe(
       ofType(FormConfigurationActions.updateForm),
       concatMap((action) =>
-        this.raceDynamicFormService.updateForm$(action.formMetadata).pipe(
+        this.raceDynamicFormService.updateForm$(action).pipe(
           map(() =>
             FormConfigurationApiActions.updateFormSuccess({
               formMetadata: action.formMetadata,
@@ -67,10 +67,13 @@ export class FormConfigurationEffects {
           mergeMap((response) =>
             forkJoin([
               this.raceDynamicFormService.updateForm$({
-                ...formDetail.formMetadata,
-                lastPublishedBy: this.loginService.getLoggedInUserName(),
-                publishedDate: new Date().toISOString(),
-                formStatus: 'Published'
+                formMetadata: {
+                  ...formDetail.formMetadata,
+                  lastPublishedBy: this.loginService.getLoggedInUserName(),
+                  publishedDate: new Date().toISOString(),
+                  formStatus: 'Published'
+                },
+                formListDynamoDBVersion: action.formListDynamoDBVersion
               }),
               this.raceDynamicFormService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
@@ -107,9 +110,12 @@ export class FormConfigurationEffects {
           mergeMap((response) =>
             forkJoin([
               this.raceDynamicFormService.updateForm$({
-                ...formDetail.formMetadata,
-                lastPublishedBy: this.loginService.getLoggedInUserName(),
-                publishedDate: new Date().toISOString()
+                formMetadata: {
+                  ...formDetail.formMetadata,
+                  lastPublishedBy: this.loginService.getLoggedInUserName(),
+                  publishedDate: new Date().toISOString()
+                },
+                formListDynamoDBVersion: action.formListDynamoDBVersion
               }),
               this.raceDynamicFormService.createAuthoredFormDetail$({
                 ...authoredFormDetail,

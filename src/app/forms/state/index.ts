@@ -169,7 +169,10 @@ export const getFormDetails = createSelector(
     formDetailId: state.formDetailId,
     authoredFormDetailVersion: state.authoredFormDetailVersion,
     isFormDetailPublished: state.isFormDetailPublished,
-    formSaveStatus: state.formSaveStatus
+    formSaveStatus: state.formSaveStatus,
+    formListDynamoDBVersion: state.formListDynamoDBVersion,
+    formDetailDynamoDBVersion: state.formDetailDynamoDBVersion,
+    authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion
   })
 );
 
