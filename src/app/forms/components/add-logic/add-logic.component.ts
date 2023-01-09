@@ -20,7 +20,7 @@ import {
 } from 'rxjs/operators';
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getQuestionLogics, getSectionQuestions, State } from '../../state';
-import { FormConfigurationActions } from '../../state/actions';
+import { AddLogicActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
 @Component({
@@ -218,7 +218,7 @@ export class AddLogicComponent implements OnInit {
         break;
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.askQuestionsUpdate({
+          AddLogicActions.askQuestionsUpdate({
             questionId: event.question.id,
             pageIndex: event.pageIndex,
             question: event.question
@@ -227,7 +227,7 @@ export class AddLogicComponent implements OnInit {
         break;
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.askQuestionsDelete({
+          AddLogicActions.askQuestionsDelete({
             questionId: event.questionId,
             pageIndex: event.pageIndex
           })

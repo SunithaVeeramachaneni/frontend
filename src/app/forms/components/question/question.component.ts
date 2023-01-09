@@ -26,7 +26,7 @@ import {
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
-import { FormConfigurationActions } from '../../state/actions';
+import { AddLogicActions } from '../../state/actions';
 
 @Component({
   selector: 'app-question',
@@ -260,7 +260,7 @@ export class QuestionComponent implements OnInit {
 
   addLogicToQuestion(pageIndex: number, questionId: string) {
     this.store.dispatch(
-      FormConfigurationActions.addLogicToQuestion({
+      AddLogicActions.addLogicToQuestion({
         pageIndex,
         questionId,
         logic: this.constructLogic(pageIndex, questionId)
@@ -289,7 +289,7 @@ export class QuestionComponent implements OnInit {
     switch (type) {
       case 'create':
         this.store.dispatch(
-          FormConfigurationActions.addLogicToQuestion({
+          AddLogicActions.addLogicToQuestion({
             pageIndex,
             questionId,
             logic: this.constructLogic(pageIndex, questionId)
@@ -298,7 +298,7 @@ export class QuestionComponent implements OnInit {
         break;
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionLogic({
+          AddLogicActions.updateQuestionLogic({
             questionId,
             pageIndex,
             logic: event.logic
@@ -307,7 +307,7 @@ export class QuestionComponent implements OnInit {
         break;
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteQuestionLogic({
+          AddLogicActions.deleteQuestionLogic({
             questionId,
             pageIndex,
             logicId: event.logicId
@@ -328,7 +328,7 @@ export class QuestionComponent implements OnInit {
           isPublishedTillSave: false
         };
         this.store.dispatch(
-          FormConfigurationActions.askQuestionsCreate({
+          AddLogicActions.askQuestionsCreate({
             questionId: event.questionId,
             pageIndex: event.pageIndex,
             logicIndex: event.logicIndex,

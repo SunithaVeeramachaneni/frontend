@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
+  AddLogicActions,
   FormConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
@@ -516,7 +518,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
-    FormConfigurationActions.addLogicToQuestion,
+    AddLogicActions.addLogicToQuestion,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -535,7 +537,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
-    FormConfigurationActions.updateQuestionLogic,
+    AddLogicActions.updateQuestionLogic,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -562,7 +564,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
-    FormConfigurationActions.deleteQuestionLogic,
+    AddLogicActions.deleteQuestionLogic,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -584,7 +586,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
-    FormConfigurationActions.askQuestionsCreate,
+    AddLogicActions.askQuestionsCreate,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -607,7 +609,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
-    FormConfigurationActions.askQuestionsUpdate,
+    AddLogicActions.askQuestionsUpdate,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -637,7 +639,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
-    FormConfigurationActions.askQuestionsDelete,
+    AddLogicActions.askQuestionsDelete,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {

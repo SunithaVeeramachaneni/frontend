@@ -1,7 +1,9 @@
+@import '../../../../scss/colors.scss';
+
 .tabContent {
   display: flex;
   padding: 5px 10px;
-  background: white;
+  background: $white;
   flex-direction: column;
 }
 
@@ -11,9 +13,9 @@
   display: flex;
   align-items: center;
   align-content: center;
-  border: 1px solid #cccccc;
+  border: 1px solid $gray3;
   padding: 0px 15px;
-  background: #ffffff;
+  background: $white;
   border-radius: 5px;
   cursor: pointer;
   font-size: initial;
@@ -26,16 +28,14 @@
   align-items: center;
   align-content: center;
   margin-left: 6px;
-  border: 1px solid #e6e6fa;
   padding: 0px 15px;
-  background: #e6f0fa;
   border-radius: 5px;
   cursor: pointer;
   font-size: initial;
   background: none !important;
   border: none !important;
   text-decoration: underline !important;
-  color: blue !important;
+  color: $blue !important;
   -webkit-appearance: none !important;
   padding: 0px !important;
   max-width: 100px;
@@ -43,10 +43,10 @@
 
 .action {
   margin: 0px 5px;
-  border: 1px solid #d7dbf4;
+  border: 1px solid $white3;
   border-radius: 6px;
   padding: 0px 5px;
-  background: #d7dbf4;
+  background: $white3;
 }
 .expression {
   width: 250px;
@@ -55,7 +55,7 @@
 
 .logicAskQuestions {
   width: 100%;
-  background: white;
+  background: $white;
   padding: 5px;
   .askQuestion {
     display: flex;
@@ -63,8 +63,8 @@
     align-items: center;
     border-radius: 5px;
     margin: 5px 0px;
-    border: 1px solid #e0e0e0;
-    background: white;
+    border: 1px solid $border-color;
+    background: $white;
     .questionContainer {
       width: 100%;
     }
@@ -91,14 +91,14 @@
   align-items: center;
   align-content: center;
   margin-left: 15px;
-  border: 1px solid #e6e6fa;
+  border: 1px solid $border-color-gray;
   padding: 4px 15px;
-  background: #e6f0fa;
+  background: $gray6;
   border-radius: 5px;
   cursor: pointer;
 }
 .actionBtn {
-  color: #3d5afe;
+  color: $blue-main;
   text-decoration: underline;
 }
 .logicOperator {
@@ -106,7 +106,7 @@
 }
 
 .delete-icon {
-  background: white;
+  background: $white;
   height: 25px;
   position: relative;
   padding: 10px;
@@ -117,13 +117,16 @@
   line-height: 0.5;
   height: 35px;
   &:hover {
-    background: rgb(193 200 209 / 60%);
+    background: $blue3-hover;
   }
 }
 
 .mat-tab-labels :last-child.mat-tab-label {
   min-width: 0;
   padding: 0 12px;
-  color: blue;
+  color: $blue;
   opacity: unset;
+}
+.m-l-m30 {
+  margin-left: -30px;
 }
