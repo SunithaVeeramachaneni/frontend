@@ -65,7 +65,7 @@ export class FormListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'Name',
       type: 'string',
       order: 1,
       searchable: false,
@@ -126,24 +126,19 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontFamily: 'Inter',
-        fontStyle: 'normal',
-        fontSize: '14px',
         textTransform: 'capitalize',
         fontWeight: 500,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 12px',
-        marginTop: '8px',
-        width: '90px',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
         height: '24px',
-        background: '#D1FAE5', // #FEF3C7
-        borderRadius: '12px',
-        flex: 'none',
-        order: 0,
-        flexGrow: 0
+        // background: '#FEF3C7',
+        // color: '#92400E',
+        borderRadius: '12px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -196,7 +191,7 @@ export class FormListComponent implements OnInit {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -222,7 +217,6 @@ export class FormListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-  isPopoverOpen = false;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -271,7 +265,8 @@ export class FormListComponent implements OnInit {
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.openEditFormModal(event.row);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        //this.openEditFormModal(event.row);
         break;
       default:
     }
@@ -321,10 +316,25 @@ export class FormListComponent implements OnInit {
       onScrollForms$
     ]).pipe(
       map(([rows, form, scrollData]) => {
+        rows.forEach((row) => {
+          if (row.formStatus === 'Draft') {
+            this.columns[2].titleStyle = {
+              ...this.columns[2].titleStyle,
+              background: '#FEF3C7',
+              color: '#92400E'
+            };
+          } else if (row.formStatus === 'Published') {
+            this.columns[2].titleStyle = {
+              ...this.columns[2].titleStyle,
+              background: '#D1FAE5',
+              color: '#065F46'
+            };
+          }
+        });
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 150px)'
+            tableHeight: 'calc(80vh - 105px)'
           };
           initial.data = rows;
         } else {
@@ -403,17 +413,17 @@ export class FormListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
-        title: 'Edit Template',
+        title: 'Edit',
         action: 'edit'
-      },
+      }
       // {
       //   title: 'Copy Template',
       //   action: 'copy'
       // },
-      {
-        title: 'Archive',
-        action: 'archive'
-      }
+      // {
+      //   title: 'Archive',
+      //   action: 'archive'
+      // },
       // {
       //   title: 'Upload to Public Library',
       //   action: 'upload'
@@ -422,13 +432,5 @@ export class FormListComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
-  }
-
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
   }
 }

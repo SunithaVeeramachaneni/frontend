@@ -69,29 +69,17 @@
         </div>
       </div>
 
-      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-        <input
-          #insertImages
-          [hidden]="true"
-          type="file"
-          accept="image/jpeg,image/jpg,image/png"
-          (change)="insertImageHandler($event)"
-        />
-      </div>
-
       <div class="dis-flex justify-content">
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div>
               <span class="m-l-40">
-                <input
-                  type="checkbox"
-                  id="required"
-                  class="required-input"
-                  name="required"
+                <mat-checkbox
                   formControlName="required"
-                />&nbsp;
-                <label for="required" translate="requiredtext"></label>
+                  class="required-checkbox"
+                >
+                </mat-checkbox>
+                <label class="required-label" translate="requiredtext"></label>
               </span>
 
               <span
@@ -99,6 +87,7 @@
                 class="m-l-40"
               >
                 <app-read-only
+                  [question]="questionForm"
                   (defaultValue)="questionForm.get('value').setValue($event)"
                 ></app-read-only>
               </span>
@@ -108,6 +97,7 @@
                 class="m-l-50"
               >
                 <app-text
+                  [question]="questionForm"
                   (inputTextAnswer)="questionForm.get('value').setValue($event)"
                 ></app-text>
               </span>
@@ -117,6 +107,7 @@
                 class="m-l-10"
               >
                 <app-date
+                  [question]="questionForm"
                   (checkedToDefaultDate)="
                     questionForm.get('value').setValue($event)
                   "
@@ -128,6 +119,7 @@
                 class="m-l-10"
               >
                 <app-time
+                  [question]="questionForm"
                   (checkedToDefaultTime)="
                     questionForm.get('value').setValue($event)
                   "
@@ -179,25 +171,24 @@
                 class="m-l-20"
               >
                 <app-drop-down
+                  [question]="questionForm"
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
             </div>
           </div>
-
-          <input
-            #insertImages
-            [hidden]="true"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            (change)="insertImageHandler($event)"
-          />
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-            <app-image [questionForm]="questionForm"></app-image>
+            <app-image [question]="questionForm"></app-image>
           </div>
         </div>
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
       </div>
     </div>
   </div>
 </div>
-<ng-content></ng-content>

@@ -7,7 +7,7 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
   styleUrls: ['./image.component.scss']
 })
 export class ImageComponent implements OnInit {
-  @Input() questionForm;
+  @Input() question;
 
   constructor(private imageUtils: ImageUtils) {}
 

@@ -1,7 +1,9 @@
 <div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
   <div class="iphone-header">
     <h3 class="form-heading">{{ formMetadata.name }}</h3>
-    <p class="form-description">{{ formMetadata.description }}</p>
+    <p class="form-description">
+      {{ formMetadata.description ? formMetadata.description : 'Description' }}
+    </p>
   </div>
   <div class="iphone-preview">
     <app-preview></app-preview>

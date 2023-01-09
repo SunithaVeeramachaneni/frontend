@@ -25,7 +25,7 @@
         <div class="field-types">
           <div class="each-fieldtype">
             <p class="question-name" *ngIf="question.fieldType !== 'ARD'">
-              {{ question.name ? question.name : 'Type Question' }}
+              {{ (question.name ? question.name : 'typeQuestion') | translate }}
             </p>
 
             <!-- read only  -->
@@ -37,14 +37,14 @@
             <input
               type="text"
               class="text-answer"
-              placeholder="Enter"
+              [placeholder]="'enter' | translate"
               *ngIf="question.fieldType === 'TF' && question.value === 'TF'"
             />
 
             <!-- long text answer  -->
             <textarea
               class="long-text-answer"
-              placeholder="Enter"
+              [placeholder]="'enter' | translate"
               *ngIf="question.fieldType === 'TF' && question.value === 'LTV'"
             ></textarea>
 
@@ -52,7 +52,7 @@
             <input
               type="number"
               class="number"
-              placeholder="Enter"
+              [placeholder]="'enter' | translate"
               *ngIf="question.fieldType === 'NF'"
             />
 
@@ -61,7 +61,7 @@
               <input
                 type="text"
                 class="text-answer"
-                placeholder="Choose item"
+                [placeholder]="'choose' | translate"
               />
               <img src="assets/rdf-forms-icons/scan-bg.svg" class="scan-icon" />
             </div>
@@ -70,7 +70,7 @@
             <input
               type="date"
               class="text-answer"
-              placeholder="Enter"
+              [placeholder]="'enter' | translate"
               *ngIf="question.fieldType === 'DF'"
             />
 
@@ -78,7 +78,7 @@
             <input
               type="time"
               class="text-answer"
-              placeholder="Enter"
+              [placeholder]="'enter' | translate"
               *ngIf="question.fieldType === 'TIF'"
             />
 
@@ -90,7 +90,11 @@
 
             <!-- signature  -->
             <div *ngIf="question.fieldType === 'SGF'">
-              <input type="text" class="text-answer" placeholder="Enter" />
+              <input
+                type="text"
+                class="text-answer"
+                [placeholder]="'enter' | translate"
+              />
               <img
                 src="assets/rdf-forms-icons/signature.svg"
                 class="signature-icon"
@@ -115,7 +119,11 @@
 
             <!-- location  -->
             <div *ngIf="question.fieldType === 'GAL'">
-              <input type="text" class="text-answer" placeholder="Enter" />
+              <input
+                type="text"
+                class="text-answer"
+                [placeholder]="'enter' | translate"
+              />
               <img
                 src="assets/rdf-forms-icons/location.svg"
                 class="signature-icon"
@@ -130,9 +138,17 @@
 
             <!-- Date Range -->
             <div class="dis-flex" *ngIf="question.fieldType === 'DFR'">
-              <input type="date" class="text-answer" placeholder="From" />
+              <input
+                type="date"
+                class="text-answer"
+                [placeholder]="'from' | translate"
+              />
               <span class="date-range-hypion">-</span>
-              <input type="date" class="text-answer" placeholder="To" />
+              <input
+                type="date"
+                class="text-answer"
+                [placeholder]="'to' | translate"
+              />
             </div>
 
             <!-- Insert Image -->
@@ -148,7 +164,10 @@
             <!-- Dropdown -->
             <div *ngIf="question.fieldType === 'DD'">
               <mat-form-field appearance="outline" class="dropdown">
-                <mat-select [multiple]="question.multi" placeholder="Enter">
+                <mat-select
+                  [multiple]="question.multi"
+                  [placeholder]="'enter' | translate"
+                >
                   <mat-option
                     *ngFor="let value of question.value.values"
                     [value]="value.title"
@@ -214,7 +233,9 @@
                 />
               </label>
               <span class="array-heading">
-                {{ question.name ? question.name : 'Type Question' }}
+                {{
+                  (question.name ? question.name : 'typeQuestion') | translate
+                }}
               </span>
 
               <div class="add-new-button">

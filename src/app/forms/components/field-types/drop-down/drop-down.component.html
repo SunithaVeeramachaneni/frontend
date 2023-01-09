@@ -1,8 +1,8 @@
-<input
-  type="checkbox"
-  id="multi"
-  class="required-input"
-  name="multi"
-  (click)="toggleChecked($event)"
-/>&nbsp;
-<label for="multi" translate="multiLabel"></label>
+<mat-checkbox
+  [(ngModel)]="multiChecked"
+  (change)="toggleChecked($event.checked)"
+  class="multi-checkbox"
+>
+</mat-checkbox>
+
+<label translate="multiLabel" class="multi-label"></label>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-date',
@@ -6,14 +6,27 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./date.component.scss']
 })
 export class DateComponent implements OnInit {
-  @Output() checkedToDefaultTime: EventEmitter<boolean> = new EventEmitter();
-  dateChecked = true;
+  @Output() checkedToDefaultDate: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+  @Input() set question(data) {
+    this.questionInfo = data;
+  }
+
+  get question() {
+    return this.questionInfo;
+  }
+
+  defaultChecked;
+  private questionInfo;
+
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.defaultChecked = this.questionInfo.get('value').value;
+  }
 
-  toggleChecked() {
-    this.dateChecked = !this.dateChecked;
-    this.checkedToDefaultTime.emit(this.dateChecked);
+  toggleChecked(event) {
+    this.defaultChecked = event;
+    this.checkedToDefaultDate.emit(this.defaultChecked);
   }
 }

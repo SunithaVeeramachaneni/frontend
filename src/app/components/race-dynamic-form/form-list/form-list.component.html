@@ -2,12 +2,6 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="formLibrary"></h2>
-      <div id="openviewtab">
-        <app-form-detail
-          [@slideInOut]="menuState"
-          (slideInOut)="menuState = 'out'"
-        ></app-form-detail>
-      </div>
       <span class="custom-form-field-gray-color search">
         <mat-form-field appearance="outline">
           <mat-icon matPrefix class="searchIcon">search</mat-icon>
@@ -18,41 +12,9 @@
             autocomplete="off"
             [formControl]="searchForm"
           />
-          <img
-            [src]="filterIcon"
-            matSuffix
-            cdkOverlayOrigin
-            class="common-filter-icon"
-            alt="Open Filter"
-            #trigger="cdkOverlayOrigin"
-            (click)="isPopoverOpen = !isPopoverOpen"
-          />
+          <img [src]="filterIcon" matSuffix alt="Open Filter" />
         </mat-form-field>
       </span>
-      <ng-template
-        cdkConnectedOverlay
-        cdkConnectedOverlayPanelClass="custom-popover"
-        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-        [cdkConnectedOverlayHasBackdrop]="true"
-        [cdkConnectedOverlayOpen]="isPopoverOpen"
-        [cdkConnectedOverlayOrigin]="trigger"
-        cdkConnectedOverlayWidth="400px"
-        (backdropClick)="isPopoverOpen = false"
-      >
-        <div class="filter-modal custom-form-field-white-color">
-          <div class="m-b-10 filter-header">
-            <span class="filter-modal-heading">{{ 'filter' | translate }}</span>
-            <button
-              class="filter-modal-cancel"
-              (click)="isPopoverOpen = false"
-              aria-label="Close Filter"
-            >
-              <img [src]="closeIcon" alt="Close Filter" />
-            </button>
-          </div>
-          <div>{{ 'filters' | translate }}</div>
-        </div>
-      </ng-template>
     </div>
 
     <div *ngIf="forms$ | async as forms; else loadingForms">
@@ -61,11 +23,19 @@
         [configOptions]="configOptions"
         (fetchDataCallback)="handleTableEvent($event)"
         (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
         (onConfigOptionsChange)="configOptionsChangeHandler($event)"
         class="width-100"
       ></cwp-dynamictable>
     </div>
   </div>
+
+  <!-- <app-submission-slider
+    [@slideInOut]="submissionSlider"
+    (slideInOut)="submissionSlider = 'out'"
+  ></app-submission-slider> -->
+
+  <!-- <button (click)="openSubmissionSlider()">Slider</button> -->
 
   <ng-template #loadingForms>
     <div class="ghost-loading">

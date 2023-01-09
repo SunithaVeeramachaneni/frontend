@@ -95,11 +95,17 @@ export class QuestionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.fieldTypes = fieldTypesMock.fieldTypes.filter(
+      (fieldType) =>
+        fieldType.type !== 'LTV' &&
+        fieldType.type !== 'DD' &&
+        fieldType.type !== 'DDM' &&
+        fieldType.type !== 'VI'
+    );
     this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(
-        debounceTime(500),
+        debounceTime(1000),
         distinctUntilChanged(),
         tap(() =>
           this.questionEvent.emit({
@@ -161,6 +167,12 @@ export class QuestionComponent implements OnInit {
       case 'TF':
         this.questionForm.get('value').setValue('TF');
         break;
+      case 'DF':
+        this.questionForm.get('value').setValue(false);
+        break;
+      case 'TIF':
+        this.questionForm.get('value').setValue(false);
+        break;
       case 'VI':
         this.questionForm.get('value').setValue([]);
         break;
@@ -174,8 +186,7 @@ export class QuestionComponent implements OnInit {
         this.questionForm.get('value').setValue(sliderValue);
         break;
       case 'IMG':
-        const index = 0;
-        this.insertImages.toArray()[index]?.nativeElement.click();
+        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
         break;
       default:
       // do nothing

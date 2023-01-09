@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-read-only',
@@ -6,11 +6,14 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./read-only.component.scss']
 })
 export class ReadOnlyComponent implements OnInit {
-  @Output() defaultValue: EventEmitter<boolean> = new EventEmitter();
+  @Output() defaultValue: EventEmitter<string> = new EventEmitter<string>();
+  @Input() question;
   default;
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.default = this.question.get('value').value;
+  }
 
   dataChanged(value) {
     this.defaultValue.emit(value);

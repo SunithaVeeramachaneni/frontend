@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-text',
@@ -6,11 +6,14 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./text.component.scss']
 })
 export class TextComponent implements OnInit {
-  @Output() inputTextAnswer: EventEmitter<boolean> = new EventEmitter();
-  textAnswer = 'TF';
+  @Output() inputTextAnswer: EventEmitter<string> = new EventEmitter<string>();
+  @Input() question;
+  textAnswer;
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.textAnswer = this.question.get('value').value;
+  }
 
   dataChanged(value) {
     this.inputTextAnswer.emit(value);

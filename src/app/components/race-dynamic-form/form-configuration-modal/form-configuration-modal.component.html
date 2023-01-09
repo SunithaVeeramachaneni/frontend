@@ -44,7 +44,7 @@
               type="text"
               name="formName"
               matInput
-              placeholder="eg. Inspection Check"
+              [placeholder]="'formName' | translate"
               formControlName="name"
             />
             <mat-error *ngIf="processValidationErrors('name')" class="m-5">
@@ -61,7 +61,7 @@
               type="text"
               matInput
               name="formDescription"
-              placeholder="Add Description"
+              [placeholder]="'addDescription' | translate"
               formControlName="description"
             />
           </mat-form-field>
@@ -81,7 +81,7 @@
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
               <input
-                placeholder="Start typing to see tags"
+                [placeholder]="'startTypingTags' | translate"
                 [matChipInputFor]="chipList"
                 [matAutocomplete]="auto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"

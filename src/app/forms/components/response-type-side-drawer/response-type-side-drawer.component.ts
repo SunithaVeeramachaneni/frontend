@@ -25,7 +25,7 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseTypeSideDrawerComponent implements OnInit {
-  @Output() setSliderValues: EventEmitter<any> = new EventEmitter();
+  @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
   @Input() question;
   sliderOpenState$: Observable<boolean>;
   multipleChoiceOpenState$: Observable<boolean>;

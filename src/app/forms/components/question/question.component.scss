@@ -77,7 +77,7 @@
 
   .input-fields {
     background: $white;
-    padding: 7px;
+    padding: 15px 7px 5px 7px;
     display: flex;
     flex-direction: column;
     width: 98%;
@@ -95,5 +95,13 @@
     .range-values {
       color: $blue-main;
     }
+  }
+  .required-label {
+    position: relative;
+    top: 1px;
+  }
+
+  .required-checkbox {
+    margin: 0 7px 0 20px;
   }
 }
