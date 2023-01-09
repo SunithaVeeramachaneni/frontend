@@ -13,13 +13,9 @@ import {
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import {
-  FormMetadata,
-  LoadEvent,
-  SearchEvent,
-  TableEvent
-} from './../../../interfaces';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
+const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
@@ -69,7 +65,7 @@ export class RaceDynamicFormService {
   }
 
   getFormsListCount$(): Observable<number> {
-    const statement = `query { listFormLists(limit: 10000) { items { id } } }`;
+    const statement = `query { listFormLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
@@ -78,7 +74,7 @@ export class RaceDynamicFormService {
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists(limit: 10000) { items { id } } }`;
+    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormSubmissionLists } }: any) =>
