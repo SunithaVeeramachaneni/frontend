@@ -225,7 +225,9 @@ export class RaceDynamicFormService {
       }
 
       // Ask Questions;
-      const askQuestions = questions.filter((q) => q.id === `AQ_${logic.id}`);
+      const askQuestions = questions.filter(
+        (q) => q.sectionId === `AQ_${logic.id}`
+      );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
         expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
