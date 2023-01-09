@@ -145,7 +145,7 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions } = page;
+      const { sections, questions, logics } = page;
       const pageItem = {
         SECTIONS: sections.map((section) => {
           const questionsBySection = questions.filter(
@@ -159,7 +159,12 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: ''
+                DEFAULTVALUE: '',
+                UIVALIDATION: this.getValidationExpression(
+                  question.id,
+                  questions,
+                  logics
+                )
               };
 
               if (question.fieldType === 'ARD') {
@@ -181,6 +186,59 @@ export class RaceDynamicFormService {
     forms.push(formData);
     return JSON.stringify({ FORMS: forms });
   };
+
+  getValidationExpression(questionId, questions, logics) {
+    let expression = '';
+    let globalIndex = 0;
+    const questionLogics = logics.filter(
+      (logic) => logic.questionId === questionId
+    );
+    if (!questionLogics || !questionLogics.length) return expression;
+
+    questionLogics.forEach((logic) => {
+      const isEmpty = !logic.operand2.length;
+
+      // Mandate Questions;
+      const mandatedQuestions = logic.mandateQuestions;
+      if (mandatedQuestions && mandatedQuestions.length) {
+        mandatedQuestions.forEach((mq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Hide Questions;
+      const hiddenQuestions = logic.hideQuestions;
+      if (hiddenQuestions && hiddenQuestions.length) {
+        hiddenQuestions.forEach((hq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Ask Questions;
+      const askQuestions = questions.filter((q) => q.id === `AQ_${logic.id}`);
+      askQuestions.forEach((q) => {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+      });
+    });
+    if (expression[0] === ';') {
+      expression = expression.slice(1, expression.length);
+    }
+    if (expression[expression.length - 1] === ';') {
+      expression = expression.slice(0, expression.length - 1);
+    }
+    return expression;
+  }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
     const rows =
