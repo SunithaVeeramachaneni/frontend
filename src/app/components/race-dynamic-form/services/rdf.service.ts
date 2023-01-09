@@ -7,19 +7,21 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
+  CreateFormListInput,
+  CreateFormListMutation,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import {
   FormMetadata,
   LoadEvent,
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -223,6 +225,39 @@ export class RaceDynamicFormService {
     forms.push(formData);
     return JSON.stringify({ FORMS: forms });
   };
+
+  fetchAllFormListNames$() {
+    const statement = `query { listFormLists(limit: 10000) { items { name } } }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { listFormLists } }: any) =>
+          listFormLists?.items as GetFormListQuery[]
+      )
+    );
+  }
+
+  generateCopyFormName(form: GetFormListQuery, rows: GetFormListQuery[]) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(form?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${form?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
+  }
+
+  createFormList$(input: CreateFormListInput) {
+    return from(this.awsApiService.CreateFormList(input));
+  }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
     const rows =

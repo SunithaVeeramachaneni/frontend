@@ -34,6 +34,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
+import { omit } from 'lodash';
 
 @Component({
   selector: 'app-form-list',
@@ -247,7 +248,6 @@ export class FormListComponent implements OnInit {
       )
       .subscribe();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
-
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -288,9 +288,27 @@ export class FormListComponent implements OnInit {
   }
 
   openCopyFormModal(form: GetFormListQuery): void {
-    this.addEditCopyForm$.next({
-      action: 'copy',
-      form
+    this.raceDynamicFormService.fetchAllFormListNames$().subscribe((rows) => {
+      const createdForm = this.raceDynamicFormService.generateCopyFormName(
+        form,
+        rows
+      );
+      if (createdForm?.newName) {
+        this.raceDynamicFormService
+          .createForm$({
+            ...omit(form, ['id', 'preTextImage']),
+            name: createdForm.newName
+          })
+          .subscribe(() => {
+            this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
+            this.formsListCount$ =
+              this.raceDynamicFormService.getFormsListCount$();
+            this.toast.show({
+              text: 'Form copied successfully!',
+              type: 'success'
+            });
+          });
+      }
     });
   }
 
@@ -410,10 +428,10 @@ export class FormListComponent implements OnInit {
         title: 'Edit Template',
         action: 'edit'
       },
-      // {
-      //   title: 'Copy Template',
-      //   action: 'copy'
-      // },
+      {
+        title: 'Copy Template',
+        action: 'copy'
+      },
       {
         title: 'Archive',
         action: 'archive'
