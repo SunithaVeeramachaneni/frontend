@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { formatDistance } from 'date-fns';
-import { from, ReplaySubject } from 'rxjs';
+import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
@@ -11,7 +11,11 @@ import {
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
+
 import {
+  ErrorInfo,
   FormMetadata,
   LoadEvent,
   SearchEvent,
@@ -25,7 +29,19 @@ export class RaceDynamicFormService {
   nextToken = '';
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  constructor(private readonly awsApiService: APIService) {}
+  constructor(
+    private readonly awsApiService: APIService,
+    private appService: AppService
+  ) {}
+
+  createTags$ = (
+    tags: string[],
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  getAllTags$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
+    this.appService._getResp(environment.rdfApiUrl, 'datasets', info);
 
   getFormsList$(queryParams: {
     skip?: number;

@@ -8,7 +8,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   FormBuilder,
   FormControl,
@@ -40,17 +40,24 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
+
+  allTags: string[] = [];
+  originalTags: string[] = [];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
-    private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly loginService: LoginService,
-    private store: Store<State>
+    private store: Store<State>,
+    private rdfService: RaceDynamicFormService
   ) {
+    this.rdfService.getAllTags$().subscribe((tags) => {
+      this.allTags = tags;
+      this.originalTags = JSON.parse(JSON.stringify(tags));
+    });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -122,6 +129,16 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   next() {
+    const newTags = [];
+    this.tags.forEach((selectedTag) => {
+      if (this.originalTags.indexOf(selectedTag) < 0) {
+        newTags.push(selectedTag);
+      }
+    });
+    this.rdfService.createTags$(newTags).subscribe((response) => {
+      // do nothing
+    });
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
