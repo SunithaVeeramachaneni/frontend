@@ -51,7 +51,10 @@ const {
   inActiveUsers,
   tenantManagement,
   raceDynamicForms,
-  submissionForms
+  submissionForms,
+  formTemplates,
+  archivedForms,
+  myForms
 } = routingUrls;
 
 @Component({
@@ -134,14 +137,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       disable: false,
       subPages: [
         {
-          title: raceDynamicForms.title,
-          url: raceDynamicForms.url,
-          permission: raceDynamicForms.permission
+          title: myForms.title,
+          url: myForms.url,
+          permission: myForms.permission
         },
         {
           title: submissionForms.title,
           url: submissionForms.url,
           permission: submissionForms.permission
+        },
+        {
+          title: formTemplates.title,
+          url: formTemplates.url,
+          permission: formTemplates.permission
+        },
+        {
+          title: archivedForms.title,
+          url: archivedForms.url,
+          permission: archivedForms.permission
         }
       ]
     },

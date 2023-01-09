@@ -212,11 +212,12 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   limit = defaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
-  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'in';
+  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
