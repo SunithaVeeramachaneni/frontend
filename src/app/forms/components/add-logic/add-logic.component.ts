@@ -20,6 +20,7 @@ import {
 } from 'rxjs/operators';
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getQuestionLogics, getSectionQuestions, State } from '../../state';
+import { FormConfigurationActions } from '../../state/actions';
 import { SelectQuestionsDialogComponent } from './select-questions-dialog/select-questions-dialog.component';
 
 @Component({
@@ -92,7 +93,10 @@ export class AddLogicComponent implements OnInit {
         logicsFormArray = logicsT.map((logic) => {
           const mandateQuestions = logic.mandateQuestions;
           const hideQuestions = logic.hideQuestions;
-          const askQuestions = logic.questions;
+          const askQuestions = this.getSectionQuestions(
+            this.pageIndex,
+            logic.id
+          );
 
           let mandateQuestionsFormArray = [];
           if (mandateQuestions && mandateQuestions.length) {
@@ -200,8 +204,36 @@ export class AddLogicComponent implements OnInit {
     return askQuestions;
   }
 
-  askQuestionEventHandler(event) {
-    //
+  askQuestionEventHandler(event, logic, logicIndex) {
+    const { type } = event;
+    switch (type) {
+      case 'add':
+        this.logicEvent.emit({
+          questionId: this.questionId,
+          pageIndex: this.pageIndex,
+          logicIndex,
+          type: 'ask_question_create',
+          logic
+        });
+        break;
+      case 'update':
+        this.store.dispatch(
+          FormConfigurationActions.askQuestionsUpdate({
+            questionId: event.question.id,
+            pageIndex: event.pageIndex,
+            question: event.question
+          })
+        );
+        break;
+      case 'delete':
+        this.store.dispatch(
+          FormConfigurationActions.askQuestionsDelete({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex
+          })
+        );
+        break;
+    }
   }
 
   operatorChanged(logic, index, event) {

@@ -60,6 +60,8 @@ export interface QuestionEvent {
   pageIndex: number;
   sectionId: string;
   question?: Question;
+  questionId?: string;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
+  isAskQuestion?: boolean;
 }

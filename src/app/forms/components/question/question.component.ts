@@ -135,7 +135,8 @@ export class QuestionComponent implements OnInit {
             sectionId: this.sectionId,
             question: this.questionForm.value,
             questionIndex: this.questionIndex,
-            type: 'update'
+            type: 'update',
+            isAskQuestion: this.isAskQuestion
           })
         )
       )
@@ -171,7 +172,8 @@ export class QuestionComponent implements OnInit {
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
       questionIndex: this.questionIndex,
-      type: 'delete'
+      type: 'delete',
+      questionId: this.questionId
     });
   }
 

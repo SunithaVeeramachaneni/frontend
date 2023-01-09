@@ -352,6 +352,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestionBySection,
     (state, action): FormConfigurationState => {
@@ -573,7 +574,62 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         if (pageIndex === action.pageIndex) {
           const questions = JSON.parse(JSON.stringify(page.questions));
           questions.push(action.question);
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
 
+  on(
+    FormConfigurationActions.askQuestionsUpdate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          let questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions = [
+            ...questions.slice(0, questionIndex),
+            action.question,
+            ...questions.slice(questionIndex + 1)
+          ];
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    FormConfigurationActions.askQuestionsDelete,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions.splice(questionIndex, 1);
           return {
             ...page,
             questions

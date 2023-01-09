@@ -82,7 +82,11 @@
               Hide ({{ logic.value.hideQuestions.length }}) Questions
               <mat-icon>edit</mat-icon>
             </span>
-            <span *ngIf="logic.value.questions.length" class="mandateAction">
+            <span
+              *ngIf="logic.value.questions.length"
+              class="mandateAction"
+              (click)="triggerMenuAction('ask_questions', i, logic.value)"
+            >
               Ask Questions
             </span>
             <button mat-button [matMenuTriggerFor]="menu" class="actionBtn">
@@ -137,10 +141,12 @@
                     class="question"
                     [pageIndex]="pageIndex"
                     [questionId]="questionObj.id"
-                    [sectionId]="sectionId"
+                    [sectionId]="questionObj.sectionId"
                     [questionIndex]="questionIndex"
                     [isAskQuestion]="true"
-                    (questionEvent)="askQuestionEventHandler($event)"
+                    (questionEvent)="
+                      askQuestionEventHandler($event, logic.value, i)
+                    "
                   ></app-question>
                 </div>
               </div>

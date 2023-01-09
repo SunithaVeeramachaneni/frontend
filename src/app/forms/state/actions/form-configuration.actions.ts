@@ -160,6 +160,22 @@ export const deleteQuestion = createAction(
   }>()
 );
 
+export const askQuestionsUpdate = createAction(
+  '[Form Configuration Component] askQuestionsUpdate',
+  props<{
+    questionId: string;
+    pageIndex: number;
+    question: Question;
+  }>()
+);
+export const askQuestionsDelete = createAction(
+  '[Form Configuration Component] askQuestionsDelete',
+  props<{
+    questionId: string;
+    pageIndex: number;
+  }>()
+);
+
 export const transferQuestionFromSection = createAction(
   '[Form Configuration] transferQuestionFromSection',
   props<{
