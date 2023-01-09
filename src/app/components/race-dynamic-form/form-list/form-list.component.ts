@@ -410,18 +410,18 @@ export class FormListComponent implements OnInit {
         title: 'Edit Template',
         action: 'edit'
       },
-      // {
-      //   title: 'Copy Template',
-      //   action: 'copy'
-      // },
+      {
+        title: 'Copy Template',
+        action: 'copy'
+      },
       {
         title: 'Archive',
         action: 'archive'
+      },
+      {
+        title: 'Upload to Public Library',
+        action: 'upload'
       }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
