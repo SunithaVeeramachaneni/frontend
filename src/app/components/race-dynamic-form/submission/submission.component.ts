@@ -183,7 +183,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: false,
+    enableRowsSelection: true,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -210,6 +210,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
   closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
+  nextToken = '';
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -279,7 +280,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   getSubmissionFormsList() {
     return this.raceDynamicFormService
       .getSubmissionFormsList$({
-        skip: this.skip,
+        nextToken: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value
       })

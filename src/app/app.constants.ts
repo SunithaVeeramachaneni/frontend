@@ -129,7 +129,7 @@ export const routingUrls = {
     permission: permissions.viewForms
   },
   submissionForms: {
-    url: '/rdf-forms/submissions',
+    url: '/forms/submissions',
     title: 'Submissions',
     permission: permissions.viewForms
   }

@@ -24,55 +24,48 @@ import {
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  nextToken = '';
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(private readonly awsApiService: APIService) {}
 
   getFormsList$(queryParams: {
-    skip?: number;
+    nextToken?: string;
     limit: number;
     searchKey: string;
   }) {
-    if (this.nextToken === null) {
-      return;
+    if (queryParams?.nextToken !== null) {
+      return from(
+        this.awsApiService.ListFormLists(
+          {},
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
     }
-    return from(
-      this.awsApiService.ListFormLists(
-        {
-          name: {
-            contains: queryParams?.searchKey || ''
-          }
-        },
-        queryParams.limit,
-        this.nextToken
-      )
-    ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
   }
 
   getSubmissionFormsList$(queryParams: {
-    skip?: number;
+    nextToken?: string;
     limit: number;
     searchKey: string;
   }) {
-    if (this.nextToken === null) {
-      return;
+    if (queryParams?.nextToken !== null) {
+      return from(
+        this.awsApiService.ListFormSubmissionLists(
+          {
+            name: {
+              contains: queryParams?.searchKey || ''
+            }
+          },
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatSubmittedListResponse(res)));
     }
-    return from(
-      this.awsApiService.ListFormSubmissionLists(
-        {
-          name: {
-            contains: queryParams?.searchKey || ''
-          }
-        },
-        queryParams.limit,
-        this.nextToken
-      )
-    ).pipe(map((res) => this.formatSubmittedListResponse(res)));
   }
 
   getFormsListCount$(): Observable<number> {
-    const statement = `query { listFormLists { items { id } } }`;
+    const statement = `query { listFormLists(limit: 10000) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
@@ -81,7 +74,7 @@ export class RaceDynamicFormService {
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists { items { id } } }`;
+    const statement = `query { listFormSubmissionLists(limit: 10000) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormSubmissionLists } }: any) =>
@@ -256,10 +249,11 @@ export class RaceDynamicFormService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    this.nextToken = resp?.nextToken;
+    const nextToken = resp?.nextToken;
     return {
       count,
-      rows
+      rows,
+      nextToken
     };
   }
 
@@ -289,9 +283,10 @@ export class RaceDynamicFormService {
             addSuffix: true
           })
         })) || [];
-    this.nextToken = resp?.nextToken;
+    const nextToken = resp?.nextToken;
     return {
-      rows
+      rows,
+      nextToken
     };
   }
 }
