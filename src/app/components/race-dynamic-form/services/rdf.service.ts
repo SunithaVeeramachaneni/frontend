@@ -35,7 +35,11 @@ export class RaceDynamicFormService {
     if (queryParams?.nextToken !== null) {
       return from(
         this.awsApiService.ListFormLists(
-          {},
+          {
+            ...(queryParams.searchKey && {
+              name: { contains: queryParams?.searchKey }
+            })
+          },
           queryParams.limit,
           queryParams.nextToken
         )
