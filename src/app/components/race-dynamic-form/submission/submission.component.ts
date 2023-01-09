@@ -237,6 +237,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(() => {
         this.skip = 0;
+        this.nextToken = '';
         return this.getSubmissionFormsList();
       })
     );
@@ -285,7 +286,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         searchKey: this.searchForm.value
       })
       .pipe(
-        mergeMap(({ rows }) => of(rows)),
+        mergeMap(({ rows, nextToken }) => {
+          this.nextToken = nextToken;
+          return of(rows);
+        }),
         catchError(() => of([]))
       );
   }

@@ -57,9 +57,9 @@ export class RaceDynamicFormService {
       return from(
         this.awsApiService.ListFormSubmissionLists(
           {
-            name: {
-              contains: queryParams?.searchKey || ''
-            }
+            ...(queryParams.searchKey && {
+              name: { contains: queryParams?.searchKey }
+            })
           },
           queryParams.limit,
           queryParams.nextToken
