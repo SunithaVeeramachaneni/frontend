@@ -590,11 +590,12 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
-          const questions = JSON.parse(JSON.stringify(page.questions));
-          questions.push(action.question);
+          page.questions.push(action.question);
+          // const questions = JSON.parse(JSON.stringify(page.questions));
+          // questions.push(action.question);
           return {
-            ...page,
-            questions
+            ...page
+            // questions
           };
         }
         return page;
