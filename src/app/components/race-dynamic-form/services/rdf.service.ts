@@ -28,21 +28,19 @@ export class RaceDynamicFormService {
   constructor(private readonly awsApiService: APIService) {}
 
   getFormsList$(queryParams: {
-    skip?: number;
+    nextToken?: string;
     limit: number;
     searchKey: string;
   }) {
-    return from(
-      this.awsApiService.ListFormLists(
-        {
-          name: {
-            contains: queryParams?.searchKey || ''
-          }
-        },
-        queryParams.limit,
-        this.nextToken
-      )
-    ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
+    if (queryParams?.nextToken !== null) {
+      return from(
+        this.awsApiService.ListFormLists(
+          {},
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
+    }
   }
 
   createForm$(
@@ -211,10 +209,11 @@ export class RaceDynamicFormService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    this.nextToken = resp?.nextToken || '';
+    const nextToken = resp?.nextToken;
     return {
       count,
-      rows
+      rows,
+      nextToken
     };
   }
 }

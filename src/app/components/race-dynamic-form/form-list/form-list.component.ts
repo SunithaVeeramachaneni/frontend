@@ -226,7 +226,7 @@ export class FormListComponent implements OnInit {
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
-
+  nextToken = '';
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService
@@ -349,13 +349,14 @@ export class FormListComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getFormsList$({
-        skip: this.skip,
+        nextToken: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value
       })
       .pipe(
-        mergeMap(({ count, rows }) => {
+        mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
+          this.nextToken = nextToken;
           return of(rows);
         }),
         catchError(() => {
