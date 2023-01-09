@@ -18,7 +18,12 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  CellClickActionEvent
+} from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
@@ -211,6 +216,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
+  public menuState = 'in';
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -230,6 +236,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
+    this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
@@ -304,6 +311,22 @@ export class SubmissionComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
+  }
+
+  prepareMenuActions(): void {
+    const menuActions = [
+      {
+        title: 'Edit',
+        action: 'edit'
+      },
+      {
+        title: 'Archive',
+        action: 'archive'
+      }
+    ];
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
   }
 
   ngOnDestroy(): void {}
