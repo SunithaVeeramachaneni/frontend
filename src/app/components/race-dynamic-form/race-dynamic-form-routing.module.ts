@@ -5,7 +5,6 @@ import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { FormContainerComponent } from './form-container/form-container.component';
-import { SubmissionDetailComponent } from './submission-detail/submission-detail.component';
 import { SubmissionComponent } from './submission/submission.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 
@@ -29,7 +28,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'view',
+        path: '/submissions/view/:id',
         component: SubmissionViewComponent,
         canActivate: [AuthGuard],
         data: {
@@ -54,16 +53,7 @@ const routes: Routes = [
           breadcrumb: { label: 'Submissions', alias: 'formName' },
           permissions: [permissions.viewForms]
         }
-      },
-      // {
-      //   path: 'submissions/view/:id',
-      //   component: SubmissionDetailComponent,
-      //   canActivate: [AuthGuard],
-      //   data: {
-      //     breadcrumb: { label: 'View Submission' },
-      //     permissions: [permissions.viewForms]
-      //   }
-      // }
+      }
     ]
   }
 ];

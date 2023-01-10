@@ -46,7 +46,6 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
-import { SubmissionDetailComponent } from './submission-detail/submission-detail.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
@@ -64,7 +63,6 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SubmissionDetailComponent,
     SubmissionSliderComponent,
     SubmissionViewComponent
   ],

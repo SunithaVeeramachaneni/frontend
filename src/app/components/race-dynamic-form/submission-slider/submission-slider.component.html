@@ -3,30 +3,30 @@
     <div>
       <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
       <br />
-      <button class="view-report-btn" routerLink="/forms/view">
+      <button class="view-report-btn" (click)="navigateView()">
         View Report
       </button>
       <button class="download-btn">
         <mat-icon class="download-icon">picture_as_pdf</mat-icon>
         <span class="download-text">Download</span>
       </button>
-      <h1 class="slider-heading">Bulletin Board Posting</h1>
+      <h1 class="slider-heading">{{submission?.name}}</h1>
       <hr class="horizon-line" />
       <div class="dis-flex just-content-space">
         <p class="sub-headings">Status</p>
-        <p class="sub-headings-value-badge">In Progress</p>
+        <p class="sub-headings-value-badge">{{submission?.status}}</p>
       </div>
       <hr class="horizon-line" />
 
       <div class="dis-flex just-content-space">
         <p class="sub-headings">Responses</p>
-        <p class="sub-headings-value">23/26</p>
+        <p class="sub-headings-value">{{submission?.responses}}</p>
       </div>
       <hr class="horizon-line" />
 
       <div class="dis-flex just-content-space">
         <p class="sub-headings">Location</p>
-        <p class="sub-headings-value">Address</p>
+        <p class="sub-headings-value">{{submission?.address ? submission?.address : '-' }}</p>
       </div>
       <hr class="horizon-line" />
 
@@ -34,7 +34,7 @@
         <p class="sub-headings">Last Edited by</p>
         <span>
           <span class="sub-headings-value"> Kavya </span>
-          <span class="sub-headings">22 Nov 2022 - 10:20 AM</span>
+          <span class="sub-headings">{{submission?.updatedAt}}</span>
         </span>
       </div>
       <hr class="horizon-line" />

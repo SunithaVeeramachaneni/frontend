@@ -3,10 +3,11 @@
     <div class="forms-header">
       <h2 class="heading" translate="submissions"></h2>
       <div id="openviewtab">
-        <app-submission-detail
+        <app-submission-slider
           [@slideInOut]="menuState"
           (slideInOut)="menuState = 'out'"
-        ></app-submission-detail>
+          [submission]="submissionDetail"
+        ></app-submission-slider>
       </div>
       <span class="custom-form-field-gray-color search">
         <span
