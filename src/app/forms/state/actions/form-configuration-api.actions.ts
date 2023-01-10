@@ -66,6 +66,7 @@ export const createAuthoredFromDetailSuccess = createAction(
   props<{
     authoredFormDetail: CreateAuthoredFormDetailMutation;
     formSaveStatus: string;
+    isFormCreated: boolean;
   }>()
 );
 

@@ -172,7 +172,8 @@ export class FormConfigurationEffects {
           map((authoredFormDetail) =>
             FormConfigurationApiActions.createAuthoredFromDetailSuccess({
               authoredFormDetail,
-              formSaveStatus: formConfigurationStatus.saved
+              formSaveStatus: formConfigurationStatus.saved,
+              isFormCreated: true
             })
           ),
           catchError((error) => {

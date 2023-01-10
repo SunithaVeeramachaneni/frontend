@@ -174,3 +174,8 @@ export const getFormPublishStatus = createSelector(
   selectFormConfigurationState,
   (state) => state.formDetailPublishStatus
 );
+
+export const getIsFormCreated = createSelector(
+  selectFormConfigurationState,
+  (state) => state.isFormCreated
+);

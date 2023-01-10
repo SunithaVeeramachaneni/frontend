@@ -21,6 +21,7 @@ export interface FormConfigurationState {
   formListDynamoDBVersion: number;
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
+  isFormCreated: boolean;
 }
 
 const initialState = {
@@ -37,7 +38,8 @@ const initialState = {
   formDetailPublishStatus: '',
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
-  authoredFormDetailDynamoDBVersion: 0
+  authoredFormDetailDynamoDBVersion: 0,
+  isFormCreated: false
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -74,7 +76,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
       formSaveStatus: action.formSaveStatus,
-      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
+      isFormCreated: action.isFormCreated
     })
   ),
   on(

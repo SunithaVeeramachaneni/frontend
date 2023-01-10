@@ -37,7 +37,8 @@ import {
   getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
-  getFormPublishStatus
+  getFormPublishStatus,
+  getIsFormCreated
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
@@ -70,6 +71,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   createOrEditForm$: Observable<boolean>;
   formSaveStatus$: Observable<string>;
   formDetailPublishStatus$: Observable<string>;
+  isFormCreated$: Observable<boolean>;
   questionIndexes: any;
   formStatus: string;
   formSaveStatus: string;
@@ -155,6 +157,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
+    this.isFormCreated$ = this.store.select(getIsFormCreated).pipe(
+      tap((isFormCreated) => {
+        if (isFormCreated) {
+          // This will cause some delay in redirection post creation of fresh form. This is only added here to reduce multiple form creations in development process
+          this.router.navigate(['/forms/edit', this.formConf.id.value]);
+        }
+      })
+    );
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
