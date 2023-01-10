@@ -62,6 +62,7 @@
   "fixNoofRows": "Fix no. of rows",
   "columnName": "Enter Column name",
   "responseType": "Choose Response Type",
+  "submissions": "Submissions",
   "addSubFields": "Add Sub Fields",
   "typeQuestion": "Type Question",
   "responseTitle": "Response Title",

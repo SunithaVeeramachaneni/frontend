@@ -48,6 +48,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AvatarComponent } from './form-configuration/avatar.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -62,7 +63,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SelectQuestionsDialogComponent
+    SelectQuestionsDialogComponent,
+    AvatarComponent
   ],
   imports: [
     FormsModule,
