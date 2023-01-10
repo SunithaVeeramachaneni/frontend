@@ -48,6 +48,8 @@ import {
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
 
 @Component({
   selector: 'app-form-configuration',
@@ -83,7 +85,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private store: Store<State>,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -521,5 +524,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+  }
+
+  importQuestions(): void {
+    const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
+      data: { selectedFormData: '', openImportQuestionsSlider: false }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // this.selectedFormData = result.selectedFormData;
+      // this.selectedFormData?.sections.forEach((section) => {
+      //   section.questions.forEach((question, index) => {
+      //     if (question.id.includes('EVIDENCE')) {
+      //       section.questions.splice(index, 1);
+      //     }
+      //   });
+      // });
+      // this.openAppSider$ = of(result.openImportQuestionsSlider);
+      // this.cdrf.markForCheck();
+    });
   }
 }
