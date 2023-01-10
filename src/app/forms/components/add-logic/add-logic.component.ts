@@ -1,5 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -18,6 +20,8 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
+
 import { fieldTypeOperatorMapping } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getQuestionLogics, getSectionQuestions, State } from '../../state';
 import { AddLogicActions } from '../../state/actions';
@@ -27,7 +31,8 @@ import { SelectQuestionsDialogComponent } from './select-questions-dialog/select
   selector: 'app-add-logic',
   templateUrl: './add-logic.component.html',
   styleUrls: ['./add-logic.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddLogicComponent implements OnInit {
   @Output() logicEvent: EventEmitter<any> = new EventEmitter<any>();
@@ -81,7 +86,8 @@ export class AddLogicComponent implements OnInit {
   constructor(
     private store: Store<State>,
     private fb: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -146,6 +152,7 @@ export class AddLogicComponent implements OnInit {
           });
         });
         this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
+        this.cdrf.detectChanges();
 
         merge(
           // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -208,13 +215,27 @@ export class AddLogicComponent implements OnInit {
     const { type } = event;
     switch (type) {
       case 'add':
-        this.logicEvent.emit({
-          questionId: this.questionId,
-          pageIndex: this.pageIndex,
-          logicIndex,
-          type: 'ask_question_create',
-          logic
-        });
+        const newQuestion = {
+          id: `AQ_${uuidv4()}`,
+          sectionId: `AQ_${logic.id}`,
+          name: '',
+          fieldType: 'TF',
+          position: 0,
+          required: false,
+          multi: false,
+          value: '',
+          isPublished: false,
+          isPublishedTillSave: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: this.questionId,
+            pageIndex: this.pageIndex,
+            logicIndex,
+            logicId: logic.id,
+            question: newQuestion
+          })
+        );
         break;
       case 'update':
         this.store.dispatch(
