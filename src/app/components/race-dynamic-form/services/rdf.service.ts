@@ -235,6 +235,29 @@ export class RaceDynamicFormService {
     return from(this.awsApiService.CreateFormList(input));
   }
 
+  getAuthoredFormDetail$(formlistID: string) {
+    const statement = `
+    query {
+      authoredFormDetailsByFormlistID(formlistID: "${formlistID}") {
+        items {
+          id
+          pages
+          counter
+          formDetailPublishStatus
+          formStatus
+          formlistID
+          version
+        }
+      }
+    }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { authoredFormDetailsByFormlistID } }: any) =>
+          authoredFormDetailsByFormlistID?.items
+      )
+    );
+  }
+
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
     const rows =
       resp.items

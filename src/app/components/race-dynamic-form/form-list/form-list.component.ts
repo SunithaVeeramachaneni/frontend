@@ -6,7 +6,7 @@ import {
   animate
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -284,26 +284,54 @@ export class FormListComponent implements OnInit {
     });
   }
 
-  openCopyFormModal(form: GetFormListQuery): void {
-    this.raceDynamicFormService.fetchAllFormListNames$().subscribe((rows) => {
-      const createdForm = this.generateCopyFormName(form, rows);
-      if (createdForm?.newName) {
-        this.raceDynamicFormService
-          .createForm$({
-            ...omit(form, ['id', 'preTextImage']),
-            name: createdForm.newName
-          })
-          .subscribe(() => {
-            this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-            this.formsListCount$ =
-              this.raceDynamicFormService.getFormsListCount$();
-            this.toast.show({
-              text: 'Form copied successfully!',
-              type: 'success'
+  onCopyFormMetaData(form: GetFormListQuery): void {
+    if (!form.id) {
+      return;
+    }
+    combineLatest([
+      this.raceDynamicFormService.fetchAllFormListNames$(),
+      this.raceDynamicFormService.getAuthoredFormDetail$(form.id)
+    ])
+      .pipe(
+        map(([formNames, authoredFormDetail]) => ({
+          formNames,
+          authoredFormDetail
+        }))
+      )
+      .subscribe(({ formNames, authoredFormDetail }) => {
+        const createdForm = this.generateCopyFormName(form, formNames);
+        if (createdForm?.newName) {
+          this.raceDynamicFormService
+            .createForm$({
+              ...omit(form, ['id', 'preTextImage']),
+              name: createdForm.newName
+            })
+            .subscribe((newRecord) => {
+              if (!newRecord) {
+                return;
+              }
+              if (authoredFormDetail?.length > 0) {
+                const obj = authoredFormDetail[0];
+                this.raceDynamicFormService.createAuthoredFormDetail$({
+                  formStatus: obj?.formStatus,
+                  formListId: newRecord?.id,
+                  pages: JSON.parse(obj?.pages) ?? '',
+                  counter: obj?.counter,
+                  authoredFormDetailVersion: +obj?.version + 1
+                });
+              }
+              this.addEditCopyForm$.next({
+                action: 'copy',
+                form: {
+                  ...form,
+                  name: createdForm.newName
+                }
+              });
+              this.formsListCount$ =
+                this.raceDynamicFormService.getFormsListCount$();
             });
-          });
-      }
-    });
+        }
+      });
   }
 
   getDisplayedForms(): void {
@@ -343,6 +371,15 @@ export class FormListComponent implements OnInit {
           };
           initial.data = rows;
         } else {
+          if (form.action === 'copy') {
+            const obj = { ...form.form };
+            initial.data.splice((obj.id as any) - 1, 0, obj);
+            form.action = 'add';
+            this.toast.show({
+              text: 'Form copied successfully!',
+              type: 'success'
+            });
+          }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
@@ -393,7 +430,7 @@ export class FormListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'copy':
-        this.openCopyFormModal(data);
+        this.onCopyFormMetaData(data);
         break;
 
       case 'edit':
