@@ -25,8 +25,7 @@ export class TimeComponent implements OnInit {
     this.timeChecked = this.questionInfo.get('value').value;
   }
 
-  toggleChecked(event) {
-    this.timeChecked = event;
+  toggleChecked() {
     this.checkedToDefaultTime.emit(this.timeChecked);
   }
 }

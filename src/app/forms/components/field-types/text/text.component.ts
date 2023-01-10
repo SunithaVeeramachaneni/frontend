@@ -7,15 +7,23 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 })
 export class TextComponent implements OnInit {
   @Output() inputTextAnswer: EventEmitter<string> = new EventEmitter<string>();
-  @Input() question;
+  @Input() set question(data) {
+    this.questionInfo = data;
+  }
+
+  get question() {
+    return this.questionInfo;
+  }
   textAnswer;
+  private questionInfo;
+
   constructor() {}
 
   ngOnInit(): void {
-    this.textAnswer = this.question.get('value').value;
+    this.textAnswer = this.questionInfo.get('value').value;
   }
 
-  dataChanged(value) {
-    this.inputTextAnswer.emit(value);
+  dataChanged() {
+    this.inputTextAnswer.emit(this.textAnswer);
   }
 }

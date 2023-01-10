@@ -25,8 +25,7 @@ export class DateComponent implements OnInit {
     this.defaultChecked = this.questionInfo.get('value').value;
   }
 
-  toggleChecked(event) {
-    this.defaultChecked = event;
+  toggleChecked() {
     this.checkedToDefaultDate.emit(this.defaultChecked);
   }
 }

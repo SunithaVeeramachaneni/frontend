@@ -25,8 +25,7 @@ export class DropDownComponent implements OnInit {
     this.multiChecked = this.questionInfo.get('multi').value;
   }
 
-  toggleChecked(event) {
-    this.multiChecked = event;
+  toggleChecked() {
     this.checkedMultiple.emit(this.multiChecked);
   }
 }

@@ -136,8 +136,8 @@ export class FormListComponent implements OnInit {
         top: '10px',
         width: '80px',
         height: '24px',
-        // background: '#FEF3C7',
-        // color: '#92400E',
+        background: '#FEF3C7',
+        color: '#92400E',
         borderRadius: '12px'
       },
       subtitleStyle: {},
@@ -316,21 +316,6 @@ export class FormListComponent implements OnInit {
       onScrollForms$
     ]).pipe(
       map(([rows, form, scrollData]) => {
-        rows.forEach((row) => {
-          if (row.formStatus === 'Draft') {
-            this.columns[2].titleStyle = {
-              ...this.columns[2].titleStyle,
-              background: '#FEF3C7',
-              color: '#92400E'
-            };
-          } else if (row.formStatus === 'Published') {
-            this.columns[2].titleStyle = {
-              ...this.columns[2].titleStyle,
-              background: '#D1FAE5',
-              color: '#065F46'
-            };
-          }
-        });
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
