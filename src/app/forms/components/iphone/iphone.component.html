@@ -2,7 +2,10 @@
   <div class="iphone-header">
     <h3 class="form-heading">{{ formMetadata.name }}</h3>
     <p class="form-description">
-      {{ formMetadata.description ? formMetadata.description : 'Description' }}
+      {{
+        (formMetadata.description ? formMetadata.description : 'des')
+          | translate
+      }}
     </p>
   </div>
   <div class="iphone-preview">

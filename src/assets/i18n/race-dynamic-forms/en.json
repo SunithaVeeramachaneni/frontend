@@ -70,5 +70,6 @@
   "enter": "Enter",
   "choose": "Choose Item",
   "prevBtn": "Previous",
-  "addAtt": "Add Attachments"
+  "addAtt": "Add Attachments",
+  "des": "Description"
 }
