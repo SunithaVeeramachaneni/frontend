@@ -3,6 +3,10 @@
 .list-view {
   background-color: $white;
   height: calc(100vh - 205px);
+
+  ::ng-deep .table-column {
+    width: 25%;
+  }
 }
 .heading {
   font-weight: 700;
