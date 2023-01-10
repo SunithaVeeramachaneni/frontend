@@ -130,6 +130,16 @@ export const routingUrls = {
   }
 };
 
+export const formConfigurationStatus = Object.freeze({
+  draft: 'Draft',
+  published: 'Published',
+  publishing: 'Publishing',
+  saved: 'Saved',
+  saving: 'Saving',
+  standalone: 'Standalone',
+  embedded: 'Embedded'
+});
+
 export const defaultCategoryId = '_UnassignedCategory_';
 export const defaultCategoryName = 'Unassigned';
 export const defaultLanguage = 'en';

@@ -54,6 +54,7 @@ mutation CreateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -72,6 +73,7 @@ mutation UpdateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -90,6 +92,7 @@ mutation DeleteAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -261,6 +264,7 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -299,6 +303,7 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -337,6 +342,7 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version

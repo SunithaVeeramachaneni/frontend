@@ -34,6 +34,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-form-list',
@@ -229,7 +230,8 @@ export class FormListComponent implements OnInit {
 
   constructor(
     private readonly toast: ToastService,
-    private readonly raceDynamicFormService: RaceDynamicFormService
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -271,18 +273,11 @@ export class FormListComponent implements OnInit {
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.openEditFormModal(event.row);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
         break;
       default:
     }
   };
-
-  openEditFormModal(form = {} as GetFormListQuery): void {
-    this.toast.show({
-      text: 'Form edited successfully!',
-      type: 'success'
-    });
-  }
 
   openCopyFormModal(form: GetFormListQuery): void {
     this.addEditCopyForm$.next({
@@ -381,8 +376,7 @@ export class FormListComponent implements OnInit {
         break;
 
       case 'edit':
-        this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        // this.openEditFormModal(data);
+        this.router.navigate(['/forms/edit', data.id]);
         break;
 
       case 'archive':

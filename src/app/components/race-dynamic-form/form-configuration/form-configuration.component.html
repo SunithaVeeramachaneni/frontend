@@ -1,12 +1,16 @@
 <div
   class="create-form-main"
   [formGroup]="formConfiguration"
+  [ngClass]="{
+    'disable-form-interactions':
+      formDetailPublishStatus === formConfigurationStatus.publishing
+  }"
   *ngIf="{
     formMetadata: formMetadata$ | async,
     authoredFormDetail: authoredFormDetail$ | async,
     createOrEditForm: createOrEditForm$ | async,
     formSaveStatus: formSaveStatus$ | async,
-    formPublishStatus: formPublishStatus$ | async
+    formDetailPublishStatus: formDetailPublishStatus$ | async
   }"
 >
   <div class="dis-flex form-header">
@@ -53,8 +57,8 @@
       <div
         class="save-status"
         [hidden]="
-          formSaveStatus !== 'Saved' ||
-          formStatus !== 'Draft' ||
+          formSaveStatus !== formConfigurationStatus.saved ||
+          formStatus !== formConfigurationStatus.draft ||
           isFormDetailPublished
         "
       >
@@ -62,21 +66,28 @@
       </div>
       <div
         class="save-status"
-        [hidden]="formSaveStatus !== 'Saving' || isFormDetailPublished"
+        [hidden]="
+          formSaveStatus !== formConfigurationStatus.saving ||
+          isFormDetailPublished
+        "
       >
         {{ 'savingChanges' | translate }}
       </div>
       <div
         class="save-status"
         [hidden]="
-          formPublishStatus !== 'Published' || formStatus !== 'Published'
+          formDetailPublishStatus !== formConfigurationStatus.published ||
+          formStatus !== formConfigurationStatus.published
         "
       >
         {{ 'changesPublished' | translate }}
       </div>
       <div
         class="save-status"
-        [hidden]="formPublishStatus !== 'Publishing' || !isFormDetailPublished"
+        [hidden]="
+          formDetailPublishStatus !== formConfigurationStatus.publishing ||
+          !isFormDetailPublished
+        "
       >
         {{ 'publishingChanges' | translate }}
       </div>
