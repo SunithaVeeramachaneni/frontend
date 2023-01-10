@@ -6,7 +6,7 @@ import {
   animate
 } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -34,7 +34,7 @@ import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
-import { omit } from 'lodash';
+import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 
 @Component({

@@ -222,7 +222,7 @@ export class RaceDynamicFormService {
   };
 
   fetchAllFormListNames$() {
-    const statement = `query { listFormLists(limit: 10000) { items { name } } }`;
+    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) =>
