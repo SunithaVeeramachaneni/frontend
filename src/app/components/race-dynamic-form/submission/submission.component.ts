@@ -18,12 +18,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  TableEvent,
-  LoadEvent,
-  SearchEvent,
-  CellClickActionEvent
-} from 'src/app/interfaces';
+import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
@@ -212,11 +207,12 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   limit = defaultLimit;
   searchForm: FormControl;
   isPopoverOpen = false;
-  filterIcon = '../../../../assets/maintenance-icons/filterIcon.svg';
-  closeIcon = '../../../../assets/img/svg/cancel-icon.svg';
+  filterIcon = 'assets/maintenance-icons/filterIcon.svg';
+  closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'in';
+  ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}

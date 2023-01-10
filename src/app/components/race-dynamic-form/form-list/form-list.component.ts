@@ -35,6 +35,7 @@ import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
 import { omit } from 'lodash';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 
 @Component({
   selector: 'app-form-list',
@@ -66,7 +67,7 @@ export class FormListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'Name',
       type: 'string',
       order: 1,
       searchable: false,
@@ -127,24 +128,19 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontFamily: 'Inter',
-        fontStyle: 'normal',
-        fontSize: '14px',
         textTransform: 'capitalize',
         fontWeight: 500,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 12px',
-        marginTop: '8px',
-        width: '90px',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
         height: '24px',
-        background: '#D1FAE5', // #FEF3C7
-        borderRadius: '12px',
-        flex: 'none',
-        order: 0,
-        flexGrow: 0
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -197,7 +193,7 @@ export class FormListComponent implements OnInit {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -274,7 +270,8 @@ export class FormListComponent implements OnInit {
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.openEditFormModal(event.row);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        //this.openEditFormModal(event.row);
         break;
       default:
     }
@@ -289,10 +286,7 @@ export class FormListComponent implements OnInit {
 
   openCopyFormModal(form: GetFormListQuery): void {
     this.raceDynamicFormService.fetchAllFormListNames$().subscribe((rows) => {
-      const createdForm = this.raceDynamicFormService.generateCopyFormName(
-        form,
-        rows
-      );
+      const createdForm = this.generateCopyFormName(form, rows);
       if (createdForm?.newName) {
         this.raceDynamicFormService
           .createForm$({
@@ -345,7 +339,7 @@ export class FormListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 150px)'
+            tableHeight: 'calc(80vh - 105px)'
           };
           initial.data = rows;
         } else {
@@ -425,7 +419,7 @@ export class FormListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
-        title: 'Edit Template',
+        title: 'Edit',
         action: 'edit'
       },
       {
@@ -435,22 +429,36 @@ export class FormListComponent implements OnInit {
       {
         title: 'Archive',
         action: 'archive'
+      },
+      {
+        title: 'Upload to Public Library',
+        action: 'upload'
       }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
   }
 
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
+  private generateCopyFormName(
+    form: GetFormListQuery,
+    rows: GetFormListQuery[]
+  ) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(form?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${form?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
   }
 }

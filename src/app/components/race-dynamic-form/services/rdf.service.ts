@@ -8,20 +8,15 @@ import { map } from 'rxjs/operators';
 import {
   APIService,
   CreateFormListInput,
-  CreateFormListMutation,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
-import {
-  FormMetadata,
-  LoadEvent,
-  SearchEvent,
-  TableEvent
-} from './../../../interfaces';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
+
+const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
@@ -71,7 +66,7 @@ export class RaceDynamicFormService {
   }
 
   getFormsListCount$(): Observable<number> {
-    const statement = `query { listFormLists(limit: 10000) { items { id } } }`;
+    const statement = `query { listFormLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
@@ -80,7 +75,7 @@ export class RaceDynamicFormService {
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists(limit: 10000) { items { id } } }`;
+    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormSubmissionLists } }: any) =>
@@ -234,25 +229,6 @@ export class RaceDynamicFormService {
           listFormLists?.items as GetFormListQuery[]
       )
     );
-  }
-
-  generateCopyFormName(form: GetFormListQuery, rows: GetFormListQuery[]) {
-    if (rows?.length > 0) {
-      const listCopyNumbers: number[] = [];
-      const regex: RegExp = generateCopyRegex(form?.name);
-      rows?.forEach((row) => {
-        const matchObject = row?.name?.match(regex);
-        if (matchObject) {
-          listCopyNumbers.push(parseInt(matchObject[1], 10));
-        }
-      });
-      const newIndex: number = generateCopyNumber(listCopyNumbers);
-      const newName = `${form?.name} Copy(${newIndex})`;
-      return {
-        newName
-      };
-    }
-    return null;
   }
 
   createFormList$(input: CreateFormListInput) {

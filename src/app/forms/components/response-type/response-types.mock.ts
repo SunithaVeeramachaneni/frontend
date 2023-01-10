@@ -2,183 +2,83 @@ export const fieldTypesMock = {
   fieldTypes: [
     {
       type: 'LF',
-      description: 'Read Only Field',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.989Z',
-      id: '63775eed42f051892309cdc3'
+      description: 'Read Only Field'
     },
     {
       type: 'TF',
-      description: 'Text Answer',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.990Z',
-      id: '63775eed42f051892309cdc5'
+      description: 'Text Answer'
     },
     {
       type: 'NF',
-      description: 'Number',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.990Z',
-      id: '63775eed42f051892309cdc6'
+      description: 'Number'
     },
     {
       type: 'DD',
-      description: 'Picklist',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdc7'
+      description: 'Picklist'
     },
     {
       type: 'SF',
-      description: 'Scan',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdc8'
+      description: 'Scan'
     },
     {
       type: 'DF',
-      description: 'Date',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdc9'
+      description: 'Date'
     },
     {
       type: 'CB',
-      description: 'Checkbox',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdca'
+      description: 'Checkbox'
     },
     {
       type: 'TIF',
-      description: 'Time Picker',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdcb'
+      description: 'Time Picker'
     },
     {
       type: 'SGF',
-      description: 'Signature',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdcc'
+      description: 'Signature'
     },
     {
       type: 'ATT',
-      description: 'Take Picture/Photo',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.991Z',
-      id: '63775eed42f051892309cdcd'
+      description: 'Take Picture/Photo'
     },
     {
       type: 'VI',
-      description: 'Multiple Choice Answers',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdce'
+      description: 'Multiple Choice Answers'
     },
     {
       type: 'RT',
-      description: 'Slider',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdcf'
+      description: 'Slider'
     },
     {
       type: 'IMG',
-      description: 'Insert Image',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd0'
+      description: 'Insert Image'
     },
     {
       type: 'LTV',
-      description: 'Long Text Answer',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd1'
+      description: 'Long Text Answer'
     },
     {
       type: 'GAL',
-      description: 'Geo Location',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd2'
+      description: 'Geo Location'
     },
     {
       type: 'DDM',
-      description: 'Multiple Select Choice answers',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.993Z',
-      id: '63775eed42f051892309cdd3'
+      description: 'Multiple Select Choice answers'
     },
     {
       type: 'DFR',
-      description: 'Date Range',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.994Z',
-      id: '63775eed42f051892309cdd4'
+      description: 'Date Range'
     },
     {
       type: 'TAF',
-      description: 'Tabular Format',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.994Z',
-      id: '63775eed42f051892309cdd5'
+      description: 'Tabular Format'
     },
     {
       type: 'ARD',
-      description: 'Array Field',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.994Z',
-      id: '63775eed42f051892309cdd6'
+      description: 'Array Field'
     },
     {
       type: 'USR',
-      description: 'User',
-      createdBy: 'Innovapptive',
-      updatedBy: null,
-      updatedAt: null,
-      createdAt: '2022-11-18T10:31:09.994Z',
-      id: '63775eed42f051892309cdd7'
+      description: 'User'
     }
   ]
 };

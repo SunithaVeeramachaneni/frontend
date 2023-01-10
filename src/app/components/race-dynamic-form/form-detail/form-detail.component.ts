@@ -6,9 +6,6 @@ import {
   Output
 } from '@angular/core';
 
-/**
- * @title Tree with nested nodes
- */
 @Component({
   selector: 'app-form-detail',
   templateUrl: './form-detail.component.html',
