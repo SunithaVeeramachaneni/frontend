@@ -4,9 +4,10 @@ import { schema } from './schema';
 
 
 
-const { FormDetail, AuthoredFormDetail, FormSubmissionDetail, FormSubmissionList, FormList } = initSchema(schema);
+const { ResponseSet, FormDetail, AuthoredFormDetail, FormSubmissionDetail, FormSubmissionList, FormList } = initSchema(schema);
 
 export {
+  ResponseSet,
   FormDetail,
   AuthoredFormDetail,
   FormSubmissionDetail,
