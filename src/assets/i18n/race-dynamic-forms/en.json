@@ -68,5 +68,7 @@
   "addDescription": "Add Description",
   "startTypingTags": "Start typing to see tags",
   "enter": "Enter",
-  "choose": "Choose Item"
+  "choose": "Choose Item",
+  "prevBtn": "Previous",
+  "addAtt": "Add Attachments"
 }
