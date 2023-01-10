@@ -326,4 +326,9 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  rowLevelActionHandler = ({ data, action }): void => {
+    console.log(action);
+    console.log(data);
+  };
 }
