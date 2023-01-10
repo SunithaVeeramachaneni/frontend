@@ -38,10 +38,15 @@ export class RaceDynamicFormService {
     tags: string[],
     info: ErrorInfo = {} as ErrorInfo
   ): Observable<any> =>
-    this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+    this.appService._postData(
+      environment.rdfApiUrl,
+      'datasets/tags',
+      tags,
+      info
+    );
 
   getAllTags$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.rdfApiUrl, 'datasets', info);
+    this.appService._getResp(environment.rdfApiUrl, 'datasets/tags', info);
 
   getFormsList$(queryParams: {
     skip?: number;
