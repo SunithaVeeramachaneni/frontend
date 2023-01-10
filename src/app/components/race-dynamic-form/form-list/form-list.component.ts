@@ -218,6 +218,8 @@ export class FormListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
+  isPopoverOpen = false;
+  formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
@@ -404,19 +406,19 @@ export class FormListComponent implements OnInit {
       {
         title: 'Edit',
         action: 'edit'
+      },
+      {
+        title: 'Copy Template',
+        action: 'copy'
+      },
+      {
+        title: 'Archive',
+        action: 'archive'
+      },
+      {
+        title: 'Upload to Public Library',
+        action: 'upload'
       }
-      // {
-      //   title: 'Copy Template',
-      //   action: 'copy'
-      // },
-      // {
-      //   title: 'Archive',
-      //   action: 'archive'
-      // },
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
