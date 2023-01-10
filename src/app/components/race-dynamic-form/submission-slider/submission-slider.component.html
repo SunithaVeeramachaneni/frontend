@@ -1,0 +1,43 @@
+<div id="openSlider">
+  <mat-card>
+    <div>
+      <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
+      <br />
+      <button class="view-report-btn" routerLink="/forms/view">
+        View Report
+      </button>
+      <button class="download-btn">
+        <mat-icon class="download-icon">picture_as_pdf</mat-icon>
+        <span class="download-text">Download</span>
+      </button>
+      <h1 class="slider-heading">Bulletin Board Posting</h1>
+      <hr class="horizon-line" />
+      <div class="dis-flex just-content-space">
+        <p class="sub-headings">Status</p>
+        <p class="sub-headings-value-badge">In Progress</p>
+      </div>
+      <hr class="horizon-line" />
+
+      <div class="dis-flex just-content-space">
+        <p class="sub-headings">Responses</p>
+        <p class="sub-headings-value">23/26</p>
+      </div>
+      <hr class="horizon-line" />
+
+      <div class="dis-flex just-content-space">
+        <p class="sub-headings">Location</p>
+        <p class="sub-headings-value">Address</p>
+      </div>
+      <hr class="horizon-line" />
+
+      <div class="dis-flex just-content-space">
+        <p class="sub-headings">Last Edited by</p>
+        <span>
+          <span class="sub-headings-value"> Kavya </span>
+          <span class="sub-headings">22 Nov 2022 - 10:20 AM</span>
+        </span>
+      </div>
+      <hr class="horizon-line" />
+    </div>
+  </mat-card>
+</div>

@@ -5,6 +5,7 @@ import { AuthGuard } from 'src/app/shared/guards/auth.guard';
 import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { FormContainerComponent } from './form-container/form-container.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,15 @@ const routes: Routes = [
         data: {
           breadcrumb: { label: 'Untitled Form', alias: 'formName' },
           permissions: [permissions.createForm]
+        }
+      },
+      {
+        path: 'view',
+        component: SubmissionViewComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'View Form', alias: 'formName' },
+          permissions: [permissions.viewForms]
         }
       },
       {

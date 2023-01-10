@@ -61,6 +61,7 @@ import { GetFormListQuery } from 'src/app/API.service';
 })
 export class FormListComponent implements OnInit {
   public menuState = 'out';
+  submissionSlider = 'out';
 
   columns: Column[] = [
     {
@@ -417,5 +418,9 @@ export class FormListComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  openSubmissionSlider() {
+    this.submissionSlider = this.submissionSlider === 'out' ? 'in' : 'out';
   }
 }

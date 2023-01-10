@@ -46,6 +46,8 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
+import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -59,7 +61,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,
-    FormConfigurationComponent
+    FormConfigurationComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent
   ],
   imports: [
     FormsModule,
@@ -78,6 +82,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCardModule,
     MatTreeModule,
     MatInputModule,
+    MatIconModule,
     MatMenuModule,
     MatExpansionModule,
     TranslateModule.forChild({
