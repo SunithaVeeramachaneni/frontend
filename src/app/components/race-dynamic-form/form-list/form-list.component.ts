@@ -87,7 +87,16 @@ export class FormListComponent implements OnInit {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      hasPostTextImage: false
+      preTextImageConfig: {
+        logoAvialable: false,
+        style: {
+          width: '40px',
+          height: '40px',
+          marginRight: '10px'
+        }
+      },
+      hasPostTextImage: false,
+      postTextImageConfig: {}
     },
     {
       id: 'author',

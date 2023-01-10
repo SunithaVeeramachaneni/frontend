@@ -12,11 +12,19 @@
   <div class="dis-flex form-header">
     <div>
       <div class="dis-flex">
-        <img
-          src="assets/rdf-forms-icons/form-image-upload.svg"
-          alt=""
-          (click)="formImageuploader.click()"
-        />
+        <ng-container *ngIf="formConfiguration.get('formLogo').value === ''">
+          <app-avatar
+            [formConfiguration]="formConfiguration"
+            (click)="formImageuploader.click()"
+          ></app-avatar>
+        </ng-container>
+        <ng-container *ngIf="formConfiguration.get('formLogo').value !== ''">
+          <img
+            src="assets/rdf-forms-icons/form-image-upload.svg"
+            alt=""
+            (click)="formImageuploader.click()"
+          />
+        </ng-container>
         <input
           hidden
           type="file"
