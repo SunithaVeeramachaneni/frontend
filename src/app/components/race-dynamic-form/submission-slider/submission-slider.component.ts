@@ -38,6 +38,7 @@ export class SubmissionSliderComponent implements OnInit, OnChanges {
   }
 
   navigateView() {
+    this.cancelForm();
     this.router.navigate(['/forms/submissions/view/'+this.submission.id]);
   }
 }
