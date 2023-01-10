@@ -1,4 +1,55 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateResponseSet(
+  $filter: ModelSubscriptionResponseSetFilterInput
+) {
+  onCreateResponseSet(filter: $filter) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateResponseSet(
+  $filter: ModelSubscriptionResponseSetFilterInput
+) {
+  onUpdateResponseSet(filter: $filter) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteResponseSet(
+  $filter: ModelSubscriptionResponseSetFilterInput
+) {
+  onDeleteResponseSet(filter: $filter) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateFormDetail(
   $filter: ModelSubscriptionFormDetailFilterInput
 ) {
@@ -50,6 +101,7 @@ subscription OnCreateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -67,6 +119,7 @@ subscription OnUpdateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -84,6 +137,7 @@ subscription OnDeleteAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -246,6 +300,7 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -281,6 +336,7 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -316,6 +372,7 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version

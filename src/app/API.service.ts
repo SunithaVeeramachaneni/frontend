@@ -10,6 +10,9 @@ export interface SubscriptionResponse<T> {
 }
 
 export type __SubscriptionContainer = {
+  onCreateResponseSet: OnCreateResponseSetSubscription;
+  onUpdateResponseSet: OnUpdateResponseSetSubscription;
+  onDeleteResponseSet: OnDeleteResponseSetSubscription;
   onCreateFormDetail: OnCreateFormDetailSubscription;
   onUpdateFormDetail: OnUpdateFormDetailSubscription;
   onDeleteFormDetail: OnDeleteFormDetailSubscription;
@@ -27,19 +30,25 @@ export type __SubscriptionContainer = {
   onDeleteFormList: OnDeleteFormListSubscription;
 };
 
-export type CreateFormDetailInput = {
+export type CreateResponseSetInput = {
   id?: string | null;
-  formData?: string | null;
-  formlistID: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
   _version?: number | null;
 };
 
-export type ModelFormDetailConditionInput = {
-  formData?: ModelStringInput | null;
-  formlistID?: ModelIDInput | null;
-  and?: Array<ModelFormDetailConditionInput | null> | null;
-  or?: Array<ModelFormDetailConditionInput | null> | null;
-  not?: ModelFormDetailConditionInput | null;
+export type ModelResponseSetConditionInput = {
+  type?: ModelStringInput | null;
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  isMultiColumn?: ModelBooleanInput | null;
+  values?: ModelStringInput | null;
+  and?: Array<ModelResponseSetConditionInput | null> | null;
+  or?: Array<ModelResponseSetConditionInput | null> | null;
+  not?: ModelResponseSetConditionInput | null;
 };
 
 export type ModelStringInput = {
@@ -79,6 +88,58 @@ export type ModelSizeInput = {
   ge?: number | null;
   gt?: number | null;
   between?: Array<number | null> | null;
+};
+
+export type ModelBooleanInput = {
+  ne?: boolean | null;
+  eq?: boolean | null;
+  attributeExists?: boolean | null;
+  attributeType?: ModelAttributeTypes | null;
+};
+
+export type ResponseSet = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateResponseSetInput = {
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  _version?: number | null;
+};
+
+export type DeleteResponseSetInput = {
+  id: string;
+  _version?: number | null;
+};
+
+export type CreateFormDetailInput = {
+  id?: string | null;
+  formData?: string | null;
+  formlistID: string;
+  _version?: number | null;
+};
+
+export type ModelFormDetailConditionInput = {
+  formData?: ModelStringInput | null;
+  formlistID?: ModelIDInput | null;
+  and?: Array<ModelFormDetailConditionInput | null> | null;
+  or?: Array<ModelFormDetailConditionInput | null> | null;
+  not?: ModelFormDetailConditionInput | null;
 };
 
 export type ModelIDInput = {
@@ -127,6 +188,7 @@ export type CreateAuthoredFormDetailInput = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   _version?: number | null;
 };
@@ -136,6 +198,7 @@ export type ModelAuthoredFormDetailConditionInput = {
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
+  formDetailPublishStatus?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   or?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
@@ -161,6 +224,7 @@ export type AuthoredFormDetail = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -175,6 +239,7 @@ export type UpdateAuthoredFormDetailInput = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID?: string | null;
   _version?: number | null;
 };
@@ -260,13 +325,6 @@ export type ModelFormSubmissionListConditionInput = {
   not?: ModelFormSubmissionListConditionInput | null;
 };
 
-export type ModelBooleanInput = {
-  ne?: boolean | null;
-  eq?: boolean | null;
-  attributeExists?: boolean | null;
-  attributeType?: ModelAttributeTypes | null;
-};
-
 export type FormSubmissionList = {
   __typename: "FormSubmissionList";
   id: string;
@@ -332,6 +390,7 @@ export type CreateFormListInput = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
+  isArchived?: boolean | null;
   _version?: number | null;
 };
 
@@ -349,6 +408,7 @@ export type ModelFormListConditionInput = {
   lastPublishedBy?: ModelStringInput | null;
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
+  isArchived?: ModelBooleanInput | null;
   and?: Array<ModelFormListConditionInput | null> | null;
   or?: Array<ModelFormListConditionInput | null> | null;
   not?: ModelFormListConditionInput | null;
@@ -373,6 +433,7 @@ export type FormList = {
   formListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
   formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
   formListFormDetail?: ModelFormDetailConnection | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -409,12 +470,32 @@ export type UpdateFormListInput = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
+  isArchived?: boolean | null;
   _version?: number | null;
 };
 
 export type DeleteFormListInput = {
   id: string;
   _version?: number | null;
+};
+
+export type ModelResponseSetFilterInput = {
+  id?: ModelIDInput | null;
+  type?: ModelStringInput | null;
+  name?: ModelStringInput | null;
+  description?: ModelStringInput | null;
+  isMultiColumn?: ModelBooleanInput | null;
+  values?: ModelStringInput | null;
+  and?: Array<ModelResponseSetFilterInput | null> | null;
+  or?: Array<ModelResponseSetFilterInput | null> | null;
+  not?: ModelResponseSetFilterInput | null;
+};
+
+export type ModelResponseSetConnection = {
+  __typename: "ModelResponseSetConnection";
+  items: Array<ResponseSet | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type ModelFormDetailFilterInput = {
@@ -437,6 +518,7 @@ export type ModelAuthoredFormDetailFilterInput = {
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
+  formDetailPublishStatus?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
@@ -493,6 +575,7 @@ export type ModelFormListFilterInput = {
   lastPublishedBy?: ModelStringInput | null;
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
+  isArchived?: ModelBooleanInput | null;
   and?: Array<ModelFormListFilterInput | null> | null;
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
@@ -505,12 +588,15 @@ export type ModelFormListConnection = {
   startedAt?: number | null;
 };
 
-export type ModelSubscriptionFormDetailFilterInput = {
+export type ModelSubscriptionResponseSetFilterInput = {
   id?: ModelSubscriptionIDInput | null;
-  formData?: ModelSubscriptionStringInput | null;
-  formlistID?: ModelSubscriptionIDInput | null;
-  and?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
-  or?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
+  type?: ModelSubscriptionStringInput | null;
+  name?: ModelSubscriptionStringInput | null;
+  description?: ModelSubscriptionStringInput | null;
+  isMultiColumn?: ModelSubscriptionBooleanInput | null;
+  values?: ModelSubscriptionStringInput | null;
+  and?: Array<ModelSubscriptionResponseSetFilterInput | null> | null;
+  or?: Array<ModelSubscriptionResponseSetFilterInput | null> | null;
 };
 
 export type ModelSubscriptionIDInput = {
@@ -543,12 +629,26 @@ export type ModelSubscriptionStringInput = {
   notIn?: Array<string | null> | null;
 };
 
+export type ModelSubscriptionBooleanInput = {
+  ne?: boolean | null;
+  eq?: boolean | null;
+};
+
+export type ModelSubscriptionFormDetailFilterInput = {
+  id?: ModelSubscriptionIDInput | null;
+  formData?: ModelSubscriptionStringInput | null;
+  formlistID?: ModelSubscriptionIDInput | null;
+  and?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
+  or?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
+};
+
 export type ModelSubscriptionAuthoredFormDetailFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   formStatus?: ModelSubscriptionStringInput | null;
   version?: ModelSubscriptionStringInput | null;
   pages?: ModelSubscriptionStringInput | null;
   counter?: ModelSubscriptionIntInput | null;
+  formDetailPublishStatus?: ModelSubscriptionStringInput | null;
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
@@ -592,11 +692,6 @@ export type ModelSubscriptionFormSubmissionListFilterInput = {
   or?: Array<ModelSubscriptionFormSubmissionListFilterInput | null> | null;
 };
 
-export type ModelSubscriptionBooleanInput = {
-  ne?: boolean | null;
-  eq?: boolean | null;
-};
-
 export type ModelSubscriptionFormListFilterInput = {
   id?: ModelSubscriptionIDInput | null;
   name?: ModelSubscriptionStringInput | null;
@@ -612,8 +707,54 @@ export type ModelSubscriptionFormListFilterInput = {
   lastPublishedBy?: ModelSubscriptionStringInput | null;
   author?: ModelSubscriptionStringInput | null;
   formType?: ModelSubscriptionStringInput | null;
+  isArchived?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
+};
+
+export type CreateResponseSetMutation = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type UpdateResponseSetMutation = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type DeleteResponseSetMutation = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
 };
 
 export type CreateFormDetailMutation = {
@@ -659,6 +800,7 @@ export type CreateAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -674,6 +816,7 @@ export type UpdateAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -689,6 +832,7 @@ export type DeleteAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -845,6 +989,7 @@ export type CreateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -883,6 +1028,7 @@ export type UpdateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -921,11 +1067,67 @@ export type DeleteFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
   _deleted?: boolean | null;
   _lastChangedAt: number;
+};
+
+export type GetResponseSetQuery = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type ListResponseSetsQuery = {
+  __typename: "ModelResponseSetConnection";
+  items: Array<{
+    __typename: "ResponseSet";
+    id: string;
+    type?: string | null;
+    name?: string | null;
+    description?: string | null;
+    isMultiColumn?: boolean | null;
+    values?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
+};
+
+export type SyncResponseSetsQuery = {
+  __typename: "ModelResponseSetConnection";
+  items: Array<{
+    __typename: "ResponseSet";
+    id: string;
+    type?: string | null;
+    name?: string | null;
+    description?: string | null;
+    isMultiColumn?: boolean | null;
+    values?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
+  } | null>;
+  nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type GetFormDetailQuery = {
@@ -998,6 +1200,7 @@ export type GetAuthoredFormDetailQuery = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1015,6 +1218,7 @@ export type ListAuthoredFormDetailsQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1035,6 +1239,7 @@ export type SyncAuthoredFormDetailsQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1055,6 +1260,7 @@ export type AuthoredFormDetailsByFormlistIDQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1260,6 +1466,7 @@ export type GetFormListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1285,6 +1492,7 @@ export type ListFormListsQuery = {
     lastPublishedBy?: string | null;
     author?: string | null;
     formType?: string | null;
+    isArchived?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1313,6 +1521,7 @@ export type SyncFormListsQuery = {
     lastPublishedBy?: string | null;
     author?: string | null;
     formType?: string | null;
+    isArchived?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1321,6 +1530,51 @@ export type SyncFormListsQuery = {
   } | null>;
   nextToken?: string | null;
   startedAt?: number | null;
+};
+
+export type OnCreateResponseSetSubscription = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnUpdateResponseSetSubscription = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
+};
+
+export type OnDeleteResponseSetSubscription = {
+  __typename: "ResponseSet";
+  id: string;
+  type?: string | null;
+  name?: string | null;
+  description?: string | null;
+  isMultiColumn?: boolean | null;
+  values?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
 };
 
 export type OnCreateFormDetailSubscription = {
@@ -1366,6 +1620,7 @@ export type OnCreateAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1381,6 +1636,7 @@ export type OnUpdateAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1396,6 +1652,7 @@ export type OnDeleteAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1552,6 +1809,7 @@ export type OnCreateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1590,6 +1848,7 @@ export type OnUpdateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1628,6 +1887,7 @@ export type OnDeleteFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1639,6 +1899,99 @@ export type OnDeleteFormListSubscription = {
   providedIn: "root"
 })
 export class APIService {
+  async CreateResponseSet(
+    input: CreateResponseSetInput,
+    condition?: ModelResponseSetConditionInput
+  ): Promise<CreateResponseSetMutation> {
+    const statement = `mutation CreateResponseSet($input: CreateResponseSetInput!, $condition: ModelResponseSetConditionInput) {
+        createResponseSet(input: $input, condition: $condition) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CreateResponseSetMutation>response.data.createResponseSet;
+  }
+  async UpdateResponseSet(
+    input: UpdateResponseSetInput,
+    condition?: ModelResponseSetConditionInput
+  ): Promise<UpdateResponseSetMutation> {
+    const statement = `mutation UpdateResponseSet($input: UpdateResponseSetInput!, $condition: ModelResponseSetConditionInput) {
+        updateResponseSet(input: $input, condition: $condition) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateResponseSetMutation>response.data.updateResponseSet;
+  }
+  async DeleteResponseSet(
+    input: DeleteResponseSetInput,
+    condition?: ModelResponseSetConditionInput
+  ): Promise<DeleteResponseSetMutation> {
+    const statement = `mutation DeleteResponseSet($input: DeleteResponseSetInput!, $condition: ModelResponseSetConditionInput) {
+        deleteResponseSet(input: $input, condition: $condition) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      input
+    };
+    if (condition) {
+      gqlAPIServiceArguments.condition = condition;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <DeleteResponseSetMutation>response.data.deleteResponseSet;
+  }
   async CreateFormDetail(
     input: CreateFormDetailInput,
     condition?: ModelFormDetailConditionInput
@@ -1735,6 +2088,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -1768,6 +2122,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -1801,6 +2156,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -2083,6 +2439,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2137,6 +2494,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2191,6 +2549,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2208,6 +2567,117 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return <DeleteFormListMutation>response.data.deleteFormList;
+  }
+  async GetResponseSet(id: string): Promise<GetResponseSetQuery> {
+    const statement = `query GetResponseSet($id: ID!) {
+        getResponseSet(id: $id) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetResponseSetQuery>response.data.getResponseSet;
+  }
+  async ListResponseSets(
+    filter?: ModelResponseSetFilterInput,
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListResponseSetsQuery> {
+    const statement = `query ListResponseSets($filter: ModelResponseSetFilterInput, $limit: Int, $nextToken: String) {
+        listResponseSets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            type
+            name
+            description
+            isMultiColumn
+            values
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <ListResponseSetsQuery>response.data.listResponseSets;
+  }
+  async SyncResponseSets(
+    filter?: ModelResponseSetFilterInput,
+    limit?: number,
+    nextToken?: string,
+    lastSync?: number
+  ): Promise<SyncResponseSetsQuery> {
+    const statement = `query SyncResponseSets($filter: ModelResponseSetFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
+        syncResponseSets(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
+          __typename
+          items {
+            __typename
+            id
+            type
+            name
+            description
+            isMultiColumn
+            values
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    if (lastSync) {
+      gqlAPIServiceArguments.lastSync = lastSync;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <SyncResponseSetsQuery>response.data.syncResponseSets;
   }
   async GetFormDetail(id: string): Promise<GetFormDetailQuery> {
     const statement = `query GetFormDetail($id: ID!) {
@@ -2365,6 +2835,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -2396,6 +2867,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2438,6 +2910,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2484,6 +2957,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2891,6 +3365,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2930,6 +3405,7 @@ export class APIService {
             lastPublishedBy
             author
             formType
+            isArchived
             createdAt
             updatedAt
             _version
@@ -2980,6 +3456,7 @@ export class APIService {
             lastPublishedBy
             author
             formType
+            isArchived
             createdAt
             updatedAt
             _version
@@ -3008,6 +3485,102 @@ export class APIService {
     )) as any;
     return <SyncFormListsQuery>response.data.syncFormLists;
   }
+  OnCreateResponseSetListener(
+    filter?: ModelSubscriptionResponseSetFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+  > {
+    const statement = `subscription OnCreateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
+        onCreateResponseSet(filter: $filter) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateResponseSet">>
+    >;
+  }
+
+  OnUpdateResponseSetListener(
+    filter?: ModelSubscriptionResponseSetFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+  > {
+    const statement = `subscription OnUpdateResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
+        onUpdateResponseSet(filter: $filter) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateResponseSet">>
+    >;
+  }
+
+  OnDeleteResponseSetListener(
+    filter?: ModelSubscriptionResponseSetFilterInput
+  ): Observable<
+    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+  > {
+    const statement = `subscription OnDeleteResponseSet($filter: ModelSubscriptionResponseSetFilterInput) {
+        onDeleteResponseSet(filter: $filter) {
+          __typename
+          id
+          type
+          name
+          description
+          isMultiColumn
+          values
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    return API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    ) as Observable<
+      SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteResponseSet">>
+    >;
+  }
+
   OnCreateFormDetailListener(
     filter?: ModelSubscriptionFormDetailFilterInput
   ): Observable<
@@ -3110,6 +3683,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3146,6 +3720,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3182,6 +3757,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3483,6 +4059,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -3538,6 +4115,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -3593,6 +4171,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version

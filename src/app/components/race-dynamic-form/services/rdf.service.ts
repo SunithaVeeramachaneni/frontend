@@ -7,6 +7,7 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
+  CreateFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
@@ -299,6 +300,26 @@ export class RaceDynamicFormService {
       expression = expression.slice(0, expression.length - 1);
     }
     return expression;
+  }
+
+  fetchAllFormListNames$() {
+    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { listFormLists } }: any) =>
+          listFormLists?.items as GetFormListQuery[]
+      )
+    );
+  }
+
+  createFormList$(input: CreateFormListInput) {
+    return from(this.awsApiService.CreateFormList(input));
+  }
+
+  getAuthoredFormDetail$(formlistID: string) {
+    return from(
+      this.awsApiService.AuthoredFormDetailsByFormlistID(formlistID)
+    ).pipe(map(({ items }) => items));
   }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
