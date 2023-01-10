@@ -46,6 +46,7 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
+import { AvatarComponent } from './form-configuration/avatar.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -59,7 +60,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     ResponseSetComponent,
     PublicLibraryComponent,
     FormConfigurationModalComponent,
-    FormConfigurationComponent
+    FormConfigurationComponent,
+    AvatarComponent
   ],
   imports: [
     FormsModule,
