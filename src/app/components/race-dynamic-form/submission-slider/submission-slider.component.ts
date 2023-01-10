@@ -7,22 +7,17 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'app-form-detail',
-  templateUrl: './form-detail.component.html',
-  styleUrls: ['./form-detail.component.scss']
+  selector: 'app-submission-slider',
+  templateUrl: './submission-slider.component.html',
+  styleUrls: ['./submission-slider.component.scss']
 })
-export class FormDetailComponent implements OnInit {
+export class SubmissionSliderComponent implements OnInit {
   @HostListener('click', ['$event.target'])
   @Output()
   slideInOut: EventEmitter<any> = new EventEmitter();
-  setnamevaribale = 'Mid Range Switchgear (Page 1/3)';
   ngOnInit(): void {}
 
   cancelForm() {
     this.slideInOut.emit('in');
-  }
-
-  openMenu(type) {
-    this.setnamevaribale = type;
   }
 }

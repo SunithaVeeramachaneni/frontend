@@ -48,6 +48,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { SubmissionDetailComponent } from './submission-detail/submission-detail.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -62,7 +64,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    SubmissionDetailComponent
+    SubmissionDetailComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent
   ],
   imports: [
     FormsModule,
@@ -81,6 +85,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatCardModule,
     MatTreeModule,
     MatInputModule,
+    MatIconModule,
     MatMenuModule,
     MatExpansionModule,
     TranslateModule.forChild({

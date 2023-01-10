@@ -6,17 +6,16 @@
     sectionsCount: sectionsCount$ | async
   } as props"
 >
-  <div class="width-5"></div>
-  <div class="width-95 section-margin">
+  <div class="width-100 section-margin">
     <div>
       <input type="hidden" formControlName="position" />
       <div class="section-header">
-        <img
+        <!-- <img
           src="assets/rdf-forms-icons/six-dots-white.svg"
           alt="six-dots"
           class="m-l-10 six-dots"
           *ngIf="isSectionOpenState === false"
-        />
+        /> -->
         <mat-icon
           (click)="toggleSectionOpenState()"
           *ngIf="isSectionOpenState === true"
@@ -36,8 +35,9 @@
           <input
             #sectionName
             type="text"
+            autofocus
             formControlName="name"
-            [size]="getSize(sectionName.value)"
+            [size]="sectionName.value !== '' ? getSize(sectionName.value) : 6"
             class="form_section_name_input"
             placeholder="Untitled Section"
             autocomplete="off"

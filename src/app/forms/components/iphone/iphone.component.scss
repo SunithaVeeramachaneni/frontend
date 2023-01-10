@@ -13,16 +13,81 @@
   right: 50px;
 }
 
-.heading {
+.iphone-header {
+  background-color: $white;
   text-align: center;
-  margin-top: 210px;
-  color: $dark-gray;
+  margin: 40px 15px 0 16px;
+
+  .form-heading {
+    font-size: 100%;
+    margin: 0;
+  }
+
+  .form-description {
+    font-size: 85%;
+    margin: 0px;
+    padding: 5px;
+  }
 }
+
+.iphone-preview {
+  height: 390px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.iphone-footer {
+  margin-top: 20px;
+  margin-left: 25px;
+
+  .page-count {
+    position: relative;
+    top: 7px;
+    left: 2px;
+  }
+  .btn-next {
+    background: $blue-main;
+    color: $white;
+    border: none;
+    width: 70px;
+    border-radius: 5px;
+    float: right;
+    margin-right: 25px;
+    height: 30px;
+  }
+
+  .btn-previous {
+    height: 30px;
+    color: $blue-main;
+    border: none;
+    width: 70px;
+    background-color: transparent;
+    float: right;
+    margin-right: 10px;
+  }
+}
+
+// media queries
 
 @media (min-width: 1280px) and (max-width: 1400px) {
   .bg-iphone {
     width: 250px;
     background-size: 250px 470px;
+  }
+
+  .iphone-header {
+    margin: 35px 15px 0 15px;
+  }
+
+  .iphone-preview {
+    height: 330px;
+  }
+
+  .iphone-footer {
+    margin-top: 11px;
+    margin-left: 25px;
   }
 }
 
@@ -40,5 +105,18 @@
     width: 250px;
     background-size: 250px 500px;
     padding-bottom: 11rem !important;
+  }
+
+  .iphone-header {
+    margin: 35px 15px 0 15px;
+  }
+
+  .iphone-preview {
+    height: 350px;
+  }
+
+  .iphone-footer {
+    margin-top: 18px;
+    margin-left: 25px;
   }
 }

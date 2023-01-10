@@ -7,7 +7,7 @@ import { FormService } from '../../services/form.service';
   styleUrls: ['./response-type.component.scss']
 })
 export class ResponseTypeComponent implements OnInit {
-  @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter();
+  @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() fieldTypes;
   @Input() question;
