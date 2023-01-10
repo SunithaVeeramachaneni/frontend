@@ -79,16 +79,16 @@
         margin: 10px 5px;
       }
 
-      .inputs {
-        background: $white;
-        border: 1px solid $border-color;
-        border-radius: 4px;
-        padding: 12px;
-        width: 95%;
+      .form-name {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 6px 0px 13px 0 !important;
+        }
       }
 
-      ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-        padding: 20px 0 0 0 !important;
+      .tags {
+        ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+          padding: 20px 0 0 0 !important;
+        }
       }
 
       .tags-mat-chips {
