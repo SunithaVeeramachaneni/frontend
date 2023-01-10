@@ -13,7 +13,7 @@ import {
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
+import { ErrorInfo, LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
 const limit = 10000;
 @Injectable({
@@ -288,5 +288,11 @@ export class RaceDynamicFormService {
       rows,
       nextToken
     };
+  }
+
+  getInspectionDetailByInspectionId$ = (
+    inspectionId: string
+  ) => {
+    return from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
   }
 }

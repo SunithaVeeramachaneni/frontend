@@ -1,0 +1,22 @@
+:host {
+  background: #fff;
+  color: #fff;
+  position: absolute;
+  left: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 450;
+  min-width: 450px;
+  overflow-y: scroll;
+  z-index: 9999;
+  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
+    0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+}
+
+#opendetail {
+   .mat-card {
+    box-shadow: none;
+  }
+ 
+}
