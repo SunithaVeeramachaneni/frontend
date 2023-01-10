@@ -218,11 +218,6 @@ export class FormListComponent implements OnInit {
   limit = defaultLimit;
   searchForm: FormControl;
   addCopyFormCount = false;
-<<<<<<< HEAD
-  isPopoverOpen = false;
-  formsListCount$: Observable<number>;
-=======
->>>>>>> submissions-ui
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
