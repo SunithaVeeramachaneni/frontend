@@ -133,12 +133,15 @@
               <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
                 <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
                   <div class="dis-flex" cdkDrag>
-                    <img
-                      cdkDragHandle
-                      src="assets/rdf-forms-icons/six-dots.svg"
-                      alt="six-dots"
-                      class="m-l-10 six-dots section-dragHandle"
-                    />
+                    <div class="section-drag-handler">
+                      <img
+                        cdkDragHandle
+                        src="assets/rdf-forms-icons/six-dots-white.svg"
+                        alt="six-dots"
+                        class="section-six-dots"
+                      />
+                    </div>
+
                     <app-section
                       class="sectionContainer"
                       [pageIndex]="pageIndex"
@@ -185,12 +188,15 @@
                               }"
                               (click)="toggleFieldContentOpenState()"
                             >
-                              <img
-                                cdkDragHandle
-                                src="assets/rdf-forms-icons/six-dots.svg"
-                                alt="six-dots"
-                                class="m-l-10 six-dots"
-                              />
+                              <div class="question-drag-handler">
+                                <img
+                                  cdkDragHandle
+                                  src="assets/rdf-forms-icons/six-dots.svg"
+                                  alt="six-dots"
+                                  class="question-six-dots"
+                                />
+                              </div>
+
                               <app-question
                                 class="question"
                                 [pageIndex]="pageIndex"

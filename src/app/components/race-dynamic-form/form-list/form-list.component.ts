@@ -66,7 +66,7 @@ export class FormListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Recents',
+      displayName: 'Name',
       type: 'string',
       order: 1,
       searchable: false,
@@ -127,24 +127,19 @@ export class FormListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontFamily: 'Inter',
-        fontStyle: 'normal',
-        fontSize: '14px',
         textTransform: 'capitalize',
         fontWeight: 500,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 12px',
-        marginTop: '8px',
-        width: '90px',
+        position: 'relative',
+        top: '10px',
+        width: '80px',
         height: '24px',
-        background: '#D1FAE5', // #FEF3C7
-        borderRadius: '12px',
-        flex: 'none',
-        order: 0,
-        flexGrow: 0
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -197,7 +192,7 @@ export class FormListComponent implements OnInit {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -224,10 +219,11 @@ export class FormListComponent implements OnInit {
   searchForm: FormControl;
   addCopyFormCount = false;
   isPopoverOpen = false;
+  formsListCount$: Observable<number>;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
-
+  nextToken = '';
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -247,6 +243,8 @@ export class FormListComponent implements OnInit {
         })
       )
       .subscribe();
+    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -319,7 +317,7 @@ export class FormListComponent implements OnInit {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 150px)'
+            tableHeight: 'calc(80vh - 105px)'
           };
           initial.data = rows;
         } else {
@@ -344,13 +342,14 @@ export class FormListComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getFormsList$({
-        skip: this.skip,
+        nextToken: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value
       })
       .pipe(
-        mergeMap(({ count, rows }) => {
+        mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
+          this.nextToken = nextToken;
           return of(rows);
         }),
         catchError(() => {
@@ -397,32 +396,24 @@ export class FormListComponent implements OnInit {
   prepareMenuActions(): void {
     const menuActions = [
       {
-        title: 'Edit Template',
+        title: 'Edit',
         action: 'edit'
       },
-      // {
-      //   title: 'Copy Template',
-      //   action: 'copy'
-      // },
+      {
+        title: 'Copy Template',
+        action: 'copy'
+      },
       {
         title: 'Archive',
         action: 'archive'
+      },
+      {
+        title: 'Upload to Public Library',
+        action: 'upload'
       }
-      // {
-      //   title: 'Upload to Public Library',
-      //   action: 'upload'
-      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
-  }
-
-  applyFilters(): void {
-    this.isPopoverOpen = false;
-  }
-
-  clearFilters(): void {
-    this.isPopoverOpen = false;
   }
 }

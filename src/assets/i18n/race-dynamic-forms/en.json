@@ -61,7 +61,16 @@
   "fixNoofRows": "Fix no. of rows",
   "columnName": "Enter Column name",
   "responseType": "Choose Response Type",
+  "submissions": "Submissions",
   "addSubFields": "Add Sub Fields",
   "typeQuestion": "Type Question",
-  "responseTitle": "Response Title"
+  "responseTitle": "Response Title",
+  "formName": "eg. Inspection Check",
+  "addDescription": "Add Description",
+  "startTypingTags": "Start typing to see tags",
+  "enter": "Enter",
+  "choose": "Choose Item",
+  "prevBtn": "Previous",
+  "addAtt": "Add Attachments",
+  "des": "Description"
 }

@@ -127,6 +127,26 @@ export const routingUrls = {
     url: '/forms',
     title: 'Forms',
     permission: permissions.viewForms
+  },
+  myForms: {
+    url: '/forms',
+    title: 'My Forms',
+    permission: permissions.viewForms
+  },
+  formTemplates: {
+    url: '/forms/templates',
+    title: 'Templates',
+    permission: permissions.viewForms
+  },
+  archivedForms: {
+    url: '/forms/archived',
+    title: 'Archived',
+    permission: permissions.viewForms
+  },
+  submissionForms: {
+    url: '/forms/submissions',
+    title: 'Submissions',
+    permission: permissions.viewForms
   }
 };
 

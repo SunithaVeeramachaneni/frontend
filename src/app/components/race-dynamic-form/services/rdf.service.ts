@@ -1,30 +1,27 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { formatDistance } from 'date-fns';
-import { from, ReplaySubject } from 'rxjs';
+import { API, graphqlOperation } from 'aws-amplify';
+import { format, formatDistance } from 'date-fns';
+import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
   GetFormListQuery,
   ListFormListsQuery,
+  ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import {
-  FormMetadata,
-  LoadEvent,
-  SearchEvent,
-  TableEvent
-} from './../../../interfaces';
+import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
+const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
-  nextToken = '';
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(
@@ -33,21 +30,62 @@ export class RaceDynamicFormService {
   ) {}
 
   getFormsList$(queryParams: {
-    skip?: number;
+    nextToken?: string;
     limit: number;
     searchKey: string;
   }) {
-    return from(
-      this.awsApiService.ListFormLists(
-        {
-          name: {
-            contains: queryParams?.searchKey || ''
-          }
-        },
-        queryParams.limit,
-        this.nextToken
+    if (queryParams?.nextToken !== null) {
+      return from(
+        this.awsApiService.ListFormLists(
+          {
+            ...(queryParams.searchKey && {
+              name: { contains: queryParams?.searchKey }
+            })
+          },
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
+    }
+  }
+
+  getSubmissionFormsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+  }) {
+    if (queryParams?.nextToken !== null) {
+      return from(
+        this.awsApiService.ListFormSubmissionLists(
+          {
+            ...(queryParams.searchKey && {
+              name: { contains: queryParams?.searchKey }
+            })
+          },
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      ).pipe(map((res) => this.formatSubmittedListResponse(res)));
+    }
+  }
+
+  getFormsListCount$(): Observable<number> {
+    const statement = `query { listFormLists(limit: ${limit}) { items { id } } }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
       )
-    ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
+    );
+  }
+
+  getSubmissionFormsListCount$(): Observable<number> {
+    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { listFormSubmissionLists } }: any) =>
+          listFormSubmissionLists?.items?.length || 0
+      )
+    );
   }
 
   createForm$(
@@ -243,10 +281,44 @@ export class RaceDynamicFormService {
             : ''
         })) || [];
     const count = resp?.items.length || 0;
-    this.nextToken = resp?.nextToken || '';
+    const nextToken = resp?.nextToken;
     return {
       count,
-      rows
+      rows,
+      nextToken
+    };
+  }
+
+  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+    const rows =
+      resp.items
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        ?.map((p) => ({
+          ...p,
+          preTextImage: {
+            style: {
+              width: '30px',
+              height: '30px',
+              'border-radius': '50%',
+              display: 'block',
+              padding: '0px 10px'
+            },
+            image: p?.formLogo,
+            condition: true
+          },
+          responses: '23/26',
+          createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+          updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
+            addSuffix: true
+          })
+        })) || [];
+    const nextToken = resp?.nextToken;
+    return {
+      rows,
+      nextToken
     };
   }
 }

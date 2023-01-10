@@ -591,12 +591,3 @@ button.mat-menu-item {
 .question-bg .form-reading-1 {
   width: 94% !important;
 }
-
-.bg-iphone .mat-tree-margin {
-  max-height: 370px;
-}
-@media (min-width: 1024px) and (max-width: 1280px) {
-  .bg-iphone .mat-tree-margin {
-    max-height: 320px;
-  }
-}

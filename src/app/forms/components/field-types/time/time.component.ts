@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-time',
@@ -6,7 +6,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./time.component.scss']
 })
 export class TimeComponent implements OnInit {
+  @Output() checkedToDefaultTime: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
+  @Input() set question(data) {
+    this.questionInfo = data;
+  }
+
+  get question() {
+    return this.questionInfo;
+  }
+
+  timeChecked;
+  private questionInfo;
+
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.timeChecked = this.questionInfo.get('value').value;
+  }
+
+  toggleChecked() {
+    this.checkedToDefaultTime.emit(this.timeChecked);
+  }
 }
