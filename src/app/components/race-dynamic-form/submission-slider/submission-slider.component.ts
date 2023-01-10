@@ -34,7 +34,6 @@ export class SubmissionSliderComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.submission && changes.submission.currentValue) {
       this.submission = changes.submission.currentValue;
-      console.log(this.submission);
     }
   }
 

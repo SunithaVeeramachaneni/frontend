@@ -28,15 +28,6 @@ const routes: Routes = [
         }
       },
       {
-        path: '/submissions/view/:id',
-        component: SubmissionViewComponent,
-        canActivate: [AuthGuard],
-        data: {
-          breadcrumb: { label: 'View Form', alias: 'formName' },
-          permissions: [permissions.viewForms]
-        }
-      },
-      {
         path: 'edit/:id',
         component: FormConfigurationComponent,
         canActivate: [AuthGuard],
@@ -51,6 +42,15 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Submissions', alias: 'formName' },
+          permissions: [permissions.viewForms]
+        }
+      },
+      {
+        path: 'submissions/view/:id',
+        component: SubmissionViewComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'View Form', alias: 'formName' },
           permissions: [permissions.viewForms]
         }
       }
