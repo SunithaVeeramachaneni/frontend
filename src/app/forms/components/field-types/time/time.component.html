@@ -1,2 +1,8 @@
-<input type="checkbox" id="time" class="required-input" name="time" />&nbsp;
-<label for="time" translate="timeLabel"></label>
+<mat-checkbox
+  [(ngModel)]="timeChecked"
+  (change)="toggleChecked()"
+  class="time-checkbox"
+>
+</mat-checkbox>
+
+<label translate="timeLabel" class="time-label"></label>

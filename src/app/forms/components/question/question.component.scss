@@ -2,12 +2,14 @@
 
 .questions {
   .floating-btns {
-    position: absolute;
-    left: 10px;
+    position: relative;
+    left: -90px;
+    top: 40px;
     border: 1px solid $border-color;
     border-radius: 7px;
-    margin-top: -60px;
+    margin-top: -100px;
     display: none;
+    width: 55px;
   }
 
   .questions-btn {
@@ -47,6 +49,7 @@
 
   .questions-div {
     border-bottom: 1px solid $border-color;
+    height: 40px;
 
     .question-input-box {
       margin-top: 7px;
@@ -57,8 +60,8 @@
   .question-input {
     padding: 7px;
     border: none;
-    margin-left: 10px;
-    width: auto;
+    margin-left: 5px;
+    width: 90%;
   }
 
   input:focus {
@@ -83,12 +86,10 @@
 
   .input-fields {
     background: $white;
-    padding: 7px;
+    padding: 15px 7px 5px 7px;
     display: flex;
     flex-direction: column;
     width: 98%;
-    border-left: 1px solid $border-color;
-    border-right: 1px solid $border-color;
     justify-content: center;
 
     .questionActionsRow {
@@ -116,5 +117,17 @@
       position: relative;
       top: 2px;
     }
+
+    .range-values {
+      color: $blue-main;
+    }
+  }
+  .required-label {
+    position: relative;
+    top: 1px;
+  }
+
+  .required-checkbox {
+    margin: 0 7px 0 20px;
   }
 }

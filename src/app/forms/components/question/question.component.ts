@@ -123,11 +123,17 @@ export class QuestionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fieldTypes = fieldTypesMock.fieldTypes;
+    this.fieldTypes = fieldTypesMock.fieldTypes.filter(
+      (fieldType) =>
+        fieldType.type !== 'LTV' &&
+        fieldType.type !== 'DD' &&
+        fieldType.type !== 'DDM' &&
+        fieldType.type !== 'VI'
+    );
     this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(
-        debounceTime(500),
+        debounceTime(1000),
         distinctUntilChanged(),
         tap(() =>
           this.questionEvent.emit({
@@ -178,6 +184,7 @@ export class QuestionComponent implements OnInit {
   }
 
   selectFieldTypeEventHandler(fieldType) {
+    this.openResponseTypeModal$ = this.formService.openResponseType$;
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
     }
@@ -185,18 +192,21 @@ export class QuestionComponent implements OnInit {
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
 
     switch (fieldType.type) {
       case 'TF':
         this.questionForm.get('value').setValue('TF');
         break;
+      case 'DF':
+        this.questionForm.get('value').setValue(false);
+        break;
+      case 'TIF':
+        this.questionForm.get('value').setValue(false);
+        break;
       case 'VI':
-        //this.isCustomizerOpen = true;
         this.questionForm.get('value').setValue([]);
         break;
       case 'RT':
-        //this.isCustomizerOpen = true;
         const sliderValue = {
           value: 0,
           min: 0,
@@ -204,25 +214,9 @@ export class QuestionComponent implements OnInit {
           increment: 1
         };
         this.questionForm.get('value').setValue(sliderValue);
-        //this.sliderOptions = sliderValue;
         break;
       case 'IMG':
-        let index = 0;
-        let found = false;
-        if (this.questionForm.get('id').value === this.question.value.id) {
-          found = true;
-        }
-        if (!found && this.questionForm.get('fieldType').value === 'IMG') {
-          index++;
-        }
-
-        timer(0)
-          .pipe(
-            tap(() => {
-              this.insertImages.toArray()[index]?.nativeElement.click();
-            })
-          )
-          .subscribe();
+        this.insertImages.toArray()[this.questionIndex]?.nativeElement.click();
         break;
       default:
       // do nothing
