@@ -1,2 +1,8 @@
-<input type="checkbox" id="date" class="required-input" name="date" />&nbsp;
-<label for="date" translate="dateLabel"></label>
+<mat-checkbox
+  [(ngModel)]="defaultChecked"
+  (change)="toggleChecked()"
+  class="date-checkbox"
+>
+</mat-checkbox>
+
+<label translate="dateLabel" class="date-label"></label>

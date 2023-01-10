@@ -1,3 +1,20 @@
-<div class="bg-iphone">
-  <h3 class="heading">Preview goes here</h3>
+<div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
+  <div class="iphone-header">
+    <h3 class="form-heading">{{ formMetadata.name }}</h3>
+    <p class="form-description">
+      {{
+        (formMetadata.description ? formMetadata.description : 'des')
+          | translate
+      }}
+    </p>
+  </div>
+  <div class="iphone-preview">
+    <app-preview></app-preview>
+  </div>
+  <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
+    <span class="page-count">1 / {{ pagesCount }}</span>
+
+    <button class="btn-next" translate="nextBtn"></button>
+    <button class="btn-previous" translate="prevBtn"></button>
+  </div>
 </div>
