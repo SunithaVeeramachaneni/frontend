@@ -38,6 +38,11 @@
       </div>
       <div class="height-50">
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
+        <button
+          class="add-new-btn"
+          (click)="handleGlobalResponses()"
+          translate="addNew"
+        ></button>
       </div>
 
       <div *ngIf="isMCQResponseOpen">
@@ -46,6 +51,10 @@
 
       <div *ngIf="question.fieldType === 'RT'">
         <app-response-type-side-drawer></app-response-type-side-drawer>
+      </div>
+
+      <div *ngIf="isGlobalResponseOpen">
+        <app-global-response-type-side-drawer></app-global-response-type-side-drawer>
       </div>
     </div>
   </div>

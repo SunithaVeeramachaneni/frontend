@@ -13,6 +13,7 @@ export class ResponseTypeComponent implements OnInit {
   @Input() question;
 
   public isMCQResponseOpen = false;
+  public isGlobalResponseOpen = false;
 
   constructor(private formService: FormService) {}
 
@@ -40,5 +41,9 @@ export class ResponseTypeComponent implements OnInit {
       this.formService.setMultiChoiceOpenState(true);
       this.formService.setOpenResponseType(false);
     }
+  }
+
+  handleGlobalResponses() {
+    this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
   }
 }

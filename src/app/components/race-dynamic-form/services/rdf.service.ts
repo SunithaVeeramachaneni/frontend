@@ -7,11 +7,13 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
+  CreateResponseSetInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
-  UpdateFormDetailInput
+  UpdateFormDetailInput,
+  UpdateResponseSetInput
 } from 'src/app/API.service';
 import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
@@ -172,6 +174,40 @@ export class RaceDynamicFormService {
         id: formDetails.authoredFormDetailId,
         _version: formDetails.authoredFormDetailDynamoDBVersion
       } as UpdateAuthoredFormDetailInput)
+    );
+  }
+
+  getResponseSet$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    responseType: string;
+  }) {
+    if (queryParams.nextToken !== null) {
+      return from(
+        this.awsApiService.ListResponseSets(
+          {
+            type: { eq: queryParams.responseType }
+          },
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      );
+    }
+  }
+
+  createResponseSet$(responseSet: CreateResponseSetInput) {
+    return from(this.awsApiService.CreateResponseSet(responseSet));
+  }
+
+  updateResponseSet$(responseSet: UpdateResponseSetInput) {
+    return from(this.awsApiService.UpdateResponseSet(responseSet));
+  }
+
+  deleteResponseSet$(responseSetId: string) {
+    return from(
+      this.awsApiService.DeleteResponseSet({
+        id: responseSetId
+      })
     );
   }
 
