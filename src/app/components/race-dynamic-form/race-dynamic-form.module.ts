@@ -48,6 +48,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
+import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AvatarComponent } from './form-configuration/avatar.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -63,6 +65,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
+    SelectQuestionsDialogComponent,
     AvatarComponent
   ],
   imports: [
@@ -101,6 +104,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     NgxShimmerLoadingModule,
     OverlayModule,
     MatSelectModule,
+    MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
       responseSet: responseSetReducer

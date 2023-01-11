@@ -110,6 +110,23 @@ export const getQuestionByID = (
       )
   );
 
+export const getQuestionByQuestionID = (
+  pageIndex: number,
+  questionId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      ?.questions.find((question) => question.id === questionId)
+  );
+
+export const getQuestionLogics = (pageIndex: number, questionId: string) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      .logics.filter((logic) => logic.questionId === questionId)
+  );
+
 export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
@@ -162,7 +179,8 @@ export const getFormDetails = createSelector(
     formSaveStatus: state.formSaveStatus,
     formListDynamoDBVersion: state.formListDynamoDBVersion,
     formDetailDynamoDBVersion: state.formDetailDynamoDBVersion,
-    authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion
+    authoredFormDetailDynamoDBVersion: state.authoredFormDetailDynamoDBVersion,
+    formDetailPublishStatus: state.formDetailPublishStatus
   })
 );
 
@@ -178,7 +196,12 @@ export const getFormSaveStatus = createSelector(
 
 export const getFormPublishStatus = createSelector(
   selectFormConfigurationState,
-  (state) => state.formPublishStatus
+  (state) => state.formDetailPublishStatus
+);
+
+export const getIsFormCreated = createSelector(
+  selectFormConfigurationState,
+  (state) => state.isFormCreated
 );
 
 // Selectors for response sets begin here

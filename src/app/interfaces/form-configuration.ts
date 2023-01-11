@@ -14,7 +14,6 @@ export interface FormMetadata {
   formType: 'Standalone' | 'Embedded';
   formStatus: 'Draft' | 'Published';
   tags: string[];
-  counter?: number;
 }
 
 export interface Page {
@@ -22,6 +21,7 @@ export interface Page {
   position: number;
   sections: Section[];
   questions: Question[];
+  logics: any[];
 }
 
 export interface Section {
@@ -59,6 +59,8 @@ export interface QuestionEvent {
   pageIndex: number;
   sectionId: string;
   question?: Question;
+  questionId?: string;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
+  isAskQuestion?: boolean;
 }

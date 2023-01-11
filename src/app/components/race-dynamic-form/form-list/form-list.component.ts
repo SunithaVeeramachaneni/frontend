@@ -34,6 +34,9 @@ import { defaultLimit } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
+import { Router } from '@angular/router';
+import { omit } from 'lodash-es';
+import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 
 @Component({
   selector: 'app-form-list',
@@ -234,7 +237,8 @@ export class FormListComponent implements OnInit {
   nextToken = '';
   constructor(
     private readonly toast: ToastService,
-    private readonly raceDynamicFormService: RaceDynamicFormService
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -251,7 +255,6 @@ export class FormListComponent implements OnInit {
       )
       .subscribe();
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
-
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -279,24 +282,59 @@ export class FormListComponent implements OnInit {
       case 'lastPublishedBy':
       case 'publishedDate':
         this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        //this.openEditFormModal(event.row);
         break;
       default:
     }
   };
 
-  openEditFormModal(form = {} as GetFormListQuery): void {
-    this.toast.show({
-      text: 'Form edited successfully!',
-      type: 'success'
-    });
-  }
-
-  openCopyFormModal(form: GetFormListQuery): void {
-    this.addEditCopyForm$.next({
-      action: 'copy',
-      form
-    });
+  onCopyFormMetaData(form: GetFormListQuery): void {
+    if (!form.id) {
+      return;
+    }
+    combineLatest([
+      this.raceDynamicFormService.fetchAllFormListNames$(),
+      this.raceDynamicFormService.getAuthoredFormDetail$(form.id)
+    ])
+      .pipe(
+        map(([formNames, authoredFormDetail]) => ({
+          formNames,
+          authoredFormDetail
+        }))
+      )
+      .subscribe(({ formNames, authoredFormDetail }) => {
+        const createdForm = this.generateCopyFormName(form, formNames);
+        if (createdForm?.newName) {
+          this.raceDynamicFormService
+            .createForm$({
+              ...omit(form, ['id', 'preTextImage']),
+              name: createdForm.newName
+            })
+            .subscribe((newRecord) => {
+              if (!newRecord) {
+                return;
+              }
+              if (authoredFormDetail?.length > 0) {
+                const obj = authoredFormDetail[0];
+                this.raceDynamicFormService.createAuthoredFormDetail$({
+                  formStatus: obj?.formStatus,
+                  formListId: newRecord?.id,
+                  pages: JSON.parse(obj?.pages) ?? '',
+                  counter: obj?.counter,
+                  authoredFormDetailVersion: +obj?.version + 1
+                });
+              }
+              this.addEditCopyForm$.next({
+                action: 'copy',
+                form: {
+                  ...form,
+                  name: createdForm.newName
+                }
+              });
+              this.formsListCount$ =
+                this.raceDynamicFormService.getFormsListCount$();
+            });
+        }
+      });
   }
 
   getDisplayedForms(): void {
@@ -336,6 +374,15 @@ export class FormListComponent implements OnInit {
           };
           initial.data = rows;
         } else {
+          if (form.action === 'copy') {
+            const obj = { ...form.form };
+            initial.data.splice((obj.id as any) - 1, 0, obj);
+            form.action = 'add';
+            this.toast.show({
+              text: 'Form copied successfully!',
+              type: 'success'
+            });
+          }
           if (form.action === 'delete') {
             initial.data = initial.data.filter((d) => d.id !== form.form.id);
             this.toast.show({
@@ -386,12 +433,11 @@ export class FormListComponent implements OnInit {
   rowLevelActionHandler = ({ data, action }): void => {
     switch (action) {
       case 'copy':
-        this.openCopyFormModal(data);
+        this.onCopyFormMetaData(data);
         break;
 
       case 'edit':
-        this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        // this.openEditFormModal(data);
+        this.router.navigate(['/forms/edit', data.id]);
         break;
 
       case 'archive':
@@ -431,5 +477,27 @@ export class FormListComponent implements OnInit {
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  private generateCopyFormName(
+    form: GetFormListQuery,
+    rows: GetFormListQuery[]
+  ) {
+    if (rows?.length > 0) {
+      const listCopyNumbers: number[] = [];
+      const regex: RegExp = generateCopyRegex(form?.name);
+      rows?.forEach((row) => {
+        const matchObject = row?.name?.match(regex);
+        if (matchObject) {
+          listCopyNumbers.push(parseInt(matchObject[1], 10));
+        }
+      });
+      const newIndex: number = generateCopyNumber(listCopyNumbers);
+      const newName = `${form?.name} Copy(${newIndex})`;
+      return {
+        newName
+      };
+    }
+    return null;
   }
 }
