@@ -62,7 +62,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       this.cdrf.detectChanges();
 
       if (state.isOpen) {
-        console.log(state.response);
         state.response.values = state.response.values || [];
         const responsesArray = [];
         state.response.values.map((response) => {

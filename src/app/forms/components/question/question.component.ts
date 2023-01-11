@@ -345,7 +345,6 @@ export class QuestionComponent implements OnInit {
     );
     switch (event.eventType) {
       case 'quickResponsesAdd':
-        console.log('adding quick responses');
         const createDataset = {
           formId,
           type: 'quickResponses',

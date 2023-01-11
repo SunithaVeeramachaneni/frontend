@@ -125,7 +125,5 @@ export class ResponseTypeComponent implements OnInit {
     }
   }
 
-  quickResponseTypeHandler(event) {
-    console.log(event);
-  }
+  quickResponseTypeHandler(event) {}
 }
