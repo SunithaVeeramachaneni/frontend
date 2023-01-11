@@ -1,4 +1,71 @@
 # this is an auto generated file. This will be overwritten
+query GetResponseSet($id: ID!) {
+  getResponseSet(id: $id) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListResponseSets(
+  $filter: ModelResponseSetFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listResponseSets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      type
+      name
+      description
+      isMultiColumn
+      values
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncResponseSets(
+  $filter: ModelResponseSetFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncResponseSets(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      type
+      name
+      description
+      isMultiColumn
+      values
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetFormDetail($id: ID!) {
   getFormDetail(id: $id) {
     id

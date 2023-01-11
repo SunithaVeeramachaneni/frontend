@@ -6,6 +6,42 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerResponseSet = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<ResponseSet, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly type?: string | null;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly isMultiColumn?: boolean | null;
+  readonly values?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyResponseSet = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<ResponseSet, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly type?: string | null;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly isMultiColumn?: boolean | null;
+  readonly values?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type ResponseSet = LazyLoading extends LazyLoadingDisabled ? EagerResponseSet : LazyResponseSet
+
+export declare const ResponseSet: (new (init: ModelInit<ResponseSet>) => ResponseSet) & {
+  copyOf(source: ResponseSet, mutator: (draft: MutableModel<ResponseSet>) => MutableModel<ResponseSet> | void): ResponseSet;
+}
+
 type EagerFormDetail = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<FormDetail, 'id'>;
