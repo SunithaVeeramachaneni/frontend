@@ -55,14 +55,20 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       responses: this.fb.array([])
     });
 
-    this.responses.valueChanges
+    this.responseForm.valueChanges
       .pipe(
         pairwise(),
-        debounceTime(500),
+        debounceTime(1000),
         distinctUntilChanged(),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) this.isResponseFormUpdated = false;
-          else if (curr.find((item) => !item.title))
+          else if (curr.responses.find((item) => !item.title))
+            this.isResponseFormUpdated = false;
+          else if (
+            this.globalResponse &&
+            this.globalResponse.name === curr.name.value &&
+            isEqual(JSON.parse(this.globalResponse.values), curr.responses)
+          )
             this.isResponseFormUpdated = false;
           else this.isResponseFormUpdated = true;
           this.cdrf.markForCheck();
@@ -75,7 +81,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       JSON.parse(this.globalResponse.values).forEach((item) => {
         this.responses.push(
           this.fb.group({
-            title: [item.title, [Validators.required, Validators.minLength(3)]],
+            title: [item.title, [Validators.required]],
             color: ''
           })
         );
@@ -86,7 +92,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
   addResponse() {
     this.responses.push(
       this.fb.group({
-        title: ['', [Validators.required, Validators.minLength(3)]],
+        title: ['', [Validators.required]],
         color: ''
       })
     );

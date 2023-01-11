@@ -25,10 +25,7 @@ export class ResponseTypeComponent implements OnInit {
   ngOnInit(): void {
     this.globalResponses$ = this.store
       .select(getResponseSets)
-      .pipe((responses: any) => {
-        console.log(responses);
-        return responses;
-      });
+      .pipe((responses: any) => responses);
     this.globalResponses$.subscribe();
   }
 

@@ -25,15 +25,11 @@ export const responseSetReducer = createReducer<ResponseSetState>(
   ),
   on(
     MCQResponseApiActions.updateResponseSetSuccess,
-    (state, action): ResponseSetState => {
-      const oldRespIdx = state.globalResponses.findIndex(
-        (item) => item.id === action.response.id
-      );
-      const newGlobalResponses = state.globalResponses;
-      newGlobalResponses[oldRespIdx] = action.response;
-      return {
-        globalResponses: newGlobalResponses
-      };
-    }
+    (state, action): ResponseSetState => ({
+      globalResponses: state.globalResponses.map((item) => {
+        if (item.id === action.response.id) return action.response;
+        return item;
+      })
+    })
   )
 );

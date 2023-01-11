@@ -41,7 +41,16 @@
         <div *ngIf="globalResponses$ | async as globalResponses">
           <div *ngFor="let response of globalResponses">
             {{ response.name }}
-            <button (click)="handleEditGlobalResponse(response)">Edit</button>
+            <button
+              mat-flat-button
+              (click)="handleEditGlobalResponse(response)"
+            >
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                class="edit-icon-img"
+              />
+            </button>
           </div>
         </div>
         <button
