@@ -235,6 +235,7 @@ export class FormListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  selectedForm: GetFormListQuery = null;
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -274,14 +275,14 @@ export class FormListComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId } = event;
+    const { columnId, row } = event;
     switch (columnId) {
       case 'name':
       case 'author':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        this.showFormDetail(row);
         break;
       default:
     }
@@ -479,6 +480,11 @@ export class FormListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+  }
+
   private generateCopyFormName(
     form: GetFormListQuery,
     rows: GetFormListQuery[]
@@ -499,5 +505,10 @@ export class FormListComponent implements OnInit {
       };
     }
     return null;
+  }
+
+  private showFormDetail(row: GetFormListQuery): void {
+    this.selectedForm = this.menuState === 'out' ? row : null;
+    this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }
 }

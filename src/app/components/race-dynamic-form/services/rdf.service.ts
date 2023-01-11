@@ -9,6 +9,7 @@ import {
   APIService,
   CreateFormListInput,
   GetFormListQuery,
+  ListFormDetailsQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
@@ -269,6 +270,29 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formlistID)
     ).pipe(map(({ items }) => items));
+  }
+
+  getFormDetail$(id: string) {
+    return from(
+      API.graphql(
+        graphqlOperation(`
+        query {
+          listFormDetails(filter: {formlistID: {eq: "${id}"}}) {
+            items {
+              formData
+            }
+          }
+        }
+      `)
+      )
+    ).pipe(
+      map(
+        ({ data: { listFormDetails } }: any) =>
+          listFormDetails?.items.map((item) =>
+            item?.formData ? JSON.parse(item?.formData) : ''
+          ) as ListFormDetailsQuery[]
+      )
+    );
   }
 
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {

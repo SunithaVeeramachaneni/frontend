@@ -44,7 +44,8 @@
 
   <app-form-detail
     [@slideInOut]="menuState"
-    (slideInOut)="menuState = 'out'"
+    (slideInOut)="onCloseViewDetail()"
+    [selectedForm]="selectedForm"
   ></app-form-detail>
 
   <!-- <app-submission-slider
