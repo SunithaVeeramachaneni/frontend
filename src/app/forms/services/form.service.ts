@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ResponseTypeOpenState } from 'src/app/interfaces';
+import { ResponseTypeOpenState } from 'src/app/interfaces/response-type';
 
 @Injectable({
   providedIn: 'root'
