@@ -197,3 +197,45 @@
     left: 80px !important;
   }
 }
+
+#import-form-customizer {
+  position: fixed;
+  bottom: 0px;
+  top: 0;
+  right: 0;
+  width: 415px;
+  z-index: 999;
+
+  .slider-heading {
+    padding: 15px 15px 5px 15px;
+    font-size: 80%;
+  }
+
+  .mat-card {
+    margin: 0;
+    border-radius: 0;
+    height: 100%;
+    padding: 0;
+  }
+  .mat-card-content {
+    padding: 0 15px;
+    max-height: 82vh;
+    overflow-y: auto;
+  }
+
+  .section-div {
+    background: rgba(61, 90, 254, 0.15);
+    border-radius: 8px 8px 0px 0px;
+    height: 30px;
+    padding: 15px 0 0 12px;
+    margin: 5px 0;
+  }
+
+  .questions {
+    padding-left: 12px;
+  }
+
+  ::ng-deep .mat-checkbox-layout {
+    white-space: pre-wrap;
+  }
+}

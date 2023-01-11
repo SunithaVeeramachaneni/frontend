@@ -2,11 +2,12 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy
+  OnDestroy,
+  ChangeDetectorRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -82,6 +83,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   fieldContentOpenState = false;
   formListVersion: number;
+  public openAppSider$: Observable<any>;
+  selectedFormData: any;
+  selectedFormName: string;
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -91,7 +95,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private breadcrumbService: BreadcrumbService,
     private router: Router,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdrf: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -164,7 +169,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       tap((isFormCreated) => {
         if (isFormCreated) {
           // This will cause some delay in redirection post creation of fresh form. This is only added here to reduce multiple form creations in development process
-          // this.router.navigate(['/forms/edit', this.formConf.id.value]);
+          this.router.navigate(['/forms/edit', this.formConf.id.value]);
         }
       })
     );
@@ -578,11 +583,16 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
   importQuestions(): void {
     const dialogRef = this.dialog.open(ImportQuestionsModalComponent, {
-      data: { selectedFormData: '', openImportQuestionsSlider: false }
+      data: {
+        selectedFormData: '',
+        selectedFormName: '',
+        openImportQuestionsSlider: false
+      }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // this.selectedFormData = result.selectedFormData;
+      this.selectedFormData = result.selectedFormData;
+      this.selectedFormName = result.selectedFormName;
       // this.selectedFormData?.sections.forEach((section) => {
       //   section.questions.forEach((question, index) => {
       //     if (question.id.includes('EVIDENCE')) {
@@ -590,8 +600,67 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       //     }
       //   });
       // });
-      // this.openAppSider$ = of(result.openImportQuestionsSlider);
-      // this.cdrf.markForCheck();
+      this.openAppSider$ = of(result.openImportQuestionsSlider);
+      this.cdrf.markForCheck();
     });
+  }
+
+  cancelSlider() {
+    this.openAppSider$ = of(false);
+  }
+
+  useForm() {
+    const newArray = [];
+    this.selectedFormData.forEach((page) => {
+      page.sections.forEach((section) => {
+        if (section.checked === true) {
+          newArray.push(section);
+        }
+        if (section.checked === false) {
+          const newQuestion = [];
+          section.questions.forEach((question) => {
+            if (question.checked === true) {
+              newQuestion.push(question);
+            }
+          });
+          if (newQuestion.length) {
+            const filteredSection = {
+              name: section.name,
+              questions: newQuestion
+            };
+            newArray.push(filteredSection);
+          }
+        }
+      });
+    });
+
+    this.openAppSider$ = of(false);
+  }
+
+  updateAllChecked(checked, question, section) {
+    question.checked = checked;
+    const countOfChecked = section.questions.filter(
+      (per) => per.checked
+    ).length;
+    if (countOfChecked === 0 || countOfChecked !== section.questions.length)
+      section.checked = false;
+    if (countOfChecked === section.questions.length) section.checked = true;
+  }
+
+  setAllChecked(checked, section) {
+    section.checked = checked;
+    if (section.questions == null) {
+      return;
+    }
+    section.questions.forEach((t) => (t.checked = checked));
+  }
+
+  fewComplete(section) {
+    if (section.questions === null) {
+      return false;
+    }
+    const checkedCount = section.questions.filter((p) => p.checked).length;
+
+    return checkedCount > 0 && checkedCount !== section.questions.length;
   }
 }

@@ -2,14 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { combineLatest, Observable, of } from 'rxjs';
 import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  of,
-  ReplaySubject
-} from 'rxjs';
-import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -18,11 +13,13 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { GetFormListQuery } from 'src/app/API.service';
-import { defaultLimit } from 'src/app/app.constants';
-import { getFormMetadata, State } from 'src/app/forms/state';
-import { FormMetadata, TableEvent } from 'src/app/interfaces';
+import { FormMetadata, TableEvent } from '../../../interfaces';
+
+import { defaultLimit } from '../../../app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
+import { GetFormListQuery } from '../../../API.service';
+import { getFormDetails, getFormMetadata, State } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
 interface SearchEvent {
   data: 'search' | 'load' | 'infiniteScroll';
@@ -41,18 +38,18 @@ export class ImportQuestionsModalComponent implements OnInit {
   selectedItem;
   disableSelectBtn = true;
   forms$: Observable<any>;
-  formMetadata$: Observable<FormMetadata>;
-  formMetadata: FormMetadata;
+  authoredFormDetail$: Observable<any>;
+  authoredFormDetail;
+  nextToken = '';
 
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private fb: FormBuilder,
     private raceDynamicFormService: RaceDynamicFormService,
     private store: Store<State>
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
@@ -65,6 +62,7 @@ export class ImportQuestionsModalComponent implements OnInit {
         })
       )
       .subscribe();
+
     this.getDisplayedForms();
   }
 
@@ -109,37 +107,65 @@ export class ImportQuestionsModalComponent implements OnInit {
   getForms() {
     return this.raceDynamicFormService
       .getFormsList$({
-        skip: this.skip,
+        nextToken: this.nextToken,
         limit: this.limit,
         searchKey: this.searchForm.value
       })
-      .pipe(mergeMap(({ rows }) => of(rows)));
+      .pipe(
+        mergeMap(({ rows, nextToken }) => {
+          this.nextToken = nextToken;
+          return of(rows);
+        })
+      );
   }
 
   selectListItem(form, index) {
-    this.selectedForm = form;
-    console.log(this.selectedForm);
     this.selectedItem = index;
     this.disableSelectBtn = false;
 
-    this.formMetadata$ = this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        this.formMetadata = formMetadata;
-      })
-    );
-    this.formMetadata$.subscribe(console.log);
+    this.raceDynamicFormService
+      .getAuthoredFormDetailByFormId$(form.id)
+      .pipe(
+        map((formData) => {
+          if (formData.length) {
+            console.log(form);
+            this.data.selectedFormName = form.name;
+            const filteredForm = JSON.parse(formData[0].pages);
+            let sectionData;
+            let pageData;
+            pageData = filteredForm.map((page) => {
+              sectionData = page.sections.map((section) => {
+                const questionsArray = [];
+                page.questions.forEach((question) => {
+                  if (section.id === question.sectionId) {
+                    questionsArray.push(question);
+                  }
+                });
+                return { ...section, questions: questionsArray };
+              });
+              return { ...page, sections: sectionData };
+            });
+            return pageData;
+          }
+        })
+      )
+      .subscribe((response) => {
+        this.selectedForm = response;
+        console.log(response);
+      });
   }
 
   selectFormElement() {
-    console.log('secelect');
-    // this.selectedForm.sections.forEach((sec) => {
-    //   sec.checked = false;
-    //   sec.questions.forEach((que) => {
-    //     que.checked = false;
-    //   });
-    // });
-    // this.data.selectedFormData = this.selectedForm;
-    // this.data.openImportQuestionsSlider = true;
-    // this.dialogRef.close(this.data);
+    this.selectedForm?.forEach((page) => {
+      page.sections.forEach((sec) => {
+        sec.checked = false;
+        sec.questions.forEach((que) => {
+          que.checked = false;
+        });
+      });
+    });
+    this.data.selectedFormData = this.selectedForm;
+    this.data.openImportQuestionsSlider = true;
+    this.dialogRef.close(this.data);
   }
 }

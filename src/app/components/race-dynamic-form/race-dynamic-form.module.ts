@@ -46,6 +46,8 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ImportQuestionsModalComponent } from './import-questions-modal/import-questions-modal.component';
 import { AvatarComponent } from './form-configuration/avatar.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
@@ -61,7 +63,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     PublicLibraryComponent,
     FormConfigurationModalComponent,
     FormConfigurationComponent,
-    AvatarComponent
+    AvatarComponent,
+    ImportQuestionsModalComponent
   ],
   imports: [
     FormsModule,
@@ -82,6 +85,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatMenuModule,
     MatExpansionModule,
+    MatCheckboxModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,

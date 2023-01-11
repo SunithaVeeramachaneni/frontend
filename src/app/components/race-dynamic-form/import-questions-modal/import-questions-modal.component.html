@@ -32,13 +32,15 @@
         (click)="selectListItem(form, i)"
         [ngClass]="{ active: selectedItem === i }"
       >
-        <div class="width-70">
+        <div class="width-100">
           <p class="form-name">{{ form.name }}</p>
-          <p class="form-des">{{ form.description }}</p>
+          <p class="form-des">
+            {{ (form.description ? form.descriptin : 'Des') | translate }}
+          </p>
         </div>
-        <div class="width-30">
+        <!-- <div class="width-30">
           <p class="no-of-ques">{{ form.countOfQues }} Questions</p>
-        </div>
+        </div> -->
       </li>
     </div>
     <div
