@@ -73,6 +73,16 @@ export class RaceDynamicFormService {
       `datasets/${datasetType}`,
       info
     );
+  getDataSetsByFormId$ = (
+    datasetType: string,
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `datasets/${datasetType}/${formId}`,
+      info
+    );
 
   getFormsList$(queryParams: {
     nextToken?: string;

@@ -365,9 +365,11 @@ export class QuestionComponent implements OnInit {
           name: 'quickResponses',
           id: event.data.id
         };
-        this.rdfService.createDataSet$(updateDataset).subscribe((response) => {
-          // do nothing
-        });
+        this.rdfService
+          .updateDataSet$(event.data.id, updateDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
         break;
     }
   }
