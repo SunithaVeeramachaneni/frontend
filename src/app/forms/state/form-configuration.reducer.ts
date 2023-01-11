@@ -549,7 +549,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
       };
     }
   ),
@@ -576,7 +579,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
       };
     }
   ),
@@ -598,7 +604,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
       };
     }
   ),
@@ -622,6 +631,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state,
         pages,
         formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
         formSaveStatus: 'Saving'
       };
     }
@@ -652,6 +662,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state,
         pages,
         formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
         formSaveStatus: 'Saving'
       };
     }
@@ -678,6 +689,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state,
         pages,
         formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
         formSaveStatus: 'Saving'
       };
     }
