@@ -34,13 +34,11 @@ export class ResponseTypeComponent implements OnInit {
 
   ngOnInit(): void {
     this.quickResponsesLoading = true;
-    setTimeout(() => {
-      this.store.select(getFormMetadata).pipe(
-        tap((formMetadata) => {
-          this.formId = formMetadata.id;
-        })
-      );
-    }, 2000);
+    this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        this.formId = formMetadata.id;
+      })
+    );
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),
       this.rdfService.getDataSetsByType$('quickResponses').pipe(
