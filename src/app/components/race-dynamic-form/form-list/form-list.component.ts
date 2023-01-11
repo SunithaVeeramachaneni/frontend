@@ -293,7 +293,7 @@ export class FormListComponent implements OnInit {
     }
     combineLatest([
       this.raceDynamicFormService.fetchAllFormListNames$(),
-      this.raceDynamicFormService.getAuthoredFormDetail$(form.id)
+      this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
         map(([formNames, authoredFormDetail]) => ({
@@ -314,14 +314,15 @@ export class FormListComponent implements OnInit {
                 return;
               }
               if (authoredFormDetail?.length > 0) {
-                const obj = authoredFormDetail[0];
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: obj?.formStatus,
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(obj?.pages) ?? '',
-                  counter: obj?.counter,
-                  authoredFormDetailVersion: +obj?.version + 1
-                });
+                for (const obj of authoredFormDetail) {
+                  this.raceDynamicFormService.createAuthoredFormDetail$({
+                    formStatus: obj?.formStatus,
+                    formListId: newRecord?.id,
+                    pages: JSON.parse(obj?.pages) ?? '',
+                    counter: obj?.counter,
+                    authoredFormDetailVersion: +obj?.version + 1
+                  });
+                }
               }
               this.addEditCopyForm$.next({
                 action: 'copy',
