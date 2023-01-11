@@ -62,5 +62,6 @@ export class ResponseTypeComponent implements OnInit {
 
   handleEditGlobalResponse = (response: any) => {
     this.responseToBeEdited = response;
+    this.handleGlobalResponsesToggle();
   };
 }

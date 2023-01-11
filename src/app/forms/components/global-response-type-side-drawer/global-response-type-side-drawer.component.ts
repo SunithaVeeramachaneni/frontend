@@ -71,6 +71,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
       .subscribe();
 
     if (this.globalResponse) {
+      this.name.patchValue(this.globalResponse.name);
       JSON.parse(this.globalResponse.values).forEach((item) => {
         this.responses.push(
           this.fb.group({
@@ -118,7 +119,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           isMultiColumn: false,
           values: JSON.stringify(this.responses.value),
           description: '',
-          version: 1
+          version: this.globalResponse._version
         })
       );
     } else
