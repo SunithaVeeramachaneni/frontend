@@ -157,7 +157,7 @@
               tenantForm.get('tenantIdp').touched
             "
           >
-            {{ 'required' | translate: { name: 'tenantIdp' | translate } }}
+            {{ 'required' | translate : { name: 'tenantIdp' | translate } }}
           </mat-error>
         </p>
 
@@ -200,7 +200,7 @@
                       length: errors.authority.length,
                       message:
                         'invalidUrl'
-                        | translate: { name: 'authority' | translate }
+                        | translate : { name: 'authority' | translate }
                     }
             }}
           </mat-error>
@@ -224,7 +224,7 @@
                       length: errors.redirectUri.length,
                       message:
                         'invalidUrl'
-                        | translate: { name: 'redirectUri' | translate }
+                        | translate : { name: 'redirectUri' | translate }
                     }
             }}
           </mat-error>
@@ -363,7 +363,7 @@
                           length: errors['erps.sap.baseUrl'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'baseUrl' | translate }
+                            | translate : { name: 'baseUrl' | translate }
                         }
                 }}
               </mat-error>
@@ -387,7 +387,7 @@
                           length: errors['erps.sap.oauth2Url'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'oauth2Url' | translate }
+                            | translate : { name: 'oauth2Url' | translate }
                         }
                 }}
               </mat-error>
@@ -617,7 +617,7 @@
                             length: errors['erps.sap.saml.oauth2Url'].length,
                             message:
                               'invalidUrl'
-                              | translate: { name: 'oauth2Url' | translate }
+                              | translate : { name: 'oauth2Url' | translate }
                           }
                   }}
                 </mat-error>
@@ -814,7 +814,7 @@
                             errors['protectedResources.sap.issuer'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -929,7 +929,7 @@
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
-                    {{ 'required' | translate: { name: 'url' | translate } }}
+                    {{ 'required' | translate : { name: 'url' | translate } }}
                   </mat-error>
                   <mat-error
                     *ngIf="
@@ -1015,7 +1015,7 @@
                               .length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -1044,7 +1044,7 @@
                             errors['protectedResources.node.issuer'].length,
                           message:
                             'invalidUrl'
-                            | translate: { name: 'issuer' | translate }
+                            | translate : { name: 'issuer' | translate }
                         }
                 }}
               </mat-error>
@@ -1160,7 +1160,7 @@
                     </button>
                   </mat-form-field>
                   <mat-error *ngIf="url.errors?.required && url.touched">
-                    {{ 'required' | translate: { name: 'url' | translate } }}
+                    {{ 'required' | translate : { name: 'url' | translate } }}
                   </mat-error>
                   <mat-error
                     *ngIf="
@@ -1349,7 +1349,7 @@
                 tenantForm.get('rdbms.dialect').touched
               "
             >
-              {{ 'required' | translate: { name: 'dialect' | translate } }}
+              {{ 'required' | translate : { name: 'dialect' | translate } }}
             </mat-error>
           </p>
         </div>
@@ -1373,7 +1373,7 @@
                 tenantForm.get('nosql.prefix').touched
               "
             >
-              {{ 'required' | translate: { name: 'prefix' | translate } }}
+              {{ 'required' | translate : { name: 'prefix' | translate } }}
             </mat-error>
           </p>
           <p class="m-0">
@@ -1518,7 +1518,7 @@
             >
               {{
                 'required'
-                  | translate: { name: 'collaborationType' | translate }
+                  | translate : { name: 'collaborationType' | translate }
               }}
             </mat-error>
           </p>
@@ -1847,7 +1847,7 @@
               tenantForm.get('products').touched
             "
           >
-            {{ 'required' | translate: { name: 'products' | translate } }}
+            {{ 'required' | translate : { name: 'products' | translate } }}
           </mat-error>
         </p>
 
@@ -1866,7 +1866,7 @@
               tenantForm.get('modules').touched
             "
           >
-            {{ 'required' | translate: { name: 'modules' | translate } }}
+            {{ 'required' | translate : { name: 'modules' | translate } }}
           </mat-error>
         </p>
 
@@ -1888,7 +1888,7 @@
               tenantForm.get('logDBType').touched
             "
           >
-            {{ 'required' | translate: { name: 'logDBType' | translate } }}
+            {{ 'required' | translate : { name: 'logDBType' | translate } }}
           </mat-error>
         </p>
 
@@ -1907,7 +1907,7 @@
               tenantForm.get('logLevel').touched
             "
           >
-            {{ 'required' | translate: { name: 'logLevel' | translate } }}
+            {{ 'required' | translate : { name: 'logLevel' | translate } }}
           </mat-error>
         </p>
         <div formGroupName="s3Details">
@@ -2024,6 +2024,26 @@
                         name: 'region' | translate,
                         length: errors['s3Details.region'].length
                       }
+              }}
+            </mat-error>
+          </p>
+        </div>
+
+        <div>
+          <p class="sub-headings" translate>amplifyConfig</p>
+          <p class="m-0">
+            <mat-form-field appearance="outline" class="width-100">
+              <mat-label translate>amplifyConfig</mat-label>
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                [placeholder]="'amplifyConfig' | translate"
+                formControlName="amplifyConfig"
+              ></textarea>
+            </mat-form-field>
+            <mat-error *ngIf="processValidationErrors('amplifyConfig')">
+              {{
+                'required' | translate : { name: 'amplifyConfig' | translate }
               }}
             </mat-error>
           </p>

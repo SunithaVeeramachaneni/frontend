@@ -1,0 +1,58 @@
+<div
+  class="pages"
+  [formGroup]="pageForm"
+  *ngIf="{ page: page$ | async, pagesCount: pagesCount$ | async } as props"
+>
+  <div class="page-header">
+    <mat-icon
+      (click)="togglePageOpenState()"
+      *ngIf="isPageOpenState === true"
+      class="page-arrow"
+    >
+      expand_more
+    </mat-icon>
+    <mat-icon
+      (click)="togglePageOpenState()"
+      *ngIf="isPageOpenState === false"
+      class="page-arrow"
+    >
+      chevron_right
+    </mat-icon>
+
+    <a>
+      <span class="form_page_name_input">
+        {{ 'page' | translate }} {{ pageForm.get('position').value }}
+      </span>
+    </a>
+
+    <button
+      [matMenuTriggerFor]="pageMenu"
+      class="more-icon"
+      aria-label="More Options"
+    >
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+    <mat-menu #pageMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="deletePage()"
+        class="text-red"
+        [disabled]="props.pagesCount === 1"
+      >
+        <span translate="deletePage"></span>
+      </button>
+    </mat-menu>
+  </div>
+  <div *ngIf="isPageOpenState === true" class="section-content">
+    <ng-content></ng-content>
+  </div>
+
+  <button class="add-page-btn" (click)="addPage()">
+    <img
+      src="assets/rdf-forms-icons/add-page.svg"
+      alt="add page"
+      class="add-page-btn-icon"
+    />
+    {{ 'addPage' | translate }}
+  </button>
+</div>

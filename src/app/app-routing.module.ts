@@ -68,6 +68,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'forms',
+    loadChildren: () =>
+      import('./components/race-dynamic-form/race-dynamic-form.module').then(
+        (m) => m.RaceDynamicFormModule
+      )
+  },
+  {
     path: 'user-settings',
     loadChildren: () =>
       import('./components/user-settings/user-settings.module').then(

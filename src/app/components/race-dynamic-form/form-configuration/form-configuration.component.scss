@@ -1,0 +1,207 @@
+@import '../../../../scss/colors.scss';
+
+.disable-form-interactions {
+  pointer-events: none;
+  user-select: none;
+}
+
+.create-form-main {
+  overflow: hidden;
+  position: relative;
+
+  .form-header {
+    justify-content: space-between;
+    position: relative;
+  }
+
+  input[type='text']:focus {
+    outline: none;
+    caret-color: $blue-main;
+  }
+
+  .form_title_input {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    font-size: 140%;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    padding: 3px 10px;
+  }
+
+  .form_description_input {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    font-size: 100%;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    padding: 3px 10px;
+  }
+
+  .changes-text {
+    margin-top: 23px;
+    color: $gray-text;
+    font-size: 100%;
+  }
+
+  .import-btn {
+    width: 160px;
+    height: 36px;
+    border: 1px solid $blue-primary;
+    color: $blue-primary;
+    margin: 12px 0 0 12px;
+    border-radius: 8px;
+  }
+
+  .save-status {
+    padding-top: 22px;
+    font-weight: 500;
+    font-size: 100%;
+    line-height: 20px;
+  }
+
+  .import-btn:disabled {
+    border: none;
+  }
+
+  .publish-btn {
+    width: 160px;
+    height: 36px;
+    background-color: $blue-primary;
+    border-color: $blue-primary;
+    border-radius: 8px;
+    margin: 12px 12px 0 12px;
+  }
+
+  .publish-btn:disabled {
+    background-color: $disabled-color;
+  }
+
+  .publish-btn-icon {
+    position: relative;
+    top: 2px;
+    left: -3px;
+  }
+
+  .publish {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 100%;
+    line-height: 20px;
+    align-items: center;
+    letter-spacing: 0.25px;
+    color: $white;
+    position: relative;
+    left: 3px;
+  }
+
+  .form {
+    height: calc(100vh - 150px);
+    overflow-y: auto;
+    margin-top: 0.6rem;
+  }
+}
+
+.questionContainer {
+  display: flex;
+
+  .question {
+    width: 100%;
+  }
+
+  .question-drag-handler {
+    height: 40px;
+    border-bottom: 1px solid $border-color;
+
+    .question-six-dots {
+      padding-left: 15px;
+      position: relative;
+      top: 15px;
+      width: 10px;
+      cursor: move;
+    }
+  }
+}
+
+.section-drag-handler {
+  position: relative;
+  width: 5%;
+
+  .section-six-dots {
+    position: absolute;
+    top: 28px;
+    left: 92px;
+    width: 10px;
+    cursor: move;
+  }
+}
+
+.highlight-bg {
+  border: 2px solid $blue-main;
+  border-radius: 4px;
+}
+
+.sectionMinimumDragArea {
+  min-height: 50px;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.sectionContainer {
+  width: 95%;
+}
+
+@media (min-width: 1900px) and (max-width: 2100px) {
+  .section-six-dots {
+    left: 114px !important;
+  }
+}
+
+@media (min-width: 1800px) and (max-width: 1900px) {
+  .section-six-dots {
+    left: 105px !important;
+  }
+}
+
+@media (min-width: 1600px) and (max-width: 1800px) {
+  .section-six-dots {
+    left: 101px !important;
+  }
+}
+
+@media (min-width: 1400px) and (max-width: 1600px) {
+  .section-six-dots {
+    left: 95px !important;
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .section-six-dots {
+    left: 90px !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .section-six-dots {
+    left: 87px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+  .section-six-dots {
+    left: 80px !important;
+  }
+}
+.sectionEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  color: $gray-text;
+  height: 50px;
+}

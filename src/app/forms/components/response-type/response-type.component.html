@@ -1,0 +1,103 @@
+<div class="response-type-modal">
+  <h1 class="modal-heading">
+    <mat-icon (click)="toggleResponseTypeModal()" class="cancel-icon">
+      clear
+    </mat-icon>
+    <span class="response-heading" translate="responseHeading"></span>
+  </h1>
+
+  <div class="dis-flex content">
+    <div class="width-50">
+      <h2 class="orange-color" translate="questionHeading"></h2>
+      <li
+        *ngFor="let fieldType of fieldTypes"
+        (click)="selectFieldType(fieldType)"
+        class="response-field-types"
+        [ngClass]="{
+          active: fieldType.type === question.fieldType
+        }"
+      >
+        <img
+          [src]="getFieldTypeImage(fieldType.type)"
+          class="response-type-icons"
+        />&nbsp;
+        <span class="response-type-description">
+          {{ fieldType.description }}
+        </span>
+      </li>
+    </div>
+    <div class="width-50">
+      <div>
+        <h2 class="orange-color" translate="multiChoiceHeading"></h2>
+        <ng-container *ngIf="quickResponsesData$ | async as quickResponsesData">
+          <div
+            *ngIf="quickResponsesData.data.length; else loadingQuickResponses"
+          >
+            <div *ngFor="let resp of quickResponsesData.data" class="h-36">
+              <button mat-flat-button class="quick-response responseBtn">
+                <mat-chip-list *ngFor="let val of resp.values; let i = index">
+                  <mat-chip
+                    *ngIf="i < 2"
+                    class="m-l-10"
+                    [ngStyle]="{
+                      color: val?.color,
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #d3d3d3',
+                      minHeight: '24px',
+                      fontSize: '90%'
+                    }"
+                  >
+                    {{ val.title }}
+                  </mat-chip>
+                </mat-chip-list>
+                <span *ngIf="resp.values.length > 2" class="more">
+                  + ({{ resp.values.length - 2 }}
+                  more)
+                </span>
+              </button>
+              <button
+                mat-flat-button
+                class="editBtn"
+                (click)="handleResponses(resp)"
+              >
+                <img
+                  src="assets/rdf-forms-icons/edit-icon.svg"
+                  alt="edit-icon"
+                />
+              </button>
+            </div>
+          </div>
+          <ng-template #loadingQuickResponses>
+            <div class="p-15">
+              <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+              </ngx-shimmer-loading>
+              <ngx-shimmer-loading [width]="'100%'" [height]="'45px'">
+              </ngx-shimmer-loading>
+            </div>
+          </ng-template>
+          <div *ngIf="quickResponsesLoading">Loading quick responses...</div>
+        </ng-container>
+        <button
+          class="add-new-btn"
+          (click)="handleResponses()"
+          translate="addNew"
+        ></button>
+      </div>
+      <div class="height-50">
+        <h2 class="orange-color" translate="globalResponseHeading"></h2>
+      </div>
+
+      <div *ngIf="isMCQResponseOpen">
+        <app-response-type-side-drawer
+          (responseTypeHandler)="quickResponseTypeHandler($event)"
+        ></app-response-type-side-drawer>
+      </div>
+
+      <div *ngIf="question.fieldType === 'RT'">
+        <app-response-type-side-drawer
+          (responseTypeHandler)="quickResponseTypeHandler($event)"
+        ></app-response-type-side-drawer>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormService } from '../../services/form.service';
+
+@Component({
+  selector: 'app-response-type-button',
+  templateUrl: './response-type-button.component.html',
+  styleUrls: ['./response-type-button.component.scss']
+})
+export class ResponseTypeButtonComponent implements OnInit {
+  @Input() questionForm;
+  @Input() fieldTypes;
+  @Input() title;
+  constructor(private formService: FormService) {}
+
+  ngOnInit(): void {}
+
+  getFieldTypeImage(type) {
+    return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
+  }
+
+  getFieldTypeDescription(type) {
+    return type
+      ? this.fieldTypes.find((field) => field.type === type)?.description
+      : null;
+  }
+
+  openResponseModal() {
+    this.formService.setOpenResponseType(true);
+  }
+}

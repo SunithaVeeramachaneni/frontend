@@ -1,0 +1,250 @@
+<div
+  class="questions"
+  [formGroup]="questionForm"
+  *ngIf="{
+    question: question$ | async,
+    sectionQuestionsCount: sectionQuestionsCount$ | async
+  } as props"
+>
+  <div>
+    <div>
+      <div class="dis-flex questions-div">
+        <div
+          class="width-70 question-input-box"
+          [ngClass]="{
+            'width-60': isAskQuestion,
+            'width-70': !isAskQuestion
+          }"
+        >
+          <!-- <img
+            src="assets/rdf-forms-icons/six-dots.svg"
+            alt="six-dots"
+            class="m-l-10 six-dots"
+          /> -->
+
+          <input
+            autocomplete="off"
+            type="text"
+            formControlName="name"
+            [placeholder]="'typeQuestion' | translate"
+            class="width-90 question-input"
+            (keyup.enter)="addQuestion()"
+          />
+
+          <div class="floating-btns" *ngIf="!isAskQuestion">
+            <button class="questions-btn" (click)="addQuestion()">
+              <img
+                src="assets/rdf-forms-icons/add-question.svg"
+                alt="add questions"
+              />
+              <p class="questions-delete-btn-text" translate="question"></p>
+            </button>
+            <br />
+
+            <button
+              class="delete-btn"
+              (click)="deleteQuestion()"
+              [disabled]="props.sectionQuestionsCount === 1"
+            >
+              <img
+                src="assets/rdf-forms-icons/delete-question.svg"
+                alt="delete questions"
+              />
+              <p class="questions-delete-btn-text" translate="delete"></p>
+            </button>
+          </div>
+        </div>
+        <span class="divider">|</span>
+        <div class="width-30">
+          <app-response-type-button
+            [questionForm]="questionForm"
+            [fieldTypes]="fieldTypes"
+          >
+          </app-response-type-button>
+          <div *ngIf="openResponseTypeModal$ | async as openResponseTypeModal">
+            <ng-container *ngIf="openResponseTypeModal === true">
+              <app-response-type
+                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+                [fieldTypes]="fieldTypes"
+                [question]="question"
+              ></app-response-type>
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="isAskQuestion">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+            (click)="deleteQuestion()"
+          />
+        </div>
+      </div>
+
+      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+
+      <div class="dis-flex justify-content" *ngIf="!isAskQuestion">
+        <div class="input-fields">
+          <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
+            <div class="questionActionsRow">
+              <button
+                mat-button
+                color="primary"
+                class="addLogicBtn"
+                *ngIf="
+                  addLogicNotAppliedFields.indexOf(
+                    questionForm.get('fieldType').value
+                  ) < 0
+                "
+                (click)="
+                  addLogicToQuestion(pageIndex, questionForm.get('id').value)
+                "
+              >
+                <mat-icon class="icon">link</mat-icon>
+                <span translate="addLogicBtn"></span>
+              </button>
+
+              <span class="m-l-40">
+                <mat-checkbox
+                  formControlName="required"
+                  class="required-checkbox"
+                >
+                </mat-checkbox>
+                <label class="required-label" translate="requiredtext"></label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                class="m-l-40"
+              >
+                <app-read-only
+                  [question]="questionForm"
+                  (defaultValue)="questionForm.get('value').setValue($event)"
+                ></app-read-only>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TF'"
+                class="m-l-50"
+              >
+                <app-text
+                  [question]="questionForm"
+                  (inputTextAnswer)="questionForm.get('value').setValue($event)"
+                ></app-text>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <app-date
+                  [question]="questionForm"
+                  (checkedToDefaultDate)="
+                    questionForm.get('value').setValue($event)
+                  "
+                ></app-date>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <app-time
+                  [question]="questionForm"
+                  (checkedToDefaultTime)="
+                    questionForm.get('value').setValue($event)
+                  "
+                >
+                </app-time>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'RT'"
+                (click)="sliderOpen()"
+                class="m-l-50"
+              >
+                <label translate="range"></label>&nbsp;
+                <span class="range-values">
+                  {{ questionForm.get('value').value.min }} -
+                  {{ questionForm.get('value').value.max }}
+                </span>
+              </span>
+              <app-response-type-side-drawer
+                (responseTypeHandler)="quickResponseTypeHandler($event)"
+                [question]="question"
+                (setSliderValues)="questionForm.get('value').setValue($event)"
+              ></app-response-type-side-drawer>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'TAF'"
+              >
+                <app-table
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-table>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'ARD'"
+              >
+                <app-array
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-array>
+              </span>
+
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value === 'DD' &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="m-l-20"
+              >
+                <app-drop-down
+                  [question]="questionForm"
+                  (checkedMultiple)="questionForm.get('multi').setValue($event)"
+                ></app-drop-down>
+              </span>
+            </div>
+            <div
+              class="addLogicRow"
+              *ngIf="
+                getQuestionLogics(pageIndex, questionForm.get('id').value)
+                  | async as questionLogics
+              "
+            >
+              <app-add-logic
+                *ngIf="questionLogics.length"
+                [questionId]="questionForm.get('id').value"
+                [fieldType]="questionForm.get('fieldType').value"
+                [pageIndex]="pageIndex"
+                [sectionId]="sectionId"
+                (logicEvent)="logicEventHandler($event)"
+              ></app-add-logic>
+            </div>
+          </div>
+          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+            <app-image [question]="questionForm"></app-image>
+          </div>
+        </div>
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+    </div>
+  </div>
+</div>

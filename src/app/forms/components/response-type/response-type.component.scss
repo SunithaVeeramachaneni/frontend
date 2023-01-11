@@ -1,0 +1,108 @@
+@import '../../../../scss/colors.scss';
+
+.response-type-modal {
+  height: calc(100vh - 130px);
+  width: 500px;
+  border: 1px solid;
+  position: absolute;
+  left: 40%;
+  top: 20px;
+  background: $white;
+  z-index: 1000;
+
+  .modal-heading {
+    margin: 15px 10px 5px 10px;
+  }
+
+  .cancel-icon {
+    cursor: pointer;
+    font-size: 150%;
+  }
+
+  .response-heading {
+    position: relative;
+    top: -7px;
+    left: 5px;
+  }
+
+  .orange-color {
+    color: $orange-text;
+  }
+
+  .content {
+    height: calc(100vh - 175px);
+    overflow-y: scroll;
+    padding: 0 15px;
+  }
+
+  .response-field-types {
+    padding: 10px 0 5px 10px;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+
+  .response-field-types:hover,
+  .active {
+    background-color: $hover-bg2;
+  }
+
+  .response-type-icons {
+    width: 15px;
+    height: 15px;
+  }
+
+  .response-type-description {
+    position: relative;
+    top: -2px;
+    font-weight: 500;
+    opacity: 0.8;
+    font-size: 100%;
+  }
+
+  .add-new-btn {
+    color: $blue-main;
+    border: none;
+    background: none;
+    padding: 10px;
+  }
+
+  .height-50 {
+    height: 50%;
+  }
+}
+
+.quick-response {
+  ::ng-deep .mat-button-wrapper {
+    display: flex;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 10px;
+  }
+
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 12px 5px 5px 5px !important;
+  }
+}
+
+.h-36 {
+  height: 36px;
+  .responseBtn {
+    padding: 0 0 0 5px;
+    height: 36px;
+  }
+}
+.m-l-10 {
+  margin-left: 10px;
+}
+.more {
+  margin-top: -10px;
+  margin-left: 5px;
+  font-weight: 400;
+}
+.editBtn {
+  float: right;
+  min-width: 10px;
+  padding: 0;
+}

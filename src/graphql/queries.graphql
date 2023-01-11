@@ -1,0 +1,582 @@
+# this is an auto generated file. This will be overwritten
+query GetResponseSet($id: ID!) {
+  getResponseSet(id: $id) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListResponseSets(
+  $filter: ModelResponseSetFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listResponseSets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      type
+      name
+      description
+      isMultiColumn
+      values
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncResponseSets(
+  $filter: ModelResponseSetFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncResponseSets(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      type
+      name
+      description
+      isMultiColumn
+      values
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetFormDetail($id: ID!) {
+  getFormDetail(id: $id) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListFormDetails(
+  $filter: ModelFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFormDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      formData
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncFormDetails(
+  $filter: ModelFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncFormDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query FormDetailsByFormlistID(
+  $formlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  formDetailsByFormlistID(
+    formlistID: $formlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetAuthoredFormDetail($id: ID!) {
+  getAuthoredFormDetail(id: $id) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formDetailPublishStatus
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListAuthoredFormDetails(
+  $filter: ModelAuthoredFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listAuthoredFormDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formStatus
+      version
+      pages
+      counter
+      formDetailPublishStatus
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncAuthoredFormDetails(
+  $filter: ModelAuthoredFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncAuthoredFormDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      formStatus
+      version
+      pages
+      counter
+      formDetailPublishStatus
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query AuthoredFormDetailsByFormlistID(
+  $formlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelAuthoredFormDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  authoredFormDetailsByFormlistID(
+    formlistID: $formlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formStatus
+      version
+      pages
+      counter
+      formDetailPublishStatus
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetFormSubmissionDetail($id: ID!) {
+  getFormSubmissionDetail(id: $id) {
+    id
+    formData
+    formsubmissionlistID
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListFormSubmissionDetails(
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFormSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formsubmissionlistID
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncFormSubmissionDetails(
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncFormSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      formData
+      formsubmissionlistID
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query FormSubmissionDetailsByFormsubmissionlistID(
+  $formsubmissionlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  formSubmissionDetailsByFormsubmissionlistID(
+    formsubmissionlistID: $formsubmissionlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formsubmissionlistID
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query FormSubmissionDetailsByFormlistID(
+  $formlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelFormSubmissionDetailFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  formSubmissionDetailsByFormlistID(
+    formlistID: $formlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formsubmissionlistID
+      formlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetFormSubmissionList($id: ID!) {
+  getFormSubmissionList(id: $id) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    formSubmissionListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListFormSubmissionLists(
+  $filter: ModelFormSubmissionListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFormSubmissionLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncFormSubmissionLists(
+  $filter: ModelFormSubmissionListFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncFormSubmissionLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetFormList($id: ID!) {
+  getFormList(id: $id) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    formListFormSubmissionDetail {
+      nextToken
+      startedAt
+    }
+    formListAuthoredFormDetail {
+      nextToken
+      startedAt
+    }
+    formListFormDetail {
+      nextToken
+      startedAt
+    }
+    isArchived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListFormLists(
+  $filter: ModelFormListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listFormLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
+      isArchived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncFormLists(
+  $filter: ModelFormListFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncFormLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      publishedDate
+      location
+      roundType
+      formStatus
+      assignee
+      tags
+      lastPublishedBy
+      author
+      formType
+      isArchived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}

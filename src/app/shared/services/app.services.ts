@@ -295,7 +295,7 @@ export class AppService {
     return this.http.get<any>(url, httpOptions);
   }
 
-  postRefreshToken(
+  getAccessTokenUsingRefreshToken(
     tokenEndPoint: string,
     data: any,
     info: ErrorInfo = {} as ErrorInfo

@@ -1,0 +1,74 @@
+<div mat-dialog-title>
+  <div class="logicRow">
+    <mat-icon>info</mat-icon>
+    <div class="questionLogic">
+      <span class="currentQuestion" *ngIf="question$ | async as question">
+        {{ question.name || 'Untitled Question' }}
+      </span>
+      <p class="m-0">
+        <span translate="ifAnswer"></span>
+        {{ operatorSymbolMap[data.logic.operator] }}
+        {{ data.logic.operand2 }}
+      </p>
+    </div>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="dialogBody">
+    <span class="heading">
+      <span translate="selectQuestionsToBe"></span>
+      <span
+        *ngIf="data.viewMode === 'MANDATE'"
+        class="f-inherit"
+        translate="mandated"
+      >
+      </span>
+      <span
+        *ngIf="data.viewMode === 'HIDE'"
+        class="f-inherit"
+        translate="hidden"
+      ></span>
+    </span>
+    <div>
+      <div *ngFor="let section of sections">
+        <div class="sectionHead">{{ section.name }}</div>
+        <div class="sectionContent">
+          <div *ngFor="let question of section.questions">
+            <div *ngIf="data.questionId !== question.id">
+              <mat-checkbox
+                class="question"
+                [checked]="selectedQuestions.indexOf(question.id) > -1"
+                (change)="selectQuestion($event.checked, question.id)"
+                [ngClass]="{
+                  'strike-question': selectedQuestions.indexOf(question.id) > -1
+                }"
+              >
+                {{
+                  question.name && question.name.length
+                    ? question.name
+                    : 'Untitled question'
+                }}</mat-checkbox
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="close()"
+    translate="cancel"
+  ></button>
+  <button
+    mat-raised-button
+    color="primary"
+    [mat-dialog-close]="true"
+    color="primary"
+    (click)="submit()"
+    translate="okay"
+  ></button>
+</mat-dialog-actions>

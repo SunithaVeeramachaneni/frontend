@@ -1,0 +1,65 @@
+<div class="list-view">
+  <div class="main-container">
+    <div class="forms-header">
+      <h2 class="heading" translate="formLibrary"></h2>
+      <span class="custom-form-field-gray-color search">
+        <span class="no-of-forms" *ngIf="formsListCount$ | async as totalCount">
+          <span class="forms-count">
+            {{ totalCount }}
+          </span>
+          <span class="forms-text">{{
+            'formLibrary'
+              | translate
+                : {
+                    count: totalCount || 0
+                  }
+          }}</span>
+        </span>
+        <mat-form-field appearance="outline">
+          <mat-icon matPrefix class="searchIcon">search</mat-icon>
+          <input
+            matInput
+            type="text"
+            [placeholder]="'searchForms' | translate"
+            autocomplete="off"
+            [formControl]="searchForm"
+          />
+          <img [src]="filterIcon" matSuffix alt="Open Filter" />
+        </mat-form-field>
+      </span>
+    </div>
+
+    <div *ngIf="forms$ | async as forms; else loadingForms">
+      <cwp-dynamictable
+        [dataSource]="dataSource"
+        [configOptions]="configOptions"
+        (fetchDataCallback)="handleTableEvent($event)"
+        (rowLevelActionHandler)="rowLevelActionHandler($event)"
+        (onConfigOptionsChange)="configOptionsChangeHandler($event)"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
+        class="width-100"
+      ></cwp-dynamictable>
+    </div>
+  </div>
+
+  <app-form-detail
+    [@slideInOut]="menuState"
+    (slideInOut)="menuState = 'out'"
+  ></app-form-detail>
+
+  <!-- <app-submission-slider
+    [@slideInOut]="submissionSlider"
+    (slideInOut)="submissionSlider = 'out'"
+  ></app-submission-slider> -->
+
+  <!-- <button (click)="openSubmissionSlider()">Slider</button> -->
+
+  <ng-template #loadingForms>
+    <div class="ghost-loading">
+      <div *ngFor="let number of ghostLoading">
+        <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
+        </ngx-shimmer-loading>
+      </div>
+    </div>
+  </ng-template>
+</div>

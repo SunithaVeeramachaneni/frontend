@@ -20,6 +20,8 @@ import { LoginErrorComponent } from './login-error/login-error.component';
 import { LoginErrorModalComponent } from './login-error-modal/login-error-modal.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/login/', '.json');
 
@@ -32,6 +34,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SharedModule,
     MatAutocompleteModule,
     MatFormFieldModule,
+    MatCardModule,
+    MatButtonModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
