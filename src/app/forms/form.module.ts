@@ -42,6 +42,7 @@ import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -85,6 +86,7 @@ import { GlobalResponseTypeSideDrawerComponent } from './components/global-respo
     MatButtonToggleModule,
     MatSelectModule,
     MatTooltipModule,
+    NgxShimmerLoadingModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
@@ -99,7 +101,8 @@ import { GlobalResponseTypeSideDrawerComponent } from './components/global-respo
     PreviewComponent,
     IphoneComponent,
     AddLogicComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    NgxShimmerLoadingModule
   ]
 })
 export class FormModule {}

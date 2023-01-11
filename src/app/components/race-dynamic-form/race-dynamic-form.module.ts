@@ -87,6 +87,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatInputModule,
     MatMenuModule,
     MatExpansionModule,
+    NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -101,7 +102,6 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
-    NgxShimmerLoadingModule,
     OverlayModule,
     MatSelectModule,
     MatCheckboxModule,

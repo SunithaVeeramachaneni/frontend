@@ -57,7 +57,7 @@ export class FormConfigurationModalComponent implements OnInit {
     private store: Store<State>,
     private rdfService: RaceDynamicFormService
   ) {
-    this.rdfService.getAllTags$().subscribe((tags) => {
+    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
         this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
@@ -140,13 +140,15 @@ export class FormConfigurationModalComponent implements OnInit {
         newTags.push(selectedTag);
       }
     });
-    const dataSet = {
-      type: 'tags',
-      values: newTags
-    };
-    this.rdfService.createTags$(dataSet).subscribe((response) => {
-      // do nothing
-    });
+    if (newTags.length) {
+      const dataSet = {
+        type: 'tags',
+        values: newTags
+      };
+      this.rdfService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
+    }
 
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
