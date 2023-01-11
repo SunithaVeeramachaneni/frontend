@@ -161,7 +161,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       tap((isFormCreated) => {
         if (isFormCreated) {
           // This will cause some delay in redirection post creation of fresh form. This is only added here to reduce multiple form creations in development process
-          this.router.navigate(['/forms/edit', this.formConf.id.value]);
+          // this.router.navigate(['/forms/edit', this.formConf.id.value]);
         }
       })
     );

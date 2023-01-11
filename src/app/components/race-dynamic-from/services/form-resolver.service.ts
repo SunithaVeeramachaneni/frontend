@@ -48,9 +48,9 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formDetailPublishStatus,
           version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
-        } = authoredFormDetail.items[0];
+        } = authoredFormDetail[0];
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
-          formDetail.items[0] ?? {};
+          formDetail[0] ?? {};
         const formMetadata = {
           id,
           name,
