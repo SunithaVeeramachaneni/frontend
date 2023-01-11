@@ -37,6 +37,9 @@ import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-form-list',
@@ -239,7 +242,8 @@ export class FormListComponent implements OnInit {
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
-    private router: Router
+    private router: Router,
+    private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -483,6 +487,7 @@ export class FormListComponent implements OnInit {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
+    this.store.dispatch(FormConfigurationActions.resetPages());
   }
 
   private generateCopyFormName(
@@ -508,6 +513,8 @@ export class FormListComponent implements OnInit {
   }
 
   private showFormDetail(row: GetFormListQuery): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = null;
     this.selectedForm = this.menuState === 'out' ? row : null;
     this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }

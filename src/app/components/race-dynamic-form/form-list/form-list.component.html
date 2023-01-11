@@ -42,11 +42,13 @@
     </div>
   </div>
 
-  <app-form-detail
-    [@slideInOut]="menuState"
-    (slideInOut)="onCloseViewDetail()"
-    [selectedForm]="selectedForm"
-  ></app-form-detail>
+  <ng-container *ngIf="menuState">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+    ></app-form-detail>
+  </ng-container>
 
   <!-- <app-submission-slider
     [@slideInOut]="submissionSlider"

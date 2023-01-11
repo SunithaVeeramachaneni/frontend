@@ -531,5 +531,19 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       ...initialState
     })
+  ),
+  on(
+    FormConfigurationActions.initPages,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: action.pages
+    })
+  ),
+  on(
+    FormConfigurationActions.resetPages,
+    (state, _): FormConfigurationState => ({
+      ...state,
+      pages: []
+    })
   )
 );

@@ -240,3 +240,12 @@ export const updateFormConfiguration = createAction(
 export const resetFormConfiguration = createAction(
   '[Form Configuration Component] resetFormConfiguration'
 );
+
+export const initPages = createAction(
+  '[Form Configuration Component] initPages',
+  props<{ pages: any[] }>()
+);
+
+export const resetPages = createAction(
+  '[Form Configuration Component] resetPages'
+);
