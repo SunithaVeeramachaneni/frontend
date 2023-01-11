@@ -35,6 +35,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
 
   responseId = '';
+  respType = '';
 
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
