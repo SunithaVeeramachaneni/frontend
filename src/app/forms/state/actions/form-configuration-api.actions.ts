@@ -31,7 +31,9 @@ export const createFormDetailSuccess = createAction(
   '[Form Configuration Component] createFormDetailSuccess',
   props<{
     formDetail: CreateFormDetailMutation;
-    formPublishStatus: string;
+    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    formStatus: string;
+    formDetailPublishStatus: string;
   }>()
 );
 
@@ -46,7 +48,9 @@ export const updateFormDetailSuccess = createAction(
   '[Form Configuration Component] updateFormDetailSuccess',
   props<{
     formDetail: UpdateFormDetailMutation;
-    formPublishStatus: string;
+    authoredFormDetail: CreateAuthoredFormDetailMutation;
+    formStatus: string;
+    formDetailPublishStatus: string;
   }>()
 );
 

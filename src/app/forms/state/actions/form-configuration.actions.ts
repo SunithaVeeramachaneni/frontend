@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
+import { FormConfigurationState } from '../form-configuration.reducer';
 
 export const createForm = createAction(
   '[Form Configuration Modal Component] createFrom',
@@ -13,12 +14,21 @@ export const updateForm = createAction(
 
 export const addFormMetadata = createAction(
   '[Form Configuration Modal Component] addFormMetadata',
-  props<{ formMetadata: FormMetadata }>()
+  props<{
+    formMetadata: FormMetadata;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const updateFormMetadata = createAction(
   '[Form Configuration Component] updateFormMetadata',
-  props<{ formMetadata: FormMetadata }>()
+  props<{
+    formMetadata: FormMetadata;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const createFormDetail = createAction(
@@ -49,6 +59,7 @@ export const createAuthoredFormDetail = createAction(
   '[Form Configuration Component] createAuthoredFormDetail',
   props<{
     formStatus: string;
+    formDetailPublishStatus: string;
     counter: number;
     pages: Page[];
     formListId: string;
@@ -60,17 +71,13 @@ export const updateAuthoredFormDetail = createAction(
   '[Form Configuration Component] updateAuthoredFormDetail',
   props<{
     formStatus: string;
+    formDetailPublishStatus: string;
     counter: number;
     pages: Page[];
     formListId: string;
     authoredFormDetailId: string;
     authoredFormDetailDynamoDBVersion: number;
   }>()
-);
-
-export const updateCounter = createAction(
-  '[Form Configuration Component] updateCounter',
-  props<{ counter: number }>()
 );
 
 export const updateIsFormDetailPublished = createAction(
@@ -80,7 +87,7 @@ export const updateIsFormDetailPublished = createAction(
 
 export const updateFormPublishStatus = createAction(
   '[Form Configuration Component] updateFormPublishStatus',
-  props<{ formPublishStatus: string }>()
+  props<{ formDetailPublishStatus: string }>()
 );
 
 export const updateCreateOrEditForm = createAction(
@@ -90,12 +97,24 @@ export const updateCreateOrEditForm = createAction(
 
 export const addPage = createAction(
   '[Form Configuration Component] addPage',
-  props<{ page: Page; pageIndex: number }>()
+  props<{
+    page: Page;
+    pageIndex: number;
+    questionCounter: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const deletePage = createAction(
   '[Form Configuration Component] deletePage',
-  props<{ pageIndex: number }>()
+  props<{
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const addSection = createAction(
@@ -105,6 +124,10 @@ export const addSection = createAction(
     question: Question;
     pageIndex: number;
     sectionIndex: number;
+    questionCounter: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -113,17 +136,34 @@ export const updatePage = createAction(
   props<{
     data: any;
     pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
 export const updateSection = createAction(
   '[Form Configuration Component] updateSection',
-  props<{ section: Section; sectionIndex: number; pageIndex: number }>()
+  props<{
+    section: Section;
+    sectionIndex: number;
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const deleteSection = createAction(
   '[Form Configuration Component] deleteSection',
-  props<{ sectionIndex: number; sectionId: string; pageIndex: number }>()
+  props<{
+    sectionIndex: number;
+    sectionId: string;
+    pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
+  }>()
 );
 
 export const addQuestion = createAction(
@@ -133,6 +173,10 @@ export const addQuestion = createAction(
     pageIndex: number;
     sectionId: string;
     questionIndex: number;
+    questionCounter: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -142,6 +186,9 @@ export const updateQuestionBySection = createAction(
     question: Question;
     sectionId: string;
     pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -152,6 +199,9 @@ export const updateQuestion = createAction(
     questionIndex: number;
     sectionId: string;
     pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -161,6 +211,9 @@ export const deleteQuestion = createAction(
     questionIndex: number;
     sectionId: string;
     pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
 );
 
@@ -173,7 +226,15 @@ export const transferQuestionFromSection = createAction(
     sourceSectionId: string;
     destinationSectionId: string;
     pageIndex: number;
+    formStatus: string;
+    formDetailPublishStatus: string;
+    formSaveStatus: string;
   }>()
+);
+
+export const updateFormConfiguration = createAction(
+  '[Form Configuration Component] updateFormConfiguration',
+  props<{ formConfiguration: FormConfigurationState }>()
 );
 
 export const resetFormConfiguration = createAction(

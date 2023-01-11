@@ -127,6 +127,7 @@ export type CreateAuthoredFormDetailInput = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   _version?: number | null;
 };
@@ -136,6 +137,7 @@ export type ModelAuthoredFormDetailConditionInput = {
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
+  formDetailPublishStatus?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
   or?: Array<ModelAuthoredFormDetailConditionInput | null> | null;
@@ -161,6 +163,7 @@ export type AuthoredFormDetail = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -175,6 +178,7 @@ export type UpdateAuthoredFormDetailInput = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID?: string | null;
   _version?: number | null;
 };
@@ -332,6 +336,7 @@ export type CreateFormListInput = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
+  isArchived?: boolean | null;
   _version?: number | null;
 };
 
@@ -349,6 +354,7 @@ export type ModelFormListConditionInput = {
   lastPublishedBy?: ModelStringInput | null;
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
+  isArchived?: ModelBooleanInput | null;
   and?: Array<ModelFormListConditionInput | null> | null;
   or?: Array<ModelFormListConditionInput | null> | null;
   not?: ModelFormListConditionInput | null;
@@ -373,6 +379,7 @@ export type FormList = {
   formListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
   formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
   formListFormDetail?: ModelFormDetailConnection | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -409,6 +416,7 @@ export type UpdateFormListInput = {
   lastPublishedBy?: string | null;
   author?: string | null;
   formType?: string | null;
+  isArchived?: boolean | null;
   _version?: number | null;
 };
 
@@ -437,6 +445,7 @@ export type ModelAuthoredFormDetailFilterInput = {
   version?: ModelStringInput | null;
   pages?: ModelStringInput | null;
   counter?: ModelIntInput | null;
+  formDetailPublishStatus?: ModelStringInput | null;
   formlistID?: ModelIDInput | null;
   and?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelAuthoredFormDetailFilterInput | null> | null;
@@ -493,6 +502,7 @@ export type ModelFormListFilterInput = {
   lastPublishedBy?: ModelStringInput | null;
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
+  isArchived?: ModelBooleanInput | null;
   and?: Array<ModelFormListFilterInput | null> | null;
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
@@ -549,6 +559,7 @@ export type ModelSubscriptionAuthoredFormDetailFilterInput = {
   version?: ModelSubscriptionStringInput | null;
   pages?: ModelSubscriptionStringInput | null;
   counter?: ModelSubscriptionIntInput | null;
+  formDetailPublishStatus?: ModelSubscriptionStringInput | null;
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionAuthoredFormDetailFilterInput | null> | null;
@@ -612,6 +623,7 @@ export type ModelSubscriptionFormListFilterInput = {
   lastPublishedBy?: ModelSubscriptionStringInput | null;
   author?: ModelSubscriptionStringInput | null;
   formType?: ModelSubscriptionStringInput | null;
+  isArchived?: ModelSubscriptionBooleanInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
 };
@@ -659,6 +671,7 @@ export type CreateAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -674,6 +687,7 @@ export type UpdateAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -689,6 +703,7 @@ export type DeleteAuthoredFormDetailMutation = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -845,6 +860,7 @@ export type CreateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -883,6 +899,7 @@ export type UpdateFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -921,6 +938,7 @@ export type DeleteFormListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -998,6 +1016,7 @@ export type GetAuthoredFormDetailQuery = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1015,6 +1034,7 @@ export type ListAuthoredFormDetailsQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1035,6 +1055,7 @@ export type SyncAuthoredFormDetailsQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1055,6 +1076,7 @@ export type AuthoredFormDetailsByFormlistIDQuery = {
     version?: string | null;
     pages?: string | null;
     counter?: number | null;
+    formDetailPublishStatus?: string | null;
     formlistID: string;
     createdAt: string;
     updatedAt: string;
@@ -1260,6 +1282,7 @@ export type GetFormListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1285,6 +1308,7 @@ export type ListFormListsQuery = {
     lastPublishedBy?: string | null;
     author?: string | null;
     formType?: string | null;
+    isArchived?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1313,6 +1337,7 @@ export type SyncFormListsQuery = {
     lastPublishedBy?: string | null;
     author?: string | null;
     formType?: string | null;
+    isArchived?: boolean | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1366,6 +1391,7 @@ export type OnCreateAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1381,6 +1407,7 @@ export type OnUpdateAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1396,6 +1423,7 @@ export type OnDeleteAuthoredFormDetailSubscription = {
   version?: string | null;
   pages?: string | null;
   counter?: number | null;
+  formDetailPublishStatus?: string | null;
   formlistID: string;
   createdAt: string;
   updatedAt: string;
@@ -1552,6 +1580,7 @@ export type OnCreateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1590,6 +1619,7 @@ export type OnUpdateFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1628,6 +1658,7 @@ export type OnDeleteFormListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  isArchived?: boolean | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1735,6 +1766,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -1768,6 +1800,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -1801,6 +1834,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -2083,6 +2117,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2137,6 +2172,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2191,6 +2227,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2365,6 +2402,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -2396,6 +2434,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2438,6 +2477,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2484,6 +2524,7 @@ export class APIService {
             version
             pages
             counter
+            formDetailPublishStatus
             formlistID
             createdAt
             updatedAt
@@ -2891,6 +2932,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -2930,6 +2972,7 @@ export class APIService {
             lastPublishedBy
             author
             formType
+            isArchived
             createdAt
             updatedAt
             _version
@@ -2980,6 +3023,7 @@ export class APIService {
             lastPublishedBy
             author
             formType
+            isArchived
             createdAt
             updatedAt
             _version
@@ -3110,6 +3154,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3146,6 +3191,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3182,6 +3228,7 @@ export class APIService {
           version
           pages
           counter
+          formDetailPublishStatus
           formlistID
           createdAt
           updatedAt
@@ -3483,6 +3530,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -3538,6 +3586,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version
@@ -3593,6 +3642,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          isArchived
           createdAt
           updatedAt
           _version

@@ -113,6 +113,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "formDetailPublishStatus": {
+                    "name": "formDetailPublishStatus",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "formlistID": {
                     "name": "formlistID",
                     "isArray": false,
@@ -557,6 +564,13 @@ export const schema = {
                         ]
                     }
                 },
+                "isArchived": {
+                    "name": "isArchived",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -603,5 +617,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.2",
-    "version": "16803994e90b8a647d047c4c5d0b9e0a"
+    "version": "8a33f7fa145e118b120bb1956f2e7f87"
 };

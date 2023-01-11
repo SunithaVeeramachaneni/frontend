@@ -47,9 +47,10 @@ import {
 } from '@angular/cdk/drag-drop';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-form-configuration',
@@ -70,15 +71,16 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
   formSaveStatus$: Observable<string>;
-  formPublishStatus$: Observable<string>;
+  formDetailPublishStatus$: Observable<string>;
   questionIndexes: any;
   formStatus: string;
   formSaveStatus: string;
-  formPublishStatus: string;
+  formDetailPublishStatus: string;
   isFormDetailPublished: string;
   formMetadata: FormMetadata;
   fieldContentOpenState = false;
   formListVersion: number;
+  readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
     private fb: FormBuilder,
@@ -86,7 +88,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +99,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       name: [''],
       description: [''],
       counter: [0],
-      formStatus: ['Draft']
+      formStatus: [formConfigurationStatus.draft]
     });
 
     const fornName = this.formConf.name.value
@@ -119,7 +122,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           if (!isEqual(prev, curr)) {
             this.store.dispatch(
               FormConfigurationActions.updateFormMetadata({
-                formMetadata: curr
+                formMetadata: curr,
+                ...this.getFormConfigurationStatuses()
               })
             );
 
@@ -131,20 +135,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             );
           }
         })
-      )
-      .subscribe();
-
-    this.formConfiguration
-      .get('counter')
-      .valueChanges.pipe(
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        tap((counter) =>
-          this.store.dispatch(
-            FormConfigurationActions.updateCounter({
-              counter
-            })
-          )
-        )
       )
       .subscribe();
 
@@ -169,13 +159,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
 
-    this.store.dispatch(
-      FormConfigurationActions.addPage({
-        page: this.getPageObject(0, 0, 0),
-        pageIndex: 0
-      })
-    );
-
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
       tap(
         ({
@@ -187,6 +170,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           authoredFormDetailVersion,
           isFormDetailPublished,
           formDetailId,
+          formDetailPublishStatus,
           formSaveStatus,
           formListDynamoDBVersion,
           formDetailDynamoDBVersion,
@@ -194,6 +178,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         }) => {
           this.formListVersion = formListDynamoDBVersion;
           this.formStatus = formStatus;
+          this.formDetailPublishStatus = formDetailPublishStatus;
           const { id: formListId } = formMetadata;
           this.isFormDetailPublished = isFormDetailPublished;
           if (pages.length && formListId) {
@@ -202,6 +187,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 this.store.dispatch(
                   FormConfigurationActions.updateAuthoredFormDetail({
                     formStatus,
+                    formDetailPublishStatus,
                     formListId,
                     counter,
                     pages,
@@ -214,6 +200,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               this.store.dispatch(
                 FormConfigurationActions.createAuthoredFormDetail({
                   formStatus,
+                  formDetailPublishStatus,
                   formListId,
                   counter,
                   pages,
@@ -235,7 +222,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                     formListId,
                     counter,
                     pages,
-                    authoredFormDetailVersion
+                    authoredFormDetailVersion,
+                    authoredFormDetailDynamoDBVersion,
+                    authoredFormDetailId
                   },
                   formListDynamoDBVersion
                 })
@@ -251,7 +240,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                     formListId,
                     counter,
                     pages,
-                    authoredFormDetailVersion
+                    authoredFormDetailVersion,
+                    authoredFormDetailDynamoDBVersion,
+                    authoredFormDetailId
                   },
                   formListDynamoDBVersion
                 })
@@ -274,11 +265,38 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .select(getFormSaveStatus)
       .pipe(tap((formSaveStatus) => (this.formSaveStatus = formSaveStatus)));
 
-    this.formPublishStatus$ = this.store
+    this.formDetailPublishStatus$ = this.store
       .select(getFormPublishStatus)
       .pipe(
-        tap((formPublishStatus) => (this.formPublishStatus = formPublishStatus))
+        tap(
+          (formDetailPublishStatus) =>
+            (this.formDetailPublishStatus = formDetailPublishStatus)
+        )
       );
+
+    this.route.data.subscribe((data) => {
+      if (data.form && Object.keys(data.form).length) {
+        this.formConf.counter.setValue(data.form.counter);
+        this.store.dispatch(
+          FormConfigurationActions.updateFormConfiguration({
+            formConfiguration: data.form
+          })
+        );
+      }
+    });
+
+    this.route.params.subscribe((params) => {
+      if (!params.id) {
+        this.store.dispatch(
+          FormConfigurationActions.addPage({
+            page: this.getPageObject(0, 0, 0),
+            pageIndex: 0,
+            questionCounter: this.formConf.counter.value,
+            ...this.getFormConfigurationStatuses()
+          })
+        );
+      }
+    });
   }
 
   get formConf() {
@@ -334,7 +352,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.store.dispatch(
           FormConfigurationActions.addPage({
             page: this.getPageObject(pageIndex, 0, 0),
-            pageIndex
+            pageIndex,
+            questionCounter: this.formConf.counter.value,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -342,7 +362,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       case 'delete':
         this.store.dispatch(
           FormConfigurationActions.deletePage({
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -361,7 +382,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               section,
               question: this.getQuestion(0, section.id),
               pageIndex,
-              sectionIndex
+              sectionIndex,
+              questionCounter: this.formConf.counter.value,
+              ...this.getFormConfigurationStatuses()
             })
           );
         }
@@ -372,7 +395,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           FormConfigurationActions.updateSection({
             section,
             sectionIndex,
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -382,7 +406,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           FormConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -398,7 +423,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             question: this.getQuestion(questionIndex, sectionId),
             pageIndex,
             sectionId,
-            questionIndex
+            questionIndex,
+            questionCounter: this.formConf.counter.value,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -409,7 +436,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             question,
             questionIndex,
             sectionId,
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -419,7 +447,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           FormConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
         break;
@@ -433,7 +462,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   publishFormDetail() {
     this.store.dispatch(
       FormConfigurationActions.updateFormPublishStatus({
-        formPublishStatus: 'Publishing'
+        formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
@@ -459,7 +488,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       this.store.dispatch(
         FormConfigurationActions.updatePage({
           pageIndex,
-          data: sectionPositionMap
+          data: sectionPositionMap,
+          ...this.getFormConfigurationStatuses()
         })
       );
     }
@@ -480,7 +510,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
               sectionId
             }),
             sectionId,
-            pageIndex
+            pageIndex,
+            ...this.getFormConfigurationStatuses()
           })
         );
       });
@@ -500,7 +531,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           previousIndex: event.previousIndex,
           sourceSectionId: event.previousContainer.id,
           destinationSectionId: event.container.id,
-          pageIndex
+          pageIndex,
+          ...this.getFormConfigurationStatuses()
         })
       );
     }
@@ -520,6 +552,14 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .select(getPage(pageIndex))
       .subscribe((v) => (pageSections = v?.sections));
     return pageSections;
+  }
+
+  getFormConfigurationStatuses() {
+    return {
+      formStatus: formConfigurationStatus.draft,
+      formDetailPublishStatus: formConfigurationStatus.draft,
+      formSaveStatus: formConfigurationStatus.saving
+    };
   }
 
   ngOnDestroy(): void {
