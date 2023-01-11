@@ -180,6 +180,19 @@
                           [id]="sectionIds[pageIndex][sectionIndex]"
                           cdkDropListGroup
                         >
+                          <div
+                            *ngIf="
+                              getQuestionsOfSection(
+                                pageIndex,
+                                sectionIds[pageIndex][sectionIndex]
+                              ).length === 0
+                            "
+                          >
+                            <span class="sectionEmpty">
+                              Section does not have any questions. Please add
+                              questions
+                            </span>
+                          </div>
                           <ng-container
                             *ngFor="
                               let questionObj of getQuestionsOfSection(
