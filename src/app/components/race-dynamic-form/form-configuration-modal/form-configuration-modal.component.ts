@@ -17,11 +17,11 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { formConfigurationStatus } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -46,6 +46,8 @@ export class FormConfigurationModalComponent implements OnInit {
 
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+  readonly formConfigurationStatus = formConfigurationStatus;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -81,8 +83,8 @@ export class FormConfigurationModalComponent implements OnInit {
       description: [''],
       isPublic: [false],
       isArchived: [false],
-      formStatus: ['Draft'],
-      formType: ['Standalone'],
+      formStatus: [formConfigurationStatus.draft],
+      formType: [formConfigurationStatus.standalone],
       tags: [this.tags]
     });
   }
@@ -149,7 +151,9 @@ export class FormConfigurationModalComponent implements OnInit {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value
+          formMetadata: this.headerDataForm.value,
+          formDetailPublishStatus: formConfigurationStatus.draft,
+          formSaveStatus: formConfigurationStatus.saving
         })
       );
       this.store.dispatch(

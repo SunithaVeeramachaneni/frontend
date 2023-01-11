@@ -24,6 +24,8 @@ import {
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 const limit = 10000;
 @Injectable({
@@ -34,6 +36,7 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(
     private readonly awsApiService: APIService,
+    private toastService: ToastService,
     private appService: AppService
   ) {}
 
@@ -120,23 +123,22 @@ export class RaceDynamicFormService {
   ) {
     return from(
       this.awsApiService.CreateFormList({
-        formLogo: formListQuery.formLogo ?? '',
-        name: formListQuery?.name ?? '',
-        description: formListQuery.description ?? '',
-        formStatus: formListQuery.formStatus ?? '',
-        author: formListQuery.author ?? '',
-        formType: formListQuery.formType ?? '',
-        tags: formListQuery.tags || null,
+        name: formListQuery.name,
+        formLogo: formListQuery.formLogo,
+        description: formListQuery.description,
+        formStatus: formListQuery.formStatus,
+        author: formListQuery.author,
+        formType: formListQuery.formType,
+        tags: formListQuery.tags,
         isPublic: formListQuery.isPublic
       })
     );
   }
 
   updateForm$(formMetaDataDetails) {
-    const { isArchived, ...form } = formMetaDataDetails.formMetadata;
     return from(
       this.awsApiService.UpdateFormList({
-        ...form,
+        ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );
@@ -144,6 +146,10 @@ export class RaceDynamicFormService {
 
   deleteForm$(id: string) {
     return from(this.awsApiService.DeleteFormList({ id }, {}));
+  }
+
+  getFormById$(id: string) {
+    return from(this.awsApiService.GetFormList(id));
   }
 
   createFormDetail$(formDetails) {
@@ -176,6 +182,7 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.CreateAuthoredFormDetail({
         formStatus: formDetails.formStatus,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
@@ -188,6 +195,7 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.UpdateAuthoredFormDetail({
         formStatus: formDetails.formStatus,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
@@ -195,6 +203,30 @@ export class RaceDynamicFormService {
         _version: formDetails.authoredFormDetailDynamoDBVersion
       } as UpdateAuthoredFormDetailInput)
     );
+  }
+
+  getAuthoredFormDetailByFormId$(formId: string) {
+    return from(
+      this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
+        formStatus: { eq: formConfigurationStatus.draft }
+      })
+    ).pipe(map(({ items }) => items));
+  }
+
+  getFormDetailByFormId$(formId: string) {
+    return from(this.awsApiService.FormDetailsByFormlistID(formId)).pipe(
+      map(({ items }) => items)
+    );
+  }
+
+  handleError(error: any) {
+    const message = error.errors?.length
+      ? error.errors[0].message.split(':')[0]
+      : error.message;
+    this.toastService.show({
+      type: 'warning',
+      text: message
+    });
   }
 
   formatFormData = (form, pages): string => {
@@ -310,10 +342,6 @@ export class RaceDynamicFormService {
           listFormLists?.items as GetFormListQuery[]
       )
     );
-  }
-
-  createFormList$(input: CreateFormListInput) {
-    return from(this.awsApiService.CreateFormList(input));
   }
 
   getAuthoredFormDetail$(formlistID: string) {

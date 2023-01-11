@@ -14,7 +14,6 @@ export interface FormMetadata {
   formType: 'Standalone' | 'Embedded';
   formStatus: 'Draft' | 'Published';
   tags: string[];
-  counter?: number;
 }
 
 export interface Page {
