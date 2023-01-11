@@ -29,8 +29,9 @@ export class PreviewComponent implements OnInit {
     this.fieldTypes = fieldTypesMock.fieldTypes;
     this.previewFormData$ = this.store.select(getPages).pipe(
       map((previewFormData) => {
+        let pageData;
         let sectionData;
-        previewFormData.forEach((page) => {
+        pageData = previewFormData.map((page) => {
           sectionData = page.sections.map((section) => {
             const questionsArray = [];
             page.questions.forEach((question) => {
@@ -40,8 +41,9 @@ export class PreviewComponent implements OnInit {
             });
             return { ...section, questions: questionsArray };
           });
+          return { ...page, sections: sectionData };
         });
-        return sectionData;
+        return pageData;
       })
     );
   }
