@@ -13,17 +13,23 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 import { Observable, timer } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
-  getQuestion,
   getQuestionByID,
   getSectionQuestionsCount,
-  State
+  State,
+  getQuestionLogics,
+  getFormMetadata
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
+import { AddLogicActions } from '../../state/actions';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -61,11 +67,34 @@ export class QuestionComponent implements OnInit {
     return this._questionIndex;
   }
 
+  @Input() set isAskQuestion(isAskQuestion: boolean) {
+    this._isAskQuestion = isAskQuestion;
+  }
+  get isAskQuestion() {
+    return this._isAskQuestion;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
   openResponseType = false;
   fieldContentOpenState = false;
   openResponseTypeModal$: Observable<boolean>;
+
+  addLogicNotAppliedFields = [
+    'LTV',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT',
+    'TAF',
+    'ARD'
+  ];
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -86,12 +115,14 @@ export class QuestionComponent implements OnInit {
   private _id: string;
   private _sectionId: string;
   private _questionIndex: number;
+  private _isAskQuestion: boolean;
 
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
-    private formService: FormService
+    private formService: FormService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -113,7 +144,8 @@ export class QuestionComponent implements OnInit {
             sectionId: this.sectionId,
             question: this.questionForm.value,
             questionIndex: this.questionIndex,
-            type: 'update'
+            type: 'update',
+            isAskQuestion: this.isAskQuestion
           })
         )
       )
@@ -149,7 +181,8 @@ export class QuestionComponent implements OnInit {
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
       questionIndex: this.questionIndex,
-      type: 'delete'
+      type: 'delete',
+      questionId: this.questionId
     });
   }
 
@@ -216,5 +249,127 @@ export class QuestionComponent implements OnInit {
 
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
+  }
+
+  getQuestionLogics(pageIndex: number, questionId: string) {
+    return this.store.select(getQuestionLogics(pageIndex, questionId));
+  }
+
+  addLogicToQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.addLogicToQuestion({
+        pageIndex,
+        questionId,
+        logic: this.constructLogic(pageIndex, questionId)
+      })
+    );
+  }
+  constructLogic(pageIndex: number, questionId: string) {
+    return {
+      id: uuidv4(),
+      questionId,
+      pageIndex,
+      operator: 'EQ',
+      operand1: '',
+      operand2: '',
+      action: '',
+      logicTitle: '',
+      expression: '',
+      questions: [],
+      mandateQuestions: [],
+      hideQuestions: []
+    };
+  }
+
+  logicEventHandler(event) {
+    const { type, questionId, pageIndex } = event;
+    switch (type) {
+      case 'create':
+        this.store.dispatch(
+          AddLogicActions.addLogicToQuestion({
+            pageIndex,
+            questionId,
+            logic: this.constructLogic(pageIndex, questionId)
+          })
+        );
+        break;
+      case 'update':
+        this.store.dispatch(
+          AddLogicActions.updateQuestionLogic({
+            questionId,
+            pageIndex,
+            logic: event.logic
+          })
+        );
+        break;
+      case 'delete':
+        this.store.dispatch(
+          AddLogicActions.deleteQuestionLogic({
+            questionId,
+            pageIndex,
+            logicId: event.logicId
+          })
+        );
+        break;
+      case 'ask_question_create':
+        const newQuestion = {
+          id: `AQ_${uuidv4()}`,
+          sectionId: `AQ_${event.logic.id}`,
+          name: '',
+          fieldType: 'TF',
+          position: 0,
+          required: false,
+          multi: false,
+          value: '',
+          isPublished: false,
+          isPublishedTillSave: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion
+          })
+        );
+        break;
+    }
+  }
+  quickResponseTypeHandler(event) {
+    let formId;
+    this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        formId = formMetadata.id;
+      })
+    );
+    switch (event.eventType) {
+      case 'quickResponsesAdd':
+        const createDataset = {
+          formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses'
+        };
+        this.rdfService.createDataSet$(createDataset).subscribe((response) => {
+          // do nothing
+        });
+        break;
+
+      case 'quickResponseUpdate':
+        const updateDataset = {
+          formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses',
+          id: event.data.id
+        };
+        this.rdfService
+          .updateDataSet$(event.data.id, updateDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
+        break;
+    }
   }
 }

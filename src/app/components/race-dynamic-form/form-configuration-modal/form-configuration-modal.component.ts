@@ -8,7 +8,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   FormBuilder,
   FormControl,
@@ -22,6 +22,7 @@ import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -40,7 +41,10 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
+
+  allTags: string[] = [];
+  originalTags: string[] = [];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
@@ -50,8 +54,15 @@ export class FormConfigurationModalComponent implements OnInit {
     private router: Router,
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
     private readonly loginService: LoginService,
-    private store: Store<State>
+    private store: Store<State>,
+    private rdfService: RaceDynamicFormService
   ) {
+    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
+      if (tags && tags.length) {
+        this.allTags = tags[0].values;
+        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+      }
+    });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -123,6 +134,22 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   next() {
+    const newTags = [];
+    this.tags.forEach((selectedTag) => {
+      if (this.originalTags.indexOf(selectedTag) < 0) {
+        newTags.push(selectedTag);
+      }
+    });
+    if (newTags.length) {
+      const dataSet = {
+        type: 'tags',
+        values: newTags
+      };
+      this.rdfService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
+    }
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(

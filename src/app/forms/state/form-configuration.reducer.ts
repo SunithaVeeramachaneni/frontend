@@ -2,6 +2,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
+  AddLogicActions,
   FormConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
@@ -344,6 +345,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestion,
     (state, action): FormConfigurationState => {
@@ -376,6 +378,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestionBySection,
     (state, action): FormConfigurationState => {
@@ -531,6 +534,165 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       ...initialState
     })
+  ),
+  on(
+    AddLogicActions.addLogicToQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          return {
+            ...page,
+            logics: [...page.logics, action.logic]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.updateQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const logics = page.logics.map((logic) => {
+            const logicObj = Object.assign({}, logic);
+            if (logic.id === action.logic.id) {
+              return action.logic;
+            }
+            return logicObj;
+          });
+
+          return {
+            ...page,
+            logics
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.deleteQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (l) => l.id !== action.logicId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsCreate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          page.questions.push(action.question);
+          // const questions = JSON.parse(JSON.stringify(page.questions));
+          // questions.push(action.question);
+          return {
+            ...page
+            // questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsUpdate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          let questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions = [
+            ...questions.slice(0, questionIndex),
+            action.question,
+            ...questions.slice(questionIndex + 1)
+          ];
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsDelete,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions.splice(questionIndex, 1);
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
   ),
   on(
     FormConfigurationActions.initPages,
