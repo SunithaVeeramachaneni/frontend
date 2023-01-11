@@ -52,7 +52,16 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      hasPostTextImage: false
+      preTextImageConfig: {
+        logoAvialable: false,
+        style: {
+          width: '40px',
+          height: '40px',
+          marginRight: '10px'
+        }
+      },
+      hasPostTextImage: false,
+      postTextImageConfig: {}
     },
     {
       id: 'status',
@@ -71,24 +80,19 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontFamily: 'Inter',
-        fontStyle: 'normal',
-        fontSize: '14px',
         textTransform: 'capitalize',
         fontWeight: 500,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 12px',
-        marginTop: '8px',
+        position: 'relative',
+        top: '10px',
         width: '90px',
-        height: '24px',
-        background: '#D1FAE5', // #FEF3C7
-        borderRadius: '12px',
-        flex: 'none',
-        order: 0,
-        flexGrow: 0
+        height: '25px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,
@@ -183,7 +187,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -232,7 +236,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
@@ -268,7 +271,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 150px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {
@@ -307,22 +310,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-  }
-
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
-      }
-    ];
-    this.configOptions.rowLevelActions.menuActions = menuActions;
-    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
-    this.configOptions = { ...this.configOptions };
   }
 
   ngOnDestroy(): void {}
