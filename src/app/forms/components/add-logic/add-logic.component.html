@@ -1,1 +1,168 @@
-<p>add-logic works!</p>
+<div [formGroup]="logicsForm" *ngIf="getLogicsList()">
+  <div formArrayName="logics">
+    <mat-tab-group>
+      <mat-tab
+        *ngFor="let logic of getLogicsList(); let i = index"
+        label="{{
+          logic.value.logicTitle ? logic.value.logicTitle : 'Untitled'
+        }}"
+      >
+        <div class="tabContent" [formGroupName]="i">
+          <div class="logicRow">
+            <img
+              src="assets/rdf-forms-icons/delete-icon.svg"
+              alt="delete-icon"
+              class="delete-icon"
+              (click)="deleteLogic(logic.value.id, questionId, pageIndex)"
+            />
+            <input type="hidden" formControlName="id" />
+            <input type="hidden" formControlName="logicTitle" />
+            <input type="hidden" formControlName="expression" />
+
+            <input type="hidden" formControlName="action" />
+            <span translate="ifAnswer"></span>
+            <select
+              class="logicCondition"
+              formControlName="operator"
+              (ngModelChange)="operatorChanged(logic.value, i, $event)"
+            >
+              <option
+                class="logicOperator"
+                value="{{ operator.code }}"
+                *ngFor="let operator of fieldOperators"
+              >
+                {{ operator.displayName }}
+              </option>
+            </select>
+
+            <input
+              type="text"
+              class="logicValue"
+              formControlName="operand2"
+              *ngIf="dropDownTypes.indexOf(fieldType) < 0"
+            />
+            <select
+              class="logicValue m-l-m30"
+              formControlName="operand2"
+              *ngIf="dropDownTypes.indexOf(fieldType) > -1"
+            >
+              <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox">
+                <option
+                  class="logicOperator"
+                  *ngFor="let option of dropdownValues"
+                >
+                  {{ option.title }}
+                </option>
+              </ng-container>
+              <ng-template #isCheckBox>
+                <option
+                  class="logicOperator"
+                  *ngFor="let option of checkBoxResponses"
+                >
+                  {{ option }}
+                </option>
+              </ng-template>
+            </select>
+
+            <span translate="then"></span>
+            <span
+              *ngIf="logic.value.mandateQuestions.length"
+              class="mandateAction"
+              (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
+            >
+              Mandate ({{ logic.value.mandateQuestions.length }}) Questions
+              <mat-icon>edit</mat-icon>
+            </span>
+            <span
+              *ngIf="logic.value.hideQuestions.length"
+              class="mandateAction"
+              (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
+            >
+              Hide ({{ logic.value.hideQuestions.length }}) Questions
+              <mat-icon>edit</mat-icon>
+            </span>
+            <span
+              *ngIf="logic.value.questions.length"
+              class="mandateAction"
+              (click)="triggerMenuAction('ask_questions', i, logic.value)"
+              translate="askQuestions"
+            >
+            </span>
+            <button
+              mat-button
+              [matMenuTriggerFor]="menu"
+              class="actionBtn"
+              translate="logicActionBtn"
+            ></button>
+            <mat-menu #menu="matMenu">
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="openSelectQuestionsDialog(logic.value, i, 'MANDATE')"
+                translate="mandateQuestions"
+              ></button>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="openSelectQuestionsDialog(logic.value, i, 'HIDE')"
+                translate="hideQuestions"
+              ></button>
+              <button
+                class="logicActionMenuItem"
+                mat-menu-item
+                (click)="triggerMenuAction('ask_questions', i, logic.value)"
+                translate="askQuestions"
+              ></button>
+            </mat-menu>
+          </div>
+          <div
+            *ngIf="getSectionQuestions(pageIndex, logic.value.id).length"
+            class="logicAskQuestions"
+          >
+            <ng-container
+              *ngFor="
+                let questionObj of getSectionQuestions(
+                  pageIndex,
+                  logic.value.id
+                );
+                let questionIndex = index
+              "
+            >
+              <div class="askQuestion">
+                <!-- <img
+                  cdkDragHandle
+                  src="assets/rdf-forms-icons/six-dots.svg"
+                  alt="six-dots"
+                  class="m-l-10 six-dots"
+                /> -->
+                <div class="questionContainer">
+                  <app-question
+                    class="question"
+                    [pageIndex]="pageIndex"
+                    [questionId]="questionObj.id"
+                    [sectionId]="questionObj.sectionId"
+                    [questionIndex]="questionIndex"
+                    [isAskQuestion]="true"
+                    (questionEvent)="
+                      askQuestionEventHandler($event, logic.value, i)
+                    "
+                  ></app-question>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab disabled>
+        <ng-template mat-tab-label>
+          <button
+            mat-icon-button
+            (click)="addLogicToQuestion(questionId, pageIndex)"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

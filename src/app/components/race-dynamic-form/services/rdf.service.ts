@@ -14,9 +14,18 @@ import {
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
+
+import {
+  ErrorInfo,
+  FormMetadata,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
 
 const limit = 10000;
 @Injectable({
@@ -27,8 +36,18 @@ export class RaceDynamicFormService {
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
   constructor(
     private readonly awsApiService: APIService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private appService: AppService
   ) {}
+
+  createTags$ = (
+    tags: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  getAllTags$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
+    this.appService._getResp(environment.rdfApiUrl, 'datasets/tags', info);
 
   getFormsList$(queryParams: {
     nextToken?: string;
@@ -218,7 +237,7 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions } = page;
+      const { sections, questions, logics } = page;
       const pageItem = {
         SECTIONS: sections.map((section) => {
           const questionsBySection = questions.filter(
@@ -232,7 +251,12 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: ''
+                DEFAULTVALUE: '',
+                UIVALIDATION: this.getValidationExpression(
+                  question.id,
+                  questions,
+                  logics
+                )
               };
 
               if (question.fieldType === 'ARD') {
@@ -254,6 +278,61 @@ export class RaceDynamicFormService {
     forms.push(formData);
     return JSON.stringify({ FORMS: forms });
   };
+
+  getValidationExpression(questionId, questions, logics) {
+    let expression = '';
+    let globalIndex = 0;
+    const questionLogics = logics.filter(
+      (logic) => logic.questionId === questionId
+    );
+    if (!questionLogics || !questionLogics.length) return expression;
+
+    questionLogics.forEach((logic) => {
+      const isEmpty = !logic.operand2.length;
+
+      // Mandate Questions;
+      const mandatedQuestions = logic.mandateQuestions;
+      if (mandatedQuestions && mandatedQuestions.length) {
+        mandatedQuestions.forEach((mq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Hide Questions;
+      const hiddenQuestions = logic.hideQuestions;
+      if (hiddenQuestions && hiddenQuestions.length) {
+        hiddenQuestions.forEach((hq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Ask Questions;
+      const askQuestions = questions.filter(
+        (q) => q.sectionId === `AQ_${logic.id}`
+      );
+      askQuestions.forEach((q) => {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+      });
+    });
+    if (expression[0] === ';') {
+      expression = expression.slice(1, expression.length);
+    }
+    if (expression[expression.length - 1] === ';') {
+      expression = expression.slice(0, expression.length - 1);
+    }
+    return expression;
+  }
 
   fetchAllFormListNames$() {
     const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;

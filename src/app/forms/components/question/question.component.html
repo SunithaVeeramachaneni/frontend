@@ -9,7 +9,13 @@
   <div>
     <div>
       <div class="dis-flex questions-div">
-        <div class="width-70 question-input-box">
+        <div
+          class="width-70 question-input-box"
+          [ngClass]="{
+            'width-60': isAskQuestion,
+            'width-70': !isAskQuestion
+          }"
+        >
           <!-- <img
             src="assets/rdf-forms-icons/six-dots.svg"
             alt="six-dots"
@@ -25,7 +31,7 @@
             (keyup.enter)="addQuestion()"
           />
 
-          <div class="floating-btns">
+          <div class="floating-btns" *ngIf="!isAskQuestion">
             <button class="questions-btn" (click)="addQuestion()">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
@@ -48,9 +54,7 @@
             </button>
           </div>
         </div>
-
         <span class="divider">|</span>
-
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
@@ -67,12 +71,47 @@
             </ng-container>
           </div>
         </div>
+        <div *ngIf="isAskQuestion">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+            (click)="deleteQuestion()"
+          />
+        </div>
       </div>
 
-      <div class="dis-flex justify-content">
+      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+
+      <div class="dis-flex justify-content" *ngIf="!isAskQuestion">
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-            <div>
+            <div class="questionActionsRow">
+              <button
+                mat-button
+                color="primary"
+                class="addLogicBtn"
+                *ngIf="
+                  addLogicNotAppliedFields.indexOf(
+                    questionForm.get('fieldType').value
+                  ) < 0
+                "
+                (click)="
+                  addLogicToQuestion(pageIndex, questionForm.get('id').value)
+                "
+              >
+                <mat-icon class="icon">link</mat-icon>
+                <span translate="addLogicBtn"></span>
+              </button>
+
               <span class="m-l-40">
                 <mat-checkbox
                   formControlName="required"
@@ -175,6 +214,22 @@
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
+            </div>
+            <div
+              class="addLogicRow"
+              *ngIf="
+                getQuestionLogics(pageIndex, questionForm.get('id').value)
+                  | async as questionLogics
+              "
+            >
+              <app-add-logic
+                *ngIf="questionLogics.length"
+                [questionId]="questionForm.get('id').value"
+                [fieldType]="questionForm.get('fieldType').value"
+                [pageIndex]="pageIndex"
+                [sectionId]="sectionId"
+                (logicEvent)="logicEventHandler($event)"
+              ></app-add-logic>
             </div>
           </div>
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
