@@ -1,5 +1,8 @@
 import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FormService } from '../../services/form.service';
+import { getResponseSets } from '../../state';
 
 @Component({
   selector: 'app-response-type',
@@ -14,10 +17,20 @@ export class ResponseTypeComponent implements OnInit {
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
+  public globalResponses$: Observable<[]>;
+  public responseToBeEdited: any;
 
-  constructor(private formService: FormService) {}
+  constructor(private formService: FormService, private store: Store) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.globalResponses$ = this.store
+      .select(getResponseSets)
+      .pipe((responses: any) => {
+        console.log(responses);
+        return responses;
+      });
+    this.globalResponses$.subscribe();
+  }
 
   getFieldTypeImage(type) {
     return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
@@ -43,7 +56,11 @@ export class ResponseTypeComponent implements OnInit {
     }
   }
 
-  handleGlobalResponses() {
+  handleGlobalResponsesToggle() {
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
   }
+
+  handleEditGlobalResponse = (response: any) => {
+    this.responseToBeEdited = response;
+  };
 }

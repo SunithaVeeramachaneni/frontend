@@ -179,7 +179,7 @@ export class RaceDynamicFormService {
 
   getResponseSet$(queryParams: {
     nextToken?: string;
-    limit: number;
+    limit?: number;
     responseType: string;
   }) {
     if (queryParams.nextToken !== null) {
@@ -195,12 +195,30 @@ export class RaceDynamicFormService {
     }
   }
 
-  createResponseSet$(responseSet: CreateResponseSetInput) {
-    return from(this.awsApiService.CreateResponseSet(responseSet));
+  createResponseSet$(responseSet) {
+    return from(
+      this.awsApiService.CreateResponseSet({
+        type: responseSet.responseType,
+        name: responseSet.name,
+        description: responseSet?.description,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values
+      })
+    );
   }
 
-  updateResponseSet$(responseSet: UpdateResponseSetInput) {
-    return from(this.awsApiService.UpdateResponseSet(responseSet));
+  updateResponseSet$(responseSet) {
+    return from(
+      this.awsApiService.UpdateResponseSet({
+        id: responseSet.id,
+        type: responseSet.responseType,
+        name: responseSet.name,
+        description: responseSet.description,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values,
+        _version: responseSet.version
+      })
+    );
   }
 
   deleteResponseSet$(responseSetId: string) {

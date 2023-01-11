@@ -38,9 +38,15 @@
       </div>
       <div class="height-50">
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
+        <div *ngIf="globalResponses$ | async as globalResponses">
+          <div *ngFor="let response of globalResponses">
+            {{ response.name }}
+            <button (click)="handleEditGlobalResponse(response)">Edit</button>
+          </div>
+        </div>
         <button
           class="add-new-btn"
-          (click)="handleGlobalResponses()"
+          (click)="handleGlobalResponsesToggle()"
           translate="addNew"
         ></button>
       </div>
@@ -54,7 +60,9 @@
       </div>
 
       <div *ngIf="isGlobalResponseOpen">
-        <app-global-response-type-side-drawer></app-global-response-type-side-drawer>
+        <app-global-response-type-side-drawer
+          [globalResponseToBeEdited]="responseToBeEdited"
+        ></app-global-response-type-side-drawer>
       </div>
     </div>
   </div>
