@@ -46,8 +46,43 @@ export class RaceDynamicFormService {
   ): Observable<any> =>
     this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
 
-  getAllTags$ = (info: ErrorInfo = {} as ErrorInfo): Observable<any[]> =>
-    this.appService._getResp(environment.rdfApiUrl, 'datasets/tags', info);
+  createDataSet$ = (
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', dataset, info);
+
+  updateDataSet$ = (
+    datasetId: string,
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._putDataToGateway(
+      environment.rdfApiUrl,
+      `datasets/${datasetId}`,
+      dataset,
+      info
+    );
+
+  getDataSetsByType$ = (
+    datasetType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `datasets/${datasetType}`,
+      info
+    );
+  getDataSetsByFormId$ = (
+    datasetType: string,
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `datasets/${datasetType}/${formId}`,
+      info
+    );
 
   getFormsList$(queryParams: {
     nextToken?: string;

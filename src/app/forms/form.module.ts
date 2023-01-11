@@ -41,6 +41,7 @@ import { DropDownComponent } from './components/field-types/drop-down/drop-down.
 import { StoreModule } from '@ngrx/store';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 import { ImageComponent } from './components/field-types/image/image.component';
+import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -83,6 +84,7 @@ import { ImageComponent } from './components/field-types/image/image.component';
     MatButtonToggleModule,
     MatSelectModule,
     MatTooltipModule,
+    NgxShimmerLoadingModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),
@@ -97,7 +99,8 @@ import { ImageComponent } from './components/field-types/image/image.component';
     PreviewComponent,
     IphoneComponent,
     AddLogicComponent,
-    AddFilterComponent
+    AddFilterComponent,
+    NgxShimmerLoadingModule
   ]
 })
 export class FormModule {}
