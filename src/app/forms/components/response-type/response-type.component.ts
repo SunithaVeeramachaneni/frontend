@@ -1,4 +1,7 @@
 import { Component, Output, OnInit, Input, EventEmitter } from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { FormService } from '../../services/form.service';
 
 @Component({
@@ -13,10 +16,58 @@ export class ResponseTypeComponent implements OnInit {
   @Input() question;
 
   public isMCQResponseOpen = false;
+  quickResponsesData$: Observable<any>;
+  createEditQuickResponse$ = new BehaviorSubject<any>({
+    type: 'create',
+    response: {}
+  });
+  quickResponsesLoading = false;
 
-  constructor(private formService: FormService) {}
+  constructor(
+    private formService: FormService,
+    private rdfService: RaceDynamicFormService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.quickResponsesLoading = true;
+    this.quickResponsesData$ = combineLatest([
+      of({ data: [] }),
+      this.rdfService.getDataSetsByType$('quickResponses').pipe(
+        tap((v) => {
+          this.quickResponsesLoading = false;
+        })
+      ),
+      this.createEditQuickResponse$
+    ]).pipe(
+      map(([initial, responses, { type, response, responseType }]) => {
+        if (Object.keys(response).length) {
+          if (type === 'create') {
+            initial.data = initial.data.concat([response]);
+          } else {
+            initial.data = initial.data.map((resp) => {
+              if (resp.id === response.id) {
+                return response;
+              }
+              return resp;
+            });
+          }
+          return initial;
+        } else {
+          if (initial.data.length === 0) {
+            const quickResp = responses.map((r) => ({
+              id: r.id,
+              name: '',
+              values: r.values
+            }));
+            initial.data = initial.data.concat(quickResp);
+          }
+          return initial;
+        }
+      })
+    );
+
+    this.quickResponsesData$.subscribe();
+  }
 
   getFieldTypeImage(type) {
     return type ? `assets/rdf-forms-icons/fieldType-icons/${type}.svg` : null;
@@ -34,11 +85,18 @@ export class ResponseTypeComponent implements OnInit {
     this.formService.setOpenResponseType(false);
   }
 
-  handleResponses() {
+  handleResponses(response = {}) {
     this.isMCQResponseOpen = true;
     if (this.isMCQResponseOpen) {
-      this.formService.setMultiChoiceOpenState(true);
+      this.formService.setMultiChoiceOpenState({
+        isOpen: true,
+        response
+      });
       this.formService.setOpenResponseType(false);
     }
+  }
+
+  quickResponseTypeHandler(event) {
+    console.log(event);
   }
 }
