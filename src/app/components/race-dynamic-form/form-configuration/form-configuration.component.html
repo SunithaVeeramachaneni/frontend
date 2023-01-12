@@ -38,7 +38,10 @@
           (change)="uploadFormImageFile($event)"
         />
         <div>
-          <a class="form-title">
+          <a
+            class="form-title"
+            matTooltip="{{ formConfiguration.get('name').value }}"
+          >
             <input
               #name
               type="text"
@@ -49,7 +52,10 @@
               autocomplete="off"
             />
           </a>
-          <a class="form-description">
+          <a
+            class="form-description"
+            matTooltip="{{ formConfiguration.get('description').value }}"
+          >
             <input
               type="text"
               class="form_description_input"
