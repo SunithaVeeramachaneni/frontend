@@ -13,12 +13,26 @@
           class="global_response_name_input"
         />
       </div>
+      <div>
+        <input
+          matInput
+          formControlName="description"
+          placeholder="Untitled description"
+          autocomplete="off"
+          class="global_response_description_input"
+        />
+      </div>
       <div class="margin response-heading" translate="response"></div>
       <mat-card-content>
         <div class="width-100" formArrayName="responses">
-          <div cdkDrop cdkDropList [cdkDropListData]="getResponseList()">
+          <div
+            cdkDrop
+            cdkDropList
+            (cdkDropListDropped)="dropResponse($event)"
+            [cdkDropListData]="getResponseList()"
+          >
             <div *ngFor="let response of getResponseList(); let i = index">
-              <div [formGroupName]="i" class="dis-flex response-list">
+              <div [formGroupName]="i" class="dis-flex response-list" cdkDrag>
                 <input
                   matInput
                   formControlName="title"

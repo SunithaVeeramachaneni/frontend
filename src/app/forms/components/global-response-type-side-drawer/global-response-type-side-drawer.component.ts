@@ -23,7 +23,7 @@ import { isEqual } from 'lodash-es';
 import { WhiteSpaceValidator } from 'src/app/shared/validators/white-space-validator';
 
 import { MCQResponseActions } from '../../state/actions';
-import { getResponseSets } from '../../state';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-global-response-type-side-drawer',
   templateUrl: './global-response-type-side-drawer.component.html',
@@ -52,6 +52,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
         Validators.minLength(3),
         WhiteSpaceValidator.trimWhiteSpace
       ]),
+      description: new FormControl(''),
       responses: this.fb.array([])
     });
 
@@ -61,7 +62,8 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         tap(([prev, curr]) => {
-          if (isEqual(prev, curr)) this.isResponseFormUpdated = false;
+          if (isEqual(prev, curr) || !curr.name || curr.responses.length < 1)
+            this.isResponseFormUpdated = false;
           else if (curr.responses.find((item) => !item.title))
             this.isResponseFormUpdated = false;
           else if (
@@ -106,9 +108,22 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     return this.responseForm.get('name') as FormControl;
   }
 
+  get description(): FormControl {
+    return this.responseForm.get('description') as FormControl;
+  }
+
   getResponseList() {
     return (this.responseForm.get('responses') as FormArray).controls;
   }
+
+  dropResponse = (event: CdkDragDrop<any>) => {
+    moveItemInArray(
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    );
+    this.responses.patchValue(event.container.data);
+  };
 
   deleteResponse = (idx: number) => {
     this.responses.removeAt(idx);
@@ -124,7 +139,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           responseType: 'globalResponse',
           isMultiColumn: false,
           values: JSON.stringify(this.responses.value),
-          description: '',
+          description: this.description.value,
           version: this.globalResponse._version
         })
       );
