@@ -21,12 +21,21 @@
   .form-heading {
     font-size: 100%;
     margin: 0;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
   }
 
   .form-description {
     font-size: 85%;
     margin: 0px;
-    padding: 5px;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
   }
 }
 

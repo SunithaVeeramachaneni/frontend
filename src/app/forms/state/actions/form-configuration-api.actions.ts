@@ -8,27 +8,27 @@ import {
 import { FormMetadata } from 'src/app/interfaces';
 
 export const createFormSuccess = createAction(
-  '[Form Configuration Service] createFormSuccess',
+  '[Form Configuration API] createFormSuccess',
   props<{ formMetadata: FormMetadata; formSaveStatus: string }>()
 );
 
 export const createFormFailure = createAction(
-  '[Form Configuration Service] createFormFailure',
+  '[Form Configuration API] createFormFailure',
   props<{ error: string }>()
 );
 
 export const updateFormSuccess = createAction(
-  '[Form Configuration Service] updateFormSuccess',
+  '[Form Configuration API] updateFormSuccess',
   props<{ formMetadata: FormMetadata; formSaveStatus: string }>()
 );
 
 export const updateFormFailure = createAction(
-  '[Form Configuration Service] updateFormFailure',
+  '[Form Configuration API] updateFormFailure',
   props<{ error: string }>()
 );
 
 export const createFormDetailSuccess = createAction(
-  '[Form Configuration Component] createFormDetailSuccess',
+  '[Form Configuration API] createFormDetailSuccess',
   props<{
     formDetail: CreateFormDetailMutation;
     authoredFormDetail: CreateAuthoredFormDetailMutation;
@@ -38,14 +38,14 @@ export const createFormDetailSuccess = createAction(
 );
 
 export const createFormDetailFailure = createAction(
-  '[Form Configuration Component] createFormDetailFailure',
+  '[Form Configuration API] createFormDetailFailure',
   props<{
     error: string;
   }>()
 );
 
 export const updateFormDetailSuccess = createAction(
-  '[Form Configuration Component] updateFormDetailSuccess',
+  '[Form Configuration API] updateFormDetailSuccess',
   props<{
     formDetail: UpdateFormDetailMutation;
     authoredFormDetail: CreateAuthoredFormDetailMutation;
@@ -55,14 +55,14 @@ export const updateFormDetailSuccess = createAction(
 );
 
 export const updateFormDetailFailure = createAction(
-  '[Form Configuration Component] updateFormDetailFailure',
+  '[Form Configuration API] updateFormDetailFailure',
   props<{
     error: string;
   }>()
 );
 
 export const createAuthoredFromDetailSuccess = createAction(
-  '[Form Configuration Service] createAuthoredFromDetailSuccess',
+  '[Form Configuration API] createAuthoredFromDetailSuccess',
   props<{
     authoredFormDetail: CreateAuthoredFormDetailMutation;
     formSaveStatus: string;
@@ -71,12 +71,12 @@ export const createAuthoredFromDetailSuccess = createAction(
 );
 
 export const createAuthoredFromDetailFailure = createAction(
-  '[Form Configuration Service] createAuthoredFromDetailFailure',
+  '[Form Configuration API] createAuthoredFromDetailFailure',
   props<{ error: string }>()
 );
 
 export const updateAuthoredFromDetailSuccess = createAction(
-  '[Form Configuration Service] updateAuthoredFromDetailSuccess',
+  '[Form Configuration API] updateAuthoredFromDetailSuccess',
   props<{
     authoredFormDetail: UpdateAuthoredFormDetailMutation;
     formSaveStatus: string;
@@ -84,6 +84,6 @@ export const updateAuthoredFromDetailSuccess = createAction(
 );
 
 export const updateAuthoredFromDetailFailure = createAction(
-  '[Form Configuration Service] updateAuthoredFromDetailFailure',
+  '[Form Configuration API] updateAuthoredFromDetailFailure',
   props<{ error: string }>()
 );

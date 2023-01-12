@@ -5,15 +5,15 @@
 >
   <div class="page-header">
     <mat-icon
-      (click)="togglePageOpenState()"
-      *ngIf="isPageOpenState === true"
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === true"
       class="page-arrow"
     >
       expand_more
     </mat-icon>
     <mat-icon
-      (click)="togglePageOpenState()"
-      *ngIf="isPageOpenState === false"
+      (click)="toggleIsOpenState()"
+      *ngIf="pageForm.get('isOpen').value === false"
       class="page-arrow"
     >
       chevron_right
@@ -43,7 +43,7 @@
       </button>
     </mat-menu>
   </div>
-  <div *ngIf="isPageOpenState === true" class="section-content">
+  <div *ngIf="pageForm.get('isOpen').value === true" class="section-content">
     <ng-content></ng-content>
   </div>
 

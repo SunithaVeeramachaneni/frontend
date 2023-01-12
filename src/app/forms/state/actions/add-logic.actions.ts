@@ -2,7 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Question } from 'src/app/interfaces';
 
 export const addLogicToQuestion = createAction(
-  '[Form Configuration Component] addLogicToQuestion',
+  '[Form Configuration] addLogicToQuestion',
   props<{
     pageIndex: number;
     questionId: string;
@@ -11,7 +11,7 @@ export const addLogicToQuestion = createAction(
 );
 
 export const updateQuestionLogic = createAction(
-  '[Form Configuration Component] updateQuestionLogic',
+  '[Form Configuration] updateQuestionLogic',
   props<{
     questionId: string;
     pageIndex: number;
@@ -20,7 +20,7 @@ export const updateQuestionLogic = createAction(
 );
 
 export const deleteQuestionLogic = createAction(
-  '[Form Configuration Component] deleteQuestionLogic',
+  '[Form Configuration] deleteQuestionLogic',
   props<{
     questionId: string;
     pageIndex: number;
@@ -29,7 +29,7 @@ export const deleteQuestionLogic = createAction(
 );
 
 export const askQuestionsCreate = createAction(
-  '[Form Configuration Component] askQuestionsCreate',
+  '[Form Configuration] askQuestionsCreate',
   props<{
     questionId: string;
     pageIndex: number;
@@ -40,7 +40,7 @@ export const askQuestionsCreate = createAction(
 );
 
 export const askQuestionsUpdate = createAction(
-  '[Form Configuration Component] askQuestionsUpdate',
+  '[Form Configuration] askQuestionsUpdate',
   props<{
     questionId: string;
     pageIndex: number;
@@ -48,7 +48,7 @@ export const askQuestionsUpdate = createAction(
   }>()
 );
 export const askQuestionsDelete = createAction(
-  '[Form Configuration Component] askQuestionsDelete',
+  '[Form Configuration] askQuestionsDelete',
   props<{
     questionId: string;
     pageIndex: number;
