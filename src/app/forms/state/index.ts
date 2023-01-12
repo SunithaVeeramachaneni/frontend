@@ -74,6 +74,22 @@ export const getSectionIds = createSelector(
     }, {})
 );
 
+export const getQuestionIds = createSelector(
+  selectFormConfigurationState,
+  (state) =>
+    state.pages.reduce((acc, curr, index) => {
+      acc[index] = {};
+      curr.questions.forEach((question) => {
+        if (acc[index][question.sectionId]) {
+          acc[index][question.sectionId].push(question.id);
+        } else {
+          acc[index][question.sectionId] = [question.id];
+        }
+      });
+      return acc;
+    }, {})
+);
+
 export const getQuestion = (
   pageIndex: number,
   sectionId: string,
@@ -117,7 +133,7 @@ export const getQuestionLogics = (pageIndex: number, questionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .logics.filter((logic) => logic.questionId === questionId)
+      .logics?.filter((logic) => logic.questionId === questionId)
   );
 
 export const getSectionQuestions = (pageIndex: number, sectionId: string) =>

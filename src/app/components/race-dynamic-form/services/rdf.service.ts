@@ -248,6 +248,12 @@ export class RaceDynamicFormService {
     ).pipe(map(({ items }) => items));
   }
 
+  getAuthoredFormDetailsByFormId$(formId: string) {
+    return from(
+      this.awsApiService.AuthoredFormDetailsByFormlistID(formId)
+    ).pipe(map(({ items }) => items));
+  }
+
   getFormDetailByFormId$(formId: string) {
     return from(this.awsApiService.FormDetailsByFormlistID(formId)).pipe(
       map(({ items }) => items)

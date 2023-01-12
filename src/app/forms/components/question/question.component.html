@@ -7,7 +7,7 @@
   } as props"
 >
   <div>
-    <div>
+    <div (click)="updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70 question-input-box"
@@ -16,13 +16,8 @@
             'width-70': !isAskQuestion
           }"
         >
-          <!-- <img
-            src="assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
-            class="m-l-10 six-dots"
-          /> -->
-
           <input
+            #name
             autocomplete="off"
             type="text"
             formControlName="name"
@@ -31,8 +26,11 @@
             (keyup.enter)="addQuestion()"
           />
 
-          <div class="floating-btns" *ngIf="!isAskQuestion">
-            <button class="questions-btn" (click)="addQuestion()">
+          <div
+            class="floating-btns"
+            *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+          >
+            <button class="questions-btn" (click)="addQuestion(true)">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
@@ -59,17 +57,19 @@
           <app-response-type-button
             [questionForm]="questionForm"
             [fieldTypes]="fieldTypes"
+            (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
           </app-response-type-button>
-          <div *ngIf="openResponseTypeModal$ | async as openResponseTypeModal">
-            <ng-container *ngIf="openResponseTypeModal === true">
-              <app-response-type
-                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
-                [fieldTypes]="fieldTypes"
-                [question]="question"
-              ></app-response-type>
-            </ng-container>
-          </div>
+          <ng-container
+            *ngIf="questionForm.get('isResponseTypeModalOpen').value === true"
+          >
+            <app-response-type
+              (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+              (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
+              [fieldTypes]="fieldTypes"
+              [question]="question"
+            ></app-response-type>
+          </ng-container>
         </div>
         <div *ngIf="isAskQuestion">
           <img
@@ -91,7 +91,10 @@
         />
       </div>
 
-      <div class="dis-flex justify-content" *ngIf="!isAskQuestion">
+      <div
+        class="dis-flex justify-content"
+        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+      >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
             <div class="questionActionsRow">

@@ -10,6 +10,8 @@ export class ResponseTypeButtonComponent implements OnInit {
   @Input() questionForm;
   @Input() fieldTypes;
   @Input() title;
+  @Output() responseTypeOpenEvent: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
   constructor(private formService: FormService) {}
 
   ngOnInit(): void {}
@@ -24,7 +26,7 @@ export class ResponseTypeButtonComponent implements OnInit {
       : null;
   }
 
-  openResponseModal() {
-    this.formService.setOpenResponseType(true);
+  openResponseTypeModal() {
+    this.responseTypeOpenEvent.emit(true);
   }
 }

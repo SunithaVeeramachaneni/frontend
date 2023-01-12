@@ -225,7 +225,9 @@ export class AddLogicComponent implements OnInit {
           multi: false,
           value: '',
           isPublished: false,
-          isPublishedTillSave: false
+          isPublishedTillSave: false,
+          isOpen: false,
+          isResponseTypeModalOpen: false
         };
         this.store.dispatch(
           AddLogicActions.askQuestionsCreate({

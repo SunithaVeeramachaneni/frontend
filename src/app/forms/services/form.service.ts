@@ -17,7 +17,6 @@ export class FormService {
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
-  openResponseType$ = this.openResponseTypeSubject.asObservable();
 
   constructor() {}
 
@@ -27,9 +26,5 @@ export class FormService {
 
   setMultiChoiceOpenState(responseType: ResponseTypeOpenState) {
     this.multiChoiceOpenStateSubject.next(responseType);
-  }
-
-  setOpenResponseType(open: boolean) {
-    this.openResponseTypeSubject.next(open);
   }
 }
