@@ -18,15 +18,34 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import { TableEvent, LoadEvent, SearchEvent, CellClickActionEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-submission',
   templateUrl: './submission.component.html',
-  styleUrls: ['./submission.component.scss']
+  styleUrls: ['./submission.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      state(
+        'in',
+        style({
+          transform: 'translate3d(0,0,0)'
+        })
+      ),
+      state(
+        'out',
+        style({
+          transform: 'translate3d(100%, 0, 0)'
+        })
+      ),
+      transition('in => out', animate('400ms ease-in-out')),
+      transition('out => in', animate('400ms ease-in-out'))
+    ])
+  ]
 })
 export class SubmissionComponent implements OnInit, OnDestroy {
   columns: Column[] = [
@@ -215,8 +234,9 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
-  public menuState = 'in';
+  public menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  submissionDetail: any;
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -313,4 +333,13 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    if (this.submissionDetail && this.submissionDetail.id == event.row.id) {
+      this.menuState = this.menuState === 'out' ? 'in' : 'out';
+    } else {
+      this.menuState = 'in';
+    }
+    this.submissionDetail = event.row;
+  };
 }

@@ -7,7 +7,6 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
-  CreateFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
@@ -16,7 +15,6 @@ import {
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-
 import {
   ErrorInfo,
   FormMetadata,
@@ -461,5 +459,11 @@ export class RaceDynamicFormService {
       rows,
       nextToken
     };
+  }
+
+  getInspectionDetailByInspectionId$ = (
+    inspectionId: string
+  ) => {
+    return from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
   }
 }
