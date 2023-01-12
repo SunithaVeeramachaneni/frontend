@@ -116,6 +116,13 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     return (this.responseForm.get('responses') as FormArray).controls;
   }
 
+  keytab(event) {
+    const element = event.srcElement.nextElementSibling;
+
+    if (element == null) return;
+    else element.focus();
+  }
+
   dropResponse = (event: CdkDragDrop<any>) => {
     moveItemInArray(
       event.container.data,
