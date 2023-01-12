@@ -8,7 +8,7 @@
             {{ totalCount }}
           </span>
           <span class="forms-text">{{
-            'formLibrary'
+            'forms'
               | translate
                 : {
                     count: totalCount || 0
@@ -42,17 +42,20 @@
     </div>
   </div>
 
-  <app-form-detail
-    [@slideInOut]="menuState"
-    (slideInOut)="menuState = 'out'"
-  ></app-form-detail>
+  <ng-container *ngIf="menuState">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+    ></app-form-detail>
+  </ng-container>
 
-  <!-- <app-submission-slider
+  <app-submission-slider
     [@slideInOut]="submissionSlider"
     (slideInOut)="submissionSlider = 'out'"
-  ></app-submission-slider> -->
+  ></app-submission-slider>
 
-  <!-- <button (click)="openSubmissionSlider()">Slider</button> -->
+  <button (click)="openSubmissionSlider()">Slider</button>
 
   <ng-template #loadingForms>
     <div class="ghost-loading">

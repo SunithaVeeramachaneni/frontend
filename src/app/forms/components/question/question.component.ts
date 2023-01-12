@@ -121,6 +121,7 @@ export class QuestionComponent implements OnInit {
   question: Question;
   sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
+  addQuestionClicked: boolean;
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
@@ -141,7 +142,9 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'LTV' &&
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
-        fieldType.type !== 'VI'
+        fieldType.type !== 'VI' &&
+        fieldType.type !== 'IMG' &&
+        fieldType.type !== 'ATT'
     );
     this.questionForm.valueChanges
       .pipe(
@@ -190,14 +193,28 @@ export class QuestionComponent implements OnInit {
     );
   }
 
-  addQuestion(ignoreUpdateIsOpen = false) {
+  addQuestion(ignoreUpdateIsOpen: boolean, ignoreDelay: boolean) {
+    if (this.addQuestionClicked) return;
     this.ignoreUpdateIsOpen = ignoreUpdateIsOpen;
-    this.questionEvent.emit({
-      pageIndex: this.pageIndex,
-      sectionId: this.sectionId,
-      questionIndex: this.questionIndex + 1,
-      type: 'add'
-    });
+    if (ignoreDelay) {
+      this.questionEvent.emit({
+        pageIndex: this.pageIndex,
+        sectionId: this.sectionId,
+        questionIndex: this.questionIndex + 1,
+        type: 'add'
+      });
+    } else {
+      this.addQuestionClicked = true;
+      timer(600).subscribe(() => {
+        this.questionEvent.emit({
+          pageIndex: this.pageIndex,
+          sectionId: this.sectionId,
+          questionIndex: this.questionIndex + 1,
+          type: 'add'
+        });
+        this.addQuestionClicked = false;
+      });
+    }
   }
 
   deleteQuestion() {
@@ -275,6 +292,13 @@ export class QuestionComponent implements OnInit {
   }
 
   updateIsOpen(isOpen: boolean) {
+    const isAskQuestion =
+      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
+    console.log(isAskQuestion);
+
+    if (isAskQuestion) {
+      return;
+    }
     if (this.questionForm.get('isOpen').value !== isOpen) {
       if (!this.ignoreUpdateIsOpen) {
         this.store.dispatch(

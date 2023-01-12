@@ -78,6 +78,8 @@ export class AddLogicComponent implements OnInit {
     { title: 'option2', code: 'option2' }
   ];
 
+  selectedTabIndex: number;
+
   private _pageIndex: number;
   private _questionId: string;
   private _sectionId: string;
@@ -96,7 +98,7 @@ export class AddLogicComponent implements OnInit {
       .select(getQuestionLogics(this.pageIndex, this.questionId))
       .subscribe((logicsT) => {
         // eslint-disable-next-line arrow-body-style
-        logicsFormArray = logicsT.map((logic) => {
+        logicsFormArray = logicsT.map((logic, index) => {
           const mandateQuestions = logic.mandateQuestions;
           const hideQuestions = logic.hideQuestions;
           const askQuestions = this.getSectionQuestions(
@@ -186,6 +188,13 @@ export class AddLogicComponent implements OnInit {
           })
         );
       });
+  }
+
+  trackByLogicId(index: number, el: any): number {
+    return el.value.id;
+  }
+  trackByQuestionIndex(index: number, el: any): number {
+    return index;
   }
 
   deleteLogic(logicId, questionId, pageIndex) {
@@ -317,5 +326,11 @@ export class AddLogicComponent implements OnInit {
       type: 'ask_question_create',
       logic
     });
+  }
+
+  onTabChanged(event) {
+    const clickedIndex = event.index;
+    this.selectedTabIndex = clickedIndex;
+    this.cdrf.detectChanges();
   }
 }

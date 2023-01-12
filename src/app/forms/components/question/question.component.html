@@ -7,7 +7,7 @@
   } as props"
 >
   <div>
-    <div (click)="updateIsOpen(true)">
+    <div (click)="!isAskQuestion && updateIsOpen(true)">
       <div class="dis-flex questions-div">
         <div
           class="width-70 question-input-box"
@@ -23,14 +23,14 @@
             formControlName="name"
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
-            (keyup.enter)="addQuestion()"
+            (keyup.enter)="addQuestion(false, false)"
           />
 
           <div
             class="floating-btns"
             *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
           >
-            <button class="questions-btn" (click)="addQuestion(true)">
+            <button class="questions-btn" (click)="addQuestion(true, true)">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
