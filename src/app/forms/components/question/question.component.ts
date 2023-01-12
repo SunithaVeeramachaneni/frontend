@@ -8,22 +8,30 @@ import {
   ViewChildren,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  tap
+} from 'rxjs/operators';
 import { Observable, timer } from 'rxjs';
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
-  getQuestion,
   getQuestionByID,
   getSectionQuestionsCount,
   State
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
+import { isEqual } from 'lodash-es';
+import { FormConfigurationActions } from '../../state/actions';
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -31,6 +39,7 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionComponent implements OnInit {
+  @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
@@ -63,9 +72,6 @@ export class QuestionComponent implements OnInit {
 
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
-  openResponseType = false;
-  fieldContentOpenState = false;
-  openResponseTypeModal$: Observable<boolean>;
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -75,13 +81,16 @@ export class QuestionComponent implements OnInit {
     position: '',
     required: false,
     multi: false,
-    value: '',
+    value: 'TF',
     isPublished: false,
-    isPublishedTillSave: false
+    isPublishedTillSave: false,
+    isOpen: false,
+    isResponseTypeModalOpen: false
   });
   question$: Observable<Question>;
   question: Question;
   sectionQuestionsCount$: Observable<number>;
+  ignoreUpdateIsOpen: boolean;
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
@@ -102,20 +111,29 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI'
     );
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(
-        debounceTime(1000),
+        startWith({}),
+        debounceTime(500),
         distinctUntilChanged(),
-        tap(() =>
-          this.questionEvent.emit({
-            pageIndex: this.pageIndex,
-            sectionId: this.sectionId,
-            question: this.questionForm.value,
-            questionIndex: this.questionIndex,
-            type: 'update'
-          })
-        )
+        pairwise(),
+        tap(([previous, current]) => {
+          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
+          const {
+            isOpen: currIsOpen,
+            isResponseTypeModalOpen: currIsResponseTypeModalOpen,
+            ...curr
+          } = current;
+          if (!isEqual(prev, curr)) {
+            this.questionEvent.emit({
+              pageIndex: this.pageIndex,
+              sectionId: this.sectionId,
+              question: this.questionForm.value,
+              questionIndex: this.questionIndex,
+              type: 'update'
+            });
+          }
+        })
       )
       .subscribe();
 
@@ -123,6 +141,11 @@ export class QuestionComponent implements OnInit {
       .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
       .pipe(
         tap((question) => {
+          if (question.isOpen) {
+            timer(0).subscribe(() => this.name.nativeElement.focus());
+          } else {
+            timer(0).subscribe(() => this.name.nativeElement.blur());
+          }
           this.question = question;
           this.questionForm.patchValue(question, {
             emitEvent: false
@@ -135,7 +158,8 @@ export class QuestionComponent implements OnInit {
     );
   }
 
-  addQuestion() {
+  addQuestion(ignoreUpdateIsOpen = false) {
+    this.ignoreUpdateIsOpen = ignoreUpdateIsOpen;
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
@@ -154,7 +178,6 @@ export class QuestionComponent implements OnInit {
   }
 
   selectFieldTypeEventHandler(fieldType) {
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
     }
@@ -216,5 +239,34 @@ export class QuestionComponent implements OnInit {
 
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
+  }
+
+  updateIsOpen(isOpen: boolean) {
+    if (this.questionForm.get('isOpen').value !== isOpen) {
+      if (!this.ignoreUpdateIsOpen) {
+        this.store.dispatch(
+          FormConfigurationActions.updateQuestionState({
+            questionId: this.questionId,
+            isOpen,
+            isResponseTypeModalOpen: this.questionForm.get(
+              'isResponseTypeModalOpen'
+            ).value
+          })
+        );
+      }
+      this.ignoreUpdateIsOpen = false;
+    }
+  }
+
+  responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
+    this.questionForm
+      .get('isResponseTypeModalOpen')
+      .setValue(isResponseTypeModalOpen);
+  }
+
+  responseTypeCloseEventHandler(responseTypeClosed: boolean) {
+    this.questionForm
+      .get('isResponseTypeModalOpen')
+      .setValue(!responseTypeClosed);
   }
 }

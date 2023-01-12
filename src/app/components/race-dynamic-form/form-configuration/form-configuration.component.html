@@ -12,7 +12,7 @@
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async
-  }"
+  } as props"
 >
   <div class="dis-flex form-header">
     <div>
@@ -66,7 +66,7 @@
       <div
         class="save-status"
         [hidden]="
-          formSaveStatus !== formConfigurationStatus.saved ||
+          props.formSaveStatus !== formConfigurationStatus.saved ||
           formStatus !== formConfigurationStatus.draft ||
           isFormDetailPublished
         "
@@ -76,7 +76,7 @@
       <div
         class="save-status"
         [hidden]="
-          formSaveStatus !== formConfigurationStatus.saving ||
+          props.formSaveStatus !== formConfigurationStatus.saving ||
           isFormDetailPublished
         "
       >
@@ -155,37 +155,37 @@
                       class="sectionContainer"
                       [pageIndex]="pageIndex"
                       [sectionIndex]="sectionIndex"
+                      [sectionId]="sectionIds[pageIndex][sectionIndex]"
                       (sectionEvent)="sectionEventHandler($event)"
                     >
-                      <ng-container
-                        *ngIf="questionIndexes$ | async as questionIndexes"
+                      <div
+                        class="sectionMinimumDragArea"
+                        cdkDrop
+                        cdkDropList
+                        (cdkDropListDropped)="
+                          drop(
+                            $event,
+                            pageIndex,
+                            sectionIds[pageIndex][sectionIndex]
+                          )
+                        "
+                        [cdkDropListData]="
+                          getQuestionsOfSection(
+                            pageIndex,
+                            sectionIds[pageIndex][sectionIndex]
+                          )
+                        "
+                        [id]="sectionIds[pageIndex][sectionIndex]"
+                        cdkDropListGroup
                       >
-                        <div
-                          class="sectionMinimumDragArea"
-                          cdkDrop
-                          cdkDropList
-                          (cdkDropListDropped)="
-                            drop(
-                              $event,
-                              pageIndex,
-                              sectionIds[pageIndex][sectionIndex]
-                            )
-                          "
-                          [cdkDropListData]="
-                            getQuestionsOfSection(
-                              pageIndex,
-                              sectionIds[pageIndex][sectionIndex]
-                            )
-                          "
-                          [id]="sectionIds[pageIndex][sectionIndex]"
-                          cdkDropListGroup
+                        <ng-container
+                          *ngIf="questionIds$ | async as questionIds"
                         >
                           <ng-container
                             *ngFor="
-                              let questionObj of getQuestionsOfSection(
-                                pageIndex,
+                              let questionId of questionIds[pageIndex][
                                 sectionIds[pageIndex][sectionIndex]
-                              );
+                              ];
                               let questionIndex = index
                             "
                           >
@@ -193,9 +193,12 @@
                               cdkDrag
                               class="questionContainer"
                               [ngClass]="{
-                                'highlight-bg': fieldContentOpenState === true
+                                'highlight-bg':
+                                  getQuestionsOfSection(
+                                    pageIndex,
+                                    sectionIds[pageIndex][sectionIndex]
+                                  )[questionIndex].isOpen === true
                               }"
-                              (click)="toggleFieldContentOpenState()"
                             >
                               <div class="question-drag-handler">
                                 <img
@@ -209,17 +212,17 @@
                               <app-question
                                 class="question"
                                 [pageIndex]="pageIndex"
-                                [questionId]="questionObj.id"
                                 [sectionId]="
                                   sectionIds[pageIndex][sectionIndex]
                                 "
+                                [questionId]="questionId"
                                 [questionIndex]="questionIndex"
                                 (questionEvent)="questionEventHandler($event)"
                               ></app-question>
                             </div>
                           </ng-container>
-                        </div>
-                      </ng-container>
+                        </ng-container>
+                      </div>
                     </app-section>
                   </div>
                 </div>
@@ -231,7 +234,6 @@
     </div>
     <div class="width-30">
       <app-iphone></app-iphone>
-      <!-- <app-preview></app-preview> -->
     </div>
   </div>
 </div>

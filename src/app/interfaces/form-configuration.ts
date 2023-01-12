@@ -19,6 +19,7 @@ export interface FormMetadata {
 export interface Page {
   name: string;
   position: number;
+  isOpen: boolean;
   sections: Section[];
   questions: Question[];
 }
@@ -27,6 +28,7 @@ export interface Section {
   id: string;
   name: string;
   position: number;
+  isOpen: boolean;
 }
 
 export interface Question {
@@ -40,6 +42,8 @@ export interface Question {
   value: any;
   isPublished: boolean;
   isPublishedTillSave: boolean;
+  isOpen: boolean;
+  isResponseTypeModalOpen: boolean;
 }
 
 export interface PageEvent {

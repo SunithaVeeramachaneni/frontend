@@ -107,6 +107,14 @@ export const addPage = createAction(
   }>()
 );
 
+export const updatePageState = createAction(
+  '[Form Configuration Component] updatePageState',
+  props<{
+    pageIndex: number;
+    isOpen: boolean;
+  }>()
+);
+
 export const deletePage = createAction(
   '[Form Configuration Component] deletePage',
   props<{
@@ -131,8 +139,8 @@ export const addSection = createAction(
   }>()
 );
 
-export const updatePage = createAction(
-  '[Form Configuration] updatePage',
+export const updatePageSections = createAction(
+  '[Form Configuration] updatePageSections',
   props<{
     data: any;
     pageIndex: number;
@@ -151,6 +159,15 @@ export const updateSection = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
+  }>()
+);
+
+export const updateSectionState = createAction(
+  '[Form Configuration Component] updateSectionState',
+  props<{
+    sectionId: string;
+    pageIndex: number;
+    isOpen: boolean;
   }>()
 );
 
@@ -202,6 +219,15 @@ export const updateQuestion = createAction(
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
+  }>()
+);
+
+export const updateQuestionState = createAction(
+  '[Form Configuration Component] updateQuestionState',
+  props<{
+    questionId: string;
+    isOpen: boolean;
+    isResponseTypeModalOpen: boolean;
   }>()
 );
 
