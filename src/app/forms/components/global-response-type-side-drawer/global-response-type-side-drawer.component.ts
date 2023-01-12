@@ -58,7 +58,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
     this.responseForm.valueChanges
       .pipe(
         pairwise(),
-        debounceTime(1000),
+        debounceTime(500),
         distinctUntilChanged(),
         tap(([prev, curr]) => {
           if (isEqual(prev, curr)) this.isResponseFormUpdated = false;
