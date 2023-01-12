@@ -34,7 +34,11 @@
             *ngIf="quickResponsesData.data.length; else loadingQuickResponses"
           >
             <div *ngFor="let resp of quickResponsesData.data" class="h-36">
-              <button mat-flat-button class="quick-response responseBtn">
+              <button
+                mat-flat-button
+                class="quick-response responseBtn"
+                (click)="closeResponseType()"
+              >
                 <mat-chip-list *ngFor="let val of resp.values; let i = index">
                   <mat-chip
                     *ngIf="i < 2"
@@ -87,7 +91,7 @@
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
         <div *ngIf="globalResponses$ | async as globalResponses">
           <div *ngFor="let response of globalResponses">
-            {{ response.name }}
+            {{ response?.name }}
             <button
               mat-flat-button
               (click)="handleEditGlobalResponse(response)"

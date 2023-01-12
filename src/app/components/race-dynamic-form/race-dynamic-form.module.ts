@@ -53,6 +53,7 @@ import { SubmissionViewComponent } from './submission-view/submission-view.compo
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AvatarComponent } from './form-configuration/avatar.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -92,6 +93,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatIconModule,
     MatMenuModule,
     MatExpansionModule,
+    MatTooltipModule,
     NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {

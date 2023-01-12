@@ -20,7 +20,7 @@ export class ResponseTypeComponent implements OnInit {
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
-  public globalResponses$: Observable<[]>;
+  public globalResponses$: Observable<any[]>;
   public responseToBeEdited: any;
   quickResponsesData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<any>({
@@ -116,6 +116,10 @@ export class ResponseTypeComponent implements OnInit {
     this.responseTypeCloseEvent.emit(true);
   }
 
+  closeResponseType() {
+    this.responseTypeCloseEvent.emit(true);
+  }
+
   toggleResponseTypeModal(value) {
     this.responseTypeCloseEvent.emit(true);
   }
@@ -133,6 +137,13 @@ export class ResponseTypeComponent implements OnInit {
 
   handleGlobalResponsesToggle() {
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
+    if (this.isGlobalResponseOpen) {
+      this.formService.setMultiChoiceOpenState({
+        isOpen: true,
+        response: []
+      });
+      this.responseTypeCloseEvent.emit(true);
+    }
   }
 
   handleEditGlobalResponse = (response: any) => {
