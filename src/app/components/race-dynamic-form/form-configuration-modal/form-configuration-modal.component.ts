@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -55,12 +61,15 @@ export class FormConfigurationModalComponent implements OnInit {
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
     private readonly loginService: LoginService,
     private store: Store<State>,
-    private rdfService: RaceDynamicFormService
+    private rdfService: RaceDynamicFormService,
+    private cdrf: ChangeDetectorRef
   ) {
     this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
       if (tags && tags.length) {
         this.allTags = tags[0].values;
         this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+        this.tagsCtrl.setValue('');
+        this.cdrf.detectChanges();
       }
     });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
