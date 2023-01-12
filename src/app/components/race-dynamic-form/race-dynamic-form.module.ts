@@ -49,6 +49,9 @@ import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AvatarComponent } from './form-configuration/avatar.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -64,7 +67,9 @@ export const customTranslateLoader = (http: HttpClient) =>
     FormConfigurationModalComponent,
     FormConfigurationComponent,
     SubmissionSliderComponent,
-    SubmissionViewComponent
+    SubmissionViewComponent,
+    SelectQuestionsDialogComponent,
+    AvatarComponent
   ],
   imports: [
     FormsModule,
@@ -86,6 +91,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatIconModule,
     MatMenuModule,
     MatExpansionModule,
+    NgxShimmerLoadingModule,
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
@@ -100,9 +106,9 @@ export const customTranslateLoader = (http: HttpClient) =>
       }
     }),
     DynamictableModule,
-    NgxShimmerLoadingModule,
     OverlayModule,
     MatSelectModule,
+    MatCheckboxModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
     }),

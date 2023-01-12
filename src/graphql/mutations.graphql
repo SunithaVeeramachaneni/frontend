@@ -1,4 +1,58 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateResponseSet(
+  $input: CreateResponseSetInput!
+  $condition: ModelResponseSetConditionInput
+) {
+  createResponseSet(input: $input, condition: $condition) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateResponseSet(
+  $input: UpdateResponseSetInput!
+  $condition: ModelResponseSetConditionInput
+) {
+  updateResponseSet(input: $input, condition: $condition) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteResponseSet(
+  $input: DeleteResponseSetInput!
+  $condition: ModelResponseSetConditionInput
+) {
+  deleteResponseSet(input: $input, condition: $condition) {
+    id
+    type
+    name
+    description
+    isMultiColumn
+    values
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateFormDetail(
   $input: CreateFormDetailInput!
   $condition: ModelFormDetailConditionInput
@@ -54,6 +108,7 @@ mutation CreateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -72,6 +127,7 @@ mutation UpdateAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -90,6 +146,7 @@ mutation DeleteAuthoredFormDetail(
     version
     pages
     counter
+    formDetailPublishStatus
     formlistID
     createdAt
     updatedAt
@@ -261,6 +318,7 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -299,6 +357,7 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version
@@ -337,6 +396,7 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
+    isArchived
     createdAt
     updatedAt
     _version

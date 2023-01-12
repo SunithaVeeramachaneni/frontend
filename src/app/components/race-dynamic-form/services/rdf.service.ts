@@ -7,13 +7,24 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
+  CreateFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
-import { ErrorInfo, LoadEvent, SearchEvent, TableEvent } from './../../../interfaces';
+import { AppService } from 'src/app/shared/services/app.services';
+import { environment } from 'src/environments/environment';
+import {
+  ErrorInfo,
+  FormMetadata,
+  LoadEvent,
+  SearchEvent,
+  TableEvent
+} from './../../../interfaces';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { ToastService } from 'src/app/shared/toast';
 
 const limit = 10000;
 @Injectable({
@@ -22,7 +33,55 @@ const limit = 10000;
 export class RaceDynamicFormService {
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
-  constructor(private readonly awsApiService: APIService) {}
+  constructor(
+    private readonly awsApiService: APIService,
+    private toastService: ToastService,
+    private appService: AppService
+  ) {}
+
+  createTags$ = (
+    tags: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', tags, info);
+
+  createDataSet$ = (
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._postData(environment.rdfApiUrl, 'datasets', dataset, info);
+
+  updateDataSet$ = (
+    datasetId: string,
+    dataset: any,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any> =>
+    this.appService._putDataToGateway(
+      environment.rdfApiUrl,
+      `datasets/${datasetId}`,
+      dataset,
+      info
+    );
+
+  getDataSetsByType$ = (
+    datasetType: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `datasets/${datasetType}`,
+      info
+    );
+  getDataSetsByFormId$ = (
+    datasetType: string,
+    formId: string,
+    info: ErrorInfo = {} as ErrorInfo
+  ): Observable<any[]> =>
+    this.appService._getResp(
+      environment.rdfApiUrl,
+      `datasets/${datasetType}/${formId}`,
+      info
+    );
 
   getFormsList$(queryParams: {
     nextToken?: string;
@@ -98,23 +157,22 @@ export class RaceDynamicFormService {
   ) {
     return from(
       this.awsApiService.CreateFormList({
-        formLogo: formListQuery.formLogo ?? '',
-        name: formListQuery?.name ?? '',
-        description: formListQuery.description ?? '',
-        formStatus: formListQuery.formStatus ?? '',
-        author: formListQuery.author ?? '',
-        formType: formListQuery.formType ?? '',
-        tags: formListQuery.tags || null,
+        name: formListQuery.name,
+        formLogo: formListQuery.formLogo,
+        description: formListQuery.description,
+        formStatus: formListQuery.formStatus,
+        author: formListQuery.author,
+        formType: formListQuery.formType,
+        tags: formListQuery.tags,
         isPublic: formListQuery.isPublic
       })
     );
   }
 
   updateForm$(formMetaDataDetails) {
-    const { isArchived, ...form } = formMetaDataDetails.formMetadata;
     return from(
       this.awsApiService.UpdateFormList({
-        ...form,
+        ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );
@@ -122,6 +180,10 @@ export class RaceDynamicFormService {
 
   deleteForm$(id: string) {
     return from(this.awsApiService.DeleteFormList({ id }, {}));
+  }
+
+  getFormById$(id: string) {
+    return from(this.awsApiService.GetFormList(id));
   }
 
   createFormDetail$(formDetails) {
@@ -154,6 +216,7 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.CreateAuthoredFormDetail({
         formStatus: formDetails.formStatus,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
@@ -166,6 +229,7 @@ export class RaceDynamicFormService {
     return from(
       this.awsApiService.UpdateAuthoredFormDetail({
         formStatus: formDetails.formStatus,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
         formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
@@ -173,6 +237,30 @@ export class RaceDynamicFormService {
         _version: formDetails.authoredFormDetailDynamoDBVersion
       } as UpdateAuthoredFormDetailInput)
     );
+  }
+
+  getAuthoredFormDetailByFormId$(formId: string) {
+    return from(
+      this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
+        formStatus: { eq: formConfigurationStatus.draft }
+      })
+    ).pipe(map(({ items }) => items));
+  }
+
+  getFormDetailByFormId$(formId: string) {
+    return from(this.awsApiService.FormDetailsByFormlistID(formId)).pipe(
+      map(({ items }) => items)
+    );
+  }
+
+  handleError(error: any) {
+    const message = error.errors?.length
+      ? error.errors[0].message.split(':')[0]
+      : error.message;
+    this.toastService.show({
+      type: 'warning',
+      text: message
+    });
   }
 
   formatFormData = (form, pages): string => {
@@ -183,7 +271,7 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions } = page;
+      const { sections, questions, logics } = page;
       const pageItem = {
         SECTIONS: sections.map((section) => {
           const questionsBySection = questions.filter(
@@ -197,7 +285,12 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: ''
+                DEFAULTVALUE: '',
+                UIVALIDATION: this.getValidationExpression(
+                  question.id,
+                  questions,
+                  logics
+                )
               };
 
               if (question.fieldType === 'ARD') {
@@ -220,6 +313,77 @@ export class RaceDynamicFormService {
     return JSON.stringify({ FORMS: forms });
   };
 
+  getValidationExpression(questionId, questions, logics) {
+    let expression = '';
+    let globalIndex = 0;
+    const questionLogics = logics.filter(
+      (logic) => logic.questionId === questionId
+    );
+    if (!questionLogics || !questionLogics.length) return expression;
+
+    questionLogics.forEach((logic) => {
+      const isEmpty = !logic.operand2.length;
+
+      // Mandate Questions;
+      const mandatedQuestions = logic.mandateQuestions;
+      if (mandatedQuestions && mandatedQuestions.length) {
+        mandatedQuestions.forEach((mq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Hide Questions;
+      const hiddenQuestions = logic.hideQuestions;
+      if (hiddenQuestions && hiddenQuestions.length) {
+        hiddenQuestions.forEach((hq) => {
+          globalIndex = globalIndex + 1;
+          if (isEmpty) {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+          } else {
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+          }
+        });
+      }
+
+      // Ask Questions;
+      const askQuestions = questions.filter(
+        (q) => q.sectionId === `AQ_${logic.id}`
+      );
+      askQuestions.forEach((q) => {
+        globalIndex = globalIndex + 1;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+      });
+    });
+    if (expression[0] === ';') {
+      expression = expression.slice(1, expression.length);
+    }
+    if (expression[expression.length - 1] === ';') {
+      expression = expression.slice(0, expression.length - 1);
+    }
+    return expression;
+  }
+
+  fetchAllFormListNames$() {
+    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
+    return from(API.graphql(graphqlOperation(statement))).pipe(
+      map(
+        ({ data: { listFormLists } }: any) =>
+          listFormLists?.items as GetFormListQuery[]
+      )
+    );
+  }
+
+  getAuthoredFormDetail$(formlistID: string) {
+    return from(
+      this.awsApiService.AuthoredFormDetailsByFormlistID(formlistID)
+    ).pipe(map(({ items }) => items));
+  }
+
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
     const rows =
       resp.items
@@ -230,15 +394,16 @@ export class RaceDynamicFormService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            style: {
-              width: '30px',
-              height: '30px',
-              'border-radius': '50%',
-              display: 'block',
-              padding: '0px 10px'
-            },
             image: p?.formLogo,
             condition: true
+          },
+          preTextImageConfig: {
+            logoAvialable: p?.formLogo === '' ? false : true,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            }
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,

@@ -1,5 +1,10 @@
 @import '../../../../scss/colors.scss';
 
+.disable-form-interactions {
+  pointer-events: none;
+  user-select: none;
+}
+
 .create-form-main {
   overflow: hidden;
   position: relative;
@@ -191,4 +196,12 @@
   .section-six-dots {
     left: 80px !important;
   }
+}
+.sectionEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  color: $gray-text;
+  height: 50px;
 }

@@ -8,7 +8,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, tap } from 'rxjs/operators';
 import {
   FormBuilder,
   FormControl,
@@ -17,11 +17,12 @@ import {
 } from '@angular/forms';
 import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { formConfigurationStatus } from 'src/app/app.constants';
+import { RaceDynamicFormService } from '../services/rdf.service';
 
 @Component({
   selector: 'app-form-configuration-modal',
@@ -40,17 +41,28 @@ export class FormConfigurationModalComponent implements OnInit {
   tagsCtrl = new FormControl();
   filteredTags: Observable<string[]>;
   tags: string[] = [];
-  allTags: string[] = ['Mining', 'Oil & Gas', 'Oil & Gas'];
+
+  allTags: string[] = [];
+  originalTags: string[] = [];
+
   headerDataForm: FormGroup;
   errors: ValidationError = {};
+  readonly formConfigurationStatus = formConfigurationStatus;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     public dialogRef: MatDialogRef<FormConfigurationModalComponent>,
-    private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly loginService: LoginService,
-    private store: Store<State>
+    private store: Store<State>,
+    private rdfService: RaceDynamicFormService
   ) {
+    this.rdfService.getDataSetsByType$('tags').subscribe((tags) => {
+      if (tags && tags.length) {
+        this.allTags = tags[0].values;
+        this.originalTags = JSON.parse(JSON.stringify(tags[0].values));
+      }
+    });
     this.filteredTags = this.tagsCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) =>
@@ -72,8 +84,8 @@ export class FormConfigurationModalComponent implements OnInit {
       description: [''],
       isPublic: [false],
       isArchived: [false],
-      formStatus: ['Draft'],
-      formType: ['Standalone'],
+      formStatus: [formConfigurationStatus.draft],
+      formType: [formConfigurationStatus.standalone],
       tags: [this.tags]
     });
   }
@@ -122,11 +134,29 @@ export class FormConfigurationModalComponent implements OnInit {
   }
 
   next() {
+    const newTags = [];
+    this.tags.forEach((selectedTag) => {
+      if (this.originalTags.indexOf(selectedTag) < 0) {
+        newTags.push(selectedTag);
+      }
+    });
+    if (newTags.length) {
+      const dataSet = {
+        type: 'tags',
+        values: newTags
+      };
+      this.rdfService.createTags$(dataSet).subscribe((response) => {
+        // do nothing
+      });
+    }
+
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
         FormConfigurationActions.addFormMetadata({
-          formMetadata: this.headerDataForm.value
+          formMetadata: this.headerDataForm.value,
+          formDetailPublishStatus: formConfigurationStatus.draft,
+          formSaveStatus: formConfigurationStatus.saving
         })
       );
       this.store.dispatch(
@@ -139,7 +169,7 @@ export class FormConfigurationModalComponent implements OnInit {
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,
-            formLogo: 'https://cdn-icons-png.flaticon.com/512/1250/1250689.png'
+            formLogo: ''
           }
         })
       );

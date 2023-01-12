@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
+  AddLogicActions,
   FormConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
@@ -16,10 +18,11 @@ export interface FormConfigurationState {
   isFormDetailPublished: boolean;
   createOrEditForm: boolean;
   formSaveStatus: string;
-  formPublishStatus: string;
+  formDetailPublishStatus: string;
   formListDynamoDBVersion: number;
   formDetailDynamoDBVersion: number;
   authoredFormDetailDynamoDBVersion: number;
+  isFormCreated: boolean;
 }
 
 const initialState = {
@@ -33,10 +36,11 @@ const initialState = {
   isFormDetailPublished: false,
   createOrEditForm: false,
   formSaveStatus: '',
-  formPublishStatus: '',
+  formDetailPublishStatus: '',
   formListDynamoDBVersion: 0,
   formDetailDynamoDBVersion: 0,
-  authoredFormDetailDynamoDBVersion: 0
+  authoredFormDetailDynamoDBVersion: 0,
+  isFormCreated: false
 };
 
 export const formConfigurationReducer = createReducer<FormConfigurationState>(
@@ -46,8 +50,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...action.formMetadata },
-      formStatus: 'Draft',
-      formSaveStatus: 'Saving'
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(
@@ -73,7 +77,8 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
       formSaveStatus: action.formSaveStatus,
-      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
+      authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version,
+      isFormCreated: action.isFormCreated
     })
   ),
   on(
@@ -88,7 +93,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationApiActions.createFormDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formStatus: 'Published',
+      formStatus: action.formStatus,
       formMetadata: {
         ...state.formMetadata,
         formStatus: 'Published'
@@ -96,24 +101,26 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formDetailId: action.formDetail.id,
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
-      formPublishStatus: action.formPublishStatus,
+      formDetailPublishStatus: action.formDetailPublishStatus,
       formDetailDynamoDBVersion: action.formDetail._version,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
-      authoredFormDetailDynamoDBVersion: 1
+      authoredFormDetailDynamoDBVersion: 1,
+      authoredFormDetailId: action.authoredFormDetail.id
     })
   ),
   on(
     FormConfigurationApiActions.updateFormDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
-      formStatus: 'Published',
+      formStatus: action.formStatus,
       formDetailId: action.formDetail.id,
       authoredFormDetailVersion: state.authoredFormDetailVersion + 1,
       isFormDetailPublished: false,
-      formPublishStatus: action.formPublishStatus,
+      formDetailPublishStatus: action.formDetailPublishStatus,
       formDetailDynamoDBVersion: action.formDetail._version,
       formListDynamoDBVersion: state.formListDynamoDBVersion + 1,
-      authoredFormDetailDynamoDBVersion: 1
+      authoredFormDetailDynamoDBVersion: 1,
+      authoredFormDetailId: action.authoredFormDetail.id
     })
   ),
   on(
@@ -128,19 +135,11 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           formStatus:
             state.formStatus === 'Published' ? state.formStatus : formStatus
         },
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
-  ),
-  on(
-    FormConfigurationActions.updateCounter,
-    (state, action): FormConfigurationState => ({
-      ...state,
-      counter: action.counter,
-      formStatus: 'Draft',
-      formSaveStatus: 'Saving'
-    })
   ),
   on(
     FormConfigurationActions.updateIsFormDetailPublished,
@@ -153,7 +152,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     FormConfigurationActions.updateFormPublishStatus,
     (state, action): FormConfigurationState => ({
       ...state,
-      formPublishStatus: action.formPublishStatus
+      formDetailPublishStatus: action.formDetailPublishStatus
     })
   ),
   on(
@@ -174,8 +173,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           .slice(action.pageIndex)
           .map((page) => ({ ...page, position: page.position + 1 }))
       ],
-      formStatus: 'Draft',
-      formSaveStatus: 'Saving'
+      counter: action.questionCounter,
+      formStatus: action.formStatus,
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(
@@ -188,8 +189,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           .slice(action.pageIndex + 1)
           .map((page) => ({ ...page, position: page.position - 1 }))
       ],
-      formStatus: 'Draft',
-      formSaveStatus: 'Saving'
+      formStatus: action.formStatus,
+      formDetailPublishStatus: action.formDetailPublishStatus,
+      formSaveStatus: action.formSaveStatus
     })
   ),
   on(
@@ -216,8 +218,10 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        counter: action.questionCounter,
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -241,8 +245,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -272,8 +277,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -297,8 +303,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -331,11 +338,14 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        counter: action.questionCounter,
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestion,
     (state, action): FormConfigurationState => {
@@ -362,11 +372,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestionBySection,
     (state, action): FormConfigurationState => {
@@ -388,8 +400,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -423,8 +436,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
   ),
@@ -501,10 +515,18 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        formStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        formStatus: action.formStatus,
+        formDetailPublishStatus: action.formDetailPublishStatus,
+        formSaveStatus: action.formSaveStatus
       };
     }
+  ),
+  on(
+    FormConfigurationActions.updateFormConfiguration,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      ...action.formConfiguration
+    })
   ),
   on(
     FormConfigurationActions.resetFormConfiguration,
@@ -512,5 +534,164 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       ...state,
       ...initialState
     })
+  ),
+  on(
+    AddLogicActions.addLogicToQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          return {
+            ...page,
+            logics: [...page.logics, action.logic]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.updateQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const logics = page.logics.map((logic) => {
+            const logicObj = Object.assign({}, logic);
+            if (logic.id === action.logic.id) {
+              return action.logic;
+            }
+            return logicObj;
+          });
+
+          return {
+            ...page,
+            logics
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.deleteQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (l) => l.id !== action.logicId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsCreate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          page.questions.push(action.question);
+          // const questions = JSON.parse(JSON.stringify(page.questions));
+          // questions.push(action.question);
+          return {
+            ...page
+            // questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsUpdate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          let questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions = [
+            ...questions.slice(0, questionIndex),
+            action.question,
+            ...questions.slice(questionIndex + 1)
+          ];
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsDelete,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions.splice(questionIndex, 1);
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
   )
 );
