@@ -18,7 +18,7 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import { TableEvent, LoadEvent, SearchEvent, CellClickActionEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
@@ -202,7 +202,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -252,7 +252,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
+    // this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
@@ -347,15 +347,12 @@ export class SubmissionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {}
 
-  rowLevelActionHandler = ({ data, action }): void => {
-    switch (action) {
-      case 'edit':
-        this.submissionDetail = data;
-        this.menuState = this.menuState === 'out' ? 'in' : 'out';
-        break;
-      case 'archive':
-        break;
-      default:
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    if (this.submissionDetail && this.submissionDetail.id == event.row.id) {
+      this.menuState = this.menuState === 'out' ? 'in' : 'out';
+    } else {
+      this.menuState = 'in';
     }
+    this.submissionDetail = event.row;
   };
 }

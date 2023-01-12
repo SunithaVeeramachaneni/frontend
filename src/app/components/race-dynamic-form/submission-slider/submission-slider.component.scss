@@ -20,7 +20,9 @@
   .mat-card {
     box-shadow: none;
   }
-
+.close-img{
+  cursor: pointer;
+}
   .view-report-btn {
     width: 48%;
     border: 1px solid $blue-main;

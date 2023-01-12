@@ -1,12 +1,12 @@
 <div id="openSlider">
   <mat-card>
     <div>
-      <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
+      <img class="close-img" (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
       <br />
       <button class="view-report-btn" (click)="navigateView()">
         View Report
       </button>
-      <button class="download-btn">
+      <button disabled class="download-btn">
         <mat-icon class="download-icon">picture_as_pdf</mat-icon>
         <span class="download-text">Download</span>
       </button>
