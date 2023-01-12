@@ -34,7 +34,16 @@
             *ngIf="quickResponsesData.data.length; else loadingQuickResponses"
           >
             <div *ngFor="let resp of quickResponsesData.data" class="h-36">
-              <button mat-flat-button class="quick-response responseBtn">
+              <button
+                mat-flat-button
+                class="quick-response responseBtn"
+                (click)="
+                  handleMCQRepsonseSelection(
+                    resp.values?.length > 4 ? 'DD' : 'VI',
+                    resp.values
+                  )
+                "
+              >
                 <mat-chip-list *ngFor="let val of resp.values; let i = index">
                   <mat-chip
                     *ngIf="i < 2"
@@ -86,8 +95,10 @@
       <div class="height-50">
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
         <div *ngIf="globalResponses$ | async as globalResponses">
-          <div *ngFor="let response of globalResponses">
-            {{ response.name }}
+          <mat-chip-list *ngFor="let response of globalResponses">
+            <mat-chip (click)="handleMCQRepsonseSelection('DD', response.values)">
+              {{ response.name }}
+            </mat-chip>
             <button
               mat-flat-button
               (click)="handleEditGlobalResponse(response)"

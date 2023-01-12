@@ -15,6 +15,7 @@ export class ResponseTypeComponent implements OnInit {
   @Input() fieldTypes;
   @Input() question;
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
   @Output() responseTypeCloseEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
@@ -115,6 +116,11 @@ export class ResponseTypeComponent implements OnInit {
     }
     this.responseTypeCloseEvent.emit(true);
   }
+
+  handleMCQRepsonseSelection = (type, value) => {
+    this.selectFieldTypeEvent.emit({ type });
+    this.setQuestionValue.emit(JSON.parse(value));
+  };
 
   toggleResponseTypeModal(value) {
     this.responseTypeCloseEvent.emit(true);

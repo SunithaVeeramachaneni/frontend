@@ -154,6 +154,7 @@ export class QuestionComponent implements OnInit {
         pairwise(),
         tap(([previous, current]) => {
           const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
+          console.log('curr', current);
           const {
             isOpen: currIsOpen,
             isResponseTypeModalOpen: currIsResponseTypeModalOpen,
