@@ -16,7 +16,6 @@ import {
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
-
 import {
   ErrorInfo,
   FormMetadata,
@@ -439,15 +438,16 @@ export class RaceDynamicFormService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            style: {
-              width: '30px',
-              height: '30px',
-              'border-radius': '50%',
-              display: 'block',
-              padding: '0px 10px'
-            },
             image: p?.formLogo,
             condition: true
+          },
+          preTextImageConfig: {
+            logoAvialable: p?.formLogo === '' ? false : true,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            }
           },
           responses: '23/26',
           createdAt: format(new Date(p?.createdAt), 'Do MMM'),
@@ -460,5 +460,11 @@ export class RaceDynamicFormService {
       rows,
       nextToken
     };
+  }
+
+  getInspectionDetailByInspectionId$ = (
+    inspectionId: string
+  ) => {
+    return from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
   }
 }

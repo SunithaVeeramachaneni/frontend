@@ -64,7 +64,9 @@
   }
 
   .import-btn:disabled {
-    border: none;
+    border-color: $border-color;
+    background-color: $border-color;
+    color: $light-gray;
   }
 
   .publish-btn {

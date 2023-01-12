@@ -64,6 +64,7 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 })
 export class FormListComponent implements OnInit {
   public menuState = 'out';
+  submissionSlider = 'out';
 
   columns: Column[] = [
     {
@@ -462,17 +463,17 @@ export class FormListComponent implements OnInit {
         action: 'edit'
       },
       {
-        title: 'Copy Template',
+        title: 'Copy',
         action: 'copy'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
-      },
-      {
-        title: 'Upload to Public Library',
-        action: 'upload'
       }
+      // {
+      //   title: 'Archive',
+      //   action: 'archive'
+      // },
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;

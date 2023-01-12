@@ -2,6 +2,13 @@
   <div class="main-container">
     <div class="forms-header">
       <h2 class="heading" translate="submissions"></h2>
+      <div id="openviewtab">
+        <app-submission-slider
+          [@slideInOut]="menuState"
+          (slideInOut)="menuState = 'out'"
+          [submission]="submissionDetail"
+        ></app-submission-slider>
+      </div>
       <span class="custom-form-field-gray-color search">
         <span
           class="no-of-forms"
@@ -71,6 +78,7 @@
         [dataSource]="dataSource"
         [configOptions]="configOptions"
         (fetchDataCallback)="handleTableEvent($event)"
+        (cellClickActionHandler)="cellClickActionHandler($event)"
         class="width-100"
       ></cwp-dynamictable>
     </div>
