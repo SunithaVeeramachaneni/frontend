@@ -85,5 +85,10 @@
   "prevBtn": "Previous",
   "addAtt": "Add Attachments",
   "des": "Description",
-  "sectionEmptyMessage": "Section does not have any questions. Please add questions"
+  "sectionEmptyMessage": "Section does not have any questions. Please add questions",
+  "pages": "PAGES",
+  "questions": "QUESTIONS",
+  "editForm": "Edit Form",
+  "createdBy": "Created by",
+  "preview": "Preview"
 }

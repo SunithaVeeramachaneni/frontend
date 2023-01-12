@@ -13,7 +13,9 @@
 
       <div class="name-heading">
         <div>
-          <p class="color-gray">Created by</p>
+          <p class="color-gray">
+            {{ 'createdBy' | translate }}
+          </p>
         </div>
         <div class="flex-custom">
           <h4 class="create-name">{{ selectedForm?.author }}</h4>
@@ -25,17 +27,21 @@
       </div>
     </ng-container>
     <div>
-      <h4>Preview</h4>
+      <h4>{{ 'preview' | translate }}</h4>
       <div>
         <div class="name-heading">
           <div class="flex-custom">
-            <h4 class="create-name">{{ pagesCount }} PAGES</h4>
+            <h4 class="create-name">
+              {{ pagesCount }} {{ 'pages' | translate }}
+            </h4>
             <span class="dots"></span>
-            <p class="date-name color-gray">{{ questionsCount }} QUESTIONS</p>
+            <p class="date-name color-gray">
+              {{ questionsCount }} {{ 'questions' | translate }}
+            </p>
           </div>
           <div (click)="onNavigateToDetailPage()">
             <button mat-raised-button class="w-full btn-push btn-primary-blue">
-              Edit Form
+              {{ 'editForm' | translate }}
             </button>
           </div>
         </div>

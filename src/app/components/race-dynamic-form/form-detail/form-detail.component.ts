@@ -1,6 +1,5 @@
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { GetFormListQuery } from 'src/app/API.service';
 import {
   Component,
   EventEmitter,
@@ -12,13 +11,15 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import { format } from 'date-fns';
-import { isJson } from '../utils/utils';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+
 import { State } from 'src/app/forms/state';
+import { isJson } from '../utils/utils';
+import { RaceDynamicFormService } from '../services/rdf.service';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { GetFormListQuery } from 'src/app/API.service';
 @Component({
   selector: 'app-form-detail',
   templateUrl: './form-detail.component.html',
