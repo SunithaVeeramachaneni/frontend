@@ -178,6 +178,7 @@
                 </span>
               </span>
               <app-response-type-side-drawer
+                (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [question]="question"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>

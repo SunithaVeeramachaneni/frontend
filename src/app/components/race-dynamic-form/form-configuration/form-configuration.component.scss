@@ -197,3 +197,11 @@
     left: 80px !important;
   }
 }
+.sectionEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  color: $gray-text;
+  height: 50px;
+}

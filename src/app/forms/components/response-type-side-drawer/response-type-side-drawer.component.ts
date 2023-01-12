@@ -16,6 +16,7 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
+import { ResponseTypeOpenState } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 
 @Component({
@@ -26,11 +27,19 @@ import { FormService } from '../../services/form.service';
 })
 export class ResponseTypeSideDrawerComponent implements OnInit {
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
+
   @Input() question;
   sliderOpenState$: Observable<boolean>;
-  multipleChoiceOpenState$: Observable<boolean>;
+  multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
+
+  responseId = '';
+  respType = '';
+
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
+  multipleChoiceOpenState = false;
 
   sliderOptions = {
     value: 0,
@@ -47,7 +56,30 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ngOnInit(): void {
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
+
+    this.multipleChoiceOpenState$.subscribe((state) => {
+      this.multipleChoiceOpenState = state.isOpen;
+      this.responseId = state.response.id;
+      this.cdrf.detectChanges();
+
+      if (state.isOpen) {
+        state.response.values = state.response.values || [];
+        const responsesArray = [];
+        state.response.values.map((response) => {
+          responsesArray.push(this.fb.group(response));
+        });
+        this.responseForm.setControl(
+          'responses',
+          this.fb.array(responsesArray || [])
+        );
+        this.responseForm.patchValue({ id: state.response.id });
+        this.isFormNotUpdated = false;
+        this.cdrf.detectChanges();
+      }
+    });
+
     this.responseForm = this.fb.group({
+      id: new FormControl(''),
       name: new FormControl(''),
       responses: this.fb.array([])
     });
@@ -91,7 +123,16 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   };
 
   submitResponses = () => {
-    this.formService.setMultiChoiceOpenState(false);
+    let eventType = 'quickResponsesAdd';
+    if (this.responseForm.value.id && this.responseForm.value.id.length) {
+      eventType = 'quickResponseUpdate';
+    }
+    this.responseTypeHandler.emit({
+      eventType,
+      data: this.responseForm.getRawValue()
+    });
+    this.multipleChoiceOpenState = false;
+    this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
 
   keytab(event) {
@@ -102,7 +143,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
 
   cancelResponse = () => {
-    this.formService.setMultiChoiceOpenState(false);
+    this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });
   };
 
   applySliderOptions(values) {

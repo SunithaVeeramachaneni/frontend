@@ -22,11 +22,13 @@ import {
   getQuestionByID,
   getSectionQuestionsCount,
   State,
-  getQuestionLogics
+  getQuestionLogics,
+  getFormMetadata
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
 import { AddLogicActions } from '../../state/actions';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 
 @Component({
   selector: 'app-question',
@@ -119,7 +121,8 @@ export class QuestionComponent implements OnInit {
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
-    private formService: FormService
+    private formService: FormService,
+    private rdfService: RaceDynamicFormService
   ) {}
 
   ngOnInit(): void {
@@ -332,6 +335,42 @@ export class QuestionComponent implements OnInit {
             question: newQuestion
           })
         );
+        break;
+    }
+  }
+  quickResponseTypeHandler(event) {
+    let formId;
+    this.store.select(getFormMetadata).pipe(
+      tap((formMetadata) => {
+        formId = formMetadata.id;
+      })
+    );
+    switch (event.eventType) {
+      case 'quickResponsesAdd':
+        const createDataset = {
+          formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses'
+        };
+        this.rdfService.createDataSet$(createDataset).subscribe((response) => {
+          // do nothing
+        });
+        break;
+
+      case 'quickResponseUpdate':
+        const updateDataset = {
+          formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses',
+          id: event.data.id
+        };
+        this.rdfService
+          .updateDataSet$(event.data.id, updateDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
         break;
     }
   }
