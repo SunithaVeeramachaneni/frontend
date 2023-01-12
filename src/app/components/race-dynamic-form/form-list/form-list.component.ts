@@ -30,7 +30,7 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
@@ -299,7 +299,7 @@ export class FormListComponent implements OnInit {
     }
     combineLatest([
       this.raceDynamicFormService.fetchAllFormListNames$(),
-      this.raceDynamicFormService.getAuthoredFormDetail$(form.id)
+      this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
         map(([formNames, authoredFormDetail]) => ({
@@ -312,29 +312,36 @@ export class FormListComponent implements OnInit {
         if (createdForm?.newName) {
           this.raceDynamicFormService
             .createForm$({
-              ...omit(form, ['id', 'preTextImage']),
-              name: createdForm.newName
+              ...omit(form, ['id', 'preTextImage', 'preTextImageConfig']),
+              name: createdForm.newName,
+              formStatus: formConfigurationStatus.draft
             })
             .subscribe((newRecord) => {
               if (!newRecord) {
                 return;
               }
               if (authoredFormDetail?.length > 0) {
-                const obj = authoredFormDetail[0];
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: obj?.formStatus,
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(obj?.pages) ?? '',
-                  counter: obj?.counter,
-                  authoredFormDetailVersion: +obj?.version + 1
-                });
+                for (const obj of authoredFormDetail) {
+                  if (obj) {
+                    this.raceDynamicFormService.createAuthoredFormDetail$({
+                      formStatus: obj?.formStatus,
+                      formListId: newRecord?.id,
+                      pages: JSON.parse(obj?.pages) ?? '',
+                      counter: obj?.counter,
+                      authoredFormDetailVersion: +obj?.version + 1
+                    });
+                  }
+                }
               }
               this.addEditCopyForm$.next({
                 action: 'copy',
                 form: {
-                  ...form,
-                  name: createdForm.newName
-                }
+                  ...newRecord,
+                  name: createdForm.newName,
+                  preTextImage: (form as any)?.preTextImage,
+                  preTextImageConfig: (form as any)?.preTextImageConfig,
+                  oldId: form.id
+                } as any
               });
               this.formsListCount$ =
                 this.raceDynamicFormService.getFormsListCount$();
@@ -381,8 +388,12 @@ export class FormListComponent implements OnInit {
           initial.data = rows;
         } else {
           if (form.action === 'copy') {
-            const obj = { ...form.form };
-            initial.data.splice((obj.id as any) - 1, 0, obj);
+            const obj = { ...form.form } as any;
+            const oldIdx = initial?.data?.findIndex(
+              (d) => d?.id === obj?.oldId
+            );
+            const newIdx = oldIdx !== -1 ? oldIdx : 0;
+            initial.data.splice(newIdx, 0, obj);
             form.action = 'add';
             this.toast.show({
               text: 'Form copied successfully!',
