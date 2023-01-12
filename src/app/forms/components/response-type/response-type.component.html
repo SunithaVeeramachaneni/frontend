@@ -34,7 +34,11 @@
             *ngIf="quickResponsesData.data.length; else loadingQuickResponses"
           >
             <div *ngFor="let resp of quickResponsesData.data" class="h-36">
-              <button mat-flat-button class="quick-response responseBtn">
+              <button
+                mat-flat-button
+                class="quick-response responseBtn"
+                (click)="closeResponseType()"
+              >
                 <mat-chip-list *ngFor="let val of resp.values; let i = index">
                   <mat-chip
                     *ngIf="i < 2"
