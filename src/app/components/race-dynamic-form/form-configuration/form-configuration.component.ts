@@ -41,7 +41,10 @@ import {
   getIsFormCreated,
   getQuestionIds
 } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  MCQResponseActions
+} from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -108,7 +111,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.breadcrumbService.set('@formName', {
       label: fornName
     });
-
+    this.store.dispatch(
+      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
+    );
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),

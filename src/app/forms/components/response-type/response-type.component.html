@@ -85,6 +85,26 @@
       </div>
       <div class="height-50">
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
+        <div *ngIf="globalResponses$ | async as globalResponses">
+          <div *ngFor="let response of globalResponses">
+            {{ response.name }}
+            <button
+              mat-flat-button
+              (click)="handleEditGlobalResponse(response)"
+            >
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                class="edit-icon-img"
+              />
+            </button>
+          </div>
+        </div>
+        <button
+          class="add-new-btn"
+          (click)="handleGlobalResponsesToggle()"
+          translate="addNew"
+        ></button>
       </div>
 
       <div *ngIf="isMCQResponseOpen">
@@ -97,6 +117,12 @@
         <app-response-type-side-drawer
           (responseTypeHandler)="quickResponseTypeHandler($event)"
         ></app-response-type-side-drawer>
+      </div>
+
+      <div *ngIf="isGlobalResponseOpen">
+        <app-global-response-type-side-drawer
+          [globalResponseToBeEdited]="responseToBeEdited"
+        ></app-global-response-type-side-drawer>
       </div>
     </div>
   </div>

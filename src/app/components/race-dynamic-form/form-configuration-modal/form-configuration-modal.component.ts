@@ -8,7 +8,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Observable } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { map, startWith } from 'rxjs/operators';
 import {
   FormBuilder,
   FormControl,

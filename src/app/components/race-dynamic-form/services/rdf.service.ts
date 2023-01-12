@@ -17,7 +17,6 @@ import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
 import {
   ErrorInfo,
-  FormMetadata,
   LoadEvent,
   SearchEvent,
   TableEvent
@@ -235,6 +234,58 @@ export class RaceDynamicFormService {
         id: formDetails.authoredFormDetailId,
         _version: formDetails.authoredFormDetailDynamoDBVersion
       } as UpdateAuthoredFormDetailInput)
+    );
+  }
+
+  getResponseSet$(queryParams: {
+    nextToken?: string;
+    limit?: number;
+    responseType: string;
+  }) {
+    if (queryParams.nextToken !== null) {
+      return from(
+        this.awsApiService.ListResponseSets(
+          {
+            type: { eq: queryParams.responseType }
+          },
+          queryParams.limit,
+          queryParams.nextToken
+        )
+      );
+    }
+  }
+
+  createResponseSet$(responseSet) {
+    return from(
+      this.awsApiService.CreateResponseSet({
+        type: responseSet.responseType,
+        name: responseSet.name,
+        description: responseSet?.description,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values
+      })
+    );
+  }
+
+  updateResponseSet$(responseSet) {
+    return from(
+      this.awsApiService.UpdateResponseSet({
+        id: responseSet.id,
+        type: responseSet.responseType,
+        name: responseSet.name,
+        description: responseSet.description,
+        isMultiColumn: responseSet.isMultiColumn,
+        values: responseSet.values,
+        _version: responseSet.version
+      })
+    );
+  }
+
+  deleteResponseSet$(responseSetId: string) {
+    return from(
+      this.awsApiService.DeleteResponseSet({
+        id: responseSetId
+      })
     );
   }
 
