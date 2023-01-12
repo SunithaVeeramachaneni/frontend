@@ -1,8 +1,15 @@
 <div [formGroup]="logicsForm" *ngIf="getLogicsList()">
   <div formArrayName="logics">
-    <mat-tab-group>
+    <mat-tab-group
+      [(selectedIndex)]="selectedTabIndex"
+      (selectedTabChange)="onTabChanged($event)"
+    >
       <mat-tab
-        *ngFor="let logic of getLogicsList(); let i = index"
+        *ngFor="
+          let logic of getLogicsList();
+          let i = index;
+          trackBy: trackByLogicId
+        "
         label="{{
           logic.value.logicTitle ? logic.value.logicTitle : 'Untitled'
         }}"
@@ -125,6 +132,7 @@
                   pageIndex,
                   logic.value.id
                 );
+                trackBy: trackByQuestionIndex;
                 let questionIndex = index
               "
             >
