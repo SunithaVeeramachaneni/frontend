@@ -133,7 +133,7 @@ export const getQuestionLogics = (pageIndex: number, questionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages
       .find((page, index) => index === pageIndex)
-      .logics.filter((logic) => logic.questionId === questionId)
+      .logics?.filter((logic) => logic.questionId === questionId)
   );
 
 export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
