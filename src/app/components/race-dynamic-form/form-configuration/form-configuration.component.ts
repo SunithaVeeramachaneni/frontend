@@ -38,7 +38,8 @@ import {
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
-  getIsFormCreated
+  getIsFormCreated,
+  getQuestionIds
 } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
@@ -66,6 +67,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   sectionIndexes$: Observable<any>;
   sectionIndexes: any;
   sectionIds$: Observable<any>;
+  questionIds$: Observable<any>;
   questionIndexes$: Observable<any>;
   authoredFormDetail$: Observable<any>;
   createOrEditForm$: Observable<boolean>;
@@ -74,11 +76,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   isFormCreated$: Observable<boolean>;
   questionIndexes: any;
   formStatus: string;
-  formSaveStatus: string;
   formDetailPublishStatus: string;
   isFormDetailPublished: string;
   formMetadata: FormMetadata;
-  fieldContentOpenState = false;
   formListVersion: number;
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -154,6 +154,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       .select(getSectionIndexes)
       .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
     this.sectionIds$ = this.store.select(getSectionIds);
+    this.questionIds$ = this.store.select(getQuestionIds);
     this.questionIndexes$ = this.store
       .select(getQuestionIndexes)
       .pipe(tap((questionIndexes) => (this.questionIndexes = questionIndexes)));
@@ -268,9 +269,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.formSaveStatus$ = this.store
-      .select(getFormSaveStatus)
-      .pipe(tap((formSaveStatus) => (this.formSaveStatus = formSaveStatus)));
+    this.formSaveStatus$ = this.store.select(getFormSaveStatus);
 
     this.formDetailPublishStatus$ = this.store
       .select(getFormPublishStatus)
@@ -316,11 +315,13 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     questionIndex: number
   ) {
     const section = this.getSection(pageIndex, sectionIndex);
+    const question = this.getQuestion(questionIndex, section.id);
     return {
       name: 'Page',
       position: pageIndex + 1,
+      isOpen: true,
       sections: [section],
-      questions: [this.getQuestion(questionIndex, section.id)],
+      questions: [question],
       logics: []
     };
   }
@@ -333,7 +334,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           : 1
       }`,
       name: 'Section',
-      position: sectionIndex + 1
+      position: sectionIndex + 1,
+      isOpen: true
     };
   }
 
@@ -347,9 +349,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       position: questionIndex + 1,
       required: false,
       multi: false,
-      value: '',
+      value: 'TF',
       isPublished: false,
-      isPublishedTillSave: false
+      isPublishedTillSave: false,
+      isOpen: true,
+      isResponseTypeModalOpen: false
     };
   }
 
@@ -357,14 +361,24 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     const { pageIndex, type } = event;
     switch (type) {
       case 'add':
-        this.store.dispatch(
-          FormConfigurationActions.addPage({
-            page: this.getPageObject(pageIndex, 0, 0),
-            pageIndex,
-            questionCounter: this.formConf.counter.value,
-            ...this.getFormConfigurationStatuses()
-          })
-        );
+        {
+          const page = this.getPageObject(pageIndex, 0, 0);
+          this.store.dispatch(
+            FormConfigurationActions.addPage({
+              page,
+              pageIndex,
+              questionCounter: this.formConf.counter.value,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+          this.store.dispatch(
+            FormConfigurationActions.updateQuestionState({
+              questionId: page.questions[0].id,
+              isOpen: true,
+              isResponseTypeModalOpen: false
+            })
+          );
+        }
         break;
 
       case 'delete':
@@ -385,14 +399,22 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           const section = this.getSection(pageIndex, sectionIndex);
+          const question = this.getQuestion(0, section.id);
           this.store.dispatch(
             FormConfigurationActions.addSection({
               section,
-              question: this.getQuestion(0, section.id),
+              question,
               pageIndex,
               sectionIndex,
               questionCounter: this.formConf.counter.value,
               ...this.getFormConfigurationStatuses()
+            })
+          );
+          this.store.dispatch(
+            FormConfigurationActions.updateQuestionState({
+              questionId: question.id,
+              isOpen: true,
+              isResponseTypeModalOpen: false
             })
           );
         }
@@ -426,16 +448,27 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     const { pageIndex, questionIndex, sectionId, question, type } = event;
     switch (type) {
       case 'add':
-        this.store.dispatch(
-          FormConfigurationActions.addQuestion({
-            question: this.getQuestion(questionIndex, sectionId),
-            pageIndex,
-            sectionId,
-            questionIndex,
-            questionCounter: this.formConf.counter.value,
-            ...this.getFormConfigurationStatuses()
-          })
-        );
+        {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const question = this.getQuestion(questionIndex, sectionId);
+          this.store.dispatch(
+            FormConfigurationActions.addQuestion({
+              question,
+              pageIndex,
+              sectionId,
+              questionIndex,
+              questionCounter: this.formConf.counter.value,
+              ...this.getFormConfigurationStatuses()
+            })
+          );
+          this.store.dispatch(
+            FormConfigurationActions.updateQuestionState({
+              questionId: question.id,
+              isOpen: true,
+              isResponseTypeModalOpen: false
+            })
+          );
+        }
         break;
 
       case 'update':
@@ -480,10 +513,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     );
   }
 
-  toggleFieldContentOpenState() {
-    this.fieldContentOpenState = true;
-  }
-
   dropSection(event: CdkDragDrop<any>, pageIndex: number) {
     const data = event.container.data.slice();
 
@@ -494,7 +523,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        FormConfigurationActions.updatePage({
+        FormConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
           ...this.getFormConfigurationStatuses()
@@ -531,7 +560,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         event.previousIndex,
         event.currentIndex
       );
-
       this.store.dispatch(
         FormConfigurationActions.transferQuestionFromSection({
           questionId,

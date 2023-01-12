@@ -10,22 +10,16 @@
     <div>
       <input type="hidden" formControlName="position" />
       <div class="section-header">
-        <!-- <img
-          src="assets/rdf-forms-icons/six-dots-white.svg"
-          alt="six-dots"
-          class="m-l-10 six-dots"
-          *ngIf="isSectionOpenState === false"
-        /> -->
         <mat-icon
-          (click)="toggleSectionOpenState()"
-          *ngIf="isSectionOpenState === true"
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === true"
           class="section-arrow"
         >
           expand_more
         </mat-icon>
         <mat-icon
-          (click)="toggleSectionOpenState()"
-          *ngIf="isSectionOpenState === false"
+          (click)="toggleIsOpenState()"
+          *ngIf="sectionForm.get('isOpen').value === false"
           class="section-arrow"
         >
           chevron_right
@@ -75,7 +69,10 @@
           </button>
         </mat-menu>
       </div>
-      <div *ngIf="isSectionOpenState === true" class="questions-content">
+      <div
+        *ngIf="sectionForm.get('isOpen').value === true"
+        class="questions-content"
+      >
         <ng-content></ng-content>
       </div>
 
