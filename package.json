@@ -9,6 +9,7 @@
     "production": "ng build --configuration production",
     "testing": "ng build --configuration testing",
     "staging": "ng build --configuration staging",
+    "uat": "ng build --configuration uat",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --browsers Chrome",
     "test-headless": "ng test --watch false --browsers ChromeHeadless --code-coverage",

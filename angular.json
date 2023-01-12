@@ -166,6 +166,34 @@
                 }
               ]
             },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.uat.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "1MB"
+                }
+              ]
+            },
             "ci": {
               "progress": false
             }
@@ -188,6 +216,9 @@
             },
             "staging": {
               "browserTarget": "cwp:build:staging"
+            },
+            "uat": {
+              "browserTarget": "cwp:build:uat"
             },
             "ci": {
               "progress": false
@@ -259,6 +290,9 @@
             },
             "staging": {
               "devServerTarget": "cwp:serve:staging"
+            },
+            "uat": {
+              "devServerTarget": "cwp:serve:uat"
             },
             "ci": {
               "devServerTarget": "cwp:serve:ci"
