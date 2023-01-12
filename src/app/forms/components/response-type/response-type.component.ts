@@ -12,10 +12,11 @@ import { getFormMetadata, State, getResponseSets } from '../../state';
   styleUrls: ['./response-type.component.scss']
 })
 export class ResponseTypeComponent implements OnInit {
-  @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
-
   @Input() fieldTypes;
   @Input() question;
+  @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() responseTypeCloseEvent: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
@@ -112,11 +113,11 @@ export class ResponseTypeComponent implements OnInit {
     if (fieldType.type === 'RT') {
       this.formService.setsliderOpenState(true);
     }
-    this.formService.setOpenResponseType(false);
+    this.responseTypeCloseEvent.emit(true);
   }
 
   toggleResponseTypeModal(value) {
-    this.formService.setOpenResponseType(false);
+    this.responseTypeCloseEvent.emit(true);
   }
 
   handleResponses(response = {}) {
@@ -126,7 +127,7 @@ export class ResponseTypeComponent implements OnInit {
         isOpen: true,
         response
       });
-      this.formService.setOpenResponseType(false);
+      this.responseTypeCloseEvent.emit(true);
     }
   }
 

@@ -8,7 +8,7 @@
             {{ totalCount }}
           </span>
           <span class="forms-text">{{
-            'formLibrary'
+            'forms'
               | translate
                 : {
                     count: totalCount || 0
@@ -47,12 +47,12 @@
     (slideInOut)="menuState = 'out'"
   ></app-form-detail>
 
-  <!-- <app-submission-slider
+  <app-submission-slider
     [@slideInOut]="submissionSlider"
     (slideInOut)="submissionSlider = 'out'"
-  ></app-submission-slider> -->
+  ></app-submission-slider>
 
-  <!-- <button (click)="openSubmissionSlider()">Slider</button> -->
+  <button (click)="openSubmissionSlider()">Slider</button>
 
   <ng-template #loadingForms>
     <div class="ghost-loading">
