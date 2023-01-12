@@ -20,7 +20,7 @@ export class ResponseTypeComponent implements OnInit {
 
   public isMCQResponseOpen = false;
   public isGlobalResponseOpen = false;
-  public globalResponses$: Observable<[]>;
+  public globalResponses$: Observable<any[]>;
   public responseToBeEdited: any;
   quickResponsesData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<any>({
