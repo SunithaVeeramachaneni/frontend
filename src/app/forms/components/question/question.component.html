@@ -91,174 +91,162 @@
         />
       </div>
 
-      <<<<<<< HEAD
       <div
         class="dis-flex justify-content"
-        *ngIf="questionForm.get('isOpen').value"
+        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
       >
-        =======
-        <div class="dis-flex justify-content" *ngIf="!isAskQuestion">
-          >>>>>>> cb5b7bb4fb6dc1aa6216758c81403faccee2b5cc
-          <div class="input-fields">
-            <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-              <div class="questionActionsRow">
-                <button
-                  mat-button
-                  color="primary"
-                  class="addLogicBtn"
-                  *ngIf="
-                    addLogicNotAppliedFields.indexOf(
-                      questionForm.get('fieldType').value
-                    ) < 0
-                  "
-                  (click)="
-                    addLogicToQuestion(pageIndex, questionForm.get('id').value)
-                  "
-                >
-                  <mat-icon class="icon">link</mat-icon>
-                  <span translate="addLogicBtn"></span>
-                </button>
-
-                <span class="m-l-40">
-                  <mat-checkbox
-                    formControlName="required"
-                    class="required-checkbox"
-                  >
-                  </mat-checkbox>
-                  <label
-                    class="required-label"
-                    translate="requiredtext"
-                  ></label>
-                </span>
-
-                <span
-                  *ngIf="questionForm.get('fieldType').value === 'LF'"
-                  class="m-l-40"
-                >
-                  <app-read-only
-                    [question]="questionForm"
-                    (defaultValue)="questionForm.get('value').setValue($event)"
-                  ></app-read-only>
-                </span>
-
-                <span
-                  *ngIf="questionForm.get('fieldType').value === 'TF'"
-                  class="m-l-50"
-                >
-                  <app-text
-                    [question]="questionForm"
-                    (inputTextAnswer)="
-                      questionForm.get('value').setValue($event)
-                    "
-                  ></app-text>
-                </span>
-
-                <span
-                  *ngIf="questionForm.get('fieldType').value === 'DF'"
-                  class="m-l-10"
-                >
-                  <app-date
-                    [question]="questionForm"
-                    (checkedToDefaultDate)="
-                      questionForm.get('value').setValue($event)
-                    "
-                  ></app-date>
-                </span>
-
-                <span
-                  *ngIf="questionForm.get('fieldType').value === 'TIF'"
-                  class="m-l-10"
-                >
-                  <app-time
-                    [question]="questionForm"
-                    (checkedToDefaultTime)="
-                      questionForm.get('value').setValue($event)
-                    "
-                  >
-                  </app-time>
-                </span>
-
-                <span
-                  *ngIf="questionForm.get('fieldType').value === 'RT'"
-                  (click)="sliderOpen()"
-                  class="m-l-50"
-                >
-                  <label translate="range"></label>&nbsp;
-                  <span class="range-values">
-                    {{ questionForm.get('value').value.min }} -
-                    {{ questionForm.get('value').value.max }}
-                  </span>
-                </span>
-                <app-response-type-side-drawer
-                  (responseTypeHandler)="quickResponseTypeHandler($event)"
-                  [question]="question"
-                  (setSliderValues)="questionForm.get('value').setValue($event)"
-                ></app-response-type-side-drawer>
-
-                <span
-                  class="m-l-40"
-                  *ngIf="questionForm.get('fieldType').value === 'TAF'"
-                >
-                  <app-table
-                    [questionForm]="questionForm"
-                    [fieldTypes]="fieldTypes"
-                  ></app-table>
-                </span>
-
-                <span
-                  class="m-l-40"
-                  *ngIf="questionForm.get('fieldType').value === 'ARD'"
-                >
-                  <app-array
-                    [questionForm]="questionForm"
-                    [fieldTypes]="fieldTypes"
-                  ></app-array>
-                </span>
-
-                <span
-                  *ngIf="
-                    questionForm.get('fieldType').value === 'DD' &&
-                    !questionForm.get('value').value?.globalDataset
-                  "
-                  class="m-l-20"
-                >
-                  <app-drop-down
-                    [question]="questionForm"
-                    (checkedMultiple)="
-                      questionForm.get('multi').setValue($event)
-                    "
-                  ></app-drop-down>
-                </span>
-              </div>
-              <div
-                class="addLogicRow"
+        <div class="input-fields">
+          <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
+            <div class="questionActionsRow">
+              <button
+                mat-button
+                color="primary"
+                class="addLogicBtn"
                 *ngIf="
-                  getQuestionLogics(pageIndex, questionForm.get('id').value)
-                    | async as questionLogics
+                  addLogicNotAppliedFields.indexOf(
+                    questionForm.get('fieldType').value
+                  ) < 0
+                "
+                (click)="
+                  addLogicToQuestion(pageIndex, questionForm.get('id').value)
                 "
               >
-                <app-add-logic
-                  *ngIf="questionLogics.length"
-                  [questionId]="questionForm.get('id').value"
-                  [fieldType]="questionForm.get('fieldType').value"
-                  [pageIndex]="pageIndex"
-                  [sectionId]="sectionId"
-                  (logicEvent)="logicEventHandler($event)"
-                ></app-add-logic>
-              </div>
+                <mat-icon class="icon">link</mat-icon>
+                <span translate="addLogicBtn"></span>
+              </button>
+
+              <span class="m-l-40">
+                <mat-checkbox
+                  formControlName="required"
+                  class="required-checkbox"
+                >
+                </mat-checkbox>
+                <label class="required-label" translate="requiredtext"></label>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'LF'"
+                class="m-l-40"
+              >
+                <app-read-only
+                  [question]="questionForm"
+                  (defaultValue)="questionForm.get('value').setValue($event)"
+                ></app-read-only>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TF'"
+                class="m-l-50"
+              >
+                <app-text
+                  [question]="questionForm"
+                  (inputTextAnswer)="questionForm.get('value').setValue($event)"
+                ></app-text>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'DF'"
+                class="m-l-10"
+              >
+                <app-date
+                  [question]="questionForm"
+                  (checkedToDefaultDate)="
+                    questionForm.get('value').setValue($event)
+                  "
+                ></app-date>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'TIF'"
+                class="m-l-10"
+              >
+                <app-time
+                  [question]="questionForm"
+                  (checkedToDefaultTime)="
+                    questionForm.get('value').setValue($event)
+                  "
+                >
+                </app-time>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'RT'"
+                (click)="sliderOpen()"
+                class="m-l-50"
+              >
+                <label translate="range"></label>&nbsp;
+                <span class="range-values">
+                  {{ questionForm.get('value').value.min }} -
+                  {{ questionForm.get('value').value.max }}
+                </span>
+              </span>
+              <app-response-type-side-drawer
+                (responseTypeHandler)="quickResponseTypeHandler($event)"
+                [question]="question"
+                (setSliderValues)="questionForm.get('value').setValue($event)"
+              ></app-response-type-side-drawer>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'TAF'"
+              >
+                <app-table
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-table>
+              </span>
+
+              <span
+                class="m-l-40"
+                *ngIf="questionForm.get('fieldType').value === 'ARD'"
+              >
+                <app-array
+                  [questionForm]="questionForm"
+                  [fieldTypes]="fieldTypes"
+                ></app-array>
+              </span>
+
+              <span
+                *ngIf="
+                  questionForm.get('fieldType').value === 'DD' &&
+                  !questionForm.get('value').value?.globalDataset
+                "
+                class="m-l-20"
+              >
+                <app-drop-down
+                  [question]="questionForm"
+                  (checkedMultiple)="questionForm.get('multi').setValue($event)"
+                ></app-drop-down>
+              </span>
             </div>
-            <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
-              <app-image [question]="questionForm"></app-image>
+            <div
+              class="addLogicRow"
+              *ngIf="
+                getQuestionLogics(pageIndex, questionForm.get('id').value)
+                  | async as questionLogics
+              "
+            >
+              <app-add-logic
+                *ngIf="questionLogics.length"
+                [questionId]="questionForm.get('id').value"
+                [fieldType]="questionForm.get('fieldType').value"
+                [pageIndex]="pageIndex"
+                [sectionId]="sectionId"
+                (logicEvent)="logicEventHandler($event)"
+              ></app-add-logic>
             </div>
           </div>
-          <input
-            #insertImages
-            [hidden]="true"
-            type="file"
-            accept="image/jpeg,image/jpg,image/png"
-            (change)="insertImageHandler($event)"
-          />
+          <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+            <app-image [question]="questionForm"></app-image>
+          </div>
         </div>
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
       </div>
     </div>
   </div>

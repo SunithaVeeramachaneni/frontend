@@ -375,7 +375,7 @@ export class QuestionComponent implements OnInit {
           value: 'TF',
           isPublished: false,
           isPublishedTillSave: false,
-          isOpen: true,
+          isOpen: false,
           isResponseTypeModalOpen: false
         };
         this.store.dispatch(
