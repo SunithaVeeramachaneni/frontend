@@ -109,6 +109,10 @@ export class ResponseTypeComponent implements OnInit {
     this.responseTypeCloseEvent.emit(true);
   }
 
+  closeResponseType() {
+    this.responseTypeCloseEvent.emit(true);
+  }
+
   toggleResponseTypeModal(value) {
     this.responseTypeCloseEvent.emit(true);
   }

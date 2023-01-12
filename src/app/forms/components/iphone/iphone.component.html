@@ -1,7 +1,9 @@
 <div class="bg-iphone" *ngIf="formMetadata$ | async as formMetadata">
   <div class="iphone-header">
-    <h3 class="form-heading">{{ formMetadata.name }}</h3>
-    <p class="form-description">
+    <h3 class="form-heading" matTooltip="{{ formMetadata.name }}">
+      {{ formMetadata.name }}
+    </h3>
+    <p class="form-description" matTooltip=" {{ formMetadata.description }}">
       {{
         (formMetadata.description ? formMetadata.description : 'des')
           | translate

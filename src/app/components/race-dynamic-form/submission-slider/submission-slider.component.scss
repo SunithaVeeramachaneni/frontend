@@ -20,9 +20,9 @@
   .mat-card {
     box-shadow: none;
   }
-.close-img{
-  cursor: pointer;
-}
+  .close-img {
+    cursor: pointer;
+  }
   .view-report-btn {
     width: 48%;
     border: 1px solid $blue-main;
@@ -33,6 +33,13 @@
     margin-right: 10px;
     font-size: 110%;
     font-weight: 500;
+  }
+
+  .view-report-btn:disabled {
+    background: $border-color;
+    border: 1px solid $border-color;
+    color: $light-gray;
+    cursor: auto;
   }
   .download-btn {
     width: 48%;
@@ -58,6 +65,19 @@
       top: -5px;
       font-weight: 500;
       margin-left: 5px;
+    }
+  }
+
+  .download-btn:disabled {
+    background: $border-color;
+    border: 1px solid $border-color;
+    cursor: auto;
+
+    .download-icon {
+      color: $light-gray;
+    }
+    .download-text {
+      color: $light-gray;
     }
   }
 
