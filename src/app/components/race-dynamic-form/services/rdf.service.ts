@@ -439,15 +439,16 @@ export class RaceDynamicFormService {
         ?.map((p) => ({
           ...p,
           preTextImage: {
-            style: {
-              width: '30px',
-              height: '30px',
-              'border-radius': '50%',
-              display: 'block',
-              padding: '0px 10px'
-            },
             image: p?.formLogo,
             condition: true
+          },
+          preTextImageConfig: {
+            logoAvialable: p?.formLogo === '' ? false : true,
+            style: {
+              width: '40px',
+              height: '40px',
+              marginRight: '10px'
+            }
           },
           responses: '23/26',
           createdAt: format(new Date(p?.createdAt), 'Do MMM'),
