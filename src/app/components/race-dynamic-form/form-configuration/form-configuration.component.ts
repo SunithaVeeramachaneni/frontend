@@ -293,6 +293,29 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
             formConfiguration: data.form
           })
         );
+        data.form.pages.forEach((page, index) => {
+          if (index === 0) {
+            this.store.dispatch(
+              FormConfigurationActions.updatePageState({
+                pageIndex: index,
+                isOpen: false
+              })
+            );
+            this.store.dispatch(
+              FormConfigurationActions.updatePageState({
+                pageIndex: index,
+                isOpen: true
+              })
+            );
+          } else {
+            this.store.dispatch(
+              FormConfigurationActions.updatePageState({
+                pageIndex: index,
+                isOpen: false
+              })
+            );
+          }
+        });
       }
     });
 
