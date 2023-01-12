@@ -52,6 +52,7 @@
   "to": "To",
   "increment": "Increment",
   "apply": "Apply",
+  "okay": "Okay",
   "cancel": "Cancel",
   "mcqHeading": "Multiple Choice Responses",
   "response": "Response",
@@ -65,6 +66,17 @@
   "addSubFields": "Add Sub Fields",
   "typeQuestion": "Type Question",
   "responseTitle": "Response Title",
+  "addLogicBtn": "Add Logic",
+  "askQuestions": "Ask Questions",
+  "mandateQuestions": "Mandate Questions",
+  "hideQuestions": "Hide Questions",
+  "then": "then",
+  "ifAnswer": "If answer",
+  "is": "is",
+  "selectQuestionsToBe": "Select questions to be",
+  "mandated": "mandated",
+  "hidden": "hidden",
+  "logicActionBtn": "+ action",
   "formName": "eg. Inspection Check",
   "addDescription": "Add Description",
   "startTypingTags": "Start typing to see tags",
@@ -72,5 +84,6 @@
   "choose": "Choose Item",
   "prevBtn": "Previous",
   "addAtt": "Add Attachments",
-  "des": "Description"
+  "des": "Description",
+  "sectionEmptyMessage": "Section does not have any questions. Please add questions"
 }

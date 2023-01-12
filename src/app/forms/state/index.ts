@@ -119,6 +119,23 @@ export const getQuestionByID = (
       )
   );
 
+export const getQuestionByQuestionID = (
+  pageIndex: number,
+  questionId: string
+) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      ?.questions.find((question) => question.id === questionId)
+  );
+
+export const getQuestionLogics = (pageIndex: number, questionId: string) =>
+  createSelector(selectFormConfigurationState, (state) =>
+    state.pages
+      .find((page, index) => index === pageIndex)
+      .logics.filter((logic) => logic.questionId === questionId)
+  );
+
 export const getSectionQuestions = (pageIndex: number, sectionId: string) =>
   createSelector(selectFormConfigurationState, (state) =>
     state.pages

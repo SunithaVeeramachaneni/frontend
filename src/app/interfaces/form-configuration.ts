@@ -22,6 +22,7 @@ export interface Page {
   isOpen: boolean;
   sections: Section[];
   questions: Question[];
+  logics: any[];
 }
 
 export interface Section {
@@ -62,6 +63,8 @@ export interface QuestionEvent {
   pageIndex: number;
   sectionId: string;
   question?: Question;
+  questionId?: string;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
+  isAskQuestion?: boolean;
 }

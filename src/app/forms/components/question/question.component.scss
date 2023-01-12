@@ -30,6 +30,15 @@
     border-bottom-right-radius: 7px;
   }
 
+  .delete-icon {
+    background: white;
+    height: 25px;
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    width: 20px;
+  }
+
   .questions-delete-btn-text {
     margin: 0;
     font-size: 75%;
@@ -78,6 +87,23 @@
     flex-direction: column;
     width: 98%;
     justify-content: center;
+
+    .questionActionsRow {
+      display: flex;
+      align-items: center;
+      .addLogicBtn {
+        color: $blue-main;
+        font-weight: 400;
+        .icon {
+          transform: rotate(120deg);
+          font-size: 12pt;
+          margin-top: -5px;
+        }
+      }
+    }
+    .addLogicRow {
+      width: 100%;
+    }
 
     .m-l-50 {
       margin-left: 50px;
