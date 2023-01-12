@@ -252,7 +252,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    // this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
@@ -327,22 +326,6 @@ export class SubmissionComponent implements OnInit, OnDestroy {
 
   clearFilters(): void {
     this.isPopoverOpen = false;
-  }
-
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
-      }
-    ];
-    this.configOptions.rowLevelActions.menuActions = menuActions;
-    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
-    this.configOptions = { ...this.configOptions };
   }
 
   ngOnDestroy(): void {}
