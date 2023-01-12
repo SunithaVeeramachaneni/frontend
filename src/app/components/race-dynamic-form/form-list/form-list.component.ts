@@ -64,6 +64,7 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 })
 export class FormListComponent implements OnInit {
   public menuState = 'out';
+  submissionSlider = 'out';
 
   columns: Column[] = [
     {
