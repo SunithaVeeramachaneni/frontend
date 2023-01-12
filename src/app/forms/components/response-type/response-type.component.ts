@@ -4,7 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { FormService } from '../../services/form.service';
 import { Store } from '@ngrx/store';
-import { getFormMetadata, State } from '../../state';
+import { getFormMetadata, State, getResponseSets } from '../../state';
 
 @Component({
   selector: 'app-response-type',
@@ -19,6 +19,9 @@ export class ResponseTypeComponent implements OnInit {
     new EventEmitter<boolean>();
 
   public isMCQResponseOpen = false;
+  public isGlobalResponseOpen = false;
+  public globalResponses$: Observable<[]>;
+  public responseToBeEdited: any;
   quickResponsesData$: Observable<any>;
   createEditQuickResponse$ = new BehaviorSubject<any>({
     type: 'create',
@@ -34,6 +37,10 @@ export class ResponseTypeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.globalResponses$ = this.store
+      .select(getResponseSets)
+      .pipe((responses: any) => responses);
+    this.globalResponses$.subscribe();
     this.quickResponsesLoading = true;
     this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
@@ -128,5 +135,13 @@ export class ResponseTypeComponent implements OnInit {
     }
   }
 
+  handleGlobalResponsesToggle() {
+    this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
+  }
+
+  handleEditGlobalResponse = (response: any) => {
+    this.responseToBeEdited = response;
+    this.handleGlobalResponsesToggle();
+  };
   quickResponseTypeHandler(event) {}
 }

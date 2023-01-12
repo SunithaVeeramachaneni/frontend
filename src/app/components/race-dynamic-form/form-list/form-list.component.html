@@ -42,10 +42,13 @@
     </div>
   </div>
 
-  <app-form-detail
-    [@slideInOut]="menuState"
-    (slideInOut)="menuState = 'out'"
-  ></app-form-detail>
+  <ng-container *ngIf="menuState">
+    <app-form-detail
+      [@slideInOut]="menuState"
+      (slideInOut)="onCloseViewDetail()"
+      [selectedForm]="selectedForm"
+    ></app-form-detail>
+  </ng-container>
 
   <ng-template #loadingForms>
     <div class="ghost-loading">

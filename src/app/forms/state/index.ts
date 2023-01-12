@@ -1,9 +1,11 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as AppState from '../../state/app.state';
 import { FormConfigurationState } from './form-configuration.reducer';
+import { ResponseSetState } from './multiple-choice-response.reducer';
 
 export interface FromModuleState {
   formConfiguration: FormConfigurationState;
+  responseSet: ResponseSetState;
 }
 
 export interface State extends AppState.State {
@@ -15,6 +17,11 @@ const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
 const selectFormConfigurationState = createSelector(
   selectFeatureState,
   (state) => state.formConfiguration
+);
+
+const selectResponseSetState = createSelector(
+  selectFeatureState,
+  (state) => state.responseSet
 );
 
 export const getFormMetadata = createSelector(
@@ -211,4 +218,11 @@ export const getFormPublishStatus = createSelector(
 export const getIsFormCreated = createSelector(
   selectFormConfigurationState,
   (state) => state.isFormCreated
+);
+
+// Selectors for response sets begin here
+
+export const getResponseSets = createSelector(
+  selectResponseSetState,
+  (state) => state.globalResponses
 );

@@ -41,10 +41,15 @@ export const permissions = Object.freeze({
   viewFiles: 'VIEW_FILES',
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
-  viewForms: 'VIEW_FORM',
+  viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
-  deleteForm: 'DELETE_FORM'
+  deleteForm: 'DELETE_FORM',
+  viewSubmissions: 'VIEW_SUBMISSIONS',
+  downloadSubmission: 'DOWNLOAD_SUBMISSION',
+  shareSubmission: 'SHARE_SUBMISSION',
+  viewTemplates: 'VIEW_TEMPLATES',
+  viewArchivedForms: 'VIEW_ARCHIVED_FORMS'
 });
 
 export const routingUrls = {
