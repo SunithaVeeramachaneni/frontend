@@ -8,13 +8,13 @@ export const generateCopyRegex = (name: string): RegExp => {
 
 export const generateCopyNumber = (currentNumbers: number[]): number => {
   let newIndex = 0;
-  const sorter = (a: number, b: number) => {
+  const sorter = (a, b) => {
     if (a < b) return -1;
     if (a > b) return 1;
     return 0;
   };
   currentNumbers.sort(sorter);
-  let isInOrder: boolean;
+  let isInOrder;
   if (currentNumbers?.length)
     isInOrder = currentNumbers.every((num, index) => {
       newIndex += 1;
@@ -23,13 +23,4 @@ export const generateCopyNumber = (currentNumbers: number[]): number => {
   else newIndex = 1;
   if (isInOrder) newIndex += 1;
   return newIndex;
-};
-
-export const isJson = (str: string): boolean => {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
 };

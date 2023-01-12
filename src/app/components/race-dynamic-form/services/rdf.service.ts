@@ -7,6 +7,7 @@ import { from, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
+  CreateFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,

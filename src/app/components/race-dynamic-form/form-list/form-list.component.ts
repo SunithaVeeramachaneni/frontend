@@ -37,9 +37,6 @@ import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
-import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-form-list',
@@ -239,12 +236,10 @@ export class FormListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
-  selectedForm: GetFormListQuery = null;
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
-    private router: Router,
-    private readonly store: Store<State>
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -280,14 +275,14 @@ export class FormListComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId, row } = event;
+    const { columnId } = event;
     switch (columnId) {
       case 'name':
       case 'author':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.showFormDetail(row);
+        this.menuState = this.menuState === 'out' ? 'in' : 'out';
         break;
       default:
     }
@@ -485,12 +480,6 @@ export class FormListComponent implements OnInit {
     this.configOptions = { ...this.configOptions };
   }
 
-  onCloseViewDetail() {
-    this.selectedForm = null;
-    this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
-  }
-
   private generateCopyFormName(
     form: GetFormListQuery,
     rows: GetFormListQuery[]
@@ -511,12 +500,5 @@ export class FormListComponent implements OnInit {
       };
     }
     return null;
-  }
-
-  private showFormDetail(row: GetFormListQuery): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = null;
-    this.selectedForm = this.menuState === 'out' ? row : null;
-    this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }
 }
