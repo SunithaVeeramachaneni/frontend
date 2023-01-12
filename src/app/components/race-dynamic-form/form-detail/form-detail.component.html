@@ -1,35 +1,47 @@
-<div id="opendetail">
+<div id="opendetail" *ngIf="selectedForm">
   <mat-card>
-    <div>
-      <img (click)="cancelForm()" src="assets/rdf-forms-icons/close.svg" />
-      <h1 class="detail-heading">Bulletin Board Posting</h1>
-    </div>
-
-    <div class="name-heading">
+    <ng-container>
       <div>
-        <p class="color-gray">Created by</p>
+        <img
+          (click)="cancelForm()"
+          src="assets/rdf-forms-icons/close.svg"
+          alt="close"
+          class="pointer"
+        />
+        <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
 
-      <div class="flex-custom">
-        <h4 class="create-name">John Paul</h4>
-        <span class="dots"></span>
-        <p class="date-name color-gray">22 Nov 2022 - 10:20 AM</p>
+      <div class="name-heading">
+        <div>
+          <p class="color-gray">
+            {{ 'createdBy' | translate }}
+          </p>
+        </div>
+        <div class="flex-custom">
+          <h4 class="create-name">{{ selectedForm?.author }}</h4>
+          <span class="dots"></span>
+          <p class="date-name color-gray">
+            {{ formateDate(selectedForm?.createdAt) }}
+          </p>
+        </div>
       </div>
-    </div>
-
+    </ng-container>
     <div>
-      <h4>Preview</h4>
-
+      <h4>{{ 'preview' | translate }}</h4>
       <div>
         <div class="name-heading">
           <div class="flex-custom">
-            <h4 class="create-name">3 PAGES</h4>
+            <h4 class="create-name">
+              {{ pagesCount }} {{ 'pages' | translate }}
+            </h4>
             <span class="dots"></span>
-            <p class="date-name color-gray">67 QUESTIONS</p>
+            <p class="date-name color-gray">
+              {{ questionsCount }} {{ 'questions' | translate }}
+            </p>
           </div>
-          <div class="w-full">
+          <div (click)="onNavigateToDetailPage()">
             <button mat-raised-button class="w-full btn-push btn-primary-blue">
-              Import
+              {{ 'editForm' | translate }}
             </button>
           </div>
         </div>
@@ -37,40 +49,30 @@
     </div>
   </mat-card>
 
-  <div class="question-bg">
+  <div
+    class="question-bg"
+    *ngIf="selectedFormDetail$ | async as selectedFormDetail"
+  >
     <div>
-      <h3 class="question-heading headind-accordian">
-        {{ setnamevaribale }}
-        <label [matMenuTriggerFor]="menu">
-          <img src="assets/rdf-forms-icons/arrow-down.svg" />
-        </label>
+      <h3 class="question-heading headind-accordian pointer">
+        <ng-container>
+          {{ defaultFormName }}
+          <label [matMenuTriggerFor]="menu">
+            <img src="assets/rdf-forms-icons/arrow-down.svg" alt="arrow-down" />
+          </label>
+        </ng-container>
       </h3>
-
       <mat-menu #menu="matMenu">
         <button
           class="btn-range"
-          (click)="openMenu('Mid Range Switchgear (Page 1/3)')"
+          (click)="openMenu(page)"
           mat-menu-item
+          *ngFor="let page of selectedFormDetail?.pages; let index = index"
         >
-          1. Mid Range Switchgear
-        </button>
-        <button
-          class="btn-range"
-          (click)="openMenu('High Range Switchgear (Page 2/3)')"
-          mat-menu-item
-        >
-          2. High Range Switchgear
-        </button>
-        <button
-          class="btn-range"
-          (click)="openMenu('Low Range Switchgear (Page 3/3)')"
-          mat-menu-item
-        >
-          3. Low Range Switchgear
+          {{ page?.name }} {{ page.position }}
         </button>
       </mat-menu>
     </div>
-
     <div>
       <app-preview></app-preview>
     </div>

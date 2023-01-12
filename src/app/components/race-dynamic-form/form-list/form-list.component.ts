@@ -30,13 +30,16 @@ import {
   TableEvent,
   FormTableUpdate
 } from 'src/app/interfaces';
-import { defaultLimit } from 'src/app/app.constants';
+import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
 @Component({
   selector: 'app-form-list',
@@ -64,6 +67,7 @@ import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 })
 export class FormListComponent implements OnInit {
   public menuState = 'out';
+  submissionSlider = 'out';
 
   columns: Column[] = [
     {
@@ -235,10 +239,12 @@ export class FormListComponent implements OnInit {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
+  selectedForm: GetFormListQuery = null;
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
-    private router: Router
+    private router: Router,
+    private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -274,14 +280,14 @@ export class FormListComponent implements OnInit {
   }
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    const { columnId } = event;
+    const { columnId, row } = event;
     switch (columnId) {
       case 'name':
       case 'author':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
-        this.menuState = this.menuState === 'out' ? 'in' : 'out';
+        this.showFormDetail(row);
         break;
       default:
     }
@@ -293,7 +299,7 @@ export class FormListComponent implements OnInit {
     }
     combineLatest([
       this.raceDynamicFormService.fetchAllFormListNames$(),
-      this.raceDynamicFormService.getAuthoredFormDetail$(form.id)
+      this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
         map(([formNames, authoredFormDetail]) => ({
@@ -306,29 +312,36 @@ export class FormListComponent implements OnInit {
         if (createdForm?.newName) {
           this.raceDynamicFormService
             .createForm$({
-              ...omit(form, ['id', 'preTextImage']),
-              name: createdForm.newName
+              ...omit(form, ['id', 'preTextImage', 'preTextImageConfig']),
+              name: createdForm.newName,
+              formStatus: formConfigurationStatus.draft
             })
             .subscribe((newRecord) => {
               if (!newRecord) {
                 return;
               }
               if (authoredFormDetail?.length > 0) {
-                const obj = authoredFormDetail[0];
-                this.raceDynamicFormService.createAuthoredFormDetail$({
-                  formStatus: obj?.formStatus,
-                  formListId: newRecord?.id,
-                  pages: JSON.parse(obj?.pages) ?? '',
-                  counter: obj?.counter,
-                  authoredFormDetailVersion: +obj?.version + 1
-                });
+                for (const obj of authoredFormDetail) {
+                  if (obj) {
+                    this.raceDynamicFormService.createAuthoredFormDetail$({
+                      formStatus: obj?.formStatus,
+                      formListId: newRecord?.id,
+                      pages: JSON.parse(obj?.pages) ?? '',
+                      counter: obj?.counter,
+                      authoredFormDetailVersion: +obj?.version + 1
+                    });
+                  }
+                }
               }
               this.addEditCopyForm$.next({
                 action: 'copy',
                 form: {
-                  ...form,
-                  name: createdForm.newName
-                }
+                  ...newRecord,
+                  name: createdForm.newName,
+                  preTextImage: (form as any)?.preTextImage,
+                  preTextImageConfig: (form as any)?.preTextImageConfig,
+                  oldId: form.id
+                } as any
               });
               this.formsListCount$ =
                 this.raceDynamicFormService.getFormsListCount$();
@@ -375,8 +388,12 @@ export class FormListComponent implements OnInit {
           initial.data = rows;
         } else {
           if (form.action === 'copy') {
-            const obj = { ...form.form };
-            initial.data.splice((obj.id as any) - 1, 0, obj);
+            const obj = { ...form.form } as any;
+            const oldIdx = initial?.data?.findIndex(
+              (d) => d?.id === obj?.oldId
+            );
+            const newIdx = oldIdx !== -1 ? oldIdx : 0;
+            initial.data.splice(newIdx, 0, obj);
             form.action = 'add';
             this.toast.show({
               text: 'Form copied successfully!',
@@ -462,21 +479,27 @@ export class FormListComponent implements OnInit {
         action: 'edit'
       },
       {
-        title: 'Copy Template',
+        title: 'Copy',
         action: 'copy'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
-      },
-      {
-        title: 'Upload to Public Library',
-        action: 'upload'
       }
+      // {
+      //   title: 'Archive',
+      //   action: 'archive'
+      // },
+      // {
+      //   title: 'Upload to Public Library',
+      //   action: 'upload'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
     this.configOptions = { ...this.configOptions };
+  }
+
+  onCloseViewDetail() {
+    this.selectedForm = null;
+    this.menuState = 'out';
+    this.store.dispatch(FormConfigurationActions.resetPages());
   }
 
   private generateCopyFormName(
@@ -499,5 +522,12 @@ export class FormListComponent implements OnInit {
       };
     }
     return null;
+  }
+
+  private showFormDetail(row: GetFormListQuery): void {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.selectedForm = null;
+    this.selectedForm = this.menuState === 'out' ? row : null;
+    this.menuState = this.menuState === 'out' ? 'in' : 'out';
   }
 }
