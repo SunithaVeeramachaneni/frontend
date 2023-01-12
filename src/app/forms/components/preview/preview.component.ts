@@ -27,9 +27,9 @@ export class PreviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
+    let pageData;
     this.previewFormData$ = this.store.select(getPages).pipe(
       map((previewFormData) => {
-        let pageData;
         let sectionData;
         pageData = previewFormData.map((page) => {
           sectionData = page.sections.map((section) => {
