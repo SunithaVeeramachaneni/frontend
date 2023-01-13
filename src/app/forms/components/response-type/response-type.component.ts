@@ -117,20 +117,18 @@ export class ResponseTypeComponent implements OnInit {
     this.responseTypeCloseEvent.emit(true);
   }
 
-  handleMCQRepsonseSelection = (responseType, value) => {
+  handleMCQRepsonseSelection = (responseType, response) => {
+    const { type, values, name } = response;
+
     this.selectFieldTypeEvent.emit({
-      type: responseType === 'quickResponse' && value?.length <= 4 ? 'VI' : 'DD'
+      type:
+        responseType === 'quickResponse' && values?.length <= 4 ? 'VI' : 'DD'
     });
     this.setQuestionValue.emit(
-      responseType === 'quickResponse' ? value : JSON.parse(value)
+      responseType === 'quickResponse'
+        ? { type, name, value: values }
+        : { type, name, value: JSON.parse(values) }
     );
-    // if (responseType === 'quickResponse') {
-    //   this.selectFieldTypeEvent.emit({ type: value?.length > 4 ? 'DD' : 'VI' });
-    //   this.setQuestionValue.emit(value);
-    // } else {
-    //   this.selectFieldTypeEvent.emit({ type: 'DD' });
-    //   this.setQuestionValue.emit(JSON.parse(value));
-    // }
   };
 
   toggleResponseTypeModal(value) {
