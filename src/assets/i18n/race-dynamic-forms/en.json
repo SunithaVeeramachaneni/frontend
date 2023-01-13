@@ -92,5 +92,7 @@
   "questions": "QUESTIONS",
   "editForm": "Edit Form",
   "createdBy": "Created by",
-  "preview": "Preview"
+  "preview": "Preview",
+  "lastPublishedBy": "Last Published By",
+  "lastModifiedBy": "Last Modified By"
 }
