@@ -375,7 +375,7 @@ export class RaceDynamicFormService {
                 arrayFieldTypeQuestions.push(question);
               }
 
-              if (question.fieldType === 'VI' || 'DD') {
+              if (question.fieldType === 'VI' || question.fieldType === 'DD') {
                 const viVALUE = question.value?.value.map((item, idx) => ({
                   [`label${idx + 1}`]: item.title,
                   key: item.title,
