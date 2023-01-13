@@ -82,16 +82,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      preTextImageConfig: {
-        logoAvialable: false,
-        style: {
-          width: '40px',
-          height: '40px',
-          marginRight: '10px'
-        }
-      },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      hasPostTextImage: false
     },
     {
       id: 'status',
@@ -350,7 +341,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    if (this.submissionDetail && this.submissionDetail.id == event.row.id) {
+    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
       this.menuState = this.menuState === 'out' ? 'in' : 'out';
     } else {
       this.menuState = 'in';

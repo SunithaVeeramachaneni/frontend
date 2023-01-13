@@ -4,9 +4,9 @@
   height: calc(100vh - 130px);
   width: 500px;
   border: 1px solid;
-  position: absolute;
-  left: 40%;
-  top: 20px;
+  position: fixed;
+  left: 50%;
+  top: 90px;
   background: $white;
   z-index: 1000;
 

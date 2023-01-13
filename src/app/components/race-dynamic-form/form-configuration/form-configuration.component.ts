@@ -6,7 +6,12 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import {
@@ -24,7 +29,8 @@ import {
   FormMetadata,
   Page,
   Question,
-  Section
+  Section,
+  ValidationError
 } from 'src/app/interfaces';
 
 import {
@@ -86,6 +92,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   isFormDetailPublished: string;
   formMetadata: FormMetadata;
   formListVersion: number;
+  errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -101,10 +108,17 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formConfiguration = this.fb.group({
       id: [''],
       formLogo: [''],
-      name: {
-        value: '',
-        disabled: true
-      },
+      name: new FormControl(
+        {
+          value: '',
+          disabled: true
+        },
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100)
+        ]
+      ),
       description: [''],
       counter: [0],
       formStatus: [formConfigurationStatus.draft]
@@ -126,23 +140,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         pairwise(),
         tap(([previous, current]) => {
-          const { counter: prevCounter, id: prevId, ...prev } = previous;
-          const { counter: currCounter, id: currId, ...curr } = current;
+          if (!this.formConfiguration.invalid) {
+            const { counter: prevCounter, id: prevId, ...prev } = previous;
+            const { counter: currCounter, id: currId, ...curr } = current;
 
-          if (!isEqual(prev, curr)) {
-            this.store.dispatch(
-              FormConfigurationActions.updateFormMetadata({
-                formMetadata: curr,
-                ...this.getFormConfigurationStatuses()
-              })
-            );
+            if (!isEqual(prev, curr)) {
+              this.store.dispatch(
+                FormConfigurationActions.updateFormMetadata({
+                  formMetadata: curr,
+                  ...this.getFormConfigurationStatuses()
+                })
+              );
 
-            this.store.dispatch(
-              FormConfigurationActions.updateForm({
-                formMetadata: { ...this.formMetadata, ...curr },
-                formListDynamoDBVersion: this.formListVersion
-              })
-            );
+              this.store.dispatch(
+                FormConfigurationActions.updateForm({
+                  formMetadata: { ...this.formMetadata, ...curr },
+                  formListDynamoDBVersion: this.formListVersion
+                })
+              );
+            }
           }
         })
       )
@@ -150,9 +166,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id } = formMetadata;
+        const { name, description, id, formLogo } = formMetadata;
         this.formMetadata = formMetadata;
-        this.formConfiguration.patchValue({ name, description, id });
+        this.formConfiguration.patchValue({ name, description, id, formLogo });
         const formName = name ? name : 'Untitled Form';
         this.headerService.setHeaderTitle(formName);
         this.breadcrumbService.set('@formName', {
@@ -202,7 +218,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           this.isFormDetailPublished = isFormDetailPublished;
           if (pages.length && formListId) {
             if (authoredFormDetailId) {
-              if (formSaveStatus !== 'Saved') {
+              if (formSaveStatus !== 'Saved' && formStatus !== 'Published') {
                 this.store.dispatch(
                   FormConfigurationActions.updateAuthoredFormDetail({
                     formStatus,
@@ -642,6 +658,21 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formDetailPublishStatus: formConfigurationStatus.draft,
       formSaveStatus: formConfigurationStatus.saving
     };
+  }
+
+  processValidationErrors(controlName: string): boolean {
+    const touched = this.formConfiguration.get(controlName).touched;
+    const errors = this.formConfiguration.get(controlName).errors;
+    this.errors[controlName] = null;
+    if (touched && errors) {
+      Object.keys(errors).forEach((messageKey) => {
+        this.errors[controlName] = {
+          name: messageKey,
+          length: errors[messageKey]?.requiredLength
+        };
+      });
+    }
+    return !touched || this.errors[controlName] === null ? false : true;
   }
 
   ngOnDestroy(): void {

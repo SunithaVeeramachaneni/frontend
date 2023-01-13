@@ -399,6 +399,21 @@ export class RaceDynamicFormService {
                 arrayFieldTypeQuestions.push(question);
               }
 
+              if (question.fieldType === 'VI' || question.fieldType === 'DD') {
+                const viVALUE = question.value?.value.map((item, idx) => ({
+                  [`label${idx + 1}`]: item.title,
+                  key: item.title,
+                  color: item.color,
+                  description: item.description
+                }));
+                questionItem.UIFIELDTYPE = question.multi
+                  ? 'DDM'
+                  : question.fieldType;
+                Object.assign(questionItem, {
+                  DDVALUE: JSON.stringify(viVALUE)
+                });
+              }
+
               return questionItem;
             })
           };
@@ -499,15 +514,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
@@ -542,15 +554,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           responses: '23/26',
           createdAt: format(new Date(p?.createdAt), 'Do MMM'),

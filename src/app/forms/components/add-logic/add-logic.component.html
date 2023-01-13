@@ -96,6 +96,7 @@
             >
             </span>
             <button
+              [disabled]="!logic.value.operand2 || !logic.value.operand2.length"
               mat-button
               [matMenuTriggerFor]="menu"
               class="actionBtn"
