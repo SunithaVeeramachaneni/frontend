@@ -202,7 +202,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           this.isFormDetailPublished = isFormDetailPublished;
           if (pages.length && formListId) {
             if (authoredFormDetailId) {
-              if (formSaveStatus !== 'Saved') {
+              if (formSaveStatus !== 'Saved' && formStatus !== 'Published') {
                 this.store.dispatch(
                   FormConfigurationActions.updateAuthoredFormDetail({
                     formStatus,

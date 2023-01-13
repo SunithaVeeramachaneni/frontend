@@ -308,7 +308,8 @@ export class FormListComponent implements OnInit {
             .createForm$({
               ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
-              formStatus: formConfigurationStatus.draft
+              formStatus: formConfigurationStatus.draft,
+              isPublic: false
             })
             .subscribe((newRecord) => {
               if (!newRecord) {
@@ -319,10 +320,11 @@ export class FormListComponent implements OnInit {
                   if (obj) {
                     this.raceDynamicFormService.createAuthoredFormDetail$({
                       formStatus: obj?.formStatus,
+                      formDetailPublishStatus: 'Draft',
                       formListId: newRecord?.id,
                       pages: JSON.parse(obj?.pages) ?? '',
                       counter: obj?.counter,
-                      authoredFormDetailVersion: +obj?.version + 1
+                      authoredFormDetailVersion: 1
                     });
                   }
                 }
