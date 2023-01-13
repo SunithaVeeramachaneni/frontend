@@ -1,0 +1,34 @@
+.widget-delete-modal {
+  width: 400px;
+  height: auto;
+  overflow: hidden;
+  padding: 17px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.cancel-title {
+  font-size: 110%;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cancel-subtitle {
+  font-size: 100%;
+}
+
+.delete-btn {
+  color: #f6685e;
+  border-radius: 4px;
+  background: #ffffff;
+  float: right;
+  border: none;
+}
+
+.cancel-btn {
+  color: #3d5afe;
+  background: #ffffff;
+  border-radius: 4px;
+  float: right;
+  border: 1px solid #3d5afe;
+}
