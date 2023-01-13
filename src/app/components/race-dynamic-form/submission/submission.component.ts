@@ -18,11 +18,22 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent, CellClickActionEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  CellClickActionEvent
+} from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
 
 @Component({
   selector: 'app-submission',
@@ -237,6 +248,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   public menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   submissionDetail: any;
+  fetchType = 'load';
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -261,9 +273,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => {
+      switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
+        this.fetchType = data;
         return this.getSubmissionFormsList();
       })
     );
@@ -272,6 +285,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = 'infiniteScroll';
           return this.getSubmissionFormsList();
         } else {
           return of([] as GetFormListQuery[]);
@@ -309,7 +323,8 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       .getSubmissionFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchForm.value
+        searchKey: this.searchForm.value,
+        fetchType: this.fetchType
       })
       .pipe(
         mergeMap(({ rows, nextToken }) => {
