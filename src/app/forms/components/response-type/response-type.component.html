@@ -37,7 +37,10 @@
               <button
                 mat-flat-button
                 class="quick-response responseBtn"
-                (click)="closeResponseType()"
+                (click)="
+                  handleMCQRepsonseSelection('quickResponse', resp);
+                  closeResponseType()
+                "
               >
                 <mat-chip-list *ngFor="let val of resp.values; let i = index">
                   <mat-chip
@@ -90,8 +93,15 @@
       <div class="height-50">
         <h2 class="orange-color" translate="globalResponseHeading"></h2>
         <div *ngIf="globalResponses$ | async as globalResponses">
-          <div *ngFor="let response of globalResponses">
-            {{ response?.name }}
+          <mat-chip-list *ngFor="let response of globalResponses">
+            <mat-chip
+              (click)="
+                handleMCQRepsonseSelection('globalResponse', response);
+                closeResponseType()
+              "
+            >
+              {{ response?.name }}
+            </mat-chip>
             <button
               mat-flat-button
               (click)="handleEditGlobalResponse(response)"
@@ -102,7 +112,7 @@
                 class="edit-icon-img"
               />
             </button>
-          </div>
+          </mat-chip-list>
         </div>
         <button
           class="add-new-btn"

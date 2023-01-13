@@ -17,10 +17,7 @@
     class="chip-list"
   >
     <mat-chip-list
-      *ngIf="
-        questionForm.get('value').value?.name &&
-        !questionForm.get('value').value?.globalDataset
-      "
+      *ngIf="questionForm.get('value').value?.type === 'globalResponse'"
       class="response-type-chips"
     >
       <mat-chip class="chips">
@@ -28,10 +25,7 @@
       </mat-chip>
     </mat-chip-list>
     <mat-chip-list
-      *ngIf="
-        !questionForm.get('value').value?.name &&
-        !questionForm.get('value').value?.globalDataset
-      "
+      *ngIf="questionForm.get('value').value?.type === 'quickResponses'"
       class="response-type-chips"
     >
       <mat-chip

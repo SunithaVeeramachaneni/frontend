@@ -83,7 +83,11 @@ export class FormListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '100%',
+        color: '#000000'
+      },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
