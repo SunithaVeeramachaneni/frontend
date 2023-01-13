@@ -10,7 +10,34 @@
         />
         <h1 class="detail-heading">{{ selectedForm?.name }}</h1>
       </div>
-
+      <div class="name-heading">
+        <div>
+          <p class="color-gray">
+            {{ 'lastPublishedBy' | translate }}
+          </p>
+        </div>
+        <div class="flex-custom">
+          <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
+          <span class="dots"></span>
+          <p class="date-name color-gray">
+            {{ formateDate(selectedForm?.updatedAt) }}
+          </p>
+        </div>
+      </div>
+      <div class="name-heading">
+        <div>
+          <p class="color-gray">
+            {{ 'lastModifiedBy' | translate }}
+          </p>
+        </div>
+        <div class="flex-custom">
+          <h4 class="create-name">{{ selectedForm?.lastPublishedBy }}</h4>
+          <span class="dots"></span>
+          <p class="date-name color-gray">
+            {{ formateDate(selectedForm?.updatedAt) }}
+          </p>
+        </div>
+      </div>
       <div class="name-heading">
         <div>
           <p class="color-gray">
