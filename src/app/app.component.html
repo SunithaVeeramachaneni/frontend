@@ -102,6 +102,7 @@
                   mat-list-item
                   [routerLink]="submenuitem.url"
                   routerLinkActive="subSelected"
+                  [routerLinkActiveOptions]="{ exact: true }"
                   *appCheckUserHasPermission="[submenuitem.permission]"
                   (click)="selectedListElement(submenuitem.title)"
                 >

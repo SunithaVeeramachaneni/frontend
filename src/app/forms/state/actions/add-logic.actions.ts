@@ -9,6 +9,13 @@ export const addLogicToQuestion = createAction(
     logic: any;
   }>()
 );
+export const removeLogicsOfQuestion = createAction(
+  '[Form Configuration] removeLogicsOfQuestion',
+  props<{
+    pageIndex: number;
+    questionId: string;
+  }>()
+);
 
 export const updateQuestionLogic = createAction(
   '[Form Configuration] updateQuestionLogic',

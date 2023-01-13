@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
-import { from, Observable, ReplaySubject } from 'rxjs';
+import { from, Observable, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
@@ -85,8 +85,13 @@ export class RaceDynamicFormService {
     nextToken?: string;
     limit: number;
     searchKey: string;
+    fetchType: string;
   }) {
-    if (queryParams?.nextToken !== null) {
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
       return from(
         this.awsApiService.ListFormLists(
           {
@@ -98,6 +103,12 @@ export class RaceDynamicFormService {
           queryParams.nextToken
         )
       ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
+    } else {
+      return of({
+        count: 0,
+        rows: [],
+        nextToken: null
+      });
     }
   }
 
@@ -105,8 +116,13 @@ export class RaceDynamicFormService {
     nextToken?: string;
     limit: number;
     searchKey: string;
+    fetchType: string;
   }) {
-    if (queryParams?.nextToken !== null) {
+    if (
+      ['load', 'search'].includes(queryParams.fetchType) ||
+      (['infiniteScroll'].includes(queryParams.fetchType) &&
+        queryParams.nextToken !== null)
+    ) {
       return from(
         this.awsApiService.ListFormSubmissionLists(
           {
@@ -118,6 +134,11 @@ export class RaceDynamicFormService {
           queryParams.nextToken
         )
       ).pipe(map((res) => this.formatSubmittedListResponse(res)));
+    } else {
+      return of({
+        rows: [],
+        nextToken: null
+      });
     }
   }
 
@@ -451,15 +472,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
@@ -489,15 +507,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           responses: '23/26',
           createdAt: format(new Date(p?.createdAt), 'Do MMM'),
@@ -512,9 +527,7 @@ export class RaceDynamicFormService {
     };
   }
 
-  getInspectionDetailByInspectionId$ = (
-    inspectionId: string
-  ) => {
+  getInspectionDetailByInspectionId$ = (inspectionId: string) => {
     return from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
-  }
+  };
 }

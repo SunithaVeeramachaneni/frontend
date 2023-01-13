@@ -144,7 +144,9 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
         fieldType.type !== 'IMG' &&
-        fieldType.type !== 'ATT'
+        fieldType.type !== 'USR' &&
+        fieldType.type !== 'ARD' &&
+        fieldType.type !== 'TAF'
     );
     this.questionForm.valueChanges
       .pipe(
@@ -231,6 +233,11 @@ export class QuestionComponent implements OnInit {
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
     }
+
+    this.removeLogicsOfQuestion(
+      this.pageIndex,
+      this.questionForm.get('id').value
+    );
 
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
@@ -339,6 +346,16 @@ export class QuestionComponent implements OnInit {
       })
     );
   }
+
+  removeLogicsOfQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.removeLogicsOfQuestion({
+        pageIndex,
+        questionId
+      })
+    );
+  }
+
   constructLogic(pageIndex: number, questionId: string) {
     return {
       id: uuidv4(),
