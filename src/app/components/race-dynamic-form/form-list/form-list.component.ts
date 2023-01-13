@@ -92,16 +92,7 @@ export class FormListComponent implements OnInit {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      preTextImageConfig: {
-        logoAvialable: false,
-        style: {
-          width: '40px',
-          height: '40px',
-          marginRight: '10px'
-        }
-      },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      hasPostTextImage: false
     },
     {
       id: 'author',
@@ -315,7 +306,7 @@ export class FormListComponent implements OnInit {
         if (createdForm?.newName) {
           this.raceDynamicFormService
             .createForm$({
-              ...omit(form, ['id', 'preTextImage', 'preTextImageConfig']),
+              ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft
             })
@@ -342,7 +333,6 @@ export class FormListComponent implements OnInit {
                   ...newRecord,
                   name: createdForm.newName,
                   preTextImage: (form as any)?.preTextImage,
-                  preTextImageConfig: (form as any)?.preTextImageConfig,
                   oldId: form.id
                 } as any
               });

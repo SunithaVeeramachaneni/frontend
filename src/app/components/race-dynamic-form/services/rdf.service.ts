@@ -472,15 +472,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
@@ -510,15 +507,12 @@ export class RaceDynamicFormService {
           ...p,
           preTextImage: {
             image: p?.formLogo,
-            condition: true
-          },
-          preTextImageConfig: {
-            logoAvialable: p?.formLogo === '' ? false : true,
             style: {
               width: '40px',
               height: '40px',
               marginRight: '10px'
-            }
+            },
+            condition: true
           },
           responses: '23/26',
           createdAt: format(new Date(p?.createdAt), 'Do MMM'),
