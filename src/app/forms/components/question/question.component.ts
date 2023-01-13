@@ -232,6 +232,11 @@ export class QuestionComponent implements OnInit {
       return;
     }
 
+    this.removeLogicsOfQuestion(
+      this.pageIndex,
+      this.questionForm.get('id').value
+    );
+
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
@@ -340,6 +345,16 @@ export class QuestionComponent implements OnInit {
       })
     );
   }
+
+  removeLogicsOfQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.removeLogicsOfQuestion({
+        pageIndex,
+        questionId
+      })
+    );
+  }
+
   constructLogic(pageIndex: number, questionId: string) {
     return {
       id: uuidv4(),

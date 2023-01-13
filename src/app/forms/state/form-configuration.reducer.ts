@@ -650,6 +650,31 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
 
   on(
+    AddLogicActions.removeLogicsOfQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (logic) => logic.questionId !== action.questionId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
     AddLogicActions.updateQuestionLogic,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
