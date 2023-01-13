@@ -2,7 +2,9 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  OnDestroy
+  OnDestroy,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -41,7 +43,10 @@ import {
   getIsFormCreated,
   getQuestionIds
 } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  MCQResponseActions
+} from 'src/app/forms/state/actions';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -59,6 +64,7 @@ import { formConfigurationStatus } from 'src/app/app.constants';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormConfigurationComponent implements OnInit, OnDestroy {
+  @ViewChild('name') formName: ElementRef;
   formConfiguration: FormGroup;
   formMetadata$: Observable<FormMetadata>;
   pageIndexes$: Observable<number[]>;
@@ -95,7 +101,10 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.formConfiguration = this.fb.group({
       id: [''],
       formLogo: [''],
-      name: [''],
+      name: {
+        value: '',
+        disabled: true
+      },
       description: [''],
       counter: [0],
       formStatus: [formConfigurationStatus.draft]
@@ -108,7 +117,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     this.breadcrumbService.set('@formName', {
       label: fornName
     });
-
+    this.store.dispatch(
+      MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
+    );
     this.formConfiguration.valueChanges
       .pipe(
         debounceTime(500),
@@ -326,6 +337,18 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  editFormName() {
+    this.formConfiguration.get('name').enable();
+    this.formName.nativeElement.focus();
+  }
+
+  getSize(value) {
+    if (value && value === value.toUpperCase()) {
+      return value.length;
+    }
+    return value.length - 1;
   }
 
   get formConf() {

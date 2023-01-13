@@ -50,13 +50,6 @@
     ></app-form-detail>
   </ng-container>
 
-  <app-submission-slider
-    [@slideInOut]="submissionSlider"
-    (slideInOut)="submissionSlider = 'out'"
-  ></app-submission-slider>
-
-  <button (click)="openSubmissionSlider()">Slider</button>
-
   <ng-template #loadingForms>
     <div class="ghost-loading">
       <div *ngFor="let number of ghostLoading">
