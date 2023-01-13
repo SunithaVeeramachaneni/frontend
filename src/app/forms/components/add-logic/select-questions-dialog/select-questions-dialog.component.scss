@@ -6,8 +6,11 @@
 .dialogBody {
   max-height: 400px;
   .heading {
-    font-size: 125%;
+    // font-size: 125%;
     font-weight: 500;
+    .selectQuestionsToBe {
+      margin-right: 5px;
+    }
   }
 }
 .logicRow {

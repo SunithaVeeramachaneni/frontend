@@ -506,6 +506,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
           );
+          if (action.questionIndex > 0) {
+            sectionQuestions[action.questionIndex - 1].isOpen = true;
+          }
           const remainingQuestions = page.questions.filter(
             (question) => question.sectionId !== action.sectionId
           );
@@ -635,6 +638,31 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           return {
             ...page,
             logics: [...page.logics, action.logic]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.removeLogicsOfQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (logic) => logic.questionId !== action.questionId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
           };
         }
         return page;
