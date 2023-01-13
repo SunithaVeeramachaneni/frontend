@@ -299,7 +299,6 @@ export class QuestionComponent implements OnInit {
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
       this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-    console.log(isAskQuestion);
 
     if (isAskQuestion) {
       return;

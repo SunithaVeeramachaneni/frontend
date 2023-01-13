@@ -506,6 +506,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
           );
+          if (action.questionIndex > 0) {
+            sectionQuestions[action.questionIndex - 1].isOpen = true;
+          }
           const remainingQuestions = page.questions.filter(
             (question) => question.sectionId !== action.sectionId
           );
