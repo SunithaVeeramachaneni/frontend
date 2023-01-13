@@ -18,11 +18,22 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent, CellClickActionEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  CellClickActionEvent
+} from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
 
 @Component({
   selector: 'app-submission',
@@ -71,16 +82,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      preTextImageConfig: {
-        logoAvialable: false,
-        style: {
-          width: '40px',
-          height: '40px',
-          marginRight: '10px'
-        }
-      },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      hasPostTextImage: false
     },
     {
       id: 'status',
@@ -335,7 +337,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {}
 
   cellClickActionHandler = (event: CellClickActionEvent): void => {
-    if (this.submissionDetail && this.submissionDetail.id == event.row.id) {
+    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
       this.menuState = this.menuState === 'out' ? 'in' : 'out';
     } else {
       this.menuState = 'in';
