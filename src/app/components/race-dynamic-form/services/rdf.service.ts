@@ -375,6 +375,21 @@ export class RaceDynamicFormService {
                 arrayFieldTypeQuestions.push(question);
               }
 
+              if (question.fieldType === 'VI' || question.fieldType === 'DD') {
+                const viVALUE = question.value?.value.map((item, idx) => ({
+                  [`label${idx + 1}`]: item.title,
+                  key: item.title,
+                  color: item.color,
+                  description: item.description
+                }));
+                questionItem.UIFIELDTYPE = question.multi
+                  ? 'DDM'
+                  : question.fieldType;
+                Object.assign(questionItem, {
+                  DDVALUE: JSON.stringify(viVALUE)
+                });
+              }
+
               return questionItem;
             })
           };
