@@ -144,7 +144,9 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
         fieldType.type !== 'IMG' &&
-        fieldType.type !== 'ATT'
+        fieldType.type !== 'USR' &&
+        fieldType.type !== 'ARD' &&
+        fieldType.type !== 'TAF'
     );
     this.questionForm.valueChanges
       .pipe(
@@ -293,6 +295,13 @@ export class QuestionComponent implements OnInit {
   }
 
   updateIsOpen(isOpen: boolean) {
+    const isAskQuestion =
+      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
+    console.log(isAskQuestion);
+
+    if (isAskQuestion) {
+      return;
+    }
     if (this.questionForm.get('isOpen').value !== isOpen) {
       if (!this.ignoreUpdateIsOpen) {
         this.store.dispatch(

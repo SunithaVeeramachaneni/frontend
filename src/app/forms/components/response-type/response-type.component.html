@@ -37,7 +37,10 @@
               <button
                 mat-flat-button
                 class="quick-response responseBtn"
-                (click)="handleMCQRepsonseSelection('quickResponse', resp)"
+                (click)="
+                  handleMCQRepsonseSelection('quickResponse', resp);
+                  closeResponseType()
+                "
               >
                 <mat-chip-list *ngFor="let val of resp.values; let i = index">
                   <mat-chip
@@ -92,9 +95,12 @@
         <div *ngIf="globalResponses$ | async as globalResponses">
           <mat-chip-list *ngFor="let response of globalResponses">
             <mat-chip
-              (click)="handleMCQRepsonseSelection('globalResponse', response)"
+              (click)="
+                handleMCQRepsonseSelection('globalResponse', response);
+                closeResponseType()
+              "
             >
-              {{ response.name }}
+              {{ response?.name }}
             </mat-chip>
             <button
               mat-flat-button
