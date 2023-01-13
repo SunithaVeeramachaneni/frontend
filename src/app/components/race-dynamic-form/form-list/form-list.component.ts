@@ -526,8 +526,7 @@ export class FormListComponent implements OnInit {
 
   private showFormDetail(row: GetFormListQuery): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = null;
-    this.selectedForm = this.menuState === 'out' ? row : null;
-    this.menuState = this.menuState === 'out' ? 'in' : 'out';
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }
