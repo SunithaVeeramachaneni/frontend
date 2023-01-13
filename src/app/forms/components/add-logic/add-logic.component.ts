@@ -290,7 +290,7 @@ export class AddLogicComponent implements OnInit {
     const dialogRef = this.dialog.open(SelectQuestionsDialogComponent, {
       restoreFocus: false,
       disableClose: true,
-      hasBackdrop: false,
+      hasBackdrop: true,
       width: '60%',
       data: {
         logic,

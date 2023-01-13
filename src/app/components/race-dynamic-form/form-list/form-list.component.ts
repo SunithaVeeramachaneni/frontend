@@ -92,16 +92,7 @@ export class FormListComponent implements OnInit {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      preTextImageConfig: {
-        logoAvialable: false,
-        style: {
-          width: '40px',
-          height: '40px',
-          marginRight: '10px'
-        }
-      },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      hasPostTextImage: false
     },
     {
       id: 'author',
@@ -240,6 +231,7 @@ export class FormListComponent implements OnInit {
   ghostLoading = new Array(12).fill(0).map((v, i) => i);
   nextToken = '';
   selectedForm: GetFormListQuery = null;
+  fetchType = 'load';
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -283,10 +275,12 @@ export class FormListComponent implements OnInit {
     const { columnId, row } = event;
     switch (columnId) {
       case 'name':
+      case 'description':
       case 'author':
       case 'formStatus':
       case 'lastPublishedBy':
       case 'publishedDate':
+      case 'responses':
         this.showFormDetail(row);
         break;
       default:
@@ -312,7 +306,7 @@ export class FormListComponent implements OnInit {
         if (createdForm?.newName) {
           this.raceDynamicFormService
             .createForm$({
-              ...omit(form, ['id', 'preTextImage', 'preTextImageConfig']),
+              ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
               formStatus: formConfigurationStatus.draft
             })
@@ -339,7 +333,6 @@ export class FormListComponent implements OnInit {
                   ...newRecord,
                   name: createdForm.newName,
                   preTextImage: (form as any)?.preTextImage,
-                  preTextImageConfig: (form as any)?.preTextImageConfig,
                   oldId: form.id
                 } as any
               });
@@ -353,8 +346,9 @@ export class FormListComponent implements OnInit {
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => {
+      switchMap(({ data }) => {
         this.skip = 0;
+        this.fetchType = data;
         return this.getForms();
       })
     );
@@ -363,6 +357,7 @@ export class FormListComponent implements OnInit {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
           return of([] as GetFormListQuery[]);
@@ -423,7 +418,8 @@ export class FormListComponent implements OnInit {
       .getFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchForm.value
+        searchKey: this.searchForm.value,
+        fetchType: this.fetchType
       })
       .pipe(
         mergeMap(({ count, rows, nextToken }) => {
@@ -526,8 +522,7 @@ export class FormListComponent implements OnInit {
 
   private showFormDetail(row: GetFormListQuery): void {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.selectedForm = null;
-    this.selectedForm = this.menuState === 'out' ? row : null;
-    this.menuState = this.menuState === 'out' ? 'in' : 'out';
+    this.selectedForm = row;
+    this.menuState = 'in';
   }
 }
