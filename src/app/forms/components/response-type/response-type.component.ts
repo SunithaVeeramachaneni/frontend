@@ -126,8 +126,8 @@ export class ResponseTypeComponent implements OnInit {
     });
     this.setQuestionValue.emit(
       responseType === 'quickResponse'
-        ? { type, name, value: values, description: name }
-        : { type, name, value: JSON.parse(values), description }
+        ? { type: responseType, name, value: values, description: name }
+        : { type: responseType, name, value: JSON.parse(values), description }
     );
   };
   closeResponseType() {
