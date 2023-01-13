@@ -83,7 +83,11 @@ export class FormListComponent implements OnInit {
       stickable: false,
       sticky: false,
       groupable: false,
-      titleStyle: { 'font-weight': '500', 'font-size': '90%' },
+      titleStyle: {
+        'font-weight': '500',
+        'font-size': '100%',
+        color: '#000000'
+      },
       hasSubtitle: true,
       showMenuOptions: false,
       subtitleColumn: 'description',
@@ -308,7 +312,8 @@ export class FormListComponent implements OnInit {
             .createForm$({
               ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
-              formStatus: formConfigurationStatus.draft
+              formStatus: formConfigurationStatus.draft,
+              isPublic: false
             })
             .subscribe((newRecord) => {
               if (!newRecord) {
@@ -319,10 +324,11 @@ export class FormListComponent implements OnInit {
                   if (obj) {
                     this.raceDynamicFormService.createAuthoredFormDetail$({
                       formStatus: obj?.formStatus,
+                      formDetailPublishStatus: 'Draft',
                       formListId: newRecord?.id,
                       pages: JSON.parse(obj?.pages) ?? '',
                       counter: obj?.counter,
-                      authoredFormDetailVersion: +obj?.version + 1
+                      authoredFormDetailVersion: 1
                     });
                   }
                 }
