@@ -190,7 +190,7 @@ export class ArchivedListComponent implements OnInit {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getSubmissionFormsList();
+        return this.getArchivedList();
       })
     );
 
@@ -199,7 +199,7 @@ export class ArchivedListComponent implements OnInit {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getSubmissionFormsList();
+          return this.getArchivedList();
         } else {
           return of([] as GetFormListQuery[]);
         }
@@ -248,7 +248,7 @@ export class ArchivedListComponent implements OnInit {
     );
   }
 
-  getSubmissionFormsList() {
+  getArchivedList() {
     return this.raceDynamicFormService
       .getFormsList$(
         {
