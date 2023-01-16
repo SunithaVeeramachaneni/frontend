@@ -104,15 +104,16 @@ export class RaceDynamicFormService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.nextToken !== null)
     ) {
+      const isSearch = queryParams.fetchType === 'search';
       return from(
         this.awsApiService.ListFormLists(
           {
             ...(queryParams.searchKey && {
-              name: { contains: queryParams?.searchKey }
+              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
             })
           },
-          queryParams.limit,
-          queryParams.nextToken
+          !isSearch && queryParams.limit,
+          !isSearch && queryParams.nextToken
         )
       ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
     } else {
@@ -135,15 +136,16 @@ export class RaceDynamicFormService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.nextToken !== null)
     ) {
+      const isSearch = queryParams.fetchType === 'search';
       return from(
         this._ListFormSubmissionLists(
           {
             ...(queryParams.searchKey && {
-              name: { contains: queryParams?.searchKey }
+              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
             })
           },
-          queryParams.limit,
-          queryParams.nextToken
+          !isSearch && queryParams.limit,
+          !isSearch && queryParams.nextToken
         )
       ).pipe(map((res) => this.formatSubmittedListResponse(res)));
     } else {
@@ -386,12 +388,13 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '',
+                DEFAULTVALUE: '' as any,
                 UIVALIDATION: this.getValidationExpression(
                   question.id,
                   questions,
                   logics
-                )
+                ),
+                MANDATORY: question.required === true ? 'X' : ''
               };
 
               if (question.fieldType === 'ARD') {
@@ -404,14 +407,19 @@ export class RaceDynamicFormService {
                   [`label${idx + 1}`]: item.title,
                   key: item.title,
                   color: item.color,
-                  description: item.description
+                  description: item.title
                 }));
                 questionItem.UIFIELDTYPE = question.multi
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: JSON.stringify(viVALUE)
+                  DDVALUE: viVALUE
                 });
+              }
+
+              if (question.fieldType === 'RT') {
+                const { min, max, increment } = question.value;
+                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
               }
 
               return questionItem;
@@ -602,6 +610,7 @@ export class RaceDynamicFormService {
             dueDate
             version
             submittedBy
+            searchTerm
             createdAt
             updatedAt
             _version

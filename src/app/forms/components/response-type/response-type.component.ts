@@ -159,18 +159,16 @@ export class ResponseTypeComponent implements OnInit {
 
   handleGlobalResponsesToggle() {
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
-    if (this.isGlobalResponseOpen) {
-      this.formService.setMultiChoiceOpenState({
-        isOpen: true,
-        response: []
-      });
-      this.responseTypeCloseEvent.emit(true);
-    }
   }
 
   handleEditGlobalResponse = (response: any) => {
     this.responseToBeEdited = response;
     this.handleGlobalResponsesToggle();
+  };
+
+  handleGlobalResponseCancel = (event) => {
+    this.isGlobalResponseOpen = event.isGlobalResponseOpen;
+    this.responseToBeEdited = event.responseToBeEdited;
   };
   quickResponseTypeHandler(event) {}
 }

@@ -15,6 +15,8 @@ export class IphoneComponent implements OnInit {
   formMetadata$: Observable<FormMetadata>;
   pagesCount$: Observable<number>;
   formMetadata: FormMetadata;
+  currentPage = 1;
+  totalPages = 0;
 
   constructor(private store: Store<State>) {}
 
@@ -26,5 +28,20 @@ export class IphoneComponent implements OnInit {
     );
 
     this.pagesCount$ = this.store.select(getPagesCount);
+    this.pagesCount$.subscribe((res) => {
+      this.totalPages = res;
+    })
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 }

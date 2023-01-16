@@ -1,4 +1,4 @@
-<div class="response-type-modal">
+<div class="response-type-modal" [hidden]="isGlobalResponseOpen">
   <h1 class="modal-heading">
     <mat-icon (click)="toggleResponseTypeModal($event)" class="cancel-icon">
       clear
@@ -134,12 +134,12 @@
           [formId]="formId"
         ></app-response-type-side-drawer>
       </div>
-
-      <div *ngIf="isGlobalResponseOpen">
-        <app-global-response-type-side-drawer
-          [globalResponseToBeEdited]="responseToBeEdited"
-        ></app-global-response-type-side-drawer>
-      </div>
     </div>
   </div>
+</div>
+<div *ngIf="isGlobalResponseOpen">
+  <app-global-response-type-side-drawer
+    [globalResponseToBeEdited]="responseToBeEdited"
+    (globalResponseHandler)="handleGlobalResponseCancel($event)"
+  ></app-global-response-type-side-drawer>
 </div>
