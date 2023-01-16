@@ -179,10 +179,12 @@
         }
 
         .mat-button-toggle-group {
-          flex-direction: column;
+         flex-direction: row;
           width: 100%;
           border: none;
           margin-top: 7px;
+          display: flex;
+          align-content: space-between;
         }
 
         .mat-button-toggle {
@@ -193,6 +195,7 @@
           font-size: 90%;
           height: 30px;
           align-items: center;
+          width: 100%;
         }
 
         ::ng-deep .mat-button-toggle-label-content {
