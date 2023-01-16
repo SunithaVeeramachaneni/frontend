@@ -5,6 +5,7 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 import { FormService } from '../../services/form.service';
 import { Store } from '@ngrx/store';
 import { getFormMetadata, State, getResponseSets } from '../../state';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-response-type',
@@ -15,6 +16,7 @@ export class ResponseTypeComponent implements OnInit {
   @Input() fieldTypes;
   @Input() question;
   @Output() selectFieldTypeEvent: EventEmitter<any> = new EventEmitter<any>();
+  @Output() setQuestionValue: EventEmitter<any> = new EventEmitter<any>();
   @Output() responseTypeCloseEvent: EventEmitter<boolean> =
     new EventEmitter<boolean>();
 
@@ -33,7 +35,8 @@ export class ResponseTypeComponent implements OnInit {
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
-    private store: Store<State>
+    private store: Store<State>,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -42,11 +45,17 @@ export class ResponseTypeComponent implements OnInit {
       .pipe((responses: any) => responses);
     this.globalResponses$.subscribe();
     this.quickResponsesLoading = true;
-    this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        this.formId = formMetadata.id;
-      })
-    );
+
+    this.route.params.subscribe((params) => {
+      this.formId = params.id;
+    });
+
+    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+      if (data.id) {
+        this.formId = data.id;
+      }
+    });
+
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),
       this.rdfService.getDataSetsByType$('quickResponses').pipe(
@@ -116,6 +125,19 @@ export class ResponseTypeComponent implements OnInit {
     this.responseTypeCloseEvent.emit(true);
   }
 
+  handleMCQRepsonseSelection = (responseType, response) => {
+    const { type, values, name, description } = response;
+
+    this.selectFieldTypeEvent.emit({
+      type:
+        responseType === 'quickResponse' && values?.length <= 4 ? 'VI' : 'DD'
+    });
+    this.setQuestionValue.emit(
+      responseType === 'quickResponse'
+        ? { type: responseType, name, value: values, description: name }
+        : { type: responseType, name, value: JSON.parse(values), description }
+    );
+  };
   closeResponseType() {
     this.responseTypeCloseEvent.emit(true);
   }
@@ -137,18 +159,16 @@ export class ResponseTypeComponent implements OnInit {
 
   handleGlobalResponsesToggle() {
     this.isGlobalResponseOpen = !this.isGlobalResponseOpen;
-    if (this.isGlobalResponseOpen) {
-      this.formService.setMultiChoiceOpenState({
-        isOpen: true,
-        response: []
-      });
-      this.responseTypeCloseEvent.emit(true);
-    }
   }
 
   handleEditGlobalResponse = (response: any) => {
     this.responseToBeEdited = response;
     this.handleGlobalResponsesToggle();
+  };
+
+  handleGlobalResponseCancel = (event) => {
+    this.isGlobalResponseOpen = event.isGlobalResponseOpen;
+    this.responseToBeEdited = event.responseToBeEdited;
   };
   quickResponseTypeHandler(event) {}
 }

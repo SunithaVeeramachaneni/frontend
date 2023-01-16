@@ -17,10 +17,7 @@
     class="chip-list"
   >
     <mat-chip-list
-      *ngIf="
-        questionForm.get('value').value?.name &&
-        !questionForm.get('value').value?.globalDataset
-      "
+      *ngIf="questionForm.get('value').value?.type === 'globalResponse'"
       class="response-type-chips"
     >
       <mat-chip class="chips">
@@ -28,33 +25,30 @@
       </mat-chip>
     </mat-chip-list>
     <mat-chip-list
-      *ngIf="
-        !questionForm.get('value').value?.name &&
-        !questionForm.get('value').value?.globalDataset
-      "
+      *ngIf="questionForm.get('value').value?.type === 'quickResponse'"
       class="response-type-chips"
     >
       <mat-chip
         class="chips"
         [ngStyle]="{
-          color: questionForm.get('value').value?.values[0]?.color
+          color: questionForm.get('value').value?.value[0]?.color
         }"
       >
-        {{ questionForm.get('value').value?.values[0].title }}
+        {{ questionForm.get('value').value?.value[0].title }}
       </mat-chip>
       <mat-chip
-        *ngIf="questionForm.get('value').value?.values.length >= 2"
+        *ngIf="questionForm.get('value').value?.value.length >= 2"
         class="chips"
         [ngStyle]="{
-          color: questionForm.get('value').value?.values[1]?.color
+          color: questionForm.get('value').value?.value[1]?.color
         }"
       >
-        {{ questionForm.get('value').value?.values[1].title }}
+        {{ questionForm.get('value').value?.value[1].title }}
       </mat-chip>
       <span
-        *ngIf="questionForm.get('value').value?.values.length > 2"
+        *ngIf="questionForm.get('value').value?.value.length > 2"
         class="ellipsis-more"
-        >+ ({{ questionForm.get('value').value?.values.length - 2 }}
+        >+ ({{ questionForm.get('value').value?.value.length - 2 }}
         more)
       </span>
     </mat-chip-list>

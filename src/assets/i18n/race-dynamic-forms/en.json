@@ -1,5 +1,5 @@
 {
-  "createForm": "Create Blank Form",
+  "createForm": "Create Form",
   "importForm": "Import from Public Library",
   "exportExcel": "Convert Excel into Form",
   "formLibrary": "Form Library",
@@ -7,7 +7,7 @@
   "importBtn": "Import Questions",
   "publishBtn": "Publish",
   "backBtn": "Back",
-  "setFormDetailsHeading": "Set form details",
+  "setFormDetailsHeading": "Form Details",
   "setFormTypeHeading": "Select Form type",
   "standalone": "Standalone",
   "embedded": "Embedded",
@@ -92,5 +92,7 @@
   "questions": "QUESTIONS",
   "editForm": "Edit Form",
   "createdBy": "Created by",
-  "preview": "Preview"
+  "preview": "Preview",
+  "lastPublishedBy": "Last Published By",
+  "lastModifiedBy": "Last Modified By"
 }

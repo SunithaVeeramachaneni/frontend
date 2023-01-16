@@ -31,7 +31,10 @@
           (change)="uploadFormImageFile($event)"
         />
         <div>
-          <a matTooltip="{{ formConfiguration.get('name').value }}">
+          <a
+            matTooltip="{{ formConfiguration.get('name').value }}"
+            class="dis-inline"
+          >
             <input
               #name
               type="text"
@@ -41,7 +44,22 @@
               autofocus="true"
               autocomplete="off"
               (keyup.enter)="formConfiguration.get('name').disable()"
+              (blur)="formConfiguration.get('name').disable()"
             />
+
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="error-fields"
+            >
+              {{
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: errors.name.length
+                      }
+              }}
+            </mat-error>
 
             <button
               (click)="editFormName()"

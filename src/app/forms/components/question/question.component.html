@@ -66,6 +66,7 @@
             <app-response-type
               (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
               (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
+              (setQuestionValue)="questionForm.get('value').setValue($event)"
               [fieldTypes]="fieldTypes"
               [question]="question"
             ></app-response-type>
@@ -183,6 +184,7 @@
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [question]="question"
+                [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>
 
@@ -229,6 +231,7 @@
               <app-add-logic
                 *ngIf="questionLogics.length"
                 [questionId]="questionForm.get('id').value"
+                [quickResponseValues]="questionForm.get('value').value"
                 [fieldType]="questionForm.get('fieldType').value"
                 [pageIndex]="pageIndex"
                 [sectionId]="sectionId"

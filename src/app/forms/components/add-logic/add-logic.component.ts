@@ -44,6 +44,13 @@ export class AddLogicComponent implements OnInit {
     return this._questionId;
   }
 
+  @Input() set quickResponseValues(values: any) {
+    this._quickResponseValues = values.value;
+  }
+  get quickResponseValues() {
+    return this._quickResponseValues;
+  }
+
   @Input() set sectionId(id: string) {
     this._sectionId = id;
   }
@@ -82,6 +89,7 @@ export class AddLogicComponent implements OnInit {
 
   private _pageIndex: number;
   private _questionId: string;
+  private _quickResponseValues: any;
   private _sectionId: string;
   private _fieldType: string;
 
@@ -290,7 +298,7 @@ export class AddLogicComponent implements OnInit {
     const dialogRef = this.dialog.open(SelectQuestionsDialogComponent, {
       restoreFocus: false,
       disableClose: true,
-      hasBackdrop: false,
+      hasBackdrop: true,
       width: '60%',
       data: {
         logic,

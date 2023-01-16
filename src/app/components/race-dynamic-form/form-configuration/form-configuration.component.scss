@@ -37,10 +37,20 @@
     border: none;
     background-color: transparent;
     position: relative;
-    left: -20px;
+    left: -10px;
     .edit-icon-img {
       width: 14px;
     }
+  }
+
+  .dis-inline {
+    display: inline;
+  }
+
+  .error-fields {
+    margin: 0;
+    font-size: 80%;
+    display: inline;
   }
 
   .form_description_input {

@@ -6,7 +6,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 450;
+  width: 450px;
   min-width: 450px;
   overflow-y: scroll;
   z-index: 9999;
@@ -70,7 +70,7 @@
     width: 100%;
   }
   .btn-push {
-    margin-left: 0.9rem;
+    margin-top: -10px;
   }
   .question-bg {
     background: rgba(61, 90, 254, 0.08);
@@ -83,7 +83,7 @@
       letter-spacing: 0.4px;
       color: #2a3eb1;
       font-weight: 600;
-      padding-bottom: 1.1rem;
+      margin: 7px 0;
     }
     .section-question {
       background: rgba(103, 58, 183, 0.08);

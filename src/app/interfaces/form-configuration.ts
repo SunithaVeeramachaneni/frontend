@@ -14,6 +14,7 @@ export interface FormMetadata {
   formType: 'Standalone' | 'Embedded';
   formStatus: 'Draft' | 'Published';
   tags: string[];
+  searchTerm: string;
 }
 
 export interface Page {

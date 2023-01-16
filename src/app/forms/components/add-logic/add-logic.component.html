@@ -49,14 +49,14 @@
               *ngIf="dropDownTypes.indexOf(fieldType) < 0"
             />
             <select
-              class="logicValue m-l-m30"
+              class="logicValue"
               formControlName="operand2"
               *ngIf="dropDownTypes.indexOf(fieldType) > -1"
             >
               <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox">
                 <option
                   class="logicOperator"
-                  *ngFor="let option of dropdownValues"
+                  *ngFor="let option of quickResponseValues"
                 >
                   {{ option.title }}
                 </option>
@@ -96,6 +96,7 @@
             >
             </span>
             <button
+              [disabled]="!logic.value.operand2 || !logic.value.operand2.length"
               mat-button
               [matMenuTriggerFor]="menu"
               class="actionBtn"

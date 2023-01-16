@@ -160,6 +160,7 @@ type EagerFormSubmissionList = {
   readonly version?: string | null;
   readonly submittedBy?: string | null;
   readonly formSubmissionListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -182,6 +183,7 @@ type LazyFormSubmissionList = {
   readonly version?: string | null;
   readonly submittedBy?: string | null;
   readonly formSubmissionListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
+  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -215,6 +217,8 @@ type EagerFormList = {
   readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
   readonly formListFormDetail?: (FormDetail | null)[] | null;
   readonly isArchived?: boolean | null;
+  readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -242,6 +246,8 @@ type LazyFormList = {
   readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
   readonly formListFormDetail: AsyncCollection<FormDetail>;
   readonly isArchived?: boolean | null;
+  readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

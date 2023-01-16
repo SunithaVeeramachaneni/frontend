@@ -38,6 +38,7 @@ import { isEqual } from 'lodash-es';
 import { FormConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-question',
@@ -122,6 +123,8 @@ export class QuestionComponent implements OnInit {
   sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
   addQuestionClicked: boolean;
+  formId: string;
+
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
@@ -133,10 +136,21 @@ export class QuestionComponent implements OnInit {
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
-    private rdfService: RaceDynamicFormService
+    private rdfService: RaceDynamicFormService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.formId = params.id;
+    });
+
+    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+      if (data.id) {
+        this.formId = data.id;
+      }
+    });
+
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
         fieldType.type !== 'LTV' &&
@@ -144,7 +158,9 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'DDM' &&
         fieldType.type !== 'VI' &&
         fieldType.type !== 'IMG' &&
-        fieldType.type !== 'ATT'
+        fieldType.type !== 'USR' &&
+        fieldType.type !== 'ARD' &&
+        fieldType.type !== 'TAF'
     );
     this.questionForm.valueChanges
       .pipe(
@@ -232,6 +248,11 @@ export class QuestionComponent implements OnInit {
       return;
     }
 
+    this.removeLogicsOfQuestion(
+      this.pageIndex,
+      this.questionForm.get('id').value
+    );
+
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
     this.questionForm.get('value').setValue('');
@@ -294,7 +315,6 @@ export class QuestionComponent implements OnInit {
   updateIsOpen(isOpen: boolean) {
     const isAskQuestion =
       this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
-    console.log(isAskQuestion);
 
     if (isAskQuestion) {
       return;
@@ -340,6 +360,16 @@ export class QuestionComponent implements OnInit {
       })
     );
   }
+
+  removeLogicsOfQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.removeLogicsOfQuestion({
+        pageIndex,
+        questionId
+      })
+    );
+  }
+
   constructLogic(pageIndex: number, questionId: string) {
     return {
       id: uuidv4(),
@@ -415,16 +445,10 @@ export class QuestionComponent implements OnInit {
     }
   }
   quickResponseTypeHandler(event) {
-    let formId;
-    this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        formId = formMetadata.id;
-      })
-    );
     switch (event.eventType) {
       case 'quickResponsesAdd':
         const createDataset = {
-          formId,
+          formId: this.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses'
@@ -436,7 +460,7 @@ export class QuestionComponent implements OnInit {
 
       case 'quickResponseUpdate':
         const updateDataset = {
-          formId,
+          formId: this.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses',
