@@ -1,10 +1,15 @@
-import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
+import {
+  ModelInit,
+  MutableModel,
+  __modelMeta__,
+  ManagedIdentifier
+} from '@aws-amplify/datastore';
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
-
-
-
-
+import {
+  LazyLoading,
+  LazyLoadingDisabled,
+  AsyncCollection
+} from '@aws-amplify/datastore';
 
 type EagerResponseSet = {
   readonly [__modelMeta__]: {
@@ -19,7 +24,7 @@ type EagerResponseSet = {
   readonly values?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyResponseSet = {
   readonly [__modelMeta__]: {
@@ -34,13 +39,22 @@ type LazyResponseSet = {
   readonly values?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type ResponseSet = LazyLoading extends LazyLoadingDisabled ? EagerResponseSet : LazyResponseSet
+export declare type ResponseSet = LazyLoading extends LazyLoadingDisabled
+  ? EagerResponseSet
+  : LazyResponseSet;
 
-export declare const ResponseSet: (new (init: ModelInit<ResponseSet>) => ResponseSet) & {
-  copyOf(source: ResponseSet, mutator: (draft: MutableModel<ResponseSet>) => MutableModel<ResponseSet> | void): ResponseSet;
-}
+export declare const ResponseSet: (new (
+  init: ModelInit<ResponseSet>
+) => ResponseSet) & {
+  copyOf(
+    source: ResponseSet,
+    mutator: (
+      draft: MutableModel<ResponseSet>
+    ) => MutableModel<ResponseSet> | void
+  ): ResponseSet;
+};
 
 type EagerFormDetail = {
   readonly [__modelMeta__]: {
@@ -52,7 +66,7 @@ type EagerFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyFormDetail = {
   readonly [__modelMeta__]: {
@@ -64,13 +78,22 @@ type LazyFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type FormDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormDetail : LazyFormDetail
+export declare type FormDetail = LazyLoading extends LazyLoadingDisabled
+  ? EagerFormDetail
+  : LazyFormDetail;
 
-export declare const FormDetail: (new (init: ModelInit<FormDetail>) => FormDetail) & {
-  copyOf(source: FormDetail, mutator: (draft: MutableModel<FormDetail>) => MutableModel<FormDetail> | void): FormDetail;
-}
+export declare const FormDetail: (new (
+  init: ModelInit<FormDetail>
+) => FormDetail) & {
+  copyOf(
+    source: FormDetail,
+    mutator: (
+      draft: MutableModel<FormDetail>
+    ) => MutableModel<FormDetail> | void
+  ): FormDetail;
+};
 
 type EagerAuthoredFormDetail = {
   readonly [__modelMeta__]: {
@@ -86,7 +109,7 @@ type EagerAuthoredFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyAuthoredFormDetail = {
   readonly [__modelMeta__]: {
@@ -102,13 +125,22 @@ type LazyAuthoredFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled ? EagerAuthoredFormDetail : LazyAuthoredFormDetail
+export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled
+  ? EagerAuthoredFormDetail
+  : LazyAuthoredFormDetail;
 
-export declare const AuthoredFormDetail: (new (init: ModelInit<AuthoredFormDetail>) => AuthoredFormDetail) & {
-  copyOf(source: AuthoredFormDetail, mutator: (draft: MutableModel<AuthoredFormDetail>) => MutableModel<AuthoredFormDetail> | void): AuthoredFormDetail;
-}
+export declare const AuthoredFormDetail: (new (
+  init: ModelInit<AuthoredFormDetail>
+) => AuthoredFormDetail) & {
+  copyOf(
+    source: AuthoredFormDetail,
+    mutator: (
+      draft: MutableModel<AuthoredFormDetail>
+    ) => MutableModel<AuthoredFormDetail> | void
+  ): AuthoredFormDetail;
+};
 
 type EagerFormSubmissionDetail = {
   readonly [__modelMeta__]: {
@@ -121,7 +153,7 @@ type EagerFormSubmissionDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyFormSubmissionDetail = {
   readonly [__modelMeta__]: {
@@ -134,13 +166,23 @@ type LazyFormSubmissionDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type FormSubmissionDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissionDetail : LazyFormSubmissionDetail
+export declare type FormSubmissionDetail =
+  LazyLoading extends LazyLoadingDisabled
+    ? EagerFormSubmissionDetail
+    : LazyFormSubmissionDetail;
 
-export declare const FormSubmissionDetail: (new (init: ModelInit<FormSubmissionDetail>) => FormSubmissionDetail) & {
-  copyOf(source: FormSubmissionDetail, mutator: (draft: MutableModel<FormSubmissionDetail>) => MutableModel<FormSubmissionDetail> | void): FormSubmissionDetail;
-}
+export declare const FormSubmissionDetail: (new (
+  init: ModelInit<FormSubmissionDetail>
+) => FormSubmissionDetail) & {
+  copyOf(
+    source: FormSubmissionDetail,
+    mutator: (
+      draft: MutableModel<FormSubmissionDetail>
+    ) => MutableModel<FormSubmissionDetail> | void
+  ): FormSubmissionDetail;
+};
 
 type EagerFormSubmissionList = {
   readonly [__modelMeta__]: {
@@ -159,11 +201,13 @@ type EagerFormSubmissionList = {
   readonly dueDate?: string | null;
   readonly version?: string | null;
   readonly submittedBy?: string | null;
-  readonly formSubmissionListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly formSubmissionListFormSubmissionDetail?:
+    | (FormSubmissionDetail | null)[]
+    | null;
   readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyFormSubmissionList = {
   readonly [__modelMeta__]: {
@@ -186,13 +230,22 @@ type LazyFormSubmissionList = {
   readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type FormSubmissionList = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissionList : LazyFormSubmissionList
+export declare type FormSubmissionList = LazyLoading extends LazyLoadingDisabled
+  ? EagerFormSubmissionList
+  : LazyFormSubmissionList;
 
-export declare const FormSubmissionList: (new (init: ModelInit<FormSubmissionList>) => FormSubmissionList) & {
-  copyOf(source: FormSubmissionList, mutator: (draft: MutableModel<FormSubmissionList>) => MutableModel<FormSubmissionList> | void): FormSubmissionList;
-}
+export declare const FormSubmissionList: (new (
+  init: ModelInit<FormSubmissionList>
+) => FormSubmissionList) & {
+  copyOf(
+    source: FormSubmissionList,
+    mutator: (
+      draft: MutableModel<FormSubmissionList>
+    ) => MutableModel<FormSubmissionList> | void
+  ): FormSubmissionList;
+};
 
 type EagerFormList = {
   readonly [__modelMeta__]: {
@@ -213,15 +266,16 @@ type EagerFormList = {
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
   readonly formType?: string | null;
-  readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly formListFormSubmissionDetail?:
+    | (FormSubmissionDetail | null)[]
+    | null;
   readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
   readonly formListFormDetail?: (FormDetail | null)[] | null;
   readonly isArchived?: boolean | null;
   readonly searchTerm?: string | null;
-  readonly isArchivedAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
 type LazyFormList = {
   readonly [__modelMeta__]: {
@@ -247,13 +301,17 @@ type LazyFormList = {
   readonly formListFormDetail: AsyncCollection<FormDetail>;
   readonly isArchived?: boolean | null;
   readonly searchTerm?: string | null;
-  readonly isArchivedAt?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-}
+};
 
-export declare type FormList = LazyLoading extends LazyLoadingDisabled ? EagerFormList : LazyFormList
+export declare type FormList = LazyLoading extends LazyLoadingDisabled
+  ? EagerFormList
+  : LazyFormList;
 
 export declare const FormList: (new (init: ModelInit<FormList>) => FormList) & {
-  copyOf(source: FormList, mutator: (draft: MutableModel<FormList>) => MutableModel<FormList> | void): FormList;
-}
+  copyOf(
+    source: FormList,
+    mutator: (draft: MutableModel<FormList>) => MutableModel<FormList> | void
+  ): FormList;
+};
