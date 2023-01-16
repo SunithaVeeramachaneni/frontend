@@ -5,6 +5,7 @@ import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/ser
 import { FormService } from '../../services/form.service';
 import { Store } from '@ngrx/store';
 import { getFormMetadata, State, getResponseSets } from '../../state';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-response-type',
@@ -34,7 +35,8 @@ export class ResponseTypeComponent implements OnInit {
   constructor(
     private formService: FormService,
     private rdfService: RaceDynamicFormService,
-    private store: Store<State>
+    private store: Store<State>,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -43,11 +45,17 @@ export class ResponseTypeComponent implements OnInit {
       .pipe((responses: any) => responses);
     this.globalResponses$.subscribe();
     this.quickResponsesLoading = true;
-    this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        this.formId = formMetadata.id;
-      })
-    );
+
+    this.route.params.subscribe((params) => {
+      this.formId = params.id;
+    });
+
+    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+      if (data.id) {
+        this.formId = data.id;
+      }
+    });
+
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),
       this.rdfService.getDataSetsByType$('quickResponses').pipe(
