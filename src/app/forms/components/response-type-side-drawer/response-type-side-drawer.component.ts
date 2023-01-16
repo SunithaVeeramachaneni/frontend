@@ -86,14 +86,18 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       responses: this.fb.array([])
     });
 
-    this.responses.valueChanges
+    this.responseForm.valueChanges
       .pipe(
         pairwise(),
         debounceTime(500),
         distinctUntilChanged(),
-        tap(([prevResp, currResp]) => {
-          if (isEqual(prevResp, currResp)) this.isFormNotUpdated = true;
-          else if (currResp.find((item) => !item.title))
+        tap(([prev, curr]) => {
+          if (
+            isEqual(prev.responses, curr.responses) ||
+            curr.responses.length < 1
+          )
+            this.isFormNotUpdated = true;
+          else if (curr.responses.find((item) => !item.title))
             this.isFormNotUpdated = true;
           else this.isFormNotUpdated = false;
           this.cdrf.markForCheck();

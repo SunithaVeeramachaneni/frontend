@@ -11,12 +11,12 @@
     </p>
   </div>
   <div class="iphone-preview">
-    <app-preview></app-preview>
+    <app-preview [pageIndex]="currentPage"></app-preview>
   </div>
   <div class="iphone-footer" *ngIf="pagesCount$ | async as pagesCount">
-    <span class="page-count">1 / {{ pagesCount }}</span>
+    <span class="page-count">{{currentPage}} / {{ pagesCount }}</span>
 
-    <button class="btn-next" translate="nextBtn"></button>
-    <button class="btn-previous" translate="prevBtn"></button>
+    <button class="btn-next" translate="nextBtn" (click)="nextPage()"></button>
+    <button class="btn-previous" translate="prevBtn" (click)="prevPage()"></button>
   </div>
 </div>

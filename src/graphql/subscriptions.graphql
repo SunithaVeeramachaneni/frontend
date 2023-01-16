@@ -211,6 +211,7 @@ subscription OnCreateFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -238,6 +239,7 @@ subscription OnUpdateFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -265,6 +267,7 @@ subscription OnDeleteFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -301,6 +304,8 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isArchived
+    searchTerm
+    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -337,6 +342,8 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isArchived
+    searchTerm
+    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -373,6 +380,8 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       startedAt
     }
     isArchived
+    searchTerm
+    isArchivedAt
     createdAt
     updatedAt
     _version
