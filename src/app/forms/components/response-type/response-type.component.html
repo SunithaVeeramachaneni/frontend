@@ -124,12 +124,14 @@
       <div *ngIf="isMCQResponseOpen">
         <app-response-type-side-drawer
           (responseTypeHandler)="quickResponseTypeHandler($event)"
+          [formId]="formId"
         ></app-response-type-side-drawer>
       </div>
 
       <div *ngIf="question.fieldType === 'RT'">
         <app-response-type-side-drawer
           (responseTypeHandler)="quickResponseTypeHandler($event)"
+          [formId]="formId"
         ></app-response-type-side-drawer>
       </div>
 

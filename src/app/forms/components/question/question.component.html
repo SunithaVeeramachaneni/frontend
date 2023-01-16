@@ -184,6 +184,7 @@
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [question]="question"
+                [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>
 
