@@ -323,7 +323,6 @@ mutation CreateFormList(
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -364,7 +363,6 @@ mutation UpdateFormList(
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -405,7 +403,6 @@ mutation DeleteFormList(
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
