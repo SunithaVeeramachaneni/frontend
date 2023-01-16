@@ -305,7 +305,6 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -343,7 +342,6 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -381,7 +379,6 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version

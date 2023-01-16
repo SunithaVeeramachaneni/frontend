@@ -46,6 +46,10 @@
                   <mat-chip
                     *ngIf="i < 2"
                     class="m-l-10"
+                    (click)="
+                      handleMCQRepsonseSelection('quickResponse', resp);
+                      closeResponseType()
+                    "
                     [ngStyle]="{
                       color: val?.color,
                       backgroundColor: '#ffffff',
