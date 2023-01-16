@@ -472,7 +472,7 @@ export class RaceDynamicFormService {
       );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${logic.operator} (V)${logic.operand2}`;
       });
     });
     if (expression[0] === ';') {
