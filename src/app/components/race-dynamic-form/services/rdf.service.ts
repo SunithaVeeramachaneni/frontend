@@ -369,7 +369,8 @@ export class RaceDynamicFormService {
                   question.id,
                   questions,
                   logics
-                )
+                ),
+                MANDATORY: question.required === true ? 'X' : ''
               };
 
               if (question.fieldType === 'ARD') {
