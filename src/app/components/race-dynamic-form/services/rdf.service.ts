@@ -386,7 +386,7 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '',
+                DEFAULTVALUE: '' as any,
                 UIVALIDATION: this.getValidationExpression(
                   question.id,
                   questions,
@@ -413,6 +413,19 @@ export class RaceDynamicFormService {
                 Object.assign(questionItem, {
                   DDVALUE: viVALUE
                 });
+              }
+
+              if (question.fieldType === 'RT') {
+                const {
+                  min: MIN,
+                  max: MAX,
+                  increment: INCREMENT
+                } = question.value;
+                questionItem.DEFAULTVALUE = {
+                  MIN,
+                  MAX,
+                  INCREMENT
+                };
               }
 
               return questionItem;
