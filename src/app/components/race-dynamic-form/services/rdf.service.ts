@@ -104,15 +104,16 @@ export class RaceDynamicFormService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.nextToken !== null)
     ) {
+      const isSearch = queryParams.fetchType === 'search';
       return from(
         this.awsApiService.ListFormLists(
           {
             ...(queryParams.searchKey && {
-              name: { contains: queryParams?.searchKey }
+              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
             })
           },
-          queryParams.limit,
-          queryParams.nextToken
+          !isSearch && queryParams.limit,
+          !isSearch && queryParams.nextToken
         )
       ).pipe(map((res) => this.formatGraphQLFormsResponse(res)));
     } else {
@@ -139,7 +140,7 @@ export class RaceDynamicFormService {
         this._ListFormSubmissionLists(
           {
             ...(queryParams.searchKey && {
-              name: { contains: queryParams?.searchKey }
+              searchTerm: { contains: queryParams?.searchKey }
             })
           },
           queryParams.limit,
@@ -184,6 +185,7 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
+      | 'searchTerm'
     >
   ) {
     return from(
@@ -195,7 +197,8 @@ export class RaceDynamicFormService {
         author: formListQuery.author,
         formType: formListQuery.formType,
         tags: formListQuery.tags,
-        isPublic: formListQuery.isPublic
+        isPublic: formListQuery.isPublic,
+        searchTerm: formListQuery.searchTerm
       })
     );
   }

@@ -152,9 +152,25 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
                 })
               );
 
+              const formMetaData = { ...this.formMetadata, searchTerm: '' };
+              if (formMetaData.name) {
+                formMetaData.searchTerm = `${
+                  formMetaData.searchTerm
+                } ${formMetaData?.name?.toLowerCase()} `;
+              }
+              if (formMetaData.description) {
+                formMetaData.searchTerm = `${
+                  formMetaData.searchTerm
+                } ${formMetaData?.description?.toLowerCase()} `;
+              }
+
               this.store.dispatch(
                 FormConfigurationActions.updateForm({
-                  formMetadata: { ...this.formMetadata, ...curr },
+                  formMetadata: {
+                    ...this.formMetadata,
+                    ...curr,
+                    ...formMetaData
+                  },
                   formListDynamoDBVersion: this.formListVersion
                 })
               );
