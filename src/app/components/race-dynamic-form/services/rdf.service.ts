@@ -416,16 +416,8 @@ export class RaceDynamicFormService {
               }
 
               if (question.fieldType === 'RT') {
-                const {
-                  min: MIN,
-                  max: MAX,
-                  increment: INCREMENT
-                } = question.value;
-                questionItem.DEFAULTVALUE = {
-                  MIN,
-                  MAX,
-                  INCREMENT
-                };
+                const { min, max, increment } = question.value;
+                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
               }
 
               return questionItem;
