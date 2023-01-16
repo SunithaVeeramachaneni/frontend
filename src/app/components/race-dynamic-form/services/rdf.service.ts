@@ -140,7 +140,7 @@ export class RaceDynamicFormService {
         this._ListFormSubmissionLists(
           {
             ...(queryParams.searchKey && {
-              searchTerm: { contains: queryParams?.searchKey }
+              searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
             })
           },
           queryParams.limit,
