@@ -360,12 +360,24 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions, logics } = page;
+      // eslint-disable-next-line prefer-const
+      let { sections, questions, logics } = page;
+
+      const logicQuestions = questions.filter((question) => {
+        let resp = false;
+        logics.forEach((logic) => {
+          if (question.sectionId === `AQ_${logic.id}`) {
+            resp = true;
+          }
+        });
+        return resp;
+      });
       const pageItem = {
         SECTIONS: sections.map((section) => {
-          const questionsBySection = questions.filter(
+          let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
           );
+          questionsBySection = [...questionsBySection, ...logicQuestions];
           const sectionItem = {
             SECTIONNAME: section.name,
             FIELDS: questionsBySection.map((question) => {
