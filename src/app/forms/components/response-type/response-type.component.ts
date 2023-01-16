@@ -51,7 +51,6 @@ export class ResponseTypeComponent implements OnInit {
     });
 
     this.rdfService.formCreatedUpdated$.subscribe((data) => {
-      console.log(data);
       if (data.id) {
         this.formId = data.id;
       }
