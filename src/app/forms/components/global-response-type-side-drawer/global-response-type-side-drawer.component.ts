@@ -3,7 +3,9 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Input
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   FormBuilder,
@@ -31,6 +33,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlobalResponseTypeSideDrawerComponent implements OnInit {
+  @Output() globalResponseHandler: EventEmitter<any> = new EventEmitter<any>();
   public responseForm: FormGroup;
   public isResponseFormUpdated = false;
   private globalResponse: any;
@@ -80,6 +83,7 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
 
     if (this.globalResponse) {
       this.name.patchValue(this.globalResponse.name);
+      this.description.patchValue(this.globalResponse.description);
       JSON.parse(this.globalResponse.values).forEach((item) => {
         this.responses.push(
           this.fb.group({
@@ -160,5 +164,15 @@ export class GlobalResponseTypeSideDrawerComponent implements OnInit {
           description: ''
         })
       );
+
+    this.closeGlobalResponse();
+  };
+
+  closeGlobalResponse = () => {
+    this.globalResponseHandler.emit({
+      isGlobalResponseOpen: false,
+      responseToBeEdited: null
+    });
+    this.cdrf.markForCheck();
   };
 }

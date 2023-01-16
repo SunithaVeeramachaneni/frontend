@@ -26,6 +26,8 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResponseTypeSideDrawerComponent implements OnInit {
+  @Input() formId;
+
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
@@ -129,7 +131,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     }
     this.responseTypeHandler.emit({
       eventType,
-      data: this.responseForm.getRawValue()
+      data: this.responseForm.getRawValue(),
+      formId: this.formId
     });
     this.multipleChoiceOpenState = false;
     this.formService.setMultiChoiceOpenState({ isOpen: false, response: {} });

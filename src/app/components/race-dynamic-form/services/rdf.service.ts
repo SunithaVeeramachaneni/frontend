@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
-import { forkJoin, from, Observable, of, ReplaySubject } from 'rxjs';
-import { exhaustMap, map } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   APIService,
   GetFormListQuery,
@@ -31,13 +32,22 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
+  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
+
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+
   constructor(
     private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService
   ) {}
+
+  setFormCreatedUpdated(data: any) {
+    this.formCreatedUpdatedSubject.next(data);
+  }
 
   createTags$ = (
     tags: any,
@@ -350,12 +360,24 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions, logics } = page;
+      // eslint-disable-next-line prefer-const
+      let { sections, questions, logics } = page;
+
+      const logicQuestions = questions.filter((question) => {
+        let resp = false;
+        logics.forEach((logic) => {
+          if (question.sectionId === `AQ_${logic.id}`) {
+            resp = true;
+          }
+        });
+        return resp;
+      });
       const pageItem = {
         SECTIONS: sections.map((section) => {
-          const questionsBySection = questions.filter(
+          let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
           );
+          questionsBySection = [...questionsBySection, ...logicQuestions];
           const sectionItem = {
             SECTIONNAME: section.name,
             FIELDS: questionsBySection.map((question) => {
@@ -364,12 +386,13 @@ export class RaceDynamicFormService {
                 FIELDLABEL: question.name,
                 UIFIELDTYPE: question.fieldType,
                 UIFIELDDESC: question.fieldType,
-                DEFAULTVALUE: '',
+                DEFAULTVALUE: '' as any,
                 UIVALIDATION: this.getValidationExpression(
                   question.id,
                   questions,
                   logics
-                )
+                ),
+                MANDATORY: question.required === true ? 'X' : ''
               };
 
               if (question.fieldType === 'ARD') {
@@ -382,14 +405,19 @@ export class RaceDynamicFormService {
                   [`label${idx + 1}`]: item.title,
                   key: item.title,
                   color: item.color,
-                  description: item.description
+                  description: item.title
                 }));
                 questionItem.UIFIELDTYPE = question.multi
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: JSON.stringify(viVALUE)
+                  DDVALUE: viVALUE
                 });
+              }
+
+              if (question.fieldType === 'RT') {
+                const { min, max, increment } = question.value;
+                questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
               }
 
               return questionItem;
