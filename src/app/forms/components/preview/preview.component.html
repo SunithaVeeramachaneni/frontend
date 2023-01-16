@@ -168,7 +168,7 @@
               </div>
 
               <!-- Dropdown -->
-              <div *ngIf="question.fieldType === 'DD' && question.value.value.length > 5">
+              <div *ngIf="question.fieldType === 'DD' && question.value.value.length > 4">
                 <mat-form-field appearance="outline" class="dropdown">
                   <mat-select
                     [multiple]="question.multi"
@@ -186,7 +186,7 @@
               </div>
 
               <!-- Dropdown -->
-              <div *ngIf="question.fieldType === 'DD' && question.value.value.length <= 5">
+              <div *ngIf="question.fieldType === 'DD' && question.value.value.length <= 4">
                 <mat-button-toggle-group>
                   <mat-button-toggle
                     *ngFor="let question of question.value.value"
