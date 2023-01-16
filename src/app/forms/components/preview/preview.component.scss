@@ -2,7 +2,12 @@
 
 .preview {
   padding: 7px;
-
+  .pages {
+    display: none;
+  }
+  .pages.active {
+    display: block !important;
+  }
   .preview-content {
     border: 1px solid $border-color;
     border-radius: 4px;

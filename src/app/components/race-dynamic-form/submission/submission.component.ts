@@ -121,7 +121,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     },
     {
       id: 'submittedBy',
-      displayName: 'Owner',
+      displayName: 'User',
       type: 'string',
       isMultiValued: true,
       order: 3,
@@ -303,6 +303,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
           initial.data = initial.data.concat(scrollData);
         }
         this.skip = initial.data.length;
+        initial.data = initial.data.map((item) => ({
+          ...item,
+          status: this.prepareStatus(item.status)
+        }));
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -347,5 +351,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       this.menuState = 'in';
     }
     this.submissionDetail = event.row;
+  };
+
+  prepareStatus = (status) => {
+    if (status === 'IN-PROGRESS') return 'In-Progress';
+    else return `${status.slice(0, 1)}${status.slice(1).toLowerCase()}`;
   };
 }

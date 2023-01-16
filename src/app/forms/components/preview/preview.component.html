@@ -1,5 +1,8 @@
 <div class="preview" *ngIf="previewFormData$ | async as pageData">
-  <div *ngFor="let page of pageData">
+  <div *ngFor="let page of pageData;let i=index;"
+   class="pages"
+    [ngClass]="{'active': pageIndex === (i+1) }"
+  >
     <div *ngFor="let section of page.sections" class="preview-content">
       <div class="section-header">
         <mat-icon
@@ -18,7 +21,7 @@
         </mat-icon>
 
         <span class="section-name">{{ section.name }}</span>
-        <span class="section-count">0/{{ page.sections.length }}</span>
+        <span class="section-count">{{ section.questions.length }}</span>
       </div>
 
       <div *ngIf="isSectionOpenState === true">
