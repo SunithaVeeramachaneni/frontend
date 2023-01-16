@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
-import { forkJoin, from, Observable, of, ReplaySubject } from 'rxjs';
-import { exhaustMap, map } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   APIService,
   GetFormListQuery,
@@ -31,13 +32,22 @@ const limit = 10000;
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
+  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
+
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+
   constructor(
     private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService
   ) {}
+
+  setFormCreatedUpdated(data: any) {
+    this.formCreatedUpdatedSubject.next(data);
+  }
 
   createTags$ = (
     tags: any,
