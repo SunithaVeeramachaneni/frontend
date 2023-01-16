@@ -173,22 +173,10 @@ export class FormConfigurationModalComponent implements OnInit {
           createOrEditForm: true
         })
       );
-
-      const formMetaData = { ...this.headerDataForm.value, searchTerm: '' };
-      if (formMetaData.name) {
-        formMetaData.searchTerm = `${
-          formMetaData.searchTerm
-        } ${formMetaData?.name?.toLowerCase()} `;
-      }
-      if (formMetaData.description) {
-        formMetaData.searchTerm = `${
-          formMetaData.searchTerm
-        } ${formMetaData?.description?.toLowerCase()} `;
-      }
       this.store.dispatch(
         FormConfigurationActions.createForm({
           formMetadata: {
-            ...formMetaData,
+            ...this.headerDataForm.value,
             author: userName,
             formLogo: 'assets/rdf-forms-icons/formlogo.svg'
           }

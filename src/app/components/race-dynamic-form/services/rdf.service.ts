@@ -136,6 +136,7 @@ export class RaceDynamicFormService {
       (['infiniteScroll'].includes(queryParams.fetchType) &&
         queryParams.nextToken !== null)
     ) {
+      const isSearch = queryParams.fetchType === 'search';
       return from(
         this._ListFormSubmissionLists(
           {
@@ -143,8 +144,8 @@ export class RaceDynamicFormService {
               searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
             })
           },
-          queryParams.limit,
-          queryParams.nextToken
+          !isSearch && queryParams.limit,
+          !isSearch && queryParams.nextToken
         )
       ).pipe(map((res) => this.formatSubmittedListResponse(res)));
     } else {
@@ -185,7 +186,6 @@ export class RaceDynamicFormService {
       | 'formType'
       | 'formStatus'
       | 'isPublic'
-      | 'searchTerm'
     >
   ) {
     return from(
@@ -197,8 +197,7 @@ export class RaceDynamicFormService {
         author: formListQuery.author,
         formType: formListQuery.formType,
         tags: formListQuery.tags,
-        isPublic: formListQuery.isPublic,
-        searchTerm: formListQuery.searchTerm
+        isPublic: formListQuery.isPublic
       })
     );
   }
@@ -611,6 +610,7 @@ export class RaceDynamicFormService {
             dueDate
             version
             submittedBy
+            searchTerm
             createdAt
             updatedAt
             _version
