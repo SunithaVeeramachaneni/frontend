@@ -168,14 +168,14 @@
               </div>
 
               <!-- Dropdown -->
-              <div *ngIf="question.fieldType === 'DD'">
+              <div *ngIf="question.fieldType === 'DD' && question.value.value.length > 4">
                 <mat-form-field appearance="outline" class="dropdown">
                   <mat-select
                     [multiple]="question.multi"
                     [placeholder]="'enter' | translate"
                   >
                     <mat-option
-                      *ngFor="let value of question.value.values"
+                      *ngFor="let value of question.value.value"
                       [value]="value.title"
                       [ngStyle]="{ color: value.color }"
                     >
@@ -185,11 +185,26 @@
                 </mat-form-field>
               </div>
 
+              <!-- Dropdown -->
+              <div *ngIf="question.fieldType === 'DD' && question.value.value.length <= 4">
+                <mat-button-toggle-group>
+                  <mat-button-toggle
+                    *ngFor="let question of question.value.value"
+                    [value]="question.title"
+                    [ngStyle]="{
+                      color: question.color
+                    }"
+                  >
+                    {{ question.title }}
+                  </mat-button-toggle>
+                </mat-button-toggle-group>
+              </div>
+
               <!-- Visible Input -->
               <div *ngIf="question.fieldType === 'VI'">
                 <mat-button-toggle-group>
                   <mat-button-toggle
-                    *ngFor="let question of question.value.values"
+                    *ngFor="let question of question.value.value"
                     [value]="question.title"
                     [ngStyle]="{
                       color: question.color
