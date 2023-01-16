@@ -44,6 +44,7 @@
               autofocus="true"
               autocomplete="off"
               (keyup.enter)="formConfiguration.get('name').disable()"
+              (blur)="formConfiguration.get('name').disable()"
             />
 
             <mat-error
