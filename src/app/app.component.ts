@@ -52,8 +52,7 @@ const {
   tenantManagement,
   raceDynamicForms,
   submissionForms,
-  myForms,
-  archivedForms
+  myForms
 } = routingUrls;
 
 @Component({
@@ -144,11 +143,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           title: submissionForms.title,
           url: submissionForms.url,
           permission: submissionForms.permission
-        },
-        {
-          title: archivedForms.title,
-          url: archivedForms.url,
-          permission: archivedForms.permission
         }
       ]
     },

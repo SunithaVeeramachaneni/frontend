@@ -8,14 +8,12 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
-  DeleteFormListInput,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   ModelFormSubmissionListFilterInput,
   UpdateAuthoredFormDetailInput,
-  UpdateFormDetailInput,
-  UpdateFormListInput
+  UpdateFormDetailInput
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -95,15 +93,12 @@ export class RaceDynamicFormService {
       info
     );
 
-  getFormsList$(
-    queryParams: {
-      nextToken?: string;
-      limit: number;
-      searchKey: string;
-      fetchType: string;
-    },
-    isArchived: boolean = false
-  ) {
+  getFormsList$(queryParams: {
+    nextToken?: string;
+    limit: number;
+    searchKey: string;
+    fetchType: string;
+  }) {
     if (
       ['load', 'search'].includes(queryParams.fetchType) ||
       (['infiniteScroll'].includes(queryParams.fetchType) &&
@@ -115,10 +110,7 @@ export class RaceDynamicFormService {
           {
             ...(queryParams.searchKey && {
               searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
-            }),
-            isArchived: {
-              eq: isArchived
-            }
+            })
           },
           !isSearch && queryParams.limit,
           !isSearch && queryParams.nextToken
@@ -164,23 +156,8 @@ export class RaceDynamicFormService {
     }
   }
 
-  getFormsListCount$(isArchived: boolean = false): Observable<number> {
-    const statement = isArchived
-      ? `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
-        items {
-          id
-        }
-      }
-    }
-    `
-      : `query {
-      listFormLists(limit: ${limit}) {
-        items {
-          id
-        }
-      }
-    }`;
+  getFormsListCount$(): Observable<number> {
+    const statement = `query { listFormLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
@@ -220,8 +197,7 @@ export class RaceDynamicFormService {
         author: formListQuery.author,
         formType: formListQuery.formType,
         tags: formListQuery.tags,
-        isPublic: formListQuery.isPublic,
-        isArchived: false
+        isPublic: formListQuery.isPublic
       })
     );
   }
@@ -235,8 +211,8 @@ export class RaceDynamicFormService {
     );
   }
 
-  deleteForm$(values: DeleteFormListInput) {
-    return from(this.awsApiService.DeleteFormList({ ...values }));
+  deleteForm$(id: string) {
+    return from(this.awsApiService.DeleteFormList({ id }, {}));
   }
 
   getFormById$(id: string) {
@@ -532,9 +508,6 @@ export class RaceDynamicFormService {
     ).pipe(map(({ items }) => items));
   }
 
-  getInspectionDetailByInspectionId$ = (inspectionId: string) =>
-    from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
-
   private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
     const rows =
       resp.items
@@ -557,11 +530,6 @@ export class RaceDynamicFormService {
           author: p.author,
           publishedDate: p.publishedDate
             ? formatDistance(new Date(p.publishedDate), new Date(), {
-                addSuffix: true
-              })
-            : '',
-          archivedAt: p.createdAt
-            ? formatDistance(new Date(p.createdAt), new Date(), {
                 addSuffix: true
               })
             : ''
@@ -615,6 +583,9 @@ export class RaceDynamicFormService {
       nextToken
     };
   }
+
+  getInspectionDetailByInspectionId$ = (inspectionId: string) =>
+    from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
 
   private async _ListFormSubmissionLists(
     filter?: ModelFormSubmissionListFilterInput,

@@ -441,22 +441,12 @@ export class FormListComponent implements OnInit {
   }
 
   openArchiveModal(form: GetFormListQuery): void {
-    this.raceDynamicFormService
-      .updateForm$({
-        formMetadata: {
-          id: form?.id,
-          isArchived: true
-        },
-        // eslint-disable-next-line no-underscore-dangle
-        formListDynamoDBVersion: form._version
-      })
-      .subscribe((updatedForm) => {
-        this.addEditCopyForm$.next({
-          action: 'delete',
-          form: updatedForm
-        });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+    this.raceDynamicFormService.deleteForm$(form?.id).subscribe(() => {
+      this.addEditCopyForm$.next({
+        action: 'delete',
+        form
       });
+    });
   }
 
   rowLevelActionHandler = ({ data, action }): void => {
@@ -493,11 +483,11 @@ export class FormListComponent implements OnInit {
       {
         title: 'Copy',
         action: 'copy'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
       }
+      // {
+      //   title: 'Archive',
+      //   action: 'archive'
+      // },
       // {
       //   title: 'Upload to Public Library',
       //   action: 'upload'

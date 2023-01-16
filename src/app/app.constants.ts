@@ -142,11 +142,6 @@ export const routingUrls = {
     url: '/forms/submissions',
     title: 'Submissions',
     permission: permissions.viewForms
-  },
-  archivedForms: {
-    url: '/forms/archived',
-    title: 'Archived',
-    permission: permissions.viewForms
   }
 };
 
