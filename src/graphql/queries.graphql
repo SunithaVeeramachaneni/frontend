@@ -507,7 +507,6 @@ query GetFormList($id: ID!) {
     }
     isArchived
     searchTerm
-    isArchivedAt
     createdAt
     updatedAt
     _version
@@ -538,7 +537,6 @@ query ListFormLists(
       formType
       isArchived
       searchTerm
-      isArchivedAt
       createdAt
       updatedAt
       _version
@@ -578,7 +576,6 @@ query SyncFormLists(
       formType
       isArchived
       searchTerm
-      isArchivedAt
       createdAt
       updatedAt
       _version

@@ -1,6 +1,12 @@
-import { OnDestroy } from '@angular/core';
+/* eslint-disable no-underscore-dangle */
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -18,51 +24,29 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import {
-  TableEvent,
-  LoadEvent,
-  SearchEvent,
-  CellClickActionEvent
-} from 'src/app/interfaces';
+import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from '@angular/animations';
+import { ToastService } from 'src/app/shared/toast';
+import { MatDialog } from '@angular/material/dialog';
+import { ArchivedDeleteModalComponent } from '../archived-delete-modal/archived-delete-modal.component';
+
+interface FormTableUpdate {
+  action: 'restore' | 'delete' | null;
+  form: GetFormListQuery;
+}
 
 @Component({
-  selector: 'app-submission',
-  templateUrl: './submission.component.html',
-  styleUrls: ['./submission.component.scss'],
-  animations: [
-    trigger('slideInOut', [
-      state(
-        'in',
-        style({
-          transform: 'translate3d(0,0,0)'
-        })
-      ),
-      state(
-        'out',
-        style({
-          transform: 'translate3d(100%, 0, 0)'
-        })
-      ),
-      transition('in => out', animate('400ms ease-in-out')),
-      transition('out => in', animate('400ms ease-in-out'))
-    ])
-  ]
+  selector: 'app-archived-list',
+  templateUrl: './archived-list.component.html',
+  styleUrls: ['./archived-list.component.scss']
 })
-export class SubmissionComponent implements OnInit, OnDestroy {
+export class ArchivedListComponent implements OnInit {
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Name',
+      displayName: 'Recents',
       type: 'string',
       order: 1,
       searchable: false,
@@ -82,50 +66,23 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         color: 'darkgray'
       },
       hasPreTextImage: true,
+      // preTextImageConfig: {
+      //   logoAvialable: false,
+      //   style: {
+      //     width: '40px',
+      //     height: '40px',
+      //     marginRight: '10px'
+      //   }
+      // },
       hasPostTextImage: false
+      //postTextImageConfig: {}
     },
     {
-      id: 'status',
-      displayName: 'Status',
-      type: 'string',
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {
-        textTransform: 'capitalize',
-        fontWeight: 500,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        position: 'relative',
-        top: '10px',
-        width: '90px',
-        height: '25px',
-        background: '#FEF3C7',
-        color: '#92400E',
-        borderRadius: '12px'
-      },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false,
-      hasConditionalStyles: true
-    },
-    {
-      id: 'submittedBy',
-      displayName: 'User',
+      id: 'archivedAt',
+      displayName: 'Archived',
       type: 'string',
       isMultiValued: true,
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -143,52 +100,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       hasPostTextImage: false
     },
     {
-      id: 'responses',
-      displayName: 'Responses',
+      id: 'publishedDate',
+      displayName: 'Last Published',
       type: 'string',
-      order: 4,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'updatedAt',
-      displayName: 'Modified',
-      type: 'string',
-      order: 5,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: true,
-      titleStyle: {},
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
-      id: 'createdAt',
-      displayName: 'Submitted',
-      type: 'string',
-      order: 6,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -220,20 +135,10 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
-    conditionalStyles: {
-      submitted: {
-        'background-color': '#D1FAE5',
-        color: '#065f46'
-      },
-      'in-progress': {
-        'background-color': '#FEF3C7',
-        color: '#92400E'
-      }
-    }
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
   };
   dataSource: MatTableDataSource<any>;
-  formSubmissions$: Observable<{
+  formArchived$: Observable<{
     columns: Column[];
     data: any[];
   }>;
@@ -242,17 +147,23 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   skip = 0;
   limit = defaultLimit;
   searchForm: FormControl;
-  isPopoverOpen = false;
   filterIcon = 'assets/maintenance-icons/filterIcon.svg';
   closeIcon = 'assets/img/svg/cancel-icon.svg';
-  submissionFormsListCount$: Observable<number>;
+  archivedFormsListCount$: Observable<number>;
   nextToken = '';
   public menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   submissionDetail: any;
   fetchType = 'load';
+  restoreDeleteForm$: BehaviorSubject<FormTableUpdate> =
+    new BehaviorSubject<FormTableUpdate>({
+      action: null,
+      form: {} as GetFormListQuery
+    });
   constructor(
-    private readonly raceDynamicFormService: RaceDynamicFormService
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly toast: ToastService,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -266,10 +177,11 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe();
-    this.submissionFormsListCount$ =
-      this.raceDynamicFormService.getSubmissionFormsListCount$();
+    this.archivedFormsListCount$ =
+      this.raceDynamicFormService.getFormsListCount$(true);
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
+    this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
@@ -279,7 +191,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         this.skip = 0;
         this.nextToken = '';
         this.fetchType = data;
-        return this.getSubmissionFormsList();
+        return this.getArchivedList();
       })
     );
 
@@ -288,7 +200,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
           this.fetchType = 'infiniteScroll';
-          return this.getSubmissionFormsList();
+          return this.getArchivedList();
         } else {
           return of([] as GetFormListQuery[]);
         }
@@ -299,11 +211,12 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       columns: this.columns,
       data: []
     };
-    this.formSubmissions$ = combineLatest([
+    this.formArchived$ = combineLatest([
       formsOnLoadSearch$,
-      onScrollForms$
+      onScrollForms$,
+      this.restoreDeleteForm$
     ]).pipe(
-      map(([rows, scrollData]) => {
+      map(([rows, scrollData, { form, action }]) => {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
@@ -311,27 +224,42 @@ export class SubmissionComponent implements OnInit, OnDestroy {
           };
           initial.data = rows;
         } else {
+          if (action === 'restore') {
+            initial.data = initial.data.filter((d) => d.id !== form.id);
+            this.toast.show({
+              text: 'Form restore successfully!',
+              type: 'success'
+            });
+            action = null;
+          }
+          if (action === 'delete') {
+            initial.data = initial.data.filter((d) => d.id !== form.id);
+            this.toast.show({
+              text: 'Form delete successfully!',
+              type: 'success'
+            });
+            action = null;
+          }
           initial.data = initial.data.concat(scrollData);
         }
         this.skip = initial.data.length;
-        initial.data = initial.data.map((item) => ({
-          ...item,
-          status: this.prepareStatus(item.status)
-        }));
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
   }
 
-  getSubmissionFormsList() {
+  getArchivedList() {
     return this.raceDynamicFormService
-      .getSubmissionFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
-      })
+      .getFormsList$(
+        {
+          nextToken: this.nextToken,
+          limit: this.limit,
+          searchKey: this.searchForm.value,
+          fetchType: this.fetchType
+        },
+        true
+      )
       .pipe(
         mergeMap(({ rows, nextToken }) => {
           this.nextToken = nextToken;
@@ -345,27 +273,76 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     this.fetchForms$.next(event);
   };
 
-  applyFilters(): void {
-    this.isPopoverOpen = false;
+  prepareMenuActions(): void {
+    const menuActions = [
+      {
+        title: 'Restore',
+        action: 'restore'
+      },
+      {
+        title: 'Delete',
+        action: 'delete'
+      }
+    ];
+    this.configOptions.rowLevelActions.menuActions = menuActions;
+    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
+    this.configOptions = { ...this.configOptions };
   }
 
-  clearFilters(): void {
-    this.isPopoverOpen = false;
-  }
+  rowLevelActionHandler = ({ data, action }): void => {
+    switch (action) {
+      case 'restore':
+        this.onRestoreForm(data);
+        break;
 
-  ngOnDestroy(): void {}
-
-  cellClickActionHandler = (event: CellClickActionEvent): void => {
-    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
-      this.menuState = this.menuState === 'out' ? 'in' : 'out';
-    } else {
-      this.menuState = 'in';
+      case 'delete':
+        this.onDeleteForm(data);
+        break;
+      default:
     }
-    this.submissionDetail = event.row;
   };
 
-  prepareStatus = (status) => {
-    if (status === 'IN-PROGRESS') return 'In-Progress';
-    else return `${status.slice(0, 1)}${status.slice(1).toLowerCase()}`;
-  };
+  private onRestoreForm(form: GetFormListQuery): void {
+    this.raceDynamicFormService
+      .updateForm$({
+        formMetadata: {
+          id: form?.id,
+          isArchived: false
+        },
+        // eslint-disable-next-line no-underscore-dangle
+        formListDynamoDBVersion: form._version
+      })
+      .subscribe((updatedForm) => {
+        this.restoreDeleteForm$.next({
+          action: 'delete',
+          form: updatedForm
+        });
+        this.archivedFormsListCount$ =
+          this.raceDynamicFormService.getFormsListCount$(true);
+      });
+  }
+
+  private onDeleteForm(form: GetFormListQuery): void {
+    const deleteReportRef = this.dialog.open(ArchivedDeleteModalComponent, {
+      data: form
+    });
+
+    deleteReportRef.afterClosed().subscribe((res) => {
+      if (res === 'delete') {
+        this.raceDynamicFormService
+          .deleteForm$({
+            _version: form._version,
+            id: form?.id
+          })
+          .subscribe((updatedForm) => {
+            this.restoreDeleteForm$.next({
+              action: 'delete',
+              form: updatedForm
+            });
+            this.archivedFormsListCount$ =
+              this.raceDynamicFormService.getFormsListCount$(true);
+          });
+      }
+    });
+  }
 }
