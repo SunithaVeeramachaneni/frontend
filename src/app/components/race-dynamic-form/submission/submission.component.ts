@@ -121,7 +121,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     },
     {
       id: 'submittedBy',
-      displayName: 'Owner',
+      displayName: 'User',
       type: 'string',
       isMultiValued: true,
       order: 3,
