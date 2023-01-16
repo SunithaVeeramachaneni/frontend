@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
@@ -325,11 +326,11 @@ export class ArchivedListComponent implements OnInit {
     const deleteReportRef = this.dialog.open(ArchivedDeleteModalComponent, {
       data: form
     });
+
     deleteReportRef.afterClosed().subscribe((res) => {
       if (res === 'delete') {
         this.raceDynamicFormService
           .deleteForm$({
-            // eslint-disable-next-line no-underscore-dangle
             _version: form._version,
             id: form?.id
           })
