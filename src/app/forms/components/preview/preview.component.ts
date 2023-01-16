@@ -46,6 +46,8 @@ export class PreviewComponent implements OnInit {
         return pageData;
       })
     );
+    this.previewFormData$.subscribe((res) => console.log(res));
+   
   }
 
   getImageSrc(base64) {
