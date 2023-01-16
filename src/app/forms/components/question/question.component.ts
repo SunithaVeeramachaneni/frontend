@@ -38,6 +38,7 @@ import { isEqual } from 'lodash-es';
 import { FormConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-question',
@@ -122,6 +123,8 @@ export class QuestionComponent implements OnInit {
   sectionQuestionsCount$: Observable<number>;
   ignoreUpdateIsOpen: boolean;
   addQuestionClicked: boolean;
+  formId: string;
+
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
@@ -133,10 +136,21 @@ export class QuestionComponent implements OnInit {
     private imageUtils: ImageUtils,
     private store: Store<State>,
     private formService: FormService,
-    private rdfService: RaceDynamicFormService
+    private rdfService: RaceDynamicFormService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.formId = params.id;
+    });
+
+    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+      if (data.id) {
+        this.formId = data.id;
+      }
+    });
+
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
         fieldType.type !== 'LTV' &&
@@ -431,16 +445,10 @@ export class QuestionComponent implements OnInit {
     }
   }
   quickResponseTypeHandler(event) {
-    let formId;
-    this.store.select(getFormMetadata).pipe(
-      tap((formMetadata) => {
-        formId = formMetadata.id;
-      })
-    );
     switch (event.eventType) {
       case 'quickResponsesAdd':
         const createDataset = {
-          formId,
+          formId: this.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses'
@@ -452,7 +460,7 @@ export class QuestionComponent implements OnInit {
 
       case 'quickResponseUpdate':
         const updateDataset = {
-          formId,
+          formId: this.formId,
           type: 'quickResponses',
           values: event.data.responses,
           name: 'quickResponses',

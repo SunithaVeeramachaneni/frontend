@@ -127,7 +127,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     const fornName = this.formConf.name.value
       ? this.formConf.name.value
       : 'Untitled Form';
-    this.headerService.setHeaderTitle(fornName);
+    this.headerService.setHeaderTitle('My Forms');
     this.breadcrumbService.set('@formName', {
       label: fornName
     });
@@ -170,7 +170,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         this.formMetadata = formMetadata;
         this.formConfiguration.patchValue({ name, description, id, formLogo });
         const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle(formName);
+        this.headerService.setHeaderTitle('My Forms');
         this.breadcrumbService.set('@formName', {
           label: formName
         });

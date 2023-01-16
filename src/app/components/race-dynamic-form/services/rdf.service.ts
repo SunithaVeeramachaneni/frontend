@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
-import { from, Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   APIService,
   GetFormListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
+  ModelFormSubmissionListFilterInput,
   UpdateAuthoredFormDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
@@ -23,19 +25,29 @@ import {
 } from './../../../interfaces';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
+import { isJson } from '../utils/utils';
 
 const limit = 10000;
 @Injectable({
   providedIn: 'root'
 })
 export class RaceDynamicFormService {
+  private formCreatedUpdatedSubject = new BehaviorSubject<any>({});
+
   fetchForms$: ReplaySubject<TableEvent | LoadEvent | SearchEvent> =
     new ReplaySubject<TableEvent | LoadEvent | SearchEvent>(2);
+
+  formCreatedUpdated$ = this.formCreatedUpdatedSubject.asObservable();
+
   constructor(
     private readonly awsApiService: APIService,
     private toastService: ToastService,
     private appService: AppService
   ) {}
+
+  setFormCreatedUpdated(data: any) {
+    this.formCreatedUpdatedSubject.next(data);
+  }
 
   createTags$ = (
     tags: any,
@@ -124,7 +136,7 @@ export class RaceDynamicFormService {
         queryParams.nextToken !== null)
     ) {
       return from(
-        this.awsApiService.ListFormSubmissionLists(
+        this._ListFormSubmissionLists(
           {
             ...(queryParams.searchKey && {
               name: { contains: queryParams?.searchKey }
@@ -348,12 +360,24 @@ export class RaceDynamicFormService {
       PAGES: []
     };
     formData.PAGES = pages.map((page) => {
-      const { sections, questions, logics } = page;
+      // eslint-disable-next-line prefer-const
+      let { sections, questions, logics } = page;
+
+      const logicQuestions = questions.filter((question) => {
+        let resp = false;
+        logics.forEach((logic) => {
+          if (question.sectionId === `AQ_${logic.id}`) {
+            resp = true;
+          }
+        });
+        return resp;
+      });
       const pageItem = {
         SECTIONS: sections.map((section) => {
-          const questionsBySection = questions.filter(
+          let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
           );
+          questionsBySection = [...questionsBySection, ...logicQuestions];
           const sectionItem = {
             SECTIONNAME: section.name,
             FIELDS: questionsBySection.map((question) => {
@@ -367,7 +391,8 @@ export class RaceDynamicFormService {
                   question.id,
                   questions,
                   logics
-                )
+                ),
+                MANDATORY: question.required === true ? 'X' : ''
               };
 
               if (question.fieldType === 'ARD') {
@@ -380,13 +405,13 @@ export class RaceDynamicFormService {
                   [`label${idx + 1}`]: item.title,
                   key: item.title,
                   color: item.color,
-                  description: item.description
+                  description: item.title
                 }));
                 questionItem.UIFIELDTYPE = question.multi
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: JSON.stringify(viVALUE)
+                  DDVALUE: viVALUE
                 });
               }
 
@@ -518,23 +543,33 @@ export class RaceDynamicFormService {
           (a, b) =>
             new Date(b?.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
-        ?.map((p) => ({
-          ...p,
-          preTextImage: {
-            image: p?.formLogo,
-            style: {
-              width: '40px',
-              height: '40px',
-              marginRight: '10px'
+        ?.map((p: any) => {
+          let responses = '0/0';
+          if (p?.formSubmissionListFormSubmissionDetail?.items?.length > 0) {
+            p?.formSubmissionListFormSubmissionDetail?.items.forEach((form) => {
+              responses = this.countFormSubmissionsResponses(
+                isJson(form?.formData) ? JSON.parse(form?.formData)?.FORMS : []
+              );
+            });
+          }
+          return {
+            ...p,
+            preTextImage: {
+              image: p?.formLogo,
+              style: {
+                width: '40px',
+                height: '40px',
+                marginRight: '10px'
+              },
+              condition: true
             },
-            condition: true
-          },
-          responses: '23/26',
-          createdAt: format(new Date(p?.createdAt), 'Do MMM'),
-          updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
-            addSuffix: true
-          })
-        })) || [];
+            responses,
+            createdAt: format(new Date(p?.createdAt), 'Do MMM'),
+            updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
+              addSuffix: true
+            })
+          };
+        }) || [];
     const nextToken = resp?.nextToken;
     return {
       rows,
@@ -542,7 +577,96 @@ export class RaceDynamicFormService {
     };
   }
 
-  getInspectionDetailByInspectionId$ = (inspectionId: string) => {
-    return from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
-  };
+  getInspectionDetailByInspectionId$ = (inspectionId: string) =>
+    from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
+
+  private async _ListFormSubmissionLists(
+    filter?: ModelFormSubmissionListFilterInput,
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    limit?: number,
+    nextToken?: string
+  ): Promise<ListFormSubmissionListsQuery> {
+    const statement = `query ListFormSubmissionLists($filter: ModelFormSubmissionListFilterInput, $limit: Int, $nextToken: String) {
+        listFormSubmissionLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+          __typename
+          items {
+            __typename
+            id
+            name
+            description
+            formLogo
+            isPublic
+            location
+            roundType
+            status
+            assignee
+            dueDate
+            version
+            submittedBy
+            createdAt
+            updatedAt
+            _version
+            _deleted
+            _lastChangedAt
+            formSubmissionListFormSubmissionDetail {
+              items {
+                _version
+                createdAt
+                formData
+                formlistID
+                formsubmissionlistID
+                id
+                updatedAt
+                _lastChangedAt
+                _deleted
+              }
+            }
+          }
+          nextToken
+          startedAt
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (filter) {
+      gqlAPIServiceArguments.filter = filter;
+    }
+    if (limit) {
+      gqlAPIServiceArguments.limit = limit;
+    }
+    if (nextToken) {
+      gqlAPIServiceArguments.nextToken = nextToken;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return response?.data
+      ?.listFormSubmissionLists as ListFormSubmissionListsQuery;
+  }
+
+  private countFormSubmissionsResponses(rows = []): string {
+    const updatedResponse = {
+      total: 0,
+      count: 0
+    };
+    rows?.forEach((page) => {
+      page?.PAGES?.forEach((p) => {
+        p?.SECTIONS?.forEach((section) => {
+          const updatedCounts = section?.FIELDS.reduce(
+            (acc, cur) => {
+              acc.total += 1;
+              if (cur?.FIELDVALUE) acc.count += 1;
+              return acc;
+            },
+            {
+              total: 0,
+              count: 0
+            }
+          );
+          updatedResponse.count += updatedCounts?.count || 0;
+          updatedResponse.total += updatedCounts?.total || 0;
+        });
+      });
+    });
+    return `${updatedResponse.count}/${updatedResponse.total}`;
+  }
 }
