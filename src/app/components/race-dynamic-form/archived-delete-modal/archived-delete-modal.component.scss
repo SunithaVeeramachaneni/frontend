@@ -1,9 +1,11 @@
+@import '../../../../scss/colors.scss';
+
 .widget-delete-modal {
   width: 400px;
   height: auto;
   overflow: hidden;
   padding: 17px;
-  background: #ffffff;
+  background: $white;
   border-radius: 4px;
 }
 
@@ -18,17 +20,17 @@
 }
 
 .delete-btn {
-  color: #f6685e;
+  color: $orange-text;
   border-radius: 4px;
-  background: #ffffff;
+  background: $white;
   float: right;
   border: none;
 }
 
 .cancel-btn {
-  color: #3d5afe;
-  background: #ffffff;
+  color: $blue-head;
+  background: $white;
   border-radius: 4px;
   float: right;
-  border: 1px solid #3d5afe;
+  border: 1px solid $blue-head;
 }
