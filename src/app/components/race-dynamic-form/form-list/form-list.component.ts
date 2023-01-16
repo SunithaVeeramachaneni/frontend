@@ -153,7 +153,8 @@ export class FormListComponent implements OnInit {
       },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
       id: 'lastPublishedBy',
@@ -213,7 +214,17 @@ export class FormListComponent implements OnInit {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      draft: {
+        'background-color': '#FEF3C7',
+        color: '#92400E'
+      },
+      published: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
+      }
+    }
   };
   dataSource: MatTableDataSource<any>;
   forms$: Observable<any>;
