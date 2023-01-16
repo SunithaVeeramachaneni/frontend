@@ -117,7 +117,8 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
       id: 'submittedBy',
@@ -219,7 +220,17 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      submitted: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
+      },
+      'in-progress': {
+        'background-color': '#FEF3C7',
+        color: '#92400E'
+      }
+    }
   };
   dataSource: MatTableDataSource<any>;
   formSubmissions$: Observable<{
