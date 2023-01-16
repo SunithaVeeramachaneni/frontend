@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { State, getPages } from 'src/app/forms/state';
 import { Observable } from 'rxjs';
@@ -10,7 +10,10 @@ import { ImageUtils } from 'src/app/shared/utils/imageUtils';
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss']
 })
-export class PreviewComponent implements OnInit {
+export class PreviewComponent implements OnInit, OnChanges {
+  @Input()
+  pageIndex = 1;
+
   isSectionOpenState = true;
   fieldTypes: any;
   arrayField = false;
@@ -24,6 +27,11 @@ export class PreviewComponent implements OnInit {
   previewFormData = [];
 
   constructor(private store: Store<State>, private imageUtils: ImageUtils) {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.page && changes.page.currentValue) {
+      this.pageIndex = changes.page.currentValue;
+    }
+  }
 
   ngOnInit(): void {
     this.fieldTypes = fieldTypesMock.fieldTypes;
