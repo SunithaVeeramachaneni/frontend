@@ -74,8 +74,8 @@ export class ArchivedListComponent implements OnInit {
       //     marginRight: '10px'
       //   }
       // },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      hasPostTextImage: false
+      //postTextImageConfig: {}
     },
     {
       id: 'archivedAt',
