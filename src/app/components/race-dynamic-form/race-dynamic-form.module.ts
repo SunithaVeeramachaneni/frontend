@@ -54,8 +54,6 @@ import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-log
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ArchivedListComponent } from './archived-list/archived-list.component';
-import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -73,9 +71,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     SubmissionSliderComponent,
     SubmissionViewComponent,
     SelectQuestionsDialogComponent,
-    AvatarComponent,
-    ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    AvatarComponent
   ],
   imports: [
     FormsModule,

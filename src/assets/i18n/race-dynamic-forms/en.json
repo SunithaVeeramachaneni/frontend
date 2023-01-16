@@ -94,11 +94,5 @@
   "createdBy": "Created by",
   "preview": "Preview",
   "lastPublishedBy": "Last Published By",
-  "lastModifiedBy": "Last Modified By",
-  "searchArchivedForm": "Search Archived Forms",
-  "archived": "Archived",
-  "deleteArchivedFormModalHeading": "Alert",
-  "deleteArchivedFormModalSubHeading": "Deleting a form will lead of all form data and it's responses",
-  "cancelBtn": "Cancel",
-  "deleteBtn": "Delete"
+  "lastModifiedBy": "Last Modified By"
 }
