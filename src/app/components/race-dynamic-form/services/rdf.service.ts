@@ -380,13 +380,13 @@ export class RaceDynamicFormService {
                   [`label${idx + 1}`]: item.title,
                   key: item.title,
                   color: item.color,
-                  description: item.description
+                  description: item.title
                 }));
                 questionItem.UIFIELDTYPE = question.multi
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: JSON.stringify(viVALUE)
+                  DDVALUE: viVALUE
                 });
               }
 
