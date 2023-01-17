@@ -41,7 +41,7 @@
 
             <button
               class="delete-btn"
-              (click)="deleteQuestion()"
+              (click)="deleteQuestion($event)"
               [disabled]="props.sectionQuestionsCount === 1"
             >
               <img
@@ -77,7 +77,7 @@
             src="assets/rdf-forms-icons/delete-icon.svg"
             alt="delete-icon"
             class="delete-icon"
-            (click)="deleteQuestion()"
+            (click)="deleteQuestion($event)"
           />
         </div>
       </div>

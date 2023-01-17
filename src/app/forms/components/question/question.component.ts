@@ -192,15 +192,17 @@ export class QuestionComponent implements OnInit {
       .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
       .pipe(
         tap((question) => {
-          if (question.isOpen) {
-            timer(0).subscribe(() => this.name.nativeElement.focus());
-          } else {
-            timer(0).subscribe(() => this.name.nativeElement.blur());
+          if (question) {
+            if (question.isOpen) {
+              timer(0).subscribe(() => this.name.nativeElement.focus());
+            } else {
+              timer(0).subscribe(() => this.name.nativeElement.blur());
+            }
+            this.question = question;
+            this.questionForm.patchValue(question, {
+              emitEvent: false
+            });
           }
-          this.question = question;
-          this.questionForm.patchValue(question, {
-            emitEvent: false
-          });
         })
       );
 
@@ -233,7 +235,9 @@ export class QuestionComponent implements OnInit {
     }
   }
 
-  deleteQuestion() {
+  deleteQuestion(event) {
+    event.stopPropagation();
+
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
