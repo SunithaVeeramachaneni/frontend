@@ -351,7 +351,14 @@ export class RaceDynamicFormService {
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        formStatus: { eq: formConfigurationStatus.draft }
+        or: [
+          {
+            formStatus: { eq: formConfigurationStatus.draft }
+          },
+          {
+            formStatus: { eq: formConfigurationStatus.published }
+          }
+        ]
       })
     ).pipe(map(({ items }) => items));
   }
