@@ -175,7 +175,7 @@ export class RaceDynamicFormService {
     }
     `
       : `query {
-      listFormLists(limit: ${limit}) {
+      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
         items {
           id
         }
