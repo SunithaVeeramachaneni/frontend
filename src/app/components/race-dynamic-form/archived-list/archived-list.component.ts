@@ -66,16 +66,16 @@ export class ArchivedListComponent implements OnInit {
         color: 'darkgray'
       },
       hasPreTextImage: true,
-      preTextImageConfig: {
-        logoAvialable: false,
-        style: {
-          width: '40px',
-          height: '40px',
-          marginRight: '10px'
-        }
-      },
-      hasPostTextImage: false,
-      postTextImageConfig: {}
+      // preTextImageConfig: {
+      //   logoAvialable: false,
+      //   style: {
+      //     width: '40px',
+      //     height: '40px',
+      //     marginRight: '10px'
+      //   }
+      // },
+      hasPostTextImage: false
+      //postTextImageConfig: {}
     },
     {
       id: 'archivedAt',
