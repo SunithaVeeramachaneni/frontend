@@ -407,6 +407,9 @@ export class RaceDynamicFormService {
           const sectionItem = {
             SECTIONNAME: section.name,
             FIELDS: questionsBySection.map((question) => {
+              if (question.fieldType === 'TF') {
+                question.fieldType = question.value;
+              }
               const questionItem = {
                 UNIQUEKEY: question.id,
                 FIELDLABEL: question.name,
