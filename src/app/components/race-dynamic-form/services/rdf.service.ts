@@ -449,6 +449,10 @@ export class RaceDynamicFormService {
                 questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
               }
 
+              if (question.fieldType === 'LF') {
+                questionItem.DEFAULTVALUE = question.value;
+              }
+
               return questionItem;
             })
           };
