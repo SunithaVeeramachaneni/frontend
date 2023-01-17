@@ -38,7 +38,7 @@
       </span>
     </div>
 
-    <div *ngIf="formArchived$ | async as forms; else loadingFormArchived">
+    <div *ngIf="(formArchived$ | async) && (isLoading$ | async) === false">
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
@@ -49,12 +49,12 @@
     </div>
   </div>
 
-  <ng-template #loadingFormArchived>
+  <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
         </ngx-shimmer-loading>
       </div>
     </div>
-  </ng-template>
+  </div>
 </div>
