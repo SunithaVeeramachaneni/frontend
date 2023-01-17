@@ -160,6 +160,7 @@ export class ArchivedListComponent implements OnInit {
       action: null,
       form: {} as GetFormListQuery
     });
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly toast: ToastService,
@@ -176,7 +177,7 @@ export class ArchivedListComponent implements OnInit {
         distinctUntilChanged(),
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
     this.archivedFormsListCount$ =
       this.raceDynamicFormService.getFormsListCount$(true);
     this.getDisplayedForms();
@@ -263,9 +264,13 @@ export class ArchivedListComponent implements OnInit {
       .pipe(
         mergeMap(({ rows, nextToken }) => {
           this.nextToken = nextToken;
+          this.isLoading$.next(false);
           return of(rows);
         }),
-        catchError(() => of([]))
+        catchError(() => {
+          this.isLoading$.next(false);
+          return of([]);
+        })
       );
   }
 

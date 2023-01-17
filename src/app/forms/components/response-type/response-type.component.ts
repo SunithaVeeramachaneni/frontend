@@ -59,8 +59,10 @@ export class ResponseTypeComponent implements OnInit {
     this.quickResponsesData$ = combineLatest([
       of({ data: [] }),
       this.rdfService.getDataSetsByType$('quickResponses').pipe(
-        tap((v) => {
+        tap((responses) => {
+          const defaultResponses = responses.filter((item) => !item.formId);
           this.quickResponsesLoading = false;
+          return defaultResponses;
         })
       ),
       this.rdfService.getDataSetsByFormId$('quickResponses', this.formId).pipe(
@@ -77,6 +79,7 @@ export class ResponseTypeComponent implements OnInit {
           formResponses,
           { type, response, responseType }
         ]) => {
+          responses = responses.filter((item) => !item.formId);
           if (Object.keys(response).length) {
             if (type === 'create') {
               initial.data = initial.data.concat([response]);
