@@ -247,6 +247,7 @@ export class FormListComponent implements OnInit {
   nextToken = '';
   selectedForm: GetFormListQuery = null;
   fetchType = 'load';
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
     private readonly toast: ToastService,
     private readonly raceDynamicFormService: RaceDynamicFormService,
@@ -258,6 +259,7 @@ export class FormListComponent implements OnInit {
     this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
     this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
+
     this.searchForm.valueChanges
       .pipe(
         debounceTime(500),
@@ -266,7 +268,7 @@ export class FormListComponent implements OnInit {
           this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
         })
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
     this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
     this.getDisplayedForms();
 
@@ -442,10 +444,12 @@ export class FormListComponent implements OnInit {
         mergeMap(({ count, rows, nextToken }) => {
           this.formsCount$ = of({ count });
           this.nextToken = nextToken;
+          this.isLoading$.next(false);
           return of(rows);
         }),
         catchError(() => {
           this.formsCount$ = of({ count: 0 });
+          this.isLoading$.next(false);
           return of([]);
         })
       );

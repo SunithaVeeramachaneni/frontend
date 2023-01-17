@@ -1,6 +1,12 @@
 import { OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -251,6 +257,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   submissionDetail: any;
   fetchType = 'load';
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -265,7 +272,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
     this.submissionFormsListCount$ =
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
@@ -335,9 +342,13 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       .pipe(
         mergeMap(({ rows, nextToken }) => {
           this.nextToken = nextToken;
+          this.isLoading$.next(false);
           return of(rows);
         }),
-        catchError(() => of([]))
+        catchError(() => {
+          this.isLoading$.next(false);
+          return of([]);
+        })
       );
   }
 
