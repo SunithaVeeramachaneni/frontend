@@ -73,7 +73,7 @@
       </ng-template>
     </div>
 
-    <div *ngIf="formSubmissions$ | async as forms; else loadingSubmissionForms">
+    <div *ngIf="(formSubmissions$ | async) && (isLoading$ | async) === false">
       <cwp-dynamictable
         [dataSource]="dataSource"
         [configOptions]="configOptions"
@@ -84,12 +84,12 @@
     </div>
   </div>
 
-  <ng-template #loadingSubmissionForms>
+  <div *ngIf="isLoading$ | async">
     <div class="padding-lr-20">
       <div *ngFor="let number of ghostLoading">
         <ngx-shimmer-loading [width]="'100%'" [height]="'40px'">
         </ngx-shimmer-loading>
       </div>
     </div>
-  </ng-template>
+  </div>
 </div>

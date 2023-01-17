@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -29,6 +30,13 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
             createOrEditForm: true
           })
         );
+        let version = 0;
+        authoredFormDetail.forEach((item) => {
+          if (item._version > version) version = item._version;
+        });
+        const latestFormVersionData = authoredFormDetail.find(
+          (item) => item._version === version
+        );
         const {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           id,
@@ -48,7 +56,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
           formDetailPublishStatus,
           version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
-        } = authoredFormDetail[0];
+        } = latestFormVersionData;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
         const formMetadata = {

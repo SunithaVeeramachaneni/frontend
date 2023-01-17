@@ -351,7 +351,14 @@ export class RaceDynamicFormService {
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        formStatus: { eq: formConfigurationStatus.draft }
+        or: [
+          {
+            formStatus: { eq: formConfigurationStatus.draft }
+          },
+          {
+            formStatus: { eq: formConfigurationStatus.published }
+          }
+        ]
       })
     ).pipe(map(({ items }) => items));
   }
@@ -407,6 +414,9 @@ export class RaceDynamicFormService {
           const sectionItem = {
             SECTIONNAME: section.name,
             FIELDS: questionsBySection.map((question) => {
+              if (question.fieldType === 'TF') {
+                question.fieldType = question.value;
+              }
               const questionItem = {
                 UNIQUEKEY: question.id,
                 FIELDLABEL: question.name,
@@ -444,6 +454,10 @@ export class RaceDynamicFormService {
               if (question.fieldType === 'RT') {
                 const { min, max, increment } = question.value;
                 questionItem.DEFAULTVALUE = `${min},${max},${increment}`;
+              }
+
+              if (question.fieldType === 'LF') {
+                questionItem.DEFAULTVALUE = question.value;
               }
 
               return questionItem;
@@ -504,7 +518,7 @@ export class RaceDynamicFormService {
       );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${logic.operator} (V)${logic.operand2}`;
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
       });
     });
     if (expression[0] === ';') {
