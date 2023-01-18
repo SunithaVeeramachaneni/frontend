@@ -129,7 +129,7 @@ export class ResponseTypeComponent implements OnInit {
   }
 
   handleMCQRepsonseSelection = (responseType, response) => {
-    const { type, values, name, description } = response;
+    const { type, values, name, description, id } = response;
 
     this.selectFieldTypeEvent.emit({
       type:
@@ -137,8 +137,14 @@ export class ResponseTypeComponent implements OnInit {
     });
     this.setQuestionValue.emit(
       responseType === 'quickResponse'
-        ? { type: responseType, name, value: values, description: name }
-        : { type: responseType, name, value: JSON.parse(values), description }
+        ? { id, type: responseType, name, value: values, description: name }
+        : {
+            id,
+            type: responseType,
+            name,
+            value: JSON.parse(values),
+            description
+          }
     );
   };
   closeResponseType() {
