@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { API, graphqlOperation } from 'aws-amplify';
 import { format, formatDistance } from 'date-fns';
 import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import {
   APIService,
   DeleteFormListInput,
@@ -14,8 +14,7 @@ import {
   ListFormSubmissionListsQuery,
   ModelFormSubmissionListFilterInput,
   UpdateAuthoredFormDetailInput,
-  UpdateFormDetailInput,
-  UpdateFormListInput
+  UpdateFormDetailInput
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -25,9 +24,11 @@ import {
   SearchEvent,
   TableEvent
 } from './../../../interfaces';
+import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
+import { getResponseSets } from 'src/app/forms/state';
 
 const limit = 10000;
 @Injectable({
@@ -44,7 +45,8 @@ export class RaceDynamicFormService {
   constructor(
     private readonly awsApiService: APIService,
     private toastService: ToastService,
-    private appService: AppService
+    private appService: AppService,
+    private store: Store
   ) {}
 
   setFormCreatedUpdated(data: any) {
@@ -436,18 +438,37 @@ export class RaceDynamicFormService {
                 arrayFieldTypeQuestions.push(question);
               }
 
-              if (question.fieldType === 'VI' || question.fieldType === 'DD') {
-                const viVALUE = question.value?.value.map((item, idx) => ({
-                  [`label${idx + 1}`]: item.title,
-                  key: item.title,
-                  color: item.color,
-                  description: item.title
-                }));
+              if (
+                question.fieldType === 'VI' ||
+                question.value?.type === 'quickResponse'
+              ) {
+                const viVALUE = this.prepareDDValue(question.value?.value);
+                Object.assign(questionItem, {
+                  DDVALUE: viVALUE
+                });
+              }
+
+              if (
+                question.fieldType === 'DD' &&
+                question.value?.type === 'globalResponse'
+              ) {
+                let currentGlobalResponseValues;
+                const currenGlobalResponse$ = this.store
+                  .select(getResponseSets)
+                  .pipe(
+                    tap((responses) => {
+                      currentGlobalResponseValues = JSON.parse(
+                        responses.find((item) => item.id === question.value.id)
+                          ?.values
+                      );
+                    })
+                  );
+                currenGlobalResponse$.subscribe();
                 questionItem.UIFIELDTYPE = question.multi
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: viVALUE
+                  DDVALUE: this.prepareDDValue(currentGlobalResponseValues)
                 });
               }
 
@@ -458,6 +479,11 @@ export class RaceDynamicFormService {
 
               if (question.fieldType === 'LF') {
                 questionItem.DEFAULTVALUE = question.value;
+              }
+
+              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+                questionItem.DEFAULTVALUE =
+                  question.fieldType === 'TIF' ? 'CT' : 'CD';
               }
 
               return questionItem;
@@ -629,6 +655,14 @@ export class RaceDynamicFormService {
       nextToken
     };
   }
+
+  prepareDDValue = (values) =>
+    values.map((item, idx) => ({
+      [`label${idx + 1}`]: item.title,
+      key: item.title,
+      color: item.color,
+      description: item.title
+    }));
 
   private async _ListFormSubmissionLists(
     filter?: ModelFormSubmissionListFilterInput,
