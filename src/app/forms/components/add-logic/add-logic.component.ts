@@ -163,7 +163,6 @@ export class AddLogicComponent implements OnInit {
         });
         this.logicsForm.setControl('logics', this.fb.array(logicsFormArray));
         this.cdrf.detectChanges();
-        this.cdrf.markForCheck();
 
         merge(
           // eslint-disable-next-line @typescript-eslint/dot-notation
