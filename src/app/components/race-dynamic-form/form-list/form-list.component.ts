@@ -179,7 +179,7 @@ export class FormListComponent implements OnInit {
     },
     {
       id: 'publishedDate',
-      displayName: 'Last Published At',
+      displayName: 'Last Published',
       type: 'string',
       order: 5,
       hasSubtitle: false,

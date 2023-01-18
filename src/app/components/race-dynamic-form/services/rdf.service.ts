@@ -177,7 +177,7 @@ export class RaceDynamicFormService {
     }
     `
       : `query {
-      listFormLists(limit: ${limit}) {
+      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
         items {
           id
         }
@@ -520,7 +520,7 @@ export class RaceDynamicFormService {
           if (isEmpty) {
             expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            expression = `${expression};${globalIndex}:(E) ${mq} EQ MANDIT IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
           }
         });
       }
@@ -533,7 +533,7 @@ export class RaceDynamicFormService {
           if (isEmpty) {
             expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
           } else {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2}`;
+            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
           }
         });
       }
