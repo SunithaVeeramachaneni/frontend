@@ -79,6 +79,7 @@ export class ResponseTypeComponent implements OnInit {
           formResponses,
           { type, response, responseType }
         ]) => {
+          console.log(formResponses);
           responses = responses.filter((item) => !item.formId);
           if (Object.keys(response).length) {
             if (type === 'create') {
@@ -103,7 +104,8 @@ export class ResponseTypeComponent implements OnInit {
               const formQuickResp = formResponses.map((r) => ({
                 id: r.id,
                 name: '',
-                values: r.values
+                values: r.values,
+                formId: r.formId
               }));
               initial.data = initial.data.concat(formQuickResp);
             }
@@ -129,7 +131,7 @@ export class ResponseTypeComponent implements OnInit {
   }
 
   handleMCQRepsonseSelection = (responseType, response) => {
-    const { type, values, name, description } = response;
+    const { type, values, name, description, id } = response;
 
     this.selectFieldTypeEvent.emit({
       type:
@@ -137,8 +139,14 @@ export class ResponseTypeComponent implements OnInit {
     });
     this.setQuestionValue.emit(
       responseType === 'quickResponse'
-        ? { type: responseType, name, value: values, description: name }
-        : { type: responseType, name, value: JSON.parse(values), description }
+        ? { id, type: responseType, name, value: values, description: name }
+        : {
+            id,
+            type: responseType,
+            name,
+            value: JSON.parse(values),
+            description
+          }
     );
   };
   closeResponseType() {
