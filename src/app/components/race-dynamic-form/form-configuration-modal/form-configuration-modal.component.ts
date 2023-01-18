@@ -86,11 +86,11 @@ export class FormConfigurationModalComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.minLength(1),
+          Validators.minLength(3),
           Validators.maxLength(100)
         ]
       ],
-      description: [''],
+      description: ['', [Validators.minLength(3)]],
       isPublic: [false],
       isArchived: [false],
       formStatus: [formConfigurationStatus.draft],
