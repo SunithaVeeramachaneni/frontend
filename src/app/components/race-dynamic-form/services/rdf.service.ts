@@ -460,6 +460,11 @@ export class RaceDynamicFormService {
                 questionItem.DEFAULTVALUE = question.value;
               }
 
+              if (question.fieldType === 'TIF' || question.fieldType === 'DF') {
+                questionItem.DEFAULTVALUE =
+                  question.fieldType === 'TIF' ? 'CT' : 'CD';
+              }
+
               return questionItem;
             })
           };
