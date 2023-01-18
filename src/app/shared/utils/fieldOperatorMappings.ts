@@ -112,5 +112,9 @@ export const operatorSymbolMap = {
 
 export const oppositeOperatorMap = {
   EQ: 'NE',
-  NE: 'EQ'
+  NE: 'EQ',
+  LT: 'GE',
+  LE: 'GT',
+  GE: 'LT',
+  GT: 'LE'
 };
