@@ -67,6 +67,7 @@
                 </span>
               </button>
               <button
+                *ngIf="resp?.formId"
                 mat-flat-button
                 class="editBtn"
                 (click)="handleResponses(resp)"
