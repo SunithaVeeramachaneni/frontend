@@ -468,7 +468,9 @@ export class RaceDynamicFormService {
                   ? 'DDM'
                   : question.fieldType;
                 Object.assign(questionItem, {
-                  DDVALUE: this.prepareDDValue(currentGlobalResponseValues)
+                  DDVALUE: currentGlobalResponseValues
+                    ? this.prepareDDValue(currentGlobalResponseValues)
+                    : []
                 });
               }
 
