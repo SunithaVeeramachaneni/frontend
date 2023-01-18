@@ -79,6 +79,7 @@ export class ResponseTypeComponent implements OnInit {
           formResponses,
           { type, response, responseType }
         ]) => {
+          console.log(formResponses);
           responses = responses.filter((item) => !item.formId);
           if (Object.keys(response).length) {
             if (type === 'create') {
@@ -103,7 +104,8 @@ export class ResponseTypeComponent implements OnInit {
               const formQuickResp = formResponses.map((r) => ({
                 id: r.id,
                 name: '',
-                values: r.values
+                values: r.values,
+                formId: r.formId
               }));
               initial.data = initial.data.concat(formQuickResp);
             }
