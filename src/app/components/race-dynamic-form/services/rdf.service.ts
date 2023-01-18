@@ -519,7 +519,7 @@ export class RaceDynamicFormService {
       const isEmpty = !logic.operand2.length;
 
       if (fieldType === 'CB') {
-        logic.operand2 = logic.operand2 ? 'X' : 'EMPTY';
+        logic.operand2 = logic.operand2 ? 'X' : '';
       }
 
       // Mandate Questions;
