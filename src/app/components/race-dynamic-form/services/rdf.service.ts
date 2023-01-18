@@ -428,6 +428,7 @@ export class RaceDynamicFormService {
                 DEFAULTVALUE: '' as any,
                 UIVALIDATION: this.getValidationExpression(
                   question.id,
+                  question,
                   questions,
                   logics
                 ),
@@ -504,7 +505,7 @@ export class RaceDynamicFormService {
     return JSON.stringify({ FORMS: forms });
   };
 
-  getValidationExpression(questionId, questions, logics) {
+  getValidationExpression(questionId, question, questions, logics) {
     let expression = '';
     let globalIndex = 0;
     const questionLogics = logics.filter(
@@ -512,8 +513,14 @@ export class RaceDynamicFormService {
     );
     if (!questionLogics || !questionLogics.length) return expression;
 
+    const fieldType = question.fieldType;
+
     questionLogics.forEach((logic) => {
       const isEmpty = !logic.operand2.length;
+
+      if (fieldType === 'CB') {
+        logic.operand2 = logic.operand2 ? 'X' : 'EMPTY';
+      }
 
       // Mandate Questions;
       const mandatedQuestions = logic.mandateQuestions;

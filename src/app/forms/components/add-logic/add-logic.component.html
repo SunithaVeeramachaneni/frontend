@@ -46,12 +46,14 @@
               type="text"
               class="logicValue"
               formControlName="operand2"
+              (input)="operand2Changed(logic.value, $event, i)"
               *ngIf="dropDownTypes.indexOf(fieldType) < 0"
             />
             <select
               class="logicValue"
               formControlName="operand2"
               *ngIf="dropDownTypes.indexOf(fieldType) > -1"
+              (change)="operand2Changed(logic.value, $event, i)"
             >
               <ng-container *ngIf="fieldType !== 'CB'; else isCheckBox">
                 <option
