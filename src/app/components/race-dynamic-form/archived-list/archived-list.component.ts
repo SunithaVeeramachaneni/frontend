@@ -319,7 +319,7 @@ export class ArchivedListComponent implements OnInit {
       })
       .subscribe((updatedForm) => {
         this.restoreDeleteForm$.next({
-          action: 'delete',
+          action: 'restore',
           form: updatedForm
         });
         this.archivedFormsListCount$ =
