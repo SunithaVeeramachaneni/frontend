@@ -28,6 +28,7 @@ import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import { isJson } from '../utils/utils';
+import { oppositeOperatorMap } from 'src/app/shared/utils/fieldOperatorMappings';
 import { getResponseSets } from 'src/app/forms/state';
 
 const limit = 10000;
@@ -544,7 +545,8 @@ export class RaceDynamicFormService {
       );
       askQuestions.forEach((q) => {
         globalIndex = globalIndex + 1;
-        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} ${logic.operator} EMPTY OR ${questionId} NE (V)${logic.operand2}`;
+        const oppositeOperator = oppositeOperatorMap[logic.operator];
+        expression = `${expression};${globalIndex}:(HI) ${q.id} IF ${questionId} EQ EMPTY OR ${questionId} ${oppositeOperator} (V)${logic.operand2}`;
       });
     });
     if (expression[0] === ';') {
