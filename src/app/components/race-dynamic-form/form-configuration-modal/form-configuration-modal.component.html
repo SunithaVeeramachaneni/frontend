@@ -64,19 +64,6 @@
               [placeholder]="'addDescription' | translate"
               formControlName="description"
             />
-            <mat-error
-              *ngIf="processValidationErrors('description')"
-              class="m-5"
-            >
-              {{
-                errors?.description.name
-                  | translate
-                    : {
-                        name: 'description' | translate,
-                        length: errors?.description?.length
-                      }
-              }}
-            </mat-error>
           </mat-form-field>
         </div>
         <div class="tags">
