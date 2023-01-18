@@ -63,24 +63,25 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
                   (item) => item._version === version
                 );
                 latestVersion = latestFormVersionData;
-                if (
-                  Array.isArray(element?.pages) &&
-                  element?.pages?.length > 0
-                ) {
-                  element?.pages.forEach((page, pIdx) => {
-                    if (pIdx === 0) {
-                      this.defaultFormName = `${page.name} ${page.position}`;
-                      this.store.dispatch(
-                        FormConfigurationActions.initPages({
-                          pages: [page]
-                        })
-                      );
-                    }
-                    this.questionsCount += page?.questions?.length || 0;
-                    this.pagesCount += 1;
-                  });
-                }
               });
+              if (
+                Array.isArray(latestVersion?.pages) &&
+                latestVersion?.pages?.length > 0
+              ) {
+                latestVersion?.pages.forEach((page, pIdx) => {
+                  if (pIdx === 0) {
+                    this.defaultFormName = `${page.name} ${page.position}`;
+                    this.store.dispatch(
+                      FormConfigurationActions.initPages({
+                        pages: [page]
+                      })
+                    );
+                  }
+                  this.questionsCount += page?.questions?.length || 0;
+                  this.pagesCount += 1;
+                });
+              }
+
               return latestVersion;
             }
             return updatedItems;
