@@ -276,6 +276,30 @@ export class AddLogicComponent implements OnInit {
     }
   }
 
+  operand2Changed(logic, event, index) {
+    if (event.target && event.target.value) {
+      if (logic.operand2 !== event.target.value) {
+        logic.operand2 = event.target.value;
+      }
+    }
+
+    const logicSymbol = this.fieldOperators.find(
+      (op) => op.code === logic.operator
+    );
+    if (logicSymbol) {
+      logic.logicTitle = `${logicSymbol.symbol} ${logic.operand2}`;
+    } else {
+      logic.logicTitle = `${logic.operator} ${logic.operand2}`;
+    }
+    this.logicEvent.emit({
+      questionId: this.questionId,
+      pageIndex: this.pageIndex,
+      logicIndex: index,
+      type: 'update',
+      logic
+    });
+  }
+
   operatorChanged(logic, index, event) {
     const logicSymbol = this.fieldOperators.find(
       (op) => op.code === logic.operator
