@@ -508,7 +508,8 @@ export class RaceDynamicFormService {
   getValidationExpression(questionId, question, questions, logics) {
     let expression = '';
     let globalIndex = 0;
-    const questionLogics = logics.filter(
+    const logicsT = JSON.parse(JSON.stringify(logics));
+    const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
     );
     if (!questionLogics || !questionLogics.length) return expression;
@@ -541,9 +542,17 @@ export class RaceDynamicFormService {
         hiddenQuestions.forEach((hq) => {
           globalIndex = globalIndex + 1;
           if (isEmpty) {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+            if (fieldType === 'CB') {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
+            } else {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+            }
           } else {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
+            if (fieldType === 'CB') {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
+            } else {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
+            }
           }
         });
       }
