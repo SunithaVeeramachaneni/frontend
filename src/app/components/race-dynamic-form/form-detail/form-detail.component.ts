@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   Component,
   EventEmitter,
@@ -35,6 +35,8 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   defaultFormName = null;
   pagesCount = 0;
   questionsCount = 0;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  ghostLoading = new Array(19).fill(0).map((_, i) => i);
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService,
     private readonly router: Router,
@@ -43,6 +45,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(_: SimpleChanges) {
     if (this.selectedForm) {
+      this.toggleLoader(true);
       this.selectedFormDetail$ = this.raceDynamicFormService
         .getAuthoredFormDetailByFormId$(this.selectedForm.id)
         .pipe(
@@ -87,6 +90,14 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
             return updatedItems;
           })
         );
+      this.selectedFormDetail$?.subscribe(
+        () => {
+          this.toggleLoader(false);
+        },
+        () => {
+          this.toggleLoader(false);
+        }
+      );
     }
   }
 
@@ -126,5 +137,10 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.selectedForm = null;
+    this.toggleLoader(false);
+  }
+
+  private toggleLoader(action: boolean): void {
+    this.isLoading$.next(action);
   }
 }
