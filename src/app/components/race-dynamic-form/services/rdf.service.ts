@@ -428,6 +428,7 @@ export class RaceDynamicFormService {
                 DEFAULTVALUE: '' as any,
                 UIVALIDATION: this.getValidationExpression(
                   question.id,
+                  question,
                   questions,
                   logics
                 ),
@@ -504,16 +505,23 @@ export class RaceDynamicFormService {
     return JSON.stringify({ FORMS: forms });
   };
 
-  getValidationExpression(questionId, questions, logics) {
+  getValidationExpression(questionId, question, questions, logics) {
     let expression = '';
     let globalIndex = 0;
-    const questionLogics = logics.filter(
+    const logicsT = JSON.parse(JSON.stringify(logics));
+    const questionLogics = logicsT.filter(
       (logic) => logic.questionId === questionId
     );
     if (!questionLogics || !questionLogics.length) return expression;
 
+    const fieldType = question.fieldType;
+
     questionLogics.forEach((logic) => {
       const isEmpty = !logic.operand2.length;
+
+      if (fieldType === 'CB') {
+        logic.operand2 = logic.operand2 ? 'X' : '';
+      }
 
       // Mandate Questions;
       const mandatedQuestions = logic.mandateQuestions;
@@ -534,9 +542,17 @@ export class RaceDynamicFormService {
         hiddenQuestions.forEach((hq) => {
           globalIndex = globalIndex + 1;
           if (isEmpty) {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+            if (fieldType === 'CB') {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
+            } else {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} EMPTY`;
+            }
           } else {
-            expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
+            if (fieldType === 'CB') {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} EQ EMPTY`;
+            } else {
+              expression = `${expression};${globalIndex}:(HI) ${hq} IF ${questionId} ${logic.operator} (V)${logic.operand2} AND ${questionId} NE EMPTY`;
+            }
           }
         });
       }
