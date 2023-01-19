@@ -124,13 +124,6 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       formStatus: [formConfigurationStatus.draft]
     });
 
-    const fornName = this.formConf.name.value
-      ? this.formConf.name.value
-      : 'Untitled Form';
-    this.headerService.setHeaderTitle('My Forms');
-    this.breadcrumbService.set('@formName', {
-      label: fornName
-    });
     this.store.dispatch(
       MCQResponseActions.getResponseSet({ responseType: 'globalResponse' })
     );
@@ -141,8 +134,18 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         pairwise(),
         tap(([previous, current]) => {
           if (!this.formConfiguration.invalid) {
-            const { counter: prevCounter, id: prevId, ...prev } = previous;
-            const { counter: currCounter, id: currId, ...curr } = current;
+            const {
+              counter: prevCounter,
+              id: prevId,
+              formStatus: prevFormStatus,
+              ...prev
+            } = previous;
+            const {
+              counter: currCounter,
+              id: currId,
+              formStatus: currFormStatus,
+              ...curr
+            } = current;
 
             if (!isEqual(prev, curr)) {
               this.store.dispatch(
@@ -154,7 +157,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
               this.store.dispatch(
                 FormConfigurationActions.updateForm({
-                  formMetadata: { ...this.formMetadata, ...curr },
+                  formMetadata: this.formMetadata,
                   formListDynamoDBVersion: this.formListVersion
                 })
               );
@@ -166,11 +169,20 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
 
     this.formMetadata$ = this.store.select(getFormMetadata).pipe(
       tap((formMetadata) => {
-        const { name, description, id, formLogo } = formMetadata;
+        const { name, description, id, formLogo, formStatus } = formMetadata;
         this.formMetadata = formMetadata;
-        this.formConfiguration.patchValue({ name, description, id, formLogo });
+        this.formConfiguration.patchValue(
+          {
+            name,
+            description,
+            id,
+            formLogo,
+            formStatus
+          },
+          { emitEvent: false }
+        );
         const formName = name ? name : 'Untitled Form';
-        this.headerService.setHeaderTitle('My Forms');
+        this.headerService.setHeaderTitle(formName);
         this.breadcrumbService.set('@formName', {
           label: formName
         });
