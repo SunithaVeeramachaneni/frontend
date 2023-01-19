@@ -305,6 +305,7 @@ export type CreateFormSubmissionListInput = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
@@ -320,6 +321,7 @@ export type ModelFormSubmissionListConditionInput = {
   dueDate?: ModelStringInput | null;
   version?: ModelStringInput | null;
   submittedBy?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelFormSubmissionListConditionInput | null> | null;
   or?: Array<ModelFormSubmissionListConditionInput | null> | null;
   not?: ModelFormSubmissionListConditionInput | null;
@@ -340,6 +342,7 @@ export type FormSubmissionList = {
   version?: string | null;
   submittedBy?: string | null;
   formSubmissionListFormSubmissionDetail?: ModelFormSubmissionDetailConnection | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -367,6 +370,7 @@ export type UpdateFormSubmissionListInput = {
   dueDate?: string | null;
   version?: string | null;
   submittedBy?: string | null;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
@@ -391,6 +395,7 @@ export type CreateFormListInput = {
   author?: string | null;
   formType?: string | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
@@ -409,6 +414,7 @@ export type ModelFormListConditionInput = {
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
   isArchived?: ModelBooleanInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelFormListConditionInput | null> | null;
   or?: Array<ModelFormListConditionInput | null> | null;
   not?: ModelFormListConditionInput | null;
@@ -434,6 +440,7 @@ export type FormList = {
   formListAuthoredFormDetail?: ModelAuthoredFormDetailConnection | null;
   formListFormDetail?: ModelFormDetailConnection | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -471,6 +478,7 @@ export type UpdateFormListInput = {
   author?: string | null;
   formType?: string | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   _version?: number | null;
 };
 
@@ -548,6 +556,7 @@ export type ModelFormSubmissionListFilterInput = {
   dueDate?: ModelStringInput | null;
   version?: ModelStringInput | null;
   submittedBy?: ModelStringInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelFormSubmissionListFilterInput | null> | null;
   or?: Array<ModelFormSubmissionListFilterInput | null> | null;
   not?: ModelFormSubmissionListFilterInput | null;
@@ -576,6 +585,7 @@ export type ModelFormListFilterInput = {
   author?: ModelStringInput | null;
   formType?: ModelStringInput | null;
   isArchived?: ModelBooleanInput | null;
+  searchTerm?: ModelStringInput | null;
   and?: Array<ModelFormListFilterInput | null> | null;
   or?: Array<ModelFormListFilterInput | null> | null;
   not?: ModelFormListFilterInput | null;
@@ -688,6 +698,7 @@ export type ModelSubscriptionFormSubmissionListFilterInput = {
   dueDate?: ModelSubscriptionStringInput | null;
   version?: ModelSubscriptionStringInput | null;
   submittedBy?: ModelSubscriptionStringInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
   and?: Array<ModelSubscriptionFormSubmissionListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormSubmissionListFilterInput | null> | null;
 };
@@ -708,6 +719,7 @@ export type ModelSubscriptionFormListFilterInput = {
   author?: ModelSubscriptionStringInput | null;
   formType?: ModelSubscriptionStringInput | null;
   isArchived?: ModelSubscriptionBooleanInput | null;
+  searchTerm?: ModelSubscriptionStringInput | null;
   and?: Array<ModelSubscriptionFormListFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormListFilterInput | null> | null;
 };
@@ -899,6 +911,7 @@ export type CreateFormSubmissionListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -925,6 +938,7 @@ export type UpdateFormSubmissionListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -951,6 +965,7 @@ export type DeleteFormSubmissionListMutation = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -990,6 +1005,7 @@ export type CreateFormListMutation = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1029,6 +1045,7 @@ export type UpdateFormListMutation = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1068,6 +1085,7 @@ export type DeleteFormListMutation = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1376,6 +1394,7 @@ export type GetFormSubmissionListQuery = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1399,6 +1418,7 @@ export type ListFormSubmissionListsQuery = {
     dueDate?: string | null;
     version?: string | null;
     submittedBy?: string | null;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1425,6 +1445,7 @@ export type SyncFormSubmissionListsQuery = {
     dueDate?: string | null;
     version?: string | null;
     submittedBy?: string | null;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1467,6 +1488,7 @@ export type GetFormListQuery = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1493,6 +1515,7 @@ export type ListFormListsQuery = {
     author?: string | null;
     formType?: string | null;
     isArchived?: boolean | null;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1522,6 +1545,7 @@ export type SyncFormListsQuery = {
     author?: string | null;
     formType?: string | null;
     isArchived?: boolean | null;
+    searchTerm?: string | null;
     createdAt: string;
     updatedAt: string;
     _version: number;
@@ -1719,6 +1743,7 @@ export type OnCreateFormSubmissionListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1745,6 +1770,7 @@ export type OnUpdateFormSubmissionListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1771,6 +1797,7 @@ export type OnDeleteFormSubmissionListSubscription = {
     nextToken?: string | null;
     startedAt?: number | null;
   } | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1810,6 +1837,7 @@ export type OnCreateFormListSubscription = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1849,6 +1877,7 @@ export type OnUpdateFormListSubscription = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -1888,6 +1917,7 @@ export type OnDeleteFormListSubscription = {
     startedAt?: number | null;
   } | null;
   isArchived?: boolean | null;
+  searchTerm?: string | null;
   createdAt: string;
   updatedAt: string;
   _version: number;
@@ -2295,6 +2325,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -2339,6 +2370,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -2383,6 +2415,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -2440,6 +2473,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -2495,6 +2529,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -2550,6 +2585,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -3219,6 +3255,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -3256,6 +3293,7 @@ export class APIService {
             dueDate
             version
             submittedBy
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -3304,6 +3342,7 @@ export class APIService {
             dueDate
             version
             submittedBy
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -3366,6 +3405,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -3406,6 +3446,7 @@ export class APIService {
             author
             formType
             isArchived
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -3457,6 +3498,7 @@ export class APIService {
             author
             formType
             isArchived
+            searchTerm
             createdAt
             updatedAt
             _version
@@ -3908,6 +3950,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -3955,6 +3998,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -4002,6 +4046,7 @@ export class APIService {
             nextToken
             startedAt
           }
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -4060,6 +4105,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -4116,6 +4162,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version
@@ -4172,6 +4219,7 @@ export class APIService {
             startedAt
           }
           isArchived
+          searchTerm
           createdAt
           updatedAt
           _version

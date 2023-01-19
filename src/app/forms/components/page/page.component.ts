@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { getPage, getPagesCount, State } from 'src/app/forms/state';
 import { PageEvent, Page } from 'src/app/interfaces';
+import { FormConfigurationActions } from '../../state/actions';
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
@@ -29,10 +30,10 @@ export class PageComponent implements OnInit {
 
   @Output() pageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
 
-  isPageOpenState = true;
   pageForm: FormGroup = this.fb.group({
     name: '',
-    position: ''
+    position: '',
+    isOpen: true
   });
   page$: Observable<Page>;
   pagesCount$: Observable<number>;
@@ -56,8 +57,14 @@ export class PageComponent implements OnInit {
     this.pageEvent.emit({ pageIndex: this.pageIndex + 1, type: 'add' });
   }
 
-  togglePageOpenState = () => {
-    this.isPageOpenState = !this.isPageOpenState;
+  toggleIsOpenState = () => {
+    this.pageForm.get('isOpen').setValue(!this.pageForm.get('isOpen').value);
+    this.store.dispatch(
+      FormConfigurationActions.updatePageState({
+        pageIndex: this.pageIndex,
+        isOpen: this.pageForm.get('isOpen').value
+      })
+    );
   };
 
   deletePage() {

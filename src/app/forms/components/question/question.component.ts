@@ -8,22 +8,38 @@ import {
   ViewChildren,
   Output,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  startWith,
+  tap
+} from 'rxjs/operators';
 import { Observable, timer } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
 import { QuestionEvent, Question } from 'src/app/interfaces';
 import {
-  getQuestion,
   getQuestionByID,
   getSectionQuestionsCount,
-  State
+  State,
+  getQuestionLogics,
+  getFormMetadata
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
+import { isEqual } from 'lodash-es';
+import { FormConfigurationActions } from '../../state/actions';
+import { AddLogicActions } from '../../state/actions';
+import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-question',
   templateUrl: './question.component.html',
@@ -31,6 +47,7 @@ import { FormService } from '../../services/form.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionComponent implements OnInit {
+  @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
@@ -61,11 +78,32 @@ export class QuestionComponent implements OnInit {
     return this._questionIndex;
   }
 
+  @Input() set isAskQuestion(isAskQuestion: boolean) {
+    this._isAskQuestion = isAskQuestion;
+  }
+  get isAskQuestion() {
+    return this._isAskQuestion;
+  }
+
   fieldType = { type: 'TF', description: 'Text Answer' };
   fieldTypes: any = [this.fieldType];
-  openResponseType = false;
-  fieldContentOpenState = false;
-  openResponseTypeModal$: Observable<boolean>;
+
+  addLogicNotAppliedFields = [
+    'LTV',
+    'TIF',
+    'SF',
+    'LF',
+    'LLF',
+    'SGF',
+    'ATT',
+    'IMG',
+    'GAL',
+    'DFR',
+    'RT',
+    'TAF',
+    'ARD',
+    'DF'
+  ];
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -75,47 +113,80 @@ export class QuestionComponent implements OnInit {
     position: '',
     required: false,
     multi: false,
-    value: '',
+    value: 'TF',
     isPublished: false,
-    isPublishedTillSave: false
+    isPublishedTillSave: false,
+    isOpen: false,
+    isResponseTypeModalOpen: false
   });
   question$: Observable<Question>;
   question: Question;
   sectionQuestionsCount$: Observable<number>;
+  ignoreUpdateIsOpen: boolean;
+  addQuestionClicked: boolean;
+  formId: string;
+
   private _pageIndex: number;
   private _id: string;
   private _sectionId: string;
   private _questionIndex: number;
+  private _isAskQuestion: boolean;
 
   constructor(
     private fb: FormBuilder,
     private imageUtils: ImageUtils,
     private store: Store<State>,
-    private formService: FormService
+    private formService: FormService,
+    private rdfService: RaceDynamicFormService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.params.subscribe((params) => {
+      this.formId = params.id;
+    });
+
+    this.rdfService.formCreatedUpdated$.subscribe((data) => {
+      if (data.id) {
+        this.formId = data.id;
+      }
+    });
+
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
         fieldType.type !== 'LTV' &&
         fieldType.type !== 'DD' &&
         fieldType.type !== 'DDM' &&
-        fieldType.type !== 'VI'
+        fieldType.type !== 'VI' &&
+        fieldType.type !== 'IMG' &&
+        fieldType.type !== 'USR' &&
+        fieldType.type !== 'ARD' &&
+        fieldType.type !== 'TAF' &&
+        fieldType.type !== 'ATT'
     );
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
     this.questionForm.valueChanges
       .pipe(
-        debounceTime(1000),
+        startWith({}),
+        debounceTime(500),
         distinctUntilChanged(),
-        tap(() =>
-          this.questionEvent.emit({
-            pageIndex: this.pageIndex,
-            sectionId: this.sectionId,
-            question: this.questionForm.value,
-            questionIndex: this.questionIndex,
-            type: 'update'
-          })
-        )
+        pairwise(),
+        tap(([previous, current]) => {
+          const { isOpen, isResponseTypeModalOpen, ...prev } = previous;
+          const {
+            isOpen: currIsOpen,
+            isResponseTypeModalOpen: currIsResponseTypeModalOpen,
+            ...curr
+          } = current;
+          if (!isEqual(prev, curr)) {
+            this.questionEvent.emit({
+              pageIndex: this.pageIndex,
+              sectionId: this.sectionId,
+              question: this.questionForm.value,
+              questionIndex: this.questionIndex,
+              type: 'update'
+            });
+          }
+        })
       )
       .subscribe();
 
@@ -123,10 +194,17 @@ export class QuestionComponent implements OnInit {
       .select(getQuestionByID(this.pageIndex, this.sectionId, this.questionId))
       .pipe(
         tap((question) => {
-          this.question = question;
-          this.questionForm.patchValue(question, {
-            emitEvent: false
-          });
+          if (question) {
+            if (question.isOpen) {
+              timer(0).subscribe(() => this.name.nativeElement.focus());
+            } else {
+              timer(0).subscribe(() => this.name.nativeElement.blur());
+            }
+            this.question = question;
+            this.questionForm.patchValue(question, {
+              emitEvent: false
+            });
+          }
         })
       );
 
@@ -135,29 +213,51 @@ export class QuestionComponent implements OnInit {
     );
   }
 
-  addQuestion() {
-    this.questionEvent.emit({
-      pageIndex: this.pageIndex,
-      sectionId: this.sectionId,
-      questionIndex: this.questionIndex + 1,
-      type: 'add'
-    });
+  addQuestion(ignoreUpdateIsOpen: boolean, ignoreDelay: boolean) {
+    if (this.addQuestionClicked) return;
+    this.ignoreUpdateIsOpen = ignoreUpdateIsOpen;
+    if (ignoreDelay) {
+      this.questionEvent.emit({
+        pageIndex: this.pageIndex,
+        sectionId: this.sectionId,
+        questionIndex: this.questionIndex + 1,
+        type: 'add'
+      });
+    } else {
+      this.addQuestionClicked = true;
+      timer(600).subscribe(() => {
+        this.questionEvent.emit({
+          pageIndex: this.pageIndex,
+          sectionId: this.sectionId,
+          questionIndex: this.questionIndex + 1,
+          type: 'add'
+        });
+        this.addQuestionClicked = false;
+      });
+    }
   }
 
-  deleteQuestion() {
+  deleteQuestion(event) {
+    event.stopPropagation();
+
     this.questionEvent.emit({
       pageIndex: this.pageIndex,
       sectionId: this.sectionId,
       questionIndex: this.questionIndex,
-      type: 'delete'
+      type: 'delete',
+      questionId: this.questionId
     });
   }
 
   selectFieldTypeEventHandler(fieldType) {
-    this.openResponseTypeModal$ = this.formService.openResponseType$;
     if (fieldType.type === this.questionForm.get('fieldType').value) {
       return;
     }
+
+    this.removeLogicsOfQuestion(
+      this.pageIndex,
+      this.questionForm.get('id').value
+    );
 
     this.questionForm.get('fieldType').setValue(fieldType.type);
     this.questionForm.get('required').setValue(false);
@@ -216,5 +316,168 @@ export class QuestionComponent implements OnInit {
 
   getImageSrc(base64) {
     return this.imageUtils.getImageSrc(base64);
+  }
+
+  updateIsOpen(isOpen: boolean) {
+    const isAskQuestion =
+      this.questionForm.get('sectionId').value === `AQ_${this.sectionId}`;
+
+    if (isAskQuestion) {
+      return;
+    }
+    if (this.questionForm.get('isOpen').value !== isOpen) {
+      if (!this.ignoreUpdateIsOpen) {
+        this.store.dispatch(
+          FormConfigurationActions.updateQuestionState({
+            questionId: this.questionId,
+            isOpen,
+            isResponseTypeModalOpen: this.questionForm.get(
+              'isResponseTypeModalOpen'
+            ).value
+          })
+        );
+      }
+      this.ignoreUpdateIsOpen = false;
+    }
+  }
+
+  responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
+    this.questionForm
+      .get('isResponseTypeModalOpen')
+      .setValue(isResponseTypeModalOpen);
+  }
+
+  responseTypeCloseEventHandler(responseTypeClosed: boolean) {
+    this.questionForm
+      .get('isResponseTypeModalOpen')
+      .setValue(!responseTypeClosed);
+  }
+
+  getQuestionLogics(pageIndex: number, questionId: string) {
+    return this.store.select(getQuestionLogics(pageIndex, questionId));
+  }
+
+  addLogicToQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.addLogicToQuestion({
+        pageIndex,
+        questionId,
+        logic: this.constructLogic(pageIndex, questionId)
+      })
+    );
+  }
+
+  removeLogicsOfQuestion(pageIndex: number, questionId: string) {
+    this.store.dispatch(
+      AddLogicActions.removeLogicsOfQuestion({
+        pageIndex,
+        questionId
+      })
+    );
+  }
+
+  constructLogic(pageIndex: number, questionId: string) {
+    return {
+      id: uuidv4(),
+      questionId,
+      pageIndex,
+      operator: 'EQ',
+      operand1: '',
+      operand2: '',
+      action: '',
+      logicTitle: '',
+      expression: '',
+      questions: [],
+      mandateQuestions: [],
+      hideQuestions: []
+    };
+  }
+
+  logicEventHandler(event) {
+    const { type, questionId, pageIndex } = event;
+    switch (type) {
+      case 'create':
+        this.store.dispatch(
+          AddLogicActions.addLogicToQuestion({
+            pageIndex,
+            questionId,
+            logic: this.constructLogic(pageIndex, questionId)
+          })
+        );
+        break;
+      case 'update':
+        this.store.dispatch(
+          AddLogicActions.updateQuestionLogic({
+            questionId,
+            pageIndex,
+            logic: event.logic
+          })
+        );
+        break;
+      case 'delete':
+        this.store.dispatch(
+          AddLogicActions.deleteQuestionLogic({
+            questionId,
+            pageIndex,
+            logicId: event.logicId
+          })
+        );
+        break;
+      case 'ask_question_create':
+        const newQuestion = {
+          id: `AQ_${uuidv4()}`,
+          sectionId: `AQ_${event.logic.id}`,
+          name: '',
+          fieldType: 'TF',
+          position: 0,
+          required: false,
+          multi: false,
+          value: 'TF',
+          isPublished: false,
+          isPublishedTillSave: false,
+          isOpen: false,
+          isResponseTypeModalOpen: false
+        };
+        this.store.dispatch(
+          AddLogicActions.askQuestionsCreate({
+            questionId: event.questionId,
+            pageIndex: event.pageIndex,
+            logicIndex: event.logicIndex,
+            logicId: event.logic.id,
+            question: newQuestion
+          })
+        );
+        break;
+    }
+  }
+  quickResponseTypeHandler(event) {
+    switch (event.eventType) {
+      case 'quickResponsesAdd':
+        const createDataset = {
+          formId: this.formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses'
+        };
+        this.rdfService.createDataSet$(createDataset).subscribe((response) => {
+          // do nothing
+        });
+        break;
+
+      case 'quickResponseUpdate':
+        const updateDataset = {
+          formId: this.formId,
+          type: 'quickResponses',
+          values: event.data.responses,
+          name: 'quickResponses',
+          id: event.data.id
+        };
+        this.rdfService
+          .updateDataSet$(event.data.id, updateDataset)
+          .subscribe((response) => {
+            // do nothing
+          });
+        break;
+    }
   }
 }

@@ -12,24 +12,17 @@
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
     isFormCreated: isFormCreated$ | async
-  }"
+  } as props"
 >
   <div class="dis-flex form-header">
     <div>
       <div class="dis-flex">
-        <ng-container *ngIf="formConfiguration.get('formLogo').value === ''">
-          <app-avatar
-            [formConfiguration]="formConfiguration"
-            (click)="formImageuploader.click()"
-          ></app-avatar>
-        </ng-container>
-        <ng-container *ngIf="formConfiguration.get('formLogo').value !== ''">
-          <img
-            src="assets/rdf-forms-icons/form-image-upload.svg"
-            alt=""
-            (click)="formImageuploader.click()"
-          />
-        </ng-container>
+        <img
+          src="assets/rdf-forms-icons/formlogo.svg"
+          alt=""
+          width="50"
+          height="50"
+        />
         <input
           hidden
           type="file"
@@ -38,18 +31,50 @@
           (change)="uploadFormImageFile($event)"
         />
         <div>
-          <a class="form-title">
+          <a
+            matTooltip="{{ formConfiguration.get('name').value }}"
+            class="dis-inline"
+          >
             <input
               #name
               type="text"
+              [size]="name.value !== '' ? getSize(name.value) : 20"
               class="form_title_input"
-              placeholder="Untitled Form"
               formControlName="name"
               autofocus="true"
               autocomplete="off"
+              (keyup.enter)="formConfiguration.get('name').disable()"
+              (blur)="formConfiguration.get('name').disable()"
             />
+
+            <mat-error
+              *ngIf="processValidationErrors('name')"
+              class="error-fields"
+            >
+              {{
+                errors.name.name
+                  | translate
+                    : {
+                        name: 'name' | translate,
+                        length: errors.name.length
+                      }
+              }}
+            </mat-error>
+
+            <button
+              (click)="editFormName()"
+              class="edit-icon"
+              *ngIf="formConfiguration.get('name').disabled === true"
+            >
+              <img
+                src="assets/rdf-forms-icons/edit-icon.svg"
+                alt="edit-icon"
+                class="edit-icon-img"
+              />
+            </button>
           </a>
-          <a class="form-description">
+          <br />
+          <a matTooltip="{{ formConfiguration.get('description').value }}">
             <input
               type="text"
               class="form_description_input"
@@ -66,7 +91,7 @@
       <div
         class="save-status"
         [hidden]="
-          formSaveStatus !== formConfigurationStatus.saved ||
+          props.formSaveStatus !== formConfigurationStatus.saved ||
           formStatus !== formConfigurationStatus.draft ||
           isFormDetailPublished
         "
@@ -76,7 +101,7 @@
       <div
         class="save-status"
         [hidden]="
-          formSaveStatus !== formConfigurationStatus.saving ||
+          props.formSaveStatus !== formConfigurationStatus.saving ||
           isFormDetailPublished
         "
       >
@@ -104,7 +129,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        (click)="importQuestions()"
+        disabled
       ></button>
 
       <button
@@ -125,7 +150,7 @@
     </div>
   </div>
   <div class="dis-flex form">
-    <div class="width-70">
+    <div class="questions-responses-width">
       <ng-container *ngFor="let pageIndex of pageIndexes$ | async">
         <app-page
           [pageIndex]="pageIndex"
@@ -156,37 +181,51 @@
                       class="sectionContainer"
                       [pageIndex]="pageIndex"
                       [sectionIndex]="sectionIndex"
+                      [sectionId]="sectionIds[pageIndex][sectionIndex]"
                       (sectionEvent)="sectionEventHandler($event)"
                     >
-                      <ng-container
-                        *ngIf="questionIndexes$ | async as questionIndexes"
+                      <div
+                        class="sectionMinimumDragArea"
+                        cdkDrop
+                        cdkDropList
+                        (cdkDropListDropped)="
+                          drop(
+                            $event,
+                            pageIndex,
+                            sectionIds[pageIndex][sectionIndex]
+                          )
+                        "
+                        [cdkDropListData]="
+                          getQuestionsOfSection(
+                            pageIndex,
+                            sectionIds[pageIndex][sectionIndex]
+                          )
+                        "
+                        [id]="sectionIds[pageIndex][sectionIndex]"
+                        cdkDropListGroup
                       >
-                        <div
-                          class="sectionMinimumDragArea"
-                          cdkDrop
-                          cdkDropList
-                          (cdkDropListDropped)="
-                            drop(
-                              $event,
-                              pageIndex,
-                              sectionIds[pageIndex][sectionIndex]
-                            )
-                          "
-                          [cdkDropListData]="
-                            getQuestionsOfSection(
-                              pageIndex,
-                              sectionIds[pageIndex][sectionIndex]
-                            )
-                          "
-                          [id]="sectionIds[pageIndex][sectionIndex]"
-                          cdkDropListGroup
+                        <ng-container
+                          *ngIf="questionIds$ | async as questionIds"
                         >
-                          <ng-container
-                            *ngFor="
-                              let questionObj of getQuestionsOfSection(
+                          <div
+                            *ngIf="
+                              getQuestionsOfSection(
                                 pageIndex,
                                 sectionIds[pageIndex][sectionIndex]
-                              );
+                              ).length === 0
+                            "
+                          >
+                            <span
+                              class="sectionEmpty"
+                              translate="sectionEmptyMessage"
+                            >
+                            </span>
+                          </div>
+                          <ng-container
+                            *ngFor="
+                              let questionId of questionIds[pageIndex][
+                                sectionIds[pageIndex][sectionIndex]
+                              ];
                               let questionIndex = index
                             "
                           >
@@ -194,9 +233,12 @@
                               cdkDrag
                               class="questionContainer"
                               [ngClass]="{
-                                'highlight-bg': fieldContentOpenState === true
+                                'highlight-bg':
+                                  getQuestionsOfSection(
+                                    pageIndex,
+                                    sectionIds[pageIndex][sectionIndex]
+                                  )[questionIndex].isOpen === true
                               }"
-                              (click)="toggleFieldContentOpenState()"
                             >
                               <div class="question-drag-handler">
                                 <img
@@ -210,17 +252,17 @@
                               <app-question
                                 class="question"
                                 [pageIndex]="pageIndex"
-                                [questionId]="questionObj.id"
                                 [sectionId]="
                                   sectionIds[pageIndex][sectionIndex]
                                 "
+                                [questionId]="questionId"
                                 [questionIndex]="questionIndex"
                                 (questionEvent)="questionEventHandler($event)"
                               ></app-question>
                             </div>
                           </ng-container>
-                        </div>
-                      </ng-container>
+                        </ng-container>
+                      </div>
                     </app-section>
                   </div>
                 </div>
@@ -230,9 +272,8 @@
         </app-page>
       </ng-container>
     </div>
-    <div class="width-30">
+    <div class="iphone-width">
       <app-iphone></app-iphone>
-      <!-- <app-preview></app-preview> -->
     </div>
   </div>
 </div>

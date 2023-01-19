@@ -7,26 +7,30 @@
   } as props"
 >
   <div>
-    <div>
+    <div (click)="!isAskQuestion && updateIsOpen(true)">
       <div class="dis-flex questions-div">
-        <div class="width-70 question-input-box">
-          <!-- <img
-            src="assets/rdf-forms-icons/six-dots.svg"
-            alt="six-dots"
-            class="m-l-10 six-dots"
-          /> -->
-
+        <div
+          class="width-70 question-input-box"
+          [ngClass]="{
+            'width-60': isAskQuestion,
+            'width-70': !isAskQuestion
+          }"
+        >
           <input
+            #name
             autocomplete="off"
             type="text"
             formControlName="name"
             [placeholder]="'typeQuestion' | translate"
             class="width-90 question-input"
-            (keyup.enter)="addQuestion()"
+            (keyup.enter)="addQuestion(false, false)"
           />
 
-          <div class="floating-btns">
-            <button class="questions-btn" (click)="addQuestion()">
+          <div
+            class="floating-btns"
+            *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+          >
+            <button class="questions-btn" (click)="addQuestion(true, true)">
               <img
                 src="assets/rdf-forms-icons/add-question.svg"
                 alt="add questions"
@@ -37,7 +41,7 @@
 
             <button
               class="delete-btn"
-              (click)="deleteQuestion()"
+              (click)="deleteQuestion($event)"
               [disabled]="props.sectionQuestionsCount === 1"
             >
               <img
@@ -48,31 +52,70 @@
             </button>
           </div>
         </div>
-
         <span class="divider">|</span>
-
         <div class="width-30">
           <app-response-type-button
             [questionForm]="questionForm"
             [fieldTypes]="fieldTypes"
+            (responseTypeOpenEvent)="responseTypeOpenEventHandler($event)"
           >
           </app-response-type-button>
-          <div *ngIf="openResponseTypeModal$ | async as openResponseTypeModal">
-            <ng-container *ngIf="openResponseTypeModal === true">
-              <app-response-type
-                (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
-                [fieldTypes]="fieldTypes"
-                [question]="question"
-              ></app-response-type>
-            </ng-container>
-          </div>
+          <ng-container
+            *ngIf="questionForm.get('isResponseTypeModalOpen').value === true"
+          >
+            <app-response-type
+              (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
+              (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
+              (setQuestionValue)="questionForm.get('value').setValue($event)"
+              [fieldTypes]="fieldTypes"
+              [question]="question"
+            ></app-response-type>
+          </ng-container>
+        </div>
+        <div *ngIf="isAskQuestion">
+          <img
+            src="assets/rdf-forms-icons/delete-icon.svg"
+            alt="delete-icon"
+            class="delete-icon"
+            (click)="deleteQuestion($event)"
+          />
         </div>
       </div>
 
-      <div class="dis-flex justify-content">
+      <div *ngIf="questionForm.get('fieldType').value === 'IMG'">
+        <input
+          #insertImages
+          [hidden]="true"
+          type="file"
+          accept="image/jpeg,image/jpg,image/png"
+          (change)="insertImageHandler($event)"
+        />
+      </div>
+
+      <div
+        class="dis-flex justify-content"
+        *ngIf="!isAskQuestion && questionForm.get('isOpen').value"
+      >
         <div class="input-fields">
           <div *ngIf="questionForm.get('fieldType').value !== 'IMG'">
-            <div>
+            <div class="questionActionsRow">
+              <button
+                mat-button
+                color="primary"
+                class="addLogicBtn"
+                *ngIf="
+                  addLogicNotAppliedFields.indexOf(
+                    questionForm.get('fieldType').value
+                  ) < 0
+                "
+                (click)="
+                  addLogicToQuestion(pageIndex, questionForm.get('id').value)
+                "
+              >
+                <mat-icon class="icon">link</mat-icon>
+                <span translate="addLogicBtn"></span>
+              </button>
+
               <span class="m-l-40">
                 <mat-checkbox
                   formControlName="required"
@@ -139,7 +182,9 @@
                 </span>
               </span>
               <app-response-type-side-drawer
+                (responseTypeHandler)="quickResponseTypeHandler($event)"
                 [question]="question"
+                [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
               ></app-response-type-side-drawer>
 
@@ -175,6 +220,23 @@
                   (checkedMultiple)="questionForm.get('multi').setValue($event)"
                 ></app-drop-down>
               </span>
+            </div>
+            <div
+              class="addLogicRow"
+              *ngIf="
+                getQuestionLogics(pageIndex, questionForm.get('id').value)
+                  | async as questionLogics
+              "
+            >
+              <app-add-logic
+                *ngIf="questionLogics.length"
+                [questionId]="questionForm.get('id').value"
+                [quickResponseValues]="questionForm.get('value').value"
+                [fieldType]="questionForm.get('fieldType').value"
+                [pageIndex]="pageIndex"
+                [sectionId]="sectionId"
+                (logicEvent)="logicEventHandler($event)"
+              ></app-add-logic>
             </div>
           </div>
           <div *ngIf="questionForm.get('fieldType').value === 'IMG'">

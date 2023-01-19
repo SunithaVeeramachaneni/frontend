@@ -224,6 +224,7 @@ mutation CreateFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -252,6 +253,7 @@ mutation UpdateFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -280,6 +282,7 @@ mutation DeleteFormSubmissionList(
       nextToken
       startedAt
     }
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -319,6 +322,7 @@ mutation CreateFormList(
       startedAt
     }
     isArchived
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -358,6 +362,7 @@ mutation UpdateFormList(
       startedAt
     }
     isArchived
+    searchTerm
     createdAt
     updatedAt
     _version
@@ -397,6 +402,7 @@ mutation DeleteFormList(
       startedAt
     }
     isArchived
+    searchTerm
     createdAt
     updatedAt
     _version

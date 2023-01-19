@@ -2,6 +2,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
+  AddLogicActions,
   FormConfigurationActions,
   FormConfigurationApiActions
 } from './actions';
@@ -132,7 +133,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           ...state.formMetadata,
           ...formMetadata,
           formStatus:
-            state.formStatus === 'Published' ? state.formStatus : formStatus
+            state.formMetadata.formStatus === 'Published'
+              ? state.formMetadata.formStatus
+              : formStatus
         },
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
@@ -176,6 +179,35 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       formStatus: action.formStatus,
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
+    })
+  ),
+  on(
+    FormConfigurationActions.updatePageState,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: state.pages.map((page, index) => {
+        if (action.pageIndex === index) {
+          if (action.isOpen) {
+            // eslint-disable-next-line @typescript-eslint/no-shadow
+            const sections = page.sections.map((section) => ({
+              ...section,
+              isOpen: true
+            }));
+            return { ...page, sections, isOpen: action.isOpen };
+          }
+          const sections = page.sections.map((section) => ({
+            ...section,
+            isOpen: false
+          }));
+          const questions = page.questions.map((question) => ({
+            ...question,
+            isOpen: false,
+            isResponseTypeModalOpen: false
+          }));
+          return { ...page, sections, questions, isOpen: action.isOpen };
+        }
+        return page;
+      })
     })
   ),
   on(
@@ -251,6 +283,39 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
+    FormConfigurationActions.updateSectionState,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          return {
+            ...page,
+            sections: page.sections.map((section, sectionIndex) => {
+              if (section.id === action.sectionId) {
+                return { ...section, isOpen: action.isOpen };
+              }
+              return section;
+            }),
+            questions: page.questions.map((question) => {
+              if (!action.isOpen && question.isOpen) {
+                return {
+                  ...question,
+                  isOpen: false,
+                  isResponseTypeModalOpen: false
+                };
+              }
+              return question;
+            })
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages
+      };
+    }
+  ),
+  on(
     FormConfigurationActions.deleteSection,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
@@ -283,7 +348,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
-    FormConfigurationActions.updatePage,
+    FormConfigurationActions.updatePageSections,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, index) => {
         if (index === action.pageIndex) {
@@ -344,6 +409,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       };
     }
   ),
+
   on(
     FormConfigurationActions.updateQuestion,
     (state, action): FormConfigurationState => {
@@ -373,6 +439,35 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
+      };
+    }
+  ),
+
+  on(
+    FormConfigurationActions.updateQuestionState,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page) => {
+        const questions = page.questions.map((question) => {
+          if (question.id === action.questionId) {
+            return {
+              ...question,
+              isOpen: action.isOpen,
+              isResponseTypeModalOpen: action.isResponseTypeModalOpen
+            };
+          } else if (question.isOpen) {
+            return {
+              ...question,
+              isOpen: false,
+              isResponseTypeModalOpen: false
+            };
+          }
+          return question;
+        });
+        return { ...page, questions };
+      });
+      return {
+        ...state,
+        pages
       };
     }
   ),
@@ -411,6 +506,9 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           let sectionQuestions = page.questions.filter(
             (question) => question.sectionId === action.sectionId
           );
+          if (action.questionIndex > 0) {
+            sectionQuestions[action.questionIndex - 1].isOpen = true;
+          }
           const remainingQuestions = page.questions.filter(
             (question) => question.sectionId !== action.sectionId
           );
@@ -530,6 +628,204 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     (state): FormConfigurationState => ({
       ...state,
       ...initialState
+    })
+  ),
+  on(
+    AddLogicActions.addLogicToQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          return {
+            ...page,
+            logics: [...page.logics, action.logic]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.removeLogicsOfQuestion,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (logic) => logic.questionId !== action.questionId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.updateQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const logics = page.logics.map((logic) => {
+            const logicObj = Object.assign({}, logic);
+            if (logic.id === action.logic.id) {
+              return action.logic;
+            }
+            return logicObj;
+          });
+
+          return {
+            ...page,
+            logics
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.deleteQuestionLogic,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const filteredLogics = page.logics.filter(
+            (l) => l.id !== action.logicId
+          );
+          return {
+            ...page,
+            logics: [...filteredLogics]
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsCreate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          page.questions.push(action.question);
+          // const questions = JSON.parse(JSON.stringify(page.questions));
+          // questions.push(action.question);
+          return {
+            ...page
+            // questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsUpdate,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          let questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions = [
+            ...questions.slice(0, questionIndex),
+            action.question,
+            ...questions.slice(questionIndex + 1)
+          ];
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+
+  on(
+    AddLogicActions.askQuestionsDelete,
+    (state, action): FormConfigurationState => {
+      const pages = state.pages.map((page, pageIndex) => {
+        if (pageIndex === action.pageIndex) {
+          const questions = JSON.parse(JSON.stringify(page.questions));
+          const questionIndex = questions.findIndex(
+            (q) => q.id === action.questionId
+          );
+          questions.splice(questionIndex, 1);
+          return {
+            ...page,
+            questions
+          };
+        }
+        return page;
+      });
+      return {
+        ...state,
+        pages,
+        formStatus: 'Draft',
+        formDetailPublishStatus: 'Draft',
+        formSaveStatus: 'Saving'
+      };
+    }
+  ),
+  on(
+    FormConfigurationActions.initPages,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      pages: action.pages
+    })
+  ),
+  on(
+    FormConfigurationActions.resetPages,
+    (state, _): FormConfigurationState => ({
+      ...state,
+      pages: []
     })
   )
 );

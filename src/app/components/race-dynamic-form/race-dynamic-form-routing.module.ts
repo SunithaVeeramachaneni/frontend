@@ -7,6 +7,8 @@ import { FormConfigurationComponent } from './form-configuration/form-configurat
 
 import { FormContainerComponent } from './form-container/form-container.component';
 import { SubmissionComponent } from './submission/submission.component';
+import { SubmissionViewComponent } from './submission-view/submission-view.component';
+import { ArchivedListComponent } from './archived-list/archived-list.component';
 
 const routes: Routes = [
   {
@@ -43,6 +45,24 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Submissions', alias: 'formName' },
+          permissions: [permissions.viewForms]
+        }
+      },
+      {
+        path: 'submissions/view/:id',
+        component: SubmissionViewComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'View Form', alias: 'formName' },
+          permissions: [permissions.viewForms]
+        }
+      },
+      {
+        path: 'archived',
+        component: ArchivedListComponent,
+        canActivate: [AuthGuard],
+        data: {
+          breadcrumb: { label: 'Archived', alias: 'formName' },
           permissions: [permissions.viewForms]
         }
       }

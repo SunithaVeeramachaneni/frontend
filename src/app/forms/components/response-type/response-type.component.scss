@@ -4,9 +4,9 @@
   height: calc(100vh - 130px);
   width: 500px;
   border: 1px solid;
-  position: absolute;
-  left: 40%;
-  top: 20px;
+  position: fixed;
+  left: 50%;
+  top: 90px;
   background: $white;
   z-index: 1000;
 
@@ -69,4 +69,40 @@
   .height-50 {
     height: 50%;
   }
+}
+
+.quick-response {
+  ::ng-deep .mat-button-wrapper {
+    display: flex;
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 10px;
+  }
+
+  ::ng-deep .mat-chip-list-wrapper .mat-standard-chip {
+    margin: 12px 5px 5px 5px !important;
+  }
+}
+
+.h-36 {
+  height: 36px;
+  .responseBtn {
+    padding: 0 0 0 5px;
+    height: 36px;
+  }
+}
+.m-l-10 {
+  margin-left: 10px;
+}
+.more {
+  margin-top: -10px;
+  margin-left: 5px;
+  font-weight: 400;
+}
+.editBtn {
+  float: right;
+  min-width: 10px;
+  padding: 0;
 }

@@ -11,10 +11,17 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
+import { isEqual } from 'lodash-es';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pairwise,
+  tap
+} from 'rxjs/operators';
 import { getSection, getSectionsCount, State } from 'src/app/forms/state';
 import { SectionEvent, Section } from 'src/app/interfaces';
+import { FormConfigurationActions } from '../../state/actions';
 
 @Component({
   selector: 'app-section',
@@ -36,21 +43,28 @@ export class SectionComponent implements OnInit {
   get sectionIndex() {
     return this._sectionIndex;
   }
+  @Input() set sectionId(sectionId: string) {
+    this._sectionId = sectionId;
+  }
+  get sectionId() {
+    return this._sectionId;
+  }
   @Output() sectionEvent: EventEmitter<SectionEvent> =
     new EventEmitter<SectionEvent>();
-  isSectionOpenState = true;
   sectionForm: FormGroup = this.fb.group({
     id: '',
     name: {
       value: '',
       disabled: true
     },
-    position: ''
+    position: '',
+    isOpen: true
   });
   section$: Observable<Section>;
   sectionsCount$: Observable<number>;
   private _pageIndex: number;
   private _sectionIndex: number;
+  private _sectionId: string;
 
   constructor(private fb: FormBuilder, private store: Store<State>) {}
 
@@ -59,13 +73,18 @@ export class SectionComponent implements OnInit {
       .pipe(
         debounceTime(500),
         distinctUntilChanged(),
-        tap(() => {
-          this.sectionEvent.emit({
-            section: this.sectionForm.getRawValue(),
-            sectionIndex: this.sectionIndex,
-            pageIndex: this.pageIndex,
-            type: 'update'
-          });
+        pairwise(),
+        tap(([previous, current]) => {
+          const { isOpen, ...prev } = previous;
+          const { isOpen: currIsOpen, ...curr } = current;
+          if (!isEqual(prev, curr)) {
+            this.sectionEvent.emit({
+              section: this.sectionForm.getRawValue(),
+              sectionIndex: this.sectionIndex,
+              pageIndex: this.pageIndex,
+              type: 'update'
+            });
+          }
         })
       )
       .subscribe();
@@ -91,8 +110,17 @@ export class SectionComponent implements OnInit {
     });
   }
 
-  toggleSectionOpenState = () => {
-    this.isSectionOpenState = !this.isSectionOpenState;
+  toggleIsOpenState = () => {
+    this.sectionForm
+      .get('isOpen')
+      .setValue(!this.sectionForm.get('isOpen').value);
+    this.store.dispatch(
+      FormConfigurationActions.updateSectionState({
+        sectionId: this.sectionId,
+        pageIndex: this.pageIndex,
+        isOpen: this.sectionForm.get('isOpen').value
+      })
+    );
   };
 
   editSection() {

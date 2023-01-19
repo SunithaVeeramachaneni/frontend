@@ -1,6 +1,12 @@
 import { OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, Observable, of, ReplaySubject } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  of,
+  ReplaySubject
+} from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -18,15 +24,45 @@ import {
 } from '@innovapptive.com/dynamictable/lib/interfaces';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { TableEvent, LoadEvent, SearchEvent } from 'src/app/interfaces';
+import {
+  TableEvent,
+  LoadEvent,
+  SearchEvent,
+  CellClickActionEvent
+} from 'src/app/interfaces';
 import { defaultLimit } from 'src/app/app.constants';
 import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from '@angular/animations';
 
 @Component({
   selector: 'app-submission',
   templateUrl: './submission.component.html',
-  styleUrls: ['./submission.component.scss']
+  styleUrls: ['./submission.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      state(
+        'in',
+        style({
+          transform: 'translate3d(0,0,0)'
+        })
+      ),
+      state(
+        'out',
+        style({
+          transform: 'translate3d(100%, 0, 0)'
+        })
+      ),
+      transition('in => out', animate('400ms ease-in-out')),
+      transition('out => in', animate('400ms ease-in-out'))
+    ])
+  ]
 })
 export class SubmissionComponent implements OnInit, OnDestroy {
   columns: Column[] = [
@@ -71,32 +107,28 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       sticky: false,
       groupable: true,
       titleStyle: {
-        fontFamily: 'Inter',
-        fontStyle: 'normal',
-        fontSize: '14px',
         textTransform: 'capitalize',
         fontWeight: 500,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '0 12px',
-        marginTop: '8px',
+        position: 'relative',
+        top: '10px',
         width: '90px',
-        height: '24px',
-        background: '#D1FAE5', // #FEF3C7
-        borderRadius: '12px',
-        flex: 'none',
-        order: 0,
-        flexGrow: 0
+        height: '25px',
+        background: '#FEF3C7',
+        color: '#92400E',
+        borderRadius: '12px'
       },
       subtitleStyle: {},
       hasPreTextImage: false,
-      hasPostTextImage: false
+      hasPostTextImage: false,
+      hasConditionalStyles: true
     },
     {
       id: 'submittedBy',
-      displayName: 'Owner',
+      displayName: 'User',
       type: 'string',
       isMultiValued: true,
       order: 3,
@@ -183,7 +215,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   configOptions: ConfigOptions = {
     tableID: 'formsTable',
     rowsExpandable: false,
-    enableRowsSelection: true,
+    enableRowsSelection: false,
     enablePagination: false,
     displayFilterPanel: false,
     displayActionsColumn: false,
@@ -194,7 +226,17 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     pageSizeOptions: [10, 25, 50, 75, 100],
     allColumns: [],
     tableHeight: 'calc(100vh - 150px)',
-    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957']
+    groupLevelColors: ['#e7ece8', '#c9e3e8', '#e8c9c957'],
+    conditionalStyles: {
+      submitted: {
+        'background-color': '#D1FAE5',
+        color: '#065f46'
+      },
+      'in-progress': {
+        'background-color': '#FEF3C7',
+        color: '#92400E'
+      }
+    }
   };
   dataSource: MatTableDataSource<any>;
   formSubmissions$: Observable<{
@@ -211,8 +253,11 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   closeIcon = 'assets/img/svg/cancel-icon.svg';
   submissionFormsListCount$: Observable<number>;
   nextToken = '';
-  public menuState = 'in';
+  public menuState = 'out';
   ghostLoading = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  submissionDetail: any;
+  fetchType = 'load';
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
     private readonly raceDynamicFormService: RaceDynamicFormService
   ) {}
@@ -227,20 +272,20 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         distinctUntilChanged(),
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
-      .subscribe();
+      .subscribe(() => this.isLoading$.next(true));
     this.submissionFormsListCount$ =
       this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
-    this.prepareMenuActions();
   }
 
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => {
+      switchMap(({ data }) => {
         this.skip = 0;
         this.nextToken = '';
+        this.fetchType = data;
         return this.getSubmissionFormsList();
       })
     );
@@ -249,6 +294,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = 'infiniteScroll';
           return this.getSubmissionFormsList();
         } else {
           return of([] as GetFormListQuery[]);
@@ -268,13 +314,17 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         if (this.skip === 0) {
           this.configOptions = {
             ...this.configOptions,
-            tableHeight: 'calc(80vh - 150px)'
+            tableHeight: 'calc(80vh - 20px)'
           };
           initial.data = rows;
         } else {
           initial.data = initial.data.concat(scrollData);
         }
         this.skip = initial.data.length;
+        initial.data = initial.data.map((item) => ({
+          ...item,
+          status: this.prepareStatus(item.status)
+        }));
         this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
@@ -286,14 +336,19 @@ export class SubmissionComponent implements OnInit, OnDestroy {
       .getSubmissionFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchForm.value
+        searchKey: this.searchForm.value,
+        fetchType: this.fetchType
       })
       .pipe(
         mergeMap(({ rows, nextToken }) => {
           this.nextToken = nextToken;
+          this.isLoading$.next(false);
           return of(rows);
         }),
-        catchError(() => of([]))
+        catchError(() => {
+          this.isLoading$.next(false);
+          return of([]);
+        })
       );
   }
 
@@ -309,21 +364,19 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     this.isPopoverOpen = false;
   }
 
-  prepareMenuActions(): void {
-    const menuActions = [
-      {
-        title: 'Edit',
-        action: 'edit'
-      },
-      {
-        title: 'Archive',
-        action: 'archive'
-      }
-    ];
-    this.configOptions.rowLevelActions.menuActions = menuActions;
-    this.configOptions.displayActionsColumn = menuActions.length ? true : false;
-    this.configOptions = { ...this.configOptions };
-  }
-
   ngOnDestroy(): void {}
+
+  cellClickActionHandler = (event: CellClickActionEvent): void => {
+    if (this.submissionDetail && this.submissionDetail.id === event.row.id) {
+      this.menuState = this.menuState === 'out' ? 'in' : 'out';
+    } else {
+      this.menuState = 'in';
+    }
+    this.submissionDetail = event.row;
+  };
+
+  prepareStatus = (status) => {
+    if (status === 'IN-PROGRESS') return 'In-Progress';
+    else return `${status.slice(0, 1)}${status.slice(1).toLowerCase()}`;
+  };
 }

@@ -14,19 +14,23 @@ export interface FormMetadata {
   formType: 'Standalone' | 'Embedded';
   formStatus: 'Draft' | 'Published';
   tags: string[];
+  searchTerm: string;
 }
 
 export interface Page {
   name: string;
   position: number;
+  isOpen: boolean;
   sections: Section[];
   questions: Question[];
+  logics: any[];
 }
 
 export interface Section {
   id: string;
   name: string;
   position: number;
+  isOpen: boolean;
 }
 
 export interface Question {
@@ -40,6 +44,8 @@ export interface Question {
   value: any;
   isPublished: boolean;
   isPublishedTillSave: boolean;
+  isOpen: boolean;
+  isResponseTypeModalOpen: boolean;
 }
 
 export interface PageEvent {
@@ -58,6 +64,8 @@ export interface QuestionEvent {
   pageIndex: number;
   sectionId: string;
   question?: Question;
+  questionId?: string;
   questionIndex: number;
   type: 'add' | 'update' | 'delete';
+  isAskQuestion?: boolean;
 }

@@ -429,6 +429,13 @@ export const schema = {
             associatedWith: ['formsubmissionlistID']
           }
         },
+        searchTerm: {
+          name: 'searchTerm',
+          isArray: false,
+          type: 'String',
+          isRequired: false,
+          attributes: []
+        },
         createdAt: {
           name: 'createdAt',
           isArray: false,
@@ -617,6 +624,13 @@ export const schema = {
           isRequired: false,
           attributes: []
         },
+        searchTerm: {
+          name: 'searchTerm',
+          isArray: false,
+          type: 'String',
+          isRequired: false,
+          attributes: []
+        },
         createdAt: {
           name: 'createdAt',
           isArray: false,
@@ -658,5 +672,5 @@ export const schema = {
   enums: {},
   nonModels: {},
   codegenVersion: '3.3.2',
-  version: '198938c3bf39c8f6c5a728f96239ab38'
+  version: '5756b6db96624929237526da700a4787'
 };
