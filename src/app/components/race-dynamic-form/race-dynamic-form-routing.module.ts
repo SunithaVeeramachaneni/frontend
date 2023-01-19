@@ -16,7 +16,7 @@ const routes: Routes = [
     component: FormContainerComponent,
     canActivate: [AuthGuard],
     data: {
-      breadcrumb: { label: 'My Forms' },
+      breadcrumb: { label: 'Forms' },
       permissions: [permissions.viewForms]
     },
     children: [
