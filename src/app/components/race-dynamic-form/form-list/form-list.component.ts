@@ -400,7 +400,6 @@ export class FormListComponent implements OnInit {
             tableHeight: 'calc(80vh - 105px)'
           };
           initial.data = rows;
-          console.log(rows);
         } else {
           if (form.action === 'copy') {
             const obj = { ...form.form } as any;
