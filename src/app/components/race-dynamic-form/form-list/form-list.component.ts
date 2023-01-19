@@ -180,7 +180,7 @@ export class FormListComponent implements OnInit {
     {
       id: 'publishedDate',
       displayName: 'Last Published',
-      type: 'string',
+      type: 'timeAgo',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
