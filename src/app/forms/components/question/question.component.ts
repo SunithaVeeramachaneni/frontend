@@ -203,12 +203,16 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-     if (!this._isAskQuestion) {
-       if (this.question.isOpen) {
-         timer(0).subscribe(() => this.name.nativeElement.focus());
-       } else {
-         timer(0).subscribe(() => this.name.nativeElement.blur());
-       }
+    if (!this._isAskQuestion) {
+      if (this.question) {
+        if (this.question.isOpen) {
+          timer(0).subscribe(() => this.name.nativeElement.focus());
+        } else {
+          timer(0).subscribe(() => this.name.nativeElement.blur());
+        }
+      } else {
+        timer(0).subscribe(() => this.name.nativeElement.focus());
+      }
      } else {
        if (!this.question.isOpen) {
          timer(0).subscribe(() => this.name.nativeElement.focus());
