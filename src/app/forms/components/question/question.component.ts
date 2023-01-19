@@ -101,7 +101,8 @@ export class QuestionComponent implements OnInit {
     'DFR',
     'RT',
     'TAF',
-    'ARD'
+    'ARD',
+    'DF'
   ];
 
   questionForm: FormGroup = this.fb.group({
