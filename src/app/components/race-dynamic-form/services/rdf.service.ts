@@ -624,11 +624,7 @@ export class RaceDynamicFormService {
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
-          publishedDate: p.publishedDate
-            ? formatDistance(new Date(p.publishedDate), new Date(), {
-                addSuffix: true
-              })
-            : '',
+          publishedDate: p.publishedDate ? p.publishedDate : '',
           archivedAt: p.createdAt
             ? formatDistance(new Date(p.createdAt), new Date(), {
                 addSuffix: true

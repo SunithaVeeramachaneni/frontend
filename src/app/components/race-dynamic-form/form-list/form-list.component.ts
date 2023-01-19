@@ -180,7 +180,7 @@ export class FormListComponent implements OnInit {
     {
       id: 'publishedDate',
       displayName: 'Last Published',
-      type: 'string',
+      type: 'timeAgo',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
@@ -400,6 +400,7 @@ export class FormListComponent implements OnInit {
             tableHeight: 'calc(80vh - 105px)'
           };
           initial.data = rows;
+          console.log(rows);
         } else {
           if (form.action === 'copy') {
             const obj = { ...form.form } as any;
