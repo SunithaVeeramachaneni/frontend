@@ -49,4 +49,8 @@
       padding: 0 20px;
     }
   }
+
+  ::ng-deep .mat-column-lastPublishedBy .displayFlex {
+    width: 200px;
+  }
 }
