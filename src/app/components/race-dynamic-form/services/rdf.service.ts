@@ -399,20 +399,29 @@ export class RaceDynamicFormService {
       // eslint-disable-next-line prefer-const
       let { sections, questions, logics } = page;
 
-      const logicQuestions = questions.filter((question) => {
-        let resp = false;
-        logics.forEach((logic) => {
-          if (question.sectionId === `AQ_${logic.id}`) {
-            resp = true;
-          }
-        });
-        return resp;
-      });
       const pageItem = {
         SECTIONS: sections.map((section) => {
           let questionsBySection = questions.filter(
             (item) => item.sectionId === section.id
           );
+          const logicQuestions = [];
+
+          questionsBySection.forEach((question) => {
+            const questionLogics = logics.filter(
+              (l) => l.questionId === question.id
+            );
+
+            if (questionLogics && questionLogics.length) {
+              questionLogics.forEach((logic) => {
+                questions.forEach((q) => {
+                  if (q.sectionId === `AQ_${logic.id}`) {
+                    logicQuestions.push(q);
+                  }
+                });
+              });
+            }
+          });
+
           questionsBySection = [...questionsBySection, ...logicQuestions];
           const sectionItem = {
             SECTIONNAME: section.name,
@@ -615,11 +624,7 @@ export class RaceDynamicFormService {
           },
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
-          publishedDate: p.publishedDate
-            ? formatDistance(new Date(p.publishedDate), new Date(), {
-                addSuffix: true
-              })
-            : '',
+          publishedDate: p.publishedDate ? p.publishedDate : '',
           archivedAt: p.createdAt
             ? formatDistance(new Date(p.createdAt), new Date(), {
                 addSuffix: true

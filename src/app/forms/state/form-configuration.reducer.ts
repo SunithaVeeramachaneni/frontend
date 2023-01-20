@@ -131,11 +131,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
         ...state,
         formMetadata: {
           ...state.formMetadata,
-          ...formMetadata,
-          formStatus:
-            state.formMetadata.formStatus === 'Published'
-              ? state.formMetadata.formStatus
-              : formStatus
+          ...formMetadata
         },
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
