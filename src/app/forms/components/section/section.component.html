@@ -31,7 +31,7 @@
             type="text"
             autofocus
             formControlName="name"
-            [size]="getSize(sectionName.value)"
+            [size]="getSize(sectionForm.get('name').value)"
             class="form_section_name_input"
             placeholder="Untitled Section"
             autocomplete="off"
