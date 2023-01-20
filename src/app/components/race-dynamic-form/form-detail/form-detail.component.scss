@@ -104,3 +104,11 @@
 .pointer {
   cursor: pointer;
 }
+
+.ghost-loading {
+  padding: 18px 18px;
+}
+
+::ng-deep .slider-values {
+  color: #000 !important;
+}
