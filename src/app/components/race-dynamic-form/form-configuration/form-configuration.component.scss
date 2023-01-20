@@ -17,7 +17,7 @@
   .form_title_input {
     border: none;
     cursor: pointer;
-    max-width: 80%;
+    max-width: 90%;
     background: none;
     font-size: 140%;
     font-weight: 500;
@@ -56,7 +56,6 @@
   .form_description_input {
     border: none;
     cursor: pointer;
-    max-width: 80%;
     background: none;
     font-size: 100%;
     font-weight: 500;
@@ -65,7 +64,11 @@
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
-    width: 100vh;
+    width: 90%;
+  }
+
+  .justify-content-end {
+    justify-content: flex-end;
   }
 
   .changes-text {
