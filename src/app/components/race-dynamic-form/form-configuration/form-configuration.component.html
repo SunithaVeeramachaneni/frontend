@@ -15,26 +15,26 @@
   } as props"
 >
   <div class="dis-flex form-header">
-    <div>
-      <div class="dis-flex">
-        <img
-          src="assets/rdf-forms-icons/formlogo.svg"
-          alt=""
-          width="50"
-          height="50"
-        />
-        <input
-          hidden
-          type="file"
-          #formImageuploader
-          accept="image/x-png,image/jpeg"
-          (change)="uploadFormImageFile($event)"
-        />
-        <div>
-          <a
-            matTooltip="{{ formConfiguration.get('name').value }}"
-            class="dis-inline"
-          >
+    <div class="dis-flex width-60">
+      <img
+        src="assets/rdf-forms-icons/formlogo.svg"
+        alt=""
+        width="50"
+        height="50"
+      />
+      <input
+        hidden
+        type="file"
+        #formImageuploader
+        accept="image/x-png,image/jpeg"
+        (change)="uploadFormImageFile($event)"
+      />
+      <div class="width-90">
+        <a
+          matTooltip="{{ formConfiguration.get('name').value }}"
+          class="dis-inline"
+        >
+          <a class="width-90">
             <input
               #name
               type="text"
@@ -60,34 +60,33 @@
                       }
               }}
             </mat-error>
-
-            <button
-              (click)="editFormName()"
-              class="edit-icon"
-              *ngIf="formConfiguration.get('name').disabled === true"
-            >
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
-            </button>
           </a>
-          <br />
-          <a matTooltip="{{ formConfiguration.get('description').value }}">
-            <input
-              type="text"
-              class="form_description_input"
-              placeholder="Add Form description"
-              formControlName="description"
-              autofocus="true"
-              autocomplete="off"
+          <button
+            (click)="editFormName()"
+            class="edit-icon"
+            *ngIf="formConfiguration.get('name').disabled === true"
+          >
+            <img
+              src="assets/rdf-forms-icons/edit-icon.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
             />
-          </a>
-        </div>
+          </button>
+        </a>
+        <br />
+        <a matTooltip="{{ formConfiguration.get('description').value }}">
+          <input
+            type="text"
+            class="form_description_input"
+            placeholder="Add Form description"
+            formControlName="description"
+            autofocus="true"
+            autocomplete="off"
+          />
+        </a>
       </div>
     </div>
-    <div class="dis-flex">
+    <div class="dis-flex width-40 justify-content-end">
       <div
         class="save-status"
         [hidden]="
