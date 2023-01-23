@@ -4,13 +4,16 @@ import { schema } from './schema';
 
 
 
-const { ResponseSet, FormDetail, AuthoredFormDetail, FormSubmissionDetail, FormSubmissionList, FormList } = initSchema(schema);
+const { AuthoredRoundPlanDetail, RoundPlanDetail, RoundPlansList, ResponseSet, FormSubmissionDetail, AuthoredFormDetail, FormSubmissionList, FormList, FormDetail } = initSchema(schema);
 
 export {
+  AuthoredRoundPlanDetail,
+  RoundPlanDetail,
+  RoundPlansList,
   ResponseSet,
-  FormDetail,
-  AuthoredFormDetail,
   FormSubmissionDetail,
+  AuthoredFormDetail,
   FormSubmissionList,
-  FormList
+  FormList,
+  FormDetail
 };
