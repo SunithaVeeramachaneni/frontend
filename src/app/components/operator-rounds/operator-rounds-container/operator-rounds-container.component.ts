@@ -11,7 +11,7 @@ import { routingUrls } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
-import { FormConfigurationModalComponent } from '../../race-dynamic-form/form-configuration-modal/form-configuration-modal.component';
+import { RoundPlanConfigurationModalComponent } from '../round-plan-configuration-modal/round-plan-configuration-modal.component';
 
 @Component({
   selector: 'app-operator-rounds-container',
@@ -51,8 +51,8 @@ export class OperatorRoundsContainerComponent implements OnInit {
     );
   }
 
-  openFormCreationModal() {
-    this.dialog.open(FormConfigurationModalComponent, {
+  openRoundPlanCreationModal() {
+    this.dialog.open(RoundPlanConfigurationModalComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

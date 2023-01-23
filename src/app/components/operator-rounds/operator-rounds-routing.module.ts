@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { permissions } from 'src/app/app.constants';
 import { AuthGuard } from 'src/app/shared/guards/auth.guard';
-import { FormResolverService } from '../race-dynamic-form/services/form-resolver.service';
-import { FormConfigurationComponent } from '../race-dynamic-form/form-configuration/form-configuration.component';
 
 import { SubmissionComponent } from '../race-dynamic-form/submission/submission.component';
 import { SubmissionViewComponent } from '../race-dynamic-form/submission-view/submission-view.component';
 import { ArchivedListComponent } from '../race-dynamic-form/archived-list/archived-list.component';
 import { OperatorRoundsContainerComponent } from './operator-rounds-container/operator-rounds-container.component';
+import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
+import { RoundPlanResolverService } from './services/round-plan-resolver.service';
 
 const routes: Routes = [
   {
@@ -22,7 +22,7 @@ const routes: Routes = [
     children: [
       {
         path: 'create',
-        component: FormConfigurationComponent,
+        component: RoundPlanConfigurationComponent,
         canActivate: [AuthGuard],
         data: {
           breadcrumb: { label: 'Untitled Plan', alias: 'formName' },
@@ -31,9 +31,9 @@ const routes: Routes = [
       },
       {
         path: 'edit/:id',
-        component: FormConfigurationComponent,
+        component: RoundPlanConfigurationComponent,
         canActivate: [AuthGuard],
-        resolve: { form: FormResolverService },
+        resolve: { form: RoundPlanResolverService },
         data: {
           breadcrumb: { label: 'Edit Form', alias: 'formName' },
           permissions: [permissions.updateForm]

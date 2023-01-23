@@ -41,15 +41,22 @@ import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
-// import { RaceDynamicFormModule } from './race-dynamic-form.module';
 import { OperatorRoundsContainerComponent } from '../operator-rounds/operator-rounds-container/operator-rounds-container.component';
 import { RaceDynamicFormModule } from '../race-dynamic-form/race-dynamic-form.module';
+import { PlanListComponent } from './plan-list/plan-list.component';
+import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
+import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
 @NgModule({
-  declarations: [OperatorRoundsContainerComponent],
+  declarations: [
+    OperatorRoundsContainerComponent,
+    PlanListComponent,
+    RoundPlanConfigurationComponent,
+    RoundPlanConfigurationModalComponent
+  ],
   imports: [
     FormsModule,
     ReactiveFormsModule,

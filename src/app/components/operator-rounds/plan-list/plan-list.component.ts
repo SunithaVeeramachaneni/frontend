@@ -32,19 +32,22 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { RaceDynamicFormService } from '../services/rdf.service';
 import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
-import { generateCopyNumber, generateCopyRegex } from '../utils/utils';
 import { Store } from '@ngrx/store';
 import { State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  generateCopyNumber,
+  generateCopyRegex
+} from '../../race-dynamic-form/utils/utils';
+import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
-  selector: 'app-form-list',
-  templateUrl: './form-list.component.html',
-  styleUrls: ['./form-list.component.scss'],
+  selector: 'app-plan-list',
+  templateUrl: './plan-list.component.html',
+  styleUrls: ['./plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('slideInOut', [
@@ -65,7 +68,7 @@ import { FormConfigurationActions } from 'src/app/forms/state/actions';
     ])
   ]
 })
-export class FormListComponent implements OnInit {
+export class PlanListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
 
@@ -250,14 +253,14 @@ export class FormListComponent implements OnInit {
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
   constructor(
     private readonly toast: ToastService,
-    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
     private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
-    this.raceDynamicFormService.fetchForms$.next({ data: 'load' });
-    this.raceDynamicFormService.fetchForms$.next({} as TableEvent);
+    this.operatorRoundsService.fetchForms$.next({ data: 'load' });
+    this.operatorRoundsService.fetchForms$.next({} as TableEvent);
     this.searchForm = new FormControl('');
 
     this.searchForm.valueChanges
@@ -265,11 +268,11 @@ export class FormListComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         tap(() => {
-          this.raceDynamicFormService.fetchForms$.next({ data: 'search' });
+          this.operatorRoundsService.fetchForms$.next({ data: 'search' });
         })
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+    this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
     this.getDisplayedForms();
 
     this.formsCount$ = combineLatest([
@@ -309,8 +312,8 @@ export class FormListComponent implements OnInit {
       return;
     }
     combineLatest([
-      this.raceDynamicFormService.fetchAllFormListNames$(),
-      this.raceDynamicFormService.getAuthoredFormDetailByFormId$(form.id)
+      this.operatorRoundsService.fetchAllFormListNames$(),
+      this.operatorRoundsService.getAuthoredFormDetailByFormId$(form.id)
     ])
       .pipe(
         map(([formNames, authoredFormDetail]) => ({
@@ -321,7 +324,7 @@ export class FormListComponent implements OnInit {
       .subscribe(({ formNames, authoredFormDetail }) => {
         const createdForm = this.generateCopyFormName(form, formNames);
         if (createdForm?.newName) {
-          this.raceDynamicFormService
+          this.operatorRoundsService
             .createForm$({
               ...omit(form, ['id', 'preTextImage']),
               name: createdForm.newName,
@@ -335,7 +338,7 @@ export class FormListComponent implements OnInit {
               if (authoredFormDetail?.length > 0) {
                 for (const obj of authoredFormDetail) {
                   if (obj) {
-                    this.raceDynamicFormService.createAuthoredFormDetail$({
+                    this.operatorRoundsService.createAuthoredFormDetail$({
                       formStatus: obj?.formStatus,
                       formDetailPublishStatus: 'Draft',
                       formListId: newRecord?.id,
@@ -356,14 +359,14 @@ export class FormListComponent implements OnInit {
                 } as any
               });
               this.formsListCount$ =
-                this.raceDynamicFormService.getFormsListCount$();
+                this.operatorRoundsService.getFormsListCount$();
             });
         }
       });
   }
 
   getDisplayedForms(): void {
-    const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
+    const formsOnLoadSearch$ = this.operatorRoundsService.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
       switchMap(({ data }) => {
         this.skip = 0;
@@ -372,7 +375,7 @@ export class FormListComponent implements OnInit {
       })
     );
 
-    const onScrollForms$ = this.raceDynamicFormService.fetchForms$.pipe(
+    const onScrollForms$ = this.operatorRoundsService.fetchForms$.pipe(
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
@@ -433,7 +436,7 @@ export class FormListComponent implements OnInit {
   }
 
   getForms() {
-    return this.raceDynamicFormService
+    return this.operatorRoundsService
       .getFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
@@ -456,7 +459,7 @@ export class FormListComponent implements OnInit {
   }
 
   openArchiveModal(form: GetFormListQuery): void {
-    this.raceDynamicFormService
+    this.operatorRoundsService
       .updateForm$({
         formMetadata: {
           id: form?.id,
@@ -470,7 +473,7 @@ export class FormListComponent implements OnInit {
           action: 'delete',
           form: updatedForm
         });
-        this.formsListCount$ = this.raceDynamicFormService.getFormsListCount$();
+        this.formsListCount$ = this.operatorRoundsService.getFormsListCount$();
       });
   }
 
@@ -481,7 +484,7 @@ export class FormListComponent implements OnInit {
         break;
 
       case 'edit':
-        this.router.navigate(['/forms/edit', data.id]);
+        this.router.navigate(['/operator-rounds/edit', data.id]);
         break;
 
       case 'archive':
@@ -492,7 +495,7 @@ export class FormListComponent implements OnInit {
   };
 
   handleTableEvent = (event): void => {
-    this.raceDynamicFormService.fetchForms$.next(event);
+    this.operatorRoundsService.fetchForms$.next(event);
   };
 
   configOptionsChangeHandler = (event): void => {
@@ -528,9 +531,9 @@ export class FormListComponent implements OnInit {
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
   }
-  formDetailActionHandler(event) {
+  roundPlanDetailActionHandler(event) {
     this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+    this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
   private generateCopyFormName(

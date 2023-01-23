@@ -30,6 +30,9 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('click', ['$event.target'])
   @Output()
   slideInOut: EventEmitter<any> = new EventEmitter();
+
+  @Output() formDetailAction: EventEmitter<any> = new EventEmitter();
+
   @Input() selectedForm: GetFormListQuery = null;
   selectedFormDetail$: Observable<any> = null;
   defaultFormName = null;
@@ -131,8 +134,7 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onNavigateToDetailPage() {
-    this.store.dispatch(FormConfigurationActions.resetPages());
-    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+    this.formDetailAction.emit({ type: 'edit' });
   }
 
   ngOnDestroy(): void {

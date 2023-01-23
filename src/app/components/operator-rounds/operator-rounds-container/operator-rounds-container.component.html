@@ -1,7 +1,7 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
     <div class="dis-flex container-padding">
-      <button class="widgets" (click)="openFormCreationModal()">
+      <button class="widgets" (click)="openRoundPlanCreationModal()">
         <img
           src="assets/rdf-forms-icons/add-form.svg"
           alt="Create"
@@ -29,7 +29,7 @@
         <span class="widgets-title" translate="exportExcel"></span>
       </button>
     </div>
-    <app-form-list></app-form-list>
+    <app-plan-list></app-plan-list>
   </ng-container>
   <router-outlet></router-outlet>
 </div>
