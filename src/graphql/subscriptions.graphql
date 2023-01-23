@@ -1,4 +1,208 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateAuthoredRoundPlanDetail(
+  $filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
+) {
+  onCreateAuthoredRoundPlanDetail(filter: $filter) {
+    id
+    formStatus
+    ver
+    page
+    counter
+    roundPlanDetailPublishStatus
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateAuthoredRoundPlanDetail(
+  $filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
+) {
+  onUpdateAuthoredRoundPlanDetail(filter: $filter) {
+    id
+    formStatus
+    ver
+    page
+    counter
+    roundPlanDetailPublishStatus
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteAuthoredRoundPlanDetail(
+  $filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
+) {
+  onDeleteAuthoredRoundPlanDetail(filter: $filter) {
+    id
+    formStatus
+    ver
+    page
+    counter
+    roundPlanDetailPublishStatus
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateRoundPlanDetail(
+  $filter: ModelSubscriptionRoundPlanDetailFilterInput
+) {
+  onCreateRoundPlanDetail(filter: $filter) {
+    id
+    formData
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateRoundPlanDetail(
+  $filter: ModelSubscriptionRoundPlanDetailFilterInput
+) {
+  onUpdateRoundPlanDetail(filter: $filter) {
+    id
+    formData
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteRoundPlanDetail(
+  $filter: ModelSubscriptionRoundPlanDetailFilterInput
+) {
+  onDeleteRoundPlanDetail(filter: $filter) {
+    id
+    formData
+    roundplanslistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateRoundPlansList(
+  $filter: ModelSubscriptionRoundPlansListFilterInput
+) {
+  onCreateRoundPlansList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    roundPlansListRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    roundPlansListAuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateRoundPlansList(
+  $filter: ModelSubscriptionRoundPlansListFilterInput
+) {
+  onUpdateRoundPlansList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    roundPlansListRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    roundPlansListAuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteRoundPlansList(
+  $filter: ModelSubscriptionRoundPlansListFilterInput
+) {
+  onDeleteRoundPlansList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    roundPlansListRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    roundPlansListAuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateResponseSet(
   $filter: ModelSubscriptionResponseSetFilterInput
 ) {
@@ -50,13 +254,14 @@ subscription OnDeleteResponseSet(
     _lastChangedAt
   }
 }
-subscription OnCreateFormDetail(
-  $filter: ModelSubscriptionFormDetailFilterInput
+subscription OnCreateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
 ) {
-  onCreateFormDetail(filter: $filter) {
+  onCreateFormSubmissionDetail(filter: $filter) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -64,13 +269,14 @@ subscription OnCreateFormDetail(
     _lastChangedAt
   }
 }
-subscription OnUpdateFormDetail(
-  $filter: ModelSubscriptionFormDetailFilterInput
+subscription OnUpdateFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
 ) {
-  onUpdateFormDetail(filter: $filter) {
+  onUpdateFormSubmissionDetail(filter: $filter) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -78,13 +284,14 @@ subscription OnUpdateFormDetail(
     _lastChangedAt
   }
 }
-subscription OnDeleteFormDetail(
-  $filter: ModelSubscriptionFormDetailFilterInput
+subscription OnDeleteFormSubmissionDetail(
+  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
 ) {
-  onDeleteFormDetail(filter: $filter) {
+  onDeleteFormSubmissionDetail(filter: $filter) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -146,51 +353,6 @@ subscription OnDeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-subscription OnCreateFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onCreateFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnUpdateFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onUpdateFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-subscription OnDeleteFormSubmissionDetail(
-  $filter: ModelSubscriptionFormSubmissionDetailFilterInput
-) {
-  onDeleteFormSubmissionDetail(filter: $filter) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
 subscription OnCreateFormSubmissionList(
   $filter: ModelSubscriptionFormSubmissionListFilterInput
 ) {
@@ -207,11 +369,11 @@ subscription OnCreateFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -235,11 +397,11 @@ subscription OnUpdateFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -263,11 +425,11 @@ subscription OnDeleteFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -291,6 +453,9 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -303,8 +468,6 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -328,6 +491,9 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -340,8 +506,6 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -365,6 +529,9 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -377,8 +544,48 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onCreateFormDetail(filter: $filter) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onUpdateFormDetail(filter: $filter) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteFormDetail(
+  $filter: ModelSubscriptionFormDetailFilterInput
+) {
+  onDeleteFormDetail(filter: $filter) {
+    id
+    formData
+    formlistID
     createdAt
     updatedAt
     _version

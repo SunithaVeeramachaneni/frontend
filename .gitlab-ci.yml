@@ -1,6 +1,4 @@
 #############3
-only:
-    - master
 stages:
   - build
   - test
