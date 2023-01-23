@@ -14,9 +14,8 @@
       formControlName="companyOrDomainName"
       autofocus="false"
       (keyup.enter)="onEnter()"
-      [matAutocomplete]="auto"
     />
-    <mat-autocomplete #auto="matAutocomplete">
+    <!-- <mat-autocomplete #auto="matAutocomplete">
       <ng-container *ngIf="tenantsInfo$ | async as tenantsInfo">
         <mat-option
           *ngFor="let tenantInfo of tenantsInfo"
@@ -31,14 +30,14 @@
           {{ tenantInfo.tenantDomainName }}
         </mat-option>
       </ng-container>
-    </mat-autocomplete>
+    </mat-autocomplete> -->
     <mat-error
       *ngIf="
         loginForm.get('companyOrDomainName').touched &&
         loginForm.get('companyOrDomainName').errors?.required
       "
     >
-      {{ 'required' | translate: { name: 'companyOrDomainName' | translate } }}
+      {{ 'required' | translate : { name: 'companyOrDomainName' | translate } }}
     </mat-error>
     <mat-error
       *ngIf="
@@ -47,7 +46,7 @@
       "
     >
       {{
-        'whiteSpace' | translate: { name: 'companyOrDomainName' | translate }
+        'whiteSpace' | translate : { name: 'companyOrDomainName' | translate }
       }}
     </mat-error>
     <mat-error
