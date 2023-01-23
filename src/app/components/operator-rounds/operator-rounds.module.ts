@@ -43,7 +43,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
 import { OperatorRoundsContainerComponent } from '../operator-rounds/operator-rounds-container/operator-rounds-container.component';
 import { RaceDynamicFormModule } from '../race-dynamic-form/race-dynamic-form.module';
-import { PlanListComponent } from './plan-list/plan-list.component';
+import { RoundPlanListComponent } from './round-plan-list/round-plan-list.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 
@@ -53,7 +53,7 @@ export const customTranslateLoader = (http: HttpClient) =>
 @NgModule({
   declarations: [
     OperatorRoundsContainerComponent,
-    PlanListComponent,
+    RoundPlanListComponent,
     RoundPlanConfigurationComponent,
     RoundPlanConfigurationModalComponent
   ],

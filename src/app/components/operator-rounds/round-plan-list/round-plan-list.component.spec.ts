@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlanListComponent } from './plan-list.component';
+import { RoundPlanListComponent } from './round-plan-list.component';
 
-describe('PlanListComponent', () => {
-  let component: PlanListComponent;
-  let fixture: ComponentFixture<PlanListComponent>;
+describe('RoundPlanListComponent', () => {
+  let component: RoundPlanListComponent;
+  let fixture: ComponentFixture<RoundPlanListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PlanListComponent]
+      declarations: [RoundPlanListComponent]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlanListComponent);
+    fixture = TestBed.createComponent(RoundPlanListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

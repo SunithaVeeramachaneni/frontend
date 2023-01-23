@@ -45,9 +45,9 @@ import {
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
 @Component({
-  selector: 'app-plan-list',
-  templateUrl: './plan-list.component.html',
-  styleUrls: ['./plan-list.component.scss'],
+  selector: 'app-round-plan-list',
+  templateUrl: './round-plan-list.component.html',
+  styleUrls: ['./round-plan-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('slideInOut', [
@@ -68,14 +68,14 @@ import { OperatorRoundsService } from '../services/operator-rounds.service';
     ])
   ]
 })
-export class PlanListComponent implements OnInit {
+export class RoundPlanListComponent implements OnInit {
   public menuState = 'out';
   submissionSlider = 'out';
 
   columns: Column[] = [
     {
       id: 'name',
-      displayName: 'Name',
+      displayName: 'Plan Name',
       type: 'string',
       order: 1,
       searchable: false,
@@ -102,32 +102,10 @@ export class PlanListComponent implements OnInit {
       hasPostTextImage: false
     },
     {
-      id: 'author',
-      displayName: 'Owner',
-      type: 'number',
-      isMultiValued: true,
-      order: 2,
-      hasSubtitle: false,
-      showMenuOptions: false,
-      subtitleColumn: '',
-      searchable: false,
-      sortable: true,
-      hideable: false,
-      visible: true,
-      movable: false,
-      stickable: false,
-      sticky: false,
-      groupable: false,
-      titleStyle: { color: '' },
-      subtitleStyle: {},
-      hasPreTextImage: false,
-      hasPostTextImage: false
-    },
-    {
       id: 'formStatus',
       displayName: 'Status',
       type: 'string',
-      order: 3,
+      order: 2,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -163,7 +141,7 @@ export class PlanListComponent implements OnInit {
       id: 'lastPublishedBy',
       displayName: 'Last Published By',
       type: 'number',
-      order: 4,
+      order: 3,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -184,7 +162,7 @@ export class PlanListComponent implements OnInit {
       id: 'publishedDate',
       displayName: 'Last Published',
       type: 'timeAgo',
-      order: 5,
+      order: 4,
       hasSubtitle: false,
       showMenuOptions: false,
       subtitleColumn: '',
@@ -197,6 +175,28 @@ export class PlanListComponent implements OnInit {
       sticky: false,
       groupable: true,
       titleStyle: {},
+      subtitleStyle: {},
+      hasPreTextImage: false,
+      hasPostTextImage: false
+    },
+    {
+      id: 'author',
+      displayName: 'Owner',
+      type: 'number',
+      isMultiValued: true,
+      order: 5,
+      hasSubtitle: false,
+      showMenuOptions: false,
+      subtitleColumn: '',
+      searchable: false,
+      sortable: true,
+      hideable: false,
+      visible: true,
+      movable: false,
+      stickable: false,
+      sticky: false,
+      groupable: false,
+      titleStyle: { color: '' },
       subtitleStyle: {},
       hasPreTextImage: false,
       hasPostTextImage: false
