@@ -1,7 +1,5 @@
 <div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
   <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
-    {{ currentRouteUrl }}- {{ routingUrls.operatorRoundPlans | json }}
-
     <div class="dis-flex container-padding">
       <button class="widgets" (click)="openFormCreationModal()">
         <img

@@ -158,7 +158,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     {
       title: operatorRoundPlans.title,
       url: operatorRoundPlans.url,
-      imageName: 'rdf-forms',
+      imageName: 'operator-rounds',
       showSubMenu: false,
       permission: operatorRoundPlans.permission,
       disable: false,
