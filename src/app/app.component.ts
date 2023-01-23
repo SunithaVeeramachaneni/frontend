@@ -53,7 +53,10 @@ const {
   raceDynamicForms,
   submissionForms,
   myForms,
-  archivedForms
+  archivedForms,
+  operatorRoundPlans,
+  myRoundPlans,
+  roundPlanSubmissions
 } = routingUrls;
 
 @Component({
@@ -150,6 +153,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
         //   url: archivedForms.url,
         //   permission: archivedForms.permission
         // }
+      ]
+    },
+    {
+      title: operatorRoundPlans.title,
+      url: operatorRoundPlans.url,
+      imageName: 'rdf-forms',
+      showSubMenu: false,
+      permission: operatorRoundPlans.permission,
+      disable: false,
+      subPages: [
+        {
+          title: myRoundPlans.title,
+          url: myRoundPlans.url,
+          permission: myRoundPlans.permission
+        },
+        {
+          title: roundPlanSubmissions.title,
+          url: roundPlanSubmissions.url,
+          permission: roundPlanSubmissions.permission
+        }
       ]
     },
     {

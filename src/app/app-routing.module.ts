@@ -75,6 +75,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'operator-rounds',
+    loadChildren: () =>
+      import('./components/operator-rounds/operator-rounds.module').then(
+        (m) => m.OperatorRoundsModule
+      )
+  },
+  {
     path: 'user-settings',
     loadChildren: () =>
       import('./components/user-settings/user-settings.module').then(
