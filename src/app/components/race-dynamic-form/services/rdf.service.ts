@@ -669,9 +669,7 @@ export class RaceDynamicFormService {
             },
             responses,
             createdAt: format(new Date(p?.createdAt), 'Do MMM'),
-            updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
-              addSuffix: true
-            })
+            updatedAt: p.updatedAt ? p.updatedAt : ''
           };
         }) || [];
     const nextToken = resp?.nextToken;
