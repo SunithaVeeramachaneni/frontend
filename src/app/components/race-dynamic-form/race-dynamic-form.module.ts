@@ -48,7 +48,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ImportQuestionsModalComponent } from './import-questions-modal/import-questions-modal.component';
+import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
@@ -57,6 +57,8 @@ import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { ImportQuestionsSliderComponent } from './import-questions/import-questions-slider/import-questions-slider.component';
+import { AddPageOrSelectExistingPageModalComponent } from './import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -76,7 +78,10 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    ArchivedDeleteModalComponent,
+    ImportQuestionsModalComponent,
+    ImportQuestionsSliderComponent,
+    AddPageOrSelectExistingPageModalComponent
   ],
   imports: [
     FormsModule,

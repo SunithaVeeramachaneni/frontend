@@ -62,7 +62,7 @@ import {
 import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { MatDialog } from '@angular/material/dialog';
-import { ImportQuestionsModalComponent } from '../import-questions-modal/import-questions-modal.component';
+import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 
@@ -98,6 +98,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   public openAppSider$: Observable<any>;
   selectedFormName: string;
   selectedFormData: any;
+  currentFormData: any;
   errors: ValidationError = {};
   readonly formConfigurationStatus = formConfigurationStatus;
 
@@ -711,74 +712,15 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       this.selectedFormData = result.selectedFormData;
       this.selectedFormName = result.selectedFormName;
-      // this.selectedFormData?.sections.forEach((section) => {
-      //   section.questions.forEach((question, index) => {
-      //     if (question.id.includes('EVIDENCE')) {
-      //       section.questions.splice(index, 1);
-      //     }
-      //   });
-      // });
+      this.authoredFormDetail$.subscribe((pagesData) => {
+        this.currentFormData = pagesData;
+      });
       this.openAppSider$ = of(result.openImportQuestionsSlider);
       this.cdrf.markForCheck();
     });
   }
 
-  cancelSlider() {
-    this.openAppSider$ = of(false);
-  }
-
-  useForm() {
-    const newArray = [];
-    this.selectedFormData.forEach((page) => {
-      page.sections.forEach((section) => {
-        if (section.checked === true) {
-          newArray.push(section);
-        }
-        if (section.checked === false) {
-          const newQuestion = [];
-          section.questions.forEach((question) => {
-            if (question.checked === true) {
-              newQuestion.push(question);
-            }
-          });
-          if (newQuestion.length) {
-            const filteredSection = {
-              name: section.name,
-              questions: newQuestion
-            };
-            newArray.push(filteredSection);
-          }
-        }
-      });
-    });
-
-    this.openAppSider$ = of(false);
-  }
-
-  updateAllChecked(checked, question, section) {
-    question.checked = checked;
-    const countOfChecked = section.questions.filter(
-      (per) => per.checked
-    ).length;
-    if (countOfChecked === 0 || countOfChecked !== section.questions.length)
-      section.checked = false;
-    if (countOfChecked === section.questions.length) section.checked = true;
-  }
-
-  setAllChecked(checked, section) {
-    section.checked = checked;
-    if (section.questions == null) {
-      return;
-    }
-    section.questions.forEach((t) => (t.checked = checked));
-  }
-
-  fewComplete(section) {
-    if (section.questions === null) {
-      return false;
-    }
-    const checkedCount = section.questions.filter((p) => p.checked).length;
-
-    return checkedCount > 0 && checkedCount !== section.questions.length;
+  cancelSlider(event) {
+    this.openAppSider$ = of(event);
   }
 }

@@ -1,0 +1,47 @@
+.add-page-modal {
+  width: 300px;
+  padding: 20px;
+  overflow: hidden;
+
+  .labels {
+    font-weight: 500;
+    font-size: 110%;
+    position: relative;
+    letter-spacing: 0.15px;
+    left: 5px;
+    top: -2px;
+  }
+
+  .footer-btns {
+    justify-content: flex-end;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    border-radius: 8px;
+    background: #ffffff;
+  }
+
+  ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 4px 0px 7px 0px;
+  }
+
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0;
+  }
+
+  ::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+  }
+
+  ::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+  }
+
+  ::ng-deep .mat-select-arrow {
+    position: relative;
+    top: 3px;
+  }
+}

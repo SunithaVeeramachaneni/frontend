@@ -13,11 +13,11 @@ import {
   switchMap,
   tap
 } from 'rxjs/operators';
-import { FormMetadata, TableEvent } from '../../../interfaces';
+import { FormMetadata, TableEvent } from '../../../../interfaces';
 
-import { defaultLimit } from '../../../app.constants';
-import { RaceDynamicFormService } from '../services/rdf.service';
-import { GetFormListQuery } from '../../../API.service';
+import { defaultLimit } from '../../../../app.constants';
+import { RaceDynamicFormService } from '../../services/rdf.service';
+import { GetFormListQuery } from '../../../../API.service';
 import { getFormDetails, getFormMetadata, State } from 'src/app/forms/state';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
 
@@ -41,7 +41,7 @@ export class ImportQuestionsModalComponent implements OnInit {
   authoredFormDetail$: Observable<any>;
   authoredFormDetail;
   nextToken = '';
-
+  fetchType = 'load';
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -69,8 +69,9 @@ export class ImportQuestionsModalComponent implements OnInit {
   getDisplayedForms(): void {
     const formsOnLoadSearch$ = this.raceDynamicFormService.fetchForms$.pipe(
       filter(({ data }) => data === 'load' || data === 'search'),
-      switchMap(() => {
+      switchMap(({ data }) => {
         this.skip = 0;
+        this.fetchType = data;
         return this.getForms();
       })
     );
@@ -79,6 +80,7 @@ export class ImportQuestionsModalComponent implements OnInit {
       filter(({ data }) => data !== 'load' && data !== 'search'),
       switchMap(({ data }) => {
         if (data === 'infiniteScroll') {
+          this.fetchType = 'infiniteScroll';
           return this.getForms();
         } else {
           return of([] as GetFormListQuery[]);
@@ -99,6 +101,7 @@ export class ImportQuestionsModalComponent implements OnInit {
         }
 
         this.skip = initial.data.length;
+        // this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );
@@ -109,10 +112,11 @@ export class ImportQuestionsModalComponent implements OnInit {
       .getFormsList$({
         nextToken: this.nextToken,
         limit: this.limit,
-        searchKey: this.searchForm.value
+        searchKey: this.searchForm.value,
+        fetchType: this.fetchType
       })
       .pipe(
-        mergeMap(({ rows, nextToken }) => {
+        mergeMap(({ count, rows, nextToken }) => {
           this.nextToken = nextToken;
           return of(rows);
         })
@@ -127,12 +131,11 @@ export class ImportQuestionsModalComponent implements OnInit {
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
         map((formData) => {
+          let pageData;
           if (formData.length) {
-            console.log(form);
             this.data.selectedFormName = form.name;
             const filteredForm = JSON.parse(formData[0].pages);
             let sectionData;
-            let pageData;
             pageData = filteredForm.map((page) => {
               sectionData = page.sections.map((section) => {
                 const questionsArray = [];
@@ -151,7 +154,6 @@ export class ImportQuestionsModalComponent implements OnInit {
       )
       .subscribe((response) => {
         this.selectedForm = response;
-        console.log(response);
       });
   }
 

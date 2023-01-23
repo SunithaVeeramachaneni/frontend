@@ -128,7 +128,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        disabled
+        (click)="importQuestions()"
       ></button>
 
       <button
@@ -278,51 +278,12 @@
 </div>
 
 <div *ngIf="openAppSider$ | async as openAppSider">
-  <div id="import-form-customizer" *ngIf="openAppSider">
-    <mat-card class="p-0">
-      <mat-card-title class="m-0 light-gray">
-        <div class="slider-heading">Import Questions</div>
-      </mat-card-title>
-      <mat-card-content>
-        <div style="font-weight: 500; font-size: 130%">
-          {{ selectedFormName }}
-        </div>
-        <div *ngFor="let page of selectedFormData; let i = index">
-          <h4 style="font-weight: 500">{{ page.name }} {{ i + 1 }}</h4>
-          <div *ngFor="let section of page.sections">
-            <p class="section-div">
-              <mat-checkbox
-                [checked]="section.checked"
-                [indeterminate]="fewComplete(section)"
-                (change)="setAllChecked($event.checked, section)"
-              >
-              </mat-checkbox>
-              {{ section.name }}
-            </p>
-            <div *ngFor="let question of section.questions" class="questions">
-              <mat-checkbox
-                [checked]="question.checked"
-                (change)="updateAllChecked($event.checked, question, section)"
-              >
-                <span>{{ question.name }}</span>
-              </mat-checkbox>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
-      <div style="padding: 0 15px 10px 15px">
-        <button
-          mat-raised-button
-          color="primary"
-          style="width: 48%; margin-right: 10px"
-          (click)="useForm()"
-        >
-          Use
-        </button>
-        <button mat-stroked-button style="width: 48%" (click)="cancelSlider()">
-          Cancel
-        </button>
-      </div>
-    </mat-card>
+  <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>
