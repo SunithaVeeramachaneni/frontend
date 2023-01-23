@@ -8,8 +8,9 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
   APIService,
-  DeleteFormListInput,
+  DeleteRoundPlansListInput,
   GetFormListQuery,
+  GetRoundPlansListQuery,
   ListFormListsQuery,
   ListFormSubmissionListsQuery,
   ModelFormSubmissionListFilterInput,
@@ -203,7 +204,7 @@ export class OperatorRoundsService {
 
   createForm$(
     formListQuery: Pick<
-      GetFormListQuery,
+      GetRoundPlansListQuery,
       | 'name'
       | 'formLogo'
       | 'description'
@@ -215,7 +216,7 @@ export class OperatorRoundsService {
     >
   ) {
     return from(
-      this.awsApiService.CreateFormList({
+      this.awsApiService.CreateRoundPlansList({
         name: formListQuery.name,
         formLogo: formListQuery.formLogo,
         description: formListQuery.description,
@@ -231,25 +232,25 @@ export class OperatorRoundsService {
 
   updateForm$(formMetaDataDetails) {
     return from(
-      this.awsApiService.UpdateFormList({
+      this.awsApiService.UpdateRoundPlansList({
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );
   }
 
-  deleteForm$(values: DeleteFormListInput) {
-    return from(this.awsApiService.DeleteFormList({ ...values }));
+  deleteForm$(values: DeleteRoundPlansListInput) {
+    return from(this.awsApiService.DeleteRoundPlansList({ ...values }));
   }
 
   getFormById$(id: string) {
-    return from(this.awsApiService.GetFormList(id));
+    return from(this.awsApiService.GetRoundPlansList(id));
   }
 
   createFormDetail$(formDetails) {
     return from(
-      this.awsApiService.CreateFormDetail({
-        formlistID: formDetails.formListId,
+      this.awsApiService.CreateRoundPlanDetail({
+        roundplanslistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -260,9 +261,9 @@ export class OperatorRoundsService {
 
   updateFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateFormDetail({
+      this.awsApiService.UpdateRoundPlanDetail({
         id: formDetails.formDetailId,
-        formlistID: formDetails.formListId,
+        roundplanslistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -274,24 +275,24 @@ export class OperatorRoundsService {
 
   createAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.CreateAuthoredFormDetail({
+      this.awsApiService.CreateAuthoredRoundPlanDetail({
         formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
+        roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
+        roundplanslistID: formDetails.formListId,
+        page: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        version: formDetails.authoredFormDetailVersion.toString()
+        ver: formDetails.authoredFormDetailVersion.toString()
       })
     );
   }
 
   updateAuthoredFormDetail$(formDetails) {
     return from(
-      this.awsApiService.UpdateAuthoredFormDetail({
+      this.awsApiService.UpdateAuthoredRoundPlanDetail({
         formStatus: formDetails.formStatus,
-        formDetailPublishStatus: formDetails.formDetailPublishStatus,
-        formlistID: formDetails.formListId,
-        pages: JSON.stringify(formDetails.pages),
+        roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
+        roundplanslistID: formDetails.formListId,
+        page: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
         _version: formDetails.authoredFormDetailDynamoDBVersion
@@ -353,29 +354,33 @@ export class OperatorRoundsService {
 
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
-      })
+      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(
+        formId,
+        null,
+        {
+          or: [
+            {
+              formStatus: { eq: formConfigurationStatus.draft }
+            },
+            {
+              formStatus: { eq: formConfigurationStatus.published }
+            }
+          ]
+        }
+      )
     ).pipe(map(({ items }) => items));
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formId)
+      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(formId)
     ).pipe(map(({ items }) => items));
   }
 
   getFormDetailByFormId$(formId: string) {
-    return from(this.awsApiService.FormDetailsByFormlistID(formId)).pipe(
-      map(({ items }) => items)
-    );
+    return from(
+      this.awsApiService.RoundPlanDetailsByRoundplanslistID(formId)
+    ).pipe(map(({ items }) => items));
   }
 
   handleError(error: any) {
@@ -586,18 +591,18 @@ export class OperatorRoundsService {
   }
 
   fetchAllFormListNames$() {
-    const statement = `query { listFormLists(limit: ${limit}) { items { name } } }`;
+    const statement = `query { listRoundPlansLists(limit: ${limit}) { items { name } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) =>
-          listFormLists?.items as GetFormListQuery[]
+          listFormLists?.items as GetRoundPlansListQuery[]
       )
     );
   }
 
   getAuthoredFormDetail$(formlistID: string) {
     return from(
-      this.awsApiService.AuthoredFormDetailsByFormlistID(formlistID)
+      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(formlistID)
     ).pipe(map(({ items }) => items));
   }
 

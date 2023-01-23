@@ -32,7 +32,7 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { roundPlanConfigurationReducer } from 'src/app/forms/state/round-plan-configuration.reducer';
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
@@ -46,6 +46,7 @@ import { RaceDynamicFormModule } from '../race-dynamic-form/race-dynamic-form.mo
 import { RoundPlanListComponent } from './round-plan-list/round-plan-list.component';
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -99,10 +100,13 @@ export const customTranslateLoader = (http: HttpClient) =>
     MatSelectModule,
     MatCheckboxModule,
     StoreModule.forFeature('feature', {
-      formConfiguration: formConfigurationReducer,
+      formConfiguration: roundPlanConfigurationReducer,
       responseSet: responseSetReducer
     }),
-    EffectsModule.forFeature([FormConfigurationEffects, ResponseSetEffects])
+    EffectsModule.forFeature([
+      RoundPlanConfigurationEffects,
+      ResponseSetEffects
+    ])
   ],
   exports: [OperatorRoundsContainerComponent]
 })
