@@ -8,13 +8,21 @@
         {{ selectedFormName }}
       </div>
       <div *ngFor="let page of selectedFormData; let i = index">
-        <h4 style="font-weight: 500">{{ page.name }} {{ i + 1 }}</h4>
+        <p>
+          <mat-checkbox
+            [checked]="page.checked"
+            [indeterminate]="fewComplete(page)"
+            (change)="setAllChecked($event.checked, page)"
+          >
+          </mat-checkbox>
+          {{ page.name }} {{ page.position }}
+        </p>
         <div *ngFor="let section of page.sections">
           <p class="section-div">
             <mat-checkbox
               [checked]="section.checked"
-              [indeterminate]="fewComplete(section)"
-              (change)="setAllChecked($event.checked, section)"
+              [indeterminate]="fewSectionComplete(section, page)"
+              (change)="setAllSectionChecked($event.checked, section)"
             >
             </mat-checkbox>
             {{ section.name }}
@@ -22,7 +30,9 @@
           <div *ngFor="let question of section.questions" class="questions">
             <mat-checkbox
               [checked]="question.checked"
-              (change)="updateAllChecked($event.checked, question, section)"
+              (change)="
+                updateAllChecked($event.checked, question, section, page)
+              "
             >
               <span>{{ question.name }}</span>
             </mat-checkbox>

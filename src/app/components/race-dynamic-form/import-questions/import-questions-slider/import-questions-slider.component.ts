@@ -18,32 +18,20 @@ export class ImportQuestionsSliderComponent implements OnInit {
   ngOnInit(): void {}
 
   useForm() {
-    const listOfPages = [];
-    const newArray = [];
-    this.selectedFormData.forEach((page) => {
-      page.sections.forEach((section) => {
-        if (section.checked === true) {
-          newArray.push(section);
-        }
-        if (section.checked === false) {
-          const newQuestion = [];
-          section.questions.forEach((question) => {
-            if (question.checked === true) {
-              newQuestion.push(question);
-            }
-          });
-          if (newQuestion.length) {
-            const filteredSection = {
-              name: section.name,
-              questions: newQuestion
-            };
-            newArray.push(filteredSection);
-          }
-        }
+    let tempObj = JSON.parse(JSON.stringify(this.selectedFormData));
+    tempObj.forEach((page) => {
+      page.sections = page.sections.filter((section) => {
+        section.questions = section.questions.filter(
+          (question) => question.checked === true
+        );
+        if (section.questions.length) return true;
+        return false;
       });
     });
 
-    console.log(newArray);
+    tempObj = tempObj.filter((page) => page.sections.length);
+
+    console.log(tempObj);
 
     const dialogRef = this.modal.open(
       AddPageOrSelectExistingPageModalComponent,
@@ -66,30 +54,54 @@ export class ImportQuestionsSliderComponent implements OnInit {
     this.cancelSliderEvent.emit(false);
   }
 
-  updateAllChecked(checked, question, section) {
+  updateAllChecked(checked, question, section, page) {
     question.checked = checked;
-    const countOfChecked = section.questions.filter(
+    const countOfSectionChecked = section.questions.filter(
       (per) => per.checked
     ).length;
-    if (countOfChecked === 0 || countOfChecked !== section.questions.length)
+
+    const countOfPageChecked = page.sections.filter((p) => p.checked).length;
+
+    if (
+      countOfSectionChecked === 0 ||
+      countOfSectionChecked !== section.questions.length
+    )
       section.checked = false;
-    if (countOfChecked === section.questions.length) section.checked = true;
+    if (countOfSectionChecked === section.questions.length)
+      section.checked = true;
+
+    if (countOfPageChecked === 0 || countOfPageChecked !== page.sections.length)
+      page.checked = false;
+    if (countOfPageChecked === page.sections.length) page.checked = true;
   }
 
-  setAllChecked(checked, section) {
+  setAllChecked(checked, page) {
+    page.checked = checked;
+    page.sections.forEach((section) => {
+      section.checked = checked;
+      section.questions.forEach((t) => (t.checked = checked));
+    });
+  }
+
+  setAllSectionChecked(checked, section) {
     section.checked = checked;
-    if (section.questions == null) {
-      return;
-    }
     section.questions.forEach((t) => (t.checked = checked));
   }
 
-  fewComplete(section) {
-    if (section.questions === null) {
-      return false;
-    }
+  fewSectionComplete(section, page) {
     const checkedCount = section.questions.filter((p) => p.checked).length;
+    const countOfPageChecked = page.sections.filter((p) => p.checked).length;
+
+    if (countOfPageChecked === 0 || countOfPageChecked !== page.sections.length)
+      page.checked = false;
+    if (countOfPageChecked === page.sections.length) page.checked = true;
 
     return checkedCount > 0 && checkedCount !== section.questions.length;
+  }
+
+  fewComplete(page) {
+    const checkedCount = page.sections.filter((p) => p.checked).length;
+
+    return checkedCount > 0 && checkedCount !== page.sections.length;
   }
 }
