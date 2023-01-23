@@ -1,6 +1,6 @@
 #############3
 only:
-    - master
+  - master
 stages:
   - build
   - test
