@@ -6,7 +6,10 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { OPRState, State } from 'src/app/forms/state';
 
-import { RoundPlanConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  RoundPlanConfigurationActions
+} from 'src/app/forms/state/actions';
 import { RoundPlanConfigurationState } from 'src/app/forms/state/round-plan-configuration.reducer';
 // import { State } from 'src/app/state/app.state';
 import { OperatorRoundsService } from './operator-rounds.service';
@@ -32,7 +35,7 @@ export class RoundPlanResolverService
     }).pipe(
       map(({ form, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
-          RoundPlanConfigurationActions.updateCreateOrEditForm({
+          FormConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
           })
         );

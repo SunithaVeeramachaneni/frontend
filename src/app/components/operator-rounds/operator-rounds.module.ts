@@ -99,7 +99,7 @@ export const customTranslateLoader = (http: HttpClient) =>
     OverlayModule,
     MatSelectModule,
     MatCheckboxModule,
-    StoreModule.forFeature('operatorRounds', {
+    StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer,
       responseSet: responseSetReducer
     }),

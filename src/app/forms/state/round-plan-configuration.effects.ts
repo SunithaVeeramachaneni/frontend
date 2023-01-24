@@ -173,8 +173,8 @@ export class RoundPlanConfigurationEffects {
       ofType(RoundPlanConfigurationActions.createAuthoredRoundPlanDetail),
       concatMap((action) =>
         this.operatorRoundsService.createAuthoredFormDetail$(action).pipe(
-          map((authoredFormDetail) =>
-            RoundPlanConfigurationApiActions.createAuthoredFromDetailSuccess({
+          map((authoredFormDetail: any) =>
+            FormConfigurationApiActions.createAuthoredFromDetailSuccess({
               authoredFormDetail,
               formSaveStatus: formConfigurationStatus.saved,
               isFormCreated: true
@@ -183,7 +183,7 @@ export class RoundPlanConfigurationEffects {
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
-              RoundPlanConfigurationApiActions.createAuthoredFromDetailFailure({
+              FormConfigurationApiActions.createAuthoredFromDetailFailure({
                 error
               })
             );
