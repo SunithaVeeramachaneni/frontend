@@ -36,7 +36,6 @@ import { roundPlanConfigurationReducer } from 'src/app/forms/state/round-plan-co
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
-import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -47,6 +46,7 @@ import { RoundPlanListComponent } from './round-plan-list/round-plan-list.compon
 import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
+import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -99,8 +99,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     OverlayModule,
     MatSelectModule,
     MatCheckboxModule,
-    StoreModule.forFeature('feature', {
-      formConfiguration: roundPlanConfigurationReducer,
+    StoreModule.forFeature('operatorRounds', {
+      formConfiguration: formConfigurationReducer,
       responseSet: responseSetReducer
     }),
     EffectsModule.forFeature([

@@ -5,8 +5,8 @@ subscription OnCreateAuthoredRoundPlanDetail(
   onCreateAuthoredRoundPlanDetail(filter: $filter) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -23,8 +23,8 @@ subscription OnUpdateAuthoredRoundPlanDetail(
   onUpdateAuthoredRoundPlanDetail(filter: $filter) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -41,8 +41,8 @@ subscription OnDeleteAuthoredRoundPlanDetail(
   onDeleteAuthoredRoundPlanDetail(filter: $filter) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -59,7 +59,7 @@ subscription OnCreateRoundPlanDetail(
   onCreateRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -73,7 +73,7 @@ subscription OnUpdateRoundPlanDetail(
   onUpdateRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -87,7 +87,7 @@ subscription OnDeleteRoundPlanDetail(
   onDeleteRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -95,10 +95,10 @@ subscription OnDeleteRoundPlanDetail(
     _lastChangedAt
   }
 }
-subscription OnCreateRoundPlansList(
-  $filter: ModelSubscriptionRoundPlansListFilterInput
+subscription OnCreateRoundPlanList(
+  $filter: ModelSubscriptionRoundPlanListFilterInput
 ) {
-  onCreateRoundPlansList(filter: $filter) {
+  onCreateRoundPlanList(filter: $filter) {
     id
     name
     description
@@ -124,6 +124,10 @@ subscription OnCreateRoundPlansList(
       nextToken
       startedAt
     }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -131,10 +135,10 @@ subscription OnCreateRoundPlansList(
     _lastChangedAt
   }
 }
-subscription OnUpdateRoundPlansList(
-  $filter: ModelSubscriptionRoundPlansListFilterInput
+subscription OnUpdateRoundPlanList(
+  $filter: ModelSubscriptionRoundPlanListFilterInput
 ) {
-  onUpdateRoundPlansList(filter: $filter) {
+  onUpdateRoundPlanList(filter: $filter) {
     id
     name
     description
@@ -160,6 +164,10 @@ subscription OnUpdateRoundPlansList(
       nextToken
       startedAt
     }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -167,10 +175,10 @@ subscription OnUpdateRoundPlansList(
     _lastChangedAt
   }
 }
-subscription OnDeleteRoundPlansList(
-  $filter: ModelSubscriptionRoundPlansListFilterInput
+subscription OnDeleteRoundPlanList(
+  $filter: ModelSubscriptionRoundPlanListFilterInput
 ) {
-  onDeleteRoundPlansList(filter: $filter) {
+  onDeleteRoundPlanList(filter: $filter) {
     id
     name
     description
@@ -193,6 +201,10 @@ subscription OnDeleteRoundPlansList(
       startedAt
     }
     roundPlansListAuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    RoundPlanDetails {
       nextToken
       startedAt
     }

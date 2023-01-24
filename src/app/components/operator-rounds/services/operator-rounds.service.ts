@@ -8,13 +8,12 @@ import { BehaviorSubject, from, Observable, of, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {
   APIService,
-  DeleteRoundPlansListInput,
-  GetFormListQuery,
-  GetRoundPlansListQuery,
-  ListFormListsQuery,
+  DeleteRoundPlanListInput,
+  GetRoundPlanListQuery,
   ListFormSubmissionListsQuery,
+  ListRoundPlanListsQuery,
   ModelFormSubmissionListFilterInput,
-  UpdateAuthoredFormDetailInput,
+  UpdateAuthoredRoundPlanDetailInput,
   UpdateFormDetailInput
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
@@ -115,7 +114,7 @@ export class OperatorRoundsService {
     ) {
       const isSearch = queryParams.fetchType === 'search';
       return from(
-        this.awsApiService.ListFormLists(
+        this.awsApiService.ListRoundPlanLists(
           {
             ...(queryParams.searchKey && {
               searchTerm: { contains: queryParams?.searchKey.toLowerCase() }
@@ -171,7 +170,7 @@ export class OperatorRoundsService {
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     const statement = isArchived
       ? `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
         items {
           id
         }
@@ -179,7 +178,7 @@ export class OperatorRoundsService {
     }
     `
       : `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+        listRoundPlanLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
         items {
           id
         }
@@ -204,7 +203,7 @@ export class OperatorRoundsService {
 
   createForm$(
     formListQuery: Pick<
-      GetRoundPlansListQuery,
+      GetRoundPlanListQuery,
       | 'name'
       | 'formLogo'
       | 'description'
@@ -216,7 +215,7 @@ export class OperatorRoundsService {
     >
   ) {
     return from(
-      this.awsApiService.CreateRoundPlansList({
+      this.awsApiService.CreateRoundPlanList({
         name: formListQuery.name,
         formLogo: formListQuery.formLogo,
         description: formListQuery.description,
@@ -232,25 +231,25 @@ export class OperatorRoundsService {
 
   updateForm$(formMetaDataDetails) {
     return from(
-      this.awsApiService.UpdateRoundPlansList({
+      this.awsApiService.UpdateRoundPlanList({
         ...formMetaDataDetails.formMetadata,
         _version: formMetaDataDetails.formListDynamoDBVersion
       })
     );
   }
 
-  deleteForm$(values: DeleteRoundPlansListInput) {
-    return from(this.awsApiService.DeleteRoundPlansList({ ...values }));
+  deleteForm$(values: DeleteRoundPlanListInput) {
+    return from(this.awsApiService.DeleteRoundPlanList({ ...values }));
   }
 
   getFormById$(id: string) {
-    return from(this.awsApiService.GetRoundPlansList(id));
+    return from(this.awsApiService.GetRoundPlanList(id));
   }
 
   createFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateRoundPlanDetail({
-        roundplanslistID: formDetails.formListId,
+        roundPlanlistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -279,9 +278,9 @@ export class OperatorRoundsService {
         formStatus: formDetails.formStatus,
         roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
         roundplanslistID: formDetails.formListId,
-        page: JSON.stringify(formDetails.pages),
+        pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
-        ver: formDetails.authoredFormDetailVersion.toString()
+        version: formDetails.authoredFormDetailVersion.toString()
       })
     );
   }
@@ -292,11 +291,11 @@ export class OperatorRoundsService {
         formStatus: formDetails.formStatus,
         roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
         roundplanslistID: formDetails.formListId,
-        page: JSON.stringify(formDetails.pages),
+        pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
         _version: formDetails.authoredFormDetailDynamoDBVersion
-      } as UpdateAuthoredFormDetailInput)
+      } as UpdateAuthoredRoundPlanDetailInput)
     );
   }
 
@@ -379,7 +378,7 @@ export class OperatorRoundsService {
 
   getFormDetailByFormId$(formId: string) {
     return from(
-      this.awsApiService.RoundPlanDetailsByRoundplanslistID(formId)
+      this.awsApiService.RoundPlanDetailsByRoundPlanlistID(formId)
     ).pipe(map(({ items }) => items));
   }
 
@@ -387,6 +386,7 @@ export class OperatorRoundsService {
     const message = error.errors?.length
       ? error.errors[0].message.split(':')[0]
       : error.message;
+    console.log(message);
     this.toastService.show({
       type: 'warning',
       text: message
@@ -595,7 +595,7 @@ export class OperatorRoundsService {
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
         ({ data: { listFormLists } }: any) =>
-          listFormLists?.items as GetRoundPlansListQuery[]
+          listFormLists?.items as GetRoundPlanListQuery[]
       )
     );
   }
@@ -609,7 +609,7 @@ export class OperatorRoundsService {
   getInspectionDetailByInspectionId$ = (inspectionId: string) =>
     from(this.awsApiService.GetFormSubmissionDetail(inspectionId));
 
-  private formatGraphQLFormsResponse(resp: ListFormListsQuery) {
+  private formatGraphQLFormsResponse(resp: ListRoundPlanListsQuery) {
     const rows =
       resp.items
         .sort(

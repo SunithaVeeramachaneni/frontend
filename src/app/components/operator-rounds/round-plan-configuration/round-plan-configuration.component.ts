@@ -41,7 +41,7 @@ import {
   getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  State,
+  OPRState,
   getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
@@ -49,8 +49,9 @@ import {
   getIsFormCreated,
   getQuestionIds
 } from 'src/app/forms/state';
+
 import {
-  FormConfigurationActions,
+  RoundPlanConfigurationActions,
   MCQResponseActions
 } from 'src/app/forms/state/actions';
 import {
@@ -97,7 +98,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store<State>,
+    private store: Store<OPRState>,
     private headerService: HeaderService,
     private breadcrumbService: BreadcrumbService,
     private router: Router,
@@ -149,14 +150,14 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
             if (!isEqual(prev, curr)) {
               this.store.dispatch(
-                FormConfigurationActions.updateFormMetadata({
+                RoundPlanConfigurationActions.updateRoundPlanMetadata({
                   formMetadata: curr,
                   ...this.getFormConfigurationStatuses()
                 })
               );
 
               this.store.dispatch(
-                FormConfigurationActions.updateForm({
+                RoundPlanConfigurationActions.updateRoundPlan({
                   formMetadata: this.formMetadata,
                   formListDynamoDBVersion: this.formListVersion
                 })
@@ -232,7 +233,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             if (authoredFormDetailId) {
               if (formSaveStatus !== 'Saved' && formStatus !== 'Published') {
                 this.store.dispatch(
-                  FormConfigurationActions.updateAuthoredFormDetail({
+                  RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
                     formStatus,
                     formDetailPublishStatus,
                     formListId,
@@ -245,7 +246,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               }
             } else {
               this.store.dispatch(
-                FormConfigurationActions.createAuthoredFormDetail({
+                RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
                   formStatus,
                   formDetailPublishStatus,
                   formListId,
@@ -258,7 +259,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
             if (isFormDetailPublished && formDetailId) {
               this.store.dispatch(
-                FormConfigurationActions.updateFormDetail({
+                RoundPlanConfigurationActions.updateRoundPlanDetail({
                   formMetadata,
                   formListId,
                   pages,
@@ -278,7 +279,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
               );
             } else if (isFormDetailPublished && !formDetailId) {
               this.store.dispatch(
-                FormConfigurationActions.createFormDetail({
+                RoundPlanConfigurationActions.createRoundPlanDetail({
                   formMetadata,
                   formListId,
                   pages,
@@ -323,27 +324,27 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       if (data.form && Object.keys(data.form).length) {
         this.formConf.counter.setValue(data.form.counter);
         this.store.dispatch(
-          FormConfigurationActions.updateFormConfiguration({
+          RoundPlanConfigurationActions.updateFormConfiguration({
             formConfiguration: data.form
           })
         );
         data.form.pages.forEach((page, index) => {
           if (index === 0) {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              RoundPlanConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: false
               })
             );
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              RoundPlanConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: true
               })
             );
           } else {
             this.store.dispatch(
-              FormConfigurationActions.updatePageState({
+              RoundPlanConfigurationActions.updatePageState({
                 pageIndex: index,
                 isOpen: false
               })
@@ -356,7 +357,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params) => {
       if (!params.id) {
         this.store.dispatch(
-          FormConfigurationActions.addPage({
+          RoundPlanConfigurationActions.addPage({
             page: this.getPageObject(0, 0, 0),
             pageIndex: 0,
             questionCounter: this.formConf.counter.value,
@@ -438,7 +439,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         {
           const page = this.getPageObject(pageIndex, 0, 0);
           this.store.dispatch(
-            FormConfigurationActions.addPage({
+            RoundPlanConfigurationActions.addPage({
               page,
               pageIndex,
               questionCounter: this.formConf.counter.value,
@@ -446,7 +447,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             })
           );
           this.store.dispatch(
-            FormConfigurationActions.updateQuestionState({
+            RoundPlanConfigurationActions.updateQuestionState({
               questionId: page.questions[0].id,
               isOpen: true,
               isResponseTypeModalOpen: false
@@ -457,7 +458,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deletePage({
+          RoundPlanConfigurationActions.deletePage({
             pageIndex,
             ...this.getFormConfigurationStatuses()
           })
@@ -475,7 +476,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           const section = this.getSection(pageIndex, sectionIndex);
           const question = this.getQuestion(0, section.id);
           this.store.dispatch(
-            FormConfigurationActions.addSection({
+            RoundPlanConfigurationActions.addSection({
               section,
               question,
               pageIndex,
@@ -485,7 +486,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             })
           );
           this.store.dispatch(
-            FormConfigurationActions.updateQuestionState({
+            RoundPlanConfigurationActions.updateQuestionState({
               questionId: question.id,
               isOpen: true,
               isResponseTypeModalOpen: false
@@ -496,7 +497,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateSection({
+          RoundPlanConfigurationActions.updateSection({
             section,
             sectionIndex,
             pageIndex,
@@ -507,7 +508,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteSection({
+          RoundPlanConfigurationActions.deleteSection({
             sectionIndex,
             sectionId: section.id,
             pageIndex,
@@ -526,7 +527,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           const question = this.getQuestion(questionIndex, sectionId);
           this.store.dispatch(
-            FormConfigurationActions.addQuestion({
+            RoundPlanConfigurationActions.addQuestion({
               question,
               pageIndex,
               sectionId,
@@ -536,7 +537,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
             })
           );
           this.store.dispatch(
-            FormConfigurationActions.updateQuestionState({
+            RoundPlanConfigurationActions.updateQuestionState({
               questionId: question.id,
               isOpen: true,
               isResponseTypeModalOpen: false
@@ -547,7 +548,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
       case 'update':
         this.store.dispatch(
-          FormConfigurationActions.updateQuestion({
+          RoundPlanConfigurationActions.updateQuestion({
             question,
             questionIndex,
             sectionId,
@@ -559,7 +560,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
       case 'delete':
         this.store.dispatch(
-          FormConfigurationActions.deleteQuestion({
+          RoundPlanConfigurationActions.deleteQuestion({
             questionIndex,
             sectionId,
             pageIndex,
@@ -576,12 +577,12 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
 
   publishFormDetail() {
     this.store.dispatch(
-      FormConfigurationActions.updateFormPublishStatus({
+      RoundPlanConfigurationActions.updateFormPublishStatus({
         formDetailPublishStatus: formConfigurationStatus.publishing
       })
     );
     this.store.dispatch(
-      FormConfigurationActions.updateIsFormDetailPublished({
+      RoundPlanConfigurationActions.updateIsFormDetailPublished({
         isFormDetailPublished: true
       })
     );
@@ -597,7 +598,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         sectionPositionMap[section.id] = index + 1;
       });
       this.store.dispatch(
-        FormConfigurationActions.updatePageSections({
+        RoundPlanConfigurationActions.updatePageSections({
           pageIndex,
           data: sectionPositionMap,
           ...this.getFormConfigurationStatuses()
@@ -615,7 +616,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       );
       event.container.data.forEach((question: Question, index) => {
         this.store.dispatch(
-          FormConfigurationActions.updateQuestionBySection({
+          RoundPlanConfigurationActions.updateQuestionBySection({
             question: Object.assign({}, question, {
               position: index + 1,
               sectionId
@@ -635,7 +636,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         event.currentIndex
       );
       this.store.dispatch(
-        FormConfigurationActions.transferQuestionFromSection({
+        RoundPlanConfigurationActions.transferQuestionFromSection({
           questionId,
           currentIndex: event.currentIndex,
           previousIndex: event.previousIndex,
@@ -688,6 +689,6 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
+    this.store.dispatch(RoundPlanConfigurationActions.resetFormConfiguration());
   }
 }

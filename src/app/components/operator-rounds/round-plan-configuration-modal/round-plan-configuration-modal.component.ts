@@ -25,7 +25,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
+import { OPRState } from 'src/app/forms/state';
 import { RoundPlanConfigurationActions } from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
@@ -60,7 +60,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private router: Router,
     public dialogRef: MatDialogRef<RoundPlanConfigurationModalComponent>,
     private readonly loginService: LoginService,
-    private store: Store<State>,
+    private store: Store<OPRState>,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef
   ) {
@@ -162,7 +162,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
-        RoundPlanConfigurationActions.addFormMetadata({
+        RoundPlanConfigurationActions.addRoundPlanMetadata({
           formMetadata: this.headerDataForm.value,
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving
@@ -174,7 +174,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        RoundPlanConfigurationActions.createForm({
+        RoundPlanConfigurationActions.createRoundPlan({
           formMetadata: {
             ...this.headerDataForm.value,
             author: userName,

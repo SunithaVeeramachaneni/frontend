@@ -34,13 +34,16 @@ import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
 import {
   GetFormListQuery,
-  UpdateRoundPlansListMutation
+  UpdateRoundPlanListMutation
 } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { OPRState } from 'src/app/forms/state';
+import {
+  FormConfigurationActions,
+  RoundPlanConfigurationActions
+} from 'src/app/forms/state/actions';
 import {
   generateCopyNumber,
   generateCopyRegex
@@ -258,7 +261,7 @@ export class RoundPlanListComponent implements OnInit {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<State>
+    private readonly store: Store<OPRState>
   ) {}
 
   ngOnInit(): void {
@@ -345,7 +348,7 @@ export class RoundPlanListComponent implements OnInit {
                       formStatus: obj?.formStatus,
                       formDetailPublishStatus: 'Draft',
                       formListId: newRecord?.id,
-                      pages: JSON.parse(obj?.page) ?? '',
+                      pages: JSON.parse(obj?.pages) ?? '',
                       counter: obj?.counter,
                       authoredFormDetailVersion: 1
                     });
@@ -532,10 +535,10 @@ export class RoundPlanListComponent implements OnInit {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
   }
   roundPlanDetailActionHandler(event) {
-    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
@@ -559,7 +562,7 @@ export class RoundPlanListComponent implements OnInit {
   }
 
   private showFormDetail(row: GetFormListQuery): void {
-    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

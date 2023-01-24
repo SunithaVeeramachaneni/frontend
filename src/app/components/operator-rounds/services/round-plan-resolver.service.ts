@@ -4,21 +4,25 @@ import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
+import { OPRState, State } from 'src/app/forms/state';
+
+import { RoundPlanConfigurationActions } from 'src/app/forms/state/actions';
+import { RoundPlanConfigurationState } from 'src/app/forms/state/round-plan-configuration.reducer';
+// import { State } from 'src/app/state/app.state';
 import { OperatorRoundsService } from './operator-rounds.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoundPlanResolverService
-  implements Resolve<FormConfigurationState>
+  implements Resolve<RoundPlanConfigurationState>
 {
   constructor(
     private operatorRoundsService: OperatorRoundsService,
-    private store: Store<State>
+    private store: Store<OPRState>
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
+  resolve(
+    route: ActivatedRouteSnapshot
+  ): Observable<RoundPlanConfigurationState> {
     const id = route.params.id;
     return forkJoin({
       form: this.operatorRoundsService.getFormById$(id),
@@ -28,7 +32,7 @@ export class RoundPlanResolverService
     }).pipe(
       map(({ form, authoredFormDetail, formDetail }) => {
         this.store.dispatch(
-          FormConfigurationActions.updateCreateOrEditForm({
+          RoundPlanConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true
           })
         );
@@ -54,9 +58,9 @@ export class RoundPlanResolverService
         const {
           id: authoredFormDetailId,
           counter,
-          page,
+          pages,
           roundPlanDetailPublishStatus,
-          ver: authoredFormDetailVersion,
+          version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
         } = latestFormVersionData;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
@@ -74,7 +78,7 @@ export class RoundPlanResolverService
         return {
           formMetadata,
           counter,
-          pages: JSON.parse(page),
+          pages: JSON.parse(pages),
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),
@@ -84,11 +88,11 @@ export class RoundPlanResolverService
           formListDynamoDBVersion,
           authoredFormDetailDynamoDBVersion,
           formDetailDynamoDBVersion
-        } as FormConfigurationState;
+        } as RoundPlanConfigurationState;
       }),
       catchError((error) => {
         this.operatorRoundsService.handleError(error);
-        return of({} as FormConfigurationState);
+        return of({} as RoundPlanConfigurationState);
       })
     );
   }

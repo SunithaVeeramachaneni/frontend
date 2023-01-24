@@ -1,4 +1,6 @@
 /* eslint-disable no-underscore-dangle */
+// import { AppState } from '@aws-amplify/core';
+
 import { createReducer, on } from '@ngrx/store';
 import { FormMetadata, Page } from 'src/app/interfaces';
 import {
@@ -7,7 +9,7 @@ import {
   RoundPlanConfigurationApiActions
 } from './actions';
 
-export interface FormConfigurationState {
+export interface RoundPlanConfigurationState {
   formMetadata: FormMetadata;
   pages: Page[];
   counter: number;
@@ -44,11 +46,11 @@ const initialState = {
 };
 
 export const roundPlanConfigurationReducer =
-  createReducer<FormConfigurationState>(
+  createReducer<RoundPlanConfigurationState>(
     initialState,
     on(
-      RoundPlanConfigurationActions.addFormMetadata,
-      (state, action): FormConfigurationState => ({
+      RoundPlanConfigurationActions.addRoundPlanMetadata,
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formMetadata: { ...action.formMetadata },
         formDetailPublishStatus: action.formDetailPublishStatus,
@@ -57,7 +59,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.createFormSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formMetadata: { ...state.formMetadata, ...action.formMetadata },
         formSaveStatus: action.formSaveStatus,
@@ -66,7 +68,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.updateFormSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formSaveStatus: action.formSaveStatus,
         formListDynamoDBVersion: state.formListDynamoDBVersion + 1
@@ -74,7 +76,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.createAuthoredFromDetailSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         authoredFormDetailId: action.authoredFormDetail.id,
         formSaveStatus: action.formSaveStatus,
@@ -84,7 +86,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.updateAuthoredFromDetailSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formSaveStatus: action.formSaveStatus,
         authoredFormDetailDynamoDBVersion: action.authoredFormDetail._version
@@ -92,7 +94,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.createFormDetailSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formStatus: action.formStatus,
         formMetadata: {
@@ -111,7 +113,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationApiActions.updateFormDetailSuccess,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formStatus: action.formStatus,
         formDetailId: action.formDetail.id,
@@ -125,8 +127,8 @@ export const roundPlanConfigurationReducer =
       })
     ),
     on(
-      RoundPlanConfigurationActions.updateFormMetadata,
-      (state, action): FormConfigurationState => {
+      RoundPlanConfigurationActions.updateRoundPlanMetadata,
+      (state, action): RoundPlanConfigurationState => {
         const { formStatus, ...formMetadata } = action.formMetadata;
         return {
           ...state,
@@ -142,28 +144,28 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updateIsFormDetailPublished,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         isFormDetailPublished: action.isFormDetailPublished
       })
     ),
     on(
       RoundPlanConfigurationActions.updateFormPublishStatus,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         formDetailPublishStatus: action.formDetailPublishStatus
       })
     ),
     on(
       RoundPlanConfigurationActions.updateCreateOrEditForm,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         createOrEditForm: action.createOrEditForm
       })
     ),
     on(
       RoundPlanConfigurationActions.addPage,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         pages: [
           ...state.pages.slice(0, action.pageIndex),
@@ -180,7 +182,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updatePageState,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         pages: state.pages.map((page, index) => {
           if (action.pageIndex === index) {
@@ -209,7 +211,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.deletePage,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         pages: [
           ...state.pages.slice(0, action.pageIndex),
@@ -224,7 +226,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.addSection,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const sections = [
@@ -255,7 +257,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updateSection,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const sections = [
@@ -281,7 +283,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updateSectionState,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             return {
@@ -314,7 +316,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.deleteSection,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const sections = [
@@ -348,7 +350,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updatePageSections,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, index) => {
           if (index === action.pageIndex) {
             const sectionPositionMap = action.data;
@@ -374,7 +376,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.addQuestion,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             let sectionQuestions = page.questions.filter(
@@ -413,7 +415,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       RoundPlanConfigurationActions.updateQuestion,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             let sectionQuestions = page.questions.filter(
@@ -446,7 +448,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       RoundPlanConfigurationActions.updateQuestionState,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page) => {
           const questions = page.questions.map((question) => {
             if (question.id === action.questionId) {
@@ -474,7 +476,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updateQuestionBySection,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const questions = page.questions.map((question) => {
@@ -501,7 +503,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.deleteQuestion,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             let sectionQuestions = page.questions.filter(
@@ -540,7 +542,7 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.transferQuestionFromSection,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const questions = page.questions.map((question) => {
@@ -619,21 +621,21 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.updateFormConfiguration,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         ...action.formConfiguration
       })
     ),
     on(
       RoundPlanConfigurationActions.resetFormConfiguration,
-      (state): FormConfigurationState => ({
+      (state): RoundPlanConfigurationState => ({
         ...state,
         ...initialState
       })
     ),
     on(
       AddLogicActions.addLogicToQuestion,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             return {
@@ -655,7 +657,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.removeLogicsOfQuestion,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const filteredLogics = page.logics.filter(
@@ -680,7 +682,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.updateQuestionLogic,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const logics = page.logics.map((logic) => {
@@ -710,7 +712,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.deleteQuestionLogic,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const filteredLogics = page.logics.filter(
@@ -735,7 +737,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.askQuestionsCreate,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             page.questions.push(action.question);
@@ -760,7 +762,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.askQuestionsUpdate,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             let questions = JSON.parse(JSON.stringify(page.questions));
@@ -791,7 +793,7 @@ export const roundPlanConfigurationReducer =
 
     on(
       AddLogicActions.askQuestionsDelete,
-      (state, action): FormConfigurationState => {
+      (state, action): RoundPlanConfigurationState => {
         const pages = state.pages.map((page, pageIndex) => {
           if (pageIndex === action.pageIndex) {
             const questions = JSON.parse(JSON.stringify(page.questions));
@@ -817,14 +819,14 @@ export const roundPlanConfigurationReducer =
     ),
     on(
       RoundPlanConfigurationActions.initPages,
-      (state, action): FormConfigurationState => ({
+      (state, action): RoundPlanConfigurationState => ({
         ...state,
         pages: action.pages
       })
     ),
     on(
       RoundPlanConfigurationActions.resetPages,
-      (state, _): FormConfigurationState => ({
+      (state, _): RoundPlanConfigurationState => ({
         ...state,
         pages: []
       })

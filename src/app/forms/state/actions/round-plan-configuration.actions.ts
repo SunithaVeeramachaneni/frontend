@@ -1,19 +1,19 @@
 import { createAction, props } from '@ngrx/store';
 import { FormMetadata, Page, Question, Section } from 'src/app/interfaces';
-import { FormConfigurationState } from '../form-configuration.reducer';
+import { RoundPlanConfigurationState } from '../round-plan-configuration.reducer';
 
-export const createForm = createAction(
-  '[Form Configuration Modal Component] createFrom',
+export const createRoundPlan = createAction(
+  '[RoundPlan Configuration Modal Component] createRoundPlan',
   props<{ formMetadata: FormMetadata }>()
 );
 
-export const updateForm = createAction(
-  '[Form Configuration] updateForm',
+export const updateRoundPlan = createAction(
+  '[RoundPlan Configuration] updateRoundPlan',
   props<{ formMetadata: FormMetadata; formListDynamoDBVersion: number }>()
 );
 
-export const addFormMetadata = createAction(
-  '[Form Configuration Modal Component] addFormMetadata',
+export const addRoundPlanMetadata = createAction(
+  '[RoundPlan Configuration Modal Component] addRoundPlanMetadata',
   props<{
     formMetadata: FormMetadata;
     formDetailPublishStatus: string;
@@ -21,8 +21,8 @@ export const addFormMetadata = createAction(
   }>()
 );
 
-export const updateFormMetadata = createAction(
-  '[Form Configuration] updateFormMetadata',
+export const updateRoundPlanMetadata = createAction(
+  '[RoundPlan Configuration] updateRoundPlanMetadata',
   props<{
     formMetadata: FormMetadata;
     formStatus: string;
@@ -31,8 +31,8 @@ export const updateFormMetadata = createAction(
   }>()
 );
 
-export const createFormDetail = createAction(
-  '[Form Configuration] createFormDetail',
+export const createRoundPlanDetail = createAction(
+  '[RoundPlan Configuration] createRoundPlanDetail',
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
@@ -42,8 +42,8 @@ export const createFormDetail = createAction(
   }>()
 );
 
-export const updateFormDetail = createAction(
-  '[Form Configuration] updateFormDetail',
+export const updateRoundPlanDetail = createAction(
+  '[RoundPlan Configuration] updateRoundPlanDetail',
   props<{
     formMetadata: FormMetadata;
     pages: Page[];
@@ -55,8 +55,8 @@ export const updateFormDetail = createAction(
   }>()
 );
 
-export const createAuthoredFormDetail = createAction(
-  '[Form Configuration] createAuthoredFormDetail',
+export const createAuthoredRoundPlanDetail = createAction(
+  '[RoundPlan Configuration] createAuthoredRoundPlanDetail',
   props<{
     formStatus: string;
     formDetailPublishStatus: string;
@@ -67,8 +67,8 @@ export const createAuthoredFormDetail = createAction(
   }>()
 );
 
-export const updateAuthoredFormDetail = createAction(
-  '[Form Configuration] updateAuthoredFormDetail',
+export const updateAuthoredRoundPlanDetail = createAction(
+  '[RoundPlan Configuration] updateAuthoredRoundPlanDetail',
   props<{
     formStatus: string;
     formDetailPublishStatus: string;
@@ -81,22 +81,22 @@ export const updateAuthoredFormDetail = createAction(
 );
 
 export const updateIsFormDetailPublished = createAction(
-  '[Form Configuration] updateIsFormDetailPublished',
+  '[RoundPlan Configuration] updateIsFormDetailPublished',
   props<{ isFormDetailPublished: boolean }>()
 );
 
 export const updateFormPublishStatus = createAction(
-  '[Form Configuration] updateFormPublishStatus',
+  '[RoundPlan Configuration] updateFormPublishStatus',
   props<{ formDetailPublishStatus: string }>()
 );
 
 export const updateCreateOrEditForm = createAction(
-  '[Form Configuration] updateCreateOrEditForm',
+  '[RoundPlan Configuration] updateCreateOrEditForm',
   props<{ createOrEditForm: boolean }>()
 );
 
 export const addPage = createAction(
-  '[Form Configuration] addPage',
+  '[RoundPlan Configuration] addPage',
   props<{
     page: Page;
     pageIndex: number;
@@ -108,7 +108,7 @@ export const addPage = createAction(
 );
 
 export const updatePageState = createAction(
-  '[Form Configuration] updatePageState',
+  '[RoundPlan Configuration] updatePageState',
   props<{
     pageIndex: number;
     isOpen: boolean;
@@ -116,7 +116,7 @@ export const updatePageState = createAction(
 );
 
 export const deletePage = createAction(
-  '[Form Configuration] deletePage',
+  '[RoundPlan Configuration] deletePage',
   props<{
     pageIndex: number;
     formStatus: string;
@@ -126,7 +126,7 @@ export const deletePage = createAction(
 );
 
 export const addSection = createAction(
-  '[Form Configuration] addSection',
+  '[RoundPlan Configuration] addSection',
   props<{
     section: Section;
     question: Question;
@@ -140,7 +140,7 @@ export const addSection = createAction(
 );
 
 export const updatePageSections = createAction(
-  '[Form Configuration] updatePageSections',
+  '[RoundPlan Configuration] updatePageSections',
   props<{
     data: any;
     pageIndex: number;
@@ -151,7 +151,7 @@ export const updatePageSections = createAction(
 );
 
 export const updateSection = createAction(
-  '[Form Configuration] updateSection',
+  '[RoundPlan Configuration] updateSection',
   props<{
     section: Section;
     sectionIndex: number;
@@ -163,7 +163,7 @@ export const updateSection = createAction(
 );
 
 export const updateSectionState = createAction(
-  '[Form Configuration] updateSectionState',
+  '[RoundPlan Configuration] updateSectionState',
   props<{
     sectionId: string;
     pageIndex: number;
@@ -172,7 +172,7 @@ export const updateSectionState = createAction(
 );
 
 export const deleteSection = createAction(
-  '[Form Configuration] deleteSection',
+  '[RoundPlan Configuration] deleteSection',
   props<{
     sectionIndex: number;
     sectionId: string;
@@ -184,7 +184,7 @@ export const deleteSection = createAction(
 );
 
 export const addQuestion = createAction(
-  '[Form Configuration] addQuestion',
+  '[RoundPlan Configuration] addQuestion',
   props<{
     question: Question;
     pageIndex: number;
@@ -198,7 +198,7 @@ export const addQuestion = createAction(
 );
 
 export const updateQuestionBySection = createAction(
-  '[Form Configuration] updateQuestionBySection',
+  '[RoundPlan Configuration] updateQuestionBySection',
   props<{
     question: Question;
     sectionId: string;
@@ -210,7 +210,7 @@ export const updateQuestionBySection = createAction(
 );
 
 export const updateQuestion = createAction(
-  '[Form Configuration] updateQuestion',
+  '[RoundPlan Configuration] updateQuestion',
   props<{
     question: Question;
     questionIndex: number;
@@ -223,7 +223,7 @@ export const updateQuestion = createAction(
 );
 
 export const updateQuestionState = createAction(
-  '[Form Configuration] updateQuestionState',
+  '[RoundPlan Configuration] updateQuestionState',
   props<{
     questionId: string;
     isOpen: boolean;
@@ -232,7 +232,7 @@ export const updateQuestionState = createAction(
 );
 
 export const deleteQuestion = createAction(
-  '[Form Configuration] deleteQuestion',
+  '[RoundPlan Configuration] deleteQuestion',
   props<{
     questionIndex: number;
     sectionId: string;
@@ -244,7 +244,7 @@ export const deleteQuestion = createAction(
 );
 
 export const transferQuestionFromSection = createAction(
-  '[Form Configuration] transferQuestionFromSection',
+  '[RoundPlan Configuration] transferQuestionFromSection',
   props<{
     questionId: string;
     currentIndex: number;
@@ -259,19 +259,19 @@ export const transferQuestionFromSection = createAction(
 );
 
 export const updateFormConfiguration = createAction(
-  '[Form Configuration] updateFormConfiguration',
-  props<{ formConfiguration: FormConfigurationState }>()
+  '[RoundPlan Configuration] updateFormConfiguration',
+  props<{ formConfiguration: RoundPlanConfigurationState }>()
 );
 
 export const resetFormConfiguration = createAction(
-  '[Form Configuration] resetFormConfiguration'
+  '[RoundPlan Configuration] resetFormConfiguration'
 );
 
 export const initPages = createAction(
-  '[Form Configuration Component] initPages',
+  '[RoundPlan Configuration Component] initPages',
   props<{ pages: any[] }>()
 );
 
 export const resetPages = createAction(
-  '[Form Configuration Component] resetPages'
+  '[RoundPlan Configuration Component] resetPages'
 );

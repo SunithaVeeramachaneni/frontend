@@ -1,12 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 import {
-  CreateAuthoredFormDetailMutation,
   CreateAuthoredRoundPlanDetailMutation,
-  CreateFormDetailMutation,
   CreateRoundPlanDetailMutation,
-  UpdateAuthoredFormDetailMutation,
   UpdateAuthoredRoundPlanDetailMutation,
-  UpdateFormDetailMutation,
   UpdateRoundPlanDetailMutation
 } from 'src/app/API.service';
 import { FormMetadata } from 'src/app/interfaces';
