@@ -54,9 +54,9 @@ export class RoundPlanResolverService
         const {
           id: authoredFormDetailId,
           counter,
-          pages,
-          formDetailPublishStatus,
-          version: authoredFormDetailVersion,
+          page,
+          roundPlanDetailPublishStatus,
+          ver: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
         } = latestFormVersionData;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
@@ -74,13 +74,13 @@ export class RoundPlanResolverService
         return {
           formMetadata,
           counter,
-          pages: JSON.parse(pages),
+          pages: JSON.parse(page),
           authoredFormDetailId,
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),
           createOrEditForm: true,
-          formStatus: formDetailPublishStatus,
-          formDetailPublishStatus,
+          formStatus: roundPlanDetailPublishStatus,
+          formDetailPublishStatus: roundPlanDetailPublishStatus,
           formListDynamoDBVersion,
           authoredFormDetailDynamoDBVersion,
           formDetailDynamoDBVersion

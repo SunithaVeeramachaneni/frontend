@@ -32,7 +32,10 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import { GetFormListQuery } from 'src/app/API.service';
+import {
+  GetFormListQuery,
+  UpdateRoundPlansListMutation
+} from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { Store } from '@ngrx/store';
@@ -235,7 +238,7 @@ export class RoundPlanListComponent implements OnInit {
   addEditCopyForm$: BehaviorSubject<FormTableUpdate> =
     new BehaviorSubject<FormTableUpdate>({
       action: null,
-      form: {} as GetFormListQuery
+      form: {} as any
     });
   formCountUpdate$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   skip = 0;
@@ -342,7 +345,7 @@ export class RoundPlanListComponent implements OnInit {
                       formStatus: obj?.formStatus,
                       formDetailPublishStatus: 'Draft',
                       formListId: newRecord?.id,
-                      pages: JSON.parse(obj?.pages) ?? '',
+                      pages: JSON.parse(obj?.page) ?? '',
                       counter: obj?.counter,
                       authoredFormDetailVersion: 1
                     });
@@ -458,7 +461,7 @@ export class RoundPlanListComponent implements OnInit {
       );
   }
 
-  openArchiveModal(form: GetFormListQuery): void {
+  openArchiveModal(form: any): void {
     this.operatorRoundsService
       .updateForm$({
         formMetadata: {
@@ -468,7 +471,7 @@ export class RoundPlanListComponent implements OnInit {
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
       })
-      .subscribe((updatedForm) => {
+      .subscribe((updatedForm: any) => {
         this.addEditCopyForm$.next({
           action: 'delete',
           form: updatedForm
@@ -536,10 +539,7 @@ export class RoundPlanListComponent implements OnInit {
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
-  private generateCopyFormName(
-    form: GetFormListQuery,
-    rows: GetFormListQuery[]
-  ) {
+  private generateCopyFormName(form: GetFormListQuery, rows: any[]) {
     if (rows?.length > 0) {
       const listCopyNumbers: number[] = [];
       const regex: RegExp = generateCopyRegex(form?.name);
