@@ -26,7 +26,10 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
 import { OPRState } from 'src/app/forms/state';
-import { RoundPlanConfigurationActions } from 'src/app/forms/state/actions';
+import {
+  FormConfigurationActions,
+  RoundPlanConfigurationActions
+} from 'src/app/forms/state/actions';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { OperatorRoundsService } from '../services/operator-rounds.service';
 
@@ -169,7 +172,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
         })
       );
       this.store.dispatch(
-        RoundPlanConfigurationActions.updateCreateOrEditForm({
+        FormConfigurationActions.updateCreateOrEditForm({
           createOrEditForm: true
         })
       );
