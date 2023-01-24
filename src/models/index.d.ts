@@ -13,8 +13,8 @@ type EagerAuthoredRoundPlanDetail = {
   };
   readonly id: string;
   readonly formStatus?: string | null;
-  readonly ver?: string | null;
-  readonly page?: string | null;
+  readonly version?: string | null;
+  readonly pages?: string | null;
   readonly counter?: number | null;
   readonly roundPlanDetailPublishStatus?: string | null;
   readonly roundplanslistID: string;
@@ -29,8 +29,8 @@ type LazyAuthoredRoundPlanDetail = {
   };
   readonly id: string;
   readonly formStatus?: string | null;
-  readonly ver?: string | null;
-  readonly page?: string | null;
+  readonly version?: string | null;
+  readonly pages?: string | null;
   readonly counter?: number | null;
   readonly roundPlanDetailPublishStatus?: string | null;
   readonly roundplanslistID: string;
@@ -51,7 +51,7 @@ type EagerRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
-  readonly roundplanslistID: string;
+  readonly roundPlanlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -63,7 +63,7 @@ type LazyRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
-  readonly roundplanslistID: string;
+  readonly roundPlanlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -74,9 +74,9 @@ export declare const RoundPlanDetail: (new (init: ModelInit<RoundPlanDetail>) =>
   copyOf(source: RoundPlanDetail, mutator: (draft: MutableModel<RoundPlanDetail>) => MutableModel<RoundPlanDetail> | void): RoundPlanDetail;
 }
 
-type EagerRoundPlansList = {
+type EagerRoundPlanList = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<RoundPlansList, 'id'>;
+    identifier: ManagedIdentifier<RoundPlanList, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
@@ -98,13 +98,14 @@ type EagerRoundPlansList = {
   readonly isArchivedAt?: string | null;
   readonly roundPlansListRoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly roundPlansListAuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
+  readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazyRoundPlansList = {
+type LazyRoundPlanList = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<RoundPlansList, 'id'>;
+    identifier: ManagedIdentifier<RoundPlanList, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
@@ -126,14 +127,15 @@ type LazyRoundPlansList = {
   readonly isArchivedAt?: string | null;
   readonly roundPlansListRoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly roundPlansListAuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
+  readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type RoundPlansList = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlansList : LazyRoundPlansList
+export declare type RoundPlanList = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanList : LazyRoundPlanList
 
-export declare const RoundPlansList: (new (init: ModelInit<RoundPlansList>) => RoundPlansList) & {
-  copyOf(source: RoundPlansList, mutator: (draft: MutableModel<RoundPlansList>) => MutableModel<RoundPlansList> | void): RoundPlansList;
+export declare const RoundPlanList: (new (init: ModelInit<RoundPlanList>) => RoundPlanList) & {
+  copyOf(source: RoundPlanList, mutator: (draft: MutableModel<RoundPlanList>) => MutableModel<RoundPlanList> | void): RoundPlanList;
 }
 
 type EagerResponseSet = {

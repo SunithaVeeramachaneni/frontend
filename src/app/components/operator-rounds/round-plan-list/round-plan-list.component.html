@@ -47,7 +47,8 @@
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
-      (formDetailAction)="formDetailActionHandler($event)"
+      [moduleName]="'OPERATOR_ROUNDS'"
+      (formDetailAction)="roundPlanDetailActionHandler($event)"
     ></app-form-detail>
   </ng-container>
 

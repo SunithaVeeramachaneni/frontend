@@ -17,15 +17,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "ver": {
-                    "name": "ver",
+                "version": {
+                    "name": "version",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "page": {
-                    "name": "page",
+                "pages": {
+                    "name": "pages",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
@@ -79,7 +79,7 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byRoundPlansList",
+                        "name": "byRoundPlanList",
                         "fields": [
                             "roundplanslistID"
                         ]
@@ -120,8 +120,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "roundplanslistID": {
-                    "name": "roundplanslistID",
+                "roundPlanlistID": {
+                    "name": "roundPlanlistID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -154,9 +154,9 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byRoundPlansList",
+                        "name": "byRoundPlanList",
                         "fields": [
-                            "roundplanslistID"
+                            "roundPlanlistID"
                         ]
                     }
                 },
@@ -178,8 +178,8 @@ export const schema = {
                 }
             ]
         },
-        "RoundPlansList": {
-            "name": "RoundPlansList",
+        "RoundPlanList": {
+            "name": "RoundPlanList",
             "fields": {
                 "id": {
                     "name": "id",
@@ -313,7 +313,7 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "roundplanslistID"
+                            "roundPlanlistID"
                         ]
                     }
                 },
@@ -330,6 +330,22 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
                             "roundplanslistID"
+                        ]
+                    }
+                },
+                "RoundPlanDetails": {
+                    "name": "RoundPlanDetails",
+                    "isArray": true,
+                    "type": {
+                        "model": "RoundPlanDetail"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "roundPlanlistID"
                         ]
                     }
                 },
@@ -351,7 +367,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "RoundPlansLists",
+            "pluralName": "RoundPlanLists",
             "attributes": [
                 {
                     "type": "model",
@@ -1099,6 +1115,6 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "codegenVersion": "3.3.2",
-    "version": "95f067b51fe9937dfcf757e73ea66b3c"
+    "codegenVersion": "3.3.5",
+    "version": "5ed096c65d2b770243111b266c0c1d10"
 };

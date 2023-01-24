@@ -6,8 +6,8 @@ mutation CreateAuthoredRoundPlanDetail(
   createAuthoredRoundPlanDetail(input: $input, condition: $condition) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -25,8 +25,8 @@ mutation UpdateAuthoredRoundPlanDetail(
   updateAuthoredRoundPlanDetail(input: $input, condition: $condition) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -44,8 +44,8 @@ mutation DeleteAuthoredRoundPlanDetail(
   deleteAuthoredRoundPlanDetail(input: $input, condition: $condition) {
     id
     formStatus
-    ver
-    page
+    version
+    pages
     counter
     roundPlanDetailPublishStatus
     roundplanslistID
@@ -63,7 +63,7 @@ mutation CreateRoundPlanDetail(
   createRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -78,7 +78,7 @@ mutation UpdateRoundPlanDetail(
   updateRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -93,7 +93,7 @@ mutation DeleteRoundPlanDetail(
   deleteRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundplanslistID
+    roundPlanlistID
     createdAt
     updatedAt
     _version
@@ -101,11 +101,11 @@ mutation DeleteRoundPlanDetail(
     _lastChangedAt
   }
 }
-mutation CreateRoundPlansList(
-  $input: CreateRoundPlansListInput!
-  $condition: ModelRoundPlansListConditionInput
+mutation CreateRoundPlanList(
+  $input: CreateRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
 ) {
-  createRoundPlansList(input: $input, condition: $condition) {
+  createRoundPlanList(input: $input, condition: $condition) {
     id
     name
     description
@@ -131,6 +131,10 @@ mutation CreateRoundPlansList(
       nextToken
       startedAt
     }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -138,11 +142,11 @@ mutation CreateRoundPlansList(
     _lastChangedAt
   }
 }
-mutation UpdateRoundPlansList(
-  $input: UpdateRoundPlansListInput!
-  $condition: ModelRoundPlansListConditionInput
+mutation UpdateRoundPlanList(
+  $input: UpdateRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
 ) {
-  updateRoundPlansList(input: $input, condition: $condition) {
+  updateRoundPlanList(input: $input, condition: $condition) {
     id
     name
     description
@@ -168,6 +172,10 @@ mutation UpdateRoundPlansList(
       nextToken
       startedAt
     }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
     createdAt
     updatedAt
     _version
@@ -175,11 +183,11 @@ mutation UpdateRoundPlansList(
     _lastChangedAt
   }
 }
-mutation DeleteRoundPlansList(
-  $input: DeleteRoundPlansListInput!
-  $condition: ModelRoundPlansListConditionInput
+mutation DeleteRoundPlanList(
+  $input: DeleteRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
 ) {
-  deleteRoundPlansList(input: $input, condition: $condition) {
+  deleteRoundPlanList(input: $input, condition: $condition) {
     id
     name
     description
@@ -202,6 +210,10 @@ mutation DeleteRoundPlansList(
       startedAt
     }
     roundPlansListAuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    RoundPlanDetails {
       nextToken
       startedAt
     }

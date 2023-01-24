@@ -12,6 +12,10 @@ export interface State extends AppState.State {
   feature: FromModuleState;
 }
 
+export interface OPRState extends AppState.State {
+  operatorRounds: FromModuleState;
+}
+
 const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(

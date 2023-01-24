@@ -11,17 +11,7 @@ import {
 } from '@ngx-translate/core';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RaceDynamicFormRoutingModule } from './race-dynamic-form-routing.module';
 import { FormModule } from 'src/app/forms/form.module';
-
-import { FormContainerComponent } from './form-container/form-container.component';
-import { FormListComponent } from './form-list/form-list.component';
-import { FormDetailComponent } from './form-detail/form-detail.component';
-import { SubmissionComponent } from './submission/submission.component';
-import { ResponseSetComponent } from './response-set/response-set.component';
-import { PublicLibraryComponent } from './public-library/public-library.component';
-import { FormConfigurationModalComponent } from './form-configuration-modal/form-configuration-modal.component';
-import { FormConfigurationComponent } from './form-configuration/form-configuration.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -42,45 +32,38 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
-import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { roundPlanConfigurationReducer } from 'src/app/forms/state/round-plan-configuration.reducer';
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
-import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
-import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
-import { SubmissionViewComponent } from './submission-view/submission-view.component';
-import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ArchivedListComponent } from './archived-list/archived-list.component';
-import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { OperatorRoundsRoutingModule } from './operator-rounds-routing.module';
+import { OperatorRoundsContainerComponent } from '../operator-rounds/operator-rounds-container/operator-rounds-container.component';
+import { RaceDynamicFormModule } from '../race-dynamic-form/race-dynamic-form.module';
+import { RoundPlanListComponent } from './round-plan-list/round-plan-list.component';
+import { RoundPlanConfigurationComponent } from './round-plan-configuration/round-plan-configuration.component';
+import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
+import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
+import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
 
 export const customTranslateLoader = (http: HttpClient) =>
-  new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
+  new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
 
 @NgModule({
   declarations: [
-    FormContainerComponent,
-    FormListComponent,
-    FormDetailComponent,
-    SubmissionComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
-    SubmissionSliderComponent,
-    SubmissionViewComponent,
-    SelectQuestionsDialogComponent,
-    AvatarComponent,
-    ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    OperatorRoundsContainerComponent,
+    RoundPlanListComponent,
+    RoundPlanConfigurationComponent,
+    RoundPlanConfigurationModalComponent
   ],
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    RaceDynamicFormRoutingModule,
+    OperatorRoundsRoutingModule,
+
+    RaceDynamicFormModule,
     DragDropModule,
     CommonModule,
     FormModule,
@@ -120,26 +103,14 @@ export const customTranslateLoader = (http: HttpClient) =>
       formConfiguration: formConfigurationReducer,
       responseSet: responseSetReducer
     }),
-    EffectsModule.forFeature([FormConfigurationEffects, ResponseSetEffects])
+    EffectsModule.forFeature([
+      RoundPlanConfigurationEffects,
+      ResponseSetEffects
+    ])
   ],
-  exports: [
-    FormContainerComponent,
-    FormListComponent,
-    FormDetailComponent,
-    SubmissionComponent,
-    ResponseSetComponent,
-    PublicLibraryComponent,
-    FormConfigurationModalComponent,
-    FormConfigurationComponent,
-    SubmissionSliderComponent,
-    SubmissionViewComponent,
-    SelectQuestionsDialogComponent,
-    AvatarComponent,
-    ArchivedListComponent,
-    ArchivedDeleteModalComponent
-  ]
+  exports: [OperatorRoundsContainerComponent]
 })
-export class RaceDynamicFormModule {
+export class OperatorRoundsModule {
   constructor(
     public translateService: TranslateService,
     public commonService: CommonService
