@@ -137,3 +137,112 @@
     ></button>
   </mat-card>
 </div>
+
+<div class="app-customizer" *ngIf="rangeSelectorOpenState">
+  <mat-card class="p-0" *ngIf="rangeSelectorOpenState === true">
+    <mat-card-title class="m-0 light-gray">
+      <div class="mcq-heading" translate="rangeSelectorHeading"></div>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="rangeLimitContainer">
+        <div class="limit">
+          <div class="limitContent">
+            <div class="limitValue">
+              <span>Lower Limit</span>
+              <input
+                matInput
+                type="number"
+                autocomplete="off"
+                class="inputField"
+              />
+            </div>
+            <div class="limitAction">
+              <label>When answer is less than Lower Limit</label>
+              <mat-radio-group class="limitRadioGroup">
+                <mat-radio-button class="limitRadioOption" [value]="'None'">
+                  None
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Warning'">
+                  Warning
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Alert'">
+                  Alert
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Note'">
+                  Note
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="limitMessage">
+            <div class="messageHead">
+              <span class="titleRow">
+                <mat-icon class="titleRowIcon">warning</mat-icon
+                ><span class="title">Warning:</span>
+              </span>
+              <mat-icon class="editIcon">edit</mat-icon>
+            </div>
+          </div>
+        </div>
+        <mat-divider class="limitDivider"></mat-divider>
+        <div class="limit">
+          <div class="limitContent">
+            <div class="limitValue">
+              <span>Upper Limit</span>
+              <input
+                matInput
+                type="number"
+                autocomplete="off"
+                class="inputField"
+              />
+            </div>
+            <div class="limitAction">
+              <label>When answer is greater than Upper Limit</label>
+              <mat-radio-group class="limitRadioGroup">
+                <mat-radio-button class="limitRadioOption" [value]="'None'">
+                  None
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Warning'">
+                  Warning
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Alert'">
+                  Alert
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Note'">
+                  Note
+                </mat-radio-button>
+                <mat-radio-button class="limitRadioOption" [value]="'Impact'">
+                  Impact
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+          <div class="limitMessage">
+            <div class="messageHead">
+              <span class="titleRow">
+                <mat-icon class="titleRowIcon">warning</mat-icon
+                ><span class="title">Warning:</span>
+              </span>
+              <mat-icon class="editIcon">edit</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <div class="rangeSelectorFooter">
+    <button
+      mat-stroked-button
+      class="cancelBtn"
+      (click)="cancelResponse()"
+      translate="cancel"
+    ></button>
+    <button
+      mat-raised-button
+      (click)="submitResponses()"
+      color="primary"
+      class="applyBtn"
+      translate="apply"
+    ></button>
+  </div>
+</div>

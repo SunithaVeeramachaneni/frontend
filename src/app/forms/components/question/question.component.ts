@@ -105,6 +105,21 @@ export class QuestionComponent implements OnInit {
     'DF'
   ];
 
+  unitOfMeasurementsAvailable = [];
+
+  unitOfMeasurements = [
+    {
+      code: 'cm',
+      symbol: '^C',
+      title: 'Centimetre'
+    },
+    {
+      code: 'Km',
+      symbol: 'Km',
+      title: 'Kilometre'
+    }
+  ];
+
   questionForm: FormGroup = this.fb.group({
     id: '',
     sectionId: '',
@@ -117,7 +132,10 @@ export class QuestionComponent implements OnInit {
     isPublished: false,
     isPublishedTillSave: false,
     isOpen: false,
-    isResponseTypeModalOpen: false
+    isResponseTypeModalOpen: false,
+    unitOfMeasurement: 'None',
+    lowerLimit: 1,
+    upperLimit: 100
   });
   question$: Observable<Question>;
   question: Question;
@@ -151,6 +169,8 @@ export class QuestionComponent implements OnInit {
         this.formId = data.id;
       }
     });
+
+    this.unitOfMeasurementsAvailable = this.unitOfMeasurements;
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -213,13 +233,28 @@ export class QuestionComponent implements OnInit {
       } else {
         timer(0).subscribe(() => this.name.nativeElement.focus());
       }
-     } else {
-       if (!this.question.isOpen) {
-         timer(0).subscribe(() => this.name.nativeElement.focus());
-       }
-     }
+    } else {
+      if (!this.question.isOpen) {
+        timer(0).subscribe(() => this.name.nativeElement.focus());
+      }
+    }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
+    );
+  }
+
+  onKey(event) {
+    const value = event.target.value;
+    this.unitOfMeasurementsAvailable = [...this.search(value)];
+    console.log(this.unitOfMeasurementsAvailable);
+  }
+  search(value: string) {
+    const filter = value.toLowerCase();
+    return this.unitOfMeasurements.filter(
+      (option) =>
+        option.title.toLowerCase().startsWith(filter) ||
+        option.code.toLowerCase().startsWith(filter) ||
+        option.symbol.toLowerCase().startsWith(filter)
     );
   }
 
@@ -305,6 +340,12 @@ export class QuestionComponent implements OnInit {
 
   sliderOpen() {
     this.formService.setsliderOpenState(true);
+  }
+  rangeSelectorOpen(question) {
+    this.formService.setRangeSelectorOpenState({
+      isOpen: true,
+      rangeValues: question
+    });
   }
 
   insertImageHandler(event) {

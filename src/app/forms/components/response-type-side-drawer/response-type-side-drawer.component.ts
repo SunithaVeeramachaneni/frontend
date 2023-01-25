@@ -16,7 +16,7 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
-import { ResponseTypeOpenState } from 'src/app/interfaces';
+import { RangeSelectorState, ResponseTypeOpenState } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 
 @Component({
@@ -35,6 +35,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   @Input() question;
   sliderOpenState$: Observable<boolean>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
+  rangeSelectorOpenState$: Observable<RangeSelectorState>;
 
   responseId = '';
   respType = '';
@@ -42,6 +43,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   public responseForm: FormGroup;
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
+  rangeSelectorOpenState = false;
 
   sliderOptions = {
     value: 0,
@@ -58,6 +60,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ngOnInit(): void {
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
+    this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
 
     this.multipleChoiceOpenState$.subscribe((state) => {
       this.multipleChoiceOpenState = state.isOpen;
@@ -78,6 +81,11 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
         this.isFormNotUpdated = false;
         this.cdrf.detectChanges();
       }
+    });
+
+    this.rangeSelectorOpenState$.subscribe((state) => {
+      this.rangeSelectorOpenState = state.isOpen;
+      this.cdrf.detectChanges();
     });
 
     this.responseForm = this.fb.group({

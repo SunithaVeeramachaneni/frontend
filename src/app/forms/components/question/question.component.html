@@ -129,6 +129,74 @@
               </span>
 
               <span
+                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                class="action"
+              >
+                <span translate="unitTxt"></span>
+                <button mat-button [matMenuTriggerFor]="menu" class="uomBtn">
+                  {{ questionForm.get('unitOfMeasurement').value }}
+                </button>
+                <mat-menu #menu="matMenu">
+                  <ng-template matMenuContent>
+                    <div (click)="$event.stopPropagation()" class="uomMenu">
+                      <span class="searchUOM">
+                        <mat-icon>search</mat-icon>
+                        <input
+                          type="text"
+                          (keyup)="onKey($event)"
+                          placeholder="Search.."
+                          class="searchInput"
+                        />
+                      </span>
+
+                      <span class="noneOption">None</span>
+                      <span
+                        *ngFor="let uom of unitOfMeasurementsAvailable"
+                        class="uomOption"
+                      >
+                        <span class="uomSymbol">{{ uom.code }}</span>
+                        <span class="uomTitle">{{ uom.title }}</span>
+                      </span>
+                    </div>
+                  </ng-template>
+                </mat-menu>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                class="action"
+              >
+                <span translate="rangeTxt"></span>
+                <button
+                  mat-button
+                  class="rangeBtn"
+                  (click)="rangeSelectorOpen(questionForm.value)"
+                >
+                  <span
+                    class="rangeValues"
+                    *ngIf="
+                      questionForm.get('lowerLimit').value &&
+                      questionForm.get('upperLimit').value
+                    "
+                  >
+                    {{ questionForm.get('lowerLimit').value }} -
+                    {{ questionForm.get('upperLimit').value }}
+                  </span>
+                  <span
+                    *ngIf="
+                      !(
+                        questionForm.get('lowerLimit').value &&
+                        questionForm.get('upperLimit').value
+                      )
+                    "
+                    translate="noneTxt"
+                    class="rangeValuesNone"
+                  >
+                  </span>
+                </button>
+              </span>
+
+              <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="action"
               >
