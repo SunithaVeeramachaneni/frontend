@@ -16,6 +16,7 @@
   "addFormDescription": "Plan Description",
   "tags": "Tags",
   "nextBtn": "Save & Next",
+  "nextBtnPreview": "Next",
   "skipBtn": "Skip",
   "name": "Plan Name",
   "required": "{name} is required",
