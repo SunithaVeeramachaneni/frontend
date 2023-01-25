@@ -1,4 +1,139 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateRoundPlanSubmissionDetails(
+  $input: CreateRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  createRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanSubmissionDetails(
+  $input: UpdateRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  updateRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanSubmissionDetails(
+  $input: DeleteRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  deleteRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateRoundPlanSubmissionList(
+  $input: CreateRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  createRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanSubmissionList(
+  $input: UpdateRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  updateRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanSubmissionList(
+  $input: DeleteRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  deleteRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateAuthoredRoundPlanDetail(
   $input: CreateAuthoredRoundPlanDetailInput!
   $condition: ModelAuthoredRoundPlanDetailConditionInput
@@ -9,8 +144,8 @@ mutation CreateAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -28,8 +163,8 @@ mutation UpdateAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -47,8 +182,8 @@ mutation DeleteAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -63,7 +198,7 @@ mutation CreateRoundPlanDetail(
   createRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -78,7 +213,7 @@ mutation UpdateRoundPlanDetail(
   updateRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -93,7 +228,7 @@ mutation DeleteRoundPlanDetail(
   deleteRoundPlanDetail(input: $input, condition: $condition) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -123,11 +258,11 @@ mutation CreateRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }
@@ -164,11 +299,11 @@ mutation UpdateRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }
@@ -205,11 +340,11 @@ mutation DeleteRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }

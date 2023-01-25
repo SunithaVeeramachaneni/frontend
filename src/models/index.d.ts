@@ -6,6 +6,90 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerRoundPlanSubmissionDetails = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly formsubmissionlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanSubmissionDetails = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly formsubmissionlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanSubmissionDetails = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanSubmissionDetails : LazyRoundPlanSubmissionDetails
+
+export declare const RoundPlanSubmissionDetails: (new (init: ModelInit<RoundPlanSubmissionDetails>) => RoundPlanSubmissionDetails) & {
+  copyOf(source: RoundPlanSubmissionDetails, mutator: (draft: MutableModel<RoundPlanSubmissionDetails>) => MutableModel<RoundPlanSubmissionDetails> | void): RoundPlanSubmissionDetails;
+}
+
+type EagerRoundPlanSubmissionList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly searchTerm?: string | null;
+  readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanSubmissionList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly searchTerm?: string | null;
+  readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanSubmissionList = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanSubmissionList : LazyRoundPlanSubmissionList
+
+export declare const RoundPlanSubmissionList: (new (init: ModelInit<RoundPlanSubmissionList>) => RoundPlanSubmissionList) & {
+  copyOf(source: RoundPlanSubmissionList, mutator: (draft: MutableModel<RoundPlanSubmissionList>) => MutableModel<RoundPlanSubmissionList> | void): RoundPlanSubmissionList;
+}
+
 type EagerAuthoredRoundPlanDetail = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<AuthoredRoundPlanDetail, 'id'>;
@@ -16,8 +100,8 @@ type EagerAuthoredRoundPlanDetail = {
   readonly version?: string | null;
   readonly pages?: string | null;
   readonly counter?: number | null;
-  readonly roundPlanDetailPublishStatus?: string | null;
-  readonly roundplanslistID: string;
+  readonly formDetailPublishStatus?: string | null;
+  readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -32,8 +116,8 @@ type LazyAuthoredRoundPlanDetail = {
   readonly version?: string | null;
   readonly pages?: string | null;
   readonly counter?: number | null;
-  readonly roundPlanDetailPublishStatus?: string | null;
-  readonly roundplanslistID: string;
+  readonly formDetailPublishStatus?: string | null;
+  readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -51,7 +135,7 @@ type EagerRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
-  readonly roundPlanlistID: string;
+  readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -63,7 +147,7 @@ type LazyRoundPlanDetail = {
   };
   readonly id: string;
   readonly formData?: string | null;
-  readonly roundPlanlistID: string;
+  readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -96,8 +180,8 @@ type EagerRoundPlanList = {
   readonly isArchived?: boolean | null;
   readonly searchTerm?: string | null;
   readonly isArchivedAt?: string | null;
-  readonly roundPlansListRoundPlanDetails?: (RoundPlanDetail | null)[] | null;
-  readonly roundPlansListAuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
+  readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
+  readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -125,8 +209,8 @@ type LazyRoundPlanList = {
   readonly isArchived?: boolean | null;
   readonly searchTerm?: string | null;
   readonly isArchivedAt?: string | null;
-  readonly roundPlansListRoundPlanDetails: AsyncCollection<RoundPlanDetail>;
-  readonly roundPlansListAuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
+  readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
+  readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
