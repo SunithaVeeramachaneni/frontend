@@ -16,6 +16,7 @@
   "addFormDescription": " Add a short description to your form",
   "tags": "Tags",
   "nextBtn": "Next",
+  "nextBtnPreview": "Next",
   "skipBtn": "Skip",
   "name": "Form Name",
   "required": "{name} is required",
