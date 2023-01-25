@@ -62,7 +62,7 @@ export class RoundPlanResolverService
           id: authoredFormDetailId,
           counter,
           pages,
-          roundPlanDetailPublishStatus,
+          formDetailPublishStatus,
           version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
         } = latestFormVersionData;
@@ -86,8 +86,8 @@ export class RoundPlanResolverService
           formDetailId,
           authoredFormDetailVersion: parseInt(authoredFormDetailVersion, 10),
           createOrEditForm: true,
-          formStatus: roundPlanDetailPublishStatus,
-          formDetailPublishStatus: roundPlanDetailPublishStatus,
+          formStatus: formDetailPublishStatus,
+          formDetailPublishStatus,
           formListDynamoDBVersion,
           authoredFormDetailDynamoDBVersion,
           formDetailDynamoDBVersion

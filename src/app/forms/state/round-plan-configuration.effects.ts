@@ -85,11 +85,11 @@ export class RoundPlanConfigurationEffects {
               this.operatorRoundsService.updateAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formStatus: formConfigurationStatus.published,
-                roundPlanDetailPublishStatus: formConfigurationStatus.published
+                formDetailPublishStatus: formConfigurationStatus.published
               }),
               this.operatorRoundsService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
-                roundPlanDetailPublishStatus: formConfigurationStatus.published,
+                formDetailPublishStatus: formConfigurationStatus.published,
                 authoredFormDetailVersion:
                   authoredFormDetail.authoredFormDetailVersion + 1
               })
@@ -136,11 +136,11 @@ export class RoundPlanConfigurationEffects {
               this.operatorRoundsService.updateAuthoredFormDetail$({
                 ...authoredFormDetail,
                 formStatus: formConfigurationStatus.published,
-                roundPlanDetailPublishStatus: formConfigurationStatus.published
+                formDetailPublishStatus: formConfigurationStatus.published
               }),
               this.operatorRoundsService.createAuthoredFormDetail$({
                 ...authoredFormDetail,
-                roundPlanDetailPublishStatus: formConfigurationStatus.published,
+                formDetailPublishStatus: formConfigurationStatus.published,
                 authoredRoundPlanDetailVersion:
                   authoredFormDetail.authoredFormDetailVersion + 1
               })

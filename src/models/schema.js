@@ -1,5 +1,248 @@
 export const schema = {
     "models": {
+        "RoundPlanSubmissionDetails": {
+            "name": "RoundPlanSubmissionDetails",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "formData": {
+                    "name": "formData",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "formlistID": {
+                    "name": "formlistID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "formsubmissionlistID": {
+                    "name": "formsubmissionlistID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "RoundPlanSubmissionDetails",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byRoundPlanList",
+                        "fields": [
+                            "formlistID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byRoundPlanSubmissionList",
+                        "fields": [
+                            "formsubmissionlistID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "RoundPlanSubmissionList": {
+            "name": "RoundPlanSubmissionList",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "formLogo": {
+                    "name": "formLogo",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "isPublic": {
+                    "name": "isPublic",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "location": {
+                    "name": "location",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "roundType": {
+                    "name": "roundType",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "status": {
+                    "name": "status",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "assignee": {
+                    "name": "assignee",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dueDate": {
+                    "name": "dueDate",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "version": {
+                    "name": "version",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "submittedBy": {
+                    "name": "submittedBy",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "searchTerm": {
+                    "name": "searchTerm",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "RoundPlanSubmissionDetails": {
+                    "name": "RoundPlanSubmissionDetails",
+                    "isArray": true,
+                    "type": {
+                        "model": "RoundPlanSubmissionDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": [
+                            "formsubmissionlistID"
+                        ]
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "RoundPlanSubmissionLists",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "AuthoredRoundPlanDetail": {
             "name": "AuthoredRoundPlanDetail",
             "fields": {
@@ -38,15 +281,15 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "roundPlanDetailPublishStatus": {
-                    "name": "roundPlanDetailPublishStatus",
+                "formDetailPublishStatus": {
+                    "name": "formDetailPublishStatus",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "roundplanslistID": {
-                    "name": "roundplanslistID",
+                "formlistID": {
+                    "name": "formlistID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -81,7 +324,7 @@ export const schema = {
                     "properties": {
                         "name": "byRoundPlanList",
                         "fields": [
-                            "roundplanslistID"
+                            "formlistID"
                         ]
                     }
                 },
@@ -120,8 +363,8 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "roundPlanlistID": {
-                    "name": "roundPlanlistID",
+                "formlistID": {
+                    "name": "formlistID",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
@@ -156,7 +399,7 @@ export const schema = {
                     "properties": {
                         "name": "byRoundPlanList",
                         "fields": [
-                            "roundPlanlistID"
+                            "formlistID"
                         ]
                     }
                 },
@@ -301,11 +544,11 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "roundPlansListRoundPlanDetails": {
-                    "name": "roundPlansListRoundPlanDetails",
+                "RoundPlanSubmissionDetails": {
+                    "name": "RoundPlanSubmissionDetails",
                     "isArray": true,
                     "type": {
-                        "model": "RoundPlanDetail"
+                        "model": "RoundPlanSubmissionDetails"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -313,12 +556,12 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "roundPlanlistID"
+                            "formlistID"
                         ]
                     }
                 },
-                "roundPlansListAuthoredRoundPlanDetails": {
-                    "name": "roundPlansListAuthoredRoundPlanDetails",
+                "AuthoredRoundPlanDetails": {
+                    "name": "AuthoredRoundPlanDetails",
                     "isArray": true,
                     "type": {
                         "model": "AuthoredRoundPlanDetail"
@@ -329,7 +572,7 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "roundplanslistID"
+                            "formlistID"
                         ]
                     }
                 },
@@ -345,7 +588,7 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": [
-                            "roundPlanlistID"
+                            "formlistID"
                         ]
                     }
                 },
@@ -1115,6 +1358,6 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "codegenVersion": "3.3.5",
-    "version": "5ed096c65d2b770243111b266c0c1d10"
+    "codegenVersion": "3.3.2",
+    "version": "aca8c52c340fe0d57a2ab87d417b9e20"
 };

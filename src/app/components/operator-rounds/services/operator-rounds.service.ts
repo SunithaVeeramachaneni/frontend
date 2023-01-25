@@ -249,7 +249,7 @@ export class OperatorRoundsService {
   createFormDetail$(formDetails) {
     return from(
       this.awsApiService.CreateRoundPlanDetail({
-        roundPlanlistID: formDetails.formListId,
+        formlistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
@@ -276,8 +276,8 @@ export class OperatorRoundsService {
     return from(
       this.awsApiService.CreateAuthoredRoundPlanDetail({
         formStatus: formDetails.formStatus,
-        roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
-        roundplanslistID: formDetails.formListId,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
+        formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         version: formDetails.authoredFormDetailVersion.toString()
@@ -289,8 +289,8 @@ export class OperatorRoundsService {
     return from(
       this.awsApiService.UpdateAuthoredRoundPlanDetail({
         formStatus: formDetails.formStatus,
-        roundPlanDetailPublishStatus: formDetails.formDetailPublishStatus,
-        roundplanslistID: formDetails.formListId,
+        formDetailPublishStatus: formDetails.formDetailPublishStatus,
+        formlistID: formDetails.formListId,
         pages: JSON.stringify(formDetails.pages),
         counter: formDetails.counter,
         id: formDetails.authoredFormDetailId,
@@ -353,33 +353,29 @@ export class OperatorRoundsService {
 
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(
-        formId,
-        null,
-        {
-          or: [
-            {
-              formStatus: { eq: formConfigurationStatus.draft }
-            },
-            {
-              formStatus: { eq: formConfigurationStatus.published }
-            }
-          ]
-        }
-      )
+      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId, null, {
+        or: [
+          {
+            formStatus: { eq: formConfigurationStatus.draft }
+          },
+          {
+            formStatus: { eq: formConfigurationStatus.published }
+          }
+        ]
+      })
     ).pipe(map(({ items }) => items));
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {
     return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(formId)
+      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formId)
     ).pipe(map(({ items }) => items));
   }
 
   getFormDetailByFormId$(formId: string) {
-    return from(
-      this.awsApiService.RoundPlanDetailsByRoundPlanlistID(formId)
-    ).pipe(map(({ items }) => items));
+    return from(this.awsApiService.RoundPlanDetailsByFormlistID(formId)).pipe(
+      map(({ items }) => items)
+    );
   }
 
   handleError(error: any) {
@@ -602,7 +598,7 @@ export class OperatorRoundsService {
 
   getAuthoredFormDetail$(formlistID: string) {
     return from(
-      this.awsApiService.AuthoredRoundPlanDetailsByRoundplanslistID(formlistID)
+      this.awsApiService.AuthoredRoundPlanDetailsByFormlistID(formlistID)
     ).pipe(map(({ items }) => items));
   }
 

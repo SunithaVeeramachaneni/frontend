@@ -1,4 +1,223 @@
 # this is an auto generated file. This will be overwritten
+query GetRoundPlanSubmissionDetails($id: ID!) {
+  getRoundPlanSubmissionDetails(id: $id) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListRoundPlanSubmissionDetails(
+  $filter: ModelRoundPlanSubmissionDetailsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listRoundPlanSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      formsubmissionlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncRoundPlanSubmissionDetails(
+  $filter: ModelRoundPlanSubmissionDetailsFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncRoundPlanSubmissionDetails(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      formsubmissionlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query RoundPlanSubmissionDetailsByFormlistID(
+  $formlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelRoundPlanSubmissionDetailsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  roundPlanSubmissionDetailsByFormlistID(
+    formlistID: $formlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      formsubmissionlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query RoundPlanSubmissionDetailsByFormsubmissionlistID(
+  $formsubmissionlistID: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelRoundPlanSubmissionDetailsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  roundPlanSubmissionDetailsByFormsubmissionlistID(
+    formsubmissionlistID: $formsubmissionlistID
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      formData
+      formlistID
+      formsubmissionlistID
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query GetRoundPlanSubmissionList($id: ID!) {
+  getRoundPlanSubmissionList(id: $id) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListRoundPlanSubmissionLists(
+  $filter: ModelRoundPlanSubmissionListFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listRoundPlanSubmissionLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncRoundPlanSubmissionLists(
+  $filter: ModelRoundPlanSubmissionListFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncRoundPlanSubmissionLists(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      name
+      description
+      formLogo
+      isPublic
+      location
+      roundType
+      status
+      assignee
+      dueDate
+      version
+      submittedBy
+      searchTerm
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetAuthoredRoundPlanDetail($id: ID!) {
   getAuthoredRoundPlanDetail(id: $id) {
     id
@@ -6,8 +225,8 @@ query GetAuthoredRoundPlanDetail($id: ID!) {
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -31,8 +250,8 @@ query ListAuthoredRoundPlanDetails(
       version
       pages
       counter
-      roundPlanDetailPublishStatus
-      roundplanslistID
+      formDetailPublishStatus
+      formlistID
       createdAt
       updatedAt
       _version
@@ -61,8 +280,8 @@ query SyncAuthoredRoundPlanDetails(
       version
       pages
       counter
-      roundPlanDetailPublishStatus
-      roundplanslistID
+      formDetailPublishStatus
+      formlistID
       createdAt
       updatedAt
       _version
@@ -73,15 +292,15 @@ query SyncAuthoredRoundPlanDetails(
     startedAt
   }
 }
-query AuthoredRoundPlanDetailsByRoundplanslistID(
-  $roundplanslistID: ID!
+query AuthoredRoundPlanDetailsByFormlistID(
+  $formlistID: ID!
   $sortDirection: ModelSortDirection
   $filter: ModelAuthoredRoundPlanDetailFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  authoredRoundPlanDetailsByRoundplanslistID(
-    roundplanslistID: $roundplanslistID
+  authoredRoundPlanDetailsByFormlistID(
+    formlistID: $formlistID
     sortDirection: $sortDirection
     filter: $filter
     limit: $limit
@@ -93,8 +312,8 @@ query AuthoredRoundPlanDetailsByRoundplanslistID(
       version
       pages
       counter
-      roundPlanDetailPublishStatus
-      roundplanslistID
+      formDetailPublishStatus
+      formlistID
       createdAt
       updatedAt
       _version
@@ -109,7 +328,7 @@ query GetRoundPlanDetail($id: ID!) {
   getRoundPlanDetail(id: $id) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -126,7 +345,7 @@ query ListRoundPlanDetails(
     items {
       id
       formData
-      roundPlanlistID
+      formlistID
       createdAt
       updatedAt
       _version
@@ -152,7 +371,7 @@ query SyncRoundPlanDetails(
     items {
       id
       formData
-      roundPlanlistID
+      formlistID
       createdAt
       updatedAt
       _version
@@ -163,15 +382,15 @@ query SyncRoundPlanDetails(
     startedAt
   }
 }
-query RoundPlanDetailsByRoundPlanlistID(
-  $roundPlanlistID: ID!
+query RoundPlanDetailsByFormlistID(
+  $formlistID: ID!
   $sortDirection: ModelSortDirection
   $filter: ModelRoundPlanDetailFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  roundPlanDetailsByRoundPlanlistID(
-    roundPlanlistID: $roundPlanlistID
+  roundPlanDetailsByFormlistID(
+    formlistID: $formlistID
     sortDirection: $sortDirection
     filter: $filter
     limit: $limit
@@ -180,7 +399,7 @@ query RoundPlanDetailsByRoundPlanlistID(
     items {
       id
       formData
-      roundPlanlistID
+      formlistID
       createdAt
       updatedAt
       _version
@@ -210,11 +429,11 @@ query GetRoundPlanList($id: ID!) {
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }

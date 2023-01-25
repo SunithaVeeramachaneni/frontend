@@ -1,4 +1,133 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateRoundPlanSubmissionDetails(
+  $filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
+) {
+  onCreateRoundPlanSubmissionDetails(filter: $filter) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateRoundPlanSubmissionDetails(
+  $filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
+) {
+  onUpdateRoundPlanSubmissionDetails(filter: $filter) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteRoundPlanSubmissionDetails(
+  $filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
+) {
+  onDeleteRoundPlanSubmissionDetails(filter: $filter) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnCreateRoundPlanSubmissionList(
+  $filter: ModelSubscriptionRoundPlanSubmissionListFilterInput
+) {
+  onCreateRoundPlanSubmissionList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateRoundPlanSubmissionList(
+  $filter: ModelSubscriptionRoundPlanSubmissionListFilterInput
+) {
+  onUpdateRoundPlanSubmissionList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteRoundPlanSubmissionList(
+  $filter: ModelSubscriptionRoundPlanSubmissionListFilterInput
+) {
+  onDeleteRoundPlanSubmissionList(filter: $filter) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateAuthoredRoundPlanDetail(
   $filter: ModelSubscriptionAuthoredRoundPlanDetailFilterInput
 ) {
@@ -8,8 +137,8 @@ subscription OnCreateAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -26,8 +155,8 @@ subscription OnUpdateAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -44,8 +173,8 @@ subscription OnDeleteAuthoredRoundPlanDetail(
     version
     pages
     counter
-    roundPlanDetailPublishStatus
-    roundplanslistID
+    formDetailPublishStatus
+    formlistID
     createdAt
     updatedAt
     _version
@@ -59,7 +188,7 @@ subscription OnCreateRoundPlanDetail(
   onCreateRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -73,7 +202,7 @@ subscription OnUpdateRoundPlanDetail(
   onUpdateRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -87,7 +216,7 @@ subscription OnDeleteRoundPlanDetail(
   onDeleteRoundPlanDetail(filter: $filter) {
     id
     formData
-    roundPlanlistID
+    formlistID
     createdAt
     updatedAt
     _version
@@ -116,11 +245,11 @@ subscription OnCreateRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }
@@ -156,11 +285,11 @@ subscription OnUpdateRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }
@@ -196,11 +325,11 @@ subscription OnDeleteRoundPlanList(
     isArchived
     searchTerm
     isArchivedAt
-    roundPlansListRoundPlanDetails {
+    RoundPlanSubmissionDetails {
       nextToken
       startedAt
     }
-    roundPlansListAuthoredRoundPlanDetails {
+    AuthoredRoundPlanDetails {
       nextToken
       startedAt
     }
