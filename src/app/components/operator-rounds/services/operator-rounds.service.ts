@@ -591,11 +591,11 @@ export class OperatorRoundsService {
   }
 
   fetchAllFormListNames$() {
-    const statement = `query { listRoundPlansLists(limit: ${limit}) { items { name } } }`;
+    const statement = `query { listRoundPlanLists(limit: ${limit}) { items { name } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
-        ({ data: { listFormLists } }: any) =>
-          listFormLists?.items as GetRoundPlanListQuery[]
+        ({ data: { listRoundPlanLists } }: any) =>
+          listRoundPlanLists?.items as GetRoundPlanListQuery[]
       )
     );
   }
