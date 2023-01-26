@@ -103,6 +103,8 @@
       }
       .action {
         padding: 0px 15px;
+        display: flex;
+        align-items: center;
       }
     }
     .addLogicRow {
@@ -129,5 +131,58 @@
 
   .required-checkbox {
     margin: 0 8px 0 0px;
+  }
+}
+
+.uomBtn {
+  color: $blue-main;
+}
+.uomMenu {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  // padding: 5px;
+  background: #f8f8f8;
+  .searchUOM {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    background: $gray3;
+    padding: 5px 10px;
+    .searchInput {
+      border: none;
+      width: 100%;
+      padding: 5px;
+      background: $gray3;
+    }
+  }
+  .noneOption {
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .uomOption {
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+    &:hover {
+      background: $hover-bg2;
+    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .uomSymbol {
+      font-weight: 600;
+    }
+    .uomTitle {
+    }
+  }
+}
+.rangeBtn {
+  .rangeValues {
+    color: $blue-main;
+  }
+  .rangeValuesNone {
+    color: $blue-main;
   }
 }

@@ -101,5 +101,13 @@
   "deleteArchivedFormModalHeading": "Alert",
   "deleteArchivedFormModalSubHeading": "Deleting a form will lead of all form data and it's responses",
   "cancelBtn": "Cancel",
-  "deleteBtn": "Delete"
+  "deleteBtn": "Delete",
+  "unitTxt": "Unit: ",
+  "rangeTxt": "Range: ",
+  "noneTxt": "None",
+  "rangeSelectorHeading": "Range",
+  "lowerLimitTxt": "Lower Limit",
+  "lowerLimitConditionTxt": "When answer is less than Lower Limit",
+  "upperLimitTxt": "Upper Limit",
+  "upperLimitConditionTxt": "When answer is greater than Upper Limit"
 }

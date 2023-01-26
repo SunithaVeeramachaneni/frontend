@@ -43,6 +43,8 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -84,6 +86,8 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
     MatTabsModule,
     MatCheckboxModule,
     MatButtonToggleModule,
+    MatRadioModule,
+    MatDividerModule,
     MatSelectModule,
     MatTooltipModule,
     NgxShimmerLoadingModule,

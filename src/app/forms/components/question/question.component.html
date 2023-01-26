@@ -66,7 +66,7 @@
             <app-response-type
               (selectFieldTypeEvent)="selectFieldTypeEventHandler($event)"
               (responseTypeCloseEvent)="responseTypeCloseEventHandler($event)"
-              (setQuestionValue)="questionForm.get('value').setValue($event)"
+              (setQuestionValue)="setQuestionValue($event)"
               [fieldTypes]="fieldTypes"
               [question]="question"
             ></app-response-type>
@@ -129,6 +129,55 @@
               </span>
 
               <span
+                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                class="action"
+              >
+                <span translate="unitTxt"></span>
+                <button mat-button [matMenuTriggerFor]="menu" class="uomBtn">
+                  {{ questionForm.get('unitOfMeasurement').value }}
+                </button>
+                <mat-menu #menu="matMenu">
+                  <ng-template matMenuContent>
+                    <div (click)="$event.stopPropagation()" class="uomMenu">
+                      <span class="searchUOM">
+                        <mat-icon>search</mat-icon>
+                        <input
+                          type="text"
+                          (keyup)="onKey($event)"
+                          placeholder="Search.."
+                          class="searchInput"
+                        />
+                      </span>
+
+                      <span class="noneOption">None</span>
+                      <span
+                        *ngFor="let uom of unitOfMeasurementsAvailable"
+                        class="uomOption"
+                        (click)="uomChanged(uom)"
+                      >
+                        <span class="uomSymbol">{{ uom.code }}</span>
+                        <span class="uomTitle">{{ uom.title }}</span>
+                      </span>
+                    </div>
+                  </ng-template>
+                </mat-menu>
+              </span>
+
+              <span
+                *ngIf="questionForm.get('fieldType').value === 'NF'"
+                class="action"
+              >
+                <span translate="rangeTxt"></span>
+                <button
+                  mat-button
+                  class="rangeBtn"
+                  (click)="rangeSelectorOpen(questionForm.value)"
+                >
+                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
+                </button>
+              </span>
+
+              <span
                 *ngIf="questionForm.get('fieldType').value === 'LF'"
                 class="action"
               >
@@ -186,6 +235,7 @@
               </span>
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
+                (rangeSelectionHandler)="rangeSelectionHandler($event)"
                 [question]="question"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"
