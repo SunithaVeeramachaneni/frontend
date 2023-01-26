@@ -16,6 +16,7 @@
   "addFormDescription": " Add a short description to your form",
   "tags": "Tags",
   "nextBtn": "Next",
+  "nextBtnPreview": "Next",
   "skipBtn": "Skip",
   "name": "Form Name",
   "required": "{name} is required",
@@ -111,5 +112,13 @@
   "importQuestions": "Import Questions",
   "new": "Add as new page",
   "existing": "Add to existing page",
-  "import": "Import"
+  "import": "Import",
+  "unitTxt": "Unit: ",
+  "rangeTxt": "Range: ",
+  "noneTxt": "None",
+  "rangeSelectorHeading": "Range",
+  "lowerLimitTxt": "Lower Limit",
+  "lowerLimitConditionTxt": "When answer is less than Lower Limit",
+  "upperLimitTxt": "Upper Limit",
+  "upperLimitConditionTxt": "When answer is greater than Upper Limit"
 }

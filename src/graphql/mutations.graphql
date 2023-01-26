@@ -1,4 +1,364 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateRoundPlanSubmissionDetails(
+  $input: CreateRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  createRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanSubmissionDetails(
+  $input: UpdateRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  updateRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanSubmissionDetails(
+  $input: DeleteRoundPlanSubmissionDetailsInput!
+  $condition: ModelRoundPlanSubmissionDetailsConditionInput
+) {
+  deleteRoundPlanSubmissionDetails(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    formsubmissionlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateRoundPlanSubmissionList(
+  $input: CreateRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  createRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanSubmissionList(
+  $input: UpdateRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  updateRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanSubmissionList(
+  $input: DeleteRoundPlanSubmissionListInput!
+  $condition: ModelRoundPlanSubmissionListConditionInput
+) {
+  deleteRoundPlanSubmissionList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    location
+    roundType
+    status
+    assignee
+    dueDate
+    version
+    submittedBy
+    searchTerm
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateAuthoredRoundPlanDetail(
+  $input: CreateAuthoredRoundPlanDetailInput!
+  $condition: ModelAuthoredRoundPlanDetailConditionInput
+) {
+  createAuthoredRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formDetailPublishStatus
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateAuthoredRoundPlanDetail(
+  $input: UpdateAuthoredRoundPlanDetailInput!
+  $condition: ModelAuthoredRoundPlanDetailConditionInput
+) {
+  updateAuthoredRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formDetailPublishStatus
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteAuthoredRoundPlanDetail(
+  $input: DeleteAuthoredRoundPlanDetailInput!
+  $condition: ModelAuthoredRoundPlanDetailConditionInput
+) {
+  deleteAuthoredRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formStatus
+    version
+    pages
+    counter
+    formDetailPublishStatus
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateRoundPlanDetail(
+  $input: CreateRoundPlanDetailInput!
+  $condition: ModelRoundPlanDetailConditionInput
+) {
+  createRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanDetail(
+  $input: UpdateRoundPlanDetailInput!
+  $condition: ModelRoundPlanDetailConditionInput
+) {
+  updateRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanDetail(
+  $input: DeleteRoundPlanDetailInput!
+  $condition: ModelRoundPlanDetailConditionInput
+) {
+  deleteRoundPlanDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateRoundPlanList(
+  $input: CreateRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
+) {
+  createRoundPlanList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    AuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateRoundPlanList(
+  $input: UpdateRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
+) {
+  updateRoundPlanList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    AuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteRoundPlanList(
+  $input: DeleteRoundPlanListInput!
+  $condition: ModelRoundPlanListConditionInput
+) {
+  deleteRoundPlanList(input: $input, condition: $condition) {
+    id
+    name
+    description
+    formLogo
+    isPublic
+    publishedDate
+    location
+    roundType
+    formStatus
+    assignee
+    tags
+    lastPublishedBy
+    author
+    formType
+    isArchived
+    searchTerm
+    isArchivedAt
+    RoundPlanSubmissionDetails {
+      nextToken
+      startedAt
+    }
+    AuthoredRoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    RoundPlanDetails {
+      nextToken
+      startedAt
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateResponseSet(
   $input: CreateResponseSetInput!
   $condition: ModelResponseSetConditionInput
@@ -53,14 +413,15 @@ mutation DeleteResponseSet(
     _lastChangedAt
   }
 }
-mutation CreateFormDetail(
-  $input: CreateFormDetailInput!
-  $condition: ModelFormDetailConditionInput
+mutation CreateFormSubmissionDetail(
+  $input: CreateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
 ) {
-  createFormDetail(input: $input, condition: $condition) {
+  createFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -68,14 +429,15 @@ mutation CreateFormDetail(
     _lastChangedAt
   }
 }
-mutation UpdateFormDetail(
-  $input: UpdateFormDetailInput!
-  $condition: ModelFormDetailConditionInput
+mutation UpdateFormSubmissionDetail(
+  $input: UpdateFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
 ) {
-  updateFormDetail(input: $input, condition: $condition) {
+  updateFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -83,14 +445,15 @@ mutation UpdateFormDetail(
     _lastChangedAt
   }
 }
-mutation DeleteFormDetail(
-  $input: DeleteFormDetailInput!
-  $condition: ModelFormDetailConditionInput
+mutation DeleteFormSubmissionDetail(
+  $input: DeleteFormSubmissionDetailInput!
+  $condition: ModelFormSubmissionDetailConditionInput
 ) {
-  deleteFormDetail(input: $input, condition: $condition) {
+  deleteFormSubmissionDetail(input: $input, condition: $condition) {
     id
     formData
     formlistID
+    formsubmissionlistID
     createdAt
     updatedAt
     _version
@@ -155,54 +518,6 @@ mutation DeleteAuthoredFormDetail(
     _lastChangedAt
   }
 }
-mutation CreateFormSubmissionDetail(
-  $input: CreateFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  createFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation UpdateFormSubmissionDetail(
-  $input: UpdateFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  updateFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
-mutation DeleteFormSubmissionDetail(
-  $input: DeleteFormSubmissionDetailInput!
-  $condition: ModelFormSubmissionDetailConditionInput
-) {
-  deleteFormSubmissionDetail(input: $input, condition: $condition) {
-    id
-    formData
-    formsubmissionlistID
-    formlistID
-    createdAt
-    updatedAt
-    _version
-    _deleted
-    _lastChangedAt
-  }
-}
 mutation CreateFormSubmissionList(
   $input: CreateFormSubmissionListInput!
   $condition: ModelFormSubmissionListConditionInput
@@ -220,11 +535,11 @@ mutation CreateFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -249,11 +564,11 @@ mutation UpdateFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -278,11 +593,11 @@ mutation DeleteFormSubmissionList(
     dueDate
     version
     submittedBy
+    searchTerm
     formSubmissionListFormSubmissionDetail {
       nextToken
       startedAt
     }
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -309,6 +624,9 @@ mutation CreateFormList(
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -321,8 +639,6 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -349,6 +665,9 @@ mutation UpdateFormList(
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -361,8 +680,6 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
     createdAt
     updatedAt
     _version
@@ -389,6 +706,9 @@ mutation DeleteFormList(
     lastPublishedBy
     author
     formType
+    isArchived
+    searchTerm
+    isArchivedAt
     formListFormSubmissionDetail {
       nextToken
       startedAt
@@ -401,8 +721,51 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
-    isArchived
-    searchTerm
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation CreateFormDetail(
+  $input: CreateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  createFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateFormDetail(
+  $input: UpdateFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  updateFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteFormDetail(
+  $input: DeleteFormDetailInput!
+  $condition: ModelFormDetailConditionInput
+) {
+  deleteFormDetail(input: $input, condition: $condition) {
+    id
+    formData
+    formlistID
     createdAt
     updatedAt
     _version

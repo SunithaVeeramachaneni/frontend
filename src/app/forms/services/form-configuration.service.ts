@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { Question, Section } from 'src/app/interfaces';
+import { NumberRangeMetadata, Question, Section } from 'src/app/interfaces';
 import { State } from 'src/app/state/app.state';
 
 @Injectable({
@@ -204,7 +204,9 @@ export class FormConfigurationService {
       isPublished: false,
       isPublishedTillSave: false,
       isOpen: question ? false : true,
-      isResponseTypeModalOpen: false
+      isResponseTypeModalOpen: false,
+      unitOfMeasurement: 'None',
+      rangeMetadata: {} as NumberRangeMetadata
     };
   }
 }

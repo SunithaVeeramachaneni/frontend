@@ -1,0 +1,35 @@
+<div *ngIf="currentRouteUrl$ | async as currentRouteUrl">
+  <ng-container *ngIf="currentRouteUrl === routingUrls.operatorRoundPlans.url">
+    <div class="dis-flex container-padding">
+      <button class="widgets" (click)="openRoundPlanCreationModal()">
+        <img
+          src="assets/rdf-forms-icons/add-form.svg"
+          alt="Create"
+          width="22"
+          height="22"
+        />
+        <span class="widgets-title" translate="createForm"></span>
+      </button>
+      <button class="widgets" [disabled]="true">
+        <img
+          src="assets/rdf-forms-icons/import-excel.svg"
+          alt="Import"
+          width="25"
+          height="25"
+        />
+        <span class="widgets-title" translate="importForm"></span>
+      </button>
+      <button class="widgets" [disabled]="true">
+        <img
+          src="assets/rdf-forms-icons/export-excel.svg"
+          alt="Export"
+          width="25"
+          height="25"
+        />
+        <span class="widgets-title" translate="exportExcel"></span>
+      </button>
+    </div>
+    <app-round-plan-list></app-round-plan-list>
+  </ng-container>
+  <router-outlet></router-outlet>
+</div>

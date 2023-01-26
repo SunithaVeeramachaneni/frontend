@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ResponseTypeOpenState } from 'src/app/interfaces/response-type';
+import {
+  RangeSelectorState,
+  ResponseTypeOpenState
+} from 'src/app/interfaces/response-type';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +16,14 @@ export class FormService {
       isOpen: false,
       response: {}
     });
+  private rangeSelectorOpenStateSubject = new BehaviorSubject<any>({
+    isOpen: false,
+    rangeMetadata: {}
+  });
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
+  rangeSelectorOpenState$ = this.rangeSelectorOpenStateSubject.asObservable();
 
   constructor() {}
 
@@ -25,5 +33,8 @@ export class FormService {
 
   setMultiChoiceOpenState(responseType: ResponseTypeOpenState) {
     this.multiChoiceOpenStateSubject.next(responseType);
+  }
+  setRangeSelectorOpenState(rangeMetadata: RangeSelectorState) {
+    this.rangeSelectorOpenStateSubject.next(rangeMetadata);
   }
 }

@@ -46,6 +46,7 @@ import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { ImportQuestionsSliderComponent } from './components/import-questions/import-questions-slider/import-questions-slider.component';
 import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatTabsModule,
     MatCheckboxModule,
     MatButtonToggleModule,
+    MatRadioModule,
+    MatDividerModule,
     MatSelectModule,
     MatTooltipModule,
     MatRadioModule,

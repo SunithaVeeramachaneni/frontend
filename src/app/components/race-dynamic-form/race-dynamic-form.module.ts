@@ -1,5 +1,5 @@
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatTreeModule } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -123,6 +123,22 @@ export const customTranslateLoader = (http: HttpClient) =>
       responseSet: responseSetReducer
     }),
     EffectsModule.forFeature([FormConfigurationEffects, ResponseSetEffects])
+  ],
+  exports: [
+    FormContainerComponent,
+    FormListComponent,
+    FormDetailComponent,
+    SubmissionComponent,
+    ResponseSetComponent,
+    PublicLibraryComponent,
+    FormConfigurationModalComponent,
+    FormConfigurationComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent,
+    SelectQuestionsDialogComponent,
+    AvatarComponent,
+    ArchivedListComponent,
+    ArchivedDeleteModalComponent
   ]
 })
 export class RaceDynamicFormModule {

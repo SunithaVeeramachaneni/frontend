@@ -25,7 +25,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
-import { QuestionEvent, Question } from 'src/app/interfaces';
+import {
+  QuestionEvent,
+  Question,
+  NumberRangeMetadata
+} from 'src/app/interfaces';
 import {
   getQuestionByID,
   getSectionQuestionsCount,
@@ -106,6 +110,21 @@ export class QuestionComponent implements OnInit {
     'DF'
   ];
 
+  unitOfMeasurementsAvailable = [];
+
+  unitOfMeasurements = [
+    {
+      code: 'cm',
+      symbol: '^C',
+      title: 'Centimetre'
+    },
+    {
+      code: 'Km',
+      symbol: 'Km',
+      title: 'Kilometre'
+    }
+  ];
+
   questionForm: FormGroup = this.fb.group({
     id: '',
     sectionId: '',
@@ -118,7 +137,9 @@ export class QuestionComponent implements OnInit {
     isPublished: false,
     isPublishedTillSave: false,
     isOpen: false,
-    isResponseTypeModalOpen: false
+    isResponseTypeModalOpen: false,
+    unitOfMeasurement: 'None',
+    rangeMetadata: {} as NumberRangeMetadata
   });
   question$: Observable<Question>;
   question: Question;
@@ -152,6 +173,8 @@ export class QuestionComponent implements OnInit {
         this.formId = data.id;
       }
     });
+
+    this.unitOfMeasurementsAvailable = this.unitOfMeasurements;
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -227,6 +250,28 @@ export class QuestionComponent implements OnInit {
     }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
+    );
+  }
+
+  getRangeMetadata() {
+    return this.questionForm.get('rangeMetadata').value;
+  }
+
+  uomChanged(event) {
+    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+  }
+
+  onKey(event) {
+    const value = event.target.value;
+    this.unitOfMeasurementsAvailable = [...this.search(value)];
+  }
+  search(value: string) {
+    const filter = value.toLowerCase();
+    return this.unitOfMeasurements.filter(
+      (option) =>
+        option.title.toLowerCase().startsWith(filter) ||
+        option.code.toLowerCase().startsWith(filter) ||
+        option.symbol.toLowerCase().startsWith(filter)
     );
   }
 
@@ -313,6 +358,21 @@ export class QuestionComponent implements OnInit {
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
+  rangeSelectorOpen(question) {
+    this.formService.setRangeSelectorOpenState({
+      isOpen: true,
+      rangeMetadata: question.rangeMetadata
+    });
+  }
+
+  getRangeDisplayText() {
+    let resp = 'None';
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+    return resp;
+  }
 
   insertImageHandler(event) {
     let base64: string;
@@ -361,13 +421,16 @@ export class QuestionComponent implements OnInit {
   responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(isResponseTypeModalOpen);
+      .setValue(isResponseTypeModalOpen, { emitEvent: false });
   }
 
   responseTypeCloseEventHandler(responseTypeClosed: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(!responseTypeClosed);
+      .setValue(!responseTypeClosed, { emitEvent: false });
+  }
+  setQuestionValue(event) {
+    this.questionForm.get('value').setValue(event, { emitEvent: false });
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
@@ -494,6 +557,13 @@ export class QuestionComponent implements OnInit {
           .subscribe((response) => {
             // do nothing
           });
+        break;
+    }
+  }
+  rangeSelectionHandler(event) {
+    switch (event.eventType) {
+      case 'update':
+        this.questionForm.get('rangeMetadata').setValue(event.data);
         break;
     }
   }

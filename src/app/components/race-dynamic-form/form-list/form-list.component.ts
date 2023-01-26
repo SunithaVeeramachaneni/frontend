@@ -528,6 +528,10 @@ export class FormListComponent implements OnInit {
     this.menuState = 'out';
     this.store.dispatch(FormConfigurationActions.resetPages());
   }
+  formDetailActionHandler(event) {
+    this.store.dispatch(FormConfigurationActions.resetPages());
+    this.router.navigate([`/forms/edit/${this.selectedForm.id}`]);
+  }
 
   private generateCopyFormName(
     form: GetFormListQuery,

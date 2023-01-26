@@ -16,7 +16,11 @@ import {
   pairwise,
   tap
 } from 'rxjs/operators';
-import { ResponseTypeOpenState } from 'src/app/interfaces';
+import {
+  NumberRangeMetadata,
+  RangeSelectorState,
+  ResponseTypeOpenState
+} from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
 
 @Component({
@@ -31,17 +35,22 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   @Output() setSliderValues: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() responseTypeHandler: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rangeSelectionHandler: EventEmitter<any> = new EventEmitter<any>();
 
   @Input() question;
   sliderOpenState$: Observable<boolean>;
   multipleChoiceOpenState$: Observable<ResponseTypeOpenState>;
+  rangeSelectorOpenState$: Observable<RangeSelectorState>;
 
   responseId = '';
   respType = '';
 
   public responseForm: FormGroup;
+  public rangeMetadataForm: FormGroup;
+
   public isFormNotUpdated = true;
   multipleChoiceOpenState = false;
+  rangeSelectorOpenState = false;
 
   sliderOptions = {
     value: 0,
@@ -49,6 +58,10 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     max: 100,
     increment: 1
   };
+
+  lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
+  upperLimitActions = ['None', 'Warning', 'Alert', 'Note', 'Impact'];
+
   constructor(
     private formService: FormService,
     private fb: FormBuilder,
@@ -58,6 +71,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   ngOnInit(): void {
     this.sliderOpenState$ = this.formService.sliderOpenState$;
     this.multipleChoiceOpenState$ = this.formService.multiChoiceOpenState$;
+    this.rangeSelectorOpenState$ = this.formService.rangeSelectorOpenState$;
 
     this.multipleChoiceOpenState$.subscribe((state) => {
       this.multipleChoiceOpenState = state.isOpen;
@@ -80,10 +94,27 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       }
     });
 
+    this.rangeSelectorOpenState$.subscribe((state) => {
+      this.rangeSelectorOpenState = state.isOpen;
+      this.cdrf.detectChanges();
+      if (state.isOpen) {
+        this.rangeMetadataForm.patchValue(state.rangeMetadata);
+      }
+    });
+
     this.responseForm = this.fb.group({
       id: new FormControl(''),
       name: new FormControl(''),
       responses: this.fb.array([])
+    });
+
+    this.rangeMetadataForm = this.fb.group({
+      min: undefined,
+      max: undefined,
+      minMsg: '',
+      maxMsg: '',
+      minAction: '',
+      maxAction: ''
     });
 
     this.responseForm.valueChanges
@@ -100,6 +131,22 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
           else if (curr.responses.find((item) => !item.title))
             this.isFormNotUpdated = true;
           else this.isFormNotUpdated = false;
+          this.cdrf.markForCheck();
+        })
+      )
+      .subscribe();
+
+    this.rangeMetadataForm.valueChanges
+      .pipe(
+        pairwise(),
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(([prev, curr]) => {
+          if (isEqual(prev, curr)) {
+            this.isFormNotUpdated = true;
+          } else {
+            this.isFormNotUpdated = false;
+          }
           this.cdrf.markForCheck();
         })
       )
@@ -161,4 +208,31 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   cancelSlider = () => {
     this.formService.setsliderOpenState(false);
   };
+
+  cancelRangeSelection = () => {
+    this.formService.setRangeSelectorOpenState({
+      isOpen: false,
+      rangeMetadata: {} as NumberRangeMetadata
+    });
+  };
+  submitRangeSelection = () => {
+    console.log({
+      eventType: 'update',
+      data: this.rangeMetadataForm.getRawValue()
+    });
+    this.rangeSelectionHandler.emit({
+      eventType: 'update',
+      data: this.rangeMetadataForm.getRawValue()
+    });
+    this.formService.setRangeSelectorOpenState({
+      isOpen: false,
+      rangeMetadata: {} as NumberRangeMetadata
+    });
+  };
+  focusMinMsg() {
+    document.getElementById('minMsgInput').focus();
+  }
+  focusMaxMsg() {
+    document.getElementById('maxMsgInput').focus();
+  }
 }

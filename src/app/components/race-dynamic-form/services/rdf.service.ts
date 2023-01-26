@@ -452,6 +452,22 @@ export class RaceDynamicFormService {
                 });
               }
 
+              if (question.fieldType === 'NF') {
+                Object.assign(questionItem, {
+                  MEASUREMENT:
+                    question.unitOfMeasurement !== 'None'
+                      ? question.unitOfMeasurement
+                      : '',
+                  DEFAULTVALUE: JSON.stringify({
+                    min: question.rangeMetadata.min,
+                    max: question.rangeMetadata.max,
+                    minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                    maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                    value: ''
+                  })
+                });
+              }
+
               if (
                 question.fieldType === 'DD' &&
                 question.value?.type === 'globalResponse'
@@ -662,9 +678,7 @@ export class RaceDynamicFormService {
             },
             responses,
             createdAt: format(new Date(p?.createdAt), 'Do MMM'),
-            updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
-              addSuffix: true
-            })
+            updatedAt: p.updatedAt ? p.updatedAt : ''
           };
         }) || [];
     const nextToken = resp?.nextToken;
