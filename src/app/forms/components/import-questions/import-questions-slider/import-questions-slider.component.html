@@ -8,10 +8,10 @@
 >
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
-      <div class="slider-heading">Import Questions</div>
+      <div class="slider-heading" translate>importQuestions</div>
     </mat-card-title>
     <mat-card-content>
-      <div style="font-weight: 500; font-size: 130%">
+      <div class="form-name">
         {{ selectedFormName }}
       </div>
       <div *ngFor="let page of selectedFormData; let i = index">
@@ -47,18 +47,20 @@
         </div>
       </div>
     </mat-card-content>
-    <div style="padding: 0 15px 10px 15px">
+    <div class="use-cancel">
+      <button
+        mat-stroked-button
+        class="cancel-button"
+        (click)="cancel()"
+        translate="cancel"
+      ></button>
       <button
         mat-raised-button
         color="primary"
-        style="width: 48%; margin-right: 10px"
+        class="use-button"
         (click)="useForm()"
-      >
-        Use
-      </button>
-      <button mat-stroked-button style="width: 48%" (click)="cancel()">
-        Cancel
-      </button>
+        translate="use"
+      ></button>
     </div>
   </mat-card>
 </div>

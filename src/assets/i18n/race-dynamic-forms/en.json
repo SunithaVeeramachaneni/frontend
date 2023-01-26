@@ -100,5 +100,16 @@
   "deleteArchivedFormModalHeading": "Alert",
   "deleteArchivedFormModalSubHeading": "Deleting a form will lead of all form data and it's responses",
   "cancelBtn": "Cancel",
-  "deleteBtn": "Delete"
+  "deleteBtn": "Delete",
+  "selectForm": "Select Form",
+  "select": "Select",
+  "close": "Close",
+  "noResults": "No results",
+  "search": "Search",
+  "formDescription": "No Description",
+  "use": "Use",
+  "importQuestions": "Import Questions",
+  "new": "Add as new page",
+  "existing": "Add to existing page",
+  "import": "Import"
 }

@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { combineLatest, Observable, of } from 'rxjs';
 import {
-  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -18,8 +17,7 @@ import { FormMetadata, TableEvent } from '../../../../interfaces';
 import { defaultLimit } from '../../../../app.constants';
 import { RaceDynamicFormService } from '../../services/rdf.service';
 import { GetFormListQuery } from '../../../../API.service';
-import { getFormDetails, getFormMetadata, State } from 'src/app/forms/state';
-import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { getFormMetadata, State } from 'src/app/forms/state';
 
 interface SearchEvent {
   data: 'search' | 'load' | 'infiniteScroll';
@@ -42,6 +40,10 @@ export class ImportQuestionsModalComponent implements OnInit {
   authoredFormDetail;
   nextToken = '';
   fetchType = 'load';
+  formMetadata$: Observable<FormMetadata>;
+  formMetadata: FormMetadata;
+  ghostLoading = new Array(7).fill(0).map((v, i) => i);
+
   constructor(
     public dialogRef: MatDialogRef<ImportQuestionsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -64,6 +66,10 @@ export class ImportQuestionsModalComponent implements OnInit {
       .subscribe();
 
     this.getDisplayedForms();
+
+    this.formMetadata$ = this.store
+      .select(getFormMetadata)
+      .pipe(tap((formMetadata) => (this.formMetadata = formMetadata)));
   }
 
   getDisplayedForms(): void {
@@ -95,13 +101,14 @@ export class ImportQuestionsModalComponent implements OnInit {
     this.forms$ = combineLatest([formsOnLoadSearch$, onScrollForms$]).pipe(
       map(([rows, scrollData]) => {
         if (this.skip === 0) {
-          initial.data = rows;
+          initial.data = rows.filter((row) => row.id !== this.formMetadata.id);
         } else {
-          initial.data = initial.data.concat(scrollData);
+          initial.data = initial.data.concat(
+            scrollData.filter((data) => data.id !== this.formMetadata.id)
+          );
         }
 
         this.skip = initial.data.length;
-        // this.dataSource = new MatTableDataSource(initial.data);
         return initial;
       })
     );

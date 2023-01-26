@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { cloneDeep } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 import {
   getPagesCount,
   getQuestionCounter,
@@ -11,7 +12,6 @@ import {
 } from 'src/app/forms/state';
 import { Question } from 'src/app/interfaces';
 import { State } from 'src/app/state/app.state';
-import { FormConfigurationService } from '../../services/form-configuration.service';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 
 @Component({
@@ -62,19 +62,6 @@ export class ImportQuestionsSliderComponent implements OnInit {
         return section.questions.length;
       });
     });
-
-    console.log(importFormData);
-
-    /* importQuestions.forEach((page) => {
-      page.sections = page.sections.filter((section) => {
-        section.questions = section.questions.filter(
-          (question) => question.checked === true
-        );
-        // console.log(section.questions);
-        return section.questions.length;
-      });
-      // console.log(page.sections);
-    }); */
     importFormData = importFormData.filter((page) => page.sections.length);
     importFormData.forEach((page) =>
       page.sections.forEach((section) => {
@@ -94,7 +81,6 @@ export class ImportQuestionsSliderComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((data) => {
       if (data.selectedPageOption === 'new') {
-        // push data to new pages
         this.formConfigurationService.addPage(
           this.pagesCount,
           0,
@@ -104,7 +90,6 @@ export class ImportQuestionsSliderComponent implements OnInit {
           this.importQuestions
         );
       } else if (data.selectedPageOption === 'existing') {
-        // push data to the selectedPage
         console.log(data.selectedPage);
         this.formConfigurationService.addSection(
           data.selectedPage.position - 1,

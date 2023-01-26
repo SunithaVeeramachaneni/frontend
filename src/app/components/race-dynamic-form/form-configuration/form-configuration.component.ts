@@ -66,7 +66,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ImportQuestionsModalComponent } from '../import-questions/import-questions-modal/import-questions-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { FormConfigurationService } from '../services/form-configuration.service';
+import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 
 @Component({
   selector: 'app-form-configuration',

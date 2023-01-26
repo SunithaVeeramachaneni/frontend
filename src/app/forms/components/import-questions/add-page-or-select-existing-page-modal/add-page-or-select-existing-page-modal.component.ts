@@ -10,9 +10,11 @@ import { Page } from 'src/app/interfaces';
   styleUrls: ['./add-page-or-select-existing-page-modal.component.scss']
 })
 export class AddPageOrSelectExistingPageModalComponent implements OnInit {
-  selectedOption = 'new';
+  selectedPageOption = 'new';
+  pageOptions: string[] = ['new', 'existing'];
   selectedPage;
   selectedPageControl = new FormControl();
+
   constructor(
     public dialogRef: MatDialogRef<AddPageOrSelectExistingPageModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data
@@ -22,10 +24,6 @@ export class AddPageOrSelectExistingPageModalComponent implements OnInit {
     this.selectedPageControl.setValue(this.data.pages[0]);
   }
 
-  onChange(event) {
-    this.selectedOption = event.target.value;
-  }
-
   cancel() {
     this.dialogRef.close({});
   }
@@ -33,7 +31,7 @@ export class AddPageOrSelectExistingPageModalComponent implements OnInit {
   import() {
     this.dialogRef.close({
       selectedPage: this.selectedPageControl.value,
-      selectedPageOption: this.selectedOption
+      selectedPageOption: this.selectedPageOption
     });
   }
 

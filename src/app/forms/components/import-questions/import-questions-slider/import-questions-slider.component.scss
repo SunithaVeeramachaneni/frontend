@@ -1,3 +1,5 @@
+@import '../../../../../scss/colors.scss';
+
 #import-form-customizer {
   position: fixed;
   bottom: 0px;
@@ -7,8 +9,15 @@
   z-index: 999;
 
   .slider-heading {
-    padding: 15px 15px 5px 15px;
+    padding: 15px 15px 15px 15px;
     font-size: 80%;
+    border-bottom: 1px solid $gray9;
+    margin: 0 15px;
+  }
+
+  .form-name {
+    font-weight: 500;
+    font-size: 130%;
   }
 
   .mat-card {
@@ -17,9 +26,10 @@
     height: 100%;
     padding: 0;
   }
+
   .mat-card-content {
     padding: 0 15px;
-    max-height: 82vh;
+    max-height: 80vh;
     overflow-y: auto;
   }
 
@@ -33,6 +43,19 @@
 
   .questions {
     padding-left: 12px;
+  }
+
+  .use-cancel {
+    padding: 0 15px 10px 15px;
+
+    .use-button {
+      width: 48%;
+    }
+
+    .cancel-button {
+      width: 48%;
+      margin-right: 10px;
+    }
   }
 
   ::ng-deep .mat-checkbox-layout {

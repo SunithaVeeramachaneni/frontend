@@ -13,7 +13,6 @@ export class FormService {
       isOpen: false,
       response: {}
     });
-  private openResponseTypeSubject = new BehaviorSubject<boolean>(false);
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
   multiChoiceOpenState$ = this.multiChoiceOpenStateSubject.asObservable();
