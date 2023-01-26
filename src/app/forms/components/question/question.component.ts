@@ -24,7 +24,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
 import { fieldTypesMock } from '../response-type/response-types.mock';
-import { QuestionEvent, Question } from 'src/app/interfaces';
+import {
+  QuestionEvent,
+  Question,
+  NumberRangeMetadata
+} from 'src/app/interfaces';
 import {
   getQuestionByID,
   getSectionQuestionsCount,
@@ -134,8 +138,7 @@ export class QuestionComponent implements OnInit {
     isOpen: false,
     isResponseTypeModalOpen: false,
     unitOfMeasurement: 'None',
-    lowerLimit: 1,
-    upperLimit: 100
+    rangeMetadata: {} as NumberRangeMetadata
   });
   question$: Observable<Question>;
   question: Question;
@@ -243,10 +246,17 @@ export class QuestionComponent implements OnInit {
     );
   }
 
+  getRangeMetadata() {
+    return this.questionForm.get('rangeMetadata').value;
+  }
+
+  uomChanged(event) {
+    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+  }
+
   onKey(event) {
     const value = event.target.value;
     this.unitOfMeasurementsAvailable = [...this.search(value)];
-    console.log(this.unitOfMeasurementsAvailable);
   }
   search(value: string) {
     const filter = value.toLowerCase();
@@ -344,8 +354,17 @@ export class QuestionComponent implements OnInit {
   rangeSelectorOpen(question) {
     this.formService.setRangeSelectorOpenState({
       isOpen: true,
-      rangeValues: question
+      rangeMetadata: question.rangeMetadata
     });
+  }
+
+  getRangeDisplayText() {
+    let resp = 'None';
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+    return resp;
   }
 
   insertImageHandler(event) {
@@ -531,6 +550,13 @@ export class QuestionComponent implements OnInit {
           .subscribe((response) => {
             // do nothing
           });
+        break;
+    }
+  }
+  rangeSelectionHandler(event) {
+    switch (event.eventType) {
+      case 'update':
+        this.questionForm.get('rangeMetadata').setValue(event.data);
         break;
     }
   }

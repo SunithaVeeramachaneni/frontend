@@ -144,43 +144,65 @@
       <div class="mcq-heading" translate="rangeSelectorHeading"></div>
     </mat-card-title>
     <mat-card-content>
-      <div class="rangeLimitContainer">
+      <div class="rangeLimitContainer" [formGroup]="rangeMetadataForm">
         <div class="limit">
           <div class="limitContent">
             <div class="limitValue">
-              <span>Lower Limit</span>
+              <span translate="lowerLimitTxt"></span>
               <input
                 matInput
                 type="number"
                 autocomplete="off"
                 class="inputField"
+                formControlName="min"
               />
             </div>
             <div class="limitAction">
-              <label>When answer is less than Lower Limit</label>
-              <mat-radio-group class="limitRadioGroup">
-                <mat-radio-button class="limitRadioOption" [value]="'None'">
-                  None
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Warning'">
-                  Warning
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Alert'">
-                  Alert
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Note'">
-                  Note
+              <label translate="lowerLimitConditionTxt"></label>
+              <mat-radio-group
+                class="limitRadioGroup"
+                formControlName="minAction"
+              >
+                <mat-radio-button
+                  *ngFor="let action of lowerLimitActions"
+                  class="limitRadioOption"
+                  [value]="action"
+                >
+                  {{ action }}
                 </mat-radio-button>
               </mat-radio-group>
             </div>
           </div>
-          <div class="limitMessage">
+          <div
+            class="limitMessage"
+            [ngClass]="{
+              warning: rangeMetadataForm.get('minAction').value === 'Warning',
+              alert: rangeMetadataForm.get('minAction').value === 'Alert',
+              note: rangeMetadataForm.get('minAction').value === 'Note'
+            }"
+            *ngIf="
+              rangeMetadataForm.get('minAction').value &&
+              rangeMetadataForm.get('minAction').value.length &&
+              rangeMetadataForm.get('minAction').value !== 'None'
+            "
+          >
             <div class="messageHead">
               <span class="titleRow">
                 <mat-icon class="titleRowIcon">warning</mat-icon
-                ><span class="title">Warning:</span>
+                ><span class="title">
+                  {{ rangeMetadataForm.get('minAction').value }}
+                </span>
               </span>
-              <mat-icon class="editIcon">edit</mat-icon>
+              <mat-icon class="editIcon" (click)="focusMinMsg()">edit</mat-icon>
+            </div>
+            <div class="messageInput">
+              <input
+                matInput
+                id="minMsgInput"
+                autocomplete="off"
+                class="inputField"
+                formControlName="minMsg"
+              />
             </div>
           </div>
         </div>
@@ -188,42 +210,62 @@
         <div class="limit">
           <div class="limitContent">
             <div class="limitValue">
-              <span>Upper Limit</span>
+              <span translate="upperLimitTxt"></span>
               <input
                 matInput
                 type="number"
                 autocomplete="off"
                 class="inputField"
+                formControlName="max"
               />
             </div>
             <div class="limitAction">
-              <label>When answer is greater than Upper Limit</label>
-              <mat-radio-group class="limitRadioGroup">
-                <mat-radio-button class="limitRadioOption" [value]="'None'">
-                  None
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Warning'">
-                  Warning
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Alert'">
-                  Alert
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Note'">
-                  Note
-                </mat-radio-button>
-                <mat-radio-button class="limitRadioOption" [value]="'Impact'">
-                  Impact
+              <label translate="upperLimitConditionTxt"></label>
+              <mat-radio-group
+                class="limitRadioGroup"
+                formControlName="maxAction"
+              >
+                <mat-radio-button
+                  *ngFor="let action of upperLimitActions"
+                  class="limitRadioOption"
+                  [value]="action"
+                >
+                  {{ action }}
                 </mat-radio-button>
               </mat-radio-group>
             </div>
           </div>
-          <div class="limitMessage">
+          <div
+            class="limitMessage"
+            [ngClass]="{
+              warning: rangeMetadataForm.get('maxAction').value === 'Warning',
+              alert: rangeMetadataForm.get('maxAction').value === 'Alert',
+              note: rangeMetadataForm.get('maxAction').value === 'Note',
+              impact: rangeMetadataForm.get('maxAction').value === 'Impact'
+            }"
+            *ngIf="
+              rangeMetadataForm.get('maxAction').value &&
+              rangeMetadataForm.get('maxAction').value.length &&
+              rangeMetadataForm.get('maxAction').value !== 'None'
+            "
+          >
             <div class="messageHead">
               <span class="titleRow">
                 <mat-icon class="titleRowIcon">warning</mat-icon
-                ><span class="title">Warning:</span>
+                ><span class="title">{{
+                  rangeMetadataForm.get('maxAction').value
+                }}</span>
               </span>
-              <mat-icon class="editIcon">edit</mat-icon>
+              <mat-icon class="editIcon" (click)="focusMaxMsg()">edit</mat-icon>
+            </div>
+            <div class="messageInput">
+              <input
+                matInput
+                id="maxMsgInput"
+                autocomplete="off"
+                class="inputField"
+                formControlName="maxMsg"
+              />
             </div>
           </div>
         </div>
@@ -234,12 +276,12 @@
     <button
       mat-stroked-button
       class="cancelBtn"
-      (click)="cancelResponse()"
+      (click)="cancelRangeSelection()"
       translate="cancel"
     ></button>
     <button
       mat-raised-button
-      (click)="submitResponses()"
+      (click)="submitRangeSelection()"
       color="primary"
       class="applyBtn"
       translate="apply"

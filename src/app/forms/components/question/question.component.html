@@ -153,6 +153,7 @@
                       <span
                         *ngFor="let uom of unitOfMeasurementsAvailable"
                         class="uomOption"
+                        (click)="uomChanged(uom)"
                       >
                         <span class="uomSymbol">{{ uom.code }}</span>
                         <span class="uomTitle">{{ uom.title }}</span>
@@ -172,27 +173,7 @@
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
-                  <span
-                    class="rangeValues"
-                    *ngIf="
-                      questionForm.get('lowerLimit').value &&
-                      questionForm.get('upperLimit').value
-                    "
-                  >
-                    {{ questionForm.get('lowerLimit').value }} -
-                    {{ questionForm.get('upperLimit').value }}
-                  </span>
-                  <span
-                    *ngIf="
-                      !(
-                        questionForm.get('lowerLimit').value &&
-                        questionForm.get('upperLimit').value
-                      )
-                    "
-                    translate="noneTxt"
-                    class="rangeValuesNone"
-                  >
-                  </span>
+                  <span class="rangeValues">{{ getRangeDisplayText() }}</span>
                 </button>
               </span>
 
@@ -254,6 +235,7 @@
               </span>
               <app-response-type-side-drawer
                 (responseTypeHandler)="quickResponseTypeHandler($event)"
+                (rangeSelectionHandler)="rangeSelectionHandler($event)"
                 [question]="question"
                 [formId]="formId"
                 (setSliderValues)="questionForm.get('value').setValue($event)"

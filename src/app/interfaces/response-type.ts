@@ -1,3 +1,5 @@
+import { NumberRangeMetadata } from './form-configuration';
+
 export interface ResponseTypeOpenState {
   isOpen: boolean;
   response: any;
@@ -5,5 +7,5 @@ export interface ResponseTypeOpenState {
 
 export interface RangeSelectorState {
   isOpen: boolean;
-  rangeValues?: any;
+  rangeMetadata: NumberRangeMetadata;
 }

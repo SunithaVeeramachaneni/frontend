@@ -19,7 +19,7 @@ export class FormService {
   private openResponseTypeSubject = new BehaviorSubject<boolean>(false);
   private rangeSelectorOpenStateSubject = new BehaviorSubject<any>({
     isOpen: false,
-    rangeValues: {}
+    rangeMetadata: {}
   });
 
   sliderOpenState$ = this.sliderOpenStateSubject.asObservable();
@@ -35,7 +35,7 @@ export class FormService {
   setMultiChoiceOpenState(responseType: ResponseTypeOpenState) {
     this.multiChoiceOpenStateSubject.next(responseType);
   }
-  setRangeSelectorOpenState(rangeValues: RangeSelectorState) {
-    this.rangeSelectorOpenStateSubject.next(rangeValues);
+  setRangeSelectorOpenState(rangeMetadata: RangeSelectorState) {
+    this.rangeSelectorOpenStateSubject.next(rangeMetadata);
   }
 }

@@ -143,13 +143,20 @@
       padding: 10px 0px;
       .limitValue {
         width: 30%;
+        font-weight: 500;
         .inputField {
           width: 80%;
           height: 25px;
+          margin-top: 10px;
+          border: 1px solid $gray3;
+          border-radius: 4px;
         }
       }
       .limitAction {
         width: 70%;
+        label {
+          font-weight: 500;
+        }
         .limitRadioGroup {
           display: flex;
           flex-direction: column;
@@ -161,8 +168,8 @@
     }
     .limitMessage {
       width: 100%;
-      height: 50px;
-      background: orange;
+      height: 65px;
+      background: $gray3;
       border-radius: 5px;
       padding: 5px;
       .messageHead {
@@ -174,12 +181,42 @@
           align-items: center;
           .titleRowIcon {
             margin: 5px;
+            font-size: 12pt;
+            margin-top: 10px;
           }
         }
         .editIcon {
           margin: 5px;
+          font-size: 12pt;
+          margin-top: 10px;
+          cursor: pointer;
         }
       }
+      .messageInput {
+        .inputField {
+          width: -webkit-fill-available;
+          background: none;
+          border: none;
+          color: inherit !important;
+          padding: 5px 0px;
+          margin-left: 35px;
+        }
+      }
+    }
+    .warning {
+      background: $warning-bg;
+    }
+    .alert {
+      background: $alert-bg;
+      color: $white;
+    }
+    .note {
+      background: $note-bg;
+      color: $white;
+    }
+    .impact {
+      background: $impact-bg;
+      color: $white;
     }
   }
 }

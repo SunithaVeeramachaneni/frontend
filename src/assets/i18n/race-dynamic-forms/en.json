@@ -105,5 +105,9 @@
   "unitTxt": "Unit: ",
   "rangeTxt": "Range: ",
   "noneTxt": "None",
-  "rangeSelectorHeading": "Range"
+  "rangeSelectorHeading": "Range",
+  "lowerLimitTxt": "Lower Limit",
+  "lowerLimitConditionTxt": "When answer is less than Lower Limit",
+  "upperLimitTxt": "Upper Limit",
+  "upperLimitConditionTxt": "When answer is greater than Upper Limit"
 }

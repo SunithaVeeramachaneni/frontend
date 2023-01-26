@@ -460,6 +460,22 @@ export class OperatorRoundsService {
                 });
               }
 
+              if (question.fieldType === 'NF') {
+                Object.assign(questionItem, {
+                  MEASUREMENT:
+                    question.unitOfMeasurement !== 'None'
+                      ? question.unitOfMeasurement
+                      : '',
+                  DEFAULTVALUE: JSON.stringify({
+                    min: question.rangeMetadata.min,
+                    max: question.rangeMetadata.max,
+                    minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                    maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                    value: ''
+                  })
+                });
+              }
+
               if (
                 question.fieldType === 'DD' &&
                 question.value?.type === 'globalResponse'

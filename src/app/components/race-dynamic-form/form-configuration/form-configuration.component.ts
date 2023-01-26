@@ -30,7 +30,8 @@ import {
   Page,
   Question,
   Section,
-  ValidationError
+  ValidationError,
+  NumberRangeMetadata
 } from 'src/app/interfaces';
 
 import {
@@ -427,7 +428,9 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       isPublished: false,
       isPublishedTillSave: false,
       isOpen: true,
-      isResponseTypeModalOpen: false
+      isResponseTypeModalOpen: false,
+      unitOfMeasurement: 'None',
+      rangeMetadata: {} as NumberRangeMetadata
     };
   }
 
