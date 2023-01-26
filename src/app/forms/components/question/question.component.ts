@@ -395,13 +395,16 @@ export class QuestionComponent implements OnInit {
   responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(isResponseTypeModalOpen);
+      .setValue(isResponseTypeModalOpen, { emitEvent: false });
   }
 
   responseTypeCloseEventHandler(responseTypeClosed: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(!responseTypeClosed);
+      .setValue(!responseTypeClosed, { emitEvent: false });
+  }
+  setQuestionValue(event) {
+    this.questionForm.get('value').setValue(event, { emitEvent: false });
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
