@@ -262,7 +262,7 @@ export class OperatorRoundsService {
     return from(
       this.awsApiService.UpdateRoundPlanDetail({
         id: formDetails.formDetailId,
-        roundplanslistID: formDetails.formListId,
+        formlistID: formDetails.formListId,
         formData: this.formatFormData(
           formDetails.formMetadata,
           formDetails.pages
