@@ -1,4 +1,11 @@
-<div id="import-form-customizer">
+<div
+  id="import-form-customizer"
+  *ngIf="{
+    sectionIndexes: sectionIndexes$ | async,
+    pagesCount: pagesCount$ | async,
+    questionCounter: questionCounter$ | async
+  }"
+>
   <mat-card class="p-0">
     <mat-card-title class="m-0 light-gray">
       <div class="slider-heading">Import Questions</div>

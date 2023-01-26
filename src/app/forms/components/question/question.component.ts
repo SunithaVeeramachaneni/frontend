@@ -16,6 +16,7 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
+  skip,
   startWith,
   tap
 } from 'rxjs/operators';
@@ -167,6 +168,7 @@ export class QuestionComponent implements OnInit {
     this.questionForm.valueChanges
       .pipe(
         startWith({}),
+        skip(1),
         debounceTime(500),
         distinctUntilChanged(),
         pairwise(),
@@ -195,6 +197,11 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
+            /* if (question.isOpen) {
+              timer(0).subscribe(() => this.name.nativeElement.focus());
+            } else {
+              timer(0).subscribe(() => this.name.nativeElement.blur());
+            } */
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -213,11 +220,11 @@ export class QuestionComponent implements OnInit {
       } else {
         timer(0).subscribe(() => this.name.nativeElement.focus());
       }
-     } else {
-       if (!this.question.isOpen) {
-         timer(0).subscribe(() => this.name.nativeElement.focus());
-       }
-     }
+    } else {
+      if (!this.question.isOpen) {
+        timer(0).subscribe(() => this.name.nativeElement.focus());
+      }
+    }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
     );

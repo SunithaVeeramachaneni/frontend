@@ -220,6 +220,11 @@ export const getIsFormCreated = createSelector(
   (state) => state.isFormCreated
 );
 
+export const getQuestionCounter = createSelector(
+  selectFormConfigurationState,
+  (state) => state.counter
+);
+
 // Selectors for response sets begin here
 
 export const getResponseSets = createSelector(

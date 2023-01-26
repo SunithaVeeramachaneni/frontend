@@ -1,5 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { cloneDeep } from 'lodash-es';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import {
+  getPagesCount,
+  getQuestionCounter,
+  getSectionIndexes
+} from 'src/app/forms/state';
+import { Question } from 'src/app/interfaces';
+import { State } from 'src/app/state/app.state';
+import { FormConfigurationService } from '../../services/form-configuration.service';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 
 @Component({
@@ -12,26 +24,66 @@ export class ImportQuestionsSliderComponent implements OnInit {
   @Input() selectedFormData;
   @Input() currentFormData;
   @Output() cancelSliderEvent: EventEmitter<boolean> = new EventEmitter();
+  importQuestions: Question[] = [];
+  sectionIndexes$: Observable<any>;
+  sectionIndexes: any;
+  pagesCount$: Observable<number>;
+  pagesCount: number;
+  questionCounter$: Observable<number>;
+  questionCounter: number;
 
-  constructor(private modal: MatDialog) {}
+  constructor(
+    private modal: MatDialog,
+    private formConfigurationService: FormConfigurationService,
+    private store: Store<State>
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.sectionIndexes$ = this.store
+      .select(getSectionIndexes)
+      .pipe(tap((sectionIndexes) => (this.sectionIndexes = sectionIndexes)));
+
+    this.pagesCount$ = this.store
+      .select(getPagesCount)
+      .pipe(tap((pagesCount) => (this.pagesCount = pagesCount)));
+
+    this.questionCounter$ = this.store
+      .select(getQuestionCounter)
+      .pipe(tap((questionCounter) => (this.questionCounter = questionCounter)));
+  }
 
   useForm() {
-    let tempObj = JSON.parse(JSON.stringify(this.selectedFormData));
-    tempObj.forEach((page) => {
+    let importFormData = cloneDeep(this.selectedFormData);
+    importFormData.forEach((page) => {
       page.sections = page.sections.filter((section) => {
         section.questions = section.questions.filter(
           (question) => question.checked === true
         );
-        if (section.questions.length) return true;
-        return false;
+        return section.questions.length;
       });
     });
 
-    tempObj = tempObj.filter((page) => page.sections.length);
+    console.log(importFormData);
 
-    console.log(tempObj);
+    /* importQuestions.forEach((page) => {
+      page.sections = page.sections.filter((section) => {
+        section.questions = section.questions.filter(
+          (question) => question.checked === true
+        );
+        // console.log(section.questions);
+        return section.questions.length;
+      });
+      // console.log(page.sections);
+    }); */
+    importFormData = importFormData.filter((page) => page.sections.length);
+    importFormData.forEach((page) =>
+      page.sections.forEach((section) => {
+        const questions = section.questions.filter(
+          (question) => question.sectionId === section.id
+        );
+        this.importQuestions = [...this.importQuestions, ...questions];
+      })
+    );
 
     const dialogRef = this.modal.open(
       AddPageOrSelectExistingPageModalComponent,
@@ -43,8 +95,25 @@ export class ImportQuestionsSliderComponent implements OnInit {
     dialogRef.afterClosed().subscribe((data) => {
       if (data.selectedPageOption === 'new') {
         // push data to new pages
+        this.formConfigurationService.addPage(
+          this.pagesCount,
+          0,
+          new Array(this.importQuestions.length).fill(0).map((v, i) => i),
+          this.sectionIndexes,
+          this.questionCounter,
+          this.importQuestions
+        );
       } else if (data.selectedPageOption === 'existing') {
         // push data to the selectedPage
+        console.log(data.selectedPage);
+        this.formConfigurationService.addSection(
+          data.selectedPage.position - 1,
+          data.selectedPage.sections.length,
+          new Array(this.importQuestions.length).fill(0).map((v, i) => i),
+          this.sectionIndexes,
+          this.questionCounter,
+          this.importQuestions
+        );
       }
       this.cancelSliderEvent.emit(false);
     });

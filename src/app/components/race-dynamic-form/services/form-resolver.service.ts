@@ -25,6 +25,7 @@ export class FormResolverService implements Resolve<FormConfigurationState> {
       formDetail: this.raceDynamicFormService.getFormDetailByFormId$(id)
     }).pipe(
       map(({ form, authoredFormDetail, formDetail }) => {
+        console.log(authoredFormDetail.length);
         this.store.dispatch(
           FormConfigurationActions.updateCreateOrEditForm({
             createOrEditForm: true

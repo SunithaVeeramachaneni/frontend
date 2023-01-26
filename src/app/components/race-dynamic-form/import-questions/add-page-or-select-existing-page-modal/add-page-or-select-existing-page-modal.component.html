@@ -23,11 +23,12 @@
       class="width-100 m-t-10"
       *ngIf="selectedOption === 'existing'"
     >
-      <mat-select placeholder="Select" [(value)]="selectedPage">
-        <mat-option
-          *ngFor="let page of data.pages"
-          [value]="page.name + ' ' + page.position"
-        >
+      <mat-select
+        placeholder="Select"
+        [formControl]="selectedPageControl"
+        [compareWith]="compareFn"
+      >
+        <mat-option *ngFor="let page of data.pages" [value]="page">
           {{ page.name }} {{ page.position }}
         </mat-option>
       </mat-select>

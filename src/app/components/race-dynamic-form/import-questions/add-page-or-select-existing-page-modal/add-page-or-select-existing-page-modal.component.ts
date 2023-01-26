@@ -1,5 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { isEqual } from 'lodash-es';
+import { Page } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-add-page-or-select-existing-page-modal',
@@ -9,14 +12,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class AddPageOrSelectExistingPageModalComponent implements OnInit {
   selectedOption = 'new';
   selectedPage;
+  selectedPageControl = new FormControl();
   constructor(
     public dialogRef: MatDialogRef<AddPageOrSelectExistingPageModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data
   ) {}
 
   ngOnInit(): void {
-    this.selectedPage =
-      this.data.pages[0].name + ' ' + this.data.pages[0].position;
+    this.selectedPageControl.setValue(this.data.pages[0]);
   }
 
   onChange(event) {
@@ -24,13 +27,17 @@ export class AddPageOrSelectExistingPageModalComponent implements OnInit {
   }
 
   cancel() {
-    this.dialogRef.close();
+    this.dialogRef.close({});
   }
 
   import() {
     this.dialogRef.close({
-      selectedPage: this.selectedPage,
+      selectedPage: this.selectedPageControl.value,
       selectedPageOption: this.selectedOption
     });
+  }
+
+  compareFn(option1: Page, option2: Page) {
+    return isEqual(option1, option2);
   }
 }
