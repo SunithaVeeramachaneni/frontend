@@ -133,9 +133,9 @@
                 class="action"
               >
                 <span translate="unitTxt"></span>
-                <button mat-button [matMenuTriggerFor]="menu" class="uomBtn">
+                <span [matMenuTriggerFor]="menu" class="uomBtn">
                   {{ questionForm.get('unitOfMeasurement').value }}
-                </button>
+                </span>
                 <mat-menu #menu="matMenu">
                   <ng-template matMenuContent>
                     <div (click)="$event.stopPropagation()" class="uomMenu">
@@ -168,13 +168,12 @@
                 class="action"
               >
                 <span translate="rangeTxt"></span>
-                <button
-                  mat-button
+                <span
                   class="rangeBtn"
                   (click)="rangeSelectorOpen(questionForm.value)"
                 >
                   <span class="rangeValues">{{ getRangeDisplayText() }}</span>
-                </button>
+                </span>
               </span>
 
               <span

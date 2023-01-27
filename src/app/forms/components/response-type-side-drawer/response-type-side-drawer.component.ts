@@ -60,7 +60,7 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   };
 
   lowerLimitActions = ['None', 'Warning', 'Alert', 'Note'];
-  upperLimitActions = ['None', 'Warning', 'Alert', 'Note', 'Impact'];
+  upperLimitActions = ['None', 'Warning', 'Alert', 'Note'];
 
   constructor(
     private formService: FormService,
@@ -230,5 +230,9 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   }
   focusMaxMsg() {
     document.getElementById('maxMsgInput').focus();
+  }
+
+  getImage(action) {
+    return `../../../../assets/rdf-forms-icons/${action.toLowerCase()}.svg`;
   }
 }

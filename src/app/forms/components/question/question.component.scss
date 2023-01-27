@@ -105,6 +105,8 @@
         padding: 0px 15px;
         display: flex;
         align-items: center;
+        background: none;
+        border: none;
       }
     }
     .addLogicRow {
@@ -122,6 +124,8 @@
 
     .range-values {
       color: $blue-main;
+      margin-left: 5px;
+      cursor: pointer;
     }
   }
   .required-label {
@@ -136,6 +140,8 @@
 
 .uomBtn {
   color: $blue-main;
+  margin-left: 5px;
+  cursor: pointer;
 }
 .uomMenu {
   width: 250px;
@@ -147,13 +153,13 @@
     height: 35px;
     display: flex;
     align-items: center;
-    background: $gray3;
+    background: $gray;
     padding: 5px 10px;
     .searchInput {
       border: none;
       width: 100%;
       padding: 5px;
-      background: $gray3;
+      background: $gray;
     }
   }
   .noneOption {
@@ -165,6 +171,7 @@
     height: 20px;
     padding: 10px;
     cursor: pointer;
+    text-transform: capitalize;
     &:hover {
       background: $hover-bg2;
     }
@@ -179,6 +186,8 @@
   }
 }
 .rangeBtn {
+  cursor: pointer;
+  margin-left: 5px;
   .rangeValues {
     color: $blue-main;
   }
