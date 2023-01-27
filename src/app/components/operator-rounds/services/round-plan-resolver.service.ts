@@ -39,13 +39,6 @@ export class RoundPlanResolverService
             createOrEditForm: true
           })
         );
-        let version = 0;
-        authoredFormDetail.forEach((item) => {
-          if (item._version > version) version = item._version;
-        });
-        const latestFormVersionData = authoredFormDetail.find(
-          (item) => item._version === version
-        );
         const {
           // eslint-disable-next-line @typescript-eslint/no-shadow
           id,
@@ -65,7 +58,7 @@ export class RoundPlanResolverService
           formDetailPublishStatus,
           version: authoredFormDetailVersion,
           _version: authoredFormDetailDynamoDBVersion
-        } = latestFormVersionData;
+        } = authoredFormDetail;
         const { id: formDetailId, _version: formDetailDynamoDBVersion } =
           formDetail[0] ?? {};
         const formMetadata = {

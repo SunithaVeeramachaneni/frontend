@@ -137,26 +137,23 @@ export class ImportQuestionsModalComponent implements OnInit {
     this.raceDynamicFormService
       .getAuthoredFormDetailByFormId$(form.id)
       .pipe(
-        map((formData) => {
-          let pageData;
-          if (formData.length) {
-            this.data.selectedFormName = form.name;
-            const filteredForm = JSON.parse(formData[0].pages);
-            let sectionData;
-            pageData = filteredForm.map((page) => {
-              sectionData = page.sections.map((section) => {
-                const questionsArray = [];
-                page.questions.forEach((question) => {
-                  if (section.id === question.sectionId) {
-                    questionsArray.push(question);
-                  }
-                });
-                return { ...section, questions: questionsArray };
+        map((authoredFormDetail) => {
+          this.data.selectedFormName = form.name;
+          const filteredForm = JSON.parse(authoredFormDetail.pages);
+          let sectionData;
+          const pageData = filteredForm.map((page) => {
+            sectionData = page.sections.map((section) => {
+              const questionsArray = [];
+              page.questions.forEach((question) => {
+                if (section.id === question.sectionId) {
+                  questionsArray.push(question);
+                }
               });
-              return { ...page, sections: sectionData };
+              return { ...section, questions: questionsArray };
             });
-            return pageData;
-          }
+            return { ...page, sections: sectionData };
+          });
+          return pageData;
         })
       )
       .subscribe((response) => {
