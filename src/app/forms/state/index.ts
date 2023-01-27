@@ -12,6 +12,10 @@ export interface State extends AppState.State {
   feature: FromModuleState;
 }
 
+export interface OPRState extends AppState.State {
+  operatorRounds: FromModuleState;
+}
+
 const selectFeatureState = createFeatureSelector<FromModuleState>('feature');
 
 const selectFormConfigurationState = createSelector(
@@ -218,6 +222,11 @@ export const getFormPublishStatus = createSelector(
 export const getIsFormCreated = createSelector(
   selectFormConfigurationState,
   (state) => state.isFormCreated
+);
+
+export const getQuestionCounter = createSelector(
+  selectFormConfigurationState,
+  (state) => state.counter
 );
 
 // Selectors for response sets begin here

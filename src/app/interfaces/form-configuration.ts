@@ -46,6 +46,18 @@ export interface Question {
   isPublishedTillSave: boolean;
   isOpen: boolean;
   isResponseTypeModalOpen: boolean;
+  unitOfMeasurement?: string;
+  rangeMetadata?: NumberRangeMetadata;
+}
+
+export interface NumberRangeMetadata {
+  min: number;
+  max: number;
+  minAction: string;
+  maxAction: string;
+  minMsg: string;
+  maxMsg: string;
+  value: number;
 }
 
 export interface PageEvent {

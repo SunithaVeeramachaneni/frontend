@@ -1,5 +1,5 @@
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { MatTreeModule } from '@angular/material/tree';
 import { MatCardModule } from '@angular/material/card';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -47,15 +47,16 @@ import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';
 import { FormConfigurationEffects } from 'src/app/forms/state/form-configuration.effects';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ResponseSetEffects } from 'src/app/forms/state/multiple-choice-response.effects';
 import { SubmissionSliderComponent } from './submission-slider/submission-slider.component';
 import { SubmissionViewComponent } from './submission-view/submission-view.component';
 import { SelectQuestionsDialogComponent } from 'src/app/forms/components/add-logic/select-questions-dialog/select-questions-dialog.component';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AvatarComponent } from './form-configuration/avatar.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ArchivedListComponent } from './archived-list/archived-list.component';
 import { ArchivedDeleteModalComponent } from './archived-delete-modal/archived-delete-modal.component';
+import { ImportQuestionsModalComponent } from './import-questions/import-questions-modal/import-questions-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/race-dynamic-forms/', '.json');
@@ -75,7 +76,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     SelectQuestionsDialogComponent,
     AvatarComponent,
     ArchivedListComponent,
-    ArchivedDeleteModalComponent
+    ArchivedDeleteModalComponent,
+    ImportQuestionsModalComponent
   ],
   imports: [
     FormsModule,
@@ -121,6 +123,22 @@ export const customTranslateLoader = (http: HttpClient) =>
       responseSet: responseSetReducer
     }),
     EffectsModule.forFeature([FormConfigurationEffects, ResponseSetEffects])
+  ],
+  exports: [
+    FormContainerComponent,
+    FormListComponent,
+    FormDetailComponent,
+    SubmissionComponent,
+    ResponseSetComponent,
+    PublicLibraryComponent,
+    FormConfigurationModalComponent,
+    FormConfigurationComponent,
+    SubmissionSliderComponent,
+    SubmissionViewComponent,
+    SelectQuestionsDialogComponent,
+    AvatarComponent,
+    ArchivedListComponent,
+    ArchivedDeleteModalComponent
   ]
 })
 export class RaceDynamicFormModule {

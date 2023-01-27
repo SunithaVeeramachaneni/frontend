@@ -354,14 +354,7 @@ export class RaceDynamicFormService {
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        or: [
-          {
-            formStatus: { eq: formConfigurationStatus.draft }
-          },
-          {
-            formStatus: { eq: formConfigurationStatus.published }
-          }
-        ]
+        formStatus: { eq: formConfigurationStatus.draft }
       })
     ).pipe(map(({ items }) => items));
   }
@@ -456,6 +449,22 @@ export class RaceDynamicFormService {
                 const viVALUE = this.prepareDDValue(question.value?.value);
                 Object.assign(questionItem, {
                   DDVALUE: viVALUE
+                });
+              }
+
+              if (question.fieldType === 'NF') {
+                Object.assign(questionItem, {
+                  MEASUREMENT:
+                    question.unitOfMeasurement !== 'None'
+                      ? question.unitOfMeasurement
+                      : '',
+                  DEFAULTVALUE: JSON.stringify({
+                    min: question.rangeMetadata.min,
+                    max: question.rangeMetadata.max,
+                    minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                    maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                    value: ''
+                  })
                 });
               }
 
@@ -669,9 +678,7 @@ export class RaceDynamicFormService {
             },
             responses,
             createdAt: format(new Date(p?.createdAt), 'Do MMM'),
-            updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
-              addSuffix: true
-            })
+            updatedAt: p.updatedAt ? p.updatedAt : ''
           };
         }) || [];
     const nextToken = resp?.nextToken;

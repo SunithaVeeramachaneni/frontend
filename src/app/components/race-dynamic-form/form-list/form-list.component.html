@@ -47,6 +47,7 @@
       [@slideInOut]="menuState"
       (slideInOut)="onCloseViewDetail()"
       [selectedForm]="selectedForm"
+      (formDetailAction)="formDetailActionHandler($event)"
     ></app-form-detail>
   </ng-container>
 
