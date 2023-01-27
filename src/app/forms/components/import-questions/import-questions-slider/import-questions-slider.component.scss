@@ -5,8 +5,11 @@
   bottom: 0px;
   top: 0;
   right: 0;
-  width: 415px;
+  width: 400px;
   z-index: 999;
+  background-color: $white;
+  border-left: 1px solid $border-color;
+  box-shadow: -15px 0px 17px -7px rgb(0 0 0 / 46%);
 
   .slider-heading {
     padding: 15px 15px 15px 15px;
@@ -29,7 +32,7 @@
 
   .mat-card-content {
     padding: 0 15px;
-    max-height: 80vh;
+    height: calc(100vh - 118px);
     overflow-y: auto;
   }
 
@@ -45,8 +48,15 @@
     padding-left: 12px;
   }
 
-  .use-cancel {
+  .import-form-footer {
     padding: 0 15px 10px 15px;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    width: 94%;
+    justify-content: center;
 
     .use-button {
       width: 48%;

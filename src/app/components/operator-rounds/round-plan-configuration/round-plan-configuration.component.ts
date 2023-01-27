@@ -41,13 +41,13 @@ import {
   getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  OPRState,
   getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
   getFormPublishStatus,
   getIsFormCreated,
-  getQuestionIds
+  getQuestionIds,
+  getQuestionCounter
 } from 'src/app/forms/state';
 
 import {
@@ -90,6 +90,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   formSaveStatus$: Observable<string>;
   formDetailPublishStatus$: Observable<string>;
   isFormCreated$: Observable<boolean>;
+  questionCounter$: Observable<number>;
   questionIndexes: any;
   formStatus: string;
   formDetailPublishStatus: string;
@@ -191,6 +192,16 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         this.breadcrumbService.set('@formName', {
           label: formName
         });
+      })
+    );
+    this.questionCounter$ = this.store.select(getQuestionCounter).pipe(
+      tap((counter) => {
+        this.formConfiguration.patchValue(
+          {
+            counter
+          },
+          { emitEvent: false }
+        );
       })
     );
     this.pageIndexes$ = this.store.select(getPageIndexes);

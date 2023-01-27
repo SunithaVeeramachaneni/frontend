@@ -116,16 +116,11 @@ export class ImportQuestionsSliderComponent implements OnInit {
 
     const countOfPageChecked = page.sections.filter((p) => p.checked).length;
 
-    if (
-      countOfSectionChecked === 0 ||
-      countOfSectionChecked !== section.questions.length
-    )
-      section.checked = false;
+    if (countOfSectionChecked === 0) section.checked = false;
     if (countOfSectionChecked === section.questions.length)
       section.checked = true;
 
-    if (countOfPageChecked === 0 || countOfPageChecked !== page.sections.length)
-      page.checked = false;
+    if (countOfPageChecked === 0) page.checked = false;
     if (countOfPageChecked === page.sections.length) page.checked = true;
   }
 
@@ -146,8 +141,7 @@ export class ImportQuestionsSliderComponent implements OnInit {
     const checkedCount = section.questions.filter((p) => p.checked).length;
     const countOfPageChecked = page.sections.filter((p) => p.checked).length;
 
-    if (countOfPageChecked === 0 || countOfPageChecked !== page.sections.length)
-      page.checked = false;
+    if (countOfPageChecked === 0) page.checked = false;
     if (countOfPageChecked === page.sections.length) page.checked = true;
 
     return checkedCount > 0 && checkedCount !== section.questions.length;
