@@ -341,19 +341,15 @@ export class RoundPlanListComponent implements OnInit {
               if (!newRecord) {
                 return;
               }
-              if (authoredFormDetail?.length > 0) {
-                for (const obj of authoredFormDetail) {
-                  if (obj) {
-                    this.operatorRoundsService.createAuthoredFormDetail$({
-                      formStatus: obj?.formStatus,
-                      formDetailPublishStatus: 'Draft',
-                      formListId: newRecord?.id,
-                      pages: JSON.parse(obj?.pages) ?? '',
-                      counter: obj?.counter,
-                      authoredFormDetailVersion: 1
-                    });
-                  }
-                }
+              if (authoredFormDetail) {
+                this.operatorRoundsService.createAuthoredFormDetail$({
+                  formStatus: authoredFormDetail?.formStatus,
+                  formDetailPublishStatus: 'Draft',
+                  formListId: newRecord?.id,
+                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
+                  counter: authoredFormDetail?.counter,
+                  authoredFormDetailVersion: 1
+                });
               }
               this.addEditCopyForm$.next({
                 action: 'copy',

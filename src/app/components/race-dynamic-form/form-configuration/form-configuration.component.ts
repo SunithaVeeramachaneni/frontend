@@ -42,7 +42,6 @@ import {
   getSectionIds,
   getSectionIndexes,
   getFormDetails,
-  State,
   getPage,
   getCreateOrEditForm,
   getFormSaveStatus,
@@ -67,6 +66,7 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
+import { State } from 'src/app/state/app.state';
 
 @Component({
   selector: 'app-form-configuration',
@@ -103,6 +103,7 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
   selectedFormData: any;
   currentFormData: any;
   errors: ValidationError = {};
+  formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -230,8 +231,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     );
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
-      tap(
-        ({
+      tap((formDetails) => {
+        const {
           formMetadata,
           formStatus,
           counter,
@@ -245,82 +246,86 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           formListDynamoDBVersion,
           formDetailDynamoDBVersion,
           authoredFormDetailDynamoDBVersion
-        }) => {
-          this.formListVersion = formListDynamoDBVersion;
-          this.formStatus = formStatus;
-          this.formDetailPublishStatus = formDetailPublishStatus;
-          const { id: formListId } = formMetadata;
-          this.isFormDetailPublished = isFormDetailPublished;
-          if (pages.length && formListId) {
-            if (authoredFormDetailId) {
-              if (formSaveStatus !== 'Saved' && formStatus !== 'Published') {
-                this.store.dispatch(
-                  FormConfigurationActions.updateAuthoredFormDetail({
-                    formStatus,
-                    formDetailPublishStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailId,
-                    authoredFormDetailDynamoDBVersion
-                  })
-                );
-              }
-            } else {
+        } = formDetails;
+        this.formListVersion = formListDynamoDBVersion;
+        this.formStatus = formStatus;
+        this.formDetailPublishStatus = formDetailPublishStatus;
+        const { id: formListId } = formMetadata;
+        this.isFormDetailPublished = isFormDetailPublished;
+        if (pages.length && formListId) {
+          if (authoredFormDetailId) {
+            if (
+              formSaveStatus !== 'Saved' &&
+              formStatus !== 'Published' &&
+              !isEqual(this.formDetails, formDetails)
+            ) {
               this.store.dispatch(
-                FormConfigurationActions.createAuthoredFormDetail({
+                FormConfigurationActions.updateAuthoredFormDetail({
                   formStatus,
                   formDetailPublishStatus,
                   formListId,
                   counter,
                   pages,
-                  authoredFormDetailVersion
+                  authoredFormDetailId,
+                  authoredFormDetailDynamoDBVersion
                 })
               );
             }
+            this.formDetails = formDetails;
+          } else {
+            this.store.dispatch(
+              FormConfigurationActions.createAuthoredFormDetail({
+                formStatus,
+                formDetailPublishStatus,
+                formListId,
+                counter,
+                pages,
+                authoredFormDetailVersion
+              })
+            );
+          }
 
-            if (isFormDetailPublished && formDetailId) {
-              this.store.dispatch(
-                FormConfigurationActions.updateFormDetail({
-                  formMetadata,
+          if (isFormDetailPublished && formDetailId) {
+            this.store.dispatch(
+              FormConfigurationActions.updateFormDetail({
+                formMetadata,
+                formListId,
+                pages,
+                formDetailId,
+                formDetailDynamoDBVersion,
+                authoredFormDetail: {
+                  formStatus,
                   formListId,
+                  counter,
                   pages,
-                  formDetailId,
-                  formDetailDynamoDBVersion,
-                  authoredFormDetail: {
-                    formStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailVersion,
-                    authoredFormDetailDynamoDBVersion,
-                    authoredFormDetailId
-                  },
-                  formListDynamoDBVersion
-                })
-              );
-            } else if (isFormDetailPublished && !formDetailId) {
-              this.store.dispatch(
-                FormConfigurationActions.createFormDetail({
-                  formMetadata,
+                  authoredFormDetailVersion,
+                  authoredFormDetailDynamoDBVersion,
+                  authoredFormDetailId
+                },
+                formListDynamoDBVersion
+              })
+            );
+          } else if (isFormDetailPublished && !formDetailId) {
+            this.store.dispatch(
+              FormConfigurationActions.createFormDetail({
+                formMetadata,
+                formListId,
+                pages,
+                authoredFormDetail: {
+                  formStatus,
                   formListId,
+                  counter,
                   pages,
-                  authoredFormDetail: {
-                    formStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailVersion,
-                    authoredFormDetailDynamoDBVersion,
-                    authoredFormDetailId
-                  },
-                  formListDynamoDBVersion
-                })
-              );
-            }
+                  authoredFormDetailVersion,
+                  authoredFormDetailDynamoDBVersion,
+                  authoredFormDetailId
+                },
+                formListDynamoDBVersion
+              })
+            );
           }
         }
-      )
+      })
     );
 
     this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
@@ -380,8 +385,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
       if (!params.id) {
         this.formConfigurationService.addPage(
           0,
-          0,
-          [0],
+          1,
+          1,
           this.sectionIndexes,
           this.formConf.counter.value
         );
@@ -412,8 +417,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
         {
           this.formConfigurationService.addPage(
             pageIndex,
-            0,
-            [0],
+            1,
+            1,
             this.sectionIndexes,
             this.formConf.counter.value
           );
@@ -436,10 +441,11 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addSection(
+          this.formConfigurationService.addSections(
             pageIndex,
+            1,
+            1,
             sectionIndex,
-            [0],
             this.sectionIndexes,
             this.formConf.counter.value
           );
@@ -478,7 +484,8 @@ export class FormConfigurationComponent implements OnInit, OnDestroy {
           this.formConfigurationService.addQuestions(
             pageIndex,
             sectionId,
-            [questionIndex],
+            1,
+            questionIndex,
             this.formConf.counter.value
           );
         }

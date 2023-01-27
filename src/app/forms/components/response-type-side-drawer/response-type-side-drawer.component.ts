@@ -216,10 +216,6 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
     });
   };
   submitRangeSelection = () => {
-    console.log({
-      eventType: 'update',
-      data: this.rangeMetadataForm.getRawValue()
-    });
     this.rangeSelectionHandler.emit({
       eventType: 'update',
       data: this.rangeMetadataForm.getRawValue()

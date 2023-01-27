@@ -228,16 +228,16 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
-    FormConfigurationActions.addSection,
+    FormConfigurationActions.addSections,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
           const sections = [
             ...page.sections.slice(0, action.sectionIndex),
-            action.section,
+            ...action.sections,
             ...page.sections.slice(action.sectionIndex).map((section) => ({
               ...section,
-              position: section.position + 1
+              position: section.position + action.sections.length
             }))
           ];
           return {
