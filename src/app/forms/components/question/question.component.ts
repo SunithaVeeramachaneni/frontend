@@ -23,7 +23,10 @@ import { Observable, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { fieldTypesMock } from '../response-type/response-types.mock';
+import {
+  fieldTypesMock,
+  unitOfMeasurementsMock
+} from '../response-type/response-types.mock';
 import {
   QuestionEvent,
   Question,
@@ -111,18 +114,7 @@ export class QuestionComponent implements OnInit {
 
   unitOfMeasurementsAvailable = [];
 
-  unitOfMeasurements = [
-    {
-      code: 'cm',
-      symbol: '^C',
-      title: 'Centimetre'
-    },
-    {
-      code: 'Km',
-      symbol: 'Km',
-      title: 'Kilometre'
-    }
-  ];
+  unitOfMeasurements = [];
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -173,7 +165,7 @@ export class QuestionComponent implements OnInit {
       }
     });
 
-    this.unitOfMeasurementsAvailable = this.unitOfMeasurements;
+    this.unitOfMeasurementsAvailable = unitOfMeasurementsMock;
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
