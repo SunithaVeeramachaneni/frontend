@@ -39,7 +39,7 @@ export class FormConfigurationService {
     this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
         questionId: page.questions[questionIndexs.length - 1].id,
-        isOpen: page.questions.length === 1 ? true : false,
+        isOpen: true,
         isResponseTypeModalOpen: false
       })
     );
@@ -71,9 +71,15 @@ export class FormConfigurationService {
       })
     );
     this.store.dispatch(
+      FormConfigurationActions.updatePageState({
+        pageIndex,
+        isOpen: true
+      })
+    );
+    this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[questionIndexs.length - 1].id,
-        isOpen: sectionQuestions.length === 1 ? true : false,
+        isOpen: true,
         isResponseTypeModalOpen: false
       })
     );
@@ -106,7 +112,7 @@ export class FormConfigurationService {
     this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
         questionId: sectionQuestions[questionIndexs.length - 1].id,
-        isOpen: sectionQuestions.length === 1 ? true : false,
+        isOpen: true,
         isResponseTypeModalOpen: false
       })
     );
@@ -205,8 +211,10 @@ export class FormConfigurationService {
       isPublishedTillSave: false,
       isOpen: question ? false : true,
       isResponseTypeModalOpen: false,
-      unitOfMeasurement: 'None',
-      rangeMetadata: {} as NumberRangeMetadata
+      unitOfMeasurement: question ? question.unitOfMeasurement : 'None',
+      rangeMetadata: question
+        ? question.rangeMetadata
+        : ({} as NumberRangeMetadata)
     };
   }
 }

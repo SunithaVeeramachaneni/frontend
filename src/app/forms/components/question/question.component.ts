@@ -16,7 +16,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   pairwise,
-  skip,
   startWith,
   tap
 } from 'rxjs/operators';
@@ -34,8 +33,7 @@ import {
   getQuestionByID,
   getSectionQuestionsCount,
   State,
-  getQuestionLogics,
-  getFormMetadata
+  getQuestionLogics
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -191,7 +189,6 @@ export class QuestionComponent implements OnInit {
     this.questionForm.valueChanges
       .pipe(
         startWith({}),
-        skip(1),
         debounceTime(500),
         distinctUntilChanged(),
         pairwise(),
@@ -220,11 +217,11 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
-            /* if (question.isOpen) {
+            if (question.isOpen) {
               timer(0).subscribe(() => this.name.nativeElement.focus());
             } else {
               timer(0).subscribe(() => this.name.nativeElement.blur());
-            } */
+            }
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -233,7 +230,7 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    if (!this._isAskQuestion) {
+    /* if (!this._isAskQuestion) {
       if (this.question) {
         if (this.question.isOpen) {
           timer(0).subscribe(() => this.name.nativeElement.focus());
@@ -247,7 +244,7 @@ export class QuestionComponent implements OnInit {
       if (!this.question.isOpen) {
         timer(0).subscribe(() => this.name.nativeElement.focus());
       }
-    }
+    } */
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
     );
