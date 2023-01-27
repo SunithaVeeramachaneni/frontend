@@ -16,7 +16,6 @@ export class FormService {
       isOpen: false,
       response: {}
     });
-  private openResponseTypeSubject = new BehaviorSubject<boolean>(false);
   private rangeSelectorOpenStateSubject = new BehaviorSubject<any>({
     isOpen: false,
     rangeMetadata: {}

@@ -11,7 +11,8 @@
     createOrEditForm: createOrEditForm$ | async,
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
-    isFormCreated: isFormCreated$ | async
+    isFormCreated: isFormCreated$ | async,
+    questionCounter: questionCounter$ | async
   } as props"
 >
   <div class="dis-flex form-header">
@@ -128,7 +129,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        disabled
+        (click)="importQuestions()"
       ></button>
 
       <button
@@ -272,5 +273,16 @@
     <div class="iphone-width">
       <app-iphone></app-iphone>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>
