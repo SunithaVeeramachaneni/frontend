@@ -10,11 +10,11 @@ import {
   APIService,
   DeleteRoundPlanListInput,
   GetRoundPlanListQuery,
-  ListFormSubmissionListsQuery,
   ListRoundPlanListsQuery,
-  ModelFormSubmissionListFilterInput,
   UpdateAuthoredRoundPlanDetailInput,
-  UpdateFormDetailInput
+  UpdateFormDetailInput,
+  ListRoundPlanSubmissionListsQuery,
+  ModelRoundPlanSubmissionListFilterInput
 } from 'src/app/API.service';
 import { AppService } from 'src/app/shared/services/app.services';
 import { environment } from 'src/environments/environment';
@@ -192,11 +192,11 @@ export class OperatorRoundsService {
   }
 
   getSubmissionFormsListCount$(): Observable<number> {
-    const statement = `query { listFormSubmissionLists(limit: ${limit}) { items { id } } }`;
+    const statement = `query { listRoundPlanSubmissionLists(limit: ${limit}) { items { id } } }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
-        ({ data: { listFormSubmissionLists } }: any) =>
-          listFormSubmissionLists?.items?.length || 0
+        ({ data: { listRoundPlanSubmissionLists } }: any) =>
+          listRoundPlanSubmissionLists?.items?.length || 0
       )
     );
   }
@@ -657,7 +657,7 @@ export class OperatorRoundsService {
     };
   }
 
-  private formatSubmittedListResponse(resp: ListFormSubmissionListsQuery) {
+  private formatSubmittedListResponse(resp: ListRoundPlanSubmissionListsQuery) {
     const rows =
       resp.items
         .sort(
@@ -666,8 +666,8 @@ export class OperatorRoundsService {
         )
         ?.map((p: any) => {
           let responses = '0/0';
-          if (p?.formSubmissionListFormSubmissionDetail?.items?.length > 0) {
-            p?.formSubmissionListFormSubmissionDetail?.items.forEach((form) => {
+          if (p?.RoundPlanSubmissionDetails?.items?.length > 0) {
+            p?.RoundPlanSubmissionDetails?.items.forEach((form) => {
               responses = this.countFormSubmissionsResponses(
                 isJson(form?.formData) ? JSON.parse(form?.formData)?.FORMS : []
               );
@@ -707,52 +707,52 @@ export class OperatorRoundsService {
     }));
 
   private async _ListFormSubmissionLists(
-    filter?: ModelFormSubmissionListFilterInput,
+    filter?: ModelRoundPlanSubmissionListFilterInput,
     // eslint-disable-next-line @typescript-eslint/no-shadow
     limit?: number,
     nextToken?: string
-  ): Promise<ListFormSubmissionListsQuery> {
-    const statement = `query ListFormSubmissionLists($filter: ModelFormSubmissionListFilterInput, $limit: Int, $nextToken: String) {
-        listFormSubmissionLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  ): Promise<ListRoundPlanSubmissionListsQuery> {
+    const statement = `query ListRoundPlanSubmissionLists($filter: ModelRoundPlanSubmissionListFilterInput, $limit: Int, $nextToken: String) {
+      listRoundPlanSubmissionLists(filter: $filter, limit: $limit, nextToken: $nextToken) {
+        __typename
+        items {
           __typename
-          items {
-            __typename
-            id
-            name
-            description
-            formLogo
-            isPublic
-            location
-            roundType
-            status
-            assignee
-            dueDate
-            version
-            submittedBy
-            searchTerm
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-            formSubmissionListFormSubmissionDetail {
-              items {
-                _version
-                createdAt
-                formData
-                formlistID
-                formsubmissionlistID
-                id
-                updatedAt
-                _lastChangedAt
-                _deleted
-              }
+          id
+          name
+          description
+          formLogo
+          isPublic
+          location
+          roundType
+          status
+          assignee
+          dueDate
+          version
+          submittedBy
+          searchTerm
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          RoundPlanSubmissionDetails {
+            items {
+              _version
+              createdAt
+              formData
+              formlistID
+              formsubmissionlistID
+              id
+              updatedAt
+              _lastChangedAt
+              _deleted
             }
           }
-          nextToken
-          startedAt
         }
-      }`;
+        nextToken
+        startedAt
+      }
+    }`;
     const gqlAPIServiceArguments: any = {};
     if (filter) {
       gqlAPIServiceArguments.filter = filter;
@@ -767,7 +767,7 @@ export class OperatorRoundsService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return response?.data
-      ?.listFormSubmissionLists as ListFormSubmissionListsQuery;
+      ?.listRoundPlanSubmissionLists as ListRoundPlanSubmissionListsQuery;
   }
 
   private countFormSubmissionsResponses(rows = []): string {
