@@ -217,11 +217,11 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
-            if (question.isOpen) {
+            /* if (question.isOpen) {
               timer(0).subscribe(() => this.name.nativeElement.focus());
             } else {
               timer(0).subscribe(() => this.name.nativeElement.blur());
-            }
+            } */
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -230,7 +230,7 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    /* if (!this._isAskQuestion) {
+    if (!this._isAskQuestion) {
       if (this.question) {
         if (this.question.isOpen) {
           timer(0).subscribe(() => this.name.nativeElement.focus());
@@ -244,7 +244,7 @@ export class QuestionComponent implements OnInit {
       if (!this.question.isOpen) {
         timer(0).subscribe(() => this.name.nativeElement.focus());
       }
-    } */
+    }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
     );
