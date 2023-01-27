@@ -161,6 +161,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationActions.updateCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      counter: action.counter
+    })
+  ),
+  on(
     FormConfigurationActions.addPage,
     (state, action): FormConfigurationState => ({
       ...state,
@@ -171,7 +178,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           .slice(action.pageIndex)
           .map((page) => ({ ...page, position: page.position + 1 }))
       ],
-      counter: action.questionCounter,
       formStatus: action.formStatus,
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
@@ -237,7 +243,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           return {
             ...page,
             sections,
-            questions: [...page.questions, action.question]
+            questions: [...page.questions, ...action.questions]
           };
         }
         return page;
@@ -245,7 +251,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        counter: action.questionCounter,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -370,7 +375,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
-    FormConfigurationActions.addQuestion,
+    FormConfigurationActions.addQuestions,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -382,7 +387,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           );
           sectionQuestions = [
             ...sectionQuestions.slice(0, action.questionIndex),
-            action.question,
+            ...action.questions,
             ...sectionQuestions.slice(action.questionIndex).map((question) => ({
               ...question,
               position: question.position + 1
@@ -398,7 +403,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        counter: action.questionCounter,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus

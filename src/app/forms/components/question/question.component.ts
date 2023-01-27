@@ -36,8 +36,7 @@ import {
   getQuestionByID,
   getSectionQuestionsCount,
   State,
-  getQuestionLogics,
-  getFormMetadata
+  getQuestionLogics
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -176,8 +175,7 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF' &&
-        fieldType.type !== 'ATT'
+        fieldType.type !== 'TAF'
     );
     this.questionForm.valueChanges
       .pipe(
@@ -210,6 +208,11 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
+            /* if (question.isOpen) {
+              timer(0).subscribe(() => this.name.nativeElement.focus());
+            } else {
+              timer(0).subscribe(() => this.name.nativeElement.blur());
+            } */
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false

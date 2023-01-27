@@ -68,6 +68,7 @@ export class TenantComponent implements OnInit, AfterViewInit {
     'Spare Parts Control Center',
     'User Management',
     'Forms',
+    'Operator Rounds',
     'Work Instructions Authoring'
   ];
   idps = ['azure'];

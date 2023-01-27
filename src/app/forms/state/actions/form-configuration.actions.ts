@@ -95,12 +95,16 @@ export const updateCreateOrEditForm = createAction(
   props<{ createOrEditForm: boolean }>()
 );
 
+export const updateCounter = createAction(
+  '[Form Configuration] updateCounter',
+  props<{ counter: number }>()
+);
+
 export const addPage = createAction(
   '[Form Configuration] addPage',
   props<{
     page: Page;
     pageIndex: number;
-    questionCounter: number;
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
@@ -129,10 +133,9 @@ export const addSection = createAction(
   '[Form Configuration] addSection',
   props<{
     section: Section;
-    question: Question;
+    questions: Question[];
     pageIndex: number;
     sectionIndex: number;
-    questionCounter: number;
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;
@@ -183,14 +186,13 @@ export const deleteSection = createAction(
   }>()
 );
 
-export const addQuestion = createAction(
-  '[Form Configuration] addQuestion',
+export const addQuestions = createAction(
+  '[Form Configuration] addQuestions',
   props<{
-    question: Question;
+    questions: Question[];
     pageIndex: number;
     sectionId: string;
     questionIndex: number;
-    questionCounter: number;
     formStatus: string;
     formDetailPublishStatus: string;
     formSaveStatus: string;

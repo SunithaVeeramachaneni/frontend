@@ -11,11 +11,12 @@
     createOrEditForm: createOrEditForm$ | async,
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
-    isFormCreated: isFormCreated$ | async
+    isFormCreated: isFormCreated$ | async,
+    questionCounter: questionCounter$ | async
   } as props"
 >
   <div class="dis-flex form-header">
-    <div class="dis-flex width-60">
+    <div class="dis-flex width-55">
       <img
         src="assets/rdf-forms-icons/formlogo.svg"
         alt=""
@@ -86,7 +87,7 @@
         </a>
       </div>
     </div>
-    <div class="dis-flex width-40 justify-content-end">
+    <div class="dis-flex width-45 justify-content-end">
       <div
         class="save-status"
         [hidden]="
@@ -128,7 +129,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        disabled
+        (click)="importQuestions()"
       ></button>
 
       <button
@@ -272,5 +273,16 @@
     <div class="iphone-width">
       <app-iphone></app-iphone>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>

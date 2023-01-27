@@ -8,8 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {
   FormConfigurationApiActions,
-  RoundPlanConfigurationActions,
-  RoundPlanConfigurationApiActions
+  RoundPlanConfigurationActions
 } from './actions';
 import { LoginService } from 'src/app/components/login/services/login.service';
 import { formConfigurationStatus } from 'src/app/app.constants';
@@ -95,7 +94,7 @@ export class RoundPlanConfigurationEffects {
               })
             ]).pipe(
               map(([, , createAuthoredFormDetail]) =>
-                RoundPlanConfigurationApiActions.createFormDetailSuccess({
+                FormConfigurationApiActions.createFormDetailSuccess({
                   formDetail: response,
                   authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
@@ -107,7 +106,7 @@ export class RoundPlanConfigurationEffects {
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
-              RoundPlanConfigurationApiActions.createFormDetailFailure({
+              FormConfigurationApiActions.createFormDetailFailure({
                 error
               })
             );
@@ -146,7 +145,7 @@ export class RoundPlanConfigurationEffects {
               })
             ]).pipe(
               map(([, , createAuthoredFormDetail]) =>
-                RoundPlanConfigurationApiActions.updateFormDetailSuccess({
+                FormConfigurationApiActions.updateFormDetailSuccess({
                   formDetail: response,
                   authoredFormDetail: createAuthoredFormDetail,
                   formStatus: formConfigurationStatus.published,
@@ -158,7 +157,7 @@ export class RoundPlanConfigurationEffects {
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
-              RoundPlanConfigurationApiActions.updateFormDetailFailure({
+              FormConfigurationApiActions.updateFormDetailFailure({
                 error
               })
             );
@@ -199,7 +198,7 @@ export class RoundPlanConfigurationEffects {
       concatMap((action) =>
         this.operatorRoundsService.updateAuthoredFormDetail$(action).pipe(
           map((authoredFormDetail) =>
-            RoundPlanConfigurationApiActions.updateAuthoredFromDetailSuccess({
+            FormConfigurationApiActions.updateAuthoredFromDetailSuccess({
               authoredFormDetail,
               formSaveStatus: formConfigurationStatus.saved
             })
@@ -207,7 +206,7 @@ export class RoundPlanConfigurationEffects {
           catchError((error) => {
             this.operatorRoundsService.handleError(error);
             return of(
-              RoundPlanConfigurationApiActions.updateAuthoredFromDetailFailure({
+              FormConfigurationApiActions.updateAuthoredFromDetailFailure({
                 error
               })
             );

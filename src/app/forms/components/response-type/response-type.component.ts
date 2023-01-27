@@ -29,7 +29,6 @@ export class ResponseTypeComponent implements OnInit {
     type: 'create',
     response: {}
   });
-  quickResponsesLoading = false;
   formId: string;
 
   constructor(
@@ -44,7 +43,6 @@ export class ResponseTypeComponent implements OnInit {
       .select(getResponseSets)
       .pipe((responses: any) => responses);
     this.globalResponses$.subscribe();
-    this.quickResponsesLoading = true;
 
     this.route.params.subscribe((params) => {
       this.formId = params.id;
@@ -61,15 +59,10 @@ export class ResponseTypeComponent implements OnInit {
       this.rdfService.getDataSetsByType$('quickResponses').pipe(
         tap((responses) => {
           const defaultResponses = responses.filter((item) => !item.formId);
-          this.quickResponsesLoading = false;
           return defaultResponses;
         })
       ),
-      this.rdfService.getDataSetsByFormId$('quickResponses', this.formId).pipe(
-        tap((v) => {
-          this.quickResponsesLoading = false;
-        })
-      ),
+      this.rdfService.getDataSetsByFormId$('quickResponses', this.formId),
       this.createEditQuickResponse$
     ]).pipe(
       map(

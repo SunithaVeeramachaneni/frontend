@@ -43,8 +43,11 @@ import { formConfigurationReducer } from 'src/app/forms/state/form-configuration
 import { ImageComponent } from './components/field-types/image/image.component';
 import { GlobalResponseTypeSideDrawerComponent } from './components/global-response-type-side-drawer/global-response-type-side-drawer.component';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
+import { ImportQuestionsSliderComponent } from './components/import-questions/import-questions-slider/import-questions-slider.component';
+import { AddPageOrSelectExistingPageModalComponent } from './components/import-questions/add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
+
 @NgModule({
   declarations: [
     FormWidgetComponent,
@@ -66,7 +69,9 @@ import { MatDividerModule } from '@angular/material/divider';
     TextComponent,
     DropDownComponent,
     ImageComponent,
-    GlobalResponseTypeSideDrawerComponent
+    GlobalResponseTypeSideDrawerComponent,
+    ImportQuestionsSliderComponent,
+    AddPageOrSelectExistingPageModalComponent
   ],
   imports: [
     FormsModule,
@@ -90,6 +95,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDividerModule,
     MatSelectModule,
     MatTooltipModule,
+    MatRadioModule,
     NgxShimmerLoadingModule,
     StoreModule.forFeature('feature', {
       formConfiguration: formConfigurationReducer
@@ -106,6 +112,7 @@ import { MatDividerModule } from '@angular/material/divider';
     IphoneComponent,
     AddLogicComponent,
     AddFilterComponent,
+    ImportQuestionsSliderComponent,
     NgxShimmerLoadingModule
   ]
 })
