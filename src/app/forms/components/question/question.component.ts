@@ -23,7 +23,10 @@ import { Observable, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { fieldTypesMock } from '../response-type/response-types.mock';
+import {
+  fieldTypesMock,
+  unitOfMeasurementsMock
+} from '../response-type/response-types.mock';
 import {
   QuestionEvent,
   Question,
@@ -110,18 +113,7 @@ export class QuestionComponent implements OnInit {
 
   unitOfMeasurementsAvailable = [];
 
-  unitOfMeasurements = [
-    {
-      code: 'cm',
-      symbol: '^C',
-      title: 'Centimetre'
-    },
-    {
-      code: 'Km',
-      symbol: 'Km',
-      title: 'Kilometre'
-    }
-  ];
+  unitOfMeasurements = [];
 
   questionForm: FormGroup = this.fb.group({
     id: '',
@@ -172,7 +164,7 @@ export class QuestionComponent implements OnInit {
       }
     });
 
-    this.unitOfMeasurementsAvailable = this.unitOfMeasurements;
+    this.unitOfMeasurementsAvailable = unitOfMeasurementsMock;
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -217,11 +209,18 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
-            /* if (question.isOpen) {
+            if (
+              question.isOpen &&
+              !isEqual(question.isOpen, this.question?.isOpen)
+            ) {
               timer(0).subscribe(() => this.name.nativeElement.focus());
-            } else {
-              timer(0).subscribe(() => this.name.nativeElement.blur());
-            } */
+            } else if (!question.isOpen) {
+              if (this.isAskQuestion) {
+                timer(0).subscribe(() => this.name.nativeElement.focus());
+              } else {
+                timer(0).subscribe(() => this.name.nativeElement.blur());
+              }
+            }
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -230,21 +229,6 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    if (!this._isAskQuestion) {
-      if (this.question) {
-        if (this.question.isOpen) {
-          timer(0).subscribe(() => this.name.nativeElement.focus());
-        } else {
-          timer(0).subscribe(() => this.name.nativeElement.blur());
-        }
-      } else {
-        timer(0).subscribe(() => this.name.nativeElement.focus());
-      }
-    } else {
-      if (!this.question.isOpen) {
-        timer(0).subscribe(() => this.name.nativeElement.focus());
-      }
-    }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
     );

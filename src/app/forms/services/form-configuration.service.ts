@@ -2,8 +2,13 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationActions } from 'src/app/forms/state/actions';
-import { NumberRangeMetadata, Question, Section } from 'src/app/interfaces';
-import { State } from 'src/app/state/app.state';
+import {
+  NumberRangeMetadata,
+  Question,
+  Section,
+  SectionQuestions
+} from 'src/app/interfaces';
+import { State } from '../state';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +18,19 @@ export class FormConfigurationService {
 
   addPage(
     pageIndex: number,
-    sectionIndex: number,
-    questionIndexs: number[],
-    sectionIndexes: any,
+    addSections: number,
+    addQuestions: number,
+    pageWiseSectionIndexes: any,
     questionCounter: number,
-    questions: Question[] = []
+    sectionQuestionsList: SectionQuestions[] = []
   ) {
     const page = this.getPageObject(
       pageIndex,
-      sectionIndex,
-      questionIndexs,
-      sectionIndexes,
+      addSections,
+      addQuestions,
+      pageWiseSectionIndexes,
       questionCounter,
-      questions
+      sectionQuestionsList
     );
 
     this.store.dispatch(
@@ -38,33 +43,34 @@ export class FormConfigurationService {
 
     this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
-        questionId: page.questions[questionIndexs.length - 1].id,
+        questionId: page.questions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
       })
     );
   }
 
-  addSection(
+  addSections(
     pageIndex: number,
+    addSections: number,
+    addQuestions: number,
     sectionIndex: number,
-    questionIndexs: number[],
-    sectionIndexes: any,
+    pageWiseSectionIndexes: any,
     questionCounter: number,
-    questions: Question[] = []
+    sectionQuestionsList: SectionQuestions[] = []
   ) {
-    const { section, sectionQuestions } = this.getSectionObject(
+    const { sections, questions } = this.getSectionsObject(
       pageIndex,
-      sectionIndex,
-      questionIndexs,
-      sectionIndexes,
+      addSections,
+      addQuestions,
+      pageWiseSectionIndexes,
       questionCounter,
-      questions
+      sectionQuestionsList
     );
     this.store.dispatch(
-      FormConfigurationActions.addSection({
-        section,
-        questions: sectionQuestions,
+      FormConfigurationActions.addSections({
+        sections,
+        questions,
         pageIndex,
         sectionIndex,
         ...this.getFormConfigurationStatuses()
@@ -78,7 +84,7 @@ export class FormConfigurationService {
     );
     this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
-        questionId: sectionQuestions[questionIndexs.length - 1].id,
+        questionId: questions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
       })
@@ -88,30 +94,33 @@ export class FormConfigurationService {
   addQuestions(
     pageIndex: number,
     sectionId: string,
-    questionIndexs: number[],
+    addQuestions: number,
+    questionIndex: number,
     questionCounter: number,
     questions: Question[] = []
   ) {
-    const sectionQuestions = questionIndexs.map((questionIndex, index) =>
-      this.getQuestion(
-        questionIndex,
-        sectionId,
-        questionCounter + index + 1,
-        questions[index]
-      )
-    );
+    const sectionQuestions = new Array(addQuestions)
+      .fill(0)
+      .map((q, index) =>
+        this.getQuestion(
+          questionIndex + index,
+          sectionId,
+          questionCounter + index + 1,
+          questions[index]
+        )
+      );
     this.store.dispatch(
       FormConfigurationActions.addQuestions({
         questions: sectionQuestions,
         pageIndex,
         sectionId,
-        questionIndex: questionIndexs[0],
+        questionIndex,
         ...this.getFormConfigurationStatuses()
       })
     );
     this.store.dispatch(
       FormConfigurationActions.updateQuestionState({
-        questionId: sectionQuestions[questionIndexs.length - 1].id,
+        questionId: sectionQuestions[addQuestions - 1].id,
         isOpen: true,
         isResponseTypeModalOpen: false
       })
@@ -128,63 +137,88 @@ export class FormConfigurationService {
 
   private getPageObject(
     pageIndex: number,
-    sectionIndex: number,
-    questionIndexs: number[],
-    sectionIndexes: any,
+    addSections: number,
+    addQuestions: number,
+    pageWiseSectionIndexes: any,
     questionCounter: number,
-    questions: Question[]
+    sectionQuestionsList: SectionQuestions[]
   ) {
-    const section = this.getSection(pageIndex, sectionIndex, sectionIndexes);
-    const sectionQuestions = questionIndexs.map((questionIndex, index) =>
-      this.getQuestion(
-        questionIndex,
-        section.id,
-        questionCounter + index + 1,
-        questions[index]
-      )
+    const { sections, questions } = this.getSectionsObject(
+      pageIndex,
+      addSections,
+      addQuestions,
+      pageWiseSectionIndexes,
+      questionCounter,
+      sectionQuestionsList
     );
+
     return {
       name: 'Page',
       position: pageIndex + 1,
       isOpen: true,
-      sections: [section],
-      questions: sectionQuestions,
+      sections,
+      questions,
       logics: []
     };
   }
 
-  private getSectionObject(
+  private getSectionsObject(
     pageIndex: number,
-    sectionIndex: number,
-    questionIndexs: number[],
-    sectionIndexes: any,
+    addSections: number,
+    addQuestions: number,
+    pageWiseSectionIndexes: any,
     questionCounter: number,
-    questions: Question[]
+    sectionQuestionsList: SectionQuestions[]
   ) {
-    const section = this.getSection(pageIndex, sectionIndex, sectionIndexes);
-    const sectionQuestions = questionIndexs.map((questionIndex, index) =>
-      this.getQuestion(
-        questionIndex,
-        section.id,
-        questionCounter + index + 1,
-        questions[index]
-      )
-    );
+    let sectionCount =
+      pageWiseSectionIndexes && pageWiseSectionIndexes[pageIndex]
+        ? pageWiseSectionIndexes[pageIndex].length
+        : 0;
+    let sliceStart = 0;
+    let questions: Question[] = [];
+
+    const sections = new Array(addSections).fill(0).map((s, sectionIndex) => {
+      sectionCount = ++sectionCount;
+      const section = this.getSection(
+        sectionCount,
+        sectionQuestionsList[sectionIndex]?.section
+      );
+
+      const sectionQuestions = new Array(addQuestions)
+        .fill(0)
+        .slice(
+          sliceStart,
+          sliceStart +
+            (sectionQuestionsList[sectionIndex]?.questions
+              ? sectionQuestionsList[sectionIndex]?.questions?.length
+              : 1)
+        )
+        .map((q, questionIndex) =>
+          this.getQuestion(
+            questionIndex,
+            section.id,
+            questionCounter + sliceStart + questionIndex + 1,
+            sectionQuestionsList[sectionIndex]?.questions[questionIndex]
+          )
+        );
+
+      sliceStart += sectionQuestionsList[sectionIndex]?.questions?.length;
+      questions = [...questions, ...sectionQuestions];
+
+      return section;
+    });
+
     return {
-      section,
-      sectionQuestions
+      sections,
+      questions
     };
   }
 
-  private getSection(pageIndex: number, sectionIndex: number, sectionIndexes) {
+  private getSection(sectionIndex: number, section: Section) {
     return {
-      id: `S${
-        sectionIndexes && sectionIndexes[pageIndex]
-          ? sectionIndexes[pageIndex].length + 1
-          : 1
-      }`,
-      name: 'Section',
-      position: sectionIndex + 1,
+      id: `S${sectionIndex}`,
+      name: section ? section.name : 'Section',
+      position: sectionIndex,
       isOpen: true
     };
   }

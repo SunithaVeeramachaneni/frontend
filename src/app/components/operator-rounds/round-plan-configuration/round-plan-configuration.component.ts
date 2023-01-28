@@ -47,7 +47,8 @@ import {
   getFormPublishStatus,
   getIsFormCreated,
   getQuestionIds,
-  getQuestionCounter
+  getQuestionCounter,
+  State
 } from 'src/app/forms/state';
 
 import {
@@ -64,7 +65,6 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { State } from 'src/app/state/app.state';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 
 @Component({
@@ -98,6 +98,7 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   formMetadata: FormMetadata;
   formListVersion: number;
   errors: ValidationError = {};
+  formDetails: any;
   readonly formConfigurationStatus = formConfigurationStatus;
 
   constructor(
@@ -223,8 +224,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     );
 
     this.authoredFormDetail$ = this.store.select(getFormDetails).pipe(
-      tap(
-        ({
+      tap((formDetails) => {
+        const {
           formMetadata,
           formStatus,
           counter,
@@ -238,82 +239,86 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           formListDynamoDBVersion,
           formDetailDynamoDBVersion,
           authoredFormDetailDynamoDBVersion
-        }) => {
-          this.formListVersion = formListDynamoDBVersion;
-          this.formStatus = formStatus;
-          this.formDetailPublishStatus = formDetailPublishStatus;
-          const { id: formListId } = formMetadata;
-          this.isFormDetailPublished = isFormDetailPublished;
-          if (pages.length && formListId) {
-            if (authoredFormDetailId) {
-              if (formSaveStatus !== 'Saved' && formStatus !== 'Published') {
-                this.store.dispatch(
-                  RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
-                    formStatus,
-                    formDetailPublishStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailId,
-                    authoredFormDetailDynamoDBVersion
-                  })
-                );
-              }
-            } else {
+        } = formDetails;
+        this.formListVersion = formListDynamoDBVersion;
+        this.formStatus = formStatus;
+        this.formDetailPublishStatus = formDetailPublishStatus;
+        const { id: formListId } = formMetadata;
+        this.isFormDetailPublished = isFormDetailPublished;
+        if (pages.length && formListId) {
+          if (authoredFormDetailId) {
+            if (
+              formSaveStatus !== 'Saved' &&
+              formStatus !== 'Published' &&
+              !isEqual(this.formDetails, formDetails)
+            ) {
               this.store.dispatch(
-                RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
+                RoundPlanConfigurationActions.updateAuthoredRoundPlanDetail({
                   formStatus,
                   formDetailPublishStatus,
                   formListId,
                   counter,
                   pages,
-                  authoredFormDetailVersion
+                  authoredFormDetailId,
+                  authoredFormDetailDynamoDBVersion
                 })
               );
             }
+            this.formDetails = formDetails;
+          } else {
+            this.store.dispatch(
+              RoundPlanConfigurationActions.createAuthoredRoundPlanDetail({
+                formStatus,
+                formDetailPublishStatus,
+                formListId,
+                counter,
+                pages,
+                authoredFormDetailVersion
+              })
+            );
+          }
 
-            if (isFormDetailPublished && formDetailId) {
-              this.store.dispatch(
-                RoundPlanConfigurationActions.updateRoundPlanDetail({
-                  formMetadata,
+          if (isFormDetailPublished && formDetailId) {
+            this.store.dispatch(
+              RoundPlanConfigurationActions.updateRoundPlanDetail({
+                formMetadata,
+                formListId,
+                pages,
+                formDetailId,
+                formDetailDynamoDBVersion,
+                authoredFormDetail: {
+                  formStatus,
                   formListId,
+                  counter,
                   pages,
-                  formDetailId,
-                  formDetailDynamoDBVersion,
-                  authoredFormDetail: {
-                    formStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailVersion,
-                    authoredFormDetailDynamoDBVersion,
-                    authoredFormDetailId
-                  },
-                  formListDynamoDBVersion
-                })
-              );
-            } else if (isFormDetailPublished && !formDetailId) {
-              this.store.dispatch(
-                RoundPlanConfigurationActions.createRoundPlanDetail({
-                  formMetadata,
+                  authoredFormDetailVersion,
+                  authoredFormDetailDynamoDBVersion,
+                  authoredFormDetailId
+                },
+                formListDynamoDBVersion
+              })
+            );
+          } else if (isFormDetailPublished && !formDetailId) {
+            this.store.dispatch(
+              RoundPlanConfigurationActions.createRoundPlanDetail({
+                formMetadata,
+                formListId,
+                pages,
+                authoredFormDetail: {
+                  formStatus,
                   formListId,
+                  counter,
                   pages,
-                  authoredFormDetail: {
-                    formStatus,
-                    formListId,
-                    counter,
-                    pages,
-                    authoredFormDetailVersion,
-                    authoredFormDetailDynamoDBVersion,
-                    authoredFormDetailId
-                  },
-                  formListDynamoDBVersion
-                })
-              );
-            }
+                  authoredFormDetailVersion,
+                  authoredFormDetailDynamoDBVersion,
+                  authoredFormDetailId
+                },
+                formListDynamoDBVersion
+              })
+            );
           }
         }
-      )
+      })
     );
 
     this.createOrEditForm$ = this.store.select(getCreateOrEditForm).pipe(
@@ -373,8 +378,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
       if (!params.id) {
         this.formConfigurationService.addPage(
           0,
-          0,
-          [0],
+          1,
+          1,
           this.sectionIndexes,
           this.formConf.counter.value
         );
@@ -405,8 +410,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
         {
           this.formConfigurationService.addPage(
             pageIndex,
-            0,
-            [0],
+            1,
+            1,
             this.sectionIndexes,
             this.formConf.counter.value
           );
@@ -429,10 +434,11 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
     switch (type) {
       case 'add':
         {
-          this.formConfigurationService.addSection(
+          this.formConfigurationService.addSections(
             pageIndex,
+            1,
+            1,
             sectionIndex,
-            [0],
             this.sectionIndexes,
             this.formConf.counter.value
           );
@@ -471,7 +477,8 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
           this.formConfigurationService.addQuestions(
             pageIndex,
             sectionId,
-            [questionIndex],
+            1,
+            questionIndex,
             this.formConf.counter.value
           );
         }

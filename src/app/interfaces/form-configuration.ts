@@ -50,6 +50,11 @@ export interface Question {
   rangeMetadata?: NumberRangeMetadata;
 }
 
+export interface SectionQuestions {
+  section: Section;
+  questions: Question[];
+}
+
 export interface NumberRangeMetadata {
   min: number;
   max: number;

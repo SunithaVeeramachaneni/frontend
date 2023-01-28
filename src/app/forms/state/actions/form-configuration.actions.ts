@@ -129,10 +129,10 @@ export const deletePage = createAction(
   }>()
 );
 
-export const addSection = createAction(
-  '[Form Configuration] addSection',
+export const addSections = createAction(
+  '[Form Configuration] addSections',
   props<{
-    section: Section;
+    sections: Section[];
     questions: Question[];
     pageIndex: number;
     sectionIndex: number;

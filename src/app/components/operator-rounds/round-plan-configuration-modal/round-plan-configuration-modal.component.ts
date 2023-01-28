@@ -25,7 +25,7 @@ import { ValidationError } from 'src/app/interfaces';
 import { Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 import { Store } from '@ngrx/store';
-import { OPRState } from 'src/app/forms/state';
+import { State } from 'src/app/forms/state';
 import {
   FormConfigurationActions,
   RoundPlanConfigurationActions
@@ -63,7 +63,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     private router: Router,
     public dialogRef: MatDialogRef<RoundPlanConfigurationModalComponent>,
     private readonly loginService: LoginService,
-    private store: Store<OPRState>,
+    private store: Store<State>,
     private operatorRoundsService: OperatorRoundsService,
     private cdrf: ChangeDetectorRef
   ) {
@@ -165,7 +165,7 @@ export class RoundPlanConfigurationModalComponent implements OnInit {
     if (this.headerDataForm.valid) {
       const userName = this.loginService.getLoggedInUserName();
       this.store.dispatch(
-        RoundPlanConfigurationActions.addRoundPlanMetadata({
+        FormConfigurationActions.addFormMetadata({
           formMetadata: this.headerDataForm.value,
           formDetailPublishStatus: formConfigurationStatus.draft,
           formSaveStatus: formConfigurationStatus.saving

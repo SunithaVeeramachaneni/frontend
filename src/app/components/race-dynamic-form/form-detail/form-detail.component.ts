@@ -64,45 +64,27 @@ export class FormDetailComponent implements OnInit, OnChanges, OnDestroy {
         );
       }
       this.selectedFormDetail$ = formDetail$.pipe(
-        map((items: any) => {
-          const updatedItems = items.map((item) => ({
-            ...item,
-            pages: isJson(item?.pages) ? JSON.parse(item.pages) : []
-          }));
-          if (updatedItems?.length > 0) {
-            let latestVersion = null;
-            this.questionsCount = 0;
-            this.pagesCount = 0;
-            let version = 0;
-
-            updatedItems.forEach((element, idx) => {
-              if (element._version > version) version = element._version;
-              const latestFormVersionData = updatedItems.find(
-                (item) => item._version === version
-              );
-              latestVersion = latestFormVersionData;
+        map((formDetail: any) => {
+          this.pagesCount = 0;
+          this.questionsCount = 0;
+          let data: any;
+          if (formDetail) {
+            const pages = JSON.parse(formDetail.pages);
+            data = { ...formDetail, pages };
+            data.pages.forEach((page, pIdx) => {
+              if (pIdx === 0) {
+                this.defaultFormName = `${page.name} ${page.position}`;
+                this.store.dispatch(
+                  FormConfigurationActions.initPages({
+                    pages: [page]
+                  })
+                );
+              }
+              this.questionsCount += page?.questions?.length || 0;
+              this.pagesCount += 1;
             });
-            if (
-              Array.isArray(latestVersion?.pages) &&
-              latestVersion?.pages?.length > 0
-            ) {
-              latestVersion?.pages.forEach((page, pIdx) => {
-                if (pIdx === 0) {
-                  this.defaultFormName = `${page.name} ${page.position}`;
-                  this.store.dispatch(
-                    FormConfigurationActions.initPages({
-                      pages: [page]
-                    })
-                  );
-                }
-                this.questionsCount += page?.questions?.length || 0;
-                this.pagesCount += 1;
-              });
-            }
-
-            return latestVersion;
           }
-          return updatedItems;
+          return data;
         })
       );
       this.selectedFormDetail$?.subscribe(

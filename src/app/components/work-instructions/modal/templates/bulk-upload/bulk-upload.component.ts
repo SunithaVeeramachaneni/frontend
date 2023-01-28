@@ -12,8 +12,7 @@ import {
   ImportFileEventData,
   Instruction
 } from '../../../../../interfaces';
-import { InstructionWithSteps } from '../../state/bulkupload.reducer';
-import { State } from '../../../../../state/app.state';
+import { InstructionWithSteps, State } from '../../state/bulkupload.reducer';
 import { Store } from '@ngrx/store';
 import * as BulkUploadActions from '../../state/bulkupload.actions';
 import { ErrorHandlerService } from '../../../../../shared/error-handler/error-handler.service';

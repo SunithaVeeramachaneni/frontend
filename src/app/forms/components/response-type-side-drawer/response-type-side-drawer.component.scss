@@ -133,6 +133,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0px 15px;
   .limitDivider {
     position: relative;
     margin: 15px 0px;
@@ -182,7 +183,6 @@
           .titleRowIcon {
             margin: 5px;
             font-size: 12pt;
-            margin-top: 10px;
           }
         }
         .editIcon {
@@ -212,11 +212,13 @@
     }
     .note {
       background: $note-bg;
-      color: $white;
-    }
-    .impact {
-      background: $impact-bg;
-      color: $white;
+      // color: $white;
     }
   }
+}
+.matCardContent {
+  height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5px;
 }
