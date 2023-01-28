@@ -2,13 +2,13 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Base64HelperService } from '../../services/base64-helper.service';
-import { State } from '../../../../state/app.state';
 import {
   getCurrentStep,
   getCurrentStepImages
 } from '../../state/instruction.selectors';
 import { Instruction, Step } from '../../../../interfaces';
 import { SelectedInstructionData } from '../overview.component';
+import { State } from '../../state/instruction.reducer';
 
 @Component({
   selector: 'app-ipad-preview',

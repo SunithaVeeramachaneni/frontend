@@ -32,18 +32,12 @@ import {
 } from 'src/app/interfaces';
 import { defaultLimit, formConfigurationStatus } from 'src/app/app.constants';
 import { ToastService } from 'src/app/shared/toast';
-import {
-  GetFormListQuery,
-  UpdateRoundPlanListMutation
-} from 'src/app/API.service';
+import { GetFormListQuery } from 'src/app/API.service';
 import { Router } from '@angular/router';
 import { omit } from 'lodash-es';
 import { Store } from '@ngrx/store';
-import { OPRState } from 'src/app/forms/state';
-import {
-  FormConfigurationActions,
-  RoundPlanConfigurationActions
-} from 'src/app/forms/state/actions';
+import { State } from 'src/app/forms/state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
 import {
   generateCopyNumber,
   generateCopyRegex
@@ -261,7 +255,7 @@ export class RoundPlanListComponent implements OnInit {
     private readonly toast: ToastService,
     private readonly operatorRoundsService: OperatorRoundsService,
     private router: Router,
-    private readonly store: Store<OPRState>
+    private readonly store: Store<State>
   ) {}
 
   ngOnInit(): void {
@@ -341,7 +335,10 @@ export class RoundPlanListComponent implements OnInit {
               if (!newRecord) {
                 return;
               }
-              if (authoredFormDetail) {
+              if (
+                authoredFormDetail &&
+                Object.keys(authoredFormDetail).length
+              ) {
                 this.operatorRoundsService.createAuthoredFormDetail$({
                   formStatus: authoredFormDetail?.formStatus,
                   formDetailPublishStatus: 'Draft',
@@ -500,9 +497,7 @@ export class RoundPlanListComponent implements OnInit {
     this.operatorRoundsService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => {
-    // console.log('event', event);
-  };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
@@ -531,10 +526,10 @@ export class RoundPlanListComponent implements OnInit {
   onCloseViewDetail() {
     this.selectedForm = null;
     this.menuState = 'out';
-    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
+    this.store.dispatch(FormConfigurationActions.resetPages());
   }
   roundPlanDetailActionHandler(event) {
-    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
+    this.store.dispatch(FormConfigurationActions.resetPages());
     this.router.navigate([`/operator-rounds/edit/${this.selectedForm.id}`]);
   }
 
@@ -558,7 +553,7 @@ export class RoundPlanListComponent implements OnInit {
   }
 
   private showFormDetail(row: GetFormListQuery): void {
-    this.store.dispatch(RoundPlanConfigurationActions.resetPages());
+    this.store.dispatch(FormConfigurationActions.resetPages());
     this.selectedForm = row;
     this.menuState = 'in';
   }

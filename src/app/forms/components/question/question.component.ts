@@ -175,7 +175,8 @@ export class QuestionComponent implements OnInit {
         fieldType.type !== 'IMG' &&
         fieldType.type !== 'USR' &&
         fieldType.type !== 'ARD' &&
-        fieldType.type !== 'TAF'
+        fieldType.type !== 'TAF' &&
+        fieldType.type !== 'ATT'
     );
     this.questionForm.valueChanges
       .pipe(

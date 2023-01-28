@@ -47,7 +47,8 @@ import {
   getFormPublishStatus,
   getIsFormCreated,
   getQuestionIds,
-  getQuestionCounter
+  getQuestionCounter,
+  State
 } from 'src/app/forms/state';
 
 import {
@@ -64,7 +65,6 @@ import { HeaderService } from 'src/app/shared/services/header.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
-import { State } from 'src/app/state/app.state';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
 
 @Component({

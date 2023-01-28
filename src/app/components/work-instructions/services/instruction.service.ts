@@ -29,10 +29,10 @@ import {
 } from '../../../interfaces';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import { environment } from '../../../../environments/environment';
 import { defaultCategoryId } from '../../../app.constants';
+import { State } from '../state/instruction.reducer';
 
 export interface InstructionQuery {
   search: string;

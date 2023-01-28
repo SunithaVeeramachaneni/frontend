@@ -4,28 +4,22 @@ import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { OPRState, State } from 'src/app/forms/state';
+import { State } from 'src/app/forms/state';
 
-import {
-  FormConfigurationActions,
-  RoundPlanConfigurationActions
-} from 'src/app/forms/state/actions';
-import { RoundPlanConfigurationState } from 'src/app/forms/state/round-plan-configuration.reducer';
-// import { State } from 'src/app/state/app.state';
+import { FormConfigurationActions } from 'src/app/forms/state/actions';
+import { FormConfigurationState } from 'src/app/forms/state/form-configuration.reducer';
 import { OperatorRoundsService } from './operator-rounds.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoundPlanResolverService
-  implements Resolve<RoundPlanConfigurationState>
+  implements Resolve<FormConfigurationState>
 {
   constructor(
     private operatorRoundsService: OperatorRoundsService,
-    private store: Store<OPRState>
+    private store: Store<State>
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot
-  ): Observable<RoundPlanConfigurationState> {
+  resolve(route: ActivatedRouteSnapshot): Observable<FormConfigurationState> {
     const id = route.params.id;
     return forkJoin({
       form: this.operatorRoundsService.getFormById$(id),
@@ -84,11 +78,11 @@ export class RoundPlanResolverService
           formListDynamoDBVersion,
           authoredFormDetailDynamoDBVersion,
           formDetailDynamoDBVersion
-        } as RoundPlanConfigurationState;
+        } as FormConfigurationState;
       }),
       catchError((error) => {
         this.operatorRoundsService.handleError(error);
-        return of({} as RoundPlanConfigurationState);
+        return of({} as FormConfigurationState);
       })
     );
   }

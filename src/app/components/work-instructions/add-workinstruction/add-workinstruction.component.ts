@@ -23,7 +23,6 @@ import {
   FileInfo
 } from '../../../interfaces';
 import { Store } from '@ngrx/store';
-import { State } from '../../../state/app.state';
 import * as InstructionActions from '../state/intruction.actions';
 import {
   getInsToBePublished,
@@ -37,6 +36,7 @@ import { Location } from '@angular/common';
 import { MediaType } from 'plyr';
 import { permissions } from 'src/app/app.constants';
 import { HeaderService } from 'src/app/shared/services/header.service';
+import { State } from '../state/instruction.reducer';
 
 @Component({
   selector: 'app-add-workinstruction',
