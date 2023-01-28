@@ -8,10 +8,10 @@ import { FormConfigurationService } from 'src/app/forms/services/form-configurat
 import {
   getPagesCount,
   getQuestionCounter,
-  getSectionIndexes
+  getSectionIndexes,
+  State
 } from 'src/app/forms/state';
 import { SectionQuestions } from 'src/app/interfaces';
-import { State } from 'src/app/state/app.state';
 import { AddPageOrSelectExistingPageModalComponent } from '../add-page-or-select-existing-page-modal/add-page-or-select-existing-page-modal.component';
 
 @Component({

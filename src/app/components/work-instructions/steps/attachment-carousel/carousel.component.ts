@@ -15,13 +15,13 @@ import {
 } from './carousel.animations';
 import { Base64HelperService } from '../../services/base64-helper.service';
 import { Store } from '@ngrx/store';
-import { State } from '../../../../state/app.state';
 import {
   getCurrentStep,
   getCurrentStepImages
 } from '../../state/instruction.selectors';
 import { Subscription } from 'rxjs';
 import { Step } from '../../../../interfaces';
+import { State } from '../../state/instruction.reducer';
 
 @Component({
   selector: 'app-carousel',

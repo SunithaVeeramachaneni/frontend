@@ -1,13 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import {
   CreateAuthoredFormDetailMutation,
-  CreateAuthoredRoundPlanDetailMutation,
   CreateFormDetailMutation,
-  CreateRoundPlanDetailMutation,
   UpdateAuthoredFormDetailMutation,
-  UpdateAuthoredRoundPlanDetailMutation,
-  UpdateFormDetailMutation,
-  UpdateRoundPlanDetailMutation
+  UpdateFormDetailMutation
 } from 'src/app/API.service';
 import { FormMetadata } from 'src/app/interfaces';
 
@@ -34,10 +30,8 @@ export const updateFormFailure = createAction(
 export const createFormDetailSuccess = createAction(
   '[Form Configuration API] createFormDetailSuccess',
   props<{
-    formDetail: CreateFormDetailMutation | CreateRoundPlanDetailMutation;
-    authoredFormDetail:
-      | CreateAuthoredFormDetailMutation
-      | CreateAuthoredRoundPlanDetailMutation;
+    formDetail: CreateFormDetailMutation;
+    authoredFormDetail: CreateAuthoredFormDetailMutation;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -53,10 +47,8 @@ export const createFormDetailFailure = createAction(
 export const updateFormDetailSuccess = createAction(
   '[Form Configuration API] updateFormDetailSuccess',
   props<{
-    formDetail: UpdateFormDetailMutation | UpdateRoundPlanDetailMutation;
-    authoredFormDetail:
-      | CreateAuthoredFormDetailMutation
-      | CreateAuthoredRoundPlanDetailMutation;
+    formDetail: UpdateFormDetailMutation;
+    authoredFormDetail: CreateAuthoredFormDetailMutation;
     formStatus: string;
     formDetailPublishStatus: string;
   }>()
@@ -86,9 +78,7 @@ export const createAuthoredFromDetailFailure = createAction(
 export const updateAuthoredFromDetailSuccess = createAction(
   '[Form Configuration API] updateAuthoredFromDetailSuccess',
   props<{
-    authoredFormDetail:
-      | UpdateAuthoredFormDetailMutation
-      | UpdateAuthoredRoundPlanDetailMutation;
+    authoredFormDetail: UpdateAuthoredFormDetailMutation;
     formSaveStatus: string;
   }>()
 );

@@ -48,7 +48,8 @@ import {
   getFormPublishStatus,
   getIsFormCreated,
   getQuestionIds,
-  getQuestionCounter
+  getQuestionCounter,
+  State
 } from 'src/app/forms/state';
 import {
   FormConfigurationActions,
@@ -66,7 +67,6 @@ import { ImportQuestionsModalComponent } from '../import-questions/import-questi
 import { ActivatedRoute, Router } from '@angular/router';
 import { formConfigurationStatus } from 'src/app/app.constants';
 import { FormConfigurationService } from 'src/app/forms/services/form-configuration.service';
-import { State } from 'src/app/state/app.state';
 
 @Component({
   selector: 'app-form-configuration',

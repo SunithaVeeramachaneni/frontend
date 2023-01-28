@@ -4,7 +4,8 @@ import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
   FormConfigurationActions,
-  FormConfigurationApiActions
+  FormConfigurationApiActions,
+  RoundPlanConfigurationApiActions
 } from './actions';
 
 export interface FormConfigurationState {
@@ -56,6 +57,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createFormSuccess,
+    RoundPlanConfigurationApiActions.createRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...state.formMetadata, ...action.formMetadata },
@@ -65,6 +67,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateFormSuccess,
+    RoundPlanConfigurationApiActions.updateRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
@@ -73,6 +76,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createAuthoredFromDetailSuccess,
+    RoundPlanConfigurationApiActions.createAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
@@ -83,6 +87,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
+    RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
@@ -91,6 +96,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createFormDetailSuccess,
+    RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -110,6 +116,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateFormDetailSuccess,
+    RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -669,10 +676,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages,
-        formStatus: 'Draft',
-        formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        pages
       };
     }
   ),

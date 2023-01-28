@@ -8,7 +8,7 @@ import {
   Section,
   SectionQuestions
 } from 'src/app/interfaces';
-import { State } from 'src/app/state/app.state';
+import { State } from '../state';
 
 @Injectable({
   providedIn: 'root'

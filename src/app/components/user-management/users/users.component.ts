@@ -547,9 +547,7 @@ export class UsersComponent implements OnInit {
   handleTableEvent = (event) => {
     this.fetchUsers$.next(event);
   };
-  configOptionsChangeHandler = (event) => {
-    // console.log('event', event);
-  };
+  configOptionsChangeHandler = (event) => {};
 
   prepareMenuActions(permissions: Permission[]) {
     const menuActions = [];

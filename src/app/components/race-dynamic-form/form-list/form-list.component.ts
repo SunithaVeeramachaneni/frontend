@@ -332,7 +332,10 @@ export class FormListComponent implements OnInit {
               if (!newRecord) {
                 return;
               }
-              if (authoredFormDetail) {
+              if (
+                authoredFormDetail &&
+                Object.keys(authoredFormDetail).length
+              ) {
                 this.raceDynamicFormService.createAuthoredFormDetail$({
                   formStatus: authoredFormDetail?.formStatus,
                   formDetailPublishStatus: 'Draft',
@@ -491,9 +494,7 @@ export class FormListComponent implements OnInit {
     this.raceDynamicFormService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => {
-    // console.log('event', event);
-  };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
