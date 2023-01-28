@@ -209,11 +209,18 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
-            /* if (question.isOpen) {
+            if (
+              question.isOpen &&
+              !isEqual(question.isOpen, this.question?.isOpen)
+            ) {
               timer(0).subscribe(() => this.name.nativeElement.focus());
-            } else {
-              timer(0).subscribe(() => this.name.nativeElement.blur());
-            } */
+            } else if (!question.isOpen) {
+              if (this.isAskQuestion) {
+                timer(0).subscribe(() => this.name.nativeElement.focus());
+              } else {
+                timer(0).subscribe(() => this.name.nativeElement.blur());
+              }
+            }
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -222,21 +229,6 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    if (!this._isAskQuestion) {
-      if (this.question) {
-        if (this.question.isOpen) {
-          timer(0).subscribe(() => this.name.nativeElement.focus());
-        } else {
-          timer(0).subscribe(() => this.name.nativeElement.blur());
-        }
-      } else {
-        timer(0).subscribe(() => this.name.nativeElement.focus());
-      }
-    } else {
-      if (!this.question.isOpen) {
-        timer(0).subscribe(() => this.name.nativeElement.focus());
-      }
-    }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
     );
