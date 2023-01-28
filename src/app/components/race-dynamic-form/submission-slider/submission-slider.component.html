@@ -22,7 +22,15 @@
       <hr class="horizon-line" />
       <div class="dis-flex just-content-space">
         <p class="sub-headings">Status</p>
-        <p class="sub-headings-value-badge">{{ submission?.status }}</p>
+        <p
+          class="sub-headings-value-badge"
+          [ngClass]="{
+            'in-progress': submission?.status === 'In Progress',
+            submitted: submission?.status === 'Submitted'
+          }"
+        >
+          {{ submission?.status }}
+        </p>
       </div>
       <hr class="horizon-line" />
 
