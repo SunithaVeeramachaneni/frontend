@@ -475,15 +475,19 @@ export class OperatorRoundsService {
                   MEASUREMENT:
                     question.unitOfMeasurement !== 'None'
                       ? question.unitOfMeasurement
-                      : '',
-                  DEFAULTVALUE: JSON.stringify({
-                    min: question.rangeMetadata.min,
-                    max: question.rangeMetadata.max,
-                    minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
-                    maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
-                    value: ''
-                  })
+                      : ''
                 });
+                if (question.rangeMetadata.min && question.rangeMetadata.max) {
+                  Object.assign(questionItem, {
+                    DEFAULTVALUE: JSON.stringify({
+                      min: question.rangeMetadata.min,
+                      max: question.rangeMetadata.max,
+                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                      value: ''
+                    })
+                  });
+                }
               }
 
               if (
