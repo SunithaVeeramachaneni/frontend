@@ -97,9 +97,6 @@ import { MatDividerModule } from '@angular/material/divider';
     MatTooltipModule,
     MatRadioModule,
     NgxShimmerLoadingModule,
-    StoreModule.forFeature('feature', {
-      formConfiguration: formConfigurationReducer
-    }),
     TranslateModule.forChild({})
   ],
   exports: [

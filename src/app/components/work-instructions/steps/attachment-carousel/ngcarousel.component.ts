@@ -3,13 +3,13 @@ import { Store } from '@ngrx/store';
 import { Slick } from 'ngx-slickjs';
 import { Subscription } from 'rxjs';
 import { Base64HelperService } from '../../services/base64-helper.service';
-import { State } from '../../../../state/app.state';
 import {
   getCurrentStep,
   getCurrentStepImages
 } from '../../state/instruction.selectors';
 import { Slide } from './carousel.interface';
 import { Step } from '../../../../interfaces';
+import { State } from '../../state/instruction.reducer';
 
 @Component({
   selector: 'app-ngcarousel',

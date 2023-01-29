@@ -354,9 +354,27 @@ export class RaceDynamicFormService {
   getAuthoredFormDetailByFormId$(formId: string) {
     return from(
       this.awsApiService.AuthoredFormDetailsByFormlistID(formId, null, {
-        formStatus: { eq: formConfigurationStatus.draft }
+        or: [
+          {
+            formStatus: { eq: formConfigurationStatus.draft }
+          },
+          {
+            formStatus: { eq: formConfigurationStatus.published }
+          }
+        ]
       })
-    ).pipe(map(({ items }) => items));
+    ).pipe(
+      map(({ items }) => {
+        let version = 0;
+        items.forEach((item) => {
+          if (item._version > version) version = item._version;
+        });
+        const latestFormVersionData = items.find(
+          (item) => item._version === version
+        );
+        return latestFormVersionData;
+      })
+    );
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {

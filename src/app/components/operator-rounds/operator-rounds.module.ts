@@ -32,7 +32,6 @@ import { defaultLanguage } from 'src/app/app.constants';
 import { NgxShimmerLoadingModule } from 'ngx-shimmer-loading';
 import { DynamictableModule } from '@innovapptive.com/dynamictable';
 import { StoreModule } from '@ngrx/store';
-import { roundPlanConfigurationReducer } from 'src/app/forms/state/round-plan-configuration.reducer';
 import { responseSetReducer } from 'src/app/forms/state/multiple-choice-response.reducer';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EffectsModule } from '@ngrx/effects';

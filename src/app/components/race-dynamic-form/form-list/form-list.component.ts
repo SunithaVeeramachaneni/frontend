@@ -332,19 +332,18 @@ export class FormListComponent implements OnInit {
               if (!newRecord) {
                 return;
               }
-              if (authoredFormDetail?.length > 0) {
-                for (const obj of authoredFormDetail) {
-                  if (obj) {
-                    this.raceDynamicFormService.createAuthoredFormDetail$({
-                      formStatus: obj?.formStatus,
-                      formDetailPublishStatus: 'Draft',
-                      formListId: newRecord?.id,
-                      pages: JSON.parse(obj?.pages) ?? '',
-                      counter: obj?.counter,
-                      authoredFormDetailVersion: 1
-                    });
-                  }
-                }
+              if (
+                authoredFormDetail &&
+                Object.keys(authoredFormDetail).length
+              ) {
+                this.raceDynamicFormService.createAuthoredFormDetail$({
+                  formStatus: authoredFormDetail?.formStatus,
+                  formDetailPublishStatus: 'Draft',
+                  formListId: newRecord?.id,
+                  pages: JSON.parse(authoredFormDetail?.pages) ?? '',
+                  counter: authoredFormDetail?.counter,
+                  authoredFormDetailVersion: 1
+                });
               }
               this.addEditCopyForm$.next({
                 action: 'copy',
@@ -495,9 +494,7 @@ export class FormListComponent implements OnInit {
     this.raceDynamicFormService.fetchForms$.next(event);
   };
 
-  configOptionsChangeHandler = (event): void => {
-    // console.log('event', event);
-  };
+  configOptionsChangeHandler = (event): void => {};
 
   prepareMenuActions(): void {
     const menuActions = [
