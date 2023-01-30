@@ -480,8 +480,8 @@ export class OperatorRoundsService {
                 if (question.rangeMetadata.min && question.rangeMetadata.max) {
                   Object.assign(questionItem, {
                     DEFAULTVALUE: JSON.stringify({
-                      min: question.rangeMetadata.min,
-                      max: question.rangeMetadata.max,
+                      min: question.rangeMetadata.min?.toString(),
+                      max: question.rangeMetadata.max?.toString(),
                       minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
                       maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
                       value: ''
