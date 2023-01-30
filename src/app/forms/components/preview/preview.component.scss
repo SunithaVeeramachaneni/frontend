@@ -5,6 +5,9 @@
   .pages {
     display: none;
   }
+  .read-only-field {
+      color: rgb(125 125 125);
+  }
   .pages.active {
     display: block !important;
   }

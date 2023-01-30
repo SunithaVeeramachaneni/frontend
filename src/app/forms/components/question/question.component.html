@@ -133,7 +133,7 @@
                 class="action"
               >
                 <span translate="unitTxt"></span>
-                <span [matMenuTriggerFor]="menu" class="uomBtn">
+                <span [matMenuTriggerFor]="menu" #unitMenuTrigger="matMenuTrigger" class="uomBtn">
                   {{ questionForm.get('unitOfMeasurement').value }}
                 </span>
                 <mat-menu #menu="matMenu">
