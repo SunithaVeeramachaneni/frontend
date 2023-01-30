@@ -186,7 +186,8 @@ export class OperatorRoundsService {
     }`;
     return from(API.graphql(graphqlOperation(statement))).pipe(
       map(
-        ({ data: { listFormLists } }: any) => listFormLists?.items?.length || 0
+        ({ data: { listRoundPlanLists } }: any) =>
+          listRoundPlanLists?.items?.length || 0
       )
     );
   }
