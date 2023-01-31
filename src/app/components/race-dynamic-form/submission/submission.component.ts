@@ -174,7 +174,7 @@ export class SubmissionComponent implements OnInit, OnDestroy {
     {
       id: 'updatedAt',
       displayName: 'Modified',
-      type: 'timeAgo',
+      type: 'string',
       order: 5,
       hasSubtitle: false,
       showMenuOptions: false,
