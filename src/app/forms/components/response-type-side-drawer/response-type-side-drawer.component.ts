@@ -113,8 +113,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       max: undefined,
       minMsg: '',
       maxMsg: '',
-      minAction: '',
-      maxAction: ''
+      minAction: 'None',
+      maxAction: 'None'
     });
 
     this.responseForm.valueChanges
@@ -146,6 +146,12 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
             this.isFormNotUpdated = true;
           } else {
             this.isFormNotUpdated = false;
+          }
+          if (!curr.min) {
+            this.rangeMetadataForm.patchValue({ minAction: 'None' });
+          }
+          if (!curr.max) {
+            this.rangeMetadataForm.patchValue({ maxAction: 'None' });
           }
           this.cdrf.markForCheck();
         })
