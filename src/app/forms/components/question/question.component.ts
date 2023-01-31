@@ -23,14 +23,20 @@ import { Observable, timer } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ImageUtils } from 'src/app/shared/utils/imageUtils';
-import { fieldTypesMock } from '../response-type/response-types.mock';
-import { QuestionEvent, Question } from 'src/app/interfaces';
+import {
+  fieldTypesMock,
+  unitOfMeasurementsMock
+} from '../response-type/response-types.mock';
+import {
+  QuestionEvent,
+  Question,
+  NumberRangeMetadata
+} from 'src/app/interfaces';
 import {
   getQuestionByID,
   getSectionQuestionsCount,
   State,
-  getQuestionLogics,
-  getFormMetadata
+  getQuestionLogics
 } from 'src/app/forms/state';
 import { Store } from '@ngrx/store';
 import { FormService } from '../../services/form.service';
@@ -39,6 +45,7 @@ import { FormConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-question',
@@ -47,6 +54,8 @@ import { ActivatedRoute } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionComponent implements OnInit {
+  @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
+
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
@@ -105,6 +114,10 @@ export class QuestionComponent implements OnInit {
     'DF'
   ];
 
+  unitOfMeasurementsAvailable = [];
+
+  unitOfMeasurements = [];
+
   questionForm: FormGroup = this.fb.group({
     id: '',
     sectionId: '',
@@ -117,7 +130,9 @@ export class QuestionComponent implements OnInit {
     isPublished: false,
     isPublishedTillSave: false,
     isOpen: false,
-    isResponseTypeModalOpen: false
+    isResponseTypeModalOpen: false,
+    unitOfMeasurement: 'None',
+    rangeMetadata: {} as NumberRangeMetadata
   });
   question$: Observable<Question>;
   question: Question;
@@ -151,6 +166,8 @@ export class QuestionComponent implements OnInit {
         this.formId = data.id;
       }
     });
+
+    this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -195,6 +212,18 @@ export class QuestionComponent implements OnInit {
       .pipe(
         tap((question) => {
           if (question) {
+            if (
+              question.isOpen &&
+              !isEqual(question.isOpen, this.question?.isOpen)
+            ) {
+              timer(0).subscribe(() => this.name.nativeElement.focus());
+            } else if (!question.isOpen) {
+              if (this.isAskQuestion) {
+                timer(0).subscribe(() => this.name.nativeElement.focus());
+              } else {
+                timer(0).subscribe(() => this.name.nativeElement.blur());
+              }
+            }
             this.question = question;
             this.questionForm.patchValue(question, {
               emitEvent: false
@@ -203,23 +232,29 @@ export class QuestionComponent implements OnInit {
         })
       );
 
-    if (!this._isAskQuestion) {
-      if (this.question) {
-        if (this.question.isOpen) {
-          timer(0).subscribe(() => this.name.nativeElement.focus());
-        } else {
-          timer(0).subscribe(() => this.name.nativeElement.blur());
-        }
-      } else {
-        timer(0).subscribe(() => this.name.nativeElement.focus());
-      }
-     } else {
-       if (!this.question.isOpen) {
-         timer(0).subscribe(() => this.name.nativeElement.focus());
-       }
-     }
     this.sectionQuestionsCount$ = this.store.select(
       getSectionQuestionsCount(this.pageIndex, this.sectionId)
+    );
+  }
+
+  getRangeMetadata() {
+    return this.questionForm.get('rangeMetadata').value;
+  }
+
+  uomChanged(event) {
+    this.questionForm.get('unitOfMeasurement').setValue(event.code);
+    this.unitMenuTrigger.closeMenu();
+  }
+
+  onKey(event) {
+    const value = event.target.value;
+    const filter = value.toLowerCase();
+    this.unitOfMeasurements = [...unitOfMeasurementsMock];
+    this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
+      (option) =>
+        option.title.toLowerCase().startsWith(filter) ||
+        option.code.toLowerCase().startsWith(filter) ||
+        option.symbol.toLowerCase().startsWith(filter)
     );
   }
 
@@ -306,6 +341,21 @@ export class QuestionComponent implements OnInit {
   sliderOpen() {
     this.formService.setsliderOpenState(true);
   }
+  rangeSelectorOpen(question) {
+    this.formService.setRangeSelectorOpenState({
+      isOpen: true,
+      rangeMetadata: question.rangeMetadata
+    });
+  }
+
+  getRangeDisplayText() {
+    let resp = 'None';
+    const rangeMeta = this.questionForm.get('rangeMetadata').value;
+    if (rangeMeta && rangeMeta.min && rangeMeta.max) {
+      resp = `${rangeMeta.min} - ${rangeMeta.max}`;
+    }
+    return resp;
+  }
 
   insertImageHandler(event) {
     let base64: string;
@@ -354,13 +404,16 @@ export class QuestionComponent implements OnInit {
   responseTypeOpenEventHandler(isResponseTypeModalOpen: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(isResponseTypeModalOpen);
+      .setValue(isResponseTypeModalOpen, { emitEvent: false });
   }
 
   responseTypeCloseEventHandler(responseTypeClosed: boolean) {
     this.questionForm
       .get('isResponseTypeModalOpen')
-      .setValue(!responseTypeClosed);
+      .setValue(!responseTypeClosed, { emitEvent: false });
+  }
+  setQuestionValue(event) {
+    this.questionForm.get('value').setValue(event, { emitEvent: false });
   }
 
   getQuestionLogics(pageIndex: number, questionId: string) {
@@ -487,6 +540,13 @@ export class QuestionComponent implements OnInit {
           .subscribe((response) => {
             // do nothing
           });
+        break;
+    }
+  }
+  rangeSelectionHandler(event) {
+    switch (event.eventType) {
+      case 'update':
+        this.questionForm.get('rangeMetadata').setValue(event.data);
         break;
     }
   }

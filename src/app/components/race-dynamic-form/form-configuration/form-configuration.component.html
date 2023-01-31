@@ -11,30 +11,31 @@
     createOrEditForm: createOrEditForm$ | async,
     formSaveStatus: formSaveStatus$ | async,
     formDetailPublishStatus: formDetailPublishStatus$ | async,
-    isFormCreated: isFormCreated$ | async
+    isFormCreated: isFormCreated$ | async,
+    questionCounter: questionCounter$ | async
   } as props"
 >
   <div class="dis-flex form-header">
-    <div>
-      <div class="dis-flex">
-        <img
-          src="assets/rdf-forms-icons/formlogo.svg"
-          alt=""
-          width="50"
-          height="50"
-        />
-        <input
-          hidden
-          type="file"
-          #formImageuploader
-          accept="image/x-png,image/jpeg"
-          (change)="uploadFormImageFile($event)"
-        />
-        <div>
-          <a
-            matTooltip="{{ formConfiguration.get('name').value }}"
-            class="dis-inline"
-          >
+    <div class="dis-flex width-55">
+      <img
+        src="assets/rdf-forms-icons/formlogo.svg"
+        alt=""
+        width="50"
+        height="50"
+      />
+      <input
+        hidden
+        type="file"
+        #formImageuploader
+        accept="image/x-png,image/jpeg"
+        (change)="uploadFormImageFile($event)"
+      />
+      <div class="width-90">
+        <a
+          matTooltip="{{ formConfiguration.get('name').value }}"
+          class="dis-inline"
+        >
+          <a class="width-90">
             <input
               #name
               type="text"
@@ -60,34 +61,33 @@
                       }
               }}
             </mat-error>
-
-            <button
-              (click)="editFormName()"
-              class="edit-icon"
-              *ngIf="formConfiguration.get('name').disabled === true"
-            >
-              <img
-                src="assets/rdf-forms-icons/edit-icon.svg"
-                alt="edit-icon"
-                class="edit-icon-img"
-              />
-            </button>
           </a>
-          <br />
-          <a matTooltip="{{ formConfiguration.get('description').value }}">
-            <input
-              type="text"
-              class="form_description_input"
-              placeholder="Add Form description"
-              formControlName="description"
-              autofocus="true"
-              autocomplete="off"
+          <button
+            (click)="editFormName()"
+            class="edit-icon"
+            *ngIf="formConfiguration.get('name').disabled === true"
+          >
+            <img
+              src="assets/rdf-forms-icons/edit-icon.svg"
+              alt="edit-icon"
+              class="edit-icon-img"
             />
-          </a>
-        </div>
+          </button>
+        </a>
+        <br />
+        <a matTooltip="{{ formConfiguration.get('description').value }}">
+          <input
+            type="text"
+            class="form_description_input"
+            placeholder="{{ 'addFormDesc' | translate }}"
+            formControlName="description"
+            autofocus="true"
+            autocomplete="off"
+          />
+        </a>
       </div>
     </div>
-    <div class="dis-flex">
+    <div class="dis-flex width-45 justify-content-end">
       <div
         class="save-status"
         [hidden]="
@@ -129,7 +129,7 @@
         mat-stroked-button
         class="import-btn"
         translate="importBtn"
-        disabled
+        (click)="importQuestions()"
       ></button>
 
       <button
@@ -159,11 +159,9 @@
         >
           <ng-container *ngIf="sectionIds$ | async as sectionIds">
             <div
-              cdkDrop
               cdkDropList
               (cdkDropListDropped)="dropSection($event, pageIndex)"
               [cdkDropListData]="getSectionsOfPage(pageIndex)"
-              cdkDropListGroup
             >
               <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
                 <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
@@ -186,8 +184,9 @@
                     >
                       <div
                         class="sectionMinimumDragArea"
-                        cdkDrop
                         cdkDropList
+                        id="{{ sectionIds[pageIndex][sectionIndex] }}"
+                        [cdkDropListConnectedTo]="sectionIds[pageIndex]"
                         (cdkDropListDropped)="
                           drop(
                             $event,
@@ -202,7 +201,6 @@
                           )
                         "
                         [id]="sectionIds[pageIndex][sectionIndex]"
-                        cdkDropListGroup
                       >
                         <ng-container
                           *ngIf="questionIds$ | async as questionIds"
@@ -275,5 +273,16 @@
     <div class="iphone-width">
       <app-iphone></app-iphone>
     </div>
+  </div>
+</div>
+
+<div *ngIf="openAppSider$ | async as openAppSider">
+  <div *ngIf="openAppSider">
+    <app-import-questions-slider
+      [selectedFormName]="selectedFormName"
+      [selectedFormData]="selectedFormData"
+      [currentFormData]="currentFormData"
+      (cancelSliderEvent)="cancelSlider($event)"
+    ></app-import-questions-slider>
   </div>
 </div>

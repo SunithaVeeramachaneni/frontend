@@ -363,7 +363,18 @@ export class RaceDynamicFormService {
           }
         ]
       })
-    ).pipe(map(({ items }) => items));
+    ).pipe(
+      map(({ items }) => {
+        let version = 0;
+        items.forEach((item) => {
+          if (item._version > version) version = item._version;
+        });
+        const latestFormVersionData = items.find(
+          (item) => item._version === version
+        );
+        return latestFormVersionData;
+      })
+    );
   }
 
   getAuthoredFormDetailsByFormId$(formId: string) {
@@ -457,6 +468,26 @@ export class RaceDynamicFormService {
                 Object.assign(questionItem, {
                   DDVALUE: viVALUE
                 });
+              }
+
+              if (question.fieldType === 'NF') {
+                Object.assign(questionItem, {
+                  MEASUREMENT:
+                    question.unitOfMeasurement !== 'None'
+                      ? question.unitOfMeasurement
+                      : ''
+                });
+                if (question.rangeMetadata.min && question.rangeMetadata.max) {
+                  Object.assign(questionItem, {
+                    DEFAULTVALUE: JSON.stringify({
+                      min: question.rangeMetadata.min + '',
+                      max: question.rangeMetadata.max + '',
+                      minMsg: `${question.rangeMetadata.minAction}: ${question.rangeMetadata.minMsg}`,
+                      maxMsg: `${question.rangeMetadata.maxAction}: ${question.rangeMetadata.maxMsg}`,
+                      value: ''
+                    })
+                  });
+                }
               }
 
               if (

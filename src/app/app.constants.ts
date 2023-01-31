@@ -41,6 +41,7 @@ export const permissions = Object.freeze({
   viewFiles: 'VIEW_FILES',
   updateFile: 'UPDATE_FILE',
   deleteFile: 'DELETE_FILE',
+
   viewForms: 'VIEW_FORMS',
   createForm: 'CREATE_FORM',
   updateForm: 'UPDATE_FORM',
@@ -49,7 +50,17 @@ export const permissions = Object.freeze({
   downloadSubmission: 'DOWNLOAD_SUBMISSION',
   shareSubmission: 'SHARE_SUBMISSION',
   viewTemplates: 'VIEW_TEMPLATES',
-  viewArchivedForms: 'VIEW_ARCHIVED_FORMS'
+  viewArchivedForms: 'VIEW_ARCHIVED_FORMS',
+
+  viewORPlans: 'VIEW_OR_PLANS',
+  createORPlan: 'CREATE_OR_PLAN',
+  updateORPlan: 'UPDATE_OR_PLAN',
+  deleteORPlan: 'DELETE_OR_FORM',
+  viewORPlanSubmissions: 'VIEW_OR_SUBMISSIONS',
+  downloadORPSubmission: 'DOWNLOAD_OR_SUBMISSION',
+  shareORPSubmission: 'SHARE_OR_SUBMISSION',
+  viewORPTemplates: 'VIEW_OR_TEMPLATES',
+  viewArchivedORP: 'VIEW_OR_ARCHIVED_FORMS'
 });
 
 export const routingUrls = {
@@ -141,12 +152,28 @@ export const routingUrls = {
   submissionForms: {
     url: '/forms/submissions',
     title: 'Submissions',
-    permission: permissions.viewForms
+    permission: permissions.viewSubmissions
   },
   archivedForms: {
     url: '/forms/archived',
     title: 'Archived',
-    permission: permissions.viewForms
+    permission: permissions.viewArchivedForms
+  },
+
+  operatorRoundPlans: {
+    url: '/operator-rounds',
+    title: 'Operator Rounds',
+    permission: permissions.viewORPlans
+  },
+  myRoundPlans: {
+    url: '/operator-rounds',
+    title: 'My Plans',
+    permission: permissions.viewORPlans
+  },
+  roundPlanSubmissions: {
+    url: '/operator-rounds/submissions',
+    title: 'Submissions',
+    permission: permissions.viewORPlanSubmissions
   }
 };
 

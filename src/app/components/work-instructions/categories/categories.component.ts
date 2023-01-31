@@ -27,7 +27,7 @@ import { WiCommonService } from '../services/wi-common.services';
 import { defaultCategoryId, permissions } from '../../../app.constants';
 import * as InstructionActions from '../state/intruction.actions';
 import { Store } from '@ngrx/store';
-import { State } from '../../../state/app.state';
+import { State } from '../state/instruction.reducer';
 
 @Component({
   selector: 'app-categories',

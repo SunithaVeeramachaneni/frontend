@@ -6,7 +6,7 @@
     sectionsCount: sectionsCount$ | async
   } as props"
 >
-  <div class="width-100 section-margin">
+  <div class="width-95 section-margin">
     <div>
       <input type="hidden" formControlName="position" />
       <div class="section-header">
@@ -25,13 +25,13 @@
           chevron_right
         </mat-icon>
 
-        <a>
+        <a class="width-60">
           <input
             #sectionName
             type="text"
             autofocus
             formControlName="name"
-            [size]="sectionName.value !== '' ? getSize(sectionName.value) : 6"
+            [size]="getSize(sectionForm.get('name').value)"
             class="form_section_name_input"
             placeholder="Untitled Section"
             autocomplete="off"

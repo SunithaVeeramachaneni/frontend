@@ -40,6 +40,8 @@ import {
   transition,
   trigger
 } from '@angular/animations';
+import { Router } from '@angular/router';
+import { OperatorRoundsService } from '../../operator-rounds/services/operator-rounds.service';
 
 @Component({
   selector: 'app-submission',
@@ -258,9 +260,16 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   submissionDetail: any;
   fetchType = 'load';
   isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+  isOperatorRounds = false;
   constructor(
-    private readonly raceDynamicFormService: RaceDynamicFormService
-  ) {}
+    private readonly raceDynamicFormService: RaceDynamicFormService,
+    private readonly router: Router,
+    private readonly operatorRoundsService: OperatorRoundsService
+  ) {
+    if (this.router.url.includes('/operator-rounds/submissions')) {
+      this.isOperatorRounds = true;
+    }
+  }
 
   ngOnInit(): void {
     this.fetchForms$.next({ data: 'load' });
@@ -273,8 +282,9 @@ export class SubmissionComponent implements OnInit, OnDestroy {
         tap(() => this.fetchForms$.next({ data: 'search' }))
       )
       .subscribe(() => this.isLoading$.next(true));
-    this.submissionFormsListCount$ =
-      this.raceDynamicFormService.getSubmissionFormsListCount$();
+    this.submissionFormsListCount$ = this.isOperatorRounds
+      ? this.operatorRoundsService.getSubmissionFormsListCount$()
+      : this.raceDynamicFormService.getSubmissionFormsListCount$();
     this.getDisplayedForms();
     this.configOptions.allColumns = this.columns;
   }
@@ -332,24 +342,26 @@ export class SubmissionComponent implements OnInit, OnDestroy {
   }
 
   getSubmissionFormsList() {
-    return this.raceDynamicFormService
-      .getSubmissionFormsList$({
-        nextToken: this.nextToken,
-        limit: this.limit,
-        searchKey: this.searchForm.value,
-        fetchType: this.fetchType
+    const obj = {
+      nextToken: this.nextToken,
+      limit: this.limit,
+      searchKey: this.searchForm.value,
+      fetchType: this.fetchType
+    };
+    const observable = this.isOperatorRounds
+      ? this.operatorRoundsService.getSubmissionFormsList$(obj)
+      : this.raceDynamicFormService.getSubmissionFormsList$(obj);
+    return observable.pipe(
+      mergeMap(({ rows, nextToken }) => {
+        this.nextToken = nextToken;
+        this.isLoading$.next(false);
+        return of(rows as any);
+      }),
+      catchError(() => {
+        this.isLoading$.next(false);
+        return of([]);
       })
-      .pipe(
-        mergeMap(({ rows, nextToken }) => {
-          this.nextToken = nextToken;
-          this.isLoading$.next(false);
-          return of(rows);
-        }),
-        catchError(() => {
-          this.isLoading$.next(false);
-          return of([]);
-        })
-      );
+    );
   }
 
   handleTableEvent = (event): void => {

@@ -4,7 +4,8 @@ import { FormMetadata, Page } from 'src/app/interfaces';
 import {
   AddLogicActions,
   FormConfigurationActions,
-  FormConfigurationApiActions
+  FormConfigurationApiActions,
+  RoundPlanConfigurationApiActions
 } from './actions';
 
 export interface FormConfigurationState {
@@ -56,6 +57,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createFormSuccess,
+    RoundPlanConfigurationApiActions.createRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formMetadata: { ...state.formMetadata, ...action.formMetadata },
@@ -65,6 +67,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateFormSuccess,
+    RoundPlanConfigurationApiActions.updateRoundPlanSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
@@ -73,6 +76,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createAuthoredFromDetailSuccess,
+    RoundPlanConfigurationApiActions.createAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       authoredFormDetailId: action.authoredFormDetail.id,
@@ -83,6 +87,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateAuthoredFromDetailSuccess,
+    RoundPlanConfigurationApiActions.updateAuthoredRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formSaveStatus: action.formSaveStatus,
@@ -91,6 +96,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.createFormDetailSuccess,
+    RoundPlanConfigurationApiActions.createRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -110,6 +116,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
   ),
   on(
     FormConfigurationApiActions.updateFormDetailSuccess,
+    RoundPlanConfigurationApiActions.updateRoundPlanDetailSuccess,
     (state, action): FormConfigurationState => ({
       ...state,
       formStatus: action.formStatus,
@@ -161,6 +168,13 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
+    FormConfigurationActions.updateCounter,
+    (state, action): FormConfigurationState => ({
+      ...state,
+      counter: action.counter
+    })
+  ),
+  on(
     FormConfigurationActions.addPage,
     (state, action): FormConfigurationState => ({
       ...state,
@@ -171,7 +185,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           .slice(action.pageIndex)
           .map((page) => ({ ...page, position: page.position + 1 }))
       ],
-      counter: action.questionCounter,
       formStatus: action.formStatus,
       formDetailPublishStatus: action.formDetailPublishStatus,
       formSaveStatus: action.formSaveStatus
@@ -222,22 +235,22 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     })
   ),
   on(
-    FormConfigurationActions.addSection,
+    FormConfigurationActions.addSections,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
           const sections = [
             ...page.sections.slice(0, action.sectionIndex),
-            action.section,
+            ...action.sections,
             ...page.sections.slice(action.sectionIndex).map((section) => ({
               ...section,
-              position: section.position + 1
+              position: section.position + action.sections.length
             }))
           ];
           return {
             ...page,
             sections,
-            questions: [...page.questions, action.question]
+            questions: [...page.questions, ...action.questions]
           };
         }
         return page;
@@ -245,7 +258,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        counter: action.questionCounter,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -370,7 +382,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
     }
   ),
   on(
-    FormConfigurationActions.addQuestion,
+    FormConfigurationActions.addQuestions,
     (state, action): FormConfigurationState => {
       const pages = state.pages.map((page, pageIndex) => {
         if (pageIndex === action.pageIndex) {
@@ -382,7 +394,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
           );
           sectionQuestions = [
             ...sectionQuestions.slice(0, action.questionIndex),
-            action.question,
+            ...action.questions,
             ...sectionQuestions.slice(action.questionIndex).map((question) => ({
               ...question,
               position: question.position + 1
@@ -398,7 +410,6 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       return {
         ...state,
         pages,
-        counter: action.questionCounter,
         formStatus: action.formStatus,
         formDetailPublishStatus: action.formDetailPublishStatus,
         formSaveStatus: action.formSaveStatus
@@ -665,10 +676,7 @@ export const formConfigurationReducer = createReducer<FormConfigurationState>(
       });
       return {
         ...state,
-        pages,
-        formStatus: 'Draft',
-        formDetailPublishStatus: 'Draft',
-        formSaveStatus: 'Saving'
+        pages
       };
     }
   ),

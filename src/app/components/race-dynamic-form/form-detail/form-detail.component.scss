@@ -104,3 +104,26 @@
 .pointer {
   cursor: pointer;
 }
+
+.ghost-loading {
+  padding: 18px 18px;
+}
+
+::ng-deep .slider-values {
+  color: #000 !important;
+}
+
+::ng-deep .field-types .each-fieldtype .text-answer {
+  width: 97% !important;
+}
+
+::ng-deep .field-types .each-fieldtype .signature-icon {
+  width: 17px !important;
+  right: 3px !important;
+}
+
+::ng-deep .field-types .each-fieldtype .slider {
+  width: 85% !important;
+  margin-left: 7px;
+  margin-right: 7px;
+}

@@ -1,15 +1,226 @@
-import {
-  ModelInit,
-  MutableModel,
-  __modelMeta__,
-  ManagedIdentifier
-} from '@aws-amplify/datastore';
+import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import {
-  LazyLoading,
-  LazyLoadingDisabled,
-  AsyncCollection
-} from '@aws-amplify/datastore';
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
+
+
+
+
+
+type EagerRoundPlanSubmissionDetails = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly formsubmissionlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanSubmissionDetails = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly formsubmissionlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanSubmissionDetails = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanSubmissionDetails : LazyRoundPlanSubmissionDetails
+
+export declare const RoundPlanSubmissionDetails: (new (init: ModelInit<RoundPlanSubmissionDetails>) => RoundPlanSubmissionDetails) & {
+  copyOf(source: RoundPlanSubmissionDetails, mutator: (draft: MutableModel<RoundPlanSubmissionDetails>) => MutableModel<RoundPlanSubmissionDetails> | void): RoundPlanSubmissionDetails;
+}
+
+type EagerRoundPlanSubmissionList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly searchTerm?: string | null;
+  readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanSubmissionList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanSubmissionList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly status?: string | null;
+  readonly assignee?: string | null;
+  readonly dueDate?: string | null;
+  readonly version?: string | null;
+  readonly submittedBy?: string | null;
+  readonly searchTerm?: string | null;
+  readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanSubmissionList = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanSubmissionList : LazyRoundPlanSubmissionList
+
+export declare const RoundPlanSubmissionList: (new (init: ModelInit<RoundPlanSubmissionList>) => RoundPlanSubmissionList) & {
+  copyOf(source: RoundPlanSubmissionList, mutator: (draft: MutableModel<RoundPlanSubmissionList>) => MutableModel<RoundPlanSubmissionList> | void): RoundPlanSubmissionList;
+}
+
+type EagerAuthoredRoundPlanDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<AuthoredRoundPlanDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formStatus?: string | null;
+  readonly version?: string | null;
+  readonly pages?: string | null;
+  readonly counter?: number | null;
+  readonly formDetailPublishStatus?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyAuthoredRoundPlanDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<AuthoredRoundPlanDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formStatus?: string | null;
+  readonly version?: string | null;
+  readonly pages?: string | null;
+  readonly counter?: number | null;
+  readonly formDetailPublishStatus?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type AuthoredRoundPlanDetail = LazyLoading extends LazyLoadingDisabled ? EagerAuthoredRoundPlanDetail : LazyAuthoredRoundPlanDetail
+
+export declare const AuthoredRoundPlanDetail: (new (init: ModelInit<AuthoredRoundPlanDetail>) => AuthoredRoundPlanDetail) & {
+  copyOf(source: AuthoredRoundPlanDetail, mutator: (draft: MutableModel<AuthoredRoundPlanDetail>) => MutableModel<AuthoredRoundPlanDetail> | void): AuthoredRoundPlanDetail;
+}
+
+type EagerRoundPlanDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanDetail = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanDetail : LazyRoundPlanDetail
+
+export declare const RoundPlanDetail: (new (init: ModelInit<RoundPlanDetail>) => RoundPlanDetail) & {
+  copyOf(source: RoundPlanDetail, mutator: (draft: MutableModel<RoundPlanDetail>) => MutableModel<RoundPlanDetail> | void): RoundPlanDetail;
+}
+
+type EagerRoundPlanList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly publishedDate?: string | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly formStatus?: string | null;
+  readonly assignee?: string | null;
+  readonly tags?: (string | null)[] | null;
+  readonly lastPublishedBy?: string | null;
+  readonly author?: string | null;
+  readonly formType?: string | null;
+  readonly isArchived?: boolean | null;
+  readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
+  readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
+  readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
+  readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyRoundPlanList = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<RoundPlanList, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly formLogo?: string | null;
+  readonly isPublic?: boolean | null;
+  readonly publishedDate?: string | null;
+  readonly location?: string | null;
+  readonly roundType?: string | null;
+  readonly formStatus?: string | null;
+  readonly assignee?: string | null;
+  readonly tags?: (string | null)[] | null;
+  readonly lastPublishedBy?: string | null;
+  readonly author?: string | null;
+  readonly formType?: string | null;
+  readonly isArchived?: boolean | null;
+  readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
+  readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
+  readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
+  readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RoundPlanList = LazyLoading extends LazyLoadingDisabled ? EagerRoundPlanList : LazyRoundPlanList
+
+export declare const RoundPlanList: (new (init: ModelInit<RoundPlanList>) => RoundPlanList) & {
+  copyOf(source: RoundPlanList, mutator: (draft: MutableModel<RoundPlanList>) => MutableModel<RoundPlanList> | void): RoundPlanList;
+}
 
 type EagerResponseSet = {
   readonly [__modelMeta__]: {
@@ -24,7 +235,7 @@ type EagerResponseSet = {
   readonly values?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
 type LazyResponseSet = {
   readonly [__modelMeta__]: {
@@ -39,61 +250,45 @@ type LazyResponseSet = {
   readonly values?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-export declare type ResponseSet = LazyLoading extends LazyLoadingDisabled
-  ? EagerResponseSet
-  : LazyResponseSet;
+export declare type ResponseSet = LazyLoading extends LazyLoadingDisabled ? EagerResponseSet : LazyResponseSet
 
-export declare const ResponseSet: (new (
-  init: ModelInit<ResponseSet>
-) => ResponseSet) & {
-  copyOf(
-    source: ResponseSet,
-    mutator: (
-      draft: MutableModel<ResponseSet>
-    ) => MutableModel<ResponseSet> | void
-  ): ResponseSet;
-};
+export declare const ResponseSet: (new (init: ModelInit<ResponseSet>) => ResponseSet) & {
+  copyOf(source: ResponseSet, mutator: (draft: MutableModel<ResponseSet>) => MutableModel<ResponseSet> | void): ResponseSet;
+}
 
-type EagerFormDetail = {
+type EagerFormSubmissionDetail = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly formData?: string | null;
   readonly formlistID: string;
+  readonly formsubmissionlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-type LazyFormDetail = {
+type LazyFormSubmissionDetail = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly formData?: string | null;
   readonly formlistID: string;
+  readonly formsubmissionlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-export declare type FormDetail = LazyLoading extends LazyLoadingDisabled
-  ? EagerFormDetail
-  : LazyFormDetail;
+export declare type FormSubmissionDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissionDetail : LazyFormSubmissionDetail
 
-export declare const FormDetail: (new (
-  init: ModelInit<FormDetail>
-) => FormDetail) & {
-  copyOf(
-    source: FormDetail,
-    mutator: (
-      draft: MutableModel<FormDetail>
-    ) => MutableModel<FormDetail> | void
-  ): FormDetail;
-};
+export declare const FormSubmissionDetail: (new (init: ModelInit<FormSubmissionDetail>) => FormSubmissionDetail) & {
+  copyOf(source: FormSubmissionDetail, mutator: (draft: MutableModel<FormSubmissionDetail>) => MutableModel<FormSubmissionDetail> | void): FormSubmissionDetail;
+}
 
 type EagerAuthoredFormDetail = {
   readonly [__modelMeta__]: {
@@ -109,7 +304,7 @@ type EagerAuthoredFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
 type LazyAuthoredFormDetail = {
   readonly [__modelMeta__]: {
@@ -125,64 +320,13 @@ type LazyAuthoredFormDetail = {
   readonly formlistID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled
-  ? EagerAuthoredFormDetail
-  : LazyAuthoredFormDetail;
+export declare type AuthoredFormDetail = LazyLoading extends LazyLoadingDisabled ? EagerAuthoredFormDetail : LazyAuthoredFormDetail
 
-export declare const AuthoredFormDetail: (new (
-  init: ModelInit<AuthoredFormDetail>
-) => AuthoredFormDetail) & {
-  copyOf(
-    source: AuthoredFormDetail,
-    mutator: (
-      draft: MutableModel<AuthoredFormDetail>
-    ) => MutableModel<AuthoredFormDetail> | void
-  ): AuthoredFormDetail;
-};
-
-type EagerFormSubmissionDetail = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly formData?: string | null;
-  readonly formsubmissionlistID: string;
-  readonly formlistID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-};
-
-type LazyFormSubmissionDetail = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<FormSubmissionDetail, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly formData?: string | null;
-  readonly formsubmissionlistID: string;
-  readonly formlistID: string;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-};
-
-export declare type FormSubmissionDetail =
-  LazyLoading extends LazyLoadingDisabled
-    ? EagerFormSubmissionDetail
-    : LazyFormSubmissionDetail;
-
-export declare const FormSubmissionDetail: (new (
-  init: ModelInit<FormSubmissionDetail>
-) => FormSubmissionDetail) & {
-  copyOf(
-    source: FormSubmissionDetail,
-    mutator: (
-      draft: MutableModel<FormSubmissionDetail>
-    ) => MutableModel<FormSubmissionDetail> | void
-  ): FormSubmissionDetail;
-};
+export declare const AuthoredFormDetail: (new (init: ModelInit<AuthoredFormDetail>) => AuthoredFormDetail) & {
+  copyOf(source: AuthoredFormDetail, mutator: (draft: MutableModel<AuthoredFormDetail>) => MutableModel<AuthoredFormDetail> | void): AuthoredFormDetail;
+}
 
 type EagerFormSubmissionList = {
   readonly [__modelMeta__]: {
@@ -201,13 +345,11 @@ type EagerFormSubmissionList = {
   readonly dueDate?: string | null;
   readonly version?: string | null;
   readonly submittedBy?: string | null;
-  readonly formSubmissionListFormSubmissionDetail?:
-    | (FormSubmissionDetail | null)[]
-    | null;
   readonly searchTerm?: string | null;
+  readonly formSubmissionListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
 type LazyFormSubmissionList = {
   readonly [__modelMeta__]: {
@@ -226,26 +368,17 @@ type LazyFormSubmissionList = {
   readonly dueDate?: string | null;
   readonly version?: string | null;
   readonly submittedBy?: string | null;
-  readonly formSubmissionListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly searchTerm?: string | null;
+  readonly formSubmissionListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-export declare type FormSubmissionList = LazyLoading extends LazyLoadingDisabled
-  ? EagerFormSubmissionList
-  : LazyFormSubmissionList;
+export declare type FormSubmissionList = LazyLoading extends LazyLoadingDisabled ? EagerFormSubmissionList : LazyFormSubmissionList
 
-export declare const FormSubmissionList: (new (
-  init: ModelInit<FormSubmissionList>
-) => FormSubmissionList) & {
-  copyOf(
-    source: FormSubmissionList,
-    mutator: (
-      draft: MutableModel<FormSubmissionList>
-    ) => MutableModel<FormSubmissionList> | void
-  ): FormSubmissionList;
-};
+export declare const FormSubmissionList: (new (init: ModelInit<FormSubmissionList>) => FormSubmissionList) & {
+  copyOf(source: FormSubmissionList, mutator: (draft: MutableModel<FormSubmissionList>) => MutableModel<FormSubmissionList> | void): FormSubmissionList;
+}
 
 type EagerFormList = {
   readonly [__modelMeta__]: {
@@ -266,16 +399,15 @@ type EagerFormList = {
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
   readonly formType?: string | null;
-  readonly formListFormSubmissionDetail?:
-    | (FormSubmissionDetail | null)[]
-    | null;
-  readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
-  readonly formListFormDetail?: (FormDetail | null)[] | null;
   readonly isArchived?: boolean | null;
   readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
+  readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
+  readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
+  readonly formListFormDetail?: (FormDetail | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
 type LazyFormList = {
   readonly [__modelMeta__]: {
@@ -296,22 +428,48 @@ type LazyFormList = {
   readonly lastPublishedBy?: string | null;
   readonly author?: string | null;
   readonly formType?: string | null;
+  readonly isArchived?: boolean | null;
+  readonly searchTerm?: string | null;
+  readonly isArchivedAt?: string | null;
   readonly formListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
   readonly formListFormDetail: AsyncCollection<FormDetail>;
-  readonly isArchived?: boolean | null;
-  readonly searchTerm?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-};
+}
 
-export declare type FormList = LazyLoading extends LazyLoadingDisabled
-  ? EagerFormList
-  : LazyFormList;
+export declare type FormList = LazyLoading extends LazyLoadingDisabled ? EagerFormList : LazyFormList
 
 export declare const FormList: (new (init: ModelInit<FormList>) => FormList) & {
-  copyOf(
-    source: FormList,
-    mutator: (draft: MutableModel<FormList>) => MutableModel<FormList> | void
-  ): FormList;
-};
+  copyOf(source: FormList, mutator: (draft: MutableModel<FormList>) => MutableModel<FormList> | void): FormList;
+}
+
+type EagerFormDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyFormDetail = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<FormDetail, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly formData?: string | null;
+  readonly formlistID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type FormDetail = LazyLoading extends LazyLoadingDisabled ? EagerFormDetail : LazyFormDetail
+
+export declare const FormDetail: (new (init: ModelInit<FormDetail>) => FormDetail) & {
+  copyOf(source: FormDetail, mutator: (draft: MutableModel<FormDetail>) => MutableModel<FormDetail> | void): FormDetail;
+}
