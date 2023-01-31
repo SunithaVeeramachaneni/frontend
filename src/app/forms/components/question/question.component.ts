@@ -45,6 +45,7 @@ import { FormConfigurationActions } from '../../state/actions';
 import { AddLogicActions } from '../../state/actions';
 import { RaceDynamicFormService } from 'src/app/components/race-dynamic-form/services/rdf.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-question',
@@ -57,6 +58,8 @@ export class QuestionComponent implements OnInit {
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
+
+  @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -240,6 +243,7 @@ export class QuestionComponent implements OnInit {
 
   uomChanged(event) {
     this.questionForm.get('unitOfMeasurement').setValue(event.code);
+    this.unitMenuTrigger.closeMenu();
   }
 
   onKey(event) {
