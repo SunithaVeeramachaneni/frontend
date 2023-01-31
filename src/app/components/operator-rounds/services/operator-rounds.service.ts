@@ -701,7 +701,9 @@ export class OperatorRoundsService {
             },
             responses,
             createdAt: format(new Date(p?.createdAt), 'Do MMM'),
-            updatedAt: p.updatedAt ? p.updatedAt : ''
+            updatedAt: formatDistance(new Date(p?.updatedAt), new Date(), {
+              addSuffix: true
+            })
           };
         }) || [];
     const nextToken = resp?.nextToken;
