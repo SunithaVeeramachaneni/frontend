@@ -120,5 +120,7 @@
   "lowerLimitTxt": "Lower Limit",
   "lowerLimitConditionTxt": "When answer is less than Lower Limit",
   "upperLimitTxt": "Upper Limit",
-  "upperLimitConditionTxt": "When answer is greater than Upper Limit"
+  "upperLimitConditionTxt": "When answer is greater than Upper Limit",
+  "addFormDesc": "Add Form description",
+  "enterMessage": "Enter message here"
 }
