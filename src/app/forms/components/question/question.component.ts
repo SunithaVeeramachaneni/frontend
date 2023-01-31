@@ -54,12 +54,12 @@ import { MatMenuTrigger } from '@angular/material/menu';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionComponent implements OnInit {
+  @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
+
   @ViewChild('name', { static: false }) name: ElementRef;
   @Output() questionEvent: EventEmitter<QuestionEvent> =
     new EventEmitter<QuestionEvent>();
   @ViewChildren('insertImages') private insertImages: QueryList<ElementRef>;
-
-  @ViewChild('unitMenuTrigger') unitMenuTrigger: MatMenuTrigger;
 
   @Input() set questionId(id: string) {
     this._id = id;
@@ -167,7 +167,7 @@ export class QuestionComponent implements OnInit {
       }
     });
 
-    this.unitOfMeasurementsAvailable = unitOfMeasurementsMock;
+    this.unitOfMeasurementsAvailable = [...unitOfMeasurementsMock];
 
     this.fieldTypes = fieldTypesMock.fieldTypes.filter(
       (fieldType) =>
@@ -248,11 +248,9 @@ export class QuestionComponent implements OnInit {
 
   onKey(event) {
     const value = event.target.value;
-    this.unitOfMeasurementsAvailable = [...this.search(value)];
-  }
-  search(value: string) {
     const filter = value.toLowerCase();
-    return this.unitOfMeasurements.filter(
+    this.unitOfMeasurements = [...unitOfMeasurementsMock];
+    this.unitOfMeasurementsAvailable = this.unitOfMeasurements.filter(
       (option) =>
         option.title.toLowerCase().startsWith(filter) ||
         option.code.toLowerCase().startsWith(filter) ||
