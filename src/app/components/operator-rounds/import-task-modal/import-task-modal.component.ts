@@ -136,7 +136,6 @@ export class ImportTaskModalComponent implements OnInit {
     });
     this.data.selectedFormData = this.selectedRoundPlan;
     this.data.openImportQuestionsSlider = true;
-    console.log(this.data);
     this.dialogRef.close(this.data);
   };
 
