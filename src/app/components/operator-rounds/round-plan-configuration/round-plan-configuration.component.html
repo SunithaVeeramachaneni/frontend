@@ -79,7 +79,7 @@
           <input
             type="text"
             class="form_description_input"
-            placeholder="Add Form description"
+            placeholder="{{ 'addFormDesc' | translate }}"
             formControlName="description"
             autofocus="true"
             autocomplete="off"
@@ -159,11 +159,9 @@
         >
           <ng-container *ngIf="sectionIds$ | async as sectionIds">
             <div
-              cdkDrop
               cdkDropList
               (cdkDropListDropped)="dropSection($event, pageIndex)"
               [cdkDropListData]="getSectionsOfPage(pageIndex)"
-              cdkDropListGroup
             >
               <ng-container *ngIf="sectionIndexes$ | async as sectionIndexes">
                 <div *ngFor="let sectionIndex of sectionIndexes[pageIndex]">
@@ -186,8 +184,9 @@
                     >
                       <div
                         class="sectionMinimumDragArea"
-                        cdkDrop
                         cdkDropList
+                        id="{{ sectionIds[pageIndex][sectionIndex] }}"
+                        [cdkDropListConnectedTo]="sectionIds[pageIndex]"
                         (cdkDropListDropped)="
                           drop(
                             $event,
@@ -202,7 +201,6 @@
                           )
                         "
                         [id]="sectionIds[pageIndex][sectionIndex]"
-                        cdkDropListGroup
                       >
                         <ng-container
                           *ngIf="questionIds$ | async as questionIds"

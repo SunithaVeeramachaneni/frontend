@@ -110,5 +110,7 @@
   "lowerLimitConditionTxt": "When answer is less than Lower Limit",
   "upperLimitTxt": "Upper Limit",
   "upperLimitConditionTxt": "When answer is greater than Upper Limit",
-  "selectRoundPlan": "Select Round Plan"
+  "selectRoundPlan": "Select Round Plan",
+  "addFormDesc": "Add Round Plan description",
+  "enterMessage": "Enter message here"
 }
