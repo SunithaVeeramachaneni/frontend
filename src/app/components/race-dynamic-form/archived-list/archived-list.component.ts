@@ -78,7 +78,7 @@ export class ArchivedListComponent implements OnInit {
       //postTextImageConfig: {}
     },
     {
-      id: 'archivedAt',
+      id: 'isArchivedAt',
       displayName: 'Archived',
       type: 'string',
       isMultiValued: true,
@@ -283,11 +283,11 @@ export class ArchivedListComponent implements OnInit {
       {
         title: 'Restore',
         action: 'restore'
-      },
-      {
-        title: 'Delete',
-        action: 'delete'
       }
+      // {
+      //   title: 'Delete',
+      //   action: 'delete'
+      // }
     ];
     this.configOptions.rowLevelActions.menuActions = menuActions;
     this.configOptions.displayActionsColumn = menuActions.length ? true : false;
@@ -312,7 +312,10 @@ export class ArchivedListComponent implements OnInit {
       .updateForm$({
         formMetadata: {
           id: form?.id,
-          isArchived: false
+          isArchived: false,
+          name: form?.name,
+          description: form?.description,
+          isArchivedAt: ''
         },
         // eslint-disable-next-line no-underscore-dangle
         formListDynamoDBVersion: form._version
