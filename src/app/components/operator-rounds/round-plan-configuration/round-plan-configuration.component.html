@@ -218,6 +218,21 @@
                               translate="sectionEmptyMessage"
                             >
                             </span>
+                            <div class="floating-btns empty-section">
+                              <button
+                                class="questions-btn"
+                                (click)="addQuestion(pageIndex, sectionIds[pageIndex][sectionIndex], 0)"
+                              >
+                                <img
+                                  src="assets/rdf-forms-icons/add-question.svg"
+                                  alt="add questions"
+                                />
+                                <p
+                                  class="questions-delete-btn-text"
+                                  translate="question"
+                                ></p>
+                              </button>
+                            </div>
                           </div>
                           <ng-container
                             *ngFor="
