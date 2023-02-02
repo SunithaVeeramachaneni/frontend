@@ -295,3 +295,27 @@
   color: $gray-text;
   height: 50px;
 }
+
+.floating-btns.empty-section {
+   display: flex;
+    justify-content: center;
+    position: absolute;
+    left: -62px;
+    top: 0px;
+    .questions-btn{
+      background-color: #ffffff;
+      border: 1px solid #e0e0e0;
+    border-radius: 7px;
+      width: 55px;
+      padding: 5px 0px;
+      p{
+        margin: 0;
+        font-size: 75%;
+        font-weight: 400;
+        letter-spacing: 0.4px;
+        color: #000000;
+      }
+    }
+    
+}
+
