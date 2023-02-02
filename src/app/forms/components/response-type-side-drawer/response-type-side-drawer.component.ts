@@ -22,6 +22,8 @@ import {
   ResponseTypeOpenState
 } from 'src/app/interfaces';
 import { FormService } from '../../services/form.service';
+import { ToastService } from 'src/app/shared/toast';
+
 
 @Component({
   selector: 'app-response-type-side-drawer',
@@ -65,7 +67,8 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
   constructor(
     private formService: FormService,
     private fb: FormBuilder,
-    private cdrf: ChangeDetectorRef
+    private cdrf: ChangeDetectorRef,
+    private readonly toast: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -221,7 +224,15 @@ export class ResponseTypeSideDrawerComponent implements OnInit {
       rangeMetadata: {} as NumberRangeMetadata
     });
   };
+
   submitRangeSelection = () => {
+    if(this.rangeMetadataForm.value?.min > this.rangeMetadataForm.value?.max ){
+      this.toast.show({
+        text: 'The upper limit cannot be lower than the lower limit',
+        type: 'warning'
+      });
+      return;
+    }
     this.rangeSelectionHandler.emit({
       eventType: 'update',
       data: this.rangeMetadataForm.getRawValue()
