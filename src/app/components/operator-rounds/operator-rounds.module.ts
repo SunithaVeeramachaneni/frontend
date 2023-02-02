@@ -46,6 +46,7 @@ import { RoundPlanConfigurationComponent } from './round-plan-configuration/roun
 import { RoundPlanConfigurationModalComponent } from './round-plan-configuration-modal/round-plan-configuration-modal.component';
 import { RoundPlanConfigurationEffects } from 'src/app/forms/state/round-plan-configuration.effects';
 import { formConfigurationReducer } from 'src/app/forms/state/form-configuration.reducer';
+import { ImportTaskModalComponent } from './import-task-modal/import-task-modal.component';
 
 export const customTranslateLoader = (http: HttpClient) =>
   new TranslateHttpLoader(http, './assets/i18n/operator-rounds/', '.json');
@@ -55,7 +56,8 @@ export const customTranslateLoader = (http: HttpClient) =>
     OperatorRoundsContainerComponent,
     RoundPlanListComponent,
     RoundPlanConfigurationComponent,
-    RoundPlanConfigurationModalComponent
+    RoundPlanConfigurationModalComponent,
+    ImportTaskModalComponent
   ],
   imports: [
     FormsModule,
