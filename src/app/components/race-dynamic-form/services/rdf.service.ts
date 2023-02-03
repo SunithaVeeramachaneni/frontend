@@ -121,6 +121,9 @@ export class RaceDynamicFormService {
             }),
             isArchived: {
               eq: isArchived
+            },
+            isDeleted: {
+              eq: false
             }
           },
           !isSearch && queryParams.limit,
@@ -170,7 +173,7 @@ export class RaceDynamicFormService {
   getFormsListCount$(isArchived: boolean = false): Observable<number> {
     const statement = isArchived
       ? `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}}) {
+      listFormLists(limit: ${limit}, filter: {isArchived: {eq: true}, isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -178,7 +181,7 @@ export class RaceDynamicFormService {
     }
     `
       : `query {
-      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false}}) {
+      listFormLists(limit: ${limit}, filter: {isArchived: {eq: false},isDeleted: {eq: false}}) {
         items {
           id
         }
@@ -224,7 +227,8 @@ export class RaceDynamicFormService {
         formType: formListQuery.formType,
         tags: formListQuery.tags,
         isPublic: formListQuery.isPublic,
-        isArchived: false
+        isArchived: false,
+        isDeleted: false
       })
     );
   }
@@ -656,11 +660,7 @@ export class RaceDynamicFormService {
           lastPublishedBy: p.lastPublishedBy,
           author: p.author,
           publishedDate: p.publishedDate ? p.publishedDate : '',
-          isArchivedAt: p?.isArchivedAt
-            ? formatDistance(new Date(p?.isArchivedAt), new Date(), {
-                addSuffix: true
-              })
-            : ''
+          isArchivedAt: p?.isArchivedAt ? p?.isArchivedAt : ''
         })) || [];
     const count = resp?.items.length || 0;
     const nextToken = resp?.nextToken;

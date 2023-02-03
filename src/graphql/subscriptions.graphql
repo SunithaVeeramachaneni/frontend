@@ -1,4 +1,67 @@
 # this is an auto generated file. This will be overwritten
+subscription OnCreateNotifications(
+  $filter: ModelSubscriptionNotificationsFilterInput
+) {
+  onCreateNotifications(filter: $filter) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnUpdateNotifications(
+  $filter: ModelSubscriptionNotificationsFilterInput
+) {
+  onUpdateNotifications(filter: $filter) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+subscription OnDeleteNotifications(
+  $filter: ModelSubscriptionNotificationsFilterInput
+) {
+  onDeleteNotifications(filter: $filter) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 subscription OnCreateRoundPlanSubmissionDetails(
   $filter: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
 ) {
@@ -257,6 +320,7 @@ subscription OnCreateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -297,6 +361,7 @@ subscription OnUpdateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -337,6 +402,7 @@ subscription OnDeleteRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -609,6 +675,7 @@ subscription OnCreateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -647,6 +714,7 @@ subscription OnUpdateFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -685,6 +753,7 @@ subscription OnDeleteFormList($filter: ModelSubscriptionFormListFilterInput) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version

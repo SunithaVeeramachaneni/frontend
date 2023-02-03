@@ -6,6 +6,50 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerNotifications = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Notifications, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly title?: string | null;
+  readonly descrption?: string | null;
+  readonly dueDate?: string | null;
+  readonly priority?: string | null;
+  readonly category?: string | null;
+  readonly assignTo?: string | null;
+  readonly location?: string | null;
+  readonly locationLat?: string | null;
+  readonly locationLong?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyNotifications = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<Notifications, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly title?: string | null;
+  readonly descrption?: string | null;
+  readonly dueDate?: string | null;
+  readonly priority?: string | null;
+  readonly category?: string | null;
+  readonly assignTo?: string | null;
+  readonly location?: string | null;
+  readonly locationLat?: string | null;
+  readonly locationLong?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Notifications = LazyLoading extends LazyLoadingDisabled ? EagerNotifications : LazyNotifications
+
+export declare const Notifications: (new (init: ModelInit<Notifications>) => Notifications) & {
+  copyOf(source: Notifications, mutator: (draft: MutableModel<Notifications>) => MutableModel<Notifications> | void): Notifications;
+}
+
 type EagerRoundPlanSubmissionDetails = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;
@@ -183,6 +227,7 @@ type EagerRoundPlanList = {
   readonly RoundPlanSubmissionDetails?: (RoundPlanSubmissionDetails | null)[] | null;
   readonly AuthoredRoundPlanDetails?: (AuthoredRoundPlanDetail | null)[] | null;
   readonly RoundPlanDetails?: (RoundPlanDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -212,6 +257,7 @@ type LazyRoundPlanList = {
   readonly RoundPlanSubmissionDetails: AsyncCollection<RoundPlanSubmissionDetails>;
   readonly AuthoredRoundPlanDetails: AsyncCollection<AuthoredRoundPlanDetail>;
   readonly RoundPlanDetails: AsyncCollection<RoundPlanDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -405,6 +451,7 @@ type EagerFormList = {
   readonly formListFormSubmissionDetail?: (FormSubmissionDetail | null)[] | null;
   readonly formListAuthoredFormDetail?: (AuthoredFormDetail | null)[] | null;
   readonly formListFormDetail?: (FormDetail | null)[] | null;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -434,6 +481,7 @@ type LazyFormList = {
   readonly formListFormSubmissionDetail: AsyncCollection<FormSubmissionDetail>;
   readonly formListAuthoredFormDetail: AsyncCollection<AuthoredFormDetail>;
   readonly formListFormDetail: AsyncCollection<FormDetail>;
+  readonly isDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -1,4 +1,83 @@
 # this is an auto generated file. This will be overwritten
+query GetNotifications($id: ID!) {
+  getNotifications(id: $id) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+query ListNotifications(
+  $filter: ModelNotificationsFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listNotifications(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      title
+      descrption
+      dueDate
+      priority
+      category
+      assignTo
+      location
+      locationLat
+      locationLong
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
+query SyncNotifications(
+  $filter: ModelNotificationsFilterInput
+  $limit: Int
+  $nextToken: String
+  $lastSync: AWSTimestamp
+) {
+  syncNotifications(
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+    lastSync: $lastSync
+  ) {
+    items {
+      id
+      title
+      descrption
+      dueDate
+      priority
+      category
+      assignTo
+      location
+      locationLat
+      locationLong
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+    nextToken
+    startedAt
+  }
+}
 query GetRoundPlanSubmissionDetails($id: ID!) {
   getRoundPlanSubmissionDetails(id: $id) {
     id
@@ -441,6 +520,7 @@ query GetRoundPlanList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -472,6 +552,7 @@ query ListRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -512,6 +593,7 @@ query SyncRoundPlanLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -945,6 +1027,7 @@ query GetFormList($id: ID!) {
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -976,6 +1059,7 @@ query ListFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version
@@ -1016,6 +1100,7 @@ query SyncFormLists(
       isArchived
       searchTerm
       isArchivedAt
+      isDeleted
       createdAt
       updatedAt
       _version

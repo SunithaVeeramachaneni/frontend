@@ -1,4 +1,70 @@
 # this is an auto generated file. This will be overwritten
+mutation CreateNotifications(
+  $input: CreateNotificationsInput!
+  $condition: ModelNotificationsConditionInput
+) {
+  createNotifications(input: $input, condition: $condition) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation UpdateNotifications(
+  $input: UpdateNotificationsInput!
+  $condition: ModelNotificationsConditionInput
+) {
+  updateNotifications(input: $input, condition: $condition) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
+mutation DeleteNotifications(
+  $input: DeleteNotificationsInput!
+  $condition: ModelNotificationsConditionInput
+) {
+  deleteNotifications(input: $input, condition: $condition) {
+    id
+    title
+    descrption
+    dueDate
+    priority
+    category
+    assignTo
+    location
+    locationLat
+    locationLong
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+  }
+}
 mutation CreateRoundPlanSubmissionDetails(
   $input: CreateRoundPlanSubmissionDetailsInput!
   $condition: ModelRoundPlanSubmissionDetailsConditionInput
@@ -270,6 +336,7 @@ mutation CreateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -311,6 +378,7 @@ mutation UpdateRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -352,6 +420,7 @@ mutation DeleteRoundPlanList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -639,6 +708,7 @@ mutation CreateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -680,6 +750,7 @@ mutation UpdateFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
@@ -721,6 +792,7 @@ mutation DeleteFormList(
       nextToken
       startedAt
     }
+    isDeleted
     createdAt
     updatedAt
     _version
