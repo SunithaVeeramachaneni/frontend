@@ -200,15 +200,17 @@
               <mat-icon class="editIcon" (click)="focusMinMsg()">edit</mat-icon>
             </div>
             <div class="messageInput">
-              <input
+              <textarea
+                rows="2"
                 matInput
+                wrap="soft"
                 maxlength="70"
                 placeholder="{{ 'enterMessage' | translate }}"
                 id="minMsgInput"
                 autocomplete="off"
                 class="inputField"
                 formControlName="minMsg"
-              />
+              ></textarea>
             </div>
           </div>
         </div>
@@ -270,7 +272,9 @@
               <mat-icon class="editIcon" (click)="focusMaxMsg()">edit</mat-icon>
             </div>
             <div class="messageInput">
-              <input
+              <textarea
+                rows="2"
+                wrap="soft"
                 matInput
                 maxlength="70"
                 placeholder="{{ 'enterMessage' | translate }}"
@@ -278,7 +282,7 @@
                 autocomplete="off"
                 class="inputField"
                 formControlName="maxMsg"
-              />
+              ></textarea>
             </div>
           </div>
         </div>
