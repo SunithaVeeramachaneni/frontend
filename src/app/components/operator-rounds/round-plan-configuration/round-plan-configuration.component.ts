@@ -662,4 +662,14 @@ export class RoundPlanConfigurationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(FormConfigurationActions.resetFormConfiguration());
   }
+
+  addQuestion(pageIndex, sectionIndex, questionIndex) {
+    this.formConfigurationService.addQuestions(
+      pageIndex,
+      sectionIndex,
+      1,
+      questionIndex,
+      this.formConf.counter.value
+    );
+  }
 }

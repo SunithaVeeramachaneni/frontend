@@ -169,7 +169,7 @@
     }
     .limitMessage {
       width: 100%;
-      height: 65px;
+      min-height: 65px;
       background: $gray3;
       border-radius: 5px;
       padding: 5px;
@@ -200,6 +200,8 @@
           color: inherit !important;
           padding: 5px 0px;
           margin-left: 35px;
+          overflow:hidden; 
+          resize:none;
         }
       }
     }
