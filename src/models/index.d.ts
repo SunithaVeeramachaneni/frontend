@@ -6,50 +6,6 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
-type EagerNotifications = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Notifications, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly title?: string | null;
-  readonly descrption?: string | null;
-  readonly dueDate?: string | null;
-  readonly priority?: string | null;
-  readonly category?: string | null;
-  readonly assignTo?: string | null;
-  readonly location?: string | null;
-  readonly locationLat?: string | null;
-  readonly locationLong?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyNotifications = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Notifications, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly title?: string | null;
-  readonly descrption?: string | null;
-  readonly dueDate?: string | null;
-  readonly priority?: string | null;
-  readonly category?: string | null;
-  readonly assignTo?: string | null;
-  readonly location?: string | null;
-  readonly locationLat?: string | null;
-  readonly locationLong?: string | null;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type Notifications = LazyLoading extends LazyLoadingDisabled ? EagerNotifications : LazyNotifications
-
-export declare const Notifications: (new (init: ModelInit<Notifications>) => Notifications) & {
-  copyOf(source: Notifications, mutator: (draft: MutableModel<Notifications>) => MutableModel<Notifications> | void): Notifications;
-}
-
 type EagerRoundPlanSubmissionDetails = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<RoundPlanSubmissionDetails, 'id'>;

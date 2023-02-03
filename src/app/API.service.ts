@@ -10,9 +10,6 @@ export interface SubscriptionResponse<T> {
 }
 
 export type __SubscriptionContainer = {
-  onCreateNotifications: OnCreateNotificationsSubscription;
-  onUpdateNotifications: OnUpdateNotificationsSubscription;
-  onDeleteNotifications: OnDeleteNotificationsSubscription;
   onCreateRoundPlanSubmissionDetails: OnCreateRoundPlanSubmissionDetailsSubscription;
   onUpdateRoundPlanSubmissionDetails: OnUpdateRoundPlanSubmissionDetailsSubscription;
   onDeleteRoundPlanSubmissionDetails: OnDeleteRoundPlanSubmissionDetailsSubscription;
@@ -48,33 +45,21 @@ export type __SubscriptionContainer = {
   onDeleteFormDetail: OnDeleteFormDetailSubscription;
 };
 
-export type CreateNotificationsInput = {
+export type CreateRoundPlanSubmissionDetailsInput = {
   id?: string | null;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
+  formData?: string | null;
+  formlistID: string;
+  formsubmissionlistID: string;
   _version?: number | null;
 };
 
-export type ModelNotificationsConditionInput = {
-  title?: ModelStringInput | null;
-  descrption?: ModelStringInput | null;
-  dueDate?: ModelStringInput | null;
-  priority?: ModelStringInput | null;
-  category?: ModelStringInput | null;
-  assignTo?: ModelStringInput | null;
-  location?: ModelStringInput | null;
-  locationLat?: ModelStringInput | null;
-  locationLong?: ModelStringInput | null;
-  and?: Array<ModelNotificationsConditionInput | null> | null;
-  or?: Array<ModelNotificationsConditionInput | null> | null;
-  not?: ModelNotificationsConditionInput | null;
+export type ModelRoundPlanSubmissionDetailsConditionInput = {
+  formData?: ModelStringInput | null;
+  formlistID?: ModelIDInput | null;
+  formsubmissionlistID?: ModelIDInput | null;
+  and?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
+  or?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
+  not?: ModelRoundPlanSubmissionDetailsConditionInput | null;
 };
 
 export type ModelStringInput = {
@@ -114,61 +99,6 @@ export type ModelSizeInput = {
   ge?: number | null;
   gt?: number | null;
   between?: Array<number | null> | null;
-};
-
-export type Notifications = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateNotificationsInput = {
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  _version?: number | null;
-};
-
-export type DeleteNotificationsInput = {
-  id: string;
-  _version?: number | null;
-};
-
-export type CreateRoundPlanSubmissionDetailsInput = {
-  id?: string | null;
-  formData?: string | null;
-  formlistID: string;
-  formsubmissionlistID: string;
-  _version?: number | null;
-};
-
-export type ModelRoundPlanSubmissionDetailsConditionInput = {
-  formData?: ModelStringInput | null;
-  formlistID?: ModelIDInput | null;
-  formsubmissionlistID?: ModelIDInput | null;
-  and?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
-  or?: Array<ModelRoundPlanSubmissionDetailsConditionInput | null> | null;
-  not?: ModelRoundPlanSubmissionDetailsConditionInput | null;
 };
 
 export type ModelIDInput = {
@@ -920,29 +850,6 @@ export type DeleteFormDetailInput = {
   _version?: number | null;
 };
 
-export type ModelNotificationsFilterInput = {
-  id?: ModelIDInput | null;
-  title?: ModelStringInput | null;
-  descrption?: ModelStringInput | null;
-  dueDate?: ModelStringInput | null;
-  priority?: ModelStringInput | null;
-  category?: ModelStringInput | null;
-  assignTo?: ModelStringInput | null;
-  location?: ModelStringInput | null;
-  locationLat?: ModelStringInput | null;
-  locationLong?: ModelStringInput | null;
-  and?: Array<ModelNotificationsFilterInput | null> | null;
-  or?: Array<ModelNotificationsFilterInput | null> | null;
-  not?: ModelNotificationsFilterInput | null;
-};
-
-export type ModelNotificationsConnection = {
-  __typename: "ModelNotificationsConnection";
-  items: Array<Notifications | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
 export type ModelRoundPlanSubmissionDetailsFilterInput = {
   id?: ModelIDInput | null;
   formData?: ModelStringInput | null;
@@ -1145,19 +1052,13 @@ export type ModelFormDetailFilterInput = {
   not?: ModelFormDetailFilterInput | null;
 };
 
-export type ModelSubscriptionNotificationsFilterInput = {
+export type ModelSubscriptionRoundPlanSubmissionDetailsFilterInput = {
   id?: ModelSubscriptionIDInput | null;
-  title?: ModelSubscriptionStringInput | null;
-  descrption?: ModelSubscriptionStringInput | null;
-  dueDate?: ModelSubscriptionStringInput | null;
-  priority?: ModelSubscriptionStringInput | null;
-  category?: ModelSubscriptionStringInput | null;
-  assignTo?: ModelSubscriptionStringInput | null;
-  location?: ModelSubscriptionStringInput | null;
-  locationLat?: ModelSubscriptionStringInput | null;
-  locationLong?: ModelSubscriptionStringInput | null;
-  and?: Array<ModelSubscriptionNotificationsFilterInput | null> | null;
-  or?: Array<ModelSubscriptionNotificationsFilterInput | null> | null;
+  formData?: ModelSubscriptionStringInput | null;
+  formlistID?: ModelSubscriptionIDInput | null;
+  formsubmissionlistID?: ModelSubscriptionIDInput | null;
+  and?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
+  or?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
 };
 
 export type ModelSubscriptionIDInput = {
@@ -1188,15 +1089,6 @@ export type ModelSubscriptionStringInput = {
   beginsWith?: string | null;
   in?: Array<string | null> | null;
   notIn?: Array<string | null> | null;
-};
-
-export type ModelSubscriptionRoundPlanSubmissionDetailsFilterInput = {
-  id?: ModelSubscriptionIDInput | null;
-  formData?: ModelSubscriptionStringInput | null;
-  formlistID?: ModelSubscriptionIDInput | null;
-  formsubmissionlistID?: ModelSubscriptionIDInput | null;
-  and?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
-  or?: Array<ModelSubscriptionRoundPlanSubmissionDetailsFilterInput | null> | null;
 };
 
 export type ModelSubscriptionRoundPlanSubmissionListFilterInput = {
@@ -1356,63 +1248,6 @@ export type ModelSubscriptionFormDetailFilterInput = {
   formlistID?: ModelSubscriptionIDInput | null;
   and?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
   or?: Array<ModelSubscriptionFormDetailFilterInput | null> | null;
-};
-
-export type CreateNotificationsMutation = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type UpdateNotificationsMutation = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type DeleteNotificationsMutation = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
 };
 
 export type CreateRoundPlanSubmissionDetailsMutation = {
@@ -2118,73 +1953,6 @@ export type DeleteFormDetailMutation = {
   _version: number;
   _deleted?: boolean | null;
   _lastChangedAt: number;
-};
-
-export type GetNotificationsQuery = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type ListNotificationsQuery = {
-  __typename: "ModelNotificationsConnection";
-  items: Array<{
-    __typename: "Notifications";
-    id: string;
-    title?: string | null;
-    descrption?: string | null;
-    dueDate?: string | null;
-    priority?: string | null;
-    category?: string | null;
-    assignTo?: string | null;
-    location?: string | null;
-    locationLat?: string | null;
-    locationLong?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
-};
-
-export type SyncNotificationsQuery = {
-  __typename: "ModelNotificationsConnection";
-  items: Array<{
-    __typename: "Notifications";
-    id: string;
-    title?: string | null;
-    descrption?: string | null;
-    dueDate?: string | null;
-    priority?: string | null;
-    category?: string | null;
-    assignTo?: string | null;
-    location?: string | null;
-    locationLat?: string | null;
-    locationLong?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    _version: number;
-    _deleted?: boolean | null;
-    _lastChangedAt: number;
-  } | null>;
-  nextToken?: string | null;
-  startedAt?: number | null;
 };
 
 export type GetRoundPlanSubmissionDetailsQuery = {
@@ -3070,63 +2838,6 @@ export type FormDetailsByFormlistIDQuery = {
   startedAt?: number | null;
 };
 
-export type OnCreateNotificationsSubscription = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnUpdateNotificationsSubscription = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
-export type OnDeleteNotificationsSubscription = {
-  __typename: "Notifications";
-  id: string;
-  title?: string | null;
-  descrption?: string | null;
-  dueDate?: string | null;
-  priority?: string | null;
-  category?: string | null;
-  assignTo?: string | null;
-  location?: string | null;
-  locationLat?: string | null;
-  locationLong?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  _version: number;
-  _deleted?: boolean | null;
-  _lastChangedAt: number;
-};
-
 export type OnCreateRoundPlanSubmissionDetailsSubscription = {
   __typename: "RoundPlanSubmissionDetails";
   id: string;
@@ -3836,111 +3547,6 @@ export type OnDeleteFormDetailSubscription = {
   providedIn: "root"
 })
 export class APIService {
-  async CreateNotifications(
-    input: CreateNotificationsInput,
-    condition?: ModelNotificationsConditionInput
-  ): Promise<CreateNotificationsMutation> {
-    const statement = `mutation CreateNotifications($input: CreateNotificationsInput!, $condition: ModelNotificationsConditionInput) {
-        createNotifications(input: $input, condition: $condition) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <CreateNotificationsMutation>response.data.createNotifications;
-  }
-  async UpdateNotifications(
-    input: UpdateNotificationsInput,
-    condition?: ModelNotificationsConditionInput
-  ): Promise<UpdateNotificationsMutation> {
-    const statement = `mutation UpdateNotifications($input: UpdateNotificationsInput!, $condition: ModelNotificationsConditionInput) {
-        updateNotifications(input: $input, condition: $condition) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <UpdateNotificationsMutation>response.data.updateNotifications;
-  }
-  async DeleteNotifications(
-    input: DeleteNotificationsInput,
-    condition?: ModelNotificationsConditionInput
-  ): Promise<DeleteNotificationsMutation> {
-    const statement = `mutation DeleteNotifications($input: DeleteNotificationsInput!, $condition: ModelNotificationsConditionInput) {
-        deleteNotifications(input: $input, condition: $condition) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      input
-    };
-    if (condition) {
-      gqlAPIServiceArguments.condition = condition;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <DeleteNotificationsMutation>response.data.deleteNotifications;
-  }
   async CreateRoundPlanSubmissionDetails(
     input: CreateRoundPlanSubmissionDetailsInput,
     condition?: ModelRoundPlanSubmissionDetailsConditionInput
@@ -5209,129 +4815,6 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return <DeleteFormDetailMutation>response.data.deleteFormDetail;
-  }
-  async GetNotifications(id: string): Promise<GetNotificationsQuery> {
-    const statement = `query GetNotifications($id: ID!) {
-        getNotifications(id: $id) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      id
-    };
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <GetNotificationsQuery>response.data.getNotifications;
-  }
-  async ListNotifications(
-    filter?: ModelNotificationsFilterInput,
-    limit?: number,
-    nextToken?: string
-  ): Promise<ListNotificationsQuery> {
-    const statement = `query ListNotifications($filter: ModelNotificationsFilterInput, $limit: Int, $nextToken: String) {
-        listNotifications(filter: $filter, limit: $limit, nextToken: $nextToken) {
-          __typename
-          items {
-            __typename
-            id
-            title
-            descrption
-            dueDate
-            priority
-            category
-            assignTo
-            location
-            locationLat
-            locationLong
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <ListNotificationsQuery>response.data.listNotifications;
-  }
-  async SyncNotifications(
-    filter?: ModelNotificationsFilterInput,
-    limit?: number,
-    nextToken?: string,
-    lastSync?: number
-  ): Promise<SyncNotificationsQuery> {
-    const statement = `query SyncNotifications($filter: ModelNotificationsFilterInput, $limit: Int, $nextToken: String, $lastSync: AWSTimestamp) {
-        syncNotifications(filter: $filter, limit: $limit, nextToken: $nextToken, lastSync: $lastSync) {
-          __typename
-          items {
-            __typename
-            id
-            title
-            descrption
-            dueDate
-            priority
-            category
-            assignTo
-            location
-            locationLat
-            locationLong
-            createdAt
-            updatedAt
-            _version
-            _deleted
-            _lastChangedAt
-          }
-          nextToken
-          startedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    if (limit) {
-      gqlAPIServiceArguments.limit = limit;
-    }
-    if (nextToken) {
-      gqlAPIServiceArguments.nextToken = nextToken;
-    }
-    if (lastSync) {
-      gqlAPIServiceArguments.lastSync = lastSync;
-    }
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <SyncNotificationsQuery>response.data.syncNotifications;
   }
   async GetRoundPlanSubmissionDetails(
     id: string
@@ -7100,120 +6583,6 @@ export class APIService {
     )) as any;
     return <FormDetailsByFormlistIDQuery>response.data.formDetailsByFormlistID;
   }
-  OnCreateNotificationsListener(
-    filter?: ModelSubscriptionNotificationsFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onCreateNotifications">>
-  > {
-    const statement = `subscription OnCreateNotifications($filter: ModelSubscriptionNotificationsFilterInput) {
-        onCreateNotifications(filter: $filter) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onCreateNotifications">
-      >
-    >;
-  }
-
-  OnUpdateNotificationsListener(
-    filter?: ModelSubscriptionNotificationsFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onUpdateNotifications">>
-  > {
-    const statement = `subscription OnUpdateNotifications($filter: ModelSubscriptionNotificationsFilterInput) {
-        onUpdateNotifications(filter: $filter) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onUpdateNotifications">
-      >
-    >;
-  }
-
-  OnDeleteNotificationsListener(
-    filter?: ModelSubscriptionNotificationsFilterInput
-  ): Observable<
-    SubscriptionResponse<Pick<__SubscriptionContainer, "onDeleteNotifications">>
-  > {
-    const statement = `subscription OnDeleteNotifications($filter: ModelSubscriptionNotificationsFilterInput) {
-        onDeleteNotifications(filter: $filter) {
-          __typename
-          id
-          title
-          descrption
-          dueDate
-          priority
-          category
-          assignTo
-          location
-          locationLat
-          locationLong
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {};
-    if (filter) {
-      gqlAPIServiceArguments.filter = filter;
-    }
-    return API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    ) as Observable<
-      SubscriptionResponse<
-        Pick<__SubscriptionContainer, "onDeleteNotifications">
-      >
-    >;
-  }
-
   OnCreateRoundPlanSubmissionDetailsListener(
     filter?: ModelSubscriptionRoundPlanSubmissionDetailsFilterInput
   ): Observable<
